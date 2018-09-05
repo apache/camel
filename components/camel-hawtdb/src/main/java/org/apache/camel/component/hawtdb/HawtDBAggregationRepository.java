@@ -32,6 +32,7 @@ import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtdb.api.OptimisticUpdateException;
 import org.fusesource.hawtdb.api.SortedIndex;
@@ -57,6 +58,8 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
     private boolean useRecovery = true;
     private int maximumRedeliveries;
     private String deadLetterUri;
+    
+    private boolean allowSerializedHeaders;
 
     /**
      * Creates an aggregation repository
@@ -70,7 +73,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
      * @param repositoryName the repository name
      */
     public HawtDBAggregationRepository(String repositoryName) {
-        ObjectHelper.notEmpty(repositoryName, "repositoryName");
+        StringHelper.notEmpty(repositoryName, "repositoryName");
         this.repositoryName = repositoryName;
     }
 
@@ -82,8 +85,8 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
      * @param persistentFileName the persistent store filename
      */
     public HawtDBAggregationRepository(String repositoryName, String persistentFileName) {
-        ObjectHelper.notEmpty(repositoryName, "repositoryName");
-        ObjectHelper.notEmpty(persistentFileName, "persistentFileName");
+        StringHelper.notEmpty(repositoryName, "repositoryName");
+        StringHelper.notEmpty(persistentFileName, "persistentFileName");
         this.repositoryName = repositoryName;
         this.persistentFileName = persistentFileName;
     }
@@ -95,7 +98,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
      * @param hawtDBFile     the hawtdb file to use as persistent store
      */
     public HawtDBAggregationRepository(String repositoryName, HawtDBFile hawtDBFile) {
-        ObjectHelper.notEmpty(repositoryName, "repositoryName");
+        StringHelper.notEmpty(repositoryName, "repositoryName");
         ObjectHelper.notNull(hawtDBFile, "hawtDBFile");
         this.hawtDBFile = hawtDBFile;
         this.repositoryName = repositoryName;
@@ -122,7 +125,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
             // in some cases.  But since we can't.. we are going to force
             // early marshaling.
             final Buffer keyBuffer = codec.marshallKey(key);
-            final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange);
+            final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange, allowSerializedHeaders);
             Buffer rc = hawtDBFile.execute(new Work<Buffer>() {
                 public Buffer execute(Transaction tx) {
                     SortedIndex<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName, true);
@@ -187,7 +190,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
         try {
             final Buffer keyBuffer = codec.marshallKey(key);
             final Buffer confirmKeyBuffer = codec.marshallKey(exchange.getExchangeId());
-            final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange);
+            final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange, allowSerializedHeaders);
             hawtDBFile.execute(new Work<Buffer>() {
                 public Buffer execute(Transaction tx) {
                     SortedIndex<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName, true);
@@ -237,7 +240,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
     }
 
     public Set<String> getKeys() {
-        final Set<String> keys = new LinkedHashSet<String>();
+        final Set<String> keys = new LinkedHashSet<>();
 
         hawtDBFile.execute(new Work<Buffer>() {
             public Buffer execute(Transaction tx) {
@@ -281,7 +284,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
     }
 
     public Set<String> scan(CamelContext camelContext) {
-        final Set<String> answer = new LinkedHashSet<String>();
+        final Set<String> answer = new LinkedHashSet<>();
         hawtDBFile.execute(new Work<Buffer>() {
             public Buffer execute(Transaction tx) {
                 // scan could potentially be running while we are shutting down so check for that
@@ -472,6 +475,14 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
 
     public void setPageSize(short pageSize) {
         this.pageSize = pageSize;
+    }
+
+    public boolean isAllowSerializedHeaders() {
+        return allowSerializedHeaders;
+    }
+
+    public void setAllowSerializedHeaders(boolean allowSerializedHeaders) {
+        this.allowSerializedHeaders = allowSerializedHeaders;
     }
 
     @Override

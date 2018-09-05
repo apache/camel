@@ -64,6 +64,11 @@ public class SetPropertyDefinition extends NoOutputExpressionNode {
     }
     
     @Override
+    public String getShortName() {
+        return "setProperty";
+    }
+
+    @Override
     public String getLabel() {
         return "setProperty[" + getPropertyName() + "]";
     }
@@ -72,7 +77,8 @@ public class SetPropertyDefinition extends NoOutputExpressionNode {
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         ObjectHelper.notNull(getPropertyName(), "propertyName", this);
         Expression expr = getExpression().createExpression(routeContext);
-        return new SetPropertyProcessor(getPropertyName(), expr);
+        Expression nameExpr = ExpressionBuilder.parseSimpleOrFallbackToConstantExpression(getPropertyName(), routeContext.getCamelContext());
+        return new SetPropertyProcessor(nameExpr, expr);
     }
 
     /**
@@ -85,7 +91,10 @@ public class SetPropertyDefinition extends NoOutputExpressionNode {
     }
 
     /**
-     * Name of exchange property to set a new value
+     * Name of exchange property to set a new value.
+     * <p/>
+     * The <tt>simple</tt> language can be used to define a dynamic evaluated exchange property name to be used.
+     * Otherwise a constant name will be used.
      */
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;

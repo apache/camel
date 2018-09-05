@@ -26,13 +26,13 @@ import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_TIMER_ACTION;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
@@ -69,7 +69,6 @@ public class TimerProducerTest {
     public void setUp() throws Exception {
         producer = new TimerProducer(endpoint);
         inOrder = Mockito.inOrder(endpoint, exchange, registry, timer, context, in);
-        when(endpoint.getRegistry()).thenReturn(registry);
         when(registry.timer(METRICS_NAME)).thenReturn(timer);
         when(timer.time()).thenReturn(context);
         when(exchange.getIn()).thenReturn(in);
@@ -146,22 +145,22 @@ public class TimerProducerTest {
     @Test
     public void testProcessNoAction() throws Exception {
         when(endpoint.getAction()).thenReturn(null);
-        when(in.getHeader(HEADER_TIMER_ACTION, null, MetricsTimerAction.class)).thenReturn(null);
         producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(endpoint, times(1)).getAction();
-        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, null, MetricsTimerAction.class);
+        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, (Object) null, MetricsTimerAction.class);
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
     public void testProcessNoActionOverride() throws Exception {
+        Object action = null;
         when(endpoint.getAction()).thenReturn(null);
-        when(in.getHeader(HEADER_TIMER_ACTION, null, MetricsTimerAction.class)).thenReturn(MetricsTimerAction.start);
+        when(in.getHeader(HEADER_TIMER_ACTION, action, MetricsTimerAction.class)).thenReturn(MetricsTimerAction.start);
         producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(endpoint, times(1)).getAction();
-        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, null, MetricsTimerAction.class);
+        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, action, MetricsTimerAction.class);
         inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Context.class);
         inOrder.verify(registry, times(1)).timer(METRICS_NAME);
         inOrder.verify(timer, times(1)).time();

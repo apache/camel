@@ -253,7 +253,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         // copy the camel in message header to the out message
         camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
         CxfHeaderHelper.propagateCxfToCamel(headerFilterStrategy, outMessage,
-                                            camelExchange.getOut().getHeaders(), camelExchange);
+                                            camelExchange.getOut(), camelExchange);
     }
 
     /**
@@ -262,7 +262,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     private class CamelOutputStream extends CachedOutputStream {
         private Message outMessage;
 
-        public CamelOutputStream(Message m) {
+        CamelOutputStream(Message m) {
             outMessage = m;
         }
 
@@ -277,9 +277,12 @@ public class CamelDestination extends AbstractDestination implements Configurabl
             if (checkException && exception != null) {
                 camelExchange.setException(exception);
             }
-
-            CachedOutputStream outputStream = (CachedOutputStream)outMessage.getContent(OutputStream.class);
-            camelExchange.getOut().setBody(outputStream.getInputStream());
+            OutputStream outputStream = outMessage.getContent(OutputStream.class);
+            if (outputStream instanceof CachedOutputStream) {
+                camelExchange.getOut().setBody(((CachedOutputStream)outputStream).getInputStream());
+            } else {
+                camelExchange.getOut().setBody(outputStream);
+            }
             LOG.debug("send the response message: {}", outputStream);
         }
 

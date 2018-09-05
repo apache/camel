@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.io.StringReader;
 import javax.xml.transform.stream.StreamSource;
 
@@ -28,6 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class StreamCachingOnlyRouteTest extends ContextTestSupport {
 
+    @Test
     public void testStreamCachingPerRoute() throws Exception {
         MockEndpoint c = getMockEndpoint("mock:c");
         c.expectedMessageCount(1);
@@ -44,7 +47,7 @@ public class StreamCachingOnlyRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                getContext().getProperties().put("CamelCachedOutputStreamThreshold", "4096");
+                getContext().getGlobalOptions().put("CamelCachedOutputStreamThreshold", "4096");
 
                 from("direct:c").streamCaching().to("mock:c");
             }

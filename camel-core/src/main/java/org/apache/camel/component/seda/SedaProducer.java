@@ -19,7 +19,6 @@ package org.apache.camel.component.seda;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
@@ -42,30 +41,32 @@ public class SedaProducer extends DefaultAsyncProducer {
     private final WaitForTaskToComplete waitForTaskToComplete;
     private final long timeout;
     private final boolean blockWhenFull;
+    private final long offerTimeout;
 
     /**
      * @deprecated Use {@link #SedaProducer(SedaEndpoint, WaitForTaskToComplete, long, boolean) the other constructor}.
      */
     @Deprecated
     public SedaProducer(SedaEndpoint endpoint, BlockingQueue<Exchange> queue, WaitForTaskToComplete waitForTaskToComplete, long timeout) {
-        this(endpoint, waitForTaskToComplete, timeout, false);
+        this(endpoint, waitForTaskToComplete, timeout, false, 0);
     }
 
     /**
      * @deprecated Use {@link #SedaProducer(SedaEndpoint, WaitForTaskToComplete, long, boolean) the other constructor}.
      */
     @Deprecated
-    public SedaProducer(SedaEndpoint endpoint, BlockingQueue<Exchange> queue, WaitForTaskToComplete waitForTaskToComplete, long timeout, boolean blockWhenFull) {
-        this(endpoint, waitForTaskToComplete, timeout, blockWhenFull);
+    public SedaProducer(SedaEndpoint endpoint, BlockingQueue<Exchange> queue, WaitForTaskToComplete waitForTaskToComplete, long timeout, boolean blockWhenFull, long offerTimeout) {
+        this(endpoint, waitForTaskToComplete, timeout, blockWhenFull, offerTimeout);
     }
 
-    public SedaProducer(SedaEndpoint endpoint, WaitForTaskToComplete waitForTaskToComplete, long timeout, boolean blockWhenFull) {
+    public SedaProducer(SedaEndpoint endpoint, WaitForTaskToComplete waitForTaskToComplete, long timeout, boolean blockWhenFull, long offerTimeout) {
         super(endpoint);
         this.queue = endpoint.getQueue();
         this.endpoint = endpoint;
         this.waitForTaskToComplete = waitForTaskToComplete;
         this.timeout = timeout;
         this.blockWhenFull = blockWhenFull;
+        this.offerTimeout = offerTimeout;
     }
 
     @Override
@@ -122,7 +123,8 @@ public class SedaProducer extends DefaultAsyncProducer {
 
             log.trace("Adding Exchange to queue: {}", copy);
             try {
-                addToQueue(copy);
+                // do not copy as we already did the copy
+                addToQueue(copy, false);
             } catch (SedaConsumerNotAvailableException e) {
                 exchange.setException(e);
                 callback.done(true);
@@ -160,11 +162,8 @@ public class SedaProducer extends DefaultAsyncProducer {
             }
         } else {
             // no wait, eg its a InOnly then just add to queue and return
-            // handover the completion so its the copy which performs that, as we do not wait
-            Exchange copy = prepareCopy(exchange, true);
-            log.trace("Adding Exchange to queue: {}", copy);
             try {
-                addToQueue(copy);
+                addToQueue(exchange, true);
             } catch (SedaConsumerNotAvailableException e) {
                 exchange.setException(e);
                 callback.done(true);
@@ -180,7 +179,11 @@ public class SedaProducer extends DefaultAsyncProducer {
 
     protected Exchange prepareCopy(Exchange exchange, boolean handover) {
         // use a new copy of the exchange to route async (and use same message id)
-        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, handover, true);
+
+        // if handover we need to do special handover to avoid handing over
+        // RestBindingMarshalOnCompletion as it should not be handed over with SEDA
+        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, handover, true,
+            synchronization -> !synchronization.getClass().getName().contains("RestBindingMarshalOnCompletion"));
         // set a new from endpoint to be the seda queue
         copy.setFromEndpoint(endpoint);
         return copy;
@@ -205,8 +208,10 @@ public class SedaProducer extends DefaultAsyncProducer {
      * simply add which will throw exception if the queue is full
      * 
      * @param exchange the exchange to add to the queue
+     * @param copy     whether to create a copy of the exchange to use for adding to the queue
      */
-    protected void addToQueue(Exchange exchange) throws SedaConsumerNotAvailableException {
+    protected void addToQueue(Exchange exchange, boolean copy) throws SedaConsumerNotAvailableException {
+        boolean offerTime;
         BlockingQueue<Exchange> queue = null;
         QueueReference queueReference = endpoint.getQueueReference();
         if (queueReference != null) {
@@ -221,20 +226,39 @@ public class SedaProducer extends DefaultAsyncProducer {
             if (endpoint.isFailIfNoConsumers()) {
                 throw new SedaConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
             } else if (endpoint.isDiscardIfNoConsumers()) {
-                log.debug("Discard message as no active consumers on endpoint: " + endpoint);
+                log.debug("Discard message as no active consumers on endpoint: {}", endpoint);
                 return;
             }
         }
 
-        if (blockWhenFull) {
+        Exchange target = exchange;
+
+        // handover the completion so its the copy which performs that, as we do not wait
+        if (copy) {
+            target = prepareCopy(exchange, true);
+        }
+
+        log.trace("Adding Exchange to queue: {}", target);
+        if (blockWhenFull && offerTimeout == 0) {
             try {
-                queue.put(exchange);
+                queue.put(target);
             } catch (InterruptedException e) {
                 // ignore
                 log.debug("Put interrupted, are we stopping? {}", isStopping() || isStopped());
             }
+        } else if (blockWhenFull && offerTimeout > 0) {
+            try {
+                offerTime = queue.offer(target, offerTimeout, TimeUnit.MILLISECONDS);
+                if (!offerTime) {
+                    throw new IllegalStateException("Fails to insert element into queue, "
+                            + "after timeout of"  + offerTimeout + "milliseconds");
+                }
+            } catch (InterruptedException e) {
+                // ignore
+                log.debug("Offer interrupted, are we stopping? {}", isStopping() || isStopped());
+            }
         } else {
-            queue.add(exchange);
+            queue.add(target);
         }
     }
 

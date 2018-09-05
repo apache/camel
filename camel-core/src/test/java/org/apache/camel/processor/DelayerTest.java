@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -31,14 +33,15 @@ public class DelayerTest extends ContextTestSupport {
 
     private ExchangeAwareDelayCalcBean exchangeAwareBean = new ExchangeAwareDelayCalcBean();
 
+    @Test
     public void testSendingMessageGetsDelayed() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
 
         // do not wait for the first message
         resultEndpoint.expectedMessageCount(0);
-        resultEndpoint.setResultWaitTime(500);
-        template.sendBodyAndHeader("seda:a", "<hello>world!</hello>", "MyDelay", 1000);
-        // we should not receive it as we wait at most 0.5 sec and it take 1 sec to send
+        resultEndpoint.setResultWaitTime(10);
+        template.sendBodyAndHeader("seda:a", "<hello>world!</hello>", "MyDelay", 100);
+        // we should not receive it as we wait at most 0.01 sec and it take 0.1 sec to send
         resultEndpoint.assertIsSatisfied();
 
         // now if we wait a bit longer we should receive the message!
@@ -47,30 +50,33 @@ public class DelayerTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testDelayConstant() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
-        // should at least take 1 sec to complete
-        resultEndpoint.setResultMinimumWaitTime(900);
+        // should at least take 0.1 sec to complete
+        resultEndpoint.setResultMinimumWaitTime(90);
         template.sendBody("seda:b", "<hello>world!</hello>");
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testDelayBean() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
-        // should at least take 1 sec to complete
-        resultEndpoint.setResultMinimumWaitTime(900);
+        // should at least take 0.1 sec to complete
+        resultEndpoint.setResultMinimumWaitTime(90);
         template.sendBody("seda:c", "<hello>world!</hello>");
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testExchangeAwareDelayBean() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
-        // should at least take 1 sec to complete
-        resultEndpoint.setResultMinimumWaitTime(900);
-        template.sendBodyAndHeader("seda:d", "<hello>world!</hello>", BEAN_DELAYER_HEADER, 1000);
+        // should at least take 0.1 sec to complete
+        resultEndpoint.setResultMinimumWaitTime(90);
+        template.sendBodyAndHeader("seda:d", "<hello>world!</hello>", BEAN_DELAYER_HEADER, 100);
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -82,7 +88,7 @@ public class DelayerTest extends ContextTestSupport {
                 // END SNIPPET: ex
 
                 // START SNIPPET: ex2
-                from("seda:b").delay(1000).to("mock:result");
+                from("seda:b").delay(100).to("mock:result");
                 // END SNIPPET: ex2
 
                 // START SNIPPET: ex3

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class AdviceWithTasksTest extends ContextTestSupport {
 
+    @Test
     public void testUnknownId() throws Exception {
         try {
             context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
@@ -39,6 +42,7 @@ public class AdviceWithTasksTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testReplace() throws Exception {
         // START SNIPPET: e1
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
@@ -62,6 +66,7 @@ public class AdviceWithTasksTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRemove() throws Exception {
         // START SNIPPET: e2
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
@@ -83,6 +88,7 @@ public class AdviceWithTasksTest extends ContextTestSupport {
         assertTrue("Should have removed mock:bar endpoint", context.hasEndpoint("mock:bar") == null);
     }
 
+    @Test
     public void testBefore() throws Exception {
         // START SNIPPET: e3
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
@@ -105,6 +111,7 @@ public class AdviceWithTasksTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAfter() throws Exception {
         // START SNIPPET: e4
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {

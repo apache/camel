@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -38,18 +40,21 @@ public class DefaultParameterMappingStrategyTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testExchange() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Exchange");
         template.sendBody("direct:a", "Hello");
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMessage() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Message");
         template.sendBody("direct:b", "Hello");
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testException() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Exception");
         template.send("direct:c", new Processor() {
@@ -61,18 +66,21 @@ public class DefaultParameterMappingStrategyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTypeConverter() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("TypeConverter");
         template.sendBody("direct:d", "Hello");
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRegistry() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Registry");
         template.sendBody("direct:e", "Hello");
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testCamelContext() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("CamelContext");
         template.sendBody("direct:f", "Hello");

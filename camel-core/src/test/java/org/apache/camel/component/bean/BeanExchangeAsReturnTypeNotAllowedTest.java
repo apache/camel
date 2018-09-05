@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
@@ -30,6 +32,7 @@ import org.apache.camel.util.jndi.JndiContext;
  */
 public class BeanExchangeAsReturnTypeNotAllowedTest extends ContextTestSupport {
 
+    @Test
     public void testExchangeAsReturnTypeNotAllowed() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(0);

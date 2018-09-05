@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -101,6 +103,7 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         return context;
     }
 
+    @Test
     public void testRetryUntilRecipientListOkOnly() throws Exception {
         invoked.set(0);
 
@@ -116,6 +119,7 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         assertEquals(0, invoked.get());
     }
 
+    @Test
     public void testRetryUntilRecipientListOkNotFail() throws Exception {
         invoked.set(0);
 
@@ -131,10 +135,11 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         assertEquals(0, invoked.get());
     }
 
+    @Test
     public void testRetryUntilRecipientListFailOnly() throws Exception {
         invoked.set(0);
 
-        NotifyBuilder event = event().whenDone(1).create();
+        NotifyBuilder event = event().whenDone(2).create();
 
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMessageCount(0);
@@ -152,10 +157,11 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         assertEquals(3, invoked.get());
     }
 
+    @Test
     public void testRetryUntilRecipientListFailAndOk() throws Exception {
         invoked.set(0);
 
-        NotifyBuilder event = event().whenDone(1).create();
+        NotifyBuilder event = event().whenDone(3).create();
 
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(0);
@@ -173,10 +179,11 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         assertEquals(3, invoked.get());
     }
 
+    @Test
     public void testRetryUntilRecipientListOkAndFail() throws Exception {
         invoked.set(0);
 
-        NotifyBuilder event = event().whenFailed(1).create();
+        NotifyBuilder event = event().whenDone(3).create();
 
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMessageCount(1);
@@ -194,6 +201,7 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         assertEquals(3, invoked.get());
     }
 
+    @Test
     public void testRetryUntilRecipientNotFail() throws Exception {
         invoked.set(0);
 
@@ -209,10 +217,11 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         assertEquals(0, invoked.get());
     }
 
+    @Test
     public void testRetryUntilRecipientFailAndNotFail() throws Exception {
         invoked.set(0);
 
-        NotifyBuilder event = event().whenDone(1).create();
+        NotifyBuilder event = event().whenDone(3).create();
 
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(0);
@@ -230,10 +239,11 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         assertEquals(3, invoked.get());
     }
 
+    @Test
     public void testRetryUntilRecipientNotFailAndFail() throws Exception {
         invoked.set(0);
 
-        NotifyBuilder event = event().whenDone(1).create();
+        NotifyBuilder event = event().whenDone(3).create();
 
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(0);
@@ -250,14 +260,13 @@ public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupp
         assertEquals(3, invoked.get());
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("seda:start")
-                    .onException(Exception.class).retryWhile(method("myRetryBean")).end()
+                    .onException(Exception.class).redeliveryDelay(0).retryWhile(method("myRetryBean")).end()
                     .recipientList(header("recipientListHeader"))
                     .to("mock:result");
 

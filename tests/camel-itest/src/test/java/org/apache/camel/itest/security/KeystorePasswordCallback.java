@@ -27,8 +27,7 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 
 public class KeystorePasswordCallback implements CallbackHandler {
     
-    private Map<String, String> passwords = 
-        new HashMap<String, String>();
+    private Map<String, String> passwords = new HashMap<>();
     
     public KeystorePasswordCallback() {
         passwords.put("alice", "password");

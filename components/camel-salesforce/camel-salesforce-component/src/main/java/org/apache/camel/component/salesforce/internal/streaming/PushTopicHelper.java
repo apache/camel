@@ -18,24 +18,27 @@ package org.apache.camel.component.salesforce.internal.streaming;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
+import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.client.SyncResponseCallback;
 import org.apache.camel.component.salesforce.internal.dto.PushTopic;
 import org.apache.camel.component.salesforce.internal.dto.QueryRecordsPushTopic;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.eclipse.jetty.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PushTopicHelper {
     private static final Logger LOG = LoggerFactory.getLogger(PushTopicHelper.class);
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = JsonUtils.createObjectMapper();
     private static final String PUSH_TOPIC_OBJECT_NAME = "PushTopic";
     private static final long API_TIMEOUT = 60; // Rest API call timeout
     private final SalesforceEndpointConfig config;
@@ -73,8 +76,11 @@ public class PushTopicHelper {
         try {
             // use SOQL to lookup Topic, since Name is not an external ID!!!
             restClient.query("SELECT Id, Name, Query, ApiVersion, IsActive, "
-                    + "NotifyForFields, NotifyForOperations, Description "
+                    + "NotifyForFields, NotifyForOperations, NotifyForOperationCreate, "
+                    + "NotifyForOperationDelete, NotifyForOperationUndelete, "
+                    + "NotifyForOperationUpdate, Description "
                     + "FROM PushTopic WHERE Name = '" + topicName + "'",
+                    Collections.emptyMap(),
                     callback);
 
             if (!callback.await(API_TIMEOUT, TimeUnit.SECONDS)) {
@@ -165,7 +171,7 @@ public class PushTopicHelper {
         final SyncResponseCallback callback = new SyncResponseCallback();
         try {
             restClient.createSObject(PUSH_TOPIC_OBJECT_NAME,
-                    new ByteArrayInputStream(OBJECT_MAPPER.writeValueAsBytes(topic)), callback);
+                    new ByteArrayInputStream(OBJECT_MAPPER.writeValueAsBytes(topic)), Collections.emptyMap(), callback);
 
             if (!callback.await(API_TIMEOUT, TimeUnit.SECONDS)) {
                 throw new SalesforceException("API call timeout!", null);
@@ -227,6 +233,7 @@ public class PushTopicHelper {
 
             restClient.updateSObject("PushTopic", topicId,
                     new ByteArrayInputStream(OBJECT_MAPPER.writeValueAsBytes(topic)),
+                    Collections.emptyMap(),
                     callback);
 
             if (!callback.await(API_TIMEOUT, TimeUnit.SECONDS)) {

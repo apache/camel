@@ -59,6 +59,10 @@ public class ManagedTypeConverterRegistry extends ManagedService implements Mana
         return registry.getStatistics().getHitCounter();
     }
 
+    public long getBaseHitCounter() {
+        return registry.getStatistics().getBaseHitCounter();
+    }
+
     public long getMissCounter() {
         return registry.getStatistics().getMissCounter();
     }
@@ -110,7 +114,9 @@ public class ManagedTypeConverterRegistry extends ManagedService implements Mana
                 String from = entry[0].getCanonicalName();
                 String to = entry[1].getCanonicalName();
                 CompositeData data = new CompositeDataSupport(ct, new String[]{"from", "to"}, new Object[]{from, to});
-                answer.put(data);
+                if (!answer.containsValue(data)) {
+                    answer.put(data);
+                }
             }
             return answer;
         } catch (Exception e) {

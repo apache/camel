@@ -30,6 +30,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.processor.TryProcessor;
+import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
@@ -61,6 +62,11 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     }
 
     @Override
+    public String getShortName() {
+        return "doTry";
+    }
+
+    @Override
     public String getLabel() {
         return "doTry";
     }
@@ -72,7 +78,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
             throw new IllegalArgumentException("Definition has no children on " + this);
         }
 
-        List<Processor> catchProcessors = new ArrayList<Processor>();
+        List<Processor> catchProcessors = new ArrayList<>();
         if (catchClauses != null) {
             for (CatchDefinition catchClause : catchClauses) {
                 catchProcessors.add(createProcessor(routeContext, catchClause));
@@ -148,7 +154,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
      * @param predicate  predicate that determines true or false
      * @return the builder
      */
-    public TryDefinition onWhen(Predicate predicate) {
+    public TryDefinition onWhen(@AsPredicate Predicate predicate) {
         // we must use a delegate so we can use the fluent builder based on TryDefinition
         // to configure all with try .. catch .. finally
         // set the onWhen predicate on all the catch definitions
@@ -183,7 +189,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
      * from a {@link Processor} or use the {@link ProcessorDefinition#throwException(Exception)}
      */
     @Deprecated
-    public TryDefinition handled(Predicate handled) {
+    public TryDefinition handled(@AsPredicate Predicate handled) {
         // we must use a delegate so we can use the fluent builder based on TryDefinition
         // to configure all with try .. catch .. finally
         // set the handled on all the catch definitions
@@ -204,7 +210,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
      * from a {@link Processor} or use the {@link ProcessorDefinition#throwException(Exception)}
      */
     @Deprecated
-    public TryDefinition handled(Expression handled) {
+    public TryDefinition handled(@AsPredicate Expression handled) {
         return handled(ExpressionToPredicateAdapter.toPredicate(handled));
     }
 
@@ -256,8 +262,8 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     protected void checkInitialized() {
         if (!initialized) {
             initialized = true;
-            outputsWithoutCatches = new ArrayList<ProcessorDefinition<?>>();
-            catchClauses = new ArrayList<CatchDefinition>();
+            outputsWithoutCatches = new ArrayList<>();
+            catchClauses = new ArrayList<>();
             finallyClause = null;
 
             for (ProcessorDefinition<?> output : outputs) {

@@ -83,7 +83,7 @@ public class MimeMultipartAlternativeWithContentTypeTest extends CamelTestSuppor
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://sachin@mymailserver.com?password=secret&consumer.delay=1000&contentType=text/html; charset=UTF-8").to("mock:result");
+                from("pop3://sachin@mymailserver.com?password=secret&consumer.initialDelay=100&consumer.delay=100&contentType=text/html; charset=UTF-8").to("mock:result");
             }
         };
     }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.Arrays;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedRemovePropertiesMBean;
@@ -34,7 +36,7 @@ public class ManagedRemoveProperties extends ManagedProcessor implements Managed
         super(context, processor, definition);
         this.processor = processor;
         if (processor.getExcludePattern() != null) {
-            exclude = processor.getExcludePattern().toString();
+            exclude = Arrays.toString(processor.getExcludePattern());
         } else {
             exclude = null;
         }

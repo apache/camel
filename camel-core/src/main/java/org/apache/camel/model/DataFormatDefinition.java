@@ -20,6 +20,7 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
@@ -47,6 +48,8 @@ public class DataFormatDefinition extends IdentifiedType implements OtherAttribu
     // use xs:any to support optional property placeholders
     @XmlAnyAttribute
     private Map<QName, Object> otherAttributes;
+    @XmlAttribute
+    private Boolean contentTypeHeader;
 
     public DataFormatDefinition() {
     }
@@ -102,6 +105,14 @@ public class DataFormatDefinition extends IdentifiedType implements OtherAttribu
             try {
                 dataFormat = createDataFormat(routeContext);
                 if (dataFormat != null) {
+                    // is enabled by default so assume true if null
+                    final boolean contentTypeHeader = this.contentTypeHeader == null || this.contentTypeHeader;
+                    try {
+                        setProperty(routeContext.getCamelContext(), dataFormat, "contentTypeHeader", contentTypeHeader);
+                    } catch (Exception e) {
+                        // ignore as this option is optional and not all data formats support this
+                    }
+                    // configure the rest of the options
                     configureDataFormat(dataFormat, routeContext.getCamelContext());
                 } else {
                     throw new IllegalArgumentException(
@@ -121,7 +132,7 @@ public class DataFormatDefinition extends IdentifiedType implements OtherAttribu
     protected DataFormat createDataFormat(RouteContext routeContext) {
         // must use getDataFormatName() as we need special logic in json dataformat
         if (getDataFormatName() != null) {
-            return routeContext.getCamelContext().resolveDataFormat(getDataFormatName());
+            return routeContext.getCamelContext().createDataFormat(getDataFormatName());
         }
         return null;
     }
@@ -192,6 +203,21 @@ public class DataFormatDefinition extends IdentifiedType implements OtherAttribu
      */
     public void setOtherAttributes(Map<QName, Object> otherAttributes) {
         this.otherAttributes = otherAttributes;
+    }
+
+    public Boolean getContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    /**
+     * Whether the data format should set the <tt>Content-Type</tt> header with the type from the data format if the
+     * data format is capable of doing so.
+     * <p/>
+     * For example <tt>application/xml</tt> for data formats marshalling to XML, or <tt>application/json</tt>
+     * for data formats marshalling to JSon etc.
+     */
+    public void setContentTypeHeader(Boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 
     public String getShortName() {

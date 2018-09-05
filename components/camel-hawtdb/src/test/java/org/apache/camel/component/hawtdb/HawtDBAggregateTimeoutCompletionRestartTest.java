@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hawtdb;
+import org.junit.Before;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,6 +28,7 @@ import org.junit.Test;
 public class HawtDBAggregateTimeoutCompletionRestartTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/data");
         super.setUp();

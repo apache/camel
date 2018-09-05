@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInPreCompleteAggregatingStrategy;
@@ -25,6 +27,7 @@ import org.apache.camel.processor.BodyInPreCompleteAggregatingStrategy;
  */
 public class AggregatePreCompleteAwareStrategyTimeoutTest extends ContextTestSupport {
 
+    @Test
     public void testAggregatePreCompleteTimeout() throws Exception {
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C", "X+D+E", "X+F");
 
@@ -40,13 +43,37 @@ public class AggregatePreCompleteAwareStrategyTimeoutTest extends ContextTestSup
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testAggregatePreCompleteTimeoutOnlyOneInLastGroup() throws Exception {
+        getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C", "X+D+E", "X");
+
+        template.sendBodyAndHeader("direct:start", "A", "id", 123);
+        template.sendBodyAndHeader("direct:start", "B", "id", 123);
+        template.sendBodyAndHeader("direct:start", "C", "id", 123);
+        template.sendBodyAndHeader("direct:start", "X", "id", 123);
+        template.sendBodyAndHeader("direct:start", "D", "id", 123);
+        template.sendBodyAndHeader("direct:start", "E", "id", 123);
+        template.sendBodyAndHeader("direct:start", "X", "id", 123);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testAggregatePreCompleteTimeoutOnlyOneInFirstGroup() throws Exception {
+        getMockEndpoint("mock:aggregated").expectedBodiesReceived("X");
+
+        template.sendBodyAndHeader("direct:start", "X", "id", 123);
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .aggregate(header("id"), new BodyInPreCompleteAggregatingStrategy()).completionTimeout(1000)
+                    .aggregate(header("id"), new BodyInPreCompleteAggregatingStrategy()).completionTimeout(100).completionTimeoutCheckerInterval(10)
                         .to("mock:aggregated");
             }
         };

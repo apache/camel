@@ -34,9 +34,7 @@ public abstract class HazelcastCamelSpringTestSupport extends CamelSpringTestSup
     protected CamelContext createCamelContext() throws Exception {
         MockitoAnnotations.initMocks(this);
         CamelContext context = super.createCamelContext();
-        HazelcastComponent hazelcastComponent = new HazelcastComponent(context);
-        hazelcastComponent.setHazelcastInstance(hazelcastInstance);
-        context.addComponent("hazelcast", hazelcastComponent);
+        HazelcastCamelTestHelper.registerHazelcastComponents(context, hazelcastInstance);
         trainHazelcastInstance(hazelcastInstance);
         return context;
     }

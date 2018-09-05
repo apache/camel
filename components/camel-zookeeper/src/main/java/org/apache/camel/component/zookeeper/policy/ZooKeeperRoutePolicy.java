@@ -23,6 +23,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.support.RoutePolicySupport;
 
@@ -48,12 +49,12 @@ import org.apache.camel.support.RoutePolicySupport;
  * See <a href="http://hadoop.apache.org/zookeeper/docs/current/recipes.html#sc_leaderElection">
  *     for more on how Leader election</a> is archived with ZooKeeper.
  */
-public class ZooKeeperRoutePolicy extends RoutePolicySupport implements ElectionWatcher {
+public class ZooKeeperRoutePolicy extends RoutePolicySupport implements ElectionWatcher, NonManagedService {
 
     private final String uri;
     private final int enabledCount;
     private final Lock lock = new ReentrantLock();
-    private final Set<Route> suspendedRoutes = new CopyOnWriteArraySet<Route>();
+    private final Set<Route> suspendedRoutes = new CopyOnWriteArraySet<>();
     private final AtomicBoolean shouldProcessExchanges = new AtomicBoolean();
     private volatile boolean shouldStopConsumer = true;
 

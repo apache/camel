@@ -48,21 +48,25 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     @Override
-    public void channelActive(ChannelHandlerContext ctx) {
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Channel open: {}", ctx.channel());
         }
         // to keep track of open sockets
         consumer.getNettyServerBootstrapFactory().addChannel(ctx.channel());
+        
+        super.channelActive(ctx);
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) {
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Channel closed: {}", ctx.channel());
         }
         // to keep track of open sockets
         consumer.getNettyServerBootstrapFactory().removeChannel(ctx.channel());
+        
+        super.channelInactive(ctx);
     }
 
     @Override
@@ -91,6 +95,9 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
         // set the exchange charset property for converting
         if (consumer.getConfiguration().getCharsetName() != null) {
             exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(consumer.getConfiguration().getCharsetName()));
+        }
+        if (consumer.getConfiguration().isReuseChannel()) {
+            exchange.setProperty(NettyConstants.NETTY_CHANNEL, ctx.channel());
         }
 
         // we want to handle the UoW

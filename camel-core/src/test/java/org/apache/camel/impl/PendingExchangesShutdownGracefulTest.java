@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -32,6 +34,7 @@ public class PendingExchangesShutdownGracefulTest extends ContextTestSupport {
     private static String foo = "";
     private static CountDownLatch latch = new CountDownLatch(1);
 
+    @Test
     public void testShutdownGraceful() throws Exception {
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(1);
 

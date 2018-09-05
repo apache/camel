@@ -1,0 +1,248 @@
+//
+// Licensed to the Apache Software Foundation (ASF) under one or more
+// contributor license agreements.  See the NOTICE file distributed with
+// this work for additional information regarding copyright ownership.
+// The ASF licenses this file to You under the Apache License, Version 2.0
+// (the "License"); you may not use this file except in compliance with
+// the License.  You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// Using some token definitions from: http://kiwwito.com/build-a-lexical-analyzer-with-javacc/
+
+options {
+    STATIC = false;
+    FORCE_LA_CHECK = true;
+    SANITY_CHECK = true;
+}
+
+
+PARSER_BEGIN(SSPTParser)
+
+package org.apache.camel.component.sql.stored.template.generated;
+
+import java.io.Reader;
+
+import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.component.sql.stored.template.ast.*;
+
+public class SSPTParser {
+   int parameterNameCounter = 0;
+
+   ClassResolver classResolver;
+
+   public SSPTParser(Reader reader, ClassResolver classResolver) {
+     this(reader);
+     this.classResolver = classResolver;
+   }
+
+   String createNextParameterName() {
+      return "_"+(parameterNameCounter++);
+   }
+}
+
+PARSER_END(SSPTParser)
+
+public Template parse() :
+{   Token procedureName;
+    Template template = new Template();
+    Object parameter = null;
+}
+{
+  (procedureName = <IDENTIFIER> <PROCEDURE_BEGIN> ( (parameter = Parameter() { template.addParameter(parameter);}) (<SEPARATOR>
+  parameter
+  = Parameter(){template.addParameter(parameter);})*)? <PROCEDURE_END> <EOF>)
+  {
+   template.setProcedureName(procedureName.toString());
+   return template;
+  }
+}
+
+Object Parameter() :
+{
+    Object param;
+}
+{
+     (param = InParameter() {return param;}) | (param = OutParameter(){return param;}) | (param = InOutParameter(){return param;})
+}
+
+InParameter InParameter() :
+{
+     Token sqlTypeToken;
+     String name = null;
+     Token valueSrcToken;
+     Integer scale = null;
+     String typeName = null;
+}
+{
+    ((name = ParameterName() " ")? sqlTypeToken = ParameterSqlType() (scale = Scale())? " " (typeName = ParameterName() " ")? valueSrcToken =
+    InParameterSrc())
+    {
+        int sqlType = ParseHelper.parseSqlType(sqlTypeToken, classResolver);
+
+        return new InParameter(name == null ? createNextParameterName() : name, sqlType, valueSrcToken, scale, typeName);
+    }
+}
+
+OutParameter OutParameter() :
+{
+     Token sqlTypeToken;
+     String outValueMapKey;
+     Integer scale = null;
+     String typeName = null;
+}
+{
+    ("OUT " sqlTypeToken = ParameterSqlType() (scale = Scale())? " " (typeName = ParameterName() " ")? outValueMapKey =
+    OutHeader())
+    {
+        return new OutParameter(ParseHelper.parseSqlType(sqlTypeToken, classResolver), outValueMapKey, scale, typeName);
+    }
+}
+
+InOutParameter InOutParameter() :
+{
+     Token sqlTypeToken;
+     Token valueSrcToken;
+     Integer scale = null;
+     String typeName = null;
+     String outValueMapKey;
+}
+{
+    ("INOUT " sqlTypeToken = ParameterSqlType() (scale = Scale())? " "
+    (typeName = ParameterName() " ")? valueSrcToken = InParameterSrc() " " outValueMapKey = OutHeader())
+    {
+        int sqlType = ParseHelper.parseSqlType(sqlTypeToken, classResolver);
+
+        return new InOutParameter(sqlType, valueSrcToken, scale, typeName, outValueMapKey);
+    }
+}
+
+String ParameterName():
+{
+    Token t = null;
+}
+{
+    (t = <PARAMETER_NAME>)
+
+    {
+        return ParseHelper.removeQuotes(t.toString()) ;
+    }
+}
+
+Integer Scale():
+{
+    Token t;
+
+}
+{
+    ( t = <SCALE> )
+    {
+
+        return ParseHelper.parseScale(t);
+    }
+}
+
+Token ParameterSqlType():
+{
+    Token t;
+    Token scaleToken;
+}
+{
+    (t = <NUMBER> | t = <IDENTIFIER>  )
+    {
+        return t;
+    }
+}
+
+String OutHeader():
+{
+ Token token;
+}
+{
+    (token = <IDENTIFIER>)
+    {
+        return token.toString();
+    }
+}
+Token InParameterSrc():
+{
+    Token ret = null;
+}
+{
+    (ret = <SIMPLE_EXP_TOKEN>)
+    {
+        return ret;
+    }
+    |
+
+    (ret = <PARAMETER_POS_TOKEN>)
+    {
+            return ret;
+    }
+}
+
+TOKEN: {
+    <SCALE: "(" (["-","0"-"9"])+ ")">
+}
+
+TOKEN: {
+    <NUMBER: (["-","0"-"9"])+>
+}
+
+TOKEN: {
+    <#DIGIT: (["0"-"9"])>
+}
+
+TOKEN: {
+    <#LETTER: (["a"-"z","A"-"Z"])>
+}
+
+TOKEN: {
+    <#SPECIAL: ([":","#","_","-","'",".","$","{","}","\"","[","]"])>
+}
+
+TOKEN: {
+    <WHITESPACE: (" "|"\n"|"\r"|"\t")>
+}
+
+TOKEN: {
+    <#COMMA: ",">
+}
+
+TOKEN: {
+    <SEPARATOR: ( ( <WHITESPACE> )* (<COMMA>) ( <WHITESPACE> )* )>
+}
+
+TOKEN: {
+    <PROCEDURE_BEGIN: ( ( <WHITESPACE> )* "(" ( <WHITESPACE> )* )>
+}
+
+TOKEN: {
+    <PROCEDURE_END: ( ( <WHITESPACE> )* ")" ( <WHITESPACE> )* )>
+}
+
+TOKEN : {
+    <SIMPLE_EXP_TOKEN: "${"(<LETTER>|<DIGIT> | <SPECIAL> | " ")+ "}">
+}
+
+TOKEN : {
+    <PARAMETER_POS_TOKEN: ":#"(<LETTER>|<DIGIT>|<SPECIAL> )+>
+}
+
+TOKEN : {
+    <PARAMETER_NAME: "'"( <LETTER> | <DIGIT> | <SPECIAL> )+"'" >
+}
+
+TOKEN : {
+    <IDENTIFIER: ( <LETTER> | <DIGIT> | <SPECIAL> )+ >
+}
+
+
+
+

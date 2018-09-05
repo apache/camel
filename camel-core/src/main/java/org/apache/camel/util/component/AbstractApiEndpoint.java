@@ -44,7 +44,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
     extends DefaultEndpoint implements PropertyNamesInterceptor, PropertiesInterceptor {
 
     // thread pool executor with Endpoint Class name as keys
-    private static Map<String, ExecutorService> executorServiceMap = new ConcurrentHashMap<String, ExecutorService>();
+    private static Map<String, ExecutorService> executorServiceMap = new ConcurrentHashMap<>();
 
     // logger
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -127,14 +127,12 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
         // compute endpoint property names and values
         this.endpointPropertyNames = Collections.unmodifiableSet(
             getPropertiesHelper().getEndpointPropertyNames(configuration));
-        final HashMap<String, Object> properties = new HashMap<String, Object>();
+        final HashMap<String, Object> properties = new HashMap<>();
         getPropertiesHelper().getEndpointProperties(configuration, properties);
         this.endpointProperties = Collections.unmodifiableMap(properties);
 
         // get endpoint property names
-        final Set<String> arguments = new HashSet<String>();
-        arguments.addAll(endpointPropertyNames);
-
+        final Set<String> arguments = new HashSet<>(endpointPropertyNames);
         // add inBody argument for producers
         if (inBody != null) {
             arguments.add(inBody);
@@ -142,11 +140,9 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
 
         interceptPropertyNames(arguments);
 
-        final String[] argNames = arguments.toArray(new String[arguments.size()]);
-
         // create a list of candidate methods
-        candidates = new ArrayList<ApiMethod>();
-        candidates.addAll(methodHelper.getCandidateMethods(methodName, argNames));
+        candidates = new ArrayList<>();
+        candidates.addAll(methodHelper.getCandidateMethods(methodName, arguments));
         candidates = Collections.unmodifiableList(candidates);
 
         // error if there are no candidates

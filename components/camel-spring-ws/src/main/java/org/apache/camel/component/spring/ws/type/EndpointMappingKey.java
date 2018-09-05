@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.spring.ws.type;
 
-import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.springframework.xml.xpath.XPathExpression;

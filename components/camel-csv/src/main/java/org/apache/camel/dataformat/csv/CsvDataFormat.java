@@ -22,6 +22,8 @@ import java.util.Arrays;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.QuoteMode;
 
@@ -34,7 +36,7 @@ import org.apache.commons.csv.QuoteMode;
  * Autogeneration can be disabled. In this case, only the fields defined in
  * csvConfig are written on the output.
  */
-public class CsvDataFormat implements DataFormat {
+public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     // CSV format options
     private CSVFormat format = CSVFormat.DEFAULT;
     private boolean commentMarkerDisabled;
@@ -55,10 +57,14 @@ public class CsvDataFormat implements DataFormat {
     private boolean recordSeparatorDisabled;
     private String recordSeparator;
     private Boolean skipHeaderRecord;
+    private Boolean trim;
+    private Boolean ignoreHeaderCase;
+    private Boolean trailingDelimiter;
 
     // Unmarshal options
     private boolean lazyLoad;
     private boolean useMaps;
+    private boolean useOrderedMaps;
     private CsvRecordConverter<?> recordConverter;
 
     private volatile CsvMarshaller marshaller;
@@ -71,18 +77,28 @@ public class CsvDataFormat implements DataFormat {
         setFormat(format);
     }
 
+    @Override
+    public String getDataFormatName() {
+        return "csv";
+    }
+
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws Exception {
-        if (marshaller == null) {
-            marshaller = CsvMarshaller.create(getActiveFormat(), this);
-        }
         marshaller.marshal(exchange, object, outputStream);
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        if (unmarshaller == null) {
-            unmarshaller = CsvUnmarshaller.create(getActiveFormat(), this);
-        }
         return unmarshaller.unmarshal(exchange, inputStream);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        marshaller = CsvMarshaller.create(getActiveFormat(), this);
+        unmarshaller = CsvUnmarshaller.create(getActiveFormat(), this);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 
     CSVFormat getActiveFormat() {
@@ -147,13 +163,20 @@ public class CsvDataFormat implements DataFormat {
         if (skipHeaderRecord != null) {
             answer = answer.withSkipHeaderRecord(skipHeaderRecord);
         }
+        
+        if (trim != null) {
+            answer = answer.withTrim(trim);
+        }
+        
+        if (ignoreHeaderCase != null) {
+            answer = answer.withIgnoreHeaderCase(ignoreHeaderCase);
+        }
+        
+        if (trailingDelimiter != null) {
+            answer = answer.withTrailingDelimiter(trailingDelimiter);
+        }
 
         return answer;
-    }
-
-    private void reset() {
-        marshaller = null;
-        unmarshaller = null;
     }
 
     //region Getters/Setters
@@ -179,7 +202,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setFormat(CSVFormat format) {
         this.format = (format == null) ? CSVFormat.DEFAULT : format;
-        reset();
         return this;
     }
 
@@ -228,7 +250,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setCommentMarkerDisabled(boolean commentMarkerDisabled) {
         this.commentMarkerDisabled = commentMarkerDisabled;
-        reset();
         return this;
     }
 
@@ -252,7 +273,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setCommentMarker(Character commentMarker) {
         this.commentMarker = commentMarker;
-        reset();
         return this;
     }
 
@@ -276,7 +296,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setDelimiter(Character delimiter) {
         this.delimiter = delimiter;
-        reset();
         return this;
     }
 
@@ -298,7 +317,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setEscapeDisabled(boolean escapeDisabled) {
         this.escapeDisabled = escapeDisabled;
-        reset();
         return this;
     }
 
@@ -322,7 +340,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setEscape(Character escape) {
         this.escape = escape;
-        reset();
         return this;
     }
 
@@ -344,7 +361,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setHeaderDisabled(boolean headerDisabled) {
         this.headerDisabled = headerDisabled;
-        reset();
         return this;
     }
 
@@ -368,7 +384,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setHeader(String[] header) {
         this.header = Arrays.copyOf(header, header.length);
-        reset();
         return this;
     }
 
@@ -392,7 +407,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setAllowMissingColumnNames(Boolean allowMissingColumnNames) {
         this.allowMissingColumnNames = allowMissingColumnNames;
-        reset();
         return this;
     }
 
@@ -416,7 +430,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setIgnoreEmptyLines(Boolean ignoreEmptyLines) {
         this.ignoreEmptyLines = ignoreEmptyLines;
-        reset();
         return this;
     }
 
@@ -440,7 +453,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setIgnoreSurroundingSpaces(Boolean ignoreSurroundingSpaces) {
         this.ignoreSurroundingSpaces = ignoreSurroundingSpaces;
-        reset();
         return this;
     }
 
@@ -462,7 +474,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setNullStringDisabled(boolean nullStringDisabled) {
         this.nullStringDisabled = nullStringDisabled;
-        reset();
         return this;
     }
 
@@ -486,7 +497,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setNullString(String nullString) {
         this.nullString = nullString;
-        reset();
         return this;
     }
 
@@ -508,7 +518,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setQuoteDisabled(boolean quoteDisabled) {
         this.quoteDisabled = quoteDisabled;
-        reset();
         return this;
     }
 
@@ -532,7 +541,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setQuote(Character quote) {
         this.quote = quote;
-        reset();
         return this;
     }
 
@@ -556,7 +564,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setQuoteMode(QuoteMode quoteMode) {
         this.quoteMode = quoteMode;
-        reset();
         return this;
     }
 
@@ -578,7 +585,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setRecordSeparatorDisabled(boolean recordSeparatorDisabled) {
         this.recordSeparatorDisabled = recordSeparatorDisabled;
-        reset();
         return this;
     }
 
@@ -602,7 +608,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setRecordSeparator(String recordSeparator) {
         this.recordSeparator = recordSeparator;
-        reset();
         return this;
     }
 
@@ -626,7 +631,6 @@ public class CsvDataFormat implements DataFormat {
      */
     public CsvDataFormat setSkipHeaderRecord(Boolean skipHeaderRecord) {
         this.skipHeaderRecord = skipHeaderRecord;
-        reset();
         return this;
     }
 
@@ -671,6 +675,26 @@ public class CsvDataFormat implements DataFormat {
     }
 
     /**
+     * Indicates whether or not the unmarshalling should produce ordered maps instead of lists.
+     *
+     * @return {@code true} for maps, {@code false} for lists
+     */
+    public boolean isUseOrderedMaps() {
+        return useOrderedMaps;
+    }
+
+    /**
+     * Sets whether or not the unmarshalling should produce ordered maps instead of lists.
+     *
+     * @param useOrderedMaps {@code true} for maps, {@code false} for lists
+     * @return Current {@code CsvDataFormat}, fluent API
+     */
+    public CsvDataFormat setUseOrderedMaps(boolean useOrderedMaps) {
+        this.useOrderedMaps = useOrderedMaps;
+        return this;
+    }
+
+    /**
      * Gets the record converter to use. If {@code null} then it will use {@link CsvDataFormat#isUseMaps()} for finding
      * the proper converter.
      *
@@ -693,5 +717,80 @@ public class CsvDataFormat implements DataFormat {
     }
 
     //endregion
+    /**
+     * Sets whether or not to trim leading and trailing blanks.
+     * <p>
+     * If {@code null} then the default value of the format used.
+     * </p>
+     * 
+     * @param trim whether or not to trim leading and trailing blanks.
+     *            <code>null</code> value allowed.
+     * @return Current {@code CsvDataFormat}, fluent API.
+     */
+    public CsvDataFormat setTrim(Boolean trim) {
+        this.trim = trim;
+        return this;
+    }
 
+    /**
+     * Indicates whether or not to trim leading and trailing blanks.
+     * 
+     * @return {@link Boolean#TRUE} if leading and trailing blanks should be
+     *         trimmed. {@link Boolean#FALSE} otherwise. Could return
+     *         <code>null</code> if value has NOT been set.
+     */
+    public Boolean getTrim() {
+        return trim;
+    }
+
+    /**
+     * Sets whether or not to ignore case when accessing header names.
+     * <p>
+     * If {@code null} then the default value of the format used.
+     * </p>
+     * 
+     * @param ignoreHeaderCase whether or not to ignore case when accessing header names.
+     *            <code>null</code> value allowed.
+     * @return Current {@code CsvDataFormat}, fluent API.
+     */
+    public CsvDataFormat setIgnoreHeaderCase(Boolean ignoreHeaderCase) {
+        this.ignoreHeaderCase = ignoreHeaderCase;
+        return this;
+    }
+
+    /**
+     * Indicates whether or not to ignore case when accessing header names.
+     * 
+     * @return {@link Boolean#TRUE} if case should be ignored when accessing
+     *         header name. {@link Boolean#FALSE} otherwise. Could return
+     *         <code>null</code> if value has NOT been set.
+     */
+    public Boolean getIgnoreHeaderCase() {
+        return ignoreHeaderCase;
+    }
+
+    /**
+     * Sets whether or not to add a trailing delimiter.
+     * <p>
+     * If {@code null} then the default value of the format used.
+     * </p>
+     * 
+     * @param trailingDelimiter whether or not to add a trailing delimiter.
+     * @return Current {@code CsvDataFormat}, fluent API.
+     */
+    public CsvDataFormat setTrailingDelimiter(Boolean trailingDelimiter) {
+        this.trailingDelimiter = trailingDelimiter;
+        return this;
+    }
+
+    /**
+     * Indicates whether or not to add a trailing delimiter.
+     * 
+     * @return {@link Boolean#TRUE} if a trailing delimiter should be added.
+     *         {@link Boolean#FALSE} otherwise. Could return <code>null</code>
+     *         if value has NOT been set.
+     */
+    public Boolean getTrailingDelimiter() {
+        return trailingDelimiter;
+    }
 }

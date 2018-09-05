@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -52,6 +54,7 @@ public class SplitterParallelAggregateTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void test1() throws Exception {
         if (!enabled) {
             return;
@@ -60,6 +63,7 @@ public class SplitterParallelAggregateTest extends ContextTestSupport {
         timeSplitRoutes(numberOfRequests);
     }
 
+    @Test
     public void test2() throws Exception {
         if (!enabled) {
             return;
@@ -68,6 +72,7 @@ public class SplitterParallelAggregateTest extends ContextTestSupport {
         timeSplitRoutes(numberOfRequests);
     }
 
+    @Test
     public void test4() throws Exception {
         if (!enabled) {
             return;
@@ -78,7 +83,7 @@ public class SplitterParallelAggregateTest extends ContextTestSupport {
 
     protected void timeSplitRoutes(int numberOfRequests) throws Exception {
         String[] endpoints = new String[]{"direct:splitSynchronizedAggregation", "direct:splitUnsynchronizedAggregation"};
-        List<Future<File>> futures = new ArrayList<Future<File>>();
+        List<Future<File>> futures = new ArrayList<>();
         StopWatch stopWatch = new StopWatch(false);
 
         for (String endpoint : endpoints) {
@@ -91,7 +96,7 @@ public class SplitterParallelAggregateTest extends ContextTestSupport {
                 Future<File> future = futures.get(i);
                 future.get();
             }
-            stopWatch.stop();
+            stopWatch.taken();
 
             log.info(String.format("test%d.%s=%d\n", numberOfRequests, endpoint, stopWatch.taken()));
         }
@@ -102,7 +107,7 @@ public class SplitterParallelAggregateTest extends ContextTestSupport {
             // we would normally be reading a large file but for this test,
             // we'll just manufacture a bunch of string
             // arrays
-            LinkedList<String[]> rows = new LinkedList<String[]>();
+            LinkedList<String[]> rows = new LinkedList<>();
             String[] row;
             for (int i = 0; i < 10000; i++) {
                 row = new String[10];

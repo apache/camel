@@ -34,27 +34,33 @@ import org.slf4j.LoggerFactory;
 /**
  * Holder object for sending an exchange over a remote wire as a serialized object.
  * This is usually configured using the <tt>transferExchange=true</tt> option on the endpoint.
- * <p/>
- * Note: Message body of type {@link File} or {@link WrappedFile} is <b>not</b> supported and
+ * <br/>
+ * <b>Note:</b> Message body of type {@link File} or {@link WrappedFile} is <b>not</b> supported and
  * a {@link RuntimeExchangeException} is thrown.
- * <p/>
+ * <br/>
  * As opposed to normal usage where only the body part of the exchange is transferred over the wire,
  * this holder object serializes the following fields over the wire:
  * <ul>
  * <li>exchangeId</li>
  * <li>in body</li>
  * <li>out body</li>
- * <li>in headers</li>
- * <li>out headers</li>
  * <li>fault body </li>
- * <li>fault headers</li>
- * <li>exchange properties</li>
  * <li>exception</li>
  * </ul>
+ * <br/>
+ * The exchange properties are not propagated by default. However you can specify they should be included
+ * by the {@link DefaultExchangeHolder#marshal(Exchange, boolean)} method.
+ * <br/>
+ * And the following headers is transferred if their values are of primitive types, String or Number based.
+ * <ul>
+ * <li>in headers</li>
+ * <li>out headers</li>
+ * <li>fault headers</li>
+ * </ul>
  * The body is serialized and stored as serialized bytes. The header and exchange properties only include
- * primitive, and String types (and Exception types for exchange properties). Any other type is skipped.
- * <p/>
- * Any object that is not serializable will be skipped and Camel will log this at WARN level.
+ * primitive, String, and Number types (and Exception types for exchange properties). Any other type is skipped.
+ * Any message body object that is not serializable will be skipped and Camel will log this at <tt>WARN</tt> level.
+ * And any message header values that is not a primitive value will be skipped and Camel will log this at <tt>DEBUG</tt> level.
  *
  * @version 
  */
@@ -80,7 +86,7 @@ public class DefaultExchangeHolder implements Serializable {
      * @return the holder object with information copied form the exchange
      */
     public static DefaultExchangeHolder marshal(Exchange exchange) {
-        return marshal(exchange, true);
+        return marshal(exchange, true, false);
     }
 
     /**
@@ -103,16 +109,53 @@ public class DefaultExchangeHolder implements Serializable {
 
         payload.exchangeId = exchange.getExchangeId();
         payload.inBody = checkSerializableBody("in body", exchange, exchange.getIn().getBody());
-        payload.safeSetInHeaders(exchange);
+        payload.safeSetInHeaders(exchange, false);
         if (exchange.hasOut()) {
             payload.outBody = checkSerializableBody("out body", exchange, exchange.getOut().getBody());
             payload.outFaultFlag = exchange.getOut().isFault();
-            payload.safeSetOutHeaders(exchange);
+            payload.safeSetOutHeaders(exchange, false);
         } else {
             payload.inFaultFlag = exchange.getIn().isFault();
         }
         if (includeProperties) {
-            payload.safeSetProperties(exchange);
+            payload.safeSetProperties(exchange, false);
+        }
+        payload.exception = exchange.getException();
+
+        return payload;
+    }
+    
+    /**
+     * Creates a payload object with the information from the given exchange.
+     *
+     * @param exchange the exchange, must <b>not</b> be <tt>null</tt>
+     * @param includeProperties whether or not to include exchange properties
+     * @param allowSerializedHeaders whether or not to include serialized headers
+     * @return the holder object with information copied form the exchange
+     */
+    public static DefaultExchangeHolder marshal(Exchange exchange, boolean includeProperties, boolean allowSerializedHeaders) {
+        ObjectHelper.notNull(exchange, "exchange");
+
+        // we do not support files
+        Object body = exchange.getIn().getBody();
+        if (body instanceof WrappedFile || body instanceof File) {
+            throw new RuntimeExchangeException("Message body of type " + body.getClass().getCanonicalName() + " is not supported by this marshaller.", exchange);
+        }
+
+        DefaultExchangeHolder payload = new DefaultExchangeHolder();
+
+        payload.exchangeId = exchange.getExchangeId();
+        payload.inBody = checkSerializableBody("in body", exchange, exchange.getIn().getBody());
+        payload.safeSetInHeaders(exchange, allowSerializedHeaders);
+        if (exchange.hasOut()) {
+            payload.outBody = checkSerializableBody("out body", exchange, exchange.getOut().getBody());
+            payload.outFaultFlag = exchange.getOut().isFault();
+            payload.safeSetOutHeaders(exchange, allowSerializedHeaders);
+        } else {
+            payload.inFaultFlag = exchange.getIn().isFault();
+        }
+        if (includeProperties) {
+            payload.safeSetProperties(exchange, allowSerializedHeaders);
         }
         payload.exception = exchange.getException();
 
@@ -169,7 +212,7 @@ public class DefaultExchangeHolder implements Serializable {
             return;
         }
         if (payload.properties == null) {
-            payload.properties = new LinkedHashMap<String, Object>();
+            payload.properties = new LinkedHashMap<>();
         }
         payload.properties.put(key, property);
     }
@@ -182,31 +225,31 @@ public class DefaultExchangeHolder implements Serializable {
         return sb.append(']').toString();
     }
 
-    private Map<String, Object> safeSetInHeaders(Exchange exchange) {
+    private Map<String, Object> safeSetInHeaders(Exchange exchange, boolean allowSerializedHeaders) {
         if (exchange.getIn().hasHeaders()) {
-            Map<String, Object> map = checkValidHeaderObjects("in headers", exchange, exchange.getIn().getHeaders());
+            Map<String, Object> map = checkValidHeaderObjects("in headers", exchange, exchange.getIn().getHeaders(), allowSerializedHeaders);
             if (map != null && !map.isEmpty()) {
-                inHeaders = new LinkedHashMap<String, Object>(map);
+                inHeaders = new LinkedHashMap<>(map);
             }
         }
         return null;
     }
 
-    private Map<String, Object> safeSetOutHeaders(Exchange exchange) {
+    private Map<String, Object> safeSetOutHeaders(Exchange exchange, boolean allowSerializedHeaders) {
         if (exchange.hasOut() && exchange.getOut().hasHeaders()) {
-            Map<String, Object> map = checkValidHeaderObjects("out headers", exchange, exchange.getOut().getHeaders());
+            Map<String, Object> map = checkValidHeaderObjects("out headers", exchange, exchange.getOut().getHeaders(), allowSerializedHeaders);
             if (map != null && !map.isEmpty()) {
-                outHeaders = new LinkedHashMap<String, Object>(map);
+                outHeaders = new LinkedHashMap<>(map);
             }
         }
         return null;
     }
 
-    private Map<String, Object> safeSetProperties(Exchange exchange) {
+    private Map<String, Object> safeSetProperties(Exchange exchange, boolean allowSerializedHeaders) {
         if (exchange.hasProperties()) {
-            Map<String, Object> map = checkValidExchangePropertyObjects("properties", exchange, exchange.getProperties());
+            Map<String, Object> map = checkValidExchangePropertyObjects("properties", exchange, exchange.getProperties(), allowSerializedHeaders);
             if (map != null && !map.isEmpty()) {
-                properties = new LinkedHashMap<String, Object>(map);
+                properties = new LinkedHashMap<>(map);
             }
         }
         return null;
@@ -221,21 +264,25 @@ public class DefaultExchangeHolder implements Serializable {
         if (converted != null) {
             return converted;
         } else {
-            LOG.warn("Exchange " + type + " containing object: " + object + " of type: " + object.getClass().getCanonicalName() + " cannot be serialized, it will be excluded by the holder.");
+            LOG.warn("Exchange {} containing object: {} of type: {} cannot be serialized, it will be excluded by the holder.", type, object, object.getClass().getCanonicalName());
             return null;
         }
     }
 
-    private static Map<String, Object> checkValidHeaderObjects(String type, Exchange exchange, Map<String, Object> map) {
+    private static Map<String, Object> checkValidHeaderObjects(String type, Exchange exchange, Map<String, Object> map, boolean allowSerializedHeaders) {
         if (map == null) {
             return null;
         }
 
-        Map<String, Object> result = new LinkedHashMap<String, Object>();
+        Map<String, Object> result = new LinkedHashMap<>();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
 
             // silently skip any values which is null
-            Object value = getValidHeaderValue(entry.getKey(), entry.getValue());
+            if (entry.getValue() == null) {
+                continue;
+            }
+
+            Object value = getValidHeaderValue(entry.getKey(), entry.getValue(), allowSerializedHeaders);
             if (value != null) {
                 Serializable converted = exchange.getContext().getTypeConverter().convertTo(Serializable.class, exchange, value);
                 if (converted != null) {
@@ -251,16 +298,20 @@ public class DefaultExchangeHolder implements Serializable {
         return result;
     }
 
-    private static Map<String, Object> checkValidExchangePropertyObjects(String type, Exchange exchange, Map<String, Object> map) {
+    private static Map<String, Object> checkValidExchangePropertyObjects(String type, Exchange exchange, Map<String, Object> map, boolean allowSerializedHeaders) {
         if (map == null) {
             return null;
         }
 
-        Map<String, Object> result = new LinkedHashMap<String, Object>();
+        Map<String, Object> result = new LinkedHashMap<>();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
 
             // silently skip any values which is null
-            Object value = getValidExchangePropertyValue(entry.getKey(), entry.getValue());
+            if (entry.getValue() == null) {
+                continue;
+            }
+
+            Object value = getValidExchangePropertyValue(entry.getKey(), entry.getValue(), allowSerializedHeaders);
             if (value != null) {
                 Serializable converted = exchange.getContext().getTypeConverter().convertTo(Serializable.class, exchange, value);
                 if (converted != null) {
@@ -287,12 +338,15 @@ public class DefaultExchangeHolder implements Serializable {
      *   <li>Number</li>
      *   <li>java.util.Date</li>
      * </ul>
-     *
+     * 
+     * We make possible store serialized headers by the boolean field allowSerializedHeaders
+     * 
      * @param headerName   the header name
      * @param headerValue  the header value
+     * @param allowSerializedHeaders  the header value
      * @return  the value to use, <tt>null</tt> to ignore this header
      */
-    protected static Object getValidHeaderValue(String headerName, Object headerValue) {
+    protected static Object getValidHeaderValue(String headerName, Object headerValue, boolean allowSerializedHeaders) {
         if (headerValue instanceof String) {
             return headerValue;
         } else if (headerValue instanceof BigInteger) {
@@ -309,6 +363,10 @@ public class DefaultExchangeHolder implements Serializable {
             return headerValue;
         } else if (headerValue instanceof Date) {
             return headerValue;
+        } else if (allowSerializedHeaders) {
+            if (headerValue instanceof Serializable) {
+                return headerValue;
+            }
         }
         return null;
     }
@@ -317,60 +375,46 @@ public class DefaultExchangeHolder implements Serializable {
      * We only want to store exchange property values of primitive and String related types, and
      * as well any caught exception that Camel routing engine has caught.
      * <p/>
-     * This default implementation will allow the same values as {@link #getValidHeaderValue(String, Object)}
+     * This default implementation will allow the same values as {@link #getValidHeaderValue(String, Object, boolean)}
      * and in addition any value of type {@link Throwable}.
      *
      * @param propertyName   the property name
      * @param propertyValue  the property value
      * @return  the value to use, <tt>null</tt> to ignore this header
      */
-    protected static Object getValidExchangePropertyValue(String propertyName, Object propertyValue) {
+    protected static Object getValidExchangePropertyValue(String propertyName, Object propertyValue, boolean allowSerializedHeaders) {
         // for exchange properties we also allow exception to be transferred so people can store caught exception
         if (propertyValue instanceof Throwable) {
             return propertyValue;
         }
-        return getValidHeaderValue(propertyName, propertyValue);
+        return getValidHeaderValue(propertyName, propertyValue, allowSerializedHeaders);
     }
 
     private static void logCannotSerializeObject(String type, String key, Object value) {
         if (key.startsWith("Camel")) {
             // log Camel at DEBUG level
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Exchange {} containing key: {} with object: {} of type: {} cannot be serialized, it will be excluded by the holder."
-                        , new Object[]{type, key, value, ObjectHelper.classCanonicalName(value)});
+                LOG.debug("Exchange {} containing key: {} with object: {} of type: {} cannot be serialized, it will be excluded by the holder.",
+                          new Object[]{type, key, value, ObjectHelper.classCanonicalName(value)});
             }
         } else {
             // log regular at WARN level
-            LOG.warn("Exchange {} containing key: {} with object: {} of type: {} cannot be serialized, it will be excluded by the holder."
-                    , new Object[]{type, key, value, ObjectHelper.classCanonicalName(value)});
+            LOG.warn("Exchange {} containing key: {} with object: {} of type: {} cannot be serialized, it will be excluded by the holder.",
+                     new Object[]{type, key, value, ObjectHelper.classCanonicalName(value)});
         }
     }
 
     private static void logInvalidHeaderValue(String type, String key, Object value) {
-        if (key.startsWith("Camel")) {
-            // log Camel at DEBUG level
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Exchange {} containing key: {} with object: {} of type: {} is not valid header type, it will be excluded by the holder."
-                          , new Object[]{type, key, value, ObjectHelper.classCanonicalName(value)});
-            }
-        } else {
-            // log regular at WARN level
-            LOG.warn("Exchange {} containing key: {} with object: {} of type: {} is not valid header type, it will be excluded by the holder."
-                     , new Object[]{type, key, value, ObjectHelper.classCanonicalName(value)});
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Exchange {} containing key: {} with object: {} of type: {} is not valid header type, it will be excluded by the holder.",
+                      new Object[]{type, key, value, ObjectHelper.classCanonicalName(value)});
         }
     }
 
     private static void logInvalidExchangePropertyValue(String type, String key, Object value) {
-        if (key.startsWith("Camel")) {
-            // log Camel at DEBUG level
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Exchange {} containing key: {} with object: {} of type: {} is not valid exchange property type, it will be excluded by the holder."
-                          , new Object[]{type, key, value, ObjectHelper.classCanonicalName(value)});
-            }
-        } else {
-            // log regular at WARN level
-            LOG.warn("Exchange {} containing key: {} with object: {} of type: {} is not valid exchange property type, it will be excluded by the holder."
-                     , new Object[]{type, key, value, ObjectHelper.classCanonicalName(value)});
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Exchange {} containing key: {} with object: {} of type: {} is not valid exchange property type, it will be excluded by the holder.",
+                      new Object[]{type, key, value, ObjectHelper.classCanonicalName(value)});
         }
     }
 

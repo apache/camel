@@ -59,7 +59,7 @@ public class ManagedSendDynamicProcessor extends ManagedProcessor implements Man
     }
 
     @Override
-    public synchronized void reset() {
+    public void reset() {
         super.reset();
         if (processor.getEndpointUtilizationStatistics() != null) {
             processor.getEndpointUtilizationStatistics().clear();
@@ -93,6 +93,14 @@ public class ManagedSendDynamicProcessor extends ManagedProcessor implements Man
 
     public Boolean isIgnoreInvalidEndpoint() {
         return processor.isIgnoreInvalidEndpoint();
+    }
+
+    public Boolean isAllowOptimisedComponents() {
+        return processor.isAllowOptimisedComponents();
+    }
+
+    public Boolean isOptimised() {
+        return processor.getDynamicAware() != null;
     }
 
     @Override

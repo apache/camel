@@ -60,6 +60,12 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
         return "From[" + getLabel() + "]";
     }
 
+    @Override
+    public String getShortName() {
+        return "from";
+    }
+
+    @Override
     public String getLabel() {
         return description(getUri(), getRef(), getEndpoint());
     }

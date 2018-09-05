@@ -36,7 +36,7 @@ public abstract class ApiMethodPropertiesHelper<C> {
     protected static final Logger LOG = LoggerFactory.getLogger(ApiMethodPropertiesHelper.class);
 
     // set of field names which are specific to the api, to be excluded from method argument considerations
-    protected final Set<String> componentConfigFields = new HashSet<String>();
+    protected final Set<String> componentConfigFields = new HashSet<>();
 
     protected final Class<?> componentConfigClass;
     protected final String propertyPrefix;
@@ -100,13 +100,13 @@ public abstract class ApiMethodPropertiesHelper<C> {
     }
 
     public Set<String> getEndpointPropertyNames(Object endpointConfiguration) {
-        Map<String, Object> properties = new HashMap<String, Object>();
+        Map<String, Object> properties = new HashMap<>();
         getEndpointProperties(endpointConfiguration, properties);
         return Collections.unmodifiableSet(properties.keySet());
     }
 
     public Set<String> getValidEndpointProperties(Object endpointConfiguration) {
-        Set<String> fields = new HashSet<String>();
+        Set<String> fields = new HashSet<>();
         for (Field field : endpointConfiguration.getClass().getDeclaredFields()) {
             fields.add(field.getName());
         }

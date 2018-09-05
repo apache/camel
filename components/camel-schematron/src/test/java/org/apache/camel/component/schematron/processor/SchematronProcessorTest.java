@@ -16,8 +16,12 @@
  */
 package org.apache.camel.component.schematron.processor;
 
+import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
+import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.TransformerFactoryImpl;
 import org.apache.camel.component.schematron.constant.Constants;
@@ -43,11 +47,23 @@ public class SchematronProcessorTest {
         logger.info("Validating payload: {}", payload);
 
         // validate
-        String result = getProcessor("sch/schematron-1.sch").validate(payload);
+        String result = getProcessor("sch/schematron-1.sch", null).validate(payload);
         logger.info("Schematron Report: {}", result);
         assertEquals(0, Integer.valueOf(Utils.evaluate("count(//svrl:failed-assert)", result)).intValue());
         assertEquals(0, Integer.valueOf(Utils.evaluate("count(//svrl:successful-report)", result)).intValue());
 
+    }
+
+    @Test
+    public void testInvalidXMLWithClientResolver() throws Exception {
+        String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-3.xml"));
+        logger.info("Validating payload: {}", payload);
+
+        // validate
+        String result = getProcessor("sch/schematron-3.sch", new ClientUriResolver()).validate(payload);
+        logger.info("Schematron Report: {}", result);
+        assertEquals("A title should be at least two characters", Utils.evaluate("//svrl:failed-assert/svrl:text", result));
+        assertEquals(0, Integer.valueOf(Utils.evaluate("count(//svrl:successful-report)", result)).intValue());
     }
 
     @Test
@@ -56,7 +72,7 @@ public class SchematronProcessorTest {
         String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"));
         logger.info("Validating payload: {}", payload);
         // validate
-        String result = getProcessor("sch/schematron-2.sch").validate(payload);
+        String result = getProcessor("sch/schematron-2.sch", null).validate(payload);
         logger.info("Schematron Report: {}", result);
         // should throw two assertions because of the missing chapters in the XML.
         assertEquals("A chapter should have a title", Utils.evaluate("//svrl:failed-assert/svrl:text", result));
@@ -68,12 +84,20 @@ public class SchematronProcessorTest {
      * Returns schematron processor
      *
      * @param schematron
+     * @param clientResolver
      * @return
      */
-    private SchematronProcessor getProcessor(final String schematron) {
+    private SchematronProcessor getProcessor(final String schematron, final URIResolver clientResolver) {
         TransformerFactory factory = new TransformerFactoryImpl();
-        factory.setURIResolver(new ClassPathURIResolver(Constants.SCHEMATRON_TEMPLATES_ROOT_DIR));
+        factory.setURIResolver(new ClassPathURIResolver(Constants.SCHEMATRON_TEMPLATES_ROOT_DIR, clientResolver));
         Templates rules = TemplatesFactory.newInstance().getTemplates(ClassLoader.getSystemResourceAsStream(schematron), factory);
         return SchematronProcessorFactory.newScehamtronEngine(rules);
+    }
+
+    class ClientUriResolver implements URIResolver {
+        @Override
+        public Source resolve(String href, String base) throws TransformerException {
+            return new StreamSource(ClientUriResolver.class.getClassLoader().getResourceAsStream("custom-resolver/".concat(href)));
+        }
     }
 }

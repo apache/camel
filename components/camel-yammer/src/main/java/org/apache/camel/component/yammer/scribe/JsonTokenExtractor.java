@@ -24,12 +24,12 @@ import org.scribe.extractors.AccessTokenExtractor;
 import org.scribe.model.Token;
 import org.scribe.utils.Preconditions;
 
-
 public class JsonTokenExtractor implements AccessTokenExtractor {
+    private static final Pattern DEFAULT_ACCESS_TOKEN_PATTERN = Pattern.compile("\"access_token\":\\s*\"(\\S*?)\"");
     private Pattern accessTokenPattern;
 
     public JsonTokenExtractor() {
-        accessTokenPattern = Pattern.compile("\"access_token\":\\s*\"(\\S*?)\"");
+        accessTokenPattern = DEFAULT_ACCESS_TOKEN_PATTERN;
     }
 
     public JsonTokenExtractor(String tokenRegex) {

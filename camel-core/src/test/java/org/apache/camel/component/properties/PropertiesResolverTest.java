@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.properties;
 
+import org.junit.Test;
+
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
@@ -27,6 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class PropertiesResolverTest extends ContextTestSupport {
 
+    @Test
     public void testPropertiesResolver() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -54,7 +58,6 @@ public class PropertiesResolverTest extends ContextTestSupport {
         CamelContext context = super.createCamelContext();
 
         PropertiesComponent pc = new PropertiesComponent();
-        pc.setCamelContext(context);
         pc.setLocation("foo");
         pc.setPropertiesResolver(new MyCustomResolver());
         context.addComponent("properties", pc);
@@ -64,7 +67,7 @@ public class PropertiesResolverTest extends ContextTestSupport {
 
     public static class MyCustomResolver implements PropertiesResolver {
 
-        public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, String... uri) throws Exception {
+        public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, List<PropertiesLocation> locations) throws Exception {
             Properties answer = new Properties();
             answer.put("foo", "mock:result");
             return answer;

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -29,6 +31,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class ManagedRedeliverTest extends ManagementTestSupport {
 
+    @Test
     public void testRedeliver() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -85,6 +88,7 @@ public class ManagedRedeliverTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 onException(Exception.class).handled(true)
+                    .redeliveryDelay(0)
                     .maximumRedeliveries(4).logStackTrace(false)
                     .setBody().constant("Error");
 

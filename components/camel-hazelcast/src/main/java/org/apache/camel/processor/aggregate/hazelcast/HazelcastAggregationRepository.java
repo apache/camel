@@ -38,6 +38,7 @@ import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * Hazelcast settings are given to an end-user and can be controlled with repositoryName and persistentRespositoryName,
  * both are {@link com.hazelcast.core.IMap} &lt;String, Exchange&gt;. However HazelcastAggregationRepository
  * can run it's own Hazelcast instance, but obviously no benefits of Hazelcast clustering are gained this way.
- * If the {@link HazelcastAggregationRepository} uses it's own local {@link HazelcastInstance} it will destroy this
+ * If the {@link HazelcastAggregationRepository} uses it's own local {@link HazelcastInstance} it will DESTROY this
  * instance on {@link #doStop()}. You should control {@link HazelcastInstance} lifecycle yourself whenever you instantiate
  * {@link HazelcastAggregationRepository} passing a reference to the instance.
  *
@@ -70,6 +71,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
     private String deadLetterChannel;
     private long recoveryInterval = 5000;
     private int maximumRedeliveries = 3;
+    private boolean allowSerializedHeaders;
 
     /**
      * Creates new {@link HazelcastAggregationRepository} that defaults to non-optimistic locking
@@ -180,7 +182,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
         }
         LOG.trace("Adding an Exchange with ID {} for key {} in an optimistic manner.", newExchange.getExchangeId(), key);
         if (oldExchange == null) {
-            DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(newExchange);
+            DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(newExchange, true, allowSerializedHeaders);
             final DefaultExchangeHolder misbehaviorHolder = cache.putIfAbsent(key, holder);
             if (misbehaviorHolder != null) {
                 Exchange misbehaviorEx = unmarshallExchange(camelContext, misbehaviorHolder);
@@ -189,8 +191,8 @@ public class HazelcastAggregationRepository extends ServiceSupport
                 throw  new OptimisticLockingException();
             }
         } else {
-            DefaultExchangeHolder oldHolder = DefaultExchangeHolder.marshal(oldExchange);
-            DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(newExchange);
+            DefaultExchangeHolder oldHolder = DefaultExchangeHolder.marshal(oldExchange, true, allowSerializedHeaders);
+            DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(newExchange, true, allowSerializedHeaders);
             if (!cache.replace(key, oldHolder, newHolder)) {
                 LOG.error("Optimistic locking failed for exchange with key {}: IMap#replace returned no Exchanges, while it's expected to replace one",
                         key);
@@ -210,7 +212,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
         Lock l = hzInstance.getLock(mapName);
         try {
             l.lock();
-            DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(exchange);
+            DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
             DefaultExchangeHolder oldHolder = cache.put(key, newHolder);
             return unmarshallExchange(camelContext, oldHolder);
         } finally {
@@ -288,6 +290,27 @@ public class HazelcastAggregationRepository extends ServiceSupport
     public Exchange get(CamelContext camelContext, String key) {
         return unmarshallExchange(camelContext, cache.get(key));
     }
+    
+    /**
+     * Checks if the key in question is in the repository.
+     * 
+     * @param key Object - key in question
+     */
+    public boolean containsKey(Object key) {
+        if (cache != null) {
+            return cache.containsKey(key);
+        } else {
+            return false;
+        }
+    }
+    
+    public boolean isAllowSerializedHeaders() {
+        return allowSerializedHeaders;
+    }
+
+    public void setAllowSerializedHeaders(boolean allowSerializedHeaders) {
+        this.allowSerializedHeaders = allowSerializedHeaders;
+    }
 
     /**
      * This method performs transactional operation on removing the {@code exchange}
@@ -299,7 +322,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
      */
     @Override
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
-        DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(exchange);
+        DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
         if (optimistic) {
             LOG.trace("Removing an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
             if (!cache.remove(key, holder)) {
@@ -323,7 +346,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
                 // if no commit occurs during the timeout. So we are still consistent whether local node crashes.
                 TransactionOptions tOpts = new TransactionOptions();
 
-                tOpts.setTransactionType(TransactionOptions.TransactionType.LOCAL);
+                tOpts.setTransactionType(TransactionOptions.TransactionType.ONE_PHASE);
                 TransactionContext tCtx = hzInstance.newTransactionContext(tOpts);
 
                 try {
@@ -383,7 +406,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
         if (recoveryInterval < 0) {
             throw new IllegalArgumentException("Recovery interval must be zero or a positive integer.");
         }
-        ObjectHelper.notEmpty(mapName, "repositoryName");
+        StringHelper.notEmpty(mapName, "repositoryName");
         if (useLocalHzInstance)  {
             Config cfg = new XmlConfigBuilder().build();
             cfg.setProperty("hazelcast.version.check.enabled", "false");
@@ -399,10 +422,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
 
     @Override
     protected void doStop() throws Exception {
-        if (useRecovery) {
-            persistedCache.clear();
-        }
-        cache.clear();
+        //noop
         if (useLocalHzInstance) {
             hzInstance.getLifecycleService().shutdown();
         }

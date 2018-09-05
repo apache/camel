@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.interceptor;
 
+import org.junit.Test;
+
 import java.io.StringReader;
 import javax.xml.transform.stream.StreamSource;
 
@@ -30,6 +32,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  */
 public class NoStreamCachingInterceptorTest extends ContextTestSupport {
 
+    @Test
     public void testNoStreamCachingInterceptorEnabled() throws Exception {
         MockEndpoint a = getMockEndpoint("mock:a");
         a.expectedMessageCount(1);

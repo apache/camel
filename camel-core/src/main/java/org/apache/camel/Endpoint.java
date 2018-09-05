@@ -43,6 +43,7 @@ public interface Endpoint extends IsSingleton, Service {
      *
      * @return the endpoint configuration
      */
+    @Deprecated
     EndpointConfiguration getEndpointConfiguration();
 
     /**

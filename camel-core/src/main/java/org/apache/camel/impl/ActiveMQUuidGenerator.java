@@ -16,11 +16,11 @@
  */
 package org.apache.camel.impl;
 
-import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -35,7 +35,10 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * The JVM system property {@link #PROPERTY_IDGENERATOR_PORT} can be used to set a specific port
  * number to be used as part of the initialization process to generate unique UUID.
+ *
+ * @deprecated replaced by {@link DefaultUuidGenerator}
  */
+@Deprecated
 public class ActiveMQUuidGenerator implements UuidGenerator {
 
     // use same JVM property name as ActiveMQ
@@ -48,6 +51,7 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
     private static int instanceCount;
     private static String hostName;
     private String seed;
+    // must use AtomicLong to ensure atomic get and update operation that is thread-safe
     private final AtomicLong sequence = new AtomicLong(1);
     private final int length;
 
@@ -87,26 +91,14 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Cannot generate unique stub by using DNS and binding to local port: " + idGeneratorPort, e);
                 } else {
-                    LOG.warn("Cannot generate unique stub by using DNS and binding to local port: " + idGeneratorPort + " due " + e.getMessage());
+                    LOG.warn("Cannot generate unique stub by using DNS and binding to local port: {} due {}", idGeneratorPort, e.getMessage());
                 }
                 // Restore interrupted state so higher level code can deal with it.
                 if (e instanceof InterruptedException) {
                     Thread.currentThread().interrupt();
                 }
             } finally {
-                // some environments, such as a PaaS may not allow us to create the ServerSocket
-                if (ss != null) {
-                    try {
-                        // TODO: replace the following line with IOHelper.close(ss) when Java 6 support is dropped
-                        ss.close();
-                    } catch (IOException ioe) {
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("Closing the server socket failed", ioe);
-                        } else {
-                            LOG.warn("Closing the server socket failed due " + ioe.getMessage() + ". This exception is ignored.");
-                        }
-                    }
-                }
+                IOHelper.close(ss);
             }
         }
 

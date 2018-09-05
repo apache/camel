@@ -33,7 +33,7 @@ public class FileProducerFileBodyGetsMoved extends ContextTestSupport {
 
     @Before
     @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         deleteDirectory("target/filemove");
         super.setUp();
     }
@@ -58,7 +58,7 @@ public class FileProducerFileBodyGetsMoved extends ContextTestSupport {
         mock.expectedMessageCount(1);
         File temporaryFile = File.createTempFile("camel", "test");
 
-        GenericFile<File> body = new GenericFile<File>();
+        GenericFile<File> body = new GenericFile<>();
         body.setFile(temporaryFile);
         template.requestBodyAndHeader("direct:in", temporaryFile, Exchange.FILE_LOCAL_WORK_PATH, temporaryFile);
 

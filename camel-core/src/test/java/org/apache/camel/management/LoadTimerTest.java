@@ -16,20 +16,27 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.TimerListener;
 import org.apache.camel.management.mbean.LoadTriplet;
 import org.apache.camel.support.TimerListenerManager;
 
+import static org.awaitility.Awaitility.await;
+
 public class LoadTimerTest extends ContextTestSupport {
 
-    private static final int SAMPLES = 3;
+    private static final int SAMPLES = 2;
 
     @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
 
+    @Test
     public void testTimer() throws Exception {
         TimerListenerManager myTimer = new TimerListenerManager();
         myTimer.setCamelContext(context);
@@ -38,11 +45,12 @@ public class LoadTimerTest extends ContextTestSupport {
         TestLoadAware test = new TestLoadAware();
         myTimer.addTimerListener(test);
         try {
-            Thread.sleep(1000 * (SAMPLES + 1));
-            assertTrue(test.counter >= SAMPLES);
-            assertFalse(Double.isNaN(test.load.getLoad1()));
-            assertTrue(test.load.getLoad1() > 0.0d);
-            assertTrue(test.load.getLoad1() < SAMPLES);
+            await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+                assertTrue(test.counter >= SAMPLES);
+                assertFalse(Double.isNaN(test.load.getLoad1()));
+                assertTrue(test.load.getLoad1() > 0.0d);
+                assertTrue(test.load.getLoad1() < SAMPLES);
+            });
         } finally {
             myTimer.removeTimerListener(test);
         }
@@ -52,13 +60,12 @@ public class LoadTimerTest extends ContextTestSupport {
 
     private class TestLoadAware implements TimerListener {
 
-        int counter;
+        volatile int counter;
         LoadTriplet load = new LoadTriplet();
 
         @Override
         public void onTimer() {
-            counter++;
-            load.update(counter);
+            load.update(++counter);
         }
 
     }

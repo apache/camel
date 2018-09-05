@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,6 +29,7 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
  */
 public class AggregateCompletedByBatchConsumerSendEmptyMessageWhenIdleTest extends ContextTestSupport {
 
+    @Test
     public void testBatchConsumerSendEmptyMessageWhenIdle() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
@@ -42,7 +45,7 @@ public class AggregateCompletedByBatchConsumerSendEmptyMessageWhenIdleTest exten
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/batch?sendEmptyMessageWhenIdle=true&delay=250")
+                from("file:target/batch?initialDelay=0&delay=10&sendEmptyMessageWhenIdle=true")
                     .aggregate(constant(true), new UseLatestAggregationStrategy()).completionFromBatchConsumer()
                         .to("mock:result");
 

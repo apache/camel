@@ -25,7 +25,7 @@ public enum AtmosOperation {
 
     private final String text;
 
-    private AtmosOperation(final String text) {
+    AtmosOperation(final String text) {
         this.text = text;
     }
 

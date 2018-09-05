@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -28,11 +31,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FromFileMoveFileIfProcessFailsTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/movefile");
         super.setUp();
     }
 
+    @Test
     public void testPollFileAndShouldNotBeMoved() throws Exception {
         template.sendBodyAndHeader("file://target/movefile", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
@@ -46,7 +51,7 @@ public class FromFileMoveFileIfProcessFailsTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/movefile?moveFailed=error")
+                from("file://target/movefile?initialDelay=0&delay=10&moveFailed=error")
                         .convertBodyTo(String.class).to("mock:foo").process(
                             new Processor() {
                                 public void process(Exchange exchange) throws Exception {

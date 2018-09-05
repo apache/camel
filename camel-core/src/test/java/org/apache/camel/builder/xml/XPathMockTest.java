@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder.xml;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -28,6 +30,7 @@ import static org.apache.camel.builder.xml.XPathBuilder.xpath;
  */
 public class XPathMockTest extends ContextTestSupport {
 
+    @Test
     public void testXPathMock() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.message(0).body().matches(xpath("/foo/text() = 'Hello World'").booleanResult());
@@ -37,15 +40,27 @@ public class XPathMockTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testXPathMock2() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.message(0).body().matches().xpath("/foo/text() = 'Hello World'");
+        mock.message(0).predicate().xpath("/foo/text() = 'Hello World'");
 
         template.sendBody("direct:start", "<foo>Hello World</foo>");
 
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testXPathMock2Fail() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.message(0).predicate().xpath("/foo/text() = 'Bye World'");
+
+        template.sendBody("direct:start", "<foo>Hello World</foo>");
+
+        mock.assertIsNotSatisfied();
+    }
+
+    @Test
     public void testXPathMock3() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.message(0).predicate().xpath("/foo/text() = 'Hello World'");
@@ -55,6 +70,7 @@ public class XPathMockTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testXPathMockMatches() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessagesMatches(xpath("/foo/text() = 'Hello World'"));
@@ -64,6 +80,7 @@ public class XPathMockTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testXPathMockMatchesTwo() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessagesMatches(xpath("/foo/text() = 'Hello World'"), xpath("/foo/text() = 'Bye World'"));
@@ -74,6 +91,7 @@ public class XPathMockTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNonXPathMockMatches() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessagesMatches(not(body().contains("Bye")), body().contains("World"));

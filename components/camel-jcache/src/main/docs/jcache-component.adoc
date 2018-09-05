@@ -1,0 +1,108 @@
+[[jcache-component]]
+== JCache Component
+
+*Available as of Camel version 2.17*
+
+The jcache component enables you to perform caching operations using JSR107/JCache as cache implementation.
+
+### URI Format
+
+[source,java]
+----------------------------
+jcache:cacheName[?options]
+----------------------------
+
+### URI Options
+
+// endpoint options: START
+The JCache endpoint is configured using URI syntax:
+
+----
+jcache:cacheName
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *cacheName* | *Required* The name of the cache |  | String
+|===
+
+
+==== Query Parameters (22 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *cacheConfiguration* (common) | A Configuration for the Cache |  | Configuration
+| *cacheConfigurationProperties* (common) | The Properties for the javax.cache.spi.CachingProvider to create the CacheManager |  | Properties
+| *cachingProvider* (common) | The fully qualified class name of the javax.cache.spi.CachingProvider |  | String
+| *configurationUri* (common) | An implementation specific URI for the CacheManager |  | String
+| *managementEnabled* (common) | Whether management gathering is enabled | false | boolean
+| *readThrough* (common) | If read-through caching should be used | false | boolean
+| *statisticsEnabled* (common) | Whether statistics gathering is enabled | false | boolean
+| *storeByValue* (common) | If cache should use store-by-value or store-by-reference semantics | true | boolean
+| *writeThrough* (common) | If write-through caching should be used | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *filteredEvents* (consumer) | Events a consumer should filter. If using filteredEvents option, then eventFilters one will be ignored |  | List
+| *oldValueRequired* (consumer) | if the old value is required for events | false | boolean
+| *synchronous* (consumer) | if the event listener should block the thread causing the event | false | boolean
+| *eventFilters* (consumer) | The CacheEntryEventFilter. If using eventFilters option, then filteredEvents one will be ignored |  | List
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *action* (producer) | To configure using a cache operation by default. If an operation in the message header, then the operation from the header takes precedence. |  | String
+| *cacheLoaderFactory* (advanced) | The CacheLoader factory |  | CacheLoader>
+| *cacheWriterFactory* (advanced) | The CacheWriter factory |  | CacheWriter>
+| *createCacheIfNotExists* (advanced) | Configure if a cache need to be created if it does exist or can't be pre-configured. | true | boolean
+| *expiryPolicyFactory* (advanced) | The ExpiryPolicy factory |  | ExpiryPolicy>
+| *lookupProviders* (advanced) | Configure if a camel-cache should try to find implementations of jcache api in runtimes like OSGi. | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 6 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.jcache.cache-configuration* | A Configuration for the Cache. The option is a javax.cache.configuration.Configuration type. |  | String
+| *camel.component.jcache.cache-configuration-properties* | The Properties for the javax.cache.spi.CachingProvider to create the CacheManager. The option is a java.util.Properties type. |  | String
+| *camel.component.jcache.caching-provider* | The fully qualified class name of the javax.cache.spi.CachingProvider |  | String
+| *camel.component.jcache.configuration-uri* | An implementation specific URI for the CacheManager |  | String
+| *camel.component.jcache.enabled* | Enable jcache component | true | Boolean
+| *camel.component.jcache.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+
+
+
+
+
+// component options: START
+The JCache component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *cachingProvider* (common) | The fully qualified class name of the javax.cache.spi.CachingProvider |  | String
+| *cacheConfiguration* (common) | A Configuration for the Cache |  | Configuration
+| *cacheConfiguration Properties* (common) | The Properties for the javax.cache.spi.CachingProvider to create the CacheManager |  | Properties
+| *configurationUri* (common) | An implementation specific URI for the CacheManager |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END

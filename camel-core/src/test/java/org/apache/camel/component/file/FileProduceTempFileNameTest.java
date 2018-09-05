@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -29,13 +32,16 @@ import org.apache.camel.builder.RouteBuilder;
 public class FileProduceTempFileNameTest extends ContextTestSupport {
 
     private String fileUrl = "file://target/tempandrename/?tempFileName=inprogress-${file:name.noext}.tmp";
+    private String parentFileUrl = "file://target/tempandrename/?tempFileName=../work/${file:name.noext}.tmp";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/tempandrename");
         super.setUp();
     }
 
+    @Test
     public void testCreateTempFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUrl);
         GenericFileProducer<?> producer = (GenericFileProducer<?>) endpoint.createProducer();
@@ -46,6 +52,7 @@ public class FileProduceTempFileNameTest extends ContextTestSupport {
         assertDirectoryEquals("target/tempandrename/inprogress-claus.tmp", tempFileName);
     }
 
+    @Test
     public void testNoPathCreateTempFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUrl);
         GenericFileProducer<?> producer = (GenericFileProducer<?>) endpoint.createProducer();
@@ -56,11 +63,23 @@ public class FileProduceTempFileNameTest extends ContextTestSupport {
         assertDirectoryEquals("inprogress-claus.tmp", tempFileName);
     }
 
+    @Test
     public void testTempFileName() throws Exception {
         template.sendBodyAndHeader("direct:a", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         File file = new File("target/tempandrename/hello.txt");
         assertEquals("The generated file should exists: " + file, true, file.exists());
+    }
+
+    @Test
+    public void testCreateParentTempFileName() throws Exception {
+        Endpoint endpoint = context.getEndpoint(parentFileUrl);
+        GenericFileProducer<?> producer = (GenericFileProducer<?>) endpoint.createProducer();
+        Exchange exchange = endpoint.createExchange();
+        exchange.getIn().setHeader(Exchange.FILE_NAME, "claus.txt");
+
+        String tempFileName = producer.createTempFileName(exchange, "target/tempandrename/claus.txt");
+        assertDirectoryEquals("target/work/claus.tmp", tempFileName);
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

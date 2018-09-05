@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.ProxyHelper;
@@ -25,11 +27,13 @@ import org.apache.camel.component.bean.ProxyHelper;
  */
 public class ProxyReturnNullIssueTest extends ContextTestSupport {
 
+    @Test
     public void testEcho() throws Exception {
         Echo service = ProxyHelper.createProxy(context.getEndpoint("direct:echo"), Echo.class);
         assertEquals("Hello World", service.echo("Hello World"));
     }
 
+    @Test
     public void testEchoNull() throws Exception {
         Echo service = ProxyHelper.createProxy(context.getEndpoint("direct:echo"), Echo.class);
         assertEquals(null, service.echo(null));

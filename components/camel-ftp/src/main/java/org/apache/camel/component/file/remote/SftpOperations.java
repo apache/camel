@@ -24,6 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.security.KeyPair;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
@@ -41,12 +44,13 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Proxy;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
+import com.jcraft.jsch.SocketFactory;
 import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
@@ -56,7 +60,6 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
-
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
@@ -69,7 +72,7 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  * <p/>
  * The JSCH session and channel are not thread-safe so we need to synchronize access to using this operation.
  */
-public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry> {
+public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     private static final Logger LOG = LoggerFactory.getLogger(SftpOperations.class);
     private static final Pattern UP_DIR_PATTERN = Pattern.compile("/[^/]+");
     private Proxy proxy;
@@ -90,7 +93,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     public interface ExtendedUserInfo extends UserInfo, UIKeyboardInteractive {
     }
 
-    public void setEndpoint(GenericFileEndpoint<ChannelSftp.LsEntry> endpoint) {
+    public void setEndpoint(GenericFileEndpoint<SftpRemoteFile> endpoint) {
         this.endpoint = (SftpEndpoint) endpoint;
     }
 
@@ -132,7 +135,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
                         LOG.trace("Connecting ...");
                         channel.connect();
                     }
-                    LOG.info("Connected to " + configuration.remoteServerInformation());
+                    LOG.debug("Connected to " + configuration.remoteServerInformation());
                 }
 
                 // yes we could connect
@@ -161,7 +164,27 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             }
         }
 
+        configureBulkRequests();
+
         return true;
+    }
+
+    private void configureBulkRequests() {
+        try {
+            tryConfigureBulkRequests();
+        } catch (JSchException e) {
+            throw new GenericFileOperationFailedException("Failed to configure number of bulk requests", e);
+        }
+    }
+
+    private void tryConfigureBulkRequests() throws JSchException {
+        Integer bulkRequests = endpoint.getConfiguration().getBulkRequests();
+
+        if (bulkRequests != null) {
+            LOG.trace("configuring channel to use up to {} bulk request(s)", bulkRequests);
+
+            channel.setBulkRequests(bulkRequests);
+        }
     }
 
     protected Session createSession(final RemoteFileConfiguration configuration) throws JSchException {
@@ -172,7 +195,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
 
         if (isNotEmpty(sftpConfig.getCiphers())) {
             LOG.debug("Using ciphers: {}", sftpConfig.getCiphers());
-            Hashtable<String, String> ciphers = new Hashtable<String, String>();
+            Hashtable<String, String> ciphers = new Hashtable<>();
             ciphers.put("cipher.s2c", sftpConfig.getCiphers());
             ciphers.put("cipher.c2s", sftpConfig.getCiphers());
             JSch.setConfig(ciphers);
@@ -211,7 +234,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
                 }
             }
             try {
-                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(endpoint.getCamelContext().getClassResolver(), sftpConfig.getPrivateKeyUri());
+                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(endpoint.getCamelContext(), sftpConfig.getPrivateKeyUri());
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 IOHelper.copyAndCloseInput(is, bos);
                 jsch.addIdentity("ID", bos.toByteArray(), null, passphrase);
@@ -242,9 +265,9 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         }
 
         if (isNotEmpty(sftpConfig.getKnownHostsUri())) {
-            LOG.debug("Using knownhosts uri: {}", sftpConfig.getKnownHostsUri());
+            LOG.debug("Using known hosts uri: {}", sftpConfig.getKnownHostsUri());
             try {
-                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(endpoint.getCamelContext().getClassResolver(), sftpConfig.getKnownHostsUri());
+                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(endpoint.getCamelContext(), sftpConfig.getKnownHostsUri());
                 jsch.setKnownHosts(is);
             } catch (IOException e) {
                 throw new JSchException("Cannot read resource: " + sftpConfig.getKnownHostsUri(), e);
@@ -252,8 +275,18 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         }
 
         if (sftpConfig.getKnownHosts() != null) {
-            LOG.debug("Using knownhosts information from byte array");
+            LOG.debug("Using known hosts information from byte array");
             jsch.setKnownHosts(new ByteArrayInputStream(sftpConfig.getKnownHosts()));
+        }
+
+        String knownHostsFile = sftpConfig.getKnownHostsFile();
+        if (knownHostsFile == null && sftpConfig.isUseUserKnownHostsFile()) {
+            knownHostsFile = System.getProperty("user.home") + "/.ssh/known_hosts";
+            LOG.info("Known host file not configured, using user known host file: {}", knownHostsFile);
+        }
+        if (ObjectHelper.isNotEmpty(knownHostsFile)) {
+            LOG.debug("Using known hosts information from file: {}", knownHostsFile);
+            jsch.setKnownHosts(knownHostsFile);
         }
 
         final Session session = jsch.getSession(configuration.getUsername(), configuration.getHost(), configuration.getPort());
@@ -262,7 +295,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             LOG.debug("Using StrickHostKeyChecking: {}", sftpConfig.getStrictHostKeyChecking());
             session.setConfig("StrictHostKeyChecking", sftpConfig.getStrictHostKeyChecking());
         }
-        
+
         session.setServerAliveInterval(sftpConfig.getServerAliveInterval());
         session.setServerAliveCountMax(sftpConfig.getServerAliveCountMax());
 
@@ -273,8 +306,8 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             session.setConfig("compression.c2s", "zlib@openssh.com,zlib,none");
             session.setConfig("compression_level", Integer.toString(sftpConfig.getCompression()));
         }
-        
-        // set the PreferredAuthentications 
+
+        // set the PreferredAuthentications
         if (sftpConfig.getPreferredAuthentications() != null) {
             LOG.debug("Using PreferredAuthentications: {}", sftpConfig.getPreferredAuthentications());
             session.setConfig("PreferredAuthentications", sftpConfig.getPreferredAuthentications());
@@ -324,12 +357,32 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         if (configuration.getSoTimeout() > 0) {
             session.setTimeout(configuration.getSoTimeout());
         }
-        
+
         // set proxy if configured
         if (proxy != null) {
             session.setProxy(proxy);
         }
-        
+
+        if (isNotEmpty(sftpConfig.getBindAddress())) {
+            session.setSocketFactory(new SocketFactory() {
+
+                @Override
+                public OutputStream getOutputStream(Socket socket) throws IOException {
+                    return socket.getOutputStream();
+                }
+
+                @Override
+                public InputStream getInputStream(Socket socket) throws IOException {
+                    return socket.getInputStream();
+                }
+
+                @Override
+                public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
+                    return createSocketUtil(host, port, sftpConfig.getBindAddress(), session.getTimeout());
+                }
+            });
+        }
+
         return session;
     }
 
@@ -392,12 +445,35 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         }
     }
 
+    public synchronized void forceDisconnect() throws GenericFileOperationFailedException {
+        try {
+            if (session != null) {
+                session.disconnect();
+            }
+            if (channel != null) {
+                channel.disconnect();
+            }
+        } finally {
+            // ensure these
+            session = null;
+            channel = null;
+        }
+    }
+
+    private void reconnectIfNecessary() {
+        if (!isConnected()) {
+            connect(endpoint.getConfiguration());
+        }
+    }
+
     public synchronized boolean deleteFile(String name) throws GenericFileOperationFailedException {
         LOG.debug("Deleting file: {}", name);
         try {
+            reconnectIfNecessary();
             channel.rm(name);
             return true;
         } catch (SftpException e) {
+            LOG.debug("Cannot delete file: " + name, e);
             throw new GenericFileOperationFailedException("Cannot delete file: " + name, e);
         }
     }
@@ -405,9 +481,14 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     public synchronized boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
         LOG.debug("Renaming file: {} to: {}", from, to);
         try {
+            reconnectIfNecessary();
+            //make use of the '/' separator because JSch expects this 
+            // as the file separator even on Windows
+            to = FileUtil.compactPath(to, '/');
             channel.rename(from, to);
             return true;
         } catch (SftpException e) {
+            LOG.debug("Cannot rename file from: " + from + " to: " + to, e);
             throw new GenericFileOperationFailedException("Cannot rename file from: " + from + " to: " + to, e);
         }
     }
@@ -461,8 +542,15 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         final String[] dirs = dirName.split("/|\\\\");
 
         boolean success = false;
+        boolean first = true;
         for (String dir : dirs) {
-            sb.append(dir).append('/');
+            if (first) {
+                first = false;
+            } else {
+                sb.append('/');
+            }
+            sb.append(dir);
+
             // must normalize the directory name
             String directory = endpoint.getConfiguration().normalizePath(sb.toString());
 
@@ -570,11 +658,11 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         changeCurrentDirectory(parent);
     }
 
-    public synchronized List<ChannelSftp.LsEntry> listFiles() throws GenericFileOperationFailedException {
+    public synchronized List<SftpRemoteFile> listFiles() throws GenericFileOperationFailedException {
         return listFiles(".");
     }
 
-    public synchronized List<ChannelSftp.LsEntry> listFiles(String path) throws GenericFileOperationFailedException {
+    public synchronized List<SftpRemoteFile> listFiles(String path) throws GenericFileOperationFailedException {
         LOG.trace("listFiles({})", path);
         if (ObjectHelper.isEmpty(path)) {
             // list current directory if file path is not given
@@ -582,14 +670,14 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         }
 
         try {
-            final List<ChannelSftp.LsEntry> list = new ArrayList<ChannelSftp.LsEntry>();
+            final List<SftpRemoteFile> list = new ArrayList<>();
 
             @SuppressWarnings("rawtypes")
             Vector files = channel.ls(path);
             // can return either null or an empty list depending on FTP servers
             if (files != null) {
                 for (Object file : files) {
-                    list.add((ChannelSftp.LsEntry) file);
+                    list.add(new SftpRemoteFileJCraft((ChannelSftp.LsEntry) file));
                 }
             }
             return list;
@@ -598,7 +686,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         }
     }
 
-    public synchronized boolean retrieveFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
+    public synchronized boolean retrieveFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
         LOG.trace("retrieveFile({})", name);
         if (ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
             // local work directory is configured so we should store file content as files in this local directory
@@ -608,10 +696,10 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             return retrieveFileToStreamInBody(name, exchange);
         }
     }
-    
-    public synchronized void releaseRetreivedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
+
+    public synchronized void releaseRetrievedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
         InputStream is = exchange.getIn().getHeader(RemoteFileComponent.REMOTE_FILE_INPUT_STREAM, InputStream.class);
-        
+
         if (is != null) {
             try {
                 is.close();
@@ -623,13 +711,12 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
 
     @SuppressWarnings("unchecked")
     private boolean retrieveFileToStreamInBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
-        OutputStream os = null;
         String currentDir = null;
         try {
             GenericFile<ChannelSftp.LsEntry> target =
                     (GenericFile<ChannelSftp.LsEntry>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
             ObjectHelper.notNull(target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
-            
+
             String remoteName = name;
             if (endpoint.getConfiguration().isStepwise()) {
                 // remember current directory
@@ -647,23 +734,24 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
 
             // use input stream which works with Apache SSHD used for testing
             InputStream is = channel.get(remoteName);
-            
+
             if (endpoint.getConfiguration().isStreamDownload()) {
                 target.setBody(is);
                 exchange.getIn().setHeader(RemoteFileComponent.REMOTE_FILE_INPUT_STREAM, is);
             } else {
-                os = new ByteArrayOutputStream();
-                target.setBody(os);
-                IOHelper.copyAndCloseInput(is, os);
+                // read the entire file into memory in the byte array
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                IOHelper.copyAndCloseInput(is, bos);
+                // close the stream after done
+                IOHelper.close(bos);
+
+                target.setBody(bos.toByteArray());
             }
 
             return true;
-        } catch (IOException e) {
-            throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
-        } catch (SftpException e) {
+        } catch (IOException | SftpException e) {
             throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
         } finally {
-            IOHelper.close(os, "retrieve: " + name, LOG);
             // change back to current directory if we changed directory
             if (currentDir != null) {
                 changeCurrentDirectory(currentDir);
@@ -770,7 +858,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         return true;
     }
 
-    public synchronized boolean storeFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
+    public synchronized boolean storeFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
         // must normalize name first
         name = endpoint.getConfiguration().normalizePath(name);
 
@@ -859,10 +947,10 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
                 // override is default
                 channel.put(is, targetName);
             }
-            watch.stop();
             if (LOG.isDebugEnabled()) {
+                long time = watch.taken();
                 LOG.debug("Took {} ({} millis) to store file: {} and FTP client returned: true",
-                        new Object[]{TimeUtils.printDuration(watch.taken()), watch.taken(), targetName});
+                        new Object[]{TimeUtils.printDuration(time), time, targetName});
             }
 
             // after storing file, we may set chmod on the file
@@ -875,7 +963,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             }
 
             return true;
-        
+
         } catch (SftpException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
         } catch (InvalidPayloadException e) {
@@ -997,7 +1085,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     public synchronized boolean sendNoop() throws GenericFileOperationFailedException {
         if (isConnected()) {
             try {
-                session.sendIgnore();
+                session.sendKeepAliveMsg();
                 return true;
             } catch (Exception e) {
                 LOG.debug("SFTP session was closed. Ignoring this exception.", e);
@@ -1010,5 +1098,65 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     public synchronized boolean sendSiteCommand(String command) throws GenericFileOperationFailedException {
         // is not implemented
         return true;
+    }
+
+    /*
+     * adapted from com.jcraft.jsch.Util.createSocket(String, int, int)
+     *
+     * added possibility to specify the address of the local network interface, against the
+     * connection should bind
+     */
+    static Socket createSocketUtil(final String host, final int port, final String bindAddress, final int timeout) {
+        Socket socket = null;
+        if (timeout == 0) {
+            try {
+                socket = new Socket(InetAddress.getByName(host), port, InetAddress.getByName(bindAddress), 0);
+                return socket;
+            } catch (Exception e) {
+                String message = e.toString();
+                if (e instanceof Throwable) {
+                    throw new RuntimeCamelException(message, (Throwable)e);
+                }
+                throw new RuntimeCamelException(message);
+            }
+        }
+        final Socket[] sockp = new Socket[1];
+        final Exception[] ee = new Exception[1];
+        String message = "";
+        Thread tmp = new Thread(new Runnable() {
+            public void run() {
+                sockp[0] = null;
+                try {
+                    sockp[0] = new Socket(InetAddress.getByName(host), port, InetAddress.getByName(bindAddress), 0);
+                } catch (Exception e) {
+                    ee[0] = e;
+                    if (sockp[0] != null && sockp[0].isConnected()) {
+                        try {
+                            sockp[0].close();
+                        } catch (Exception eee) { }
+                    }
+                    sockp[0] = null;
+                }
+            }
+        });
+        tmp.setName("Opening Socket " + host);
+        tmp.start();
+        try {
+            tmp.join(timeout);
+            message = "timeout: ";
+        } catch (java.lang.InterruptedException eee) {
+        }
+        if (sockp[0] != null && sockp[0].isConnected()) {
+            socket = sockp[0];
+        } else {
+            message += "socket is not established";
+            if (ee[0] != null) {
+                message = ee[0].toString();
+            }
+            tmp.interrupt();
+            tmp = null;
+            throw new RuntimeCamelException(message, ee[0]);
+        }
+        return socket;
     }
 }

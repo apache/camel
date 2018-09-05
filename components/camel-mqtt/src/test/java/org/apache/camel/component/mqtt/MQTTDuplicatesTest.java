@@ -70,7 +70,7 @@ public class MQTTDuplicatesTest extends MQTTBaseTest {
         brokerService = new BrokerService();
         brokerService.setPersistent(false);
         brokerService.setAdvisorySupport(false);
-        brokerService.addConnector("mqtt://127.0.0.1:1883?trace=true");
+        brokerService.addConnector(MQTTTestSupport.getConnection() + "?trace=true");
         brokerService.start();
         brokerService.waitUntilStarted();
         LOG.info(">>>>>>>>>> Broker restarted");
@@ -93,7 +93,7 @@ public class MQTTDuplicatesTest extends MQTTBaseTest {
         brokerService = new BrokerService();
         brokerService.setPersistent(false);
         brokerService.setAdvisorySupport(false);
-        brokerService.addConnector("mqtt://127.0.0.1:1883?trace=true");
+        brokerService.addConnector(MQTTTestSupport.getConnection() + "?trace=true");
         brokerService.start();
         brokerService.waitUntilStarted();
         LOG.info(">>>>>>>>>> Broker restarted");
@@ -110,8 +110,8 @@ public class MQTTDuplicatesTest extends MQTTBaseTest {
     private void assertNoDuplicates() {
         List<Exchange> exchanges = resultEndpoint.getExchanges();
         Assert.assertTrue("No message was delivered - something wrong happened", exchanges.size() > 0);
-        Set<String> values = new HashSet<String>();
-        List<String> duplicates = new ArrayList<String>();
+        Set<String> values = new HashSet<>();
+        List<String> duplicates = new ArrayList<>();
         for (Exchange e : exchanges) {
             String body = e.getIn().getBody(String.class);
             if (values.contains(body)) {
@@ -133,9 +133,9 @@ public class MQTTDuplicatesTest extends MQTTBaseTest {
                 from("direct:withoutClientID")
                     .routeId("SenderWithoutClientID")
                     .log("$$$$$ Sending message: ${body}")
-                    .to("mqtt:sender?publishTopicName=test/topic1&qualityOfService=ExactlyOnce");
+                    .to("mqtt:sender?publishTopicName=test/topic1&qualityOfService=ExactlyOnce&host=" + MQTTTestSupport.getHostForMQTTEndpoint());
             
-                from("mqtt:reader?subscribeTopicName=test/topic1&qualityOfService=ExactlyOnce")
+                from("mqtt:reader?subscribeTopicName=test/topic1&qualityOfService=ExactlyOnce&host=" + MQTTTestSupport.getHostForMQTTEndpoint())
                     .routeId("ReceiverWithoutClientID")
                     .log("$$$$$ Received message: ${body}")
                     .to("mock:result");
@@ -146,9 +146,9 @@ public class MQTTDuplicatesTest extends MQTTBaseTest {
                 from("direct:withClientID")
                     .routeId("SenderWithClientID")
                     .log("$$$$$ Sending message: ${body}")
-                    .to("mqtt:sender?publishTopicName=test/topic2&clientId=sender&qualityOfService=ExactlyOnce");
+                    .to("mqtt:sender?publishTopicName=test/topic2&clientId=sender&qualityOfService=ExactlyOnce&host=" + MQTTTestSupport.getHostForMQTTEndpoint());
                 
-                from("mqtt:reader?subscribeTopicName=test/topic2&clientId=receiver&qualityOfService=ExactlyOnce")
+                from("mqtt:reader?subscribeTopicName=test/topic2&clientId=receiver&qualityOfService=ExactlyOnce&host=" + MQTTTestSupport.getHostForMQTTEndpoint())
                     .routeId("ReceiverWithClientID")
                     .log("$$$$$ Received message: ${body}")
                     .to("mock:result");

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -34,7 +37,8 @@ public class DirectoryCreateIssueTest extends ContextTestSupport {
     private final String path = "target/a/b/c/d/e/f/g/h";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/a");
         super.setUp();
     }
@@ -59,6 +63,7 @@ public class DirectoryCreateIssueTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testFileCreatedAsDir() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");        
         mock.expectedMessageCount(numFiles);         
@@ -71,7 +76,7 @@ public class DirectoryCreateIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // wait a little while for the files to settle down
-        Thread.sleep(200);
+        Thread.sleep(50);
 
         for (int i = 0; i < numFiles; i++) {
             assertTrue((new File(path + "/file" + i + ".txt")).isFile());

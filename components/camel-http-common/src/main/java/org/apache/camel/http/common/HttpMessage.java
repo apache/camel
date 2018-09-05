@@ -30,11 +30,15 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class HttpMessage extends DefaultMessage {
 
-    private HttpServletRequest request;
-    private HttpServletResponse response;
+    private final HttpServletRequest request;
+    private final HttpServletResponse response;
+    private final HttpCommonEndpoint endpoint;
 
-    public HttpMessage(Exchange exchange, HttpServletRequest request, HttpServletResponse response) {
+    public HttpMessage(Exchange exchange, HttpCommonEndpoint endpoint, HttpServletRequest request, HttpServletResponse response) {
         setExchange(exchange);
+        setCamelContext(exchange.getContext());
+        this.endpoint = endpoint;
+
         this.request = request;
         this.response = response;
         // Put the request and response into the message header
@@ -49,7 +53,15 @@ public class HttpMessage extends DefaultMessage {
 
         // use binding to read the request allowing end users to use their
         // implementation of the binding
-        getEndpoint().getBinding().readRequest(request, this);
+        endpoint.getHttpBinding().readRequest(request, this);
+    }
+
+    private HttpMessage(HttpServletRequest request, HttpServletResponse response, Exchange exchange, HttpCommonEndpoint endpoint) {
+        this.request = request;
+        this.response = response;
+        setExchange(getExchange());
+        this.endpoint = endpoint;
+        setCamelContext(exchange.getContext());
     }
 
     public HttpServletRequest getRequest() {
@@ -63,14 +75,15 @@ public class HttpMessage extends DefaultMessage {
     @Override
     protected Object createBody() {
         try {
-            return getEndpoint().getBinding().parseBody(this);
+            return endpoint.getHttpBinding().parseBody(this);
         } catch (IOException e) {
             throw new RuntimeCamelException(e);
         }
     }
-    
-    private HttpCommonEndpoint getEndpoint() {
-        return (HttpCommonEndpoint) getExchange().getFromEndpoint();
+
+    @Override
+    public HttpMessage newInstance() {
+        return new HttpMessage(request, response, getExchange(), endpoint);
     }
 
     @Override

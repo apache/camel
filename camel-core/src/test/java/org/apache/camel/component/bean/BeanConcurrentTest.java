@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -30,6 +31,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class BeanConcurrentTest extends ContextTestSupport {
 
+    @Test
     public void testBeanConcurrent() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1000);
@@ -45,12 +47,12 @@ public class BeanConcurrentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // should be 1000 messages
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (int i = 0; i < 1000; i++) {
             String body = mock.getReceivedExchanges().get(i).getIn().getBody(String.class);
             list.add(body);
         }
-        Collections.sort(list);
+        list.sort(null);
 
         // and they should be unique and no lost messages
         assertEquals(1000, list.size());

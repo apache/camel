@@ -18,6 +18,7 @@ package org.apache.camel.util.toolbox;
 
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
+import org.apache.camel.processor.aggregate.GroupedBodyAggregationStrategy;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
@@ -39,7 +40,7 @@ public final class AggregationStrategies {
      * @param type The type the {@link FlexibleAggregationStrategy} deals with.
      */
     public static <T> FlexibleAggregationStrategy<T> flexible(Class<T> type) {
-        return new FlexibleAggregationStrategy<T>(type);
+        return new FlexibleAggregationStrategy<>(type);
     }
     
     /**
@@ -47,7 +48,7 @@ public final class AggregationStrategies {
      * <tt>pick expression</tt> results.
      */
     public static FlexibleAggregationStrategy<Object> flexible() {
-        return new FlexibleAggregationStrategy<Object>();
+        return new FlexibleAggregationStrategy<>();
     }
 
     /**
@@ -69,10 +70,28 @@ public final class AggregationStrategies {
     }
 
     /**
+     * Use the original exchange.
+     *
+     * @param propagateException whether to propgate exception if errors was thrown during processing splitted messages.
+     *
+     * @see org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy
+     */
+    public static AggregationStrategy useOriginal(boolean propagateException) {
+        return new UseOriginalAggregationStrategy(propagateException);
+    }
+
+    /**
      * Creates a {@link GroupedExchangeAggregationStrategy} aggregation strategy.
      */
     public static AggregationStrategy groupedExchange() {
         return new GroupedExchangeAggregationStrategy();
+    }
+
+    /**
+     * Creates a {@link GroupedBodyAggregationStrategy} aggregation strategy.
+     */
+    public static AggregationStrategy groupedBody() {
+        return new GroupedBodyAggregationStrategy();
     }
 
     /**
@@ -121,6 +140,13 @@ public final class AggregationStrategies {
         adapter.setAllowNullOldExchange(true);
         adapter.setAllowNullNewExchange(true);
         return adapter;
+    }
+
+    /**
+     * Creates a {@link XsltAggregationStrategy} as the aggregation strategy.
+     */
+    public static XsltAggregationStrategy xslt(String xslFileLocation) {
+        return XsltAggregationStrategy.create(xslFileLocation);
     }
 
 }

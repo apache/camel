@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.onexception;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -32,6 +34,7 @@ public class OnExceptionUseOriginalMessageTest extends ContextTestSupport {
     
     private static final String TEST_STRING = "<firstName>James</firstName>";
 
+    @Test
     public void testOnExceptionError() throws Exception {
         getMockEndpoint("mock:middle").expectedBodiesReceived(HELLO_WORLD);
         getMockEndpoint("mock:middle").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
@@ -43,6 +46,7 @@ public class OnExceptionUseOriginalMessageTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testOnExceptionStreamReset() throws Exception {
         
         getMockEndpoint("mock:middle").expectedMessageCount(1);

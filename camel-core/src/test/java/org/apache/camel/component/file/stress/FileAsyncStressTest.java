@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.stress;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.Random;
 
@@ -23,16 +26,19 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Ignore;
 
 /**
  * @version 
  */
+@Ignore("Manual test")
 public class FileAsyncStressTest extends ContextTestSupport {
 
     private int files = 150;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // do not test on windows
         if (isPlatform("windows")) {
             return;
@@ -45,6 +51,7 @@ public class FileAsyncStressTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testAsyncStress() throws Exception {
         // do not test on windows
         if (isPlatform("windows")) {

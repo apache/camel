@@ -34,7 +34,10 @@ import org.snmp4j.PDU;
 import org.snmp4j.mp.SnmpConstants;
 import org.snmp4j.security.SecurityLevel;
 
-@UriEndpoint(scheme = "snmp", title = "SNMP", syntax = "snmp:host:port", consumerOnly = true, label = "monitoring")
+/**
+ * The snmp component gives you the ability to poll SNMP capable devices or receiving traps.
+ */
+@UriEndpoint(firstVersion = "2.1.0", scheme = "snmp", title = "SNMP", syntax = "snmp:host:port", consumerOnly = true, label = "monitoring")
 public class SnmpEndpoint extends DefaultPollingEndpoint {
 
     public static final String DEFAULT_COMMUNITY = "public";
@@ -43,8 +46,6 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     public static final int DEFAULT_SNMP_TIMEOUT = 1500;
 
     private static final Logger LOG = LoggerFactory.getLogger(SnmpEndpoint.class);
-
-    private OIDList oids = new OIDList();
 
     private transient String address;
 
@@ -66,22 +67,27 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     private SnmpActionType type;
     @UriParam(label = "consumer", defaultValue = "60000")
     private long delay = 60000;
-    @UriParam(defaultValue = "" + SecurityLevel.AUTH_PRIV, enums = "1,2,3")
+    @UriParam(defaultValue = "" + SecurityLevel.AUTH_PRIV, enums = "1,2,3", label = "security")
     private int securityLevel = SecurityLevel.AUTH_PRIV;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String securityName;
-    @UriParam(enums = "MD5,SHA1")
+    @UriParam(enums = "MD5,SHA1", label = "security")
     private String authenticationProtocol;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String authenticationPassphrase;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String privacyProtocol;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String privacyPassphrase;
     @UriParam
     private String snmpContextName;
     @UriParam
     private String snmpContextEngineId;
+    @UriParam(javaType = "java.lang.String")
+    private OIDList oids = new OIDList();
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean treeList;
+
     /**
      * creates a snmp endpoint
      *
@@ -107,7 +113,11 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        throw new UnsupportedOperationException("SnmpProducer is not implemented");
+        if (this.type == SnmpActionType.TRAP) {
+            return new SnmpTrapProducer(this);
+        } else {
+            return new SnmpProducer(this);
+        }
     }
 
     public boolean isSingleton() {
@@ -122,7 +132,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
      */
     public Exchange createExchange(PDU pdu) {
         Exchange exchange = super.createExchange();
-        exchange.setIn(new SnmpMessage(pdu));
+        exchange.setIn(new SnmpMessage(getCamelContext(), pdu));
         return exchange;
     }
 
@@ -135,7 +145,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
      */
     public Exchange createExchange(PDU pdu, CommandResponderEvent event) {
         Exchange exchange = super.createExchange();
-        exchange.setIn(new SnmpMessage(pdu, event));
+        exchange.setIn(new SnmpMessage(getCamelContext(), pdu, event));
         return exchange;
     }
 
@@ -379,9 +389,21 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         this.snmpContextEngineId = snmpContextEngineId;
     }
 
+    public boolean isTreeList() {
+        return treeList;
+    }
+
+    /**
+     * Sets the flag whether the scoped PDU will be displayed as the list
+     * if it has child elements in its tree
+     */
+    public void setTreeList(boolean treeList) {
+        this.treeList = treeList;
+    }
+
     @Override
     public String toString() {
         // only show address to avoid user and password details to be shown
-        return "SnmpEndpoint[" + address + "]";
+        return "snmp://" + address;
     }
 }

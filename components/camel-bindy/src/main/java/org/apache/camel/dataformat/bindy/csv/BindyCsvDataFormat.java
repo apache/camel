@@ -16,10 +16,10 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,12 +27,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
 import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
 import org.apache.camel.dataformat.bindy.BindyCsvFactory;
-import org.apache.camel.dataformat.bindy.annotation.Link;
+import org.apache.camel.dataformat.bindy.FormatFactory;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.IOHelper;
@@ -54,6 +56,11 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         super(type);
     }
 
+    @Override
+    public String getDataFormatName() {
+        return "bindy-csv";
+    }
+
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
 
@@ -73,7 +80,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             outputStream.write(bytesCRLF);
         }
 
-        List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> models = new ArrayList<>();
 
         // the body is not a prepared list of map that bindy expects so help a bit here and create one for us
         Iterator<Object> it = ObjectHelper.createIterator(body);
@@ -83,32 +90,45 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                 models.add((Map<String, Object>) model);
             } else {
                 String name = model.getClass().getName();
-                Map<String, Object> row = new HashMap<String, Object>(1);
+                Map<String, Object> row = new HashMap<>(1);
                 row.put(name, model);
-                // search for @Link-ed fields and add them to the model
-                for (Field field : model.getClass().getDeclaredFields()) {
-                    Link linkField = field.getAnnotation(Link.class);
-                    if (linkField != null) {
-                        boolean accessible = field.isAccessible();
-                        field.setAccessible(true);
-                        row.put(field.getType().getName(), field.get(model));
-                        field.setAccessible(accessible);
-                    }
-                } 
+                row.putAll(createLinkedFieldsModel(model));
                 models.add(row);
             }
         }
-
-        for (Map<String, Object> model : models) {
-
-            String result = factory.unbind(model);
+        
+        Iterator<Map<String, Object>> modelsMap = models.iterator();
+        while (modelsMap.hasNext()) {
+            String result = factory.unbind(getCamelContext(), modelsMap.next());
 
             byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, result);
             outputStream.write(bytes);
 
-            // Add a carriage return
-            outputStream.write(bytesCRLF);
+            if (factory.isEndWithLineBreak() || modelsMap.hasNext()) {
+                // Add a carriage return
+                outputStream.write(bytesCRLF);
+            }
         }
+    }
+
+    /**
+     * check emptyStream and if CVSRecord is allow to process emptyStreams
+     * avoid IllegalArgumentException and return empty list when unmarshalling
+     */
+    private boolean checkEmptyStream(BindyCsvFactory factory, InputStream inputStream) throws IOException {
+        boolean allowEmptyStream = factory.isAllowEmptyStream();
+        boolean isStreamEmpty = false;
+        boolean canReturnEmptyListOfModels = false;
+        
+        if (inputStream == null || inputStream.available() == 0) {
+            isStreamEmpty = true;
+        }
+        
+        if (isStreamEmpty && allowEmptyStream) {
+            canReturnEmptyListOfModels = true;
+        }
+        
+        return canReturnEmptyListOfModels;
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
@@ -116,23 +136,29 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         ObjectHelper.notNull(factory, "not instantiated");
 
         // List of Pojos
-        List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> models = new ArrayList<>();
 
         // Pojos of the model
         Map<String, Object> model;
-
-        InputStreamReader in = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
-
-        // Scanner is used to read big file
-        Scanner scanner = new Scanner(in);
-
-        // Retrieve the separator defined to split the record
-        String separator = factory.getSeparator();
-        String quote = factory .getQuote();
-        ObjectHelper.notNull(separator, "The separator has not been defined in the annotation @CsvRecord or not instantiated during initModel.");
-
-        int count = 0;
+        InputStreamReader in = null;
+        Scanner scanner = null;
         try {
+            if (checkEmptyStream(factory, inputStream)) {
+                return models;
+            }
+    
+            in = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
+    
+            // Scanner is used to read big file
+            scanner = new Scanner(in);
+    
+            // Retrieve the separator defined to split the record
+            String separator = factory.getSeparator();
+            String quote = factory.getQuote();
+            ObjectHelper.notNull(separator, "The separator has not been defined in the annotation @CsvRecord or not instantiated during initModel.");
+    
+            int count = 0;
+            
             // If the first line of the CSV file contains columns name, then we
             // skip this line
             if (factory.getSkipFirstLine()) {
@@ -141,55 +167,64 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                     scanner.nextLine();
                 }
             }
-
+    
             while (scanner.hasNextLine()) {
-
+    
                 // Read the line
                 String line = scanner.nextLine().trim();
-
+    
                 if (ObjectHelper.isEmpty(line)) {
                     // skip if line is empty
                     continue;
                 }
-
+    
                 // Increment counter
                 count++;
-
+    
                 // Create POJO where CSV data will be stored
                 model = factory.factory();
-
+    
                 // Split the CSV record according to the separator defined in
                 // annotated class @CSVRecord
-                String[] tokens = line.split(separator, -1);
+                Pattern pattern = Pattern.compile(separator);
+                Matcher matcher = pattern.matcher(line);
+                List<String> separators = new ArrayList<>();
+                
+                // Retrieve separators for each match
+                while (matcher.find()) {
+                    separators.add(matcher.group());
+                }
+                // Add terminal separator
+                if (separators.size() > 0) {
+                    separators.add(separators.get(separators.size() - 1));
+                }
+                
+                String[] tokens = pattern.split(line, factory.getAutospanLine() ? factory.getMaxpos() : -1);
                 List<String> result = Arrays.asList(tokens);
                 // must unquote tokens before use
-                result = unquoteTokens(result, separator, quote);
-
+                result = unquoteTokens(result, separators, quote);
+    
                 if (result.size() == 0 || result.isEmpty()) {
                     throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
                 } else {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Size of the record splitted : {}", result.size());
                     }
-
-                    if (factory.getAutospanLine()) {
-                        result = autospanLine(result, factory.getMaxpos(), separator);
-                    }
-
+    
                     // Bind data from CSV record with model classes
-                    factory.bind(result, model, count);
-
+                    factory.bind(getCamelContext(), result, model, count);
+    
                     // Link objects together
                     factory.link(model);
-
+    
                     // Add objects graph to the list
                     models.add(model);
-
+    
                     LOG.debug("Graph of objects created: {}", model);
                 }
             }
-
-            // Test if models list is empty or not
+    
+            // BigIntegerFormatFactory if models list is empty or not
             // If this is the case (correspond to an empty stream, ...)
             if (models.size() == 0) {
                 throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
@@ -198,42 +233,14 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             }
 
         } finally {
-            scanner.close();
-            IOHelper.close(in, "in", LOG);
-        }
-
-    }
-
-    /**
-     * Concatenate "the rest of the line" as the last record. Works similar as if quoted
-     *
-     * @param result    input result set
-     * @param maxpos    position of maximum record
-     * @param separator csv separator char
-     * @return List<String> with concatenated last record
-     */
-    private static List<String> autospanLine(final List<String> result, final int maxpos, final String separator) {
-        if (result.size() <= maxpos) {
-            return result;
-        }
-
-        final List<String> answer = new ArrayList<String>();
-        final StringBuilder lastRecord = new StringBuilder();
-
-        final Iterator<String> it = result.iterator();
-        for (int counter = 0; counter < maxpos - 1; counter++) {
-            answer.add(it.next());
-        }
-
-        while (it.hasNext()) {
-            lastRecord.append(it.next());
-            if (it.hasNext()) {
-                lastRecord.append(separator);
+            if (scanner != null) {
+                scanner.close();
+            }
+            if (in != null) {
+                IOHelper.close(in, "in", LOG);
             }
         }
-        answer.add(lastRecord.toString());
 
-        return answer;
     }
 
     /**
@@ -241,61 +248,71 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
      * as will handling fixing broken tokens which may have been split
      * by a separator inside a quote.
      */
-    private List<String> unquoteTokens(List<String> result, String separator, String quote) {
+    private List<String> unquoteTokens(List<String> result, List<String> separators, String quote) {
         // a current quoted token which we assemble from the broken pieces
         // we need to do this as we use the split method on the String class
         // to split the line using regular expression, and it does not handle
         // if the separator char is also inside a quoted token, therefore we need
         // to fix this afterwards
         StringBuilder current = new StringBuilder();
+        boolean inProgress = false;
+        List<String> answer = new ArrayList<>();
+        int idxSeparator = 0;
 
-        List<String> answer = new ArrayList<String>();
+        //parsing assumes matching close and end quotes
         for (String s : result) {
-            boolean startQuote = false;
-            boolean endQuote = false;
+            boolean canStart = false;
+            boolean canClose = false;
+            boolean cutStart = false;
+            boolean cutEnd = false;
             if (s.startsWith(quote)) {
-                s = s.substring(1);
-                startQuote = true;
-            }
-            if (s.endsWith(quote)) {
-                s = s.substring(0, s.length() - 1);
-                endQuote = true;
-            }
-
-            // are we in progress of rebuilding a broken token
-            boolean currentInProgress = current.length() > 0;
-
-            // situation when field ending with a separator symbol.
-            if (currentInProgress && startQuote && s.isEmpty()) {
-                // Add separator, append current and reset it
-                current.append(separator);
-                answer.add(current.toString());
-                current.setLength(0);
-                continue;
-            }
-
-            // if we hit a start token then rebuild a broken token
-            if (currentInProgress || startQuote) {
-                // append to current if we are in the middle of a start quote
-                if (currentInProgress) {
-                    // must append separator back as this is a quoted token that was broken
-                    // but a separator inside the quotes
-                    current.append(separator);
+                //token is just a quote
+                if (s.length() == 1) {
+                    s = "";
+                    //if token is a quote then it can only close processing if it has begun
+                    if (inProgress) {
+                        canClose = true;
+                    } else {
+                        canStart = true;
+                    }
+                } else {
+                    //quote+"not empty"
+                    cutStart = true;
+                    canStart = true;
                 }
-                current.append(s);
+            }
+
+            //"not empty"+quote
+            if (s.endsWith(quote)) {
+                cutEnd = true;
+                canClose = true;
+            }
+
+            //optimize to only substring once
+            if (cutEnd || cutStart) {
+                s = s.substring(cutStart ? 1 : 0, cutEnd ? s.length() - 1 : s.length());
             }
 
             // are we in progress of rebuilding a broken token
-            currentInProgress = current.length() > 0;
+            if (inProgress) {
+                current.append(separators.get(idxSeparator));
+                current.append(s);
 
-            if (endQuote) {
-                // we hit end quote so append current and reset it
-                answer.add(current.toString());
-                current.setLength(0);
-            } else if (!currentInProgress) {
-                // not rebuilding so add directly as is
-                answer.add(s);
+                if (canClose) {
+                    answer.add(current.toString());
+                    current.setLength(0);
+                    inProgress = false;
+                }
+            } else {
+                if (canStart && !canClose) {
+                    current.append(s);
+                    inProgress = true;
+                } else {
+                    //case where no quotes
+                    answer.add(s);
+                }
             }
+            idxSeparator++;
         }
 
         // any left over from current?
@@ -308,7 +325,9 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     }
 
     @Override
-    protected BindyAbstractFactory createModelFactory() throws Exception {
-        return new BindyCsvFactory(getClassType());
+    protected BindyAbstractFactory createModelFactory(FormatFactory formatFactory) throws Exception {
+        BindyCsvFactory bindyCsvFactory = new BindyCsvFactory(getClassType());
+        bindyCsvFactory.setFormatFactory(formatFactory);
+        return bindyCsvFactory;
     }
 }

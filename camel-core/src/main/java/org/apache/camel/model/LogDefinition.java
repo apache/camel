@@ -17,21 +17,26 @@
 package org.apache.camel.model;
 
 import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
+import org.apache.camel.processor.DefaultMaskingFormatter;
 import org.apache.camel.processor.LogProcessor;
+import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +45,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@Metadata(label = "configuration")
+@Metadata(label = "eip,configuration")
 @XmlRootElement(name = "log")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LogDefinition extends NoOutputDefinition<LogDefinition> {
@@ -72,13 +77,18 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
     }
     
     @Override
+    public String getShortName() {
+        return "log";
+    }
+
+    @Override
     public String getLabel() {
         return "log";
     }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        ObjectHelper.notEmpty(message, "message", this);
+        StringHelper.notEmpty(message, "message", this);
 
         // use simple language for the message string to give it more power
         Expression exp = routeContext.getCamelContext().resolveLanguage("simple").createExpression(message);
@@ -106,8 +116,14 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         if (logger == null) {
             String name = getLogName();
             if (name == null) {
+                name = routeContext.getCamelContext().getGlobalOption(Exchange.LOG_EIP_NAME);
+                if (name != null) {
+                    LOG.debug("Using logName from CamelContext properties: {}", name);
+                }
+            }
+            if (name == null) {
                 name = routeContext.getRoute().getId();
-                LOG.debug("The LogName is null. Falling back to create logger by using the route id {}.", name);
+                LOG.debug("LogName is not configured, using route id as logName: {}", name);
             }
             logger = LoggerFactory.getLogger(name);
         }
@@ -116,7 +132,18 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         LoggingLevel level = getLoggingLevel() != null ? getLoggingLevel() : LoggingLevel.INFO;
         CamelLogger camelLogger = new CamelLogger(logger, level, getMarker());
 
-        return new LogProcessor(exp, camelLogger);
+        return new LogProcessor(exp, camelLogger, getMaskingFormatter(routeContext), routeContext.getCamelContext().getLogListeners());
+    }
+
+    private MaskingFormatter getMaskingFormatter(RouteContext routeContext) {
+        if (routeContext.isLogMask()) {
+            MaskingFormatter formatter = routeContext.getCamelContext().getRegistry().lookupByNameAndType(Constants.CUSTOM_LOG_MASK_REF, MaskingFormatter.class);
+            if (formatter == null) {
+                formatter = new DefaultMaskingFormatter();
+            }
+            return formatter;
+        }
+        return null;
     }
 
     @Override

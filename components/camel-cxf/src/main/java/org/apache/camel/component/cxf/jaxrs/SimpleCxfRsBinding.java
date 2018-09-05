@@ -43,6 +43,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultAttachment;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.InputStreamDataSource;
@@ -105,7 +106,7 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
 
     /** The JAX-RS annotations to be injected as headers in the IN message */
     private static final Set<Class<?>> HEADER_ANNOTATIONS = Collections.unmodifiableSet(
-            new HashSet<Class<?>>(Arrays.asList(new Class<?>[]{ 
+            new HashSet<>(Arrays.asList(new Class<?>[] {
                 CookieParam.class, 
                 FormParam.class, 
                 PathParam.class,
@@ -114,7 +115,7 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
                 QueryParam.class})));
     
     private static final Set<Class<?>> BINARY_ATTACHMENT_TYPES = Collections.unmodifiableSet(
-            new HashSet<Class<?>>(Arrays.asList(new Class<?>[] {
+            new HashSet<>(Arrays.asList(new Class<?>[] {
                 Attachment.class,
                 DataHandler.class,
                 DataSource.class,
@@ -125,7 +126,7 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
     private static final Object[] NO_PARAMETERS = null;
     
     /** Caches the Method to Parameters associations to avoid reflection with every request */
-    private Map<Method, MethodSpec> methodSpecCache = new ConcurrentHashMap<Method, MethodSpec>();
+    private Map<Method, MethodSpec> methodSpecCache = new ConcurrentHashMap<>();
    
 
     @Override
@@ -191,15 +192,17 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
      * <p />
      * The {@link DefaultCxfRsBinding} doesn't filter the response headers according to the {@link HeaderFilterStrategy}, 
      * so we handle this task in this binding.
-     * @param headers
-     * @param camelExchange
-     * @return
      */
     protected Map<String, String> filterCamelHeadersForResponseHeaders(Map<String, Object> headers,
                                                                      org.apache.camel.Exchange camelExchange) {
-        Map<String, String> answer = new HashMap<String, String>();
+        Map<String, String> answer = new HashMap<>();
         for (Map.Entry<String, Object> entry : headers.entrySet()) {
             if (getHeaderFilterStrategy().applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), camelExchange)) {
+                continue;
+            }
+            // skip content-length as the simple binding with Response will set correct content-length based
+            // on the entity set as the Response
+            if ("content-length".equalsIgnoreCase(entry.getKey())) {
                 continue;
             }
             answer.put(entry.getKey(), entry.getValue().toString());
@@ -277,21 +280,31 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
     }
 
     private void transferBinaryMultipartParameter(Object toMap, String parameterName, String multipartType, Message in) {
-        DataHandler dh = null;
+        org.apache.camel.Attachment dh = null;
         if (toMap instanceof Attachment) {
-            dh = ((Attachment) toMap).getDataHandler();
+            dh = createCamelAttachment((Attachment) toMap);
         } else if (toMap instanceof DataSource) {
-            dh = new DataHandler((DataSource) toMap);
+            dh = new DefaultAttachment((DataSource) toMap);
         } else if (toMap instanceof DataHandler) {
-            dh = (DataHandler) toMap;
+            dh = new DefaultAttachment((DataHandler) toMap);
         } else if (toMap instanceof InputStream) {
-            dh = new DataHandler(new InputStreamDataSource((InputStream) toMap, multipartType == null ? "application/octet-stream" : multipartType));
+            dh = new DefaultAttachment(new InputStreamDataSource((InputStream) toMap, multipartType == null ? "application/octet-stream" : multipartType));
         }
         if (dh != null) {
-            in.addAttachment(parameterName, dh);
+            in.addAttachmentObject(parameterName, dh);
         }
     }
-    
+
+    private DefaultAttachment createCamelAttachment(Attachment attachment) {
+        DefaultAttachment camelAttachment = new DefaultAttachment(attachment.getDataHandler());
+        for (String name : attachment.getHeaders().keySet()) {
+            for (String value : attachment.getHeaderAsList(name)) {
+                camelAttachment.addHeader(name, value);
+            }
+        }
+        return camelAttachment;
+    }
+
     protected static class MethodSpec {
         private boolean multipart;
         private int numberParameters;

@@ -21,6 +21,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.junit.Test;
 
 // START SNIPPET: example
+// tag::example[]
 // to use camel-test-blueprint, then extend the CamelBlueprintTestSupport class,
 // and add your unit tests methods as shown below.
 public class DebugBlueprintTest extends CamelBlueprintTestSupport {
@@ -33,7 +34,7 @@ public class DebugBlueprintTest extends CamelBlueprintTestSupport {
     protected String getBlueprintDescriptor() {
         return "org/apache/camel/test/blueprint/camelContext.xml";
     }
-   
+
     // here we have regular JUnit @Test method
     @Test
     public void testRoute() throws Exception {
@@ -70,4 +71,5 @@ public class DebugBlueprintTest extends CamelBlueprintTestSupport {
         debugAfterMethodCalled = true;
     }
 }
+// end::example[]
 // END SNIPPET: example

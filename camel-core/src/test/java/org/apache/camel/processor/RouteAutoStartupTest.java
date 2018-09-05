@@ -16,8 +16,11 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.properties.PropertiesComponent;
 
@@ -26,6 +29,7 @@ import org.apache.camel.component.properties.PropertiesComponent;
  */
 public class RouteAutoStartupTest extends ContextTestSupport {
 
+    @Test
     public void testRouteAutoStartedUsingBoolean() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -41,7 +45,10 @@ public class RouteAutoStartupTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRouteNotAutoStartedUsingBoolean() throws Exception {
+        context.getComponent("direct", DirectComponent.class).setBlock(false);
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -70,6 +77,7 @@ public class RouteAutoStartupTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRouteAutoStartedUsingString() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -85,7 +93,10 @@ public class RouteAutoStartupTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRouteNotAutoStartedUsingString() throws Exception {
+        context.getComponent("direct", DirectComponent.class).setBlock(false);
+        
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -114,6 +125,7 @@ public class RouteAutoStartupTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRouteAutoStartedUsingProperties() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -134,7 +146,10 @@ public class RouteAutoStartupTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRouteNotAutoStartedUsingProperties() throws Exception {
+        context.getComponent("direct", DirectComponent.class).setBlock(false);
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

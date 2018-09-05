@@ -34,10 +34,11 @@ public class GoogleDriveConfiguration {
     private static final List<String> DEFAULT_SCOPES = Arrays.asList(DriveScopes.DRIVE_FILE, DriveScopes.DRIVE_APPS_READONLY, DriveScopes.DRIVE_METADATA_READONLY,
             DriveScopes.DRIVE);
 
-    @UriPath @Metadata(required = "true")
+    @UriPath(enums = "drive-about,drive-apps,drive-changes,drive-channels,drive-children,drive-comments,drive-files,drive-parents"
+            + ",drive-permissions,drive-properties,drive-realtime,drive-replies,drive-revisions") @Metadata(required = "true")
     private GoogleDriveApiName apiName;
 
-    @UriPath(enums = "copy,delete,get,getIdForEmail,insert,list,patch,stop,touch,untrash,update,watch")
+    @UriPath(enums = "copy,delete,get,getIdForEmail,insert,list,patch,stop,touch,trash,untrash,update,watch")
     @Metadata(required = "true")
     private String methodName;
     

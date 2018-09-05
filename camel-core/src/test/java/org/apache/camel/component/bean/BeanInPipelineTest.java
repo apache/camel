@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
@@ -27,6 +29,7 @@ import org.apache.camel.util.jndi.JndiContext;
  */
 public class BeanInPipelineTest extends ContextTestSupport {
 
+    @Test
     public void testBeanInPipeline() throws Exception {
         Object response = template.requestBody("direct:start", "Start:");
         assertEquals("Start:onetwothree", response);

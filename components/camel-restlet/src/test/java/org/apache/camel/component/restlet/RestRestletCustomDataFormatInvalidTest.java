@@ -62,7 +62,7 @@ public class RestRestletCustomDataFormatInvalidTest extends RestletTestSupport {
             context.start();
             fail("Should have thrown exception");
         } catch (FailedToCreateRouteException e) {
-            assertEquals("JsonDataFormat name: bla must not be an existing bean instance from the registry", e.getCause().getMessage());
+            assertTrue(e.getCause().getMessage().contains("JsonDataFormat name: bla must not be an existing bean instance from the registry"));
         }
     }
 

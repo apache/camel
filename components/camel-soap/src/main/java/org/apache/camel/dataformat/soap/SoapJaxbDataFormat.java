@@ -30,8 +30,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBIntrospector;
 import javax.xml.namespace.QName;
 
-import org.xml.sax.SAXException;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
@@ -92,6 +90,11 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
     }
 
     @Override
+    public String getDataFormatName() {
+        return "soapjaxb";
+    }
+
+    @Override
     protected void doStart() throws Exception {
         if ("1.2".equals(version)) {
             LOG.debug("Using SOAP 1.2 adapter");
@@ -127,9 +130,8 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      * 
      * To determine the name of the top level xml elements the elementNameStrategy
      * is used.
-     * @throws IOException,SAXException 
      */
-    public void marshal(Exchange exchange, Object inputObject, OutputStream stream) throws IOException, SAXException {
+    public void marshal(Exchange exchange, Object inputObject, OutputStream stream) throws IOException {
         checkElementNameStrategy(exchange);
 
         String soapAction = getSoapActionFromExchange(exchange);
@@ -165,13 +167,13 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      */
     protected List<Object> createContentFromObject(final Object inputObject, String soapAction,
                                                          List<Object> headerElements) {
-        List<Object> bodyParts = new ArrayList<Object>();
-        List<Object> headerParts = new ArrayList<Object>();
+        List<Object> bodyParts = new ArrayList<>();
+        List<Object> headerParts = new ArrayList<>();
         if (inputObject instanceof BeanInvocation) {
             BeanInvocation bi = (BeanInvocation)inputObject;
             Annotation[][] annotations = bi.getMethod().getParameterAnnotations();
 
-            List<WebParam> webParams = new ArrayList<WebParam>();
+            List<WebParam> webParams = new ArrayList<>();
             for (Annotation[] singleParameterAnnotations : annotations) {
                 for (Annotation annotation : singleParameterAnnotations) {
                     if (annotation instanceof WebParam) {
@@ -206,7 +208,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
             bodyParts.add(inputObject);
         }
 
-        List<Object> bodyElements = new ArrayList<Object>();
+        List<Object> bodyElements = new ArrayList<>();
         for (Object bodyObj : bodyParts) {
             QName name = elementNameStrategy.findQNameForSoapActionOrType(soapAction, bodyObj.getClass());
             if (name == null) {
@@ -256,9 +258,8 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
     
     /**
      * Unmarshal a given SOAP xml stream and return the content of the SOAP body
-     * @throws IOException,SAXException
      */
-    public Object unmarshal(Exchange exchange, InputStream stream) throws IOException, SAXException {
+    public Object unmarshal(Exchange exchange, InputStream stream) throws IOException {
         checkElementNameStrategy(exchange);
         
         String soapAction = getSoapActionFromExchange(exchange);

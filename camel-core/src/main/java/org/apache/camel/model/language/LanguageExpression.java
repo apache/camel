@@ -24,12 +24,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Represents a parameterised language expression which can support any language
- * at runtime using the language attribute.
+ * To use the specified language in Camel expressions or predicates.
  *
  * @version 
  */
-@Metadata(label = "language", title = "Language")
+@Metadata(label = "language,core", title = "Language")
 @XmlRootElement(name = "language")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LanguageExpression extends ExpressionDefinition {

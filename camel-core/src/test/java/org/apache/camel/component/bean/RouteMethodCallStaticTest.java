@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class RouteMethodCallStaticTest extends ContextTestSupport {
 
+    @Test
     public void testStaticMethodCall() throws Exception {
         getMockEndpoint("mock:camel").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:other").expectedBodiesReceived("Hello World");

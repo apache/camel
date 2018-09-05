@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -33,11 +36,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileConsumerFailureHandledTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/messages/input");
         super.setUp();
     }
 
+    @Test
     public void testParis() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:valid");
         mock.expectedBodiesReceived("Hello Paris");
@@ -50,6 +55,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         assertFiles("paris.txt", true);
     }
 
+    @Test
     public void testLondon() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:invalid");
         // we get the original input so its not Hello London but only London
@@ -64,6 +70,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         assertFiles("london.txt", true);
     }
     
+    @Test
     public void testDublin() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:beer");
         // we get the original input so its not Hello London but only London
@@ -78,6 +85,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         assertFiles("dublin.txt", false);
     }
 
+    @Test
     public void testMadrid() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:error");
         // we get the original input so its not Hello London but only London
@@ -118,7 +126,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
                 onException(ValidationException.class).handled(true).to("mock:invalid");
 
                 // our route logic to process files from the input folder
-                from("file:target/messages/input/?delete=true").
+                from("file:target/messages/input/?initialDelay=0&delay=10&delete=true").
                     process(new MyValidatorProcessor()).
                     to("mock:valid");
             }

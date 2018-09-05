@@ -16,14 +16,18 @@
  */
 package org.apache.camel.component.restlet;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -31,18 +35,15 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.restlet.data.Method;
 
 /**
- * Represents a <a href="http://www.restlet.org/"> endpoint</a>
- *
- * @version 
+ * Component for consuming and producing Restful resources using Restlet.
  */
-@UriEndpoint(scheme = "restlet", title = "Restlet", syntax = "restlet:protocol:host:port/uriPattern", consumerClass = RestletConsumer.class, label = "rest")
-public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
-
+@UriEndpoint(firstVersion = "2.0.0", scheme = "restlet", title = "Restlet", syntax = "restlet:protocol:host:port/uriPattern",
+        consumerClass = RestletConsumer.class, label = "rest", lenientProperties = true)
+public class RestletEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
     private static final int DEFAULT_PORT = 80;
     private static final String DEFAULT_PROTOCOL = "http";
     private static final String DEFAULT_HOST = "localhost";
@@ -55,33 +56,46 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     private String host = DEFAULT_HOST;
     @UriPath(defaultValue = "80") @Metadata(required = "true")
     private int port = DEFAULT_PORT;
-    @UriPath @Metadata(required = "true")
+    @UriPath
     private String uriPattern;
     @UriParam(label = "producer", defaultValue = "" + DEFAULT_SOCKET_TIMEOUT)
     private int socketTimeout = DEFAULT_SOCKET_TIMEOUT;
     @UriParam(label = "producer", defaultValue = "" + DEFAULT_CONNECT_TIMEOUT)
     private int connectTimeout = DEFAULT_CONNECT_TIMEOUT;
-    @UriParam(defaultValue = "GET")
+    @UriParam(defaultValue = "GET", enums = "ALL,CONNECT,DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT,TRACE")
     private Method restletMethod = Method.GET;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", javaType = "java.lang.String")
     private Method[] restletMethods;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
+    @Deprecated
     private List<String> restletUriPatterns;
-    @UriParam
+    @UriParam(label = "security")
     private Map<String, String> restletRealm;
-    @UriParam
+    @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy;
-    @UriParam
+    @UriParam(label = "advanced")
     private RestletBinding restletBinding;
     @UriParam(label = "producer", defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private boolean disableStreamCache;
-    @UriParam
+    @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+    @UriParam(label = "producer,advanced")
+    private boolean streamRepresentation;
+    @UriParam(label = "producer,advanced")
+    private boolean autoCloseStream;
+    @UriParam(label = "producer")
+    private CookieHandler cookieHandler;
+    // should NOT be exposes as @UriParam
+    private transient Map<String, Object> queryParameters;
 
     public RestletEndpoint(RestletComponent component, String remaining) throws Exception {
         super(remaining, component);
+    }
+
+    public void setCompleteEndpointUri(String uri) {
+        setEndpointUri(uri);
     }
 
     public boolean isSingleton() {
@@ -244,6 +258,7 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     /**
      * Specify one or more methods separated by commas (e.g. restletMethods=post,put) to be serviced by a restlet consumer endpoint.
      * If both restletMethod and restletMethods options are specified, the restletMethod setting is ignored.
+     * The possible methods are: ALL,CONNECT,DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT,TRACE
      */
     public void setRestletMethods(Method[] restletMethods) {
         this.restletMethods = restletMethods;
@@ -258,10 +273,12 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
      * reference a List<String> in the Camel Registry.
      * If a URI pattern has been defined in the endpoint URI, both the URI pattern defined in the endpoint and the restletUriPatterns option will be honored.
      */
+    @Deprecated
     public void setRestletUriPatterns(List<String> restletUriPatterns) {
         this.restletUriPatterns = restletUriPatterns;
     }
 
+    @Deprecated
     public List<String> getRestletUriPatterns() {
         return restletUriPatterns;
     }
@@ -306,23 +323,57 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         this.sslContextParameters = scp;
     }
 
-    // Update the endpointUri with the restlet method information
-    protected void updateEndpointUri() {
-        String endpointUri = getEndpointUri();
-        CollectionStringBuffer methods = new CollectionStringBuffer(",");
-        if (getRestletMethods() != null && getRestletMethods().length > 0) {
-            // list the method(s) as a comma seperated list
-            for (Method method : getRestletMethods()) {
-                methods.append(method.getName());
-            }
-        } else {
-            // otherwise consider the single method we own
-            methods.append(getRestletMethod());
-        }
+    public boolean isStreamRepresentation() {
+        return streamRepresentation;
+    }
 
-        // update the uri
-        endpointUri = endpointUri + "?restletMethods=" + methods;
-        setEndpointUri(endpointUri);
+    /**
+     * Whether to support stream representation as response from calling a REST service using the restlet producer.
+     * If the response is streaming then this option can be enabled to use an {@link java.io.InputStream} as the
+     * message body on the Camel {@link Message} body. If using this option you may want to enable the
+     * autoCloseStream option as well to ensure the input stream is closed when the Camel {@link Exchange}
+     * is done being routed. However if you need to read the stream outside a Camel route, you may need
+     * to not auto close the stream.
+     */
+    public void setStreamRepresentation(boolean streamRepresentation) {
+        this.streamRepresentation = streamRepresentation;
+    }
+
+    public boolean isAutoCloseStream() {
+        return autoCloseStream;
+    }
+
+    /**
+     * Whether to auto close the stream representation as response from calling a REST service using the restlet producer.
+     * If the response is streaming and the option streamRepresentation is enabled then you may want to auto close
+     * the {@link InputStream} from the streaming response to ensure the input stream is closed when the Camel {@link Exchange}
+     * is done being routed. However if you need to read the stream outside a Camel route, you may need
+     * to not auto close the stream.
+     */
+    public void setAutoCloseStream(boolean autoCloseStream) {
+        this.autoCloseStream = autoCloseStream;
+    }
+
+    public CookieHandler getCookieHandler() {
+        return cookieHandler;
+    }
+
+    /**
+     * Configure a cookie handler to maintain a HTTP session
+     */
+    public void setCookieHandler(CookieHandler cookieHandler) {
+        this.cookieHandler = cookieHandler;
+    }
+
+    public Map<String, Object> getQueryParameters() {
+        return queryParameters;
+    }
+
+    /**
+     * Additional query parameters for producer
+     */
+    public void setQueryParameters(Map<String, Object> queryParameters) {
+        this.queryParameters = queryParameters;
     }
 
     @Override
@@ -335,6 +386,10 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
         }
         if (restletBinding instanceof HeaderFilterStrategyAware) {
             ((HeaderFilterStrategyAware) restletBinding).setHeaderFilterStrategy(getHeaderFilterStrategy());
+        }
+        if (restletBinding instanceof DefaultRestletBinding) {
+            ((DefaultRestletBinding) restletBinding).setStreamRepresentation(isStreamRepresentation());
+            ((DefaultRestletBinding) restletBinding).setAutoCloseStream(isAutoCloseStream());
         }
     }
 

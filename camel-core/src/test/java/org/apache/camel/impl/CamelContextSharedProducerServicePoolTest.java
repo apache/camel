@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -33,7 +35,7 @@ public class CamelContextSharedProducerServicePoolTest extends ContextTestSuppor
         private boolean start;
         private boolean stop;
 
-        public MyProducer(Endpoint endpoint) throws Exception {
+        MyProducer(Endpoint endpoint) throws Exception {
             super(endpoint);
             start();
         }
@@ -57,6 +59,7 @@ public class CamelContextSharedProducerServicePoolTest extends ContextTestSuppor
         }
     }
 
+    @Test
     public void testSharedProducerServicePool() throws Exception {
         // the default capacity
         assertEquals(100, context.getProducerServicePool().getCapacity());
@@ -66,6 +69,7 @@ public class CamelContextSharedProducerServicePoolTest extends ContextTestSuppor
         assertEquals(25, context.getProducerServicePool().getCapacity());
     }
 
+    @Test
     public void testSharedProducerServicePoolHitMax() throws Exception {
         // the default capacity
         assertEquals(100, context.getProducerServicePool().getCapacity());

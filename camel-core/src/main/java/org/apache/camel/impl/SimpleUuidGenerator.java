@@ -21,7 +21,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.camel.spi.UuidGenerator;
 
 /**
- * This implementation uses a counter which increments by one
+ * This implementation uses a counter which increments by one.
+ * This generator is not unique per host or JVM, as its private per CamelContext.
  */
 public class SimpleUuidGenerator implements UuidGenerator {
     

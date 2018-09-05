@@ -29,6 +29,8 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
+ * The jira component interacts with the JIRA issue tracker.
+ *
  * The endpoint encapsulates portions of the JIRA API, relying on the jira-rest-java-client SDK.
  * Available endpoint URIs include:
  * 
@@ -43,7 +45,7 @@ import org.apache.camel.spi.UriPath;
  * - the types of payloads we're polling aren't typically large (plus, paging is available in the API)
  * - need to support apps running somewhere not publicly accessible where a webhook would fail
  */
-@UriEndpoint(scheme = "jira", title = "JIRA", syntax = "jira:type", label = "api,reporting")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "jira", title = "JIRA", syntax = "jira:type", label = "api,reporting")
 public class JIRAEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")

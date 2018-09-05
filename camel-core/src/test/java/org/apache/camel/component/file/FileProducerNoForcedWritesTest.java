@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -26,15 +29,18 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileProducerNoForcedWritesTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/file");
         super.setUp();
-        template.sendBodyAndHeader("file://target/file", "Hello World", Exchange.FILE_NAME, "hello.txt");
     }
 
+    @Test
     public void testNoForcedWrites() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
+
+        template.sendBodyAndHeader("file://target/file", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
 
@@ -50,8 +56,11 @@ public class FileProducerNoForcedWritesTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/file?noop=true").multicast().to("file:target/file/?fileName=output.txt&forceWrites=false",
-                    "file:target/file/?fileName=output2.txt&charset=iso-8859-1&forceWrites=false").to("mock:result");
+                from("file:target/file?initialDelay=0&delay=10&noop=true")
+                    .multicast().to(
+                        "file:target/file/?fileName=output.txt&forceWrites=false",
+                        "file:target/file/?fileName=output2.txt&charset=iso-8859-1&forceWrites=false")
+                    .to("mock:result");
             }
         };
     }

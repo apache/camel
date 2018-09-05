@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.EventObject;
 
@@ -34,7 +37,8 @@ public class ManagedCamelContextRestartTest extends ManagementTestSupport {
     private int stops;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
 
         super.setUp();
 
@@ -58,6 +62,7 @@ public class ManagedCamelContextRestartTest extends ManagementTestSupport {
         });
     }
 
+    @Test
     public void testManagedCamelContext() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -74,6 +79,9 @@ public class ManagedCamelContextRestartTest extends ManagementTestSupport {
 
         String uptime = (String) mbeanServer.getAttribute(on, "Uptime");
         assertNotNull(uptime);
+
+        long uptimeMillis = (Long) mbeanServer.getAttribute(on, "UptimeMillis");
+        assertTrue(uptimeMillis > 0);
 
         String status = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Started", status);
@@ -104,7 +112,7 @@ public class ManagedCamelContextRestartTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:foo").transform(constant("Bye World"));
+                from("direct:foo").delay(10).transform(constant("Bye World"));
             }
         };
     }

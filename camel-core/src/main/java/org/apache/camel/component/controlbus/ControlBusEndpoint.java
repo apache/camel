@@ -31,9 +31,11 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.CamelLogger;
 
 /**
- * The control bus endpoint.
+ * The controlbus component provides easy management of Camel applications based on the Control Bus EIP pattern.
+ *
+ * For example, by sending a message to an Endpoint you can control the lifecycle of routes, or gather performance statistics.
  */
-@UriEndpoint(scheme = "controlbus", title = "Control Bus", syntax = "controlbus:command:language", producerOnly = true, label = "core,monitoring")
+@UriEndpoint(firstVersion = "2.11.0", scheme = "controlbus", title = "Control Bus", syntax = "controlbus:command:language", producerOnly = true, label = "core,monitoring")
 public class ControlBusEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Command can be either route or language", enums = "route,language") @Metadata(required = "true")
@@ -42,8 +44,10 @@ public class ControlBusEndpoint extends DefaultEndpoint {
     private Language language;
     @UriParam
     private String routeId;
-    @UriParam(enums = "start,stop,suspend,resume,status")
+    @UriParam(enums = "start,stop,suspend,resume,restart,status,stats")
     private String action;
+    @UriParam(defaultValue = "1000")
+    private int restartDelay = 1000;
     @UriParam
     private boolean async;
     @UriParam(defaultValue = "INFO")
@@ -93,6 +97,7 @@ public class ControlBusEndpoint extends DefaultEndpoint {
 
     /**
      * To specify a route by its id.
+     * The special keyword "current" indicates the current route.
      */
     public void setRouteId(String routeId) {
         this.routeId = routeId;
@@ -109,10 +114,21 @@ public class ControlBusEndpoint extends DefaultEndpoint {
      * You can use suspend and resume from Camel 2.11.1 onwards to either suspend or resume a route.
      * And from Camel 2.11.1 onwards you can use stats to get performance statics returned in XML format;
      * the routeId option can be used to define which route to get the performance stats for, if routeId is not defined,
-     * then you get statistics for the entire CamelContext.
+     * then you get statistics for the entire CamelContext. The restart action will restart the route.
      */
     public void setAction(String action) {
         this.action = action;
+    }
+
+    public int getRestartDelay() {
+        return restartDelay;
+    }
+
+    /**
+     * The delay in millis to use when restarting a route.
+     */
+    public void setRestartDelay(int restartDelay) {
+        this.restartDelay = restartDelay;
     }
 
     public boolean isAsync() {

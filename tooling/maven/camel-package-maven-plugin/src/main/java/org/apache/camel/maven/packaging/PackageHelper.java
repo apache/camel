@@ -19,6 +19,7 @@ package org.apache.camel.maven.packaging;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -26,6 +27,7 @@ import java.io.LineNumberReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.logging.Log;
@@ -45,7 +47,9 @@ public final class PackageHelper {
                 file = new File(r.getDirectory().substring(baseDir.length() + 1));
             }
             String path = file.getPath() + "/" + suffix;
-            log.debug("checking  if " + path + " (" + r.getDirectory() + "/" + suffix + ") has changed.");
+            if (log.isDebugEnabled()) {
+                log.debug("checking  if " + path + " (" + r.getDirectory() + "/" + suffix + ") has changed.");
+            }
             if (buildContext.hasDelta(path)) {
                 log.debug("Indeed " + suffix + " has changed.");
                 return true;
@@ -83,6 +87,15 @@ public final class PackageHelper {
         }
     }
 
+    public static void writeText(File file, String text) throws IOException {
+        FileOutputStream fos = new FileOutputStream(file, false);
+        try {
+            fos.write(text.getBytes());
+        } finally {
+            fos.close();
+        }
+    }
+
     public static String after(String text, String after) {
         if (!text.contains(after)) {
             return null;
@@ -96,7 +109,7 @@ public final class PackageHelper {
      * @return the map
      */
     public static Map<String, String> parseAsMap(String data) {
-        Map<String, String> answer = new HashMap<String, String>();
+        Map<String, String> answer = new HashMap<>();
         if (data != null) {
             String[] lines = data.split("\n");
             for (String line : lines) {
@@ -111,6 +124,13 @@ public final class PackageHelper {
             }
         }
         return answer;
+    }
+
+    public static Set<File> findJsonFiles(File dir, FileFilter filter) {
+        Set<File> files = new TreeSet<>();
+        findJsonFiles(dir, files, filter);
+
+        return files;
     }
 
     public static void findJsonFiles(File dir, Set<File> found, FileFilter filter) {
@@ -133,10 +153,34 @@ public final class PackageHelper {
         @Override
         public boolean accept(File pathname) {
             // skip camel-jetty9 as its a duplicate of camel-jetty
-            if ("camel-jetty9".equals(pathname)) {
+            if ("camel-jetty9".equals(pathname.getName())) {
                 return false;
             }
             return pathname.isDirectory() || pathname.getName().endsWith(".json");
+        }
+    }
+
+    public static class CamelOthersModelFilter implements FileFilter {
+
+        @Override
+        public boolean accept(File pathname) {
+            String name = pathname.getName();
+            boolean special = "camel-core-osgi".equals(name)
+                || "camel-core-xml".equals(name)
+                || "camel-http-common".equals(name)
+                || "camel-jetty".equals(name)
+                || "camel-jetty-common".equals(name);
+            boolean special2 = "camel-as2".equals(name)
+                || "camel-box".equals(name)
+                || "camel-linkedin".equals(name)
+                || "camel-olingo2".equals(name)
+                || "camel-olingo4".equals(name)
+                || "camel-salesforce".equals(name);
+            if (special || special2) {
+                return false;
+            }
+
+            return pathname.isDirectory() || name.endsWith(".json");
         }
     }
 

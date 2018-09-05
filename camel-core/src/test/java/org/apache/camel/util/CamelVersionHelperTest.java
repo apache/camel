@@ -16,12 +16,12 @@
  */
 package org.apache.camel.util;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.apache.camel.util.CamelVersionHelper.isGE;
 
-public class CamelVersionHelperTest extends TestCase {
+public class CamelVersionHelperTest extends Assert {
 
     @Test
     public void testGE() throws Exception {
@@ -29,10 +29,12 @@ public class CamelVersionHelperTest extends TestCase {
         assertTrue(isGE("2.15.0", "2.15.1"));
         assertTrue(isGE("2.15.0", "2.16.0"));
         assertTrue(isGE("2.15.0", "2.16-SNAPSHOT"));
+        assertTrue(isGE("2.15.0", "2.16-foo"));
 
         assertFalse(isGE("2.15.0", "2.14.3"));
         assertFalse(isGE("2.15.0", "2.13.0"));
         assertFalse(isGE("2.15.0", "2.13.1"));
         assertFalse(isGE("2.15.0", "2.14-SNAPSHOT"));
+        assertFalse(isGE("2.15.0", "2.14-foo"));
     }
 }

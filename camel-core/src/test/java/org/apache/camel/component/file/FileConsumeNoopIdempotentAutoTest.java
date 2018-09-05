@@ -30,7 +30,7 @@ public class FileConsumeNoopIdempotentAutoTest extends FileConsumeNoopIdempotent
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/noop?noop=true").convertBodyTo(String.class).to("mock:result");
+                from("file://target/noop?initialDelay=0&delay=10&noop=true").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

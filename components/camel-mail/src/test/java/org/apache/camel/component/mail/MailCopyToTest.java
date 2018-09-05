@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+import org.junit.Before;
 
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -33,6 +34,7 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailCopyToTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();
@@ -66,6 +68,7 @@ public class MailCopyToTest extends CamelTestSupport {
         Message[] messages = new Message[5];
         for (int i = 0; i < 5; i++) {
             messages[i] = new MimeMessage(sender.getSession());
+            messages[i].setHeader("Message-ID", "" + i);
             messages[i].setText("Message " + i);
         }
         folder.appendMessages(messages);
@@ -75,7 +78,7 @@ public class MailCopyToTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("imap://jones@localhost?password=secret&copyTo=backup").to("mock:result");
+                from("imap://jones@localhost?password=secret&copyTo=backup&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
             }
         };
     }

@@ -176,7 +176,7 @@ public class KeyStoreParameters extends JsseParameters {
         }
         
         if (LOG.isDebugEnabled()) {
-            List<String> aliases = new LinkedList<String>();
+            List<String> aliases = new LinkedList<>();
             
             Enumeration<String> aliasEnum = ks.aliases();
             while (aliasEnum.hasMoreElements()) {
@@ -193,7 +193,7 @@ public class KeyStoreParameters extends JsseParameters {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("KeyStoreParameters [type=");
+        builder.append("KeyStoreParameters[type=");
         builder.append(type);
         builder.append(", password=");
         builder.append("********");
@@ -201,8 +201,6 @@ public class KeyStoreParameters extends JsseParameters {
         builder.append(provider);
         builder.append(", resource=");
         builder.append(resource);
-        builder.append(", getContext()=");
-        builder.append(getCamelContext());
         builder.append("]");
         return builder.toString();
     }

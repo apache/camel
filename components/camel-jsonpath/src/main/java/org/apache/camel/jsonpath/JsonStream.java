@@ -264,7 +264,7 @@ public class JsonStream extends FilterInputStream {
     @Override
     public long skip(long n) throws IOException {
         if (inputIndex < inputEnd) {
-            long minimum = Math.min(n, (long) (inputEnd - inputIndex));
+            long minimum = Math.min(n, inputEnd - inputIndex);
             for (int i = 0; i < minimum; i++) {
                 inputIndex++;
             }

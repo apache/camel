@@ -16,16 +16,32 @@
  */
 package org.apache.camel.component.aws.ec2;
 
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.ec2.AmazonEC2Client;
+
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
+import static org.mockito.Mockito.mock;
+
 public class EC2ComponentConfigurationTest extends CamelTestSupport {
-    
+    AmazonEC2Client amazonEc2Client = mock(AmazonEC2Client.class);
+
     @Test
     public void createEndpointWithMinimalConfiguration() throws Exception {
         EC2Component component = new EC2Component(context);
-        EC2Endpoint endpoint = (EC2Endpoint) component.createEndpoint(
-                "aws-ec2://TestDomain?accessKey=xxx&secretKey=yyy");
+        EC2Endpoint endpoint = (EC2Endpoint)component.createEndpoint("aws-ec2://TestDomain?amazonEc2Client=#amazonEc2Client&accessKey=xxx&secretKey=yyy");
+        
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
+        assertNotNull(endpoint.getConfiguration().getAmazonEc2Client());
+    }
+    
+    @Test
+    public void createEndpointWithOnlyAccessKeyAndSecretKey() throws Exception {
+        EC2Component component = new EC2Component(context);
+        EC2Endpoint endpoint = (EC2Endpoint)component.createEndpoint("aws-ec2://TestDomain?accessKey=xxx&secretKey=yyy");
         
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
@@ -54,5 +70,42 @@ public class EC2ComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
         EC2Component component = new EC2Component(context);
         component.createEndpoint("aws-ec2://TestDomain?accessKey=xxx");
+    }
+    
+    @Test
+    public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() throws Exception {
+        EC2Component component = new EC2Component(context);
+        component.createEndpoint("aws-ec2://TestDomain?amazonEc2Client=#amazonEc2Client");
+    }
+    
+    @Test
+    public void createEndpointWithComponentElements() throws Exception {
+        EC2Component component = new EC2Component(context);
+        component.setAccessKey("XXX");
+        component.setSecretKey("YYY");
+        EC2Endpoint endpoint = (EC2Endpoint)component.createEndpoint("aws-ec2://testDomain");
+        
+        assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
+        assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
+    }
+    
+    @Test
+    public void createEndpointWithComponentAndEndpointElements() throws Exception {
+        EC2Component component = new EC2Component(context);
+        component.setAccessKey("XXX");
+        component.setSecretKey("YYY");
+        component.setRegion(Regions.US_WEST_1.toString());
+        EC2Endpoint endpoint = (EC2Endpoint)component.createEndpoint("aws-s3://testDomain?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        
+        assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
+    }
+    
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+        registry.bind("amazonEc2Client", amazonEc2Client);
+        return registry;
     }
 }

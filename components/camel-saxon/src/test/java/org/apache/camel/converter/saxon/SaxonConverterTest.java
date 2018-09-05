@@ -55,7 +55,7 @@ public class SaxonConverterTest extends CamelTestSupport {
         super.setUp();
         exchange = new DefaultExchange(context);
         evaluator = new XPathEvaluator();
-        doc = evaluator.setSource(new StringSource(CONTENT));
+        doc = evaluator.getConfiguration().buildDocumentTree(new StringSource(CONTENT)).getRootNode();
     }
 
     @Test
@@ -106,7 +106,7 @@ public class SaxonConverterTest extends CamelTestSupport {
 
     @Test
     public void convertToNodeList() throws XPathException {
-        List<NodeInfo> nil = new LinkedList<NodeInfo>();
+        List<NodeInfo> nil = new LinkedList<>();
         nil.add(doc);
         NodeList nodeList = context.getTypeConverter().convertTo(NodeList.class, exchange, nil);
         assertNotNull(nodeList);

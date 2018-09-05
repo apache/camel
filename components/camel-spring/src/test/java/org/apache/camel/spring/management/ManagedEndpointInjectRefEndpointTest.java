@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.management;
 
+import org.junit.Test;
+
 import java.util.Iterator;
 import java.util.Set;
 import javax.management.MBeanServer;
@@ -29,6 +31,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class ManagedEndpointInjectRefEndpointTest extends SpringTestSupport {
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/ManagedEndpointInjectRefEndpointTest.xml");
     }
@@ -37,6 +44,7 @@ public class ManagedEndpointInjectRefEndpointTest extends SpringTestSupport {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
+    @Test
     public void testRef() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

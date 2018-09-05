@@ -16,15 +16,18 @@
  */
 package org.apache.camel.component.vm;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 
-public class VmMultipleConsumersKeepRouteTest extends TestCase {
+public class VmMultipleConsumersKeepRouteTest extends Assert {
 
+    @Test
     public void testVmMultipleConsumersKeepRoute() throws Exception {
         CamelContext camelContext = new DefaultCamelContext();
         ProducerTemplate producerTemplate = camelContext.createProducerTemplate();

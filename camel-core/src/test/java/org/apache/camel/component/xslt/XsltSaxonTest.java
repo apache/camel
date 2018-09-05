@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.xslt;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToCreateRouteException;
-import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -28,6 +29,7 @@ import org.apache.camel.impl.DefaultCamelContext;
  */
 public class XsltSaxonTest extends TestSupport {
 
+    @Test
     public void testSaxon() throws Exception {
         try {
             RouteBuilder builder = createRouteBuilder();
@@ -37,8 +39,7 @@ public class XsltSaxonTest extends TestSupport {
 
             fail("Should have thrown an exception due XSLT saxon not on classpath");
         } catch (FailedToCreateRouteException e) {
-            assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
-            assertIsInstanceOf(ClassNotFoundException.class, e.getCause().getCause());
+            assertIsInstanceOf(ClassNotFoundException.class, e.getCause());
         }
     }
 

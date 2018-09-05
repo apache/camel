@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.intercept;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.interceptor.TraceEventMessage;
@@ -26,6 +28,7 @@ import org.apache.camel.processor.interceptor.Tracer;
  */
 public class InterceptSimpleRouteTraceTest extends ContextTestSupport {
 
+    @Test
     public void testIntercept() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);

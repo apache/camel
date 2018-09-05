@@ -1,0 +1,38 @@
+{
+  "baseScheme" : "twitter-search",
+  "baseGroupId" : "org.apache.camel",
+  "baseArtifactId" : "camel-twitter",
+  "baseVersion" : "2.22.0-SNAPSHOT",
+  "baseJavaType" : "org.apache.camel.component.twitter.search.TwitterSearchComponent",
+  "name" : "TwitterFind",
+  "scheme" : "twitter-find",
+  "javaType" : "org.foo.find.TwitterFindComponent",
+  "groupId" : "org.foo",
+  "artifactId" : "twitter-find-connector",
+  "version" : "2.22.0-SNAPSHOT",
+  "description" : "Find for twitter",
+  "labels" : [ "twitter" ],
+  "pattern" : "From",
+  "inputDataType" : "none",
+  "outputDataType" : "java:twitter4j.Status",
+  "componentOptions" : [ "accessToken", "accessTokenSecret", "consumerKey", "consumerSecret" ],
+  "endpointOptions" : [ "delay", "keywords", "filterOld" ],
+  "endpointValues" : {
+    "type" : "POLLING",
+    "delay" : 5000
+  },
+  "connectorProperties" : {
+    "prefix" : {
+      "kind" : "parameter",
+      "displayName" : "Keyword prefix",
+      "group" : "filter",
+      "label" : "consumer,filter",
+      "required" : false,
+      "type" : "string",
+      "javaType" : "java.lang.String",
+      "deprecated" : false,
+      "secret" : false,
+      "description" : "A prefix"
+    }
+  }
+}

@@ -26,7 +26,6 @@ import java.util.Properties;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMessage.RecipientType;
 
 import com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64;
 import com.google.api.services.gmail.model.ListMessagesResponse;
@@ -55,7 +54,7 @@ public class GmailUsersMessagesIntegrationTest extends AbstractGoogleMailTestSup
 
         // ==== Send test email ====
         Message testEmail = createTestEmail();
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleMail.userId", CURRENT_USERID);
         // parameter type is com.google.api.services.gmail.model.Message
@@ -66,14 +65,14 @@ public class GmailUsersMessagesIntegrationTest extends AbstractGoogleMailTestSup
         String testEmailId = result.getId();
 
         // ==== Search for message we just sent ====
-        headers = new HashMap<String, Object>();
+        headers = new HashMap<>();
         headers.put("CamelGoogleMail.q", "subject:\"Hello from camel-google-mail\"");
         // using String message body for single parameter "userId"
         ListMessagesResponse listOfMessages = requestBody("direct://LIST", CURRENT_USERID);
         assertTrue(idInList(testEmailId, listOfMessages));
 
         // ===== trash it ====
-        headers = new HashMap<String, Object>();
+        headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleMail.userId", CURRENT_USERID);
         // parameter type is String
@@ -81,14 +80,14 @@ public class GmailUsersMessagesIntegrationTest extends AbstractGoogleMailTestSup
         requestBodyAndHeaders("direct://TRASH", null, headers);
 
         // ==== Search for message we just trashed ====
-        headers = new HashMap<String, Object>();
+        headers = new HashMap<>();
         headers.put("CamelGoogleMail.q", "subject:\"Hello from camel-google-mail\"");
         // using String message body for single parameter "userId"
         listOfMessages = requestBody("direct://LIST", CURRENT_USERID);
         assertFalse(idInList(testEmailId, listOfMessages));
 
         // ===== untrash it ====
-        headers = new HashMap<String, Object>();
+        headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleMail.userId", CURRENT_USERID);
         // parameter type is String
@@ -96,14 +95,14 @@ public class GmailUsersMessagesIntegrationTest extends AbstractGoogleMailTestSup
         requestBodyAndHeaders("direct://UNTRASH", null, headers);
 
         // ==== Search for message we just trashed ====
-        headers = new HashMap<String, Object>();
+        headers = new HashMap<>();
         headers.put("CamelGoogleMail.q", "subject:\"Hello from camel-google-mail\"");
         // using String message body for single parameter "userId"
         listOfMessages = requestBody("direct://LIST", CURRENT_USERID);
         assertTrue(idInList(testEmailId, listOfMessages));
 
         // ===== permanently delete it ====
-        headers = new HashMap<String, Object>();
+        headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleMail.userId", CURRENT_USERID);
         // parameter type is String
@@ -111,7 +110,7 @@ public class GmailUsersMessagesIntegrationTest extends AbstractGoogleMailTestSup
         requestBodyAndHeaders("direct://DELETE", null, headers);
 
         // ==== Search for message we just deleted ====
-        headers = new HashMap<String, Object>();
+        headers = new HashMap<>();
         headers.put("CamelGoogleMail.q", "subject:\"Hello from camel-google-mail\"");
         // using String message body for single parameter "userId"
         listOfMessages = requestBody("direct://LIST", CURRENT_USERID);

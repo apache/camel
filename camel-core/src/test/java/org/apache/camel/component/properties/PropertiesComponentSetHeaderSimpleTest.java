@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.properties;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class PropertiesComponentSetHeaderSimpleTest extends ContextTestSupport {
     
+    @Test
     public void testPropertiesAndSimple() throws Exception {
         getMockEndpoint("mock:result").expectedHeaderReceived("foo", "http://mycoolserver/myapp");
 
@@ -38,7 +41,6 @@ public class PropertiesComponentSetHeaderSimpleTest extends ContextTestSupport {
         CamelContext context = super.createCamelContext();
 
         PropertiesComponent pc = new PropertiesComponent();
-        pc.setCamelContext(context);
         pc.setLocation("classpath:org/apache/camel/component/properties/cheese.properties");
         context.addComponent("properties", pc);
 

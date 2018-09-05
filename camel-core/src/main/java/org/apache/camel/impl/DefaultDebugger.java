@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.EventObject;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -29,8 +30,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.MessageHistory;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
-import org.apache.camel.RouteNode;
 import org.apache.camel.management.event.AbstractExchangeEvent;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.management.event.ExchangeCreatedEvent;
@@ -55,9 +57,9 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultDebugger.class);
     private final EventNotifier debugEventNotifier = new DebugEventNotifier();
-    private final List<BreakpointConditions> breakpoints = new CopyOnWriteArrayList<BreakpointConditions>();
+    private final List<BreakpointConditions> breakpoints = new CopyOnWriteArrayList<>();
     private final int maxConcurrentSingleSteps = 1;
-    private final Map<String, Breakpoint> singleSteps = new HashMap<String, Breakpoint>(maxConcurrentSingleSteps);
+    private final Map<String, Breakpoint> singleSteps = new HashMap<>(maxConcurrentSingleSteps);
     private CamelContext camelContext;
     private boolean useTracer = true;
 
@@ -199,7 +201,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
 
     @Override
     public List<Breakpoint> getBreakpoints() {
-        List<Breakpoint> answer = new ArrayList<Breakpoint>(breakpoints.size());
+        List<Breakpoint> answer = new ArrayList<>(breakpoints.size());
         for (BreakpointConditions e : breakpoints) {
             answer.add(e.getBreakpoint());
         }
@@ -310,14 +312,16 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected void onEvent(Exchange exchange, EventObject event, Breakpoint breakpoint) {
         ProcessorDefinition<?> definition = null;
 
         // try to get the last known definition
-        if (exchange.getUnitOfWork() != null && exchange.getUnitOfWork().getTracedRouteNodes() != null) {
-            RouteNode node = exchange.getUnitOfWork().getTracedRouteNodes().getLastNode();
-            if (node != null) {
-                definition = node.getProcessorDefinition();
+        LinkedList<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, LinkedList.class);
+        if (list != null && !list.isEmpty())  {
+            NamedNode node = list.getLast().getNode();
+            if (node instanceof ProcessorDefinition) {
+                definition = (ProcessorDefinition<?>) node;
             }
         }
 

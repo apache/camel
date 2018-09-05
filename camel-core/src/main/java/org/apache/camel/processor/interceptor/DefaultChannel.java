@@ -27,6 +27,8 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Channel;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.management.InstrumentationInterceptStrategy;
+import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.model.ModelChannel;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
@@ -36,8 +38,10 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.InterceptorToAsyncProcessorBridge;
+import org.apache.camel.processor.RedeliveryErrorHandler;
 import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.OrderedComparator;
 import org.apache.camel.util.ServiceHelper;
@@ -60,7 +64,7 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultChannel.class);
 
-    private final List<InterceptStrategy> interceptors = new ArrayList<InterceptStrategy>();
+    private final List<InterceptStrategy> interceptors = new ArrayList<>();
     private Processor errorHandler;
     // the next processor (non wrapped)
     private Processor nextProcessor;
@@ -68,6 +72,7 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
     private Processor output;
     private ProcessorDefinition<?> definition;
     private ProcessorDefinition<?> childDefinition;
+    private InstrumentationProcessor instrumentationProcessor;
     private CamelContext camelContext;
     private RouteContext routeContext;
 
@@ -94,7 +99,7 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
         if (!hasNext()) {
             return null;
         }
-        List<Processor> answer = new ArrayList<Processor>(1);
+        List<Processor> answer = new ArrayList<>(1);
         answer.add(nextProcessor);
         return answer;
     }
@@ -210,11 +215,13 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
         // force the creation of an id
         RouteDefinitionHelper.forceAssignIds(routeContext.getCamelContext(), definition);
 
-        // first wrap the output with the managed strategy if any
+        // setup instrumentation processor for management (jmx)
+        // this is later used in postInitChannel as we need to setup the error handler later as well
         InterceptStrategy managed = routeContext.getManagedInterceptStrategy();
-        if (managed != null) {
-            next = target == nextProcessor ? null : nextProcessor;
-            target = managed.wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, target, next);
+        if (managed instanceof InstrumentationInterceptStrategy) {
+            InstrumentationInterceptStrategy iis = (InstrumentationInterceptStrategy) managed;
+            instrumentationProcessor = new InstrumentationProcessor(targetOutputDef.getShortName(), target);
+            iis.prepareProcessor(targetOutputDef, target, instrumentationProcessor);
         }
 
         // then wrap the output with the backlog and tracer (backlog first, as we do not want regular tracer to tracer the backlog)
@@ -242,15 +249,16 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
 
         if (routeContext.isMessageHistory()) {
             // add message history advice
-            addAdvice(new MessageHistoryAdvice(targetOutputDef));
+            MessageHistoryFactory factory = camelContext.getMessageHistoryFactory();
+            addAdvice(new MessageHistoryAdvice(factory, targetOutputDef));
         }
 
         // the regular tracer is not a task on internalProcessor as this is not really needed
         // end users have to explicit enable the tracer to use it, and then its okay if we wrap
         // the processors (but by default tracer is disabled, and therefore we do not wrap processors)
         tracer = getOrCreateTracer();
-        camelContext.addService(tracer);
         if (tracer != null) {
+            camelContext.addService(tracer);
             TraceInterceptor trace = (TraceInterceptor) tracer.wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, target, null);
             // trace interceptor need to have a reference to route context so we at runtime can enable/disable tracing on-the-fly
             trace.setRouteContext(routeContext);
@@ -258,7 +266,7 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
         }
 
         // sort interceptors according to ordered
-        Collections.sort(interceptors, new OrderedComparator());
+        interceptors.sort(OrderedComparator.get());
         // then reverse list so the first will be wrapped last, as it would then be first being invoked
         Collections.reverse(interceptors);
         // wrap the output with the configured interceptors
@@ -315,7 +323,25 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
 
     @Override
     public void postInitChannel(ProcessorDefinition<?> outputDefinition, RouteContext routeContext) throws Exception {
-        // noop
+        // if jmx was enabled for the processor then either add as advice or wrap and change the processor
+        // on the error handler. See more details in the class javadoc of InstrumentationProcessor
+        if (instrumentationProcessor != null) {
+            boolean redeliveryPossible = false;
+            if (errorHandler instanceof RedeliveryErrorHandler) {
+                redeliveryPossible = ((RedeliveryErrorHandler) errorHandler).determineIfRedeliveryIsEnabled();
+                if (redeliveryPossible) {
+                    // okay we can redeliver then we need to change the output in the error handler
+                    // to use us which we then wrap the call so we can capture before/after for redeliveries as well
+                    Processor currentOutput = ((RedeliveryErrorHandler) errorHandler).getOutput();
+                    instrumentationProcessor.setProcessor(currentOutput);
+                    ((RedeliveryErrorHandler) errorHandler).changeOutput(instrumentationProcessor);
+                }
+            }
+            if (!redeliveryPossible) {
+                // optimise to use advice as we cannot redeliver
+                addAdvice(instrumentationProcessor);
+            }
+        }
     }
 
     private InterceptStrategy getOrCreateTracer() {

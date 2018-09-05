@@ -16,56 +16,42 @@
  */
 package org.apache.camel.util;
 
-import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Scanner;
+import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.NoTypeConversionAvailableException;
 
 /**
  * Group based {@link Iterator} which groups the given {@link Iterator} a number of times
- * and then return a combined response as a String.
+ * and then return a combined response as a <tt>List</tt>.
  * <p/>
- * This implementation uses as internal byte array buffer, to combine the response.
- * The token is inserted between the individual parts.
- * <p/>
- * For example if you group by new line, then a new line token is inserted between the lines.
+ * This implementation uses a internal array list, to combine the response.
+ *
+ * @see GroupTokenIterator
  */
 public final class GroupIterator implements Iterator<Object>, Closeable {
 
     private final CamelContext camelContext;
     private final Exchange exchange;
     private final Iterator<?> it;
-    private final String token;
     private final int group;
+    private final boolean skipFirst;
     private boolean closed;
-    private final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-    
+
     /**
      * Creates a new group iterator
      *
-     * @param camelContext  the camel context
+     * @param exchange  the exchange used to create this group iterator
      * @param it            the iterator to group
-     * @param token         then token used to separate between the parts, use <tt>null</tt> to not add the token
      * @param group         number of parts to group together
      * @throws IllegalArgumentException is thrown if group is not a positive number
-     * @deprecated  Please use GroupIterator(Exchange exchange, Iterator<?> it, String token, int group) instead
      */
-    @Deprecated 
-    public GroupIterator(CamelContext camelContext, Iterator<?> it, String token, int group) {
-        this.exchange = null;
-        this.camelContext = camelContext;
-        this.it = it;
-        this.token = token;
-        this.group = group;
-        if (group <= 0) {
-            throw new IllegalArgumentException("Group must be a positive number, was: " + group);
-        }
+    public GroupIterator(Exchange exchange, Iterator<?> it, int group) {
+        this(exchange, it, group, false);
     }
 
     /**
@@ -73,38 +59,25 @@ public final class GroupIterator implements Iterator<Object>, Closeable {
      *
      * @param exchange  the exchange used to create this group iterator
      * @param it            the iterator to group
-     * @param token         then token used to separate between the parts, use <tt>null</tt> to not add the token
      * @param group         number of parts to group together
      * @throws IllegalArgumentException is thrown if group is not a positive number
      */
-    public GroupIterator(Exchange exchange, Iterator<?> it, String token, int group) {
+    public GroupIterator(Exchange exchange, Iterator<?> it, int group, boolean skipFirst) {
         this.exchange = exchange;
         this.camelContext = exchange.getContext();
         this.it = it;
-        this.token = token;
         this.group = group;
         if (group <= 0) {
             throw new IllegalArgumentException("Group must be a positive number, was: " + group);
         }
+        this.skipFirst = skipFirst;
     }
 
     @Override
     public void close() throws IOException {
         try {
-            if (it instanceof Scanner) {
-                // special for Scanner which implement the Closeable since JDK7 
-                Scanner scanner = (Scanner) it;
-                scanner.close();
-                IOException ioException = scanner.ioException();
-                if (ioException != null) {
-                    throw ioException;
-                }
-            } else if (it instanceof Closeable) {
-                IOHelper.closeWithException((Closeable) it);
-            }
+            IOHelper.closeIterator(it);
         } finally {
-            // close the buffer as well
-            bos.close();
             // we are now closed
             closed = true;
         }
@@ -137,35 +110,16 @@ public final class GroupIterator implements Iterator<Object>, Closeable {
         }
     }
 
-    private Object doNext() throws IOException, NoTypeConversionAvailableException {
+    private Object doNext() throws IOException {
+        List<Object> list = new ArrayList<>();
         int count = 0;
-        Object data = "";
         while (count < group && it.hasNext()) {
-            data = it.next();
-
-            // include token in between
-            if (data != null && count > 0 && token != null) {
-                bos.write(token.getBytes());
-            }
-            if (data instanceof InputStream) {
-                InputStream is = (InputStream) data;
-                IOHelper.copy(is, bos);
-            } else if (data instanceof byte[]) {
-                byte[] bytes = (byte[]) data;
-                bos.write(bytes);
-            } else if (data != null) {
-                // convert to input stream
-                InputStream is = camelContext.getTypeConverter().mandatoryConvertTo(InputStream.class, data);
-                IOHelper.copy(is, bos);
-            }
-
+            Object data = it.next();
+            list.add(data);
             count++;
         }
 
-        // prepare and return answer as String using exchange's charset
-        String answer = bos.toString(IOHelper.getCharsetName(exchange));
-        bos.reset();
-        return answer;
+        return list;
     }
 
     @Override

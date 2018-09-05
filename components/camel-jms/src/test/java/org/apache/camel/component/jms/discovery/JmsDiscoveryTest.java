@@ -50,7 +50,7 @@ public class JmsDiscoveryTest extends CamelTestSupport {
         // sleep a little
         Thread.sleep(1000);
 
-        Map<String, Map<?, ?>> map = new HashMap<String, Map<?, ?>>(registry.getServices());
+        Map<String, Map<?, ?>> map = new HashMap<>(registry.getServices());
         assertTrue("There should be 1 or more, was: " + map.size(), map.size() >= 1);
     }
 

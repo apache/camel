@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.timer;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -25,6 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class TimerSuspendCamelContextTest extends ContextTestSupport {
 
+    @Test
     public void testTimerSuspendResume() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
@@ -35,7 +38,6 @@ public class TimerSuspendCamelContextTest extends ContextTestSupport {
         mock.expectedMessageCount(0);
 
         context.suspend();
-        Thread.sleep(2000);
 
         assertMockEndpointsSatisfied();
 
@@ -50,7 +52,7 @@ public class TimerSuspendCamelContextTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("timer://foo?fixedRate=true&delay=0&period=500").to("mock:result");
+                from("timer://foo?fixedRate=true&delay=0&period=10").to("mock:result");
             }
         };
     }

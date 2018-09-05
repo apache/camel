@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
@@ -35,6 +37,7 @@ public class AggregateTimeoutTest extends ContextTestSupport {
     private volatile int receivedTotal;
     private volatile long receivedTimeout;
 
+    @Test
     public void testAggregateTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
         mock.expectedMessageCount(0);
@@ -42,8 +45,8 @@ public class AggregateTimeoutTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
 
-        // wait about 4 seconds so that the timeout kicks in but it was discarded
-        mock.assertIsSatisfied(4000);
+        // wait about 0.2 second so that the timeout kicks in but it was discarded
+        mock.assertIsSatisfied(200);
 
         // should invoke the timeout method
         assertEquals(1, invoked.get());
@@ -52,7 +55,7 @@ public class AggregateTimeoutTest extends ContextTestSupport {
         assertEquals("AB", receivedExchange.getIn().getBody());
         assertEquals(-1, receivedIndex);
         assertEquals(-1, receivedTotal);
-        assertEquals(2000, receivedTimeout);
+        assertEquals(100, receivedTimeout);
 
         mock.reset();
         mock.expectedBodiesReceived("ABC");
@@ -63,7 +66,7 @@ public class AggregateTimeoutTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "C", "id", 123);
 
         // should complete before timeout
-        mock.assertIsSatisfied(1500);
+        mock.assertIsSatisfied(150);
 
         // should have not invoked the timeout method anymore
         assertEquals(1, invoked.get());
@@ -78,8 +81,8 @@ public class AggregateTimeoutTest extends ContextTestSupport {
                     .aggregate(header("id"), new MyAggregationStrategy())
                         .discardOnCompletionTimeout()
                         .completionSize(3)
-                        // use a 2 second timeout
-                        .completionTimeout(2000)
+                        // use a 0.1 second timeout
+                        .completionTimeout(100).completionTimeoutCheckerInterval(10)
                         .to("mock:aggregated");
             }
         };
@@ -91,7 +94,7 @@ public class AggregateTimeoutTest extends ContextTestSupport {
             invoked.incrementAndGet();
 
             // we can't assert on the expected values here as the contract of this method doesn't
-            // allow to throw any Throwable (including AssertionFailedError) so that we assert
+            // allow to throw any Throwable (including AssertionError) so that we assert
             // about the expected values directly inside the test method itself. other than that
             // asserting inside a thread other than the main thread dosen't make much sense as
             // junit would not realize the failed assertion!

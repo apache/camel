@@ -40,13 +40,19 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.component.AbstractApiEndpoint;
 import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodPropertiesHelper;
+import org.apache.cxf.Bus;
+import org.apache.cxf.BusFactory;
+import org.apache.cxf.jaxrs.client.AbstractClient;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
+import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.apache.cxf.jaxrs.client.WebClient;
 
+
 /**
- * Represents a LinkedIn endpoint.
+ * The linkedin component is used for retrieving LinkedIn user profiles, connections, companies, groups, posts, etc.
  */
-@UriEndpoint(scheme = "linkedin", title = "Linkedin", syntax = "linkedin:apiName/methodName", label = "api,cloud,social", consumerClass = LinkedInConsumer.class)
+@UriEndpoint(firstVersion = "2.14.0", scheme = "linkedin", title = "Linkedin", syntax = "linkedin:apiName/methodName", label = "api,cloud,social",
+        consumerClass = LinkedInConsumer.class, lenientProperties = true)
 public class LinkedInEndpoint extends AbstractApiEndpoint<LinkedInApiName, LinkedInConfiguration> {
 
     protected static final String FIELDS_OPTION = "fields";
@@ -129,6 +135,8 @@ public class LinkedInEndpoint extends AbstractApiEndpoint<LinkedInApiName, Linke
         }
 
         // create endpoint proxy
+        Bus bus = BusFactory.getThreadDefaultBus();
+        bus.setProperty("allow.empty.path.template.value", true);
         resourceProxy = JAXRSClientFactory.create(LinkedInOAuthRequestFilter.BASE_ADDRESS, proxyClass,
             Arrays.asList(new Object[]{requestFilter, new EnumQueryParamConverterProvider()}));
     }

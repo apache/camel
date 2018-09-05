@@ -52,7 +52,7 @@ public class ManagedChoice extends ManagedProcessor implements ManagedChoiceMBea
     }
 
     @Override
-    public synchronized void reset() {
+    public void reset() {
         processor.reset();
         super.reset();
     }

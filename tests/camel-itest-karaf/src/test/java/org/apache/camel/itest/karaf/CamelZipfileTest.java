@@ -16,31 +16,19 @@
  */
 package org.apache.camel.itest.karaf;
 
-import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class CamelZipfileTest extends AbstractFeatureTest {
+public class CamelZipfileTest extends BaseKarafTest {
 
     public static final String COMPONENT = extractName(CamelZipfileTest.class);
-    
-    protected DataFormatDefinition createDataformatDefinition(String format) {        
-        return new ZipFileDataFormat();
-    }
 
     @Test
     public void test() throws Exception {
         testDataFormat(COMPONENT);
     }
 
-    @Configuration
-    public static Option[] configure() {
-        return configure(COMPONENT);
-    }
 
 }

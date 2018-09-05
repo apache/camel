@@ -18,10 +18,12 @@ package org.apache.camel.component.nagios;
 
 import java.util.EventObject;
 
-import com.googlecode.jsendnsca.core.Level;
-import com.googlecode.jsendnsca.core.MessagePayload;
-import com.googlecode.jsendnsca.core.NagiosPassiveCheckSender;
-import com.googlecode.jsendnsca.core.NagiosSettings;
+import com.googlecode.jsendnsca.Level;
+import com.googlecode.jsendnsca.MessagePayload;
+import com.googlecode.jsendnsca.NagiosPassiveCheckSender;
+import com.googlecode.jsendnsca.NagiosSettings;
+import com.googlecode.jsendnsca.PassiveCheckSender;
+
 import org.apache.camel.management.event.CamelContextStartupFailureEvent;
 import org.apache.camel.management.event.CamelContextStopFailureEvent;
 import org.apache.camel.management.event.ExchangeFailedEvent;
@@ -40,15 +42,23 @@ public class NagiosEventNotifier extends EventNotifierSupport {
 
     private NagiosSettings nagiosSettings;
     private NagiosConfiguration configuration;
-    private NagiosPassiveCheckSender sender;
+    private PassiveCheckSender sender;
     private String serviceName = "Camel";
     private String hostName = "localhost";
+
+    public NagiosEventNotifier() {
+
+    }
+
+    public NagiosEventNotifier(PassiveCheckSender sender) {
+        this.sender = sender;
+    }
 
     public void notify(EventObject eventObject) throws Exception {
         // create message payload to send
         String message = eventObject.toString();
         Level level = determineLevel(eventObject);
-        MessagePayload payload = new MessagePayload(getHostName(), level.ordinal(), getServiceName(), message);
+        MessagePayload payload = new MessagePayload(getHostName(), level, getServiceName(), message);
 
         if (log.isInfoEnabled()) {
             log.info("Sending notification to Nagios: {}", payload.getMessage());
@@ -122,7 +132,9 @@ public class NagiosEventNotifier extends EventNotifierSupport {
         if (nagiosSettings == null) {
             nagiosSettings = configuration.getNagiosSettings();
         }
-        sender = new NagiosPassiveCheckSender(nagiosSettings);
+        if (sender == null) {
+            sender = new NagiosPassiveCheckSender(nagiosSettings);
+        }
 
         log.info("Using " + configuration);
     }

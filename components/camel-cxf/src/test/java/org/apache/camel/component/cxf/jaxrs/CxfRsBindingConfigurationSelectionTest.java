@@ -19,13 +19,13 @@ package org.apache.camel.component.cxf.jaxrs;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.CXFTestSupport;
-import org.apache.camel.component.cxf.jaxrs.CxfRsEndpoint.BindingStyle;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -101,25 +101,26 @@ public class CxfRsBindingConfigurationSelectionTest extends CamelTestSupport {
 
         @Override
         public Object bindResponseToCamelBody(Object response, Exchange camelExchange) throws Exception {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public Map<String, Object> bindResponseHeadersToCamelHeaders(Object response, Exchange camelExchange) throws Exception {
-            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public Entity<Object> bindCamelMessageToRequestEntity(Object body, Message camelMessage, Exchange camelExchange) {
             return null;
         }
 
         @Override
         public Object bindCamelMessageBodyToRequestBody(Message camelMessage, Exchange camelExchange) throws Exception {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public MultivaluedMap<String, String> bindCamelHeadersToRequestHeaders(Map<String, Object> camelHeaders, Exchange camelExchange) throws Exception {
-            // TODO Auto-generated method stub
             return null;
         }
     }

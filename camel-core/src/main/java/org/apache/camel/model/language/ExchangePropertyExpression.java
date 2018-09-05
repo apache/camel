@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * An expression which extracts the named exchange property
+ * To use a Camel Exchange property in expressions or predicates.
  *
  * @version 
  */
-@Metadata(label = "language", title = "ExchangeProperty")
+@Metadata(firstVersion = "2.0.0", label = "language,core", title = "ExchangeProperty")
 @XmlRootElement(name = "exchangeProperty")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ExchangePropertyExpression extends ExpressionDefinition {

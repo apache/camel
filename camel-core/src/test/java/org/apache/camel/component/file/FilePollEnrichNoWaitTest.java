@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -29,11 +32,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FilePollEnrichNoWaitTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/pollenrich");
         super.setUp();
     }
 
+    @Test
     public void testFilePollEnrichNoWait() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -54,10 +59,10 @@ public class FilePollEnrichNoWaitTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer:foo?period=1000").routeId("foo")
+                from("timer:foo?delay=0&period=10").routeId("foo")
                     .log("Trigger timer foo")
                     // use 0 as timeout for no wait
-                    .pollEnrich("file:target/pollenrich?move=done", 0)
+                    .pollEnrich("file:target/pollenrich?initialDelay=0&delay=10&move=done", 0)
                     .convertBodyTo(String.class)
                     .filter(body().isNull())
                         .stop()

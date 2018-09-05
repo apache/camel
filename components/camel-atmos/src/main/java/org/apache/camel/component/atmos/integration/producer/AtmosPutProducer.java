@@ -21,11 +21,8 @@ import org.apache.camel.component.atmos.AtmosConfiguration;
 import org.apache.camel.component.atmos.AtmosEndpoint;
 import org.apache.camel.component.atmos.core.AtmosAPIFacade;
 import org.apache.camel.component.atmos.dto.AtmosResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AtmosPutProducer extends AtmosProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(AtmosPutProducer.class);
 
     public AtmosPutProducer(AtmosEndpoint endpoint, AtmosConfiguration configuration) {
         super(endpoint, configuration);
@@ -36,8 +33,6 @@ public class AtmosPutProducer extends AtmosProducer {
         AtmosResult result = AtmosAPIFacade.getInstance(configuration.getClient())
                 .put(configuration.getLocalPath(), configuration.getRemotePath());
         result.populateExchange(exchange);
-        LOG.info("Uploaded: " + result.toString());
-
     }
 
 }

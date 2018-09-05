@@ -21,11 +21,16 @@ import org.apache.camel.Exchange;
 /**
  * @version 
  */
-public class ExchangeFailedEvent extends AbstractExchangeEvent {
+public class ExchangeFailedEvent extends AbstractExchangeEvent implements FailureEvent {
     private static final long serialVersionUID = -8484326904627268101L;
 
     public ExchangeFailedEvent(Exchange source) {
         super(source);
+    }
+    
+    @Override
+    public Throwable getCause() {
+        return getExchange().getException();
     }
 
     @Override
@@ -37,4 +42,5 @@ public class ExchangeFailedEvent extends AbstractExchangeEvent {
             return getExchange().getExchangeId() + " exchange failure: " + getExchange();
         }
     }
+
 }

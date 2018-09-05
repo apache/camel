@@ -18,6 +18,7 @@ package org.apache.camel.component.sjms.jms;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
+import javax.jms.ExceptionListener;
 
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.pool.BasePoolableObjectFactory;
@@ -35,6 +36,7 @@ public class ConnectionFactoryResource extends BasePoolableObjectFactory<Connect
     private String username;
     private String password;
     private String clientId;
+    private ExceptionListener exceptionListener;
 
     /**
      * Default Constructor
@@ -56,16 +58,35 @@ public class ConnectionFactoryResource extends BasePoolableObjectFactory<Connect
     }
 
     public ConnectionFactoryResource(int poolSize, ConnectionFactory connectionFactory, String username, String password, String connectionId, long maxWait) {
+        this(poolSize, connectionFactory, username, password, connectionId, DEFAULT_WAIT_TIMEOUT, true);
+    }
+
+    public ConnectionFactoryResource(int poolSize, ConnectionFactory connectionFactory, String username, String password, String connectionId,
+                                     long maxWait, boolean testOnBorrow) {
         this.connectionFactory = connectionFactory;
         this.username = username;
         this.password = password;
         this.clientId = connectionId;
-        this.connections = new GenericObjectPool<Connection>(this);
+        this.connections = new GenericObjectPool<>(this);
         this.connections.setMaxWait(maxWait);
         this.connections.setMaxActive(poolSize);
         this.connections.setMaxIdle(poolSize);
         this.connections.setMinIdle(poolSize);
         this.connections.setLifo(false);
+        this.connections.setTestOnBorrow(testOnBorrow);
+    }
+
+    @Override
+    public boolean validateObject(Connection connection) {
+        try {
+            // ensure connection works so we need to start it
+            connection.start();
+            return true;
+        } catch (Throwable e) {
+            // ignore
+        }
+
+        return false;
     }
 
     @Override
@@ -92,6 +113,10 @@ public class ConnectionFactoryResource extends BasePoolableObjectFactory<Connect
             if (ObjectHelper.isNotEmpty(getClientId())) {
                 connection.setClientID(getClientId());
             }
+            // we want to listen for exceptions
+            if (exceptionListener != null) {
+                connection.setExceptionListener(exceptionListener);
+            }
             connection.start();
         }
         return connection;
@@ -103,7 +128,6 @@ public class ConnectionFactoryResource extends BasePoolableObjectFactory<Connect
             connection.stop();
             connection.close();
         }
-
     }
 
     public ConnectionFactory getConnectionFactory() {
@@ -136,6 +160,14 @@ public class ConnectionFactoryResource extends BasePoolableObjectFactory<Connect
 
     public void setClientId(String clientId) {
         this.clientId = clientId;
+    }
+
+    public ExceptionListener getExceptionListener() {
+        return exceptionListener;
+    }
+
+    public void setExceptionListener(ExceptionListener exceptionListener) {
+        this.exceptionListener = exceptionListener;
     }
 
     public int size() {

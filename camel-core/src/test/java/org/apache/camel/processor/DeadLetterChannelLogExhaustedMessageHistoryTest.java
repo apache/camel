@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class DeadLetterChannelLogExhaustedMessageHistoryTest extends ContextTestSupport {
 
+    @Test
     public void testLogExhaustedMessageHistory() throws Exception {
         getMockEndpoint("mock:dead").expectedMessageCount(1);
 
@@ -35,7 +38,9 @@ public class DeadLetterChannelLogExhaustedMessageHistoryTest extends ContextTest
             @Override
             public void configure() throws Exception {
                 // no delay to speedup test
-                errorHandler(deadLetterChannel("mock:dead").redeliveryDelay(0).maximumRedeliveries(3).logExhaustedMessageHistory(true));
+                errorHandler(deadLetterChannel("mock:dead").redeliveryDelay(0).maximumRedeliveries(3)
+                        // need to turn on logging handled and exhausted to see this with DLC
+                        .logHandled(true).logExhausted(true).logExhaustedMessageHistory(true));
 
                 from("direct:start")
                     .log("Incoming ${body}")

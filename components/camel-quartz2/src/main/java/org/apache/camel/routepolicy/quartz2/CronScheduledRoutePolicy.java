@@ -25,6 +25,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
 
 public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements ScheduledRoutePolicyConstants {
     private String routeStartTime;
@@ -33,7 +34,7 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
     private String routeResumeTime;
     private String timeZoneString;
     private TimeZone timeZone;
-    
+
     public void onInit(Route route) {
         try {
             doOnInit(route);
@@ -80,25 +81,32 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
 
     @Override
     protected Trigger createTrigger(Action action, Route route) throws Exception {
-        Trigger  trigger = null;
-        
+        Trigger trigger = null;
+
         CronScheduleBuilder scheduleBuilder = null;
+        String triggerPrefix = null;
         if (action == Action.START) {
             scheduleBuilder = CronScheduleBuilder.cronSchedule(getRouteStartTime());
+            triggerPrefix = TRIGGER_START;
         } else if (action == Action.STOP) {
             scheduleBuilder = CronScheduleBuilder.cronSchedule(getRouteStopTime());
+            triggerPrefix = TRIGGER_STOP;
         } else if (action == Action.SUSPEND) {
             scheduleBuilder = CronScheduleBuilder.cronSchedule(getRouteSuspendTime());
+            triggerPrefix = TRIGGER_SUSPEND;
         } else if (action == Action.RESUME) {
             scheduleBuilder = CronScheduleBuilder.cronSchedule(getRouteResumeTime());
+            triggerPrefix = TRIGGER_RESUME;
         }
-        
+
         if (scheduleBuilder != null) {
             if (timeZone != null) {
                 scheduleBuilder.inTimeZone(timeZone);
             }
+
+            TriggerKey triggerKey = new TriggerKey(triggerPrefix + route.getId(), TRIGGER_GROUP + route.getId());
             trigger = TriggerBuilder.newTrigger()
-                .withIdentity(TRIGGER_START + route.getId(), TRIGGER_GROUP + route.getId())
+                .withIdentity(triggerKey)
                 .withSchedule(scheduleBuilder)
                 .build();
         }

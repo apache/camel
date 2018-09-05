@@ -35,7 +35,7 @@ import org.apache.camel.util.ServiceHelper;
  */
 public class LimitedPollingConsumerPollStrategy extends DefaultPollingConsumerPollStrategy implements Service {
 
-    private final Map<Consumer, Integer> state = new HashMap<Consumer, Integer>();
+    private final Map<Consumer, Integer> state = new HashMap<>();
     private int limit = 3;
 
     public int getLimit() {

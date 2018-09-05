@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf;
+import org.junit.Before;
 
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
@@ -68,17 +69,17 @@ public class CxfMessageHeaderTimeoutTest extends CamelSpringTestSupport {
     protected Exchange sendJaxWsMessage(String endpointUri) throws InterruptedException {
         Exchange exchange = template.send(endpointUri, new Processor() {
             public void process(final Exchange exchange) {
-                final List<String> params = new ArrayList<String>();
+                final List<String> params = new ArrayList<>();
                 params.add(TEST_MESSAGE);
                 exchange.getIn().setBody(params);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, GREET_ME_OPERATION);
                 // setup the receive timeout dynamically
-                Map<String, Object> requestContext = new HashMap<String, Object>();
+                Map<String, Object> requestContext = new HashMap<>();
                 HTTPClientPolicy clientPolicy = new HTTPClientPolicy();
                 clientPolicy.setReceiveTimeout(100);
                 requestContext.put(HTTPClientPolicy.class.getName(), clientPolicy);
                 exchange.getIn().setBody(params);
-                exchange.getIn().setHeader(Client.REQUEST_CONTEXT , requestContext);
+                exchange.getIn().setHeader(Client.REQUEST_CONTEXT, requestContext);
                 
             }
         });

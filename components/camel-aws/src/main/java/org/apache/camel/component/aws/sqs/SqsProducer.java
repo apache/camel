@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.sqs;
 
 import java.nio.ByteBuffer;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,15 +35,19 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageForResponse;
+
 /**
  * A Producer which sends messages to the Amazon Web Service Simple Queue Service
  * <a href="http://aws.amazon.com/sqs/">AWS SQS</a>
  * 
  */
 public class SqsProducer extends DefaultProducer {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(SqsProducer.class);
-    
+
+    private transient String sqsProducerToString;
+
     public SqsProducer(SqsEndpoint endpoint) throws NoFactoryAvailableException {
         super(endpoint);
     }
@@ -52,16 +57,31 @@ public class SqsProducer extends DefaultProducer {
         SendMessageRequest request = new SendMessageRequest(getQueueUrl(), body);
         request.setMessageAttributes(translateAttributes(exchange.getIn().getHeaders(), exchange));
         addDelay(request, exchange);
+        configureFifoAttributes(request, exchange);
 
         LOG.trace("Sending request [{}] from exchange [{}]...", request, exchange);
-        
+
         SendMessageResult result = getClient().sendMessage(request);
-        
+
         LOG.trace("Received result [{}]", result);
-        
+
         Message message = getMessageForResponse(exchange);
         message.setHeader(SqsConstants.MESSAGE_ID, result.getMessageId());
         message.setHeader(SqsConstants.MD5_OF_BODY, result.getMD5OfMessageBody());
+    }
+
+    private void configureFifoAttributes(SendMessageRequest request, Exchange exchange) {
+        if (getEndpoint().getConfiguration().isFifoQueue()) {
+            // use strategies
+            MessageGroupIdStrategy messageGroupIdStrategy = getEndpoint().getConfiguration().getMessageGroupIdStrategy();
+            String messageGroupId = messageGroupIdStrategy.getMessageGroupId(exchange);
+            request.setMessageGroupId(messageGroupId);
+
+            MessageDeduplicationIdStrategy messageDeduplicationIdStrategy = getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy();
+            String messageDeduplicationId = messageDeduplicationIdStrategy.getMessageDeduplicationId(exchange);
+            request.setMessageDeduplicationId(messageDeduplicationId);
+
+        }
     }
 
     private void addDelay(SendMessageRequest request, Exchange exchange) {
@@ -78,42 +98,35 @@ public class SqsProducer extends DefaultProducer {
         request.setDelaySeconds(delayValue == null ? Integer.valueOf(0) : delayValue);
     }
 
-    private Message getMessageForResponse(Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            return out;
-        }
-        
-        return exchange.getIn();
-    }
-    
     protected AmazonSQS getClient() {
         return getEndpoint().getClient();
     }
-    
+
     protected String getQueueUrl() {
         return getEndpoint().getQueueUrl();
     }
-    
+
     @Override
     public SqsEndpoint getEndpoint() {
         return (SqsEndpoint) super.getEndpoint();
     }
-    
+
     @Override
     public String toString() {
-        return "SqsProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (sqsProducerToString == null) {
+            sqsProducerToString = "SqsProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return sqsProducerToString;
     }
-    
-    private Map<String, MessageAttributeValue> translateAttributes(Map<String, Object> headers, Exchange exchange) {
-        Map<String, MessageAttributeValue> result = new HashMap<String, MessageAttributeValue>();
+
+    Map<String, MessageAttributeValue> translateAttributes(Map<String, Object> headers, Exchange exchange) {
+        Map<String, MessageAttributeValue> result = new HashMap<>();
         HeaderFilterStrategy headerFilterStrategy = getEndpoint().getHeaderFilterStrategy();
         for (Entry<String, Object> entry : headers.entrySet()) {
             // only put the message header which is not filtered into the message attribute
             if (!headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange)) {
                 Object value = entry.getValue();
-                if (value instanceof String) {
+                if (value instanceof String && !((String)value).isEmpty()) {
                     MessageAttributeValue mav = new MessageAttributeValue();
                     mav.setDataType("String");
                     mav.withStringValue((String)value);
@@ -122,6 +135,37 @@ public class SqsProducer extends DefaultProducer {
                     MessageAttributeValue mav = new MessageAttributeValue();
                     mav.setDataType("Binary");
                     mav.withBinaryValue((ByteBuffer)value);
+                    result.put(entry.getKey(), mav);
+                } else if (value instanceof Boolean) {
+                    MessageAttributeValue mav = new MessageAttributeValue();
+                    mav.setDataType("Number.Boolean");
+                    mav.withStringValue(((Boolean)value) ? "1" : "0");
+                    result.put(entry.getKey(), mav);
+                } else if (value instanceof Number) {
+                    MessageAttributeValue mav = new MessageAttributeValue();
+                    final String dataType;
+                    if (value instanceof Integer) {
+                        dataType = "Number.int";
+                    } else if (value instanceof Byte) {
+                        dataType = "Number.byte";
+                    } else if (value instanceof Double) {
+                        dataType = "Number.double";
+                    } else if (value instanceof Float) {
+                        dataType = "Number.float";
+                    } else if (value instanceof Long) {
+                        dataType = "Number.long";
+                    } else if (value instanceof Short) {
+                        dataType = "Number.short";
+                    } else {
+                        dataType = "Number";
+                    }
+                    mav.setDataType(dataType);
+                    mav.withStringValue(((Number)value).toString());
+                    result.put(entry.getKey(), mav);
+                } else if (value instanceof Date) {
+                    MessageAttributeValue mav = new MessageAttributeValue();
+                    mav.setDataType("String");
+                    mav.withStringValue(value.toString());
                     result.put(entry.getKey(), mav);
                 } else {
                     // cannot translate the message header to message attribute value

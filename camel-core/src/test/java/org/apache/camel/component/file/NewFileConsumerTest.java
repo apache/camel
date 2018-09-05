@@ -15,13 +15,19 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  *
@@ -31,11 +37,13 @@ public class NewFileConsumerTest extends ContextTestSupport {
     private MyFileEndpoint myFile;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/myfile");
         super.setUp();
     }
 
+    @Test
     public void testNewFileConsumer() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -44,9 +52,7 @@ public class NewFileConsumerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesMockWaitTime();
 
-        Thread.sleep(250);
-
-        assertTrue("Should have invoked postPollCheck", myFile.isPost());
+        await("postPollCheck invocation").atMost(1, TimeUnit.SECONDS).until(myFile::isPost);
     }
 
     @Override
@@ -57,6 +63,8 @@ public class NewFileConsumerTest extends ContextTestSupport {
                 myFile = new MyFileEndpoint();
                 myFile.setCamelContext(context);
                 myFile.setFile(new File("target/myfile"));
+                myFile.setDelay(10);
+                myFile.setInitialDelay(0);
 
                 from(myFile).to("mock:result");
             }
@@ -68,7 +76,7 @@ public class NewFileConsumerTest extends ContextTestSupport {
         private volatile boolean post;
 
         protected FileConsumer newFileConsumer(Processor processor, GenericFileOperations<File> operations) {
-            return new FileConsumer(this, processor, operations) {
+            return new FileConsumer(this, processor, operations, createGenericFileStrategy()) {
                 @Override
                 protected void postPollCheck(int polledMessages) {
                     post = true;

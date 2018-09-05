@@ -75,4 +75,9 @@ public interface EndpointRegistry<K> extends Map<K, Endpoint>, StaticService {
      */
     boolean isDynamic(String key);
 
+    /**
+     * Cleanup the cache (purging stale entries)
+     */
+    void cleanUp();
+
 }

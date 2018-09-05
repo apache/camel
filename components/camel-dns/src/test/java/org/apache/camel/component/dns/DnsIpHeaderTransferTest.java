@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.dns;
 
 import org.apache.camel.EndpointInject;
@@ -26,9 +25,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 
-
-import static org.apache.camel.builder.Builder.constant;
-
 public class DnsIpHeaderTransferTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock:result")
@@ -38,10 +34,12 @@ public class DnsIpHeaderTransferTest extends CamelTestSupport {
     protected ProducerTemplate template;
 
     protected RouteBuilder createRouteBuilder() throws Exception {
-        RouteBuilder routeBuilder = super.createRouteBuilder();
-        routeBuilder.from("direct:start").setHeader("foo", constant("bar")).to("dns:ip").to("mock:result");
-
-        return routeBuilder;
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").setHeader("foo", constant("bar")).to("dns:ip").to("mock:result");
+            }
+        };
     }
 
     @Test

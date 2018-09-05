@@ -62,25 +62,24 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
             Map<String, TransactedPolicy> mapPolicy = routeContext.lookupByType(TransactedPolicy.class);
             if (mapPolicy != null && mapPolicy.size() == 1) {
                 TransactedPolicy policy = mapPolicy.values().iterator().next();
-                if (policy != null && policy instanceof SpringTransactionPolicy) {
+                if (policy instanceof SpringTransactionPolicy) {
                     transactionTemplate = ((SpringTransactionPolicy) policy).getTransactionTemplate();
                 }
             }
 
             if (transactionTemplate == null) {
                 TransactedPolicy policy = routeContext.lookup(PROPAGATION_REQUIRED, TransactedPolicy.class);
-                if (policy != null && policy instanceof SpringTransactionPolicy) {
+                if (policy instanceof SpringTransactionPolicy) {
                     transactionTemplate = ((SpringTransactionPolicy) policy).getTransactionTemplate();
                 }
             }
 
             if (transactionTemplate == null) {
                 Map<String, TransactionTemplate> mapTemplate = routeContext.lookupByType(TransactionTemplate.class);
-                if (mapTemplate != null && mapTemplate.size() == 1) {
-                    transactionTemplate = mapTemplate.values().iterator().next();
-                }
                 if (mapTemplate == null || mapTemplate.isEmpty()) {
                     LOG.trace("No TransactionTemplate found in registry.");
+                } else if (mapTemplate.size() == 1) {
+                    transactionTemplate = mapTemplate.values().iterator().next();
                 } else {
                     LOG.debug("Found {} TransactionTemplate in registry. Cannot determine which one to use. "
                               + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder", mapTemplate.size());
@@ -89,11 +88,10 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
 
             if (transactionTemplate == null) {
                 Map<String, PlatformTransactionManager> mapManager = routeContext.lookupByType(PlatformTransactionManager.class);
-                if (mapManager != null && mapManager.size() == 1) {
-                    transactionTemplate = new TransactionTemplate(mapManager.values().iterator().next());
-                }
                 if (mapManager == null || mapManager.isEmpty()) {
                     LOG.trace("No PlatformTransactionManager found in registry.");
+                } else if (mapManager.size() == 1) {
+                    transactionTemplate = new TransactionTemplate(mapManager.values().iterator().next());
                 } else {
                     LOG.debug("Found {} PlatformTransactionManager in registry. Cannot determine which one to use for TransactionTemplate. "
                               + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder", mapManager.size());
@@ -109,7 +107,7 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
 
         TransactionErrorHandler answer = new TransactionErrorHandler(routeContext.getCamelContext(), processor,
             getLogger(), getOnRedelivery(), getRedeliveryPolicy(), getExceptionPolicyStrategy(), transactionTemplate, 
-            getRetryWhilePolicy(routeContext.getCamelContext()), getExecutorService(routeContext.getCamelContext()), getRollbackLoggingLevel());
+            getRetryWhilePolicy(routeContext.getCamelContext()), getExecutorService(routeContext.getCamelContext()), getRollbackLoggingLevel(), getOnExceptionOccurred());
         // configure error handler before we can use it
         configure(routeContext, answer);
         return answer;

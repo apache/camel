@@ -75,12 +75,14 @@ public class CometdConsumer extends DefaultConsumer implements CometdProducerCon
         private final CometdEndpoint endpoint;
         private final CometdConsumer consumer;
         private final CometdBinding binding;
+        private final String channelName;
 
         public ConsumerService(String channel, BayeuxServerImpl bayeux, CometdConsumer consumer) {
             super(bayeux, channel);
             this.endpoint = consumer.getEndpoint();
             this.binding = createBinding(bayeux);
             this.consumer = consumer;
+            this.channelName = channel;
             addService(channel, "push");
         }
 
@@ -89,10 +91,10 @@ public class CometdConsumer extends DefaultConsumer implements CometdProducerCon
             return new CometdBinding(bayeux, enableSessionHeaders);
         }
 
-        public void push(ServerSession remote, String channelName, ServerMessage cometdMessage, String messageId) throws Exception {
+        public void push(ServerSession remote, ServerMessage cometdMessage) throws Exception {
             Object data = null;
 
-            Message message = binding.createCamelMessage(remote, cometdMessage, data);
+            Message message = binding.createCamelMessage(endpoint.getCamelContext(), remote, cometdMessage, data);
 
             Exchange exchange = endpoint.createExchange();
             exchange.setIn(message);

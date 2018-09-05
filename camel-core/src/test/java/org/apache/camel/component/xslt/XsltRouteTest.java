@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xslt;
 
+import org.junit.Test;
+
 import java.util.List;
 
 import org.w3c.dom.Document;
@@ -29,14 +31,17 @@ import org.apache.camel.impl.JndiRegistry;
 
 public class XsltRouteTest extends ContextTestSupport {
     
+    @Test
     public void testSendStringMessage() throws Exception {
         sendMessageAndHaveItTransformed("<mail><subject>Hey</subject><body>Hello world!</body></mail>");
     }
     
+    @Test
     public void testSendBytesMessage() throws Exception {
         sendMessageAndHaveItTransformed("<mail><subject>Hey</subject><body>Hello world!</body></mail>".getBytes());
     }
     
+    @Test
     public void testSendDomMessage() throws Exception {
         XmlConverter  converter = new XmlConverter();
         Document body = converter.toDOMDocument("<mail><subject>Hey</subject><body>Hello world!</body></mail>");

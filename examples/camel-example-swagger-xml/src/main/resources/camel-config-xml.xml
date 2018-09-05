@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+  <!-- a bean for user services -->
+  <bean id="userService" class="org.apache.camel.example.rest.UserService"/>
+
+  <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
+
+    <!-- property placeholder file -->
+    <propertyPlaceholder id="properties" location="rest.properties"/>
+
+    <!-- configure rest to use the camel-servlet component, and use json binding mode -->
+    <!-- and tell to output json in pretty print mode -->
+    <!-- setup context path and port number that Apache Tomcat will deploy this application with,
+         as we use the servlet component, then we need to aid Camel to tell it these details so Camel
+         knows the url to the REST services.
+         Notice: This is optional, but needed if the RestRegistry should enlist accurate information.
+         You can access the RestRegistry from JMX at runtime -->
+    <!-- also enable swagger api, using the apiContextPath
+         and enable CORS so the swagger-ui web console can access the swagger api docs -->
+    <restConfiguration component="servlet" bindingMode="json"
+                       contextPath="camel-example-swagger-xml/rest" port="8080"
+                       apiContextPath="api-docs" apiContextListing="true"
+                       enableCORS="true">
+
+      <!-- we want json output in pretty mode -->
+      <dataFormatProperty key="prettyPrint" value="true"/>
+
+      <!-- setup swagger api descriptions -->
+      <apiProperty key="base.path" value="rest"/>
+      <apiProperty key="api.version" value="1.2.3"/>
+      <apiProperty key="api.title" value="User Services"/>
+      <apiProperty key="api.description" value="Camel Rest Example with Swagger that provides an User REST service"/>
+      <apiProperty key="api.contact.name" value="The Apache Camel team"/>
+
+    </restConfiguration>
+
+    <!-- defines the rest services using the context-path /user -->
+    <rest path="/user" consumes="application/json" produces="application/json">
+      <description>User rest service</description>
+
+      <!-- this is a rest GET to view an user by the given id -->
+      <get uri="/{id}" outType="org.apache.camel.example.rest.User">
+        <description>Find user by id</description>
+        <param name="id" type="path" description="The id of the user to get" dataType="integer"/>
+        <responseMessage message="The user that was found"/>
+        <responseMessage code="404" message="User not found"/>
+        <route>
+          <to uri="bean:userService?method=getUser(${header.id})"/>
+          <filter>
+            <simple>${body} == null</simple>
+            <setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+              <constant>404</constant>
+            </setHeader>
+          </filter>
+        </route>
+      </get>
+
+      <!-- this is a rest PUT to create/update an user -->
+      <put type="org.apache.camel.example.rest.User">
+        <description>Updates or create a user</description>
+        <param name="body" type="body" description="The user to update or create"/>
+        <to uri="bean:userService?method=updateUser"/>
+      </put>
+
+      <!-- this is a rest GET to find all users -->
+      <get uri="/findAll" outType="org.apache.camel.example.rest.User[]">
+        <description>Find all users</description>
+        <responseMessage message="All the users"/>
+        <to uri="bean:userService?method=listUsers"/>
+      </get>
+    </rest>
+
+    <!-- defines the rest services using the context-path /echo -->
+    <rest path="/echo" consumes="application/text" produces="application/text">
+      <description>Echo rest service</description>
+
+      <get uri="/ping">
+        <description>A ping service</description>
+        <param name="name" type="query" description="You can provide a name" dataType="string" defaultValue="{{defaultName}}"/>
+        <route>
+          <transform>
+            <simple>pong ${header.name}</simple>
+          </transform>
+        </route>
+      </get>
+
+    </rest>
+
+  </camelContext>
+
+</beans>

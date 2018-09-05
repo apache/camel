@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -29,6 +31,7 @@ import org.apache.camel.TestSupport;
  */
 public class BeanInvocationSerializeTest extends TestSupport {
 
+    @Test
     public void testSerialize() throws Exception {
         Method method = getClass().getMethod("cheese", String.class, String.class);
         BeanInvocation invocation = new BeanInvocation(method, new Object[] {"a", "b"});
@@ -43,6 +46,7 @@ public class BeanInvocationSerializeTest extends TestSupport {
         log.debug("Received " + actual);
     }
 
+    @Test
     public void testSerializeCtr() throws Exception {
         Method method = getClass().getMethod("cheese", String.class, String.class);
         BeanInvocation invocation = new BeanInvocation();
@@ -60,7 +64,7 @@ public class BeanInvocationSerializeTest extends TestSupport {
     }
 
     public void cheese(String a, String b) {
-        log.debug("Called with a: " + a + " b: " + b);
+        log.debug("Called with a: {} b: {}", a, b);
     }
 
 }

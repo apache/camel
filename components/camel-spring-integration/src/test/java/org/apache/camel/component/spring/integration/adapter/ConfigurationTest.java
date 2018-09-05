@@ -17,7 +17,6 @@
 package org.apache.camel.component.spring.integration.adapter;
 
 import org.apache.camel.util.IOHelper;
-
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;

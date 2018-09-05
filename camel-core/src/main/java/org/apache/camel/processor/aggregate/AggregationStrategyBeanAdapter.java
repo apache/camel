@@ -37,7 +37,7 @@ import org.apache.camel.util.ServiceHelper;
  */
 public final class AggregationStrategyBeanAdapter extends ServiceSupport implements AggregationStrategy, CamelContextAware {
 
-    private static final List<Method> EXCLUDED_METHODS = new ArrayList<Method>();
+    private static final List<Method> EXCLUDED_METHODS = new ArrayList<>();
     private CamelContext camelContext;
     private Object pojo;
     private final Class<?> type;
@@ -225,7 +225,7 @@ public final class AggregationStrategyBeanAdapter extends ServiceSupport impleme
         mi = bi.createMethodInfo();
 
         // in case the POJO is CamelContextAware
-        if (pojo != null && pojo instanceof CamelContextAware) {
+        if (pojo instanceof CamelContextAware) {
             ((CamelContextAware) pojo).setCamelContext(getCamelContext());
         }
 

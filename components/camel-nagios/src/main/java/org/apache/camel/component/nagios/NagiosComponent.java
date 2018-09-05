@@ -20,18 +20,19 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version 
  */
-public class NagiosComponent extends UriEndpointComponent {
+public class NagiosComponent extends DefaultComponent {
 
+    @Metadata(label = "advanced")
     private NagiosConfiguration configuration;
 
     public NagiosComponent() {
-        super(NagiosEndpoint.class);
         configuration = new NagiosConfiguration();
     }
 

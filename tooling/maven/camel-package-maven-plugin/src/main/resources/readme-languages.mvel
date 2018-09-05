@@ -1,0 +1,12 @@
+@if{!languages.isEmpty()}
+
+Number of Languages: @{languages.size} in @{numberOfArtifacts} JAR artifacts (@{numberOfDeprecated} deprecated)
+
+[width="100%",cols="4,1,5",options="header"]
+|===
+| Language | Available From | Description
+@foreach{row : languages}
+| link:@{row.docLink}/${row.name}-language.adoc[@{row.title}] (@{row.artifactId}) | @{row.firstVersionShort} | @if{row.deprecated == "true"}*deprecated* @end{}@{row.description}
+@end{}|===
+
+@end{}

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -36,12 +38,14 @@ public class BeanInfoSelectMethodTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testOrder() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Order");
         template.sendBody("direct:a", "Hello");
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFailure() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Failure");
         template.send("direct:b", new Processor() {

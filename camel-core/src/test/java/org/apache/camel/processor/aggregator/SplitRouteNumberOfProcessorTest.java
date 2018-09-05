@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.ContextTestSupport;
@@ -37,6 +39,7 @@ public class SplitRouteNumberOfProcessorTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testOneProcessor() throws Exception {
         failed.set(false);
 
@@ -79,6 +82,7 @@ public class SplitRouteNumberOfProcessorTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testThreeProcessors() throws Exception {
         failed.set(false);
 

@@ -27,6 +27,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManagerFactory;
 
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.IOHelper;
@@ -37,18 +38,21 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPSClient;
 
 /**
- * FTP Secure (FTP over SSL/TLS) endpoint
- * 
- * @version 
+ * The ftps (FTP secure SSL/TLS) component is used for uploading or downloading files from FTP servers.
  */
-@UriEndpoint(scheme = "ftps", extendsScheme = "file", title = "FTPS",
-        syntax = "ftps:host:port/directoryName", consumerClass = FtpConsumer.class, label = "file")
+@UriEndpoint(firstVersion = "2.2.0", scheme = "ftps", extendsScheme = "file", title = "FTPS",
+        syntax = "ftps:host:port/directoryName", alternativeSyntax = "ftps:username:password@host:port/directoryName",
+        consumerClass = FtpConsumer.class, label = "file")
+@ManagedResource(description = "Managed FtpsEndpoint")
 public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     @UriParam
     protected FtpsConfiguration configuration;
-    protected Map<String, Object> ftpClientKeyStoreParameters;
-    protected Map<String, Object> ftpClientTrustStoreParameters;
+    @UriParam(label = "security")
     protected SSLContextParameters sslContextParameters;
+    @UriParam(label = "security", prefix = "ftpClient.keyStore.", multiValue = true)
+    protected Map<String, Object> ftpClientKeyStoreParameters;
+    @UriParam(label = "security", prefix = "ftpClient.trustStore.", multiValue = true)
+    protected Map<String, Object> ftpClientTrustStoreParameters;
 
     public FtpsEndpoint() {
     }
@@ -67,10 +71,10 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
      * Create the FTPS client.
      */
     protected FTPClient createFtpClient() throws Exception {
-        FTPSClient client = null;
+        FTPSClient client;
         
         if (sslContextParameters != null) {
-            SSLContext context = sslContextParameters.createSSLContext();
+            SSLContext context = sslContextParameters.createSSLContext(getCamelContext());
 
             client = new FTPSClient(getFtpsConfiguration().isImplicit(), context);
             
@@ -165,7 +169,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
         dataTimeout = getConfiguration().getTimeout();
 
         if (ftpClientParameters != null) {
-            Map<String, Object> localParameters = new HashMap<String, Object>(ftpClientParameters);
+            Map<String, Object> localParameters = new HashMap<>(ftpClientParameters);
             // setting soTimeout has to be done later on FTPClient (after it has connected)
             Object timeout = localParameters.remove("soTimeout");
             if (timeout != null) {
@@ -174,7 +178,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
             // and we want to keep data timeout so we can log it later
             timeout = localParameters.remove("dataTimeout");
             if (timeout != null) {
-                dataTimeout = getCamelContext().getTypeConverter().convertTo(int.class, dataTimeout);
+                dataTimeout = getCamelContext().getTypeConverter().convertTo(int.class, timeout);
             }
             setProperties(client, localParameters);
         }
@@ -184,7 +188,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
             if (ftpClientConfig == null) {
                 ftpClientConfig = new FTPClientConfig();
             }
-            Map<String, Object> localConfigParameters = new HashMap<String, Object>(ftpClientConfigParameters);
+            Map<String, Object> localConfigParameters = new HashMap<>(ftpClientConfigParameters);
             setProperties(ftpClientConfig, localConfigParameters);
         }
 
@@ -193,7 +197,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Created FTPClient [connectTimeout: {}, soTimeout: {}, dataTimeout: {}, bufferSize: {}"
+            log.debug("Created FTPSClient [connectTimeout: {}, soTimeout: {}, dataTimeout: {}, bufferSize: {}"
                             + ", receiveDataSocketBufferSize: {}, sendDataSocketBufferSize: {}]: {}",
                     new Object[]{client.getConnectTimeout(), getSoTimeout(), dataTimeout, client.getBufferSize(),
                             client.getReceiveDataSocketBufferSize(), client.getSendDataSocketBufferSize(), client});
@@ -206,8 +210,6 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
 
     /**
      * Returns the FTPSClient. This method exists only for convenient.
-     * 
-     * @return ftpsClient
      */
     public FTPSClient getFtpsClient() {
         return (FTPSClient) getFtpClient();
@@ -215,8 +217,6 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     
     /**
      * Returns the FtpsConfiguration. This method exists only for convenient.
-     * 
-     * @return ftpsConfiguration
      */
     public FtpsConfiguration getFtpsConfiguration() {
         return (FtpsConfiguration) getConfiguration();

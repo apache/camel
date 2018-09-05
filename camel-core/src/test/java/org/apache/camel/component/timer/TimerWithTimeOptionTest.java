@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.timer;
 
+import org.junit.Test;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -35,150 +37,165 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testFiredInFutureWithTPattern() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                Date future = new Date(new Date().getTime() + 1000);
+                Date future = new Date(new Date().getTime() + 10);
 
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
                 String time = sdf.format(future);
 
-                fromF("timer://foo?time=%s", time).to("mock:result");
+                fromF("timer://foo?delay=0&period=10&time=%s", time).to("mock:result");
             }
         });
-        context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        // period is default 1000 so we can get more messages
+        // period is 10 so we can get more messages
         mock.expectedMinimumMessageCount(1);
+
+        context.start();
 
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFiredInFutureWithTPatternNoPeriod() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                Date future = new Date(new Date().getTime() + 1000);
+                Date future = new Date(new Date().getTime() + 10);
 
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
                 String time = sdf.format(future);
 
                 fromF("timer://foo?period=0&time=%s", time).to("mock:result");
             }
         });
-        context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
+        context.start();
+
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFiredInFutureWithTPatternFixedRate() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                Date future = new Date(new Date().getTime() + 1000);
+                Date future = new Date(new Date().getTime() + 10);
 
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
                 String time = sdf.format(future);
 
-                fromF("timer://foo?fixedRate=true&time=%s", time).to("mock:result");
+                fromF("timer://foo?delay=0&period=10&fixedRate=true&time=%s", time).to("mock:result");
             }
         });
-        context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        // period is default 1000 so we can get more messages
+        // period is 10 so we can get more messages
         mock.expectedMinimumMessageCount(1);
+
+        context.start();
 
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFiredInFutureWithoutTPattern() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                Date future = new Date(new Date().getTime() + 1000);
+                Date future = new Date(new Date().getTime() + 10);
 
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
                 String time = sdf.format(future);
 
-                fromF("timer://foo?time=%s", time).to("mock:result");
+                fromF("timer://foo?delay=0&period=10&time=%s", time).to("mock:result");
             }
         });
-        context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        // period is default 1000 so we can get more messages
+        // period is 10 so we can get more messages
         mock.expectedMinimumMessageCount(1);
+
+        context.start();
 
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFiredInFutureWithoutTPatternNoPeriod() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                Date future = new Date(new Date().getTime() + 1000);
+                Date future = new Date(new Date().getTime() + 10);
 
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
                 String time = sdf.format(future);
 
-                fromF("timer://foo?period=0&time=%s", time).to("mock:result");
+                fromF("timer://foo?delay=0&period=0&time=%s", time).to("mock:result");
             }
         });
-        context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
+        context.start();
+
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFiredInFutureCustomPattern() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                Date future = new Date(new Date().getTime() + 1000);
+                Date future = new Date(new Date().getTime() + 10);
 
-                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
                 String time = sdf.format(future);
 
-                fromF("timer://foo?time=%s&pattern=dd-MM-yyyy HH:mm:ss", time).to("mock:result");
+                fromF("timer://foo?delay=0&period=10&time=%s&pattern=dd-MM-yyyy HH:mm:ss.SSS", time).to("mock:result");
             }
         });
-        context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        // period is default 1000 so we can get more messages
+        // period is 10 so we can get more messages
         mock.expectedMinimumMessageCount(1);
+
+        context.start();
 
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFiredInFutureCustomPatternNoPeriod() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                Date future = new Date(new Date().getTime() + 1000);
+                Date future = new Date(new Date().getTime() + 10);
 
-                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SSS");
                 String time = sdf.format(future);
 
-                fromF("timer://foo?period=0&time=%s&pattern=dd-MM-yyyy HH:mm:ss", time).to("mock:result");
+                fromF("timer://foo?delay=0&period=0&time=%s&pattern=dd-MM-yyyy HH:mm:ss.SSS", time).to("mock:result");
             }
         });
-        context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
+        context.start();
+
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFiredInFutureIllegalTime() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

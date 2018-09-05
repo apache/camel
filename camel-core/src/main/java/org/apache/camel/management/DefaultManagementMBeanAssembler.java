@@ -29,7 +29,9 @@ import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.NotificationSenderAware;
 import org.apache.camel.spi.ManagementMBeanAssembler;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +42,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class DefaultManagementMBeanAssembler implements ManagementMBeanAssembler {
+public class DefaultManagementMBeanAssembler extends ServiceSupport implements ManagementMBeanAssembler {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultManagementMBeanAssembler.class);
     protected final MBeanInfoAssembler assembler;
     protected final CamelContext camelContext;
@@ -114,4 +116,13 @@ public class DefaultManagementMBeanAssembler implements ManagementMBeanAssembler
         return mbean;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        ServiceHelper.startService(assembler);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(assembler);
+    }
 }

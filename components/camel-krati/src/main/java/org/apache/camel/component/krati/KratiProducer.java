@@ -78,6 +78,7 @@ public class KratiProducer extends DefaultProducer {
             //Its required to have only one thread putting stuff there at any given time per store.
             synchronized (endpoint.getPath().intern()) {
                 dataStore.put(key, value);
+                dataStore.persist();
             }
         }
     }

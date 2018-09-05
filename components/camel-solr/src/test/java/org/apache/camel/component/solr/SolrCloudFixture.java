@@ -17,13 +17,20 @@
 package org.apache.camel.component.solr;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.util.IOHelper;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.embedded.JettySolrRunner;
-import org.apache.solr.client.solrj.impl.CloudSolrServer;
+import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.cloud.MiniSolrCloudCluster;
 import org.apache.solr.common.SolrInputDocument;
@@ -37,34 +44,34 @@ import org.apache.solr.common.util.NamedList;
  * 
  */
 public class SolrCloudFixture {
-    
+
+    private static final Logger LOG;
+    private static final Path TEMP_DIR;
+
     /**
-     * Create indexes in this directory, optimally use a subdir, named after the
-     * test
+     * Create a temp dir under the maven target folder
      */
-    public static final File TEMP_DIR;
     static {
-        String s = System.getProperty("tempDir", System.getProperty("java.io.tmpdir"));
-        if (s == null) {
-            throw new RuntimeException("To run tests, you need to define system property 'tempDir' or 'java.io.tmpdir'.");
+        LOG = Logger.getLogger(SolrCloudFixture.class);
+        TEMP_DIR = Paths.get("target", "tmp");
+        try {
+            Files.createDirectories(TEMP_DIR);
+            LOG.info("Created: " + TEMP_DIR);
+        } catch (IOException e) {
+            LOG.error("Unable to create " + TEMP_DIR, e);
         }
-        TEMP_DIR = new File(s);
-        TEMP_DIR.mkdirs();
-        System.out.println("Created: " + TEMP_DIR.getAbsolutePath());
+
     }
-    
-    static Logger log = Logger.getLogger(SolrCloudFixture.class);
-    
 
     MiniSolrCloudCluster miniCluster;
     File testDir;
     SolrZkClient zkClient;
 
-    CloudSolrServer solrClient;
-    
+    CloudSolrClient solrClient;
+
     public SolrCloudFixture(String solrHome) throws Exception {
-       
-        miniCluster = new MiniSolrCloudCluster(1, "/solr", new File(solrHome, "solr-no-core.xml"), null, null);
+        String xml = IOHelper.loadText(new FileInputStream(new File(solrHome, "solr-no-core.xml")));
+        miniCluster = new MiniSolrCloudCluster(1, "/solr", TEMP_DIR, xml, null, null);
         String zkAddr = miniCluster.getZkServer().getZkAddress();
         String zkHost = miniCluster.getZkServer().getZkHost();
 
@@ -72,13 +79,13 @@ public class SolrCloudFixture {
         List<JettySolrRunner> jettys = miniCluster.getJettySolrRunners();
         for (JettySolrRunner jetty : jettys) {
             if (!jetty.isRunning()) {
-                log.warn("JETTY NOT RUNNING!");
+                LOG.warn("JETTY NOT RUNNING!");
             } else {
-                log.info("JETTY RUNNING AT " + jetty.getBaseUrl() + " PORT " + jetty.getLocalPort());
+                LOG.info("JETTY RUNNING AT " + jetty.getBaseUrl() + " PORT " + jetty.getLocalPort());
             }
         }
 
-        solrClient = new CloudSolrServer(zkAddr, true);
+        solrClient = new CloudSolrClient.Builder().withZkHost(zkAddr).build();
         solrClient.connect();
 
         createCollection(solrClient, "collection1", 1, 1, "conf1");
@@ -98,7 +105,7 @@ public class SolrCloudFixture {
         putConfig(confName, zkClient, solrhome, name, name);
     }
 
-    protected NamedList<Object> createCollection(CloudSolrServer server, String name, int numShards,
+    protected NamedList<Object> createCollection(CloudSolrClient server, String name, int numShards,
                                                  int replicationFactor, String configName) throws Exception {
         ModifiableSolrParams modParams = new ModifiableSolrParams();
         modParams.set(CoreAdminParams.ACTION, CollectionAction.CREATE.name());
@@ -115,12 +122,12 @@ public class SolrCloudFixture {
                                  String destName) throws Exception {
         File file = new File(solrhome, "collection1" + File.separator + "conf" + File.separator + srcName);
         if (!file.exists()) {
-            log.info("zk skipping " + file.getAbsolutePath() + " because it doesn't exist");
+            LOG.info("zk skipping " + file.getAbsolutePath() + " because it doesn't exist");
             return;
         }
 
         String destPath = "/configs/" + confName + "/" + destName;
-        log.info("zk put " + file.getAbsolutePath() + " to " + destPath);
+        LOG.info("zk put " + file.getAbsolutePath() + " to " + destPath);
         zkClient.makePath(destPath, file, false, true);
     }
 
@@ -129,7 +136,7 @@ public class SolrCloudFixture {
         throws Exception {
         zkClient = new SolrZkClient(zkAddress, 60000);
 
-        Map<String, Object> props = new HashMap<String, Object>();
+        Map<String, Object> props = new HashMap<>();
         props.put("configName", "conf1");
 
         // for now, always upload the config and schema to the canonical names
@@ -150,8 +157,9 @@ public class SolrCloudFixture {
     }
 
     public void teardown() throws Exception {
-        solrClient.shutdown();
+        solrClient.close();
         miniCluster.shutdown();
+        Files.walk(TEMP_DIR).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
 
         solrClient = null;
         miniCluster = null;

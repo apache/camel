@@ -17,6 +17,7 @@
 package org.apache.camel.component.eventadmin;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -25,10 +26,10 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * EventAdmin endpoint
+ * The eventadmin component can be used in an OSGi environment to receive OSGi EventAdmin events and process them.
  */
-@UriEndpoint(scheme = "eventadmin", title = "OSGi EventAdmin", syntax = "eventadmin:topic", consumerClass = EventAdminConsumer.class, label = "eventbus")
-public class EventAdminEndpoint extends DefaultEndpoint {
+@UriEndpoint(firstVersion = "2.6.0", scheme = "eventadmin", title = "OSGi EventAdmin", syntax = "eventadmin:topic", consumerClass = EventAdminConsumer.class, label = "eventbus")
+public class EventAdminEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     @UriPath
     private final String topic;
@@ -74,6 +75,11 @@ public class EventAdminEndpoint extends DefaultEndpoint {
     }
 
     public boolean isSingleton() {
+        return true;
+    }
+
+    @Override
+    public boolean isMultipleConsumersSupported() {
         return true;
     }
 }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.converter;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -26,6 +28,7 @@ import org.slf4j.LoggerFactory;
 public class TimerDrivenTimePatternConverterTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(TimerDrivenTimePatternConverterTest.class);
     
+    @Test
     public void testTimerInvocation() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result"); 
         mock.expectedMinimumMessageCount(2);
@@ -33,23 +36,24 @@ public class TimerDrivenTimePatternConverterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTimerUsingStopWatch() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result"); 
         mock.expectedMinimumMessageCount(2);
 
         StopWatch watch = new StopWatch();
         assertMockEndpointsSatisfied();
-        long interval = watch.stop();
+        long interval = watch.taken();
         
-        LOG.trace("Should take approx 2000 milliseconds, was: {}", interval);
-        assertTrue("Should take approx 2000 milliseconds, was: " + interval, interval >= 1700);
+        LOG.trace("Should take approx 50 milliseconds, was: {}", interval);
+        assertTrue("Should take approx 50 milliseconds, was: " + interval, interval >= 40);
     }
     
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("timer://foo?fixedRate=true&delay=0&period=2s").to("mock:result");
+                from("timer://foo?fixedRate=true&delay=0&period=50").to("mock:result");
             }
         };
     } 

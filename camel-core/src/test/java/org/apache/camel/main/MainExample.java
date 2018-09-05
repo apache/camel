@@ -38,15 +38,14 @@ public class MainExample {
     public void boot() throws Exception {
         // create a Main instance
         main = new Main();
-        // enable hangup support so you can press ctrl + c to terminate the JVM
-        main.enableHangupSupport();
-        // bind MyBean into the registery
+        // bind MyBean into the registry
         main.bind("foo", new MyBean());
         // add routes
         main.addRouteBuilder(new MyRouteBuilder());
         // add event listener
         main.addMainListener(new Events());
-
+        // set the properties from a file
+        main.setPropertyPlaceholderLocations("example.properties");
         // run until you terminate the JVM
         System.out.println("Starting Camel. Use ctrl + c to terminate the JVM.\n");
         main.run();
@@ -55,7 +54,7 @@ public class MainExample {
     private static class MyRouteBuilder extends RouteBuilder {
         @Override
         public void configure() throws Exception {
-            from("timer:foo?delay=2000")
+            from("timer:foo?delay={{millisecs}}")
                 .process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         System.out.println("Invoked timer at " + new Date());
@@ -67,7 +66,7 @@ public class MainExample {
 
     public static class MyBean {
         public void callMe() {
-            System.out.println("MyBean.calleMe method has been called");
+            System.out.println("MyBean.callMe method has been called");
         }
     }
 

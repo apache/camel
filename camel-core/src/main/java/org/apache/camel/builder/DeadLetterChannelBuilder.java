@@ -26,7 +26,7 @@ import org.apache.camel.processor.FatalFallbackErrorHandler;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelLogger;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -44,6 +44,8 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
 
     public DeadLetterChannelBuilder(Endpoint deadLetter) {
         setDeadLetter(deadLetter);
+        // DLC do not log exhausted by default
+        getRedeliveryPolicy().setLogExhausted(false);
     }
 
     public DeadLetterChannelBuilder(String uri) {
@@ -55,7 +57,8 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
 
         DeadLetterChannel answer = new DeadLetterChannel(routeContext.getCamelContext(), processor, getLogger(), getOnRedelivery(), 
                 getRedeliveryPolicy(), getExceptionPolicyStrategy(), getFailureProcessor(), getDeadLetterUri(), isDeadLetterHandleNewException(),
-                isUseOriginalMessage(), getRetryWhilePolicy(routeContext.getCamelContext()), getExecutorService(routeContext.getCamelContext()), getOnPrepareFailure());
+                isUseOriginalMessage(), getRetryWhilePolicy(routeContext.getCamelContext()), getExecutorService(routeContext.getCamelContext()),
+                getOnPrepareFailure(), getOnExceptionOccurred());
         // configure error handler before we can use it
         configure(routeContext, answer);
         return answer;
@@ -87,7 +90,7 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
 
     protected void validateDeadLetterUri(RouteContext routeContext) {
         if (deadLetter == null) {
-            ObjectHelper.notEmpty(deadLetterUri, "deadLetterUri", this);
+            StringHelper.notEmpty(deadLetterUri, "deadLetterUri", this);
             deadLetter = routeContext.getCamelContext().getEndpoint(deadLetterUri);
             if (deadLetter == null) {
                 throw new NoSuchEndpointException(deadLetterUri);

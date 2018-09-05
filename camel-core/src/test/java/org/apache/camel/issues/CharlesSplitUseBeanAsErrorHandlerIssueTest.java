@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeException;
@@ -30,6 +32,7 @@ public class CharlesSplitUseBeanAsErrorHandlerIssueTest extends ContextTestSuppo
 
     private static String logged;
 
+    @Test
     public void testSplitBeanErrorHandlerOK() throws Exception {
         MockEndpoint split = getMockEndpoint("mock:split");
         MockEndpoint ile = getMockEndpoint("mock:ile");
@@ -44,6 +47,7 @@ public class CharlesSplitUseBeanAsErrorHandlerIssueTest extends ContextTestSuppo
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitBeanErrorHandlerHandled() throws Exception {
         MockEndpoint split = getMockEndpoint("mock:split");
         MockEndpoint ile = getMockEndpoint("mock:ile");

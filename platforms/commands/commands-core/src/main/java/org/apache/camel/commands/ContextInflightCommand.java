@@ -43,17 +43,19 @@ public class ContextInflightCommand extends AbstractContextCommand {
     private static final int MIN_COLUMN_WIDTH = 12;
 
     private int limit;
+    private String route;
     private boolean sortByLongestDuration;
 
-    public ContextInflightCommand(String context, int limit, boolean sortByLongestDuration) {
+    public ContextInflightCommand(String context, String route, int limit, boolean sortByLongestDuration) {
         super(context);
+        this.route = route;
         this.limit = limit;
         this.sortByLongestDuration = sortByLongestDuration;
     }
 
     @Override
     protected Object performContextCommand(CamelController camelController, String contextName, PrintStream out, PrintStream err) throws Exception {
-        List<Map<String, Object>> inflight = camelController.browseInflightExchanges(contextName, limit, sortByLongestDuration);
+        List<Map<String, Object>> inflight = camelController.browseInflightExchanges(contextName, route, limit, sortByLongestDuration);
 
         final Map<String, Integer> columnWidths = computeColumnWidths(inflight);
         final String headerFormat = buildFormatString(columnWidths, true);
@@ -107,7 +109,7 @@ public class ContextInflightCommand extends AbstractContextCommand {
                 maxDurationLen = java.lang.Math.max(maxDurationLen, duration == null ? 0 : duration.length());
             }
 
-            final Map<String, Integer> retval = new Hashtable<String, Integer>(5);
+            final Map<String, Integer> retval = new Hashtable<>(5);
             retval.put(EXCHANGE_COLUMN_LABEL, maxExchangeLen);
             retval.put(FROM_ROUTE_COLUMN_LABEL, maxFromRouteLen);
             retval.put(ROUTE_COLUMN_LABEL, maxRouteLen);

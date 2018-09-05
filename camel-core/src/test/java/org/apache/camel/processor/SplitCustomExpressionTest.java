@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +31,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class SplitCustomExpressionTest extends ContextTestSupport {
 
+    @Test
     public void testSplitCustomExpression() throws Exception {
         getMockEndpoint("mock:split").expectedBodiesReceived("A", "B", "C");
 
@@ -58,7 +61,7 @@ public class SplitCustomExpressionTest extends ContextTestSupport {
 
             // just split the body by comma
             String[] parts = body.split(",");
-            List<String> list = new ArrayList<String>();
+            List<String> list = new ArrayList<>();
             for (String part : parts) {
                 list.add(part);
             }

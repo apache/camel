@@ -63,6 +63,14 @@ public class LinkedInComponent extends AbstractApiComponent<LinkedInApiName, Lin
         super.setConfiguration(configuration);
     }
 
+    /**
+     * To use the shared configuration
+     */
+    @Override
+    public LinkedInConfiguration getConfiguration() {
+        return super.getConfiguration();
+    }
+ 
     @Override
     protected Endpoint createEndpoint(String uri, String methodName, LinkedInApiName apiName,
                                       LinkedInConfiguration endpointConfiguration) {
@@ -82,14 +90,14 @@ public class LinkedInComponent extends AbstractApiComponent<LinkedInApiName, Lin
         }
     }
 
-    private static LinkedInOAuthRequestFilter createRequestFilter(LinkedInConfiguration configuration) {
+    private LinkedInOAuthRequestFilter createRequestFilter(LinkedInConfiguration configuration) {
         // validate configuration
         configuration.validate();
 
         final String[] enabledProtocols;
         try {
             // use default SSP to create supported non-SSL protocols list
-            final SSLContext sslContext = new SSLContextParameters().createSSLContext();
+            final SSLContext sslContext = new SSLContextParameters().createSSLContext(getCamelContext());
             enabledProtocols = sslContext.createSSLEngine().getEnabledProtocols();
         } catch (GeneralSecurityException e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);

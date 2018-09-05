@@ -19,10 +19,13 @@ package org.apache.camel.component.smpp;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.extra.SessionState;
+import org.jsmpp.session.Session;
 import org.jsmpp.session.SessionStateListener;
 import org.junit.Before;
 import org.junit.Test;
@@ -111,6 +114,7 @@ public class SmppConfigurationTest {
         assertEquals("user", configuration.getHttpProxyUsername());
         assertEquals("secret", configuration.getHttpProxyPassword());
         assertNotNull(configuration.getSessionStateListener());
+        assertEquals("1", configuration.getProxyHeaders().get("X-Proxy-Header"));
     }
 
     @Test
@@ -156,6 +160,7 @@ public class SmppConfigurationTest {
         assertEquals(config.getHttpProxyUsername(), configuration.getHttpProxyUsername());
         assertEquals(config.getHttpProxyPassword(), configuration.getHttpProxyPassword());
         assertEquals(config.getSessionStateListener(), configuration.getSessionStateListener());
+        assertEquals(config.getProxyHeaders(), configuration.getProxyHeaders());
     }
     
     @Test
@@ -188,12 +193,14 @@ public class SmppConfigurationTest {
                 + "numberingPlanIndicator=0, "
                 + "initialReconnectDelay=5000, "
                 + "reconnectDelay=5000, "
+                + "maxReconnect=2147483647, "
                 + "lazySessionCreation=false, "
                 + "httpProxyHost=null, "
                 + "httpProxyPort=3128, "
                 + "httpProxyUsername=null, "
                 + "httpProxyPassword=null, "
-                + "splittingPolicy=ALLOW]";
+                + "splittingPolicy=ALLOW, "
+                + "proxyHeaders=null]";
 
         assertEquals(expected, configuration.toString());
     }
@@ -228,8 +235,11 @@ public class SmppConfigurationTest {
         config.setHttpProxyUsername("user");
         config.setHttpProxyPassword("secret");
         config.setSessionStateListener(new SessionStateListener() {
-            public void onStateChange(SessionState arg0, SessionState arg1, Object arg2) {
+            public void onStateChange(SessionState arg0, SessionState arg1, Session arg2) {
             }
         });
+        Map<String, String> proxyHeaders = new HashMap<>();
+        proxyHeaders.put("X-Proxy-Header", "1");
+        config.setProxyHeaders(proxyHeaders);
     }
 }

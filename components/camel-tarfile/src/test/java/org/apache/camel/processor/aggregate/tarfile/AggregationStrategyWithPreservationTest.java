@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregate.tarfile;
+import org.junit.Before;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,8 +35,13 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
 
     private static final int EXPECTED_NO_FILES = 5;
 
+    private TarAggregationStrategy tar = new TarAggregationStrategy(true, true);
+
     @Override
+    @Before
     public void setUp() throws Exception {
+        tar.setParentDir("target/temp");
+        deleteDirectory("target/temp");
         deleteDirectory("target/out");
         super.setUp();
     }
@@ -53,7 +59,7 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
         assertTrue("Should be a file in target/out directory", files.length > 0);
 
         File resultFile = files[0];
-        Set<String> expectedTarFiles = new HashSet<String>(Arrays.asList("another/hello.txt",
+        Set<String> expectedTarFiles = new HashSet<>(Arrays.asList("another/hello.txt",
                 "other/greetings.txt",
                 "chiau.txt", "hi.txt", "hola.txt"));
         TarArchiveInputStream tin = new TarArchiveInputStream(new FileInputStream(resultFile));
@@ -83,7 +89,7 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // Untar file and Split it according to FileEntry
                 from("file:src/test/resources/org/apache/camel/aggregate/tarfile/data?consumer.delay=1000&noop=true&recursive=true")
-                        .aggregate(new TarAggregationStrategy(true, true))
+                        .aggregate(tar)
                         .constant(true)
                         .completionFromBatchConsumer()
                         .eagerCheckCompletion()

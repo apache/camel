@@ -33,7 +33,7 @@ public abstract class ObservableProcessor<T> extends ServiceSupport implements P
     private final ProcessorToObserver<T> processor;
 
     protected ObservableProcessor(Func1<Exchange, T> func) {
-        this.processor = new ProcessorToObserver<T>(func, observable);
+        this.processor = new ProcessorToObserver<>(func, observable);
     }
 
     @Override

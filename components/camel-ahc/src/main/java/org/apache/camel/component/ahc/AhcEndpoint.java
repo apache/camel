@@ -17,13 +17,17 @@
 package org.apache.camel.component.ahc;
 
 import java.net.URI;
+import java.util.Map;
 import javax.net.ssl.SSLContext;
 
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.AsyncHttpClientConfig;
+import io.netty.handler.ssl.ClientAuth;
+import io.netty.handler.ssl.JdkSslContext;
+
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -33,29 +37,44 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.AsyncHttpClientConfig;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 
-@UriEndpoint(scheme = "ahc", title = "AHC", syntax = "ahc:httpUri", producerOnly = true, label = "http")
-public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
+/**
+ * To call external HTTP services using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>.
+ */
+@UriEndpoint(firstVersion = "2.8.0", scheme = "ahc", title = "AHC", syntax = "ahc:httpUri", producerOnly = true, label = "http", lenientProperties = true)
+public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
     private AsyncHttpClient client;
     @UriPath @Metadata(required = "true")
     private URI httpUri;
-    @UriParam
-    private AsyncHttpClientConfig clientConfig;
     @UriParam
     private boolean bridgeEndpoint;
     @UriParam(defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
     @UriParam
     private boolean transferException;
-    @UriParam
-    private SSLContextParameters sslContextParameters;
     @UriParam(defaultValue = "" + 4 * 1024)
     private int bufferSize = 4 * 1024;
     @UriParam
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
-    @UriParam
+    @UriParam(label = "advanced")
     private AhcBinding binding;
+    @UriParam(label = "security")
+    private SSLContextParameters sslContextParameters;
+    @UriParam(label = "advanced")
+    private AsyncHttpClientConfig clientConfig;
+    @UriParam(label = "advanced", prefix = "clientConfig.", multiValue = true)
+    private Map<String, Object> clientConfigOptions;
+    @UriParam(label = "advanced,security", prefix = "clientConfig.realm.", multiValue = true)
+    private Map<String, Object> clientConfigRealmOptions;
+    @UriParam(label = "producer", defaultValue = "false")
+    private boolean connectionClose;
+    @UriParam(label = "producer")
+    private CookieHandler cookieHandler;
 
     public AhcEndpoint(String endpointUri, AhcComponent component, URI httpUri) {
         super(endpointUri, component);
@@ -179,6 +198,9 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
      * in the response as a application/x-java-serialized-object content type (for example using Jetty or Servlet Camel components).
      * On the producer side the exception will be deserialized and thrown as is, instead of the AhcOperationFailedException.
      * The caused exception is required to be serialized.
+     * <p/>
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
+     * data from the request to Java and that can be a potential security risk.
      */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
@@ -209,29 +231,80 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         this.bufferSize = bufferSize;
     }
 
+    public Map<String, Object> getClientConfigOptions() {
+        return clientConfigOptions;
+    }
+
+    /**
+     * To configure the AsyncHttpClientConfig using the key/values from the Map.
+     */
+    public void setClientConfigOptions(Map<String, Object> clientConfigOptions) {
+        this.clientConfigOptions = clientConfigOptions;
+    }
+
+    public Map<String, Object> getClientConfigRealmOptions() {
+        return clientConfigRealmOptions;
+    }
+
+    /**
+     * To configure the AsyncHttpClientConfig Realm using the key/values from the Map.
+     */
+    public void setClientConfigRealmOptions(Map<String, Object> clientConfigRealmOptions) {
+        this.clientConfigRealmOptions = clientConfigRealmOptions;
+    }
+
+    public boolean isConnectionClose() {
+        return connectionClose;
+    }
+    
+    /**
+     * Define if the Connection Close header has to be added to HTTP Request. This parameter is false by default
+     */
+    public void setConnectionClose(boolean connectionClose) {
+        this.connectionClose = connectionClose;
+    }
+
+    public CookieHandler getCookieHandler() {
+        return cookieHandler;
+    }
+
+    /**
+     * Configure a cookie handler to maintain a HTTP session
+     */
+    public void setCookieHandler(CookieHandler cookieHandler) {
+        this.cookieHandler = cookieHandler;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
         if (client == null) {
             
-            AsyncHttpClientConfig config = null;
+            AsyncHttpClientConfig config;
             
             if (clientConfig != null) {
-                AsyncHttpClientConfig.Builder builder = AhcComponent.cloneConfig(clientConfig);
+                DefaultAsyncHttpClientConfig.Builder builder = AhcComponent.cloneConfig(clientConfig);
                 
                 if (sslContextParameters != null) {
-                    SSLContext ssl = sslContextParameters.createSSLContext();
-                    builder.setSSLContext(ssl);
+                    SSLContext sslContext = sslContextParameters.createSSLContext(getCamelContext());
+                    JdkSslContext ssl = new JdkSslContext(sslContext, true, ClientAuth.REQUIRE);
+                    builder.setSslContext(ssl);
                 }
                 
                 config = builder.build();
             } else {
+                DefaultAsyncHttpClientConfig.Builder builder = new DefaultAsyncHttpClientConfig.Builder();
+                /*
+                 * Not doing this will always create a cookie handler per endpoint, which is incompatible
+                 * to prior versions and interferes with the cookie handling in camel
+                 */
+                builder.setCookieStore(null);
                 if (sslContextParameters != null) {
-                    AsyncHttpClientConfig.Builder builder = new AsyncHttpClientConfig.Builder();
-                    SSLContext ssl = sslContextParameters.createSSLContext();
-                    builder.setSSLContext(ssl);
-                    config = builder.build();
+                    SSLContext sslContext = sslContextParameters.createSSLContext(getCamelContext());
+                    JdkSslContext ssl = new JdkSslContext(sslContext, true, ClientAuth.REQUIRE);
+                    builder.setSslContext(ssl);
                 }
+                config = builder.build();
             }
             client = createClient(config);
         }
@@ -239,9 +312,9 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     protected AsyncHttpClient createClient(AsyncHttpClientConfig config) {
         if (config == null) {
-            return new AsyncHttpClient();
+            return new DefaultAsyncHttpClient();
         } else {
-            return new AsyncHttpClient(config);
+            return new DefaultAsyncHttpClient(config);
         }
     }
 

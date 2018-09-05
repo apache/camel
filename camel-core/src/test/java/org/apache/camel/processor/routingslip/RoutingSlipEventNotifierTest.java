@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.routingslip;
 
+import org.junit.Test;
+
 import java.util.EventObject;
 
 import org.apache.camel.CamelContext;
@@ -36,6 +38,7 @@ public class RoutingSlipEventNotifierTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testRoutingSlipEventNotifier() throws Exception {
         getMockEndpoint("mock:x").expectedMessageCount(1);
         getMockEndpoint("mock:y").expectedMessageCount(1);
@@ -66,6 +69,7 @@ public class RoutingSlipEventNotifierTest extends ContextTestSupport {
         @Override
         public void notify(EventObject event) throws Exception {
             if (event instanceof ExchangeSendingEvent) {
+                log.info("Sending: {}", event);
                 sending++;
             } else {
                 sent++;

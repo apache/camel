@@ -42,7 +42,7 @@ public class VelocitySupplementalContextTest extends CamelTestSupport {
         outputEndpoint.expectedHeaderReceived("in.body", "old_body");
         outputEndpoint.expectedBodiesReceived("bar");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(VelocityConstants.VELOCITY_TEMPLATE,
                 "#set( $headers.body = ${body} )\n#set( $headers['in.body'] = $in.body )\n" + "bar");
         inputEndpoint.sendBodyAndHeaders("old_body", headers);

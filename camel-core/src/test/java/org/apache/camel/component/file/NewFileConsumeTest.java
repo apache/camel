@@ -15,11 +15,15 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
@@ -35,7 +39,8 @@ public class NewFileConsumeTest extends ContextTestSupport {
     private CountDownLatch latch = new CountDownLatch(1);
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/consumefile");
         super.setUp();
     }
@@ -45,6 +50,7 @@ public class NewFileConsumeTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testNewFileConsumer() throws Exception {
         FileComponent comp = new FileComponent();
         comp.setCamelContext(context);
@@ -68,7 +74,7 @@ public class NewFileConsumeTest extends ContextTestSupport {
             }
         });
         consumer.start();
-        latch.await();
+        latch.await(5, TimeUnit.SECONDS);
 
         consumer.stop();
     }

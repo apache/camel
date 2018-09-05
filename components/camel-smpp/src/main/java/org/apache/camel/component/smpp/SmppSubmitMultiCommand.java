@@ -26,7 +26,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.jsmpp.bean.Address;
-import org.jsmpp.bean.DataCoding;
+import org.jsmpp.bean.DataCodings;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.GSMSpecificFeature;
 import org.jsmpp.bean.MessageMode;
@@ -50,7 +50,7 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
     @Override
     public void execute(Exchange exchange) throws SmppException {
         SubmitMulti[] submitMulties = createSubmitMulti(exchange);
-        List<SubmitMultiResult> results = new ArrayList<SubmitMultiResult>(submitMulties.length);
+        List<SubmitMultiResult> results = new ArrayList<>(submitMulties.length);
         
         for (SubmitMulti submitMulti : submitMulties) {
             SubmitMultiResult result;
@@ -72,7 +72,7 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
                         submitMulti.getValidityPeriod(),
                         new RegisteredDelivery(submitMulti.getRegisteredDelivery()),
                         new ReplaceIfPresentFlag(submitMulti.getReplaceIfPresentFlag()),
-                        DataCoding.newInstance(submitMulti.getDataCoding()),
+                        DataCodings.newInstance(submitMulti.getDataCoding()),
                         submitMulti.getSmDefaultMsgId(),
                         submitMulti.getShortMessage(),
                         submitMulti.getOptionalParameters());
@@ -86,18 +86,18 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
             log.debug("Sent multiple short messages for exchange id '{}' and received results '{}'", exchange.getExchangeId(), results);
         }
 
-        List<String> messageIDs = new ArrayList<String>(results.size());
+        List<String> messageIDs = new ArrayList<>(results.size());
         // {messageID : [{destAddr : address, error : errorCode}]}
-        Map<String, List<Map<String, Object>>> errors = new HashMap<String, List<Map<String, Object>>>();
+        Map<String, List<Map<String, Object>>> errors = new HashMap<>();
         
         for (SubmitMultiResult result : results) {
             UnsuccessDelivery[] deliveries = result.getUnsuccessDeliveries();
             
             if (deliveries != null) {
-                List<Map<String, Object>> undelivered = new ArrayList<Map<String, Object>>();
+                List<Map<String, Object>> undelivered = new ArrayList<>();
                 
                 for (UnsuccessDelivery delivery : deliveries) {
-                    Map<String, Object> error = new HashMap<String, Object>();
+                    Map<String, Object> error = new HashMap<>();
                     error.put(SmppConstants.DEST_ADDR, delivery.getDestinationAddress().getAddress());
                     error.put(SmppConstants.ERROR, delivery.getErrorStatusCode());
                     undelivered.add(error);

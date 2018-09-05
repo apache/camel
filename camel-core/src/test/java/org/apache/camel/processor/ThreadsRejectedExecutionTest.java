@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -37,6 +39,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testThreadsRejectedExecution() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -49,7 +52,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
                     .to("log:before")
                     // will use our custom pool
                     .threads().executorService(pool)
-                    .delay(1000)
+                    .delay(200)
                     .to("log:after")
                     .to("mock:result");
             }
@@ -65,6 +68,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testThreadsRejectedExecutionCallerNotRuns() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -77,7 +81,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
                     .to("log:before")
                     // will use our custom pool
                     .threads().executorService(pool).callerRunsWhenRejected(false)
-                    .delay(1000)
+                    .delay(200)
                     .to("log:after")
                     .to("mock:result");
             }
@@ -86,8 +90,8 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(3);
-        // wait at most 5 seconds
-        mock.setResultWaitTime(5000);
+        // wait at most 2 seconds
+        mock.setResultWaitTime(2000);
 
         template.sendBody("seda:start", "Hello World");
         template.sendBody("seda:start", "Hi World");
@@ -100,6 +104,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         assertEquals(1, mock.getReceivedCounter());
     }
 
+    @Test
     public void testThreadsRejectedDiscard() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -107,7 +112,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
                 from("seda:start")
                         .to("log:before")
                         .threads(1, 1).maxPoolSize(1).maxQueueSize(2).rejectedPolicy(ThreadPoolRejectedPolicy.Discard)
-                        .delay(1000)
+                        .delay(100)
                         .to("log:after")
                         .to("mock:result");
             }
@@ -128,6 +133,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         assertEquals(0, inflight);
     }
     
+    @Test
     public void testThreadsRejectedDiscardOldest() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -135,7 +141,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
                 from("seda:start")
                         .to("log:before")
                         .threads(1, 1).maxPoolSize(1).maxQueueSize(2).rejectedPolicy(ThreadPoolRejectedPolicy.DiscardOldest)
-                        .delay(1000)
+                        .delay(100)
                         .to("log:after")
                         .to("mock:result");
             }
@@ -156,6 +162,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         assertEquals(0, inflight);
     }
 
+    @Test
     public void testThreadsRejectedAbort() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -163,7 +170,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
                 from("seda:start")
                         .to("log:before")
                         .threads(1, 1).maxPoolSize(1).maxQueueSize(2).rejectedPolicy(ThreadPoolRejectedPolicy.Abort)
-                        .delay(1000)
+                        .delay(100)
                         .to("log:after")
                         .to("mock:result");
             }
@@ -184,6 +191,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         assertEquals(0, inflight);
     }
 
+    @Test
     public void testThreadsRejectedCallerRuns() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -191,7 +199,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
                 from("seda:start")
                         .to("log:before")
                         .threads(1, 1).maxPoolSize(1).maxQueueSize(2).rejectedPolicy(ThreadPoolRejectedPolicy.CallerRuns)
-                        .delay(200)
+                        .delay(100)
                         .to("log:after")
                         .to("mock:result");
             }
@@ -212,16 +220,17 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         assertEquals(0, inflight);
     }
 
+    @Test
     public void testThreadsRejectedAbortNoRedelivery() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).maximumRedeliveries(3).handled(true).to("mock:error");
+                onException(Exception.class).redeliveryDelay(250).maximumRedeliveries(3).handled(true).to("mock:error");
 
                 from("seda:start")
                         .to("log:before")
                         .threads(1, 1).maxPoolSize(1).maxQueueSize(2).rejectedPolicy(ThreadPoolRejectedPolicy.Abort)
-                        .delay(1000)
+                        .delay(250)
                         .to("log:after")
                         .to("mock:result");
             }
@@ -245,5 +254,4 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         assertEquals(0, inflight);
     }
 
-    
 }

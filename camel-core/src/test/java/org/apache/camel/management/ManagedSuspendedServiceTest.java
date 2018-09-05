@@ -15,9 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -27,17 +31,21 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.RoutePolicySupport;
 
+import static org.awaitility.Awaitility.await;
+
 /**
  * @version 
  */
 public class ManagedSuspendedServiceTest extends ManagementTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/suspended");
         super.setUp();
     }
 
+    @Test
     public void testConsumeSuspendAndResumeFile() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -66,11 +74,11 @@ public class ManagedSuspendedServiceTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Thread.sleep(1000);
-
-        // now its suspended by the policy
-        suspended = (Boolean) mbeanServer.getAttribute(on, "Suspended");
-        assertEquals(true, suspended.booleanValue());
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            // now its suspended by the policy
+            Boolean bool = (Boolean) mbeanServer.getAttribute(on, "Suspended");
+            assertEquals(true, bool.booleanValue());
+        });
 
         // the route is suspended by the policy so we should only receive one
         String[] files = new File("target/suspended/").list();
@@ -89,12 +97,12 @@ public class ManagedSuspendedServiceTest extends ManagementTestSupport {
         suspended = (Boolean) mbeanServer.getAttribute(on, "Suspended");
         assertEquals(false, suspended.booleanValue());
 
-        Thread.sleep(500);
-
-        // and the file is now deleted
-        files = new File("target/suspended/").list();
-        assertNotNull(files);
-        assertEquals("The file should exists", 0, files.length);
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
+            // and the file is now deleted
+            String[] names = new File("target/suspended/").list();
+            assertNotNull(names);
+            assertEquals("The file should exists", 0, names.length);
+        });
     }
 
     @Override
@@ -104,7 +112,7 @@ public class ManagedSuspendedServiceTest extends ManagementTestSupport {
             public void configure() throws Exception {
                 MyPolicy myPolicy = new MyPolicy();
 
-                from("file://target/suspended?maxMessagesPerPoll=1&delete=true")
+                from("file://target/suspended?initialDelay=0&delay=10&maxMessagesPerPoll=1&delete=true")
                     .routePolicy(myPolicy).id("myRoute")
                     .to("mock:result");
             }
@@ -119,7 +127,7 @@ public class ManagedSuspendedServiceTest extends ManagementTestSupport {
             // only stop it at first run
             if (counter++ == 0) {
                 try {
-                    super.stopConsumer(route.getConsumer());
+                    super.suspendOrStopConsumer(route.getConsumer());
                 } catch (Exception e) {
                     handleException(e);
                 }

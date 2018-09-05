@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -27,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class RouteWithMistypedComponentNameTest extends TestSupport {
 
+    @Test
     public void testNoSuchEndpoint() throws Exception {
         CamelContext context = new DefaultCamelContext();
         try {
@@ -46,6 +49,7 @@ public class RouteWithMistypedComponentNameTest extends TestSupport {
     }
 
 
+    @Test
     public void testNoSuchEndpointType() throws Exception {
         CamelContext context = new DefaultCamelContext();
         try {

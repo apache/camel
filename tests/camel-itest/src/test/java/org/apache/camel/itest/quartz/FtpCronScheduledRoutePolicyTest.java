@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.itest.quartz;
+import org.junit.Before;
+import org.junit.After;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -69,6 +71,7 @@ public class FtpCronScheduledRoutePolicyTest extends CamelTestSupport {
         };
     }
 
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("res");
@@ -77,6 +80,7 @@ public class FtpCronScheduledRoutePolicyTest extends CamelTestSupport {
         ftpServer.start();
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         ftpServer.stop();

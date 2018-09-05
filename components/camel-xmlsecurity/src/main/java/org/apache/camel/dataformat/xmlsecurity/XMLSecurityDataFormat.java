@@ -50,6 +50,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.xml.DefaultNamespaceContext;
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.xml.security.encryption.EncryptedData;
@@ -65,7 +67,7 @@ import org.slf4j.LoggerFactory;
 
 
 
-public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
+public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     /**
      * @deprecated  Use {@link #XMLSecurityDataFormat(String, Map, boolean, String, String, String, KeyStoreParameters)} instead.
@@ -362,13 +364,17 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         this.setKeyPassword(keyPassword);
         this.setDigestAlgorithm(digestAlgorithm);
     }
-    
+
+    @Override
+    public String getDataFormatName() {
+        return "secureXML";
+    }
+
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
         try {
             setDefaultsFromContext(camelContext);
-
         } catch (Exception e) {
             throw new IllegalStateException("Could not initialize XMLSecurityDataFormat with camelContext. ", e);
         }
@@ -378,7 +384,17 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
     public CamelContext getCamelContext() {
         return camelContext;
     }
-    
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
+
     /**
      * Sets missing properties that are defined in the Camel context.
      * @deprecated  this operation populates the data format using depreciated properties and will be
@@ -596,7 +612,18 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
             keyEncryptionKey = generateKeyEncryptionKey("AES");
         }
 
-        return decode(exchange, encodedDocument, keyEncryptionKey);
+        Object ret = null;
+        try {
+            ret = decode(exchange, encodedDocument, keyEncryptionKey, true);
+        } catch (org.apache.xml.security.encryption.XMLEncryptionException ex) {
+            if (ex.getMessage().equals("encryption.nokey")) {
+                //the message don't have EncryptionKey, try key directly
+                ret = decode(exchange, encodedDocument, keyEncryptionKey, false);
+            } else {
+                throw ex;
+            }
+        }
+        return  ret;
     }
     
     private Object decodeWithAsymmetricKey(Exchange exchange, Document encodedDocument) throws Exception { 
@@ -612,14 +639,30 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         
         Key keyEncryptionKey = getPrivateKey(this.keyStore, this.recipientKeyAlias, 
                  this.keyPassword != null ? this.keyPassword : this.keyStorePassword);
-        return decode(exchange, encodedDocument, keyEncryptionKey);
+        Object ret = null;
+        try {
+            ret = decode(exchange, encodedDocument, keyEncryptionKey, true);
+        } catch (org.apache.xml.security.encryption.XMLEncryptionException ex) {
+            if (ex.getMessage().equals("encryption.nokey")) {
+                //the message don't have EncryptionKey, try key directly
+                ret = decode(exchange, encodedDocument, keyEncryptionKey, false);
+            } else {
+                throw ex;
+            }
+        }
+        return  ret;
     }
     
-    private Object decode(Exchange exchange, Document encodedDocument, Key keyEncryptionKey) throws Exception {
+    private Object decode(Exchange exchange, Document encodedDocument, Key keyEncryptionKey,
+                          boolean hasEncrytionKey) throws Exception {
         XMLCipher xmlCipher = XMLCipher.getInstance();
         xmlCipher.setSecureValidation(true);
-        xmlCipher.init(XMLCipher.DECRYPT_MODE, null);
-        xmlCipher.setKEK(keyEncryptionKey);
+        if (hasEncrytionKey) {
+            xmlCipher.init(XMLCipher.DECRYPT_MODE, null);
+            xmlCipher.setKEK(keyEncryptionKey);
+        } else {
+            xmlCipher.init(XMLCipher.DECRYPT_MODE, keyEncryptionKey);
+        }
 
         if (secureTag.equalsIgnoreCase("")) {
             checkEncryptionAlgorithm(keyEncryptionKey, encodedDocument.getDocumentElement());

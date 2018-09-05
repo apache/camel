@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
@@ -35,11 +38,13 @@ public class EndpointHelperTest extends ContextTestSupport {
     private Endpoint foo;
     private Endpoint bar;
 
+    @Test
     public void testPollEndpoint() throws Exception {
         template.sendBody("seda:foo", "Hello World");
         template.sendBody("seda:foo", "Bye World");
 
-        final List<String> bodies = new ArrayList<String>();
+        final List<String> bodies = new ArrayList<>();
+        // uses 1 sec default timeout
         EndpointHelper.pollEndpoint(context.getEndpoint("seda:foo"), new Processor() {
             public void process(Exchange exchange) throws Exception {
                 bodies.add(exchange.getIn().getBody(String.class));
@@ -51,16 +56,17 @@ public class EndpointHelperTest extends ContextTestSupport {
         assertEquals("Bye World", bodies.get(1));
     }
 
+    @Test
     public void testPollEndpointTimeout() throws Exception {
         template.sendBody("seda:foo", "Hello World");
         template.sendBody("seda:foo", "Bye World");
 
-        final List<String> bodies = new ArrayList<String>();
+        final List<String> bodies = new ArrayList<>();
         EndpointHelper.pollEndpoint(context.getEndpoint("seda:foo"), new Processor() {
             public void process(Exchange exchange) throws Exception {
                 bodies.add(exchange.getIn().getBody(String.class));
             }
-        }, 2000);
+        }, 10);
 
         assertEquals(2, bodies.size());
         assertEquals("Hello World", bodies.get(0));
@@ -76,16 +82,19 @@ public class EndpointHelperTest extends ContextTestSupport {
         bar = context.getEndpoint("mock:bar");
         reg.put("foo", foo);
         reg.put("coolbar", bar);
+        reg.put("numbar", "12345");
 
         return context;
     }
 
+    @Test
     public void testLookupEndpointRegistryId() throws Exception {
         assertEquals("foo", EndpointHelper.lookupEndpointRegistryId(foo));
         assertEquals("coolbar", EndpointHelper.lookupEndpointRegistryId(bar));
         assertEquals(null, EndpointHelper.lookupEndpointRegistryId(context.getEndpoint("mock:cheese")));
     }
 
+    @Test
     public void testLookupEndpointRegistryIdUsingRef() throws Exception {
         foo = context.getEndpoint("ref:foo");
         bar = context.getEndpoint("ref:coolbar");
@@ -95,12 +104,38 @@ public class EndpointHelperTest extends ContextTestSupport {
         assertEquals(null, EndpointHelper.lookupEndpointRegistryId(context.getEndpoint("mock:cheese")));
     }
 
+    @Test
     public void testResolveReferenceParameter() throws Exception {
         Endpoint endpoint = EndpointHelper.resolveReferenceParameter(context, "coolbar", Endpoint.class);
         assertNotNull(endpoint);
         assertSame(bar, endpoint);
     }
 
+    @Test
+    public void testResolveAndConvertReferenceParameter() throws Exception {
+        // The registry value is a java.lang.String
+        Integer number = EndpointHelper.resolveReferenceParameter(context, "numbar", Integer.class);
+        assertNotNull(number);
+        assertEquals(12345, (int) number);
+    }
+
+    @Test
+    public void testResolveAndConvertMissingReferenceParameter() throws Exception {
+        Integer number = EndpointHelper.resolveReferenceParameter(context, "misbar", Integer.class, false);
+        assertNull(number);
+    }
+
+    @Test
+    public void testMandatoryResolveAndConvertMissingReferenceParameter() throws Exception {
+        try {
+            EndpointHelper.resolveReferenceParameter(context, "misbar", Integer.class, true);
+            fail();
+        } catch (NoSuchBeanException ex) {
+            assertEquals("No bean could be found in the registry for: misbar of type: java.lang.Integer", ex.getMessage());
+        }
+    }
+
+    @Test
     public void testResolveParameter() throws Exception {
         Endpoint endpoint = EndpointHelper.resolveParameter(context, "#coolbar", Endpoint.class);
         assertNotNull(endpoint);

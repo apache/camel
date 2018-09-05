@@ -15,16 +15,19 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.util.IOHelper;
 
 /**
  *
@@ -34,7 +37,8 @@ public class FileProducerCharsetUTFOptimizedTest extends ContextTestSupport {
     private byte[] utf;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // use utf-8 as original payload with 00e6 which is a danish ae letter
         utf = "ABC\u00e6".getBytes("utf-8");
 
@@ -48,20 +52,21 @@ public class FileProducerCharsetUTFOptimizedTest extends ContextTestSupport {
         }
 
         // write the byte array to a file using plain API
-        FileOutputStream fos = new FileOutputStream("target/charset/input/input.txt");
+        OutputStream fos = Files.newOutputStream(Paths.get("target/charset/input/input.txt"));
         fos.write(utf);
         fos.close();
 
         super.setUp();
     }
 
+    @Test
     public void testFileProducerCharsetUTFOptimized() throws Exception {
         oneExchangeDone.matchesMockWaitTime();
 
         File file = new File("target/charset/output.txt");
         assertTrue("File should exist", file.exists());
 
-        InputStream fis = IOHelper.buffered(new FileInputStream(file));
+        InputStream fis = Files.newInputStream(Paths.get(file.getAbsolutePath()));
         byte[] buffer = new byte[100];
 
         int len = fis.read(buffer);
@@ -84,7 +89,7 @@ public class FileProducerCharsetUTFOptimizedTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/charset/input?noop=true")
+                from("file:target/charset/input?initialDelay=0&delay=10&noop=true")
                     // no charset so its optimized to write directly
                     .to("file:target/charset/?fileName=output.txt");
             }

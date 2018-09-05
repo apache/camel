@@ -1,0 +1,257 @@
+[[yql-component]]
+== Yahoo Query Language Component
+
+*Available as of Camel version 2.21*
+
+The *yql* component is used for accessing the https://developer.yahoo.com/yql/[Yahoo Query Language platform].
+
+The YQL (Yahoo! Query Language) platform enables you to query, filter, and combine data across the web through
+a single interface. It exposes a SQL-like syntax that is both familiar to developers and expressive enough for
+getting the right data.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-yql</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+=== URI format
+
+----
+yql://query[?options]
+----
+
+Where *query* represents the YQL query.
+
+=== Options
+
+// component options: START
+The Yahoo Query Language component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *connectionManager* (producer) | To use a custom configured HttpClientConnectionManager. |  | HttpClientConnection Manager
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The Yahoo Query Language endpoint is configured using URI syntax:
+
+----
+yql:query
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *query* | *Required* The YQL statement to execute. |  | String
+|===
+
+
+==== Query Parameters (10 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *callback* (producer) | The name of the JavaScript callback function for JSONP format. If callback is set and if format=json, then the response format is JSON. For more information on using XML instead of JSON, see JSONP-X. https://developer.yahoo.com/yql/guide/response.html |  | String
+| *crossProduct* (producer) | When given the value optimized, the projected fields in SELECT statements that may be returned in separate item elements in the response are optimized to be in a single item element instead. The only allowed value is optimized. More information https://developer.yahoo.com/yql/guide/response.html#response-optimizing= |  | String
+| *debug* (producer) | If true, and if diagnostic is set to true, debug data is returned with the response. More information: https://developer.yahoo.com/yql/guide/dev-external_tables.html#odt-enable-logging= | false | boolean
+| *diagnostics* (producer) | If true, diagnostic information is returned with the response. | false | boolean
+| *env* (producer) | Allows you to use multiple Open Data Tables through a YQL environment file. More information https://developer.yahoo.com/yql/guide/yql_storage.html#using-records-env-files= |  | String
+| *format* (producer) | The expected format. Allowed values: xml or json. | json | String
+| *jsonCompat* (producer) | Enables lossless JSON processing. The only allowed value is new. More information https://developer.yahoo.com/yql/guide/response.html#json-to-json |  | String
+| *throwExceptionOnFailure* (producer) | Option to disable throwing the YqlHttpException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code. | true | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *https* (security) | Option to use HTTPS to communicate with YQL. | true | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.yql.connection-manager* | To use a custom configured HttpClientConnectionManager. The option is a org.apache.http.conn.HttpClientConnectionManager type. |  | String
+| *camel.component.yql.enabled* | Whether to enable auto configuration of the yql component. This is enabled by default. |  | Boolean
+| *camel.component.yql.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+=== Exchange data format
+
+Camel will deliver the body as a JSON or XML formatted java.lang.String (see
+the `format` option above).
+
+=== Message Headers
+
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Header |Description
+|`CamelYqlHttpRequest` | Original HTTP request sent to YQL.
+|`CamelYqlHttpStatus` | Status code from the response.
+|===
+
+=== Samples
+
+==== Sample 1
+
+In this example we query YQL to obtain the current wind and atmosphere data in Chicago:
+
+[source,java]
+----
+from("direct:start")
+  .to("yql://select wind, atmosphere from weather.forecast where woeid in (select woeid from geo.places(1) where text='chicago, il'");
+----
+
+Which will setup the body as:
+
+[source,json]
+----
+{
+   "query":{
+      "count":1,
+      "created":"2017-11-01T19:37:26Z",
+      "lang":"en-US",
+      "results":{
+         "channel":{
+            "wind":{
+               "chill":"32",
+               "direction":"165",
+               "speed":"22"
+            },
+            "atmosphere":{
+               "humidity":"71",
+               "pressure":"994.0",
+               "rising":"0",
+               "visibility":"16.1"
+            }
+         }
+      }
+   }
+}
+----
+
+and the headers:
+
+[width="100%",cols="30%,70%",options="header",]
+|===
+|Header |Value
+|`CamelYqlHttpRequest` |https://query.yahooapis.com/v1/public/yql?q=select+wind%2C+atmosphere+from+weather.forecast+where+woeid+in+%28select+woeid+from+geo.places%281%29+where+text%3D%22chicago%2C+il%22%29&format=json&callback=&diagnostics=false&debug=false
+|`CamelYqlHttpStatus` |200
+|===
+
+==== Sample 2
+
+In this example we query YQL to obtain the Google quote.
+
+[source,java]
+----
+from("direct:start")
+  .to("yql://select symbol, Ask, Bid, AverageDailyVolume from yahoo.finance.quotes where symbol in ('GOOG')?env=store://datatables.org/alltableswithkeys&https=false&callback=yqlCallback");
+----
+
+Which will setup the body as:
+
+[source,json]
+----
+/**/yqlCallback({
+   "query":{
+      "count":1,
+      "created":"2017-11-01T19:48:17Z",
+      "lang":"en-US",
+      "results":{
+         "quote":{
+            "symbol":"GOOG",
+            "Bid":"1025.57",
+            "Ask":"1025.92",
+            "AverageDailyVolume":"1350640"AverageDailyVolume
+         }
+      }
+   }
+});
+----
+
+and the headers:
+
+[width="100%",cols="30%,70%",options="header",]
+|===
+|Header |Value
+|`CamelYqlHttpRequest` |http://query.yahooapis.com/v1/public/yql?q=select+symbol%2C+Ask%2C+Bid%2C+AverageDailyVolume+from+yahoo.finance.quotes+where+symbol+in+%28%27GOOG%27%29&format=json&callback=yqlCallback&diagnostics=false&debug=false&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys
+|`CamelYqlHttpStatus` |200
+|===
+
+==== Sample 3
+
+In this example we query YQL to obtain one book written by Barack Obama
+
+[source,java]
+----
+from("direct:start")
+  .to("yql://select * from google.books where q='barack obama' and maxResults=1?format=xml&crossProduct=optimized&env=store://datatables.org/alltableswithkeys");
+----
+
+Which will setup the body as:
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<query xmlns:yahoo="http://www.yahooapis.com/v1/base.rng" yahoo:count="1" yahoo:created="2017-11-01T20:32:22Z" yahoo:lang="en-US">
+   <results>
+      <json>
+         <kind>books#volumes</kind>
+         <totalItems>1993</totalItems>
+         <items>
+            <kind>books#volume</kind>
+            <id>HRCHJp-V0QUC</id>
+            <etag>SeTJeSgFDzo</etag>
+            <selfLink>https://www.googleapis.com/books/v1/volumes/HRCHJp-V0QUC</selfLink>
+            <volumeInfo>
+               <title>Dreams from My Father</title>
+               <subtitle>A Story of Race and Inheritance</subtitle>
+               <authors>Barack Obama</authors>
+               <publisher>Broadway Books</publisher>
+               <publishedDate>2007-01-09</publishedDate>
+               ...
+            </volumeInfo>
+         </items>
+      </json>
+   </results>
+</query>
+<!-- total: 646 -->
+----
+
+and the headers:
+
+[width="100%",cols="30%,70%",options="header",]
+|===
+|Header |Value
+|`CamelYqlHttpRequest` |https://query.yahooapis.com/v1/public/yql?q=select+*+from+google.books+where+q%3D%27barack+obama%27+and+maxResults%3D1&format=xml&callback=&crossProduct=optimized&diagnostics=false&debug=false&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys
+|`CamelYqlHttpStatus` |200
+|===
+
+=== See Also
+
+* https://developer.yahoo.com/yql/guide/[YQL Official Guide]

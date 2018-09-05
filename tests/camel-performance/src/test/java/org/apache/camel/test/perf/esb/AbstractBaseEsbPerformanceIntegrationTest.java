@@ -24,10 +24,9 @@ import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.junit.After;
 import org.junit.Before;
 
@@ -40,14 +39,9 @@ public abstract class AbstractBaseEsbPerformanceIntegrationTest extends CamelBlu
     @Before
     @Override
     public void setUp() throws Exception {
-        server = new Server();
+        server = new Server(9000);
 
-        SelectChannelConnector connector0 = new SelectChannelConnector();
-        connector0.setPort(9000);
-        connector0.setThreadPool(new QueuedThreadPool(20));
-        connector0.setMaxIdleTime(30000);
-        connector0.setAcceptors(2);
-        connector0.setStatsOn(false);
+        ServerConnector connector0 = new ServerConnector(server);
         connector0.setReuseAddress(true);
         server.setConnectors(new Connector[]{connector0});
 
@@ -77,7 +71,7 @@ public abstract class AbstractBaseEsbPerformanceIntegrationTest extends CamelBlu
     protected void send(String endpointUri, int messagesToSend) {
         template.setDefaultEndpointUri(endpointUri);
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("Content-Type", "text/xml;charset=UTF-8");
         headers.put("SOAPAction", "urn:buyStocks.2");
         headers.put("routing", "xadmin;server1;community#1.0##");

@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.component.rabbitmq.RabbitMQConstants;
 import org.apache.camel.component.rabbitmq.RabbitMQEndpoint;
+import org.apache.camel.component.rabbitmq.RabbitMQMessageConverter;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -37,19 +38,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class ReplyManagerSupport extends ServiceSupport implements ReplyManager {
+    private static final int CLOSE_TIMEOUT = 30 * 1000;
+    
     protected final Logger log = LoggerFactory.getLogger(ReplyManagerSupport.class);
     protected final CamelContext camelContext;
     protected final CountDownLatch replyToLatch = new CountDownLatch(1);
     protected final long replyToTimeout = 1000;
-
+    
     protected ScheduledExecutorService executorService;
     protected RabbitMQEndpoint endpoint;
     protected String replyTo;
+
     protected Connection listenerContainer;
-
     protected CorrelationTimeoutMap correlation;
-
-    private int closeTimeout = 30 * 1000;
+    
+    private final RabbitMQMessageConverter messageConverter = new RabbitMQMessageConverter();
 
     public ReplyManagerSupport(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -107,6 +110,15 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
 
     protected abstract ReplyHandler createReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
                                                        String originalCorrelationId, String correlationId, long requestTimeout);
+    
+
+    public void cancelCorrelationId(String correlationId) {
+        ReplyHandler handler = correlation.get(correlationId);
+        if (handler != null) {
+            log.warn("Cancelling correlationID: {}", correlationId);
+            correlation.remove(correlationId);
+        }
+    }
 
     public void onMessage(AMQP.BasicProperties properties, byte[] message) {
         String correlationID = properties.getCorrelationId();
@@ -123,7 +135,6 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     }
 
     public void processReply(ReplyHolder holder) {
-        log.info("in processReply");
         if (holder != null && isRunAllowed()) {
             try {
                 Exchange exchange = holder.getExchange();
@@ -134,7 +145,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                     if (log.isWarnEnabled()) {
                         log.warn("Timeout occurred after {} millis waiting for reply message with correlationID [{}] on destination {}."
                                 + " Setting ExchangeTimedOutException on {} and continue routing.",
-                                new Object[]{holder.getRequestTimeout(), holder.getCorrelationId(), replyTo, ExchangeHelper.logIds(exchange)});
+                                 holder.getRequestTimeout(), holder.getCorrelationId(), replyTo, ExchangeHelper.logIds(exchange));
                     }
 
                     // no response, so lets set a timed out exception
@@ -142,11 +153,11 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                     exchange.setException(new ExchangeTimedOutException(exchange, holder.getRequestTimeout(), msg));
                 } else {
                     
-                    endpoint.setRabbitExchange(exchange, null, holder.getProperties(), holder.getMessage());
+                    messageConverter.populateRabbitExchange(exchange, null, holder.getProperties(), holder.getMessage(), true);
 
                     // restore correlation id in case the remote server messed with it
                     if (holder.getOriginalCorrelationId() != null) {
-                        if (exchange.getOut() != null) {
+                        if (exchange.hasOut()) {
                             exchange.getOut().setHeader(RabbitMQConstants.CORRELATIONID, holder.getOriginalCorrelationId());
                         } else {
                             exchange.getIn().setHeader(RabbitMQConstants.CORRELATIONID, holder.getOriginalCorrelationId());
@@ -200,7 +211,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
             if (answer != null) {
                 if (log.isTraceEnabled()) {
                     log.trace("Early reply with correlationID [{}] has been matched after {} attempts and can be processed using handler: {}",
-                            new Object[]{correlationID, counter, answer});
+                              correlationID, counter, answer);
                 }
             }
         }
@@ -213,18 +224,17 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         ObjectHelper.notNull(executorService, "executorService", this);
         ObjectHelper.notNull(endpoint, "endpoint", this);
 
+        messageConverter.setAllowNullHeaders(endpoint.isAllowNullHeaders());
         // timeout map to use for purging messages which have timed out, while waiting for an expected reply
         // when doing request/reply over JMS
         log.debug("Using timeout checker interval with {} millis", endpoint.getRequestTimeoutCheckerInterval());
         correlation = new CorrelationTimeoutMap(executorService, endpoint.getRequestTimeoutCheckerInterval());
         ServiceHelper.startService(correlation);
 
-        // create JMS listener and start it
-        
+        // create listener and start it
         listenerContainer = createListenerContainer();
         
         log.debug("Using executor {}", executorService);
-        
     }
 
     @Override
@@ -232,8 +242,8 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         ServiceHelper.stopService(correlation);
 
         if (listenerContainer != null) {
-            log.debug("Closing connection: {} with timeout: {} ms.", listenerContainer, closeTimeout);
-            listenerContainer.close(closeTimeout);
+            log.debug("Closing connection: {} with timeout: {} ms.", listenerContainer, CLOSE_TIMEOUT);
+            listenerContainer.close(CLOSE_TIMEOUT);
             listenerContainer = null;
         }
 

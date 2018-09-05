@@ -14,19 +14,28 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ------------------------------------------------------------------------
+CollectionFormat
 DeleteVerbDefinition
 GetVerbDefinition
 HeadVerbDefinition
+OptionsVerbDefinition
 PostVerbDefinition
 PutVerbDefinition
+PatchVerbDefinition
 RestBindingDefinition
 RestBindingMode
 RestConfigurationDefinition
 RestDefinition
 RestHostNameResolver
 RestOperationParamDefinition
+RestOperationResponseMsgDefinition
+RestOperationResponseHeaderDefinition
 RestParamType
 RestPropertyDefinition
 RestsDefinition
+RestSecurityApiKey
+RestSecurityBasicAuth
+RestSecuritiesDefinition
+RestSecurityOAuth2
+SecurityDefinition
 VerbDefinition
-RestOperationResponseMsgDefinition

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import org.junit.Test;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class NoClassDefFoundErrorWrapExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testNoClassDef() throws Exception {
         try {
             template.requestBody("seda:start", "Hello World");

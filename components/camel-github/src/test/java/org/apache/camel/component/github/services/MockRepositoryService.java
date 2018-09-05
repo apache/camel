@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 public class MockRepositoryService extends RepositoryService {
     protected static final Logger LOG = LoggerFactory.getLogger(MockRepositoryService.class);
 
-    private List<RepositoryTag> tags = new ArrayList<RepositoryTag>();
+    private List<RepositoryTag> tags = new ArrayList<>();
 
     public RepositoryTag addTag(String tagName) {
         RepositoryTag tag = new RepositoryTag();

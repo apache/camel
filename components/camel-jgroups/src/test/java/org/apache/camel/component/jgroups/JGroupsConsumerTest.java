@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jgroups;
+import org.junit.After;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -61,6 +62,7 @@ public class JGroupsConsumerTest extends CamelTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         channel.close();
         super.tearDown();
@@ -75,7 +77,9 @@ public class JGroupsConsumerTest extends CamelTestSupport {
         mockEndpoint.expectedBodiesReceived(message);
 
         // When
-        channel.send(new Message(null, null, message));
+        Message msg = new Message(null, message);
+        msg.setSrc(null);
+        channel.send(msg);
 
         // Then
         assertMockEndpointsSatisfied();
@@ -88,7 +92,9 @@ public class JGroupsConsumerTest extends CamelTestSupport {
         mockEndpoint.message(0).header(HEADER_JGROUPS_ORIGINAL_MESSAGE).isInstanceOf(Message.class);
 
         // When
-        channel.send(new Message(null, null, message));
+        Message msg = new Message(null, message);
+        msg.setSrc(null);
+        channel.send(msg);
 
         // Then
         assertMockEndpointsSatisfied();

@@ -30,8 +30,12 @@ import org.apache.camel.spi.PackageScanClassResolver;
  */
 public class DefaultTypeConverter extends BaseTypeConverterRegistry {
 
-    public DefaultTypeConverter(PackageScanClassResolver resolver, Injector injector, FactoryFinder factoryFinder) {
+    private final boolean loadTypeConverters;
+
+    public DefaultTypeConverter(PackageScanClassResolver resolver, Injector injector,
+                                FactoryFinder factoryFinder, boolean loadTypeConverters) {
         super(resolver, injector, factoryFinder);
+        this.loadTypeConverters = loadTypeConverters;
     }
 
     @Override
@@ -48,12 +52,19 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        // load type converters up front
-        loadCoreTypeConverters();
-        loadTypeConverters();
+        // core type converters is always loaded which does not use any classpath scanning
+        // and therefore is fast
 
-        // report how many type converters we have loaded
-        log.info("Loaded {} type converters", typeMappings.size());
+        loadCoreTypeConverters();
+        if (loadTypeConverters) {
+            int core = typeMappings.size();
+            // load type converters up front
+            loadTypeConverters();
+            int additional = typeMappings.size() - core;
+
+            // report how many type converters we have loaded
+            log.info("Type converters loaded (core: {}, classpath: {})", core, additional);
+        }
     }
 
 }

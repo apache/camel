@@ -103,6 +103,9 @@ public class SplunkProducer extends DefaultProducer {
         if (endpoint.getConfiguration().getSource() != null) {
             args.put("source", endpoint.getConfiguration().getSource());
         }
+        if (endpoint.getConfiguration().getEventHost() != null) {
+            args.put("host", endpoint.getConfiguration().getEventHost());
+        }
         return args;
     }
 

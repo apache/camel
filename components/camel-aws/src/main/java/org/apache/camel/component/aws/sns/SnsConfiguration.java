@@ -18,10 +18,9 @@ package org.apache.camel.component.aws.sns;
 
 import com.amazonaws.services.sns.AmazonSNS;
 
-import org.apache.camel.spi.Metadata;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.spi.UriPath;
 
 @UriParams
 public class SnsConfiguration implements Cloneable {
@@ -29,16 +28,13 @@ public class SnsConfiguration implements Cloneable {
     private String topicArn;
 
     // Common properties
-    @UriPath @Metadata(required = "true")
     private String topicName;
     @UriParam
     private AmazonSNS amazonSNSClient;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessKey;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String secretKey;
-    @UriParam
-    private String amazonSNSEndpoint;
     @UriParam
     private String proxyHost;
     @UriParam
@@ -51,17 +47,8 @@ public class SnsConfiguration implements Cloneable {
     private String policy;
     @UriParam
     private String messageStructure;
-
-    /**
-     * The region with which the AWS-SNS client wants to work with.
-     */
-    public void setAmazonSNSEndpoint(String awsSNSEndpoint) {
-        this.amazonSNSEndpoint = awsSNSEndpoint;
-    }
-    
-    public String getAmazonSNSEndpoint() {
-        return amazonSNSEndpoint;
-    }
+    @UriParam
+    private String region;
     
     public String getSubject() {
         return subject;
@@ -151,40 +138,48 @@ public class SnsConfiguration implements Cloneable {
         this.messageStructure = messageStructure;
     }
     
-    /**
-     * To define a proxy host when instantiating the SQS client
-     */
     public String getProxyHost() {
         return proxyHost;
     }
 
+    /**
+     * To define a proxy host when instantiating the SNS client
+     */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
     }
 
-    /**
-     * To define a proxy port when instantiating the SQS client
-     */
     public Integer getProxyPort() {
         return proxyPort;
     }
 
+    /**
+     * To define a proxy port when instantiating the SNS client
+     */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
+    
+    public String getRegion() {
+        return region;
+    }
 
-    @Override
-    public String toString() {
-        return "SnsConfiguration[topicName=" + topicName
-            + ", amazonSNSClient=" + amazonSNSClient
-            + ", accessKey=" + accessKey
-            + ", secretKey=xxxxxxxxxxxxxxx" 
-            + ", subject=" + subject
-            + ", topicArn=" + topicArn
-            + ", policy=" + policy
-            + ", messageStructure=" + messageStructure
-            + ", proxyHost=" + proxyHost
-            + ", proxyPort=" + proxyPort
-            + "]";
+    /**
+     * The region in which SNS client needs to work
+     */
+    public void setRegion(String region) {
+        this.region = region;
+    }
+    
+    // *************************************************
+    //
+    // *************************************************
+
+    public SnsConfiguration copy() {
+        try {
+            return (SnsConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }

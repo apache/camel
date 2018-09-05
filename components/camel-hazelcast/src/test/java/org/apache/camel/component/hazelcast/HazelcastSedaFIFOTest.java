@@ -37,7 +37,7 @@ public class HazelcastSedaFIFOTest extends CamelTestSupport {
     public void fifoTesting() throws Exception {
         final int bodyCount = 5;
 
-        List<String> bodies = new ArrayList<String>();
+        List<String> bodies = new ArrayList<>();
         for (int i = 0; i < bodyCount; i++) {
             bodies.add("test" + i);
         }
@@ -46,7 +46,7 @@ public class HazelcastSedaFIFOTest extends CamelTestSupport {
         mock.expectedMessageCount(bodyCount);
 
         for (int i = 0; i < bodyCount; i++) {
-            template.sendBody("hazelcast:seda:foo", "test" + i);
+            template.sendBody("hazelcast-seda:foo", "test" + i);
         }
 
         assertMockEndpointsSatisfied();
@@ -58,7 +58,7 @@ public class HazelcastSedaFIFOTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("hazelcast:seda:foo").to("mock:result");
+                from("hazelcast-seda:foo").to("mock:result");
             }
         };
     }

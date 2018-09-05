@@ -23,6 +23,7 @@ import java.util.Set;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.StreamCache;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ExpressionClauseSupport;
 import org.apache.camel.builder.ValueBuilder;
@@ -38,7 +39,7 @@ public abstract class AssertionClause extends ExpressionClauseSupport<ValueBuild
 
     protected final MockEndpoint mock;
     protected volatile int currentIndex;
-    private final Set<Predicate> predicates = new LinkedHashSet<Predicate>();
+    private final Set<Predicate> predicates = new LinkedHashSet<>();
     private final Expression previous = new PreviousTimestamp();
     private final Expression next = new NextTimestamp();
 
@@ -74,7 +75,7 @@ public abstract class AssertionClause extends ExpressionClauseSupport<ValueBuild
      * Adds the given predicate to this assertion clause
      */
     public ExpressionClause<AssertionClause> predicate() {
-        ExpressionClause<AssertionClause> clause = new ExpressionClause<AssertionClause>(this);
+        ExpressionClause<AssertionClause> clause = new ExpressionClause<>(this);
         addPredicate(clause);
         return clause;
     }
@@ -103,6 +104,14 @@ public abstract class AssertionClause extends ExpressionClauseSupport<ValueBuild
     protected void applyAssertionOn(MockEndpoint endpoint, int index, Exchange exchange) {
         for (Predicate predicate : predicates) {
             currentIndex = index;
+
+            Object value = exchange.hasOut() ? exchange.getOut().getBody() : exchange.getIn().getBody();
+            // if the value is StreamCache then ensure its readable before evaluating any predicates
+            // by resetting it (this is also what StreamCachingAdvice does)
+            if (value instanceof StreamCache) {
+                ((StreamCache) value).reset();
+            }
+
             PredicateAssertHelper.assertMatches(predicate, "Assertion error at index " + index + " on mock " + endpoint.getEndpointUri() + " with predicate: ", exchange);
         }
     }

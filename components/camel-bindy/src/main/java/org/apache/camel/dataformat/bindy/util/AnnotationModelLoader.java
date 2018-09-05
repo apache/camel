@@ -41,7 +41,7 @@ public class AnnotationModelLoader {
     public AnnotationModelLoader(PackageScanClassResolver resolver) {
         this.resolver = resolver;
 
-        annotations = new LinkedHashSet<Class<? extends Annotation>>();
+        annotations = new LinkedHashSet<>();
         annotations.add(CsvRecord.class);
         annotations.add(Link.class);
         annotations.add(Message.class);
@@ -59,7 +59,7 @@ public class AnnotationModelLoader {
         
         //TODO;  this logic could be moved into the PackageScanClassResolver by creating:
         //          findAnnotated(annotations, packageNames, filter) 
-        Set<Class<?>> resultsToRemove = new HashSet<Class<?>>();
+        Set<Class<?>> resultsToRemove = new HashSet<>();
         if (filter != null) {
             for (Class<?> clazz : results) {
                 if (!filter.matches(clazz)) {

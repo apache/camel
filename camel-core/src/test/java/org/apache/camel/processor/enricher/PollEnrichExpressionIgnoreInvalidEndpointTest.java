@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor.enricher;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class PollEnrichExpressionIgnoreInvalidEndpointTest extends ContextTestSupport {
 
+    @Test
     public void testPollEnrichExpression() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Unknown");
 

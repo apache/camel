@@ -32,23 +32,23 @@ public class OptaPlannerConsumer extends DefaultConsumer {
     private static final transient Logger LOGGER = LoggerFactory.getLogger(OptaPlannerConsumer.class);
     private final OptaPlannerEndpoint endpoint;
     private final OptaPlannerConfiguration configuration;
-    private final SolverEventListener listener;
+    private final SolverEventListener<Object> listener;
 
     public OptaPlannerConsumer(OptaPlannerEndpoint endpoint, Processor processor, OptaPlannerConfiguration configuration) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.configuration = configuration;
-        listener = new SolverEventListener() {
+        listener = new SolverEventListener<Object>() {
             @Override
-            public void bestSolutionChanged(BestSolutionChangedEvent event) {
-                if (event.isEveryProblemFactChangeProcessed() && event.isNewBestSolutionInitialized()) {
+            public void bestSolutionChanged(BestSolutionChangedEvent<Object> event) {
+                if (event.isEveryProblemFactChangeProcessed() && event.getNewBestScore().isSolutionInitialized()) {
                     processEvent(event);
                 }
             }
         };
     }
 
-    public void processEvent(BestSolutionChangedEvent event) {
+    public void processEvent(BestSolutionChangedEvent<Object> event) {
         Exchange exchange = getEndpoint().createExchange();
         exchange.getOut().setHeader(OptaPlannerConstants.BEST_SOLUTION, event.getNewBestSolution());
         try {
@@ -60,16 +60,15 @@ public class OptaPlannerConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        Solver solver = endpoint.getOrCreateSolver(configuration.getSolverId());
+        Solver<Object> solver = endpoint.getOrCreateSolver(configuration.getSolverId());
         solver.addEventListener(listener);
         super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
-        Solver solver = endpoint.getOrCreateSolver(configuration.getSolverId());
+        Solver<Object> solver = endpoint.getOrCreateSolver(configuration.getSolverId());
         solver.removeEventListener(listener);
         super.doStop();
     }
 }
-

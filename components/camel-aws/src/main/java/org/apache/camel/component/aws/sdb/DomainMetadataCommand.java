@@ -23,6 +23,8 @@ import com.amazonaws.services.simpledb.model.DomainMetadataResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 
+import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageForResponse;
+
 public class DomainMetadataCommand extends AbstractSdbCommand {
 
     public DomainMetadataCommand(AmazonSimpleDB sdbClient, SdbConfiguration configuration, Exchange exchange) {

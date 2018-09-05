@@ -28,7 +28,7 @@ import org.apache.camel.language.simple.types.SimpleToken;
  */
 public class CompositeNodes extends BaseSimpleNode {
 
-    private final List<SimpleNode> children = new ArrayList<SimpleNode>();
+    private final List<SimpleNode> children = new ArrayList<>();
 
     public CompositeNodes(SimpleToken token) {
         super(token);
@@ -58,7 +58,7 @@ public class CompositeNodes extends BaseSimpleNode {
         } else if (children.size() == 1) {
             return children.get(0).createExpression(expression);
         } else {
-            List<Expression> answer = new ArrayList<Expression>();
+            List<Expression> answer = new ArrayList<>();
             for (SimpleNode child : children) {
                 answer.add(child.createExpression(expression));
             }

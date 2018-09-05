@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.ContextTestSupport;
@@ -39,6 +41,7 @@ public class CBRPredicateBeanThrowExceptionTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testCBR() throws Exception {
         check.set(false);
         check2.set(false);
@@ -56,6 +59,7 @@ public class CBRPredicateBeanThrowExceptionTest extends ContextTestSupport {
         assertTrue(check2.get());
     }
 
+    @Test
     public void testCBRKaboom() throws Exception {
         check.set(false);
         check2.set(false);

@@ -70,7 +70,7 @@ public final class RestContextRefDefinitionHelper {
         // must clone the rest definitions as they can be reused with multiple CamelContexts
         // and they would need their own instances of the definitions to not have side effects among
         // the CamelContext - for example property placeholder resolutions etc.
-        List<RestDefinition> clones = new ArrayList<RestDefinition>(answer.size());
+        List<RestDefinition> clones = new ArrayList<>(answer.size());
         try {
             JAXBContext jaxb = getOrCreateJAXBContext(camelContext);
             for (RestDefinition def : answer) {
@@ -103,7 +103,7 @@ public final class RestContextRefDefinitionHelper {
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         Object clone = unmarshaller.unmarshal(bis);
 
-        if (clone != null && clone instanceof RestDefinition) {
+        if (clone instanceof RestDefinition) {
             RestDefinition def2 = (RestDefinition) clone;
 
             Iterator<VerbDefinition> verbit1 = def.getVerbs().iterator();
@@ -134,7 +134,7 @@ public final class RestContextRefDefinitionHelper {
                         }
 
                         if (name != null && name2 != null && name.getNamespaces() != null && !name.getNamespaces().isEmpty()) {
-                            Map<String, String> map = new HashMap<String, String>();
+                            Map<String, String> map = new HashMap<>();
                             map.putAll(name.getNamespaces());
                             name2.setNamespaces(map);
                         }

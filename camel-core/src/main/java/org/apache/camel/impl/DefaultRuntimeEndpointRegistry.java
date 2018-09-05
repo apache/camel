@@ -38,7 +38,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.EventNotifierSupport;
-import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 
@@ -73,7 +73,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
 
     @Override
     public List<String> getAllEndpoints(boolean includeInputs) {
-        List<String> answer = new ArrayList<String>();
+        List<String> answer = new ArrayList<>();
         if (includeInputs) {
             for (Map.Entry<String, Set<String>> entry : inputs.entrySet()) {
                 answer.addAll(entry.getValue());
@@ -87,7 +87,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
 
     @Override
     public List<String> getEndpointsPerRoute(String routeId, boolean includeInputs) {
-        List<String> answer = new ArrayList<String>();
+        List<String> answer = new ArrayList<>();
         if (includeInputs) {
             Set<String> uris = inputs.get(routeId);
             if (uris != null) {
@@ -103,7 +103,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
 
     @Override
     public List<Statistic> getEndpointStatistics() {
-        List<Statistic> answer = new ArrayList<Statistic>();
+        List<Statistic> answer = new ArrayList<>();
 
         // inputs
         for (Map.Entry<String, Set<String>> entry : inputs.entrySet()) {
@@ -184,16 +184,13 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
         ObjectHelper.notNull(camelContext, "camelContext", this);
 
         if (inputs == null) {
-            inputs = new HashMap<String, Set<String>>();
+            inputs = new HashMap<>();
         }
         if (outputs == null) {
-            outputs = new HashMap<String, Map<String, String>>();
+            outputs = new HashMap<>();
         }
         if (getCamelContext().getManagementStrategy().getManagementAgent() != null) {
-            Boolean isEnabled = getCamelContext().getManagementStrategy().getManagementAgent().getEndpointRuntimeStatisticsEnabled();
-            boolean isExtended = getCamelContext().getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
-            // extended mode is either if we use Extended statistics level or the option is explicit enabled
-            extended = isExtended || isEnabled != null && isEnabled;
+            extended = getCamelContext().getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
         }
         if (extended) {
             inputUtilization = new DefaultEndpointUtilizationStatistics(limit);
@@ -201,6 +198,8 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
         }
         if (extended) {
             log.info("Runtime endpoint registry is in extended mode gathering usage statistics of all incoming and outgoing endpoints (cache limit: {})", limit);
+        } else {
+            log.info("Runtime endpoint registry is in normal mode gathering information of all incoming and outgoing endpoints (cache limit: {})", limit);
         }
         ServiceHelper.startServices(inputUtilization, outputUtilization);
     }
@@ -212,6 +211,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void notify(EventObject event) throws Exception {
         if (event instanceof RouteAddedEvent) {
             RouteAddedEvent rse = (RouteAddedEvent) event;
@@ -219,12 +219,12 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             String routeId = rse.getRoute().getId();
 
             // a HashSet is fine for inputs as we only have a limited number of those
-            Set<String> uris = new HashSet<String>();
+            Set<String> uris = new HashSet<>();
             uris.add(endpoint.getEndpointUri());
             inputs.put(routeId, uris);
             // use a LRUCache for outputs as we could potential have unlimited uris if dynamic routing is in use
             // and therefore need to have the limit in use
-            outputs.put(routeId, new LRUCache<String, String>(limit));
+            outputs.put(routeId, LRUCacheFactory.newLRUCache(limit));
         } else if (event instanceof RouteRemovedEvent) {
             RouteRemovedEvent rse = (RouteRemovedEvent) event;
             String routeId = rse.getRoute().getId();
@@ -241,11 +241,13 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             // we only capture details in extended mode
             ExchangeCreatedEvent ece = (ExchangeCreatedEvent) event;
             Endpoint endpoint = ece.getExchange().getFromEndpoint();
-            String routeId = ece.getExchange().getFromRouteId();
-            String uri = endpoint.getEndpointUri();
-            String key = asUtilizationKey(routeId, uri);
-            if (key != null) {
-                inputUtilization.onHit(key);
+            if (endpoint != null) {
+                String routeId = ece.getExchange().getFromRouteId();
+                String uri = endpoint.getEndpointUri();
+                String key = asUtilizationKey(routeId, uri);
+                if (key != null) {
+                    inputUtilization.onHit(key);
+                }
             }
         } else if (event instanceof ExchangeSendingEvent) {
             ExchangeSendingEvent ese = (ExchangeSendingEvent) event;
@@ -278,6 +280,11 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             answer = exchange.getFromRouteId();
         }
         return answer;
+    }
+
+    @Override
+    public boolean isDisabled() {
+        return !enabled;
     }
 
     @Override

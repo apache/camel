@@ -22,6 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.TestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.Test;
+import org.quartz.Scheduler;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -61,6 +62,10 @@ public class SpringQuartzTwoAppsClusteredFailoverTest extends TestSupport {
 
         // now let's simulate a crash of the first app (the quartz instance 'app-one')
         log.warn("The first app is going to crash NOW!");
+        // we need to stop the Scheduler first as the CamelContext will gracefully shutdown and
+        // delete all scheduled jobs, so there would be nothing for the second CamelContext to
+        // failover from
+        app.getBean(Scheduler.class).shutdown();
         IOHelper.close(app);
 
         log.warn("Crashed...");

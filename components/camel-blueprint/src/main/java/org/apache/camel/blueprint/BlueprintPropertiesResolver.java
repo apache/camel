@@ -16,11 +16,13 @@
  */
 package org.apache.camel.blueprint;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.component.properties.PropertiesResolver;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * A {@link PropertiesResolver} which supports the <tt>blueprint</tt> scheme.
@@ -40,28 +42,26 @@ public class BlueprintPropertiesResolver implements PropertiesResolver {
     }
 
     @Override
-    public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, String... urls) throws Exception {
+    public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, List<PropertiesLocation> locations) throws Exception {
         Properties answer = new Properties();
 
         boolean explicit = false;
 
-        for (String url : urls) {
-            if (url.startsWith("blueprint:")) {
-                String ref = ObjectHelper.after(url, "blueprint:");
-                blueprint.addPropertyPlaceholder(ref);
+        for (PropertiesLocation location : locations) {
+            if ("blueprint".equals(location.getResolver())) {
+                blueprint.addPropertyPlaceholder(location.getPath());
                 // indicate an explicit blueprint id was configured
                 explicit = true;
             } else {
                 // delegate the url
-                answer.putAll(delegate.resolveProperties(context, ignoreMissingLocation, url));
+                answer.putAll(delegate.resolveProperties(context, ignoreMissingLocation, Collections.singletonList(location)));
             }
         }
 
         if (!explicit) {
             // auto lookup blueprint property placeholders to use if none explicit was configured
             // this is convention over configuration
-            String[] ids = blueprint.lookupPropertyPlaceholderIds();
-            for (String id : ids) {
+            for (String id : blueprint.lookupPropertyPlaceholderIds()) {
                 blueprint.addPropertyPlaceholder(id);
             }
         }

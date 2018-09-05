@@ -28,7 +28,10 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import spark.route.HttpMethod;
 
-@UriEndpoint(scheme = "spark-rest", title = "Spark Rest", syntax = "spark-rest:verb:path", consumerOnly = true, consumerClass =  SparkConsumer.class, label = "rest")
+/**
+ * The spark-rest component is used for hosting REST services which has been defined using Camel rest-dsl.
+ */
+@UriEndpoint(firstVersion = "2.14.0", scheme = "spark-rest", title = "Spark Rest", syntax = "spark-rest:verb:path", consumerOnly = true, consumerClass =  SparkConsumer.class, label = "rest")
 public class SparkEndpoint extends DefaultEndpoint {
     @UriPath(enums = "get,post,put,patch,delete,head,trace,connect,options") @Metadata(required = "true")
     private String verb;
@@ -38,7 +41,7 @@ public class SparkEndpoint extends DefaultEndpoint {
     private String accept;
     @UriParam
     private SparkConfiguration sparkConfiguration;
-    @UriParam
+    @UriParam(label = "advanced")
     private SparkBinding sparkBinding;
 
     public SparkEndpoint(String endpointUri, Component component) {
@@ -125,7 +128,8 @@ public class SparkEndpoint extends DefaultEndpoint {
         ObjectHelper.notEmpty(verb, "verb", this);
         ObjectHelper.notEmpty(path, "path", this);
 
-        // verb must be supported by Spark
-        HttpMethod.valueOf(verb);
+        // verb must be supported by Spark and lets convert to the actual name
+        HttpMethod method = getCamelContext().getTypeConverter().mandatoryConvertTo(HttpMethod.class, verb);
+        verb = method.name();
     }
 }

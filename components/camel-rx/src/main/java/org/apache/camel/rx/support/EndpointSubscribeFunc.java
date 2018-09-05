@@ -16,6 +16,8 @@
  */
 package org.apache.camel.rx.support;
 
+import java.util.concurrent.ExecutorService;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import rx.Observable;
@@ -24,16 +26,18 @@ import rx.functions.Func1;
 
 public class EndpointSubscribeFunc<T> implements Observable.OnSubscribe<T> {
 
+    private final ExecutorService workerPool;
     private final Endpoint endpoint;
     private final Func1<Exchange, T> converter;
 
-    public EndpointSubscribeFunc(Endpoint endpoint, Func1<Exchange, T> converter) {
+    public EndpointSubscribeFunc(ExecutorService workerPool, Endpoint endpoint, Func1<Exchange, T> converter) {
+        this.workerPool = workerPool;
         this.endpoint = endpoint;
         this.converter = converter;
     }
 
     @Override
     public void call(Subscriber<? super T> subscriber) {
-        subscriber.add(new EndpointSubscription<T>(endpoint, subscriber, converter));
+        subscriber.add(new EndpointSubscription<>(workerPool, endpoint, subscriber, converter));
     }
 }

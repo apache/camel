@@ -16,35 +16,28 @@
  */
 package org.apache.camel.management.event;
 
-import java.util.EventObject;
-
 import org.apache.camel.CamelContext;
 
 /**
  * @version 
  */
-public class CamelContextResumeFailureEvent extends EventObject {
+public class CamelContextResumeFailureEvent extends AbstractContextEvent implements FailureEvent {
     private static final long serialVersionUID = -4271899927507894566L;
 
-    private CamelContext context;
     private Throwable cause;
 
     public CamelContextResumeFailureEvent(CamelContext context, Throwable cause) {
         super(context);
-        this.context = context;
         this.cause = cause;
     }
 
-    public CamelContext getContext() {
-        return context;
-    }
-
+    @Override
     public Throwable getCause() {
         return cause;
     }
 
     @Override
     public String toString() {
-        return "Failed to resume Camel: " + context.getName() + " due to " + cause.getMessage();
+        return "Failed to resume Camel: " + getContext().getName() + " due to " + cause.getMessage();
     }
 }

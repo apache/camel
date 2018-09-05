@@ -52,6 +52,7 @@ public final class CamelJmsTestHelper {
         connectionFactory.setCopyMessageOnSend(false);
         connectionFactory.setOptimizeAcknowledge(true);
         connectionFactory.setOptimizedMessageDispatch(true);
+        connectionFactory.setTrustAllPackages(true);
 
         // When using asyncSend, producers will not be guaranteed to send in the order we 
         // have in the tests (which may be confusing for queues) so we need this set to false.
@@ -90,6 +91,7 @@ public final class CamelJmsTestHelper {
         connectionFactory.setOptimizedMessageDispatch(true);
         connectionFactory.setUseAsyncSend(true);
         connectionFactory.setAlwaysSessionAsync(false);
+        connectionFactory.setTrustAllPackages(true);
 
         // use a pooled connection factory
         PooledConnectionFactory pooled = new PooledConnectionFactory(connectionFactory);

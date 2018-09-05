@@ -42,7 +42,7 @@ public class StaticMethodFallbackTypeConverter extends TypeConverterSupport {
 
     public StaticMethodFallbackTypeConverter(Method method, TypeConverterRegistry registry, boolean allowNull) {
         this.method = method;
-        this.useExchange = method.getParameterTypes().length == 4;
+        this.useExchange = method.getParameterCount() == 4;
         this.registry = registry;
         this.allowNull = allowNull;
     }

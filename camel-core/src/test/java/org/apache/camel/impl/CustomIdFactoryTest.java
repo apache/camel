@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -44,7 +47,8 @@ public class CustomIdFactoryTest extends ContextTestSupport {
     private static String ids;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         ids = "";
         counter = 0;
         super.setUp();
@@ -81,6 +85,7 @@ public class CustomIdFactoryTest extends ContextTestSupport {
     /**
      * Test path 1
      */
+    @Test
     public void testHello() throws Exception {
         assertEquals("#route1#", context.getRouteDefinitions().get(0).getId());
 
@@ -95,6 +100,7 @@ public class CustomIdFactoryTest extends ContextTestSupport {
     /**
      * Test path 2
      */
+    @Test
     public void testOther() throws Exception {
         assertEquals("#route1#", context.getRouteDefinitions().get(0).getId());
 
@@ -118,7 +124,7 @@ public class CustomIdFactoryTest extends ContextTestSupport {
             return new DelegateProcessor(target) {
                 @Override
                 protected void processNext(Exchange exchange) throws Exception {
-                    LOG.debug("Debugging at: " + definition.toString() + " with id: " + definition.getId() + " with exchange: " + exchange);
+                    LOG.debug("Debugging at: {} with id: {} with exchange: {}", definition.toString(), definition.getId(), exchange);
 
                     // record the path taken at runtime
                     ids += definition.getId();

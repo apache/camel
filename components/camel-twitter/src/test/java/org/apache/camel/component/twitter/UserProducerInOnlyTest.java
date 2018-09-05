@@ -34,6 +34,7 @@ import static org.hamcrest.core.Is.is;
  * Tests posting a twitter update with the default In Message Exchange Pattern
  */
 public class UserProducerInOnlyTest extends CamelTwitterTestSupport {
+
     private static final Logger LOG = LoggerFactory.getLogger(UserProducerInOnlyTest.class);
 
     @EndpointInject(uri = "mock:result")
@@ -67,7 +68,7 @@ public class UserProducerInOnlyTest extends CamelTwitterTestSupport {
             public void configure() {
                 from("direct:tweets")
                         //.to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
-                        .to("twitter://timeline/user?" + getUriTokens())
+                        .to("twitter-timeline://user?" + getUriTokens())
                         //.to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
                         .to("mock:result");
             }

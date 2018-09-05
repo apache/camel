@@ -18,11 +18,13 @@ package org.apache.camel.component.mail;
 
 import java.text.DateFormat;
 import java.util.Date;
+
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Mail utility class.
@@ -220,7 +222,7 @@ public final class MailUtils {
         for (String part : parts) {
             part = part.trim();
             if (part.startsWith("charset")) {
-                return ObjectHelper.after(part, "charset=");
+                return StringHelper.after(part, "charset=");
             }
         }
         return null;

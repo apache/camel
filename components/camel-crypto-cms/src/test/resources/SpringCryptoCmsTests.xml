@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+    ">
+
+    <camelContext id="camel"
+        xmlns="http://camel.apache.org/schema/spring">
+        <onException>
+            <exception>org.apache.camel.component.crypto.cms.exception.CryptoCmsVerifierCertificateNotValidException
+            </exception>
+            <handled>
+                <constant>false</constant>
+            </handled>
+            <to uri="mock:exception" />
+        </onException>
+
+        <!-- START SNIPPET: two-signer -->
+        <route>
+            <from uri="direct:start" />
+            <to
+                uri="crypto-cms:sign://testsign?signer=#signer1&amp;signer=#signer2&amp;includeContent=true" />
+            <to
+                uri="crypto-cms:encrypt://testencrpyt?toBase64=true&amp;recipient=#recipient1&amp;contentEncryptionAlgorithm=DESede/CBC/PKCS5Padding&amp;secretKeyLength=128" />
+            <to
+                uri="crypto-cms:decrypt://testdecrypt?fromBase64=true&amp;keyStoreParameters=#keyStoreParameters1" />
+            <to
+                uri="crypto-cms:verify://testverify?keyStoreParameters=#keyStoreParameters1" />
+            <to uri="mock:result" />
+        </route>
+        <!-- END SNIPPET: two-signer -->
+
+
+        <!-- START SNIPPET: outdated -->
+        <route>
+            <from uri="direct:outdated" />
+            <to
+                uri="crypto-cms:sign://outdated?signer=#signerOutdated&amp;includeContent=true" />
+            <to
+                uri="crypto-cms:verify://testverify?keyStoreParameters=#keyStoreParameters1" />
+            <to uri="mock:result" />
+        </route>
+        <!-- END SNIPPET: outdated -->
+
+        <!-- START SNIPPET: decryptAndVerify -->
+        <route>
+            <from uri="direct:decryptAndVerify" />
+            <to
+                uri="crypto-cms:decrypt://testdecrypt?fromBase64=true&amp;keyStoreParameters=#keyStoreParameters1" />
+            <to
+                uri="crypto-cms:verify://testverify?keyStoreParameters=#keyStoreParameters1" />
+            <to uri="mock:result" />
+        </route>
+        <!-- END SNIPPET: decryptAndVerify -->
+
+        <!-- START SNIPPET: encryptDecryptOriginatorAttributes -->
+        <route>
+            <from uri="direct:encryptDecryptOriginatorAttributes" />
+            <to
+                uri="crypto-cms:encrypt://testencrpyt?toBase64=true&amp;recipient=#recipient1&amp;contentEncryptionAlgorithm=DESede/CBC/PKCS5Padding&amp;secretKeyLength=128&amp;originatorInformationProvider=#originatorInformationProvider1&amp;unprotectedAttributesGeneratorProvider=#attributesGeneratorProvider1" />
+            <to
+                uri="crypto-cms:decrypt://testdecrypt?fromBase64=true&amp;keyStoreParameters=#keyStoreParameters1" />
+            <to uri="mock:result" />
+        </route>
+        <!-- END SNIPPET: encryptDecryptOriginatorAttributes -->
+
+
+    </camelContext>
+
+    <keyStoreParameters xmlns="http://camel.apache.org/schema/spring"
+        id="keyStoreParameters1" resource="./keystore/system.jks"
+        password="Abcd1234" type="JCEKS" />
+
+    <bean id="recipient1"
+        class="org.apache.camel.component.crypto.cms.crypt.DefaultKeyTransRecipientInfo">
+        <property name="keyStoreParameters" ref="keyStoreParameters1" />
+        <property name="certificateAlias" value="rsa" />
+    </bean>
+
+    <bean id="signer1"
+        class="org.apache.camel.component.crypto.cms.sig.DefaultSignerInfo">
+        <property name="keyStoreParameters" ref="keyStoreParameters1" />
+        <property name="privateKeyAlias" value="rsa" />
+        <property name="signatureAlgorithm" value="SHA256withRSA" />
+        <property name="includeCertificates" value="true" />
+    </bean>
+
+    <bean id="signer2"
+        class="org.apache.camel.component.crypto.cms.sig.DefaultSignerInfo">
+        <property name="keyStoreParameters" ref="keyStoreParameters1" />
+        <property name="privateKeyAlias" value="dsa" />
+        <property name="signatureAlgorithm" value="SHA256withDSA" />
+    </bean>
+
+    <bean id="signerOutdated"
+        class="org.apache.camel.component.crypto.cms.sig.DefaultSignerInfo">
+        <property name="keyStoreParameters" ref="keyStoreParameters1" />
+        <property name="privateKeyAlias" value="outdated" />
+        <property name="signatureAlgorithm" value="SHA1withRSA" />
+        <property name="includeCertificates" value="false" />
+    </bean>
+
+    <bean id="originatorInformationProvider1"
+        class="org.apache.camel.component.crypto.cms.util.TestOriginatorInformationProvider" />
+
+    <bean id="attributesGeneratorProvider1"
+        class="org.apache.camel.component.crypto.cms.util.TestAttributesGeneratorProvider" />
+
+
+
+</beans>

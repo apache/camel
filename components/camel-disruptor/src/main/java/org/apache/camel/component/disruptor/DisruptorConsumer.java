@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.disruptor;
 
 import java.util.HashSet;
@@ -26,7 +25,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
-import org.apache.camel.SuspendableService;
+import org.apache.camel.Suspendable;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.Synchronization;
@@ -40,7 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A Consumer for the Disruptor component.
  */
-public class DisruptorConsumer extends ServiceSupport implements Consumer, SuspendableService, ShutdownAware {
+public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspendable, ShutdownAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DisruptorConsumer.class);
 
@@ -97,7 +96,7 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
     }
 
     Set<LifecycleAwareExchangeEventHandler> createEventHandlers(final int concurrentConsumers) {
-        final Set<LifecycleAwareExchangeEventHandler> eventHandlers = new HashSet<LifecycleAwareExchangeEventHandler>();
+        final Set<LifecycleAwareExchangeEventHandler> eventHandlers = new HashSet<>();
 
         for (int i = 0; i < concurrentConsumers; ++i) {
             eventHandlers.add(new ConsumerEventHandler(i, concurrentConsumers));
@@ -114,7 +113,7 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
     }
 
     @Override
-    public void prepareShutdown(final boolean forced) {
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
         // nothing
     }
 
@@ -197,7 +196,7 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
 
         private final int concurrentConsumers;
 
-        public ConsumerEventHandler(final int ordinal, final int concurrentConsumers) {
+        ConsumerEventHandler(final int ordinal, final int concurrentConsumers) {
             this.ordinal = ordinal;
             this.concurrentConsumers = concurrentConsumers;
         }

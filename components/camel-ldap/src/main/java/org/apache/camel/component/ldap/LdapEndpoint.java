@@ -17,6 +17,7 @@
 package org.apache.camel.component.ldap;
 
 import java.net.URISyntaxException;
+import java.util.Map;
 import javax.naming.directory.SearchControls;
 
 import org.apache.camel.Consumer;
@@ -30,9 +31,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * Represents an endpoint that synchronously invokes an LDAP server when a producer sends a message to it.
+ * The ldap component allows you to perform searches in LDAP servers using filters as the message payload.
  */
-@UriEndpoint(scheme = "ldap", title = "LDAP", syntax = "ldap:dirContextName", producerOnly = true, label = "ldap")
+@UriEndpoint(firstVersion = "1.5.0", scheme = "ldap", title = "LDAP", syntax = "ldap:dirContextName", producerOnly = true, label = "ldap")
 public class LdapEndpoint extends DefaultEndpoint {
     public static final String SYSTEM_DN = "ou=system";
     public static final String OBJECT_SCOPE = "object";
@@ -78,7 +79,10 @@ public class LdapEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Name of {@link javax.naming.directory.DirContext} bean to lookup in the registry.
+     * Name of either a {@link javax.naming.directory.DirContext}, or {@link java.util.Hashtable}, or {@link Map} bean to lookup in the registry.
+     * If the bean is either a Hashtable or Map then a new {@link javax.naming.directory.DirContext} instance is created for each use. If the bean
+     * is a {@link javax.naming.directory.DirContext} then the bean is used as given. The latter may not be possible in all situations where
+     * the {@link javax.naming.directory.DirContext} must not be shared, and in those situations it can be better to use {@link java.util.Hashtable} or {@link Map} instead.
      */
     public void setDirContextName(String dirContextName) {
         this.dirContextName = dirContextName;

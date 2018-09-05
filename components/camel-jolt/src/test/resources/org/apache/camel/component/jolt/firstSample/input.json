@@ -1,0 +1,15 @@
+{        "rating": {
+            "primary": {
+                "value": 3,
+                "max": 5
+            },
+            "sharpness": {
+                "value": 5,
+                "max": 5
+            },
+            "quality": {
+                "value": 3,
+                "max": 7
+            }
+        }
+}

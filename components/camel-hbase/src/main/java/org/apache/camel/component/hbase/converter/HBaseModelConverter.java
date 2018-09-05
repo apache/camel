@@ -85,14 +85,4 @@ public final class HBaseModelConverter {
     public static Float bytesToFloat(byte[] bytes) {
         return Bytes.toFloat(bytes);
     }
-
-    @Converter
-    public static byte[] stringToBytes(String str) {
-        return Bytes.toBytes(str);
-    }
-
-    @Converter
-    public static String bytesToString(byte[] bytes) {
-        return Bytes.toString(bytes);
-    }
 }

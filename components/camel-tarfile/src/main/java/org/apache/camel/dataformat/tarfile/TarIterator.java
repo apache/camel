@@ -49,14 +49,14 @@ public class TarIterator implements Iterator<Message>, Closeable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TarIterator.class);
 
-    private final Message inputMessage;
-    private TarArchiveInputStream tarInputStream;
-    private Message parent;
+    private final Exchange exchange;
+    private volatile TarArchiveInputStream tarInputStream;
+    private volatile Message parent;
+    private boolean allowEmptyDirectory;
 
-    public TarIterator(Message inputMessage, InputStream inputStream) {
-        this.inputMessage = inputMessage;
-        //InputStream inputStream = inputMessage.getBody(InputStream.class);
-
+    public TarIterator(Exchange exchange, InputStream inputStream) {
+        this.exchange = exchange;
+        this.allowEmptyDirectory = false;
         if (inputStream instanceof TarArchiveInputStream) {
             tarInputStream = (TarArchiveInputStream) inputStream;
         } else {
@@ -99,7 +99,6 @@ public class TarIterator implements Iterator<Message>, Closeable {
         if (parent == null) {
             parent = getNextElement();
         }
-
         Message answer = parent;
         parent = null;
         checkNullAnswer(answer);
@@ -108,10 +107,8 @@ public class TarIterator implements Iterator<Message>, Closeable {
     }
 
     private Message getNextElement() {
-        Message answer = null;
-
         if (tarInputStream == null) {
-            return answer;
+            return null;
         }
 
         try {
@@ -119,8 +116,8 @@ public class TarIterator implements Iterator<Message>, Closeable {
 
             if (current != null) {
                 LOGGER.debug("Reading tarEntry {}", current.getName());
-                answer = new DefaultMessage();
-                answer.getHeaders().putAll(inputMessage.getHeaders());
+                Message answer = new DefaultMessage(exchange.getContext());
+                answer.getHeaders().putAll(exchange.getIn().getHeaders());
                 answer.setHeader(TARFILE_ENTRY_NAME_HEADER, current.getName());
                 answer.setHeader(Exchange.FILE_NAME, current.getName());
                 if (current.getSize() > 0) {
@@ -132,13 +129,12 @@ public class TarIterator implements Iterator<Message>, Closeable {
                 return answer;
             } else {
                 LOGGER.trace("Closed tarInputStream");
+                return null;
             }
         } catch (IOException exception) {
             //Just wrap the IOException as CamelRuntimeException
             throw new RuntimeCamelException(exception);
         }
-
-        return answer;
     }
 
     public void checkNullAnswer(Message answer) {
@@ -154,6 +150,10 @@ public class TarIterator implements Iterator<Message>, Closeable {
         while ((entry = tarInputStream.getNextTarEntry()) != null) {
             if (!entry.isDirectory()) {
                 return entry;
+            } else {
+                if (allowEmptyDirectory) {
+                    return entry;
+                }
             }
         }
 
@@ -167,9 +167,15 @@ public class TarIterator implements Iterator<Message>, Closeable {
 
     @Override
     public void close() throws IOException {
-        if (tarInputStream != null) {
-            tarInputStream.close();
-            tarInputStream = null;
-        }
+        IOHelper.close(tarInputStream);
+        tarInputStream = null;
+    }
+
+    public boolean isAllowEmptyDirectory() {
+        return allowEmptyDirectory;
+    }
+
+    public void setAllowEmptyDirectory(boolean allowEmptyDirectory) {
+        this.allowEmptyDirectory = allowEmptyDirectory;
     }
 }

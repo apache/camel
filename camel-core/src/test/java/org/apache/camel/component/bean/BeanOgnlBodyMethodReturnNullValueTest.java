@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class BeanOgnlBodyMethodReturnNullValueTest extends ContextTestSupport {
 
+    @Test
     public void testBothValue() {
         ExamplePojo fooBar = new ExamplePojo();
         fooBar.setFoo("foo1");
@@ -33,6 +36,7 @@ public class BeanOgnlBodyMethodReturnNullValueTest extends ContextTestSupport {
         assertEquals("foo: foo1; bar: bar2", result);
     }
 
+    @Test
     public void testNullValue() {
         ExamplePojo fooBar = new ExamplePojo();
         fooBar.setFoo(null);

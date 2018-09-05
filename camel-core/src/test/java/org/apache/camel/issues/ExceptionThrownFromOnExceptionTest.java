@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -38,6 +40,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testExceptionThrownFromOnException() throws Exception {
         RETRY.set(0);
         ON_EXCEPTION_RETRY.set(0);
@@ -47,6 +50,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // on exception to catch all IO exceptions and handle them specially
                 onException(IOException.class)
+                    .redeliveryDelay(0)
                     .maximumRedeliveries(3)
                     .to("mock:b")
                     .process(new Processor() {
@@ -96,6 +100,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
     }
 
+    @Test
     public void testExceptionThrownFromOnExceptionAndHandled() throws Exception {
         RETRY.set(0);
         ON_EXCEPTION_RETRY.set(0);
@@ -105,6 +110,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // on exception to catch all IO exceptions and handle them specially
                 onException(IOException.class)
+                    .redeliveryDelay(0)
                     .maximumRedeliveries(3)
                     // this time we handle the exception
                     .handled(true)
@@ -156,6 +162,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
     }
 
+    @Test
     public void testExceptionThrownFromOnExceptionWithDeadLetterChannel() throws Exception {
         RETRY.set(0);
         ON_EXCEPTION_RETRY.set(0);
@@ -168,6 +175,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
                 // on exception to catch all IO exceptions and handle them specially
                 onException(IOException.class)
+                    .redeliveryDelay(0)
                     .maximumRedeliveries(3)
                     .to("mock:b")
                     .process(new Processor() {
@@ -220,6 +228,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
     }
 
+    @Test
     public void testExceptionThrownFromOnExceptionAndHandledWithDeadLetterChannel() throws Exception {
         RETRY.set(0);
         ON_EXCEPTION_RETRY.set(0);
@@ -232,6 +241,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
                 // on exception to catch all IO exceptions and handle them specially
                 onException(IOException.class)
+                    .redeliveryDelay(0)
                     .maximumRedeliveries(3)
                     // this time we handle the exception
                     .handled(true)
@@ -286,6 +296,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
     }
 
+    @Test
     public void testNoExceptionThrownFromOnExceptionWithDeadLetterChannel() throws Exception {
         RETRY.set(0);
         ON_EXCEPTION_RETRY.set(0);
@@ -298,6 +309,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
                 // on exception to catch all IO exceptions and handle them specially
                 onException(IOException.class)
+                    .redeliveryDelay(0)
                     .maximumRedeliveries(3)
                     .to("mock:b")
                     .process(new Processor() {
@@ -352,6 +364,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
     }
 
+    @Test
     public void testNoExceptionThrownFromOnExceptionAndHandledWithDeadLetterChannel() throws Exception {
         RETRY.set(0);
         ON_EXCEPTION_RETRY.set(0);
@@ -364,6 +377,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
                 // on exception to catch all IO exceptions and handle them specially
                 onException(IOException.class)
+                    .redeliveryDelay(0)
                     .maximumRedeliveries(3)
                     // we now handle the exception
                     .handled(true)

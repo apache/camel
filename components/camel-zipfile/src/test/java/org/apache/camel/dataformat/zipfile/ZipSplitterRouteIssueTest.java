@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.zipfile;
+import org.junit.Before;
 
 import java.io.File;
 
@@ -25,6 +26,7 @@ import org.junit.Test;
 public class ZipSplitterRouteIssueTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/zip");
         super.setUp();
@@ -32,9 +34,9 @@ public class ZipSplitterRouteIssueTest extends CamelTestSupport {
 
     @Test
     public void testSplitter() throws Exception {
-        getMockEndpoint("mock:entry").expectedMessageCount(3);
+        getMockEndpoint("mock:entry").expectedMessageCount(2);
 
-        template.sendBody("seda:decompressFiles", new File("src/test/resources/data.zip"));
+        template.sendBody("direct:decompressFiles", new File("src/test/resources/data.zip"));
 
         assertMockEndpointsSatisfied();
     }
@@ -43,11 +45,11 @@ public class ZipSplitterRouteIssueTest extends CamelTestSupport {
     public void testSplitterWithWrongFile() throws Exception {
         getMockEndpoint("mock:entry").expectedMessageCount(0);
         getMockEndpoint("mock:errors").expectedMessageCount(1);
+
         //Send a file which is not exit
-        template.sendBody("seda:decompressFiles", new File("src/test/resources/data"));
+        template.sendBody("direct:decompressFiles", new File("src/test/resources/data"));
         
         assertMockEndpointsSatisfied();
-        
     }
 
     @Override
@@ -57,11 +59,10 @@ public class ZipSplitterRouteIssueTest extends CamelTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:errors"));
                 
-                from("seda:decompressFiles")
+                from("direct:decompressFiles")
                     .split(new ZipSplitter()).streaming().shareUnitOfWork()
-                        .log("we are splitting")
+                        .to("log:entry")
                         .to("mock:entry");
-                        //.to("file:target/zip/?fileName=decompressed.txt&fileExist=Append");
             }
         };
     }

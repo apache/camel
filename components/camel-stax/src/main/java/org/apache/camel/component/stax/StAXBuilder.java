@@ -33,7 +33,7 @@ public final class StAXBuilder {
      * @param clazz the class which has JAXB annotations to bind POJO.
      */
     public static <T> Expression stax(Class<T> clazz) {
-        return new StAXJAXBIteratorExpression<T>(clazz);
+        return new StAXJAXBIteratorExpression<>(clazz);
     }
 
     /**
@@ -52,7 +52,7 @@ public final class StAXBuilder {
      * @param isNamespaceAware sets the namespace awareness of the xml reader
      */
     public static <T> Expression stax(Class<T> clazz, boolean isNamespaceAware) {
-        return new StAXJAXBIteratorExpression<T>(clazz, isNamespaceAware);
+        return new StAXJAXBIteratorExpression<>(clazz, isNamespaceAware);
     }
 
     /**

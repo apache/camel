@@ -105,7 +105,7 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
         assertMockEndpointsSatisfied();
 
         // all 3 messages should be in jpa repo
-        Set<String> ids = new HashSet<String>();
+        Set<String> ids = new HashSet<>();
         Query query = entityManager.createQuery(SELECT_ALL_STRING);
         query.setParameter(1, PROCESSOR_NAME);
         List<MessageProcessed> list = query.getResultList();
@@ -156,7 +156,7 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
         assertMockEndpointsSatisfied();
 
         // only message 1 and 3 should be in jpa repo
-        Set<String> ids = new HashSet<String>();
+        Set<String> ids = new HashSet<>();
         Query query = entityManager.createQuery(SELECT_ALL_STRING);
         query.setParameter(1, PROCESSOR_NAME);
         List<MessageProcessed> list = query.getResultList();

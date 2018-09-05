@@ -36,6 +36,7 @@ import org.apache.camel.component.apns.util.ParamUtils;
 import org.apache.camel.component.apns.util.ResourceUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 
 public class ApnsServiceFactory implements CamelContextAware {
@@ -192,17 +193,17 @@ public class ApnsServiceFactory implements CamelContextAware {
 
     private void configureApnsCertificate(ApnsServiceBuilder builder) throws IOException, GeneralSecurityException {
         if (getSslContextParameters() != null) {
-            builder.withSSLContext(getSslContextParameters().createSSLContext());
+            builder.withSSLContext(getSslContextParameters().createSSLContext(getCamelContext()));
             return;
         }
 
         ObjectHelper.notNull(getCamelContext(), "camelContext");
-        ObjectHelper.notEmpty(getCertificatePath(), "certificatePath");
-        ObjectHelper.notEmpty(getCertificatePassword(), "certificatePassword");
+        StringHelper.notEmpty(getCertificatePath(), "certificatePath");
+        StringHelper.notEmpty(getCertificatePassword(), "certificatePassword");
 
         InputStream certificateInputStream = null;
         try {
-            certificateInputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext.getClassResolver(), getCertificatePath());
+            certificateInputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, getCertificatePath());
             builder.withCert(certificateInputStream, getCertificatePassword());
         } finally {
             ResourceUtils.close(certificateInputStream);

@@ -46,7 +46,7 @@ import org.apache.camel.StaticService;
  * <p/>
  * For more information about shutting down thread pools see the {@link #shutdown(java.util.concurrent.ExecutorService)}
  * and {@link #shutdownNow(java.util.concurrent.ExecutorService)}, and {@link #getShutdownAwaitTermination()} methods.
- * Notice the details about using a graceful shutdown at fist, and then falling back to aggressive shutdown in case
+ * Notice the details about using a graceful shutdown at first, and then falling back to aggressive shutdown in case
  * of await termination timeout occurred.
  *
  * @see ThreadPoolFactory
@@ -112,7 +112,7 @@ public interface ExecutorServiceManager extends ShutdownableService, StaticServi
      * Where <tt>#camelId#</tt> is the name of the {@link org.apache.camel.CamelContext}
      * <br/>and <tt>#counter#</tt> is a unique incrementing counter.
      * <br/>and <tt>#name#</tt> is the regular thread name.
-     * <br/>You can also use <tt>#longName#</tt> is the long thread name which can includes endpoint parameters etc.
+     * <br/>You can also use <tt>#longName#</tt> is the long thread name which can include endpoint parameters etc.
      *
      * @param pattern the pattern
      * @throws IllegalArgumentException if the pattern is invalid.
@@ -120,7 +120,7 @@ public interface ExecutorServiceManager extends ShutdownableService, StaticServi
     void setThreadNamePattern(String pattern) throws IllegalArgumentException;
 
     /**
-     * Gets the thread name patter to use
+     * Gets the thread name pattern to use
      *
      * @return the pattern
      */

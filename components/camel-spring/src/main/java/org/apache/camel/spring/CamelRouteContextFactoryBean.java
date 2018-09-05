@@ -25,17 +25,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.Metadata;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
- * @version 
+ * Configuration of routes using XML
+ *
+ * @version
  */
+@Metadata(label = "spring,configuration,routing")
 @XmlRootElement(name = "routeContext")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelRouteContextFactoryBean extends IdentifiedType implements FactoryBean<List<RouteDefinition>> {
 
     @XmlElement(name = "route", required = true)
-    private List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
+    private List<RouteDefinition> routes = new ArrayList<>();
 
     public List<RouteDefinition> getObject() throws Exception {
         return routes;

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+import org.junit.Before;
 
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -35,6 +36,7 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailShutdownCompleteAllTasksTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();
@@ -52,7 +54,7 @@ public class MailShutdownCompleteAllTasksTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("pop3://jones@localhost?password=secret&initialDelay=2s").routeId("route1")
+                from("pop3://jones@localhost?password=secret&consumer.initialDelay=100&consumer.delay=100").routeId("route1")
                         // let it complete all tasks during shutdown
                         .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
                         .delay(500).to("mock:bar");
@@ -89,6 +91,7 @@ public class MailShutdownCompleteAllTasksTest extends CamelTestSupport {
         for (int i = 0; i < 5; i++) {
             messages[i] = new MimeMessage(sender.getSession());
             messages[i].setText("Message " + i);
+            messages[i].setHeader("Message-ID", "" + i);
         }
         folder.appendMessages(messages);
         folder.close(true);

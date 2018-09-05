@@ -83,7 +83,7 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
 
     private static final String DOUBLE_QUOTE = "\"";
     private static final String URI_PATH_WILDCARD = "*";
-    private Map<EndpointMappingKey, MessageEndpoint> endpoints = new ConcurrentHashMap<EndpointMappingKey, MessageEndpoint>();
+    private Map<EndpointMappingKey, MessageEndpoint> endpoints = new ConcurrentHashMap<>();
     private TransformerFactory transformerFactory;
     private XmlConverter xmlConverter;
 

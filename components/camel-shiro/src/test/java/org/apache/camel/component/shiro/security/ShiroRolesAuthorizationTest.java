@@ -123,7 +123,7 @@ public class ShiroRolesAuthorizationTest extends CamelTestSupport {
         return new RouteBuilder[] {new RouteBuilder() {
             public void configure() {
                 
-                List<String> rolesList = new ArrayList<String>();
+                List<String> rolesList = new ArrayList<>();
                 rolesList.add("sec-level2");
                 rolesList.add("sec-level3");
                 
@@ -142,7 +142,7 @@ public class ShiroRolesAuthorizationTest extends CamelTestSupport {
         }, new RouteBuilder() {
             public void configure() {
                 
-                List<String> rolesList = new ArrayList<String>();
+                List<String> rolesList = new ArrayList<>();
                 rolesList.add("sec-level2");
                 rolesList.add("sec-level3");
                 
@@ -165,7 +165,7 @@ public class ShiroRolesAuthorizationTest extends CamelTestSupport {
     
     private static class TestShiroSecurityTokenInjector extends ShiroSecurityTokenInjector {
 
-        public TestShiroSecurityTokenInjector(ShiroSecurityToken shiroSecurityToken, byte[] bytes) {
+        TestShiroSecurityTokenInjector(ShiroSecurityToken shiroSecurityToken, byte[] bytes) {
             super(shiroSecurityToken, bytes);
         }
         

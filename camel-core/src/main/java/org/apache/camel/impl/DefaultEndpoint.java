@@ -29,12 +29,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.HasId;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,19 +57,34 @@ import org.slf4j.LoggerFactory;
 public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint, HasId, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultEndpoint.class);
+    private final String id = EndpointHelper.createEndpointId();
+    private transient String endpointUriToString;
     private String endpointUri;
     private EndpointConfiguration endpointConfiguration;
     private CamelContext camelContext;
     private Component component;
-    @UriParam(defaultValue = "InOnly", description = "Sets the default exchange pattern when creating an exchange")
+    @UriParam(label = "consumer", optionalPrefix = "consumer.", description = "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while"
+                    + " the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler."
+                    + " By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored.")
+    private boolean bridgeErrorHandler;
+    @UriParam(label = "consumer,advanced", optionalPrefix = "consumer.", description = "To let the consumer use a custom ExceptionHandler."
+            + " Notice if the option bridgeErrorHandler is enabled then this options is not in use."
+            + " By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored.")
+    private ExceptionHandler exceptionHandler;
+    @UriParam(label = "consumer,advanced",
+            description = "Sets the exchange pattern when the consumer creates an exchange.")
+    // no default value set on @UriParam as the MEP is sometimes InOnly or InOut depending on the component in use
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
     // option to allow end user to dictate whether async processing should be
     // used or not (if possible)
-    @UriParam(defaultValue = "false",
+    @UriParam(defaultValue = "false", label = "advanced",
             description = "Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported).")
     private boolean synchronous;
-    private final String id = EndpointHelper.createEndpointId();
+    // these options are not really in use any option related to the consumer has a specific option on the endpoint
+    // and consumerProperties was added from the very start of Camel.
     private Map<String, Object> consumerProperties;
+    // pooling consumer options only related to EventDrivenPollingConsumer which are very seldom in use
+    // so lets not expose them in the component docs as it will be included in every component
     private int pollingConsumerQueueSize = 1000;
     private boolean pollingConsumerBlockWhenFull = true;
     private long pollingConsumerBlockTimeout;
@@ -136,20 +153,27 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     public boolean equals(Object object) {
         if (object instanceof DefaultEndpoint) {
             DefaultEndpoint that = (DefaultEndpoint)object;
-            return ObjectHelper.equal(this.getEndpointUri(), that.getEndpointUri());
+            // must also match the same CamelContext in case we compare endpoints from different contexts
+            String thisContextName = this.getCamelContext() != null ? this.getCamelContext().getName() : null;
+            String thatContextName = that.getCamelContext() != null ? that.getCamelContext().getName() : null;
+            return ObjectHelper.equal(this.getEndpointUri(), that.getEndpointUri()) && ObjectHelper.equal(thisContextName, thatContextName);
         }
         return false;
     }
 
     @Override
     public String toString() {
-        String value = null;
-        try {
-            value = getEndpointUri();
-        } catch (RuntimeException e) {
-            // ignore any exception and use null for building the string value
+        if (endpointUriToString == null) {
+            String value = null;
+            try {
+                value = getEndpointUri();
+            } catch (RuntimeException e) {
+                // ignore any exception and use null for building the string value
+            }
+            // ensure to sanitize uri so we do not show sensitive information such as passwords
+            endpointUriToString = URISupport.sanitizeUri(value);
         }
-        return String.format("Endpoint[%s]", URISupport.sanitizeUri(value));
+        return endpointUriToString;
     }
 
     /**
@@ -183,17 +207,17 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      *
      * @param endpointConfiguration a custom endpoint configuration to be used.
      */
+    @Deprecated
     public void setEndpointConfiguration(EndpointConfiguration endpointConfiguration) {
         this.endpointConfiguration = endpointConfiguration;
     }
 
     public String getEndpointKey() {
         if (isLenientProperties()) {
-            // only use the endpoint uri without parameters as the properties is
-            // lenient
+            // only use the endpoint uri without parameters as the properties are lenient
             String uri = getEndpointUri();
             if (uri.indexOf('?') != -1) {
-                return ObjectHelper.before(uri, "?");
+                return StringHelper.before(uri, "?");
             } else {
                 return uri;
             }
@@ -274,6 +298,35 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      */
     public void setSynchronous(boolean synchronous) {
         this.synchronous = synchronous;
+    }
+
+    public boolean isBridgeErrorHandler() {
+        return bridgeErrorHandler;
+    }
+
+    /**
+     * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while
+     * the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and
+     * handled by the routing Error Handler.
+     * <p/>
+     * By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions,
+     * that will be logged at WARN/ERROR level and ignored.
+     */
+    public void setBridgeErrorHandler(boolean bridgeErrorHandler) {
+        this.bridgeErrorHandler = bridgeErrorHandler;
+    }
+
+    public ExceptionHandler getExceptionHandler() {
+        return exceptionHandler;
+    }
+
+    /**
+     * To let the consumer use a custom ExceptionHandler.
+     + Notice if the option bridgeErrorHandler is enabled then this options is not in use.
+     + By default the consumer will deal with exceptions, that will be logged at WARN/ERROR level and ignored.
+     */
+    public void setExceptionHandler(ExceptionHandler exceptionHandler) {
+        this.exceptionHandler = exceptionHandler;
     }
 
     /**
@@ -377,6 +430,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     /**
      * A factory method to lazily create the endpoint configuration if none is specified
      */
+    @Deprecated
     protected EndpointConfiguration createEndpointConfiguration(String uri) {
         // using this factory method to be backwards compatible with the old code
         if (getComponent() != null) {
@@ -422,7 +476,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     public Map<String, Object> getConsumerProperties() {
         if (consumerProperties == null) {
             // must create empty if none exists
-            consumerProperties = new HashMap<String, Object>();
+            consumerProperties = new HashMap<>();
         }
         return consumerProperties;
     }
@@ -431,7 +485,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         // append consumer properties
         if (consumerProperties != null && !consumerProperties.isEmpty()) {
             if (this.consumerProperties == null) {
-                this.consumerProperties = new HashMap<String, Object>(consumerProperties);
+                this.consumerProperties = new HashMap<>(consumerProperties);
             } else {
                 this.consumerProperties.putAll(consumerProperties);
             }
@@ -439,10 +493,15 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     }
 
     protected void configureConsumer(Consumer consumer) throws Exception {
+        // inject CamelContext
+        if (consumer instanceof CamelContextAware) {
+            ((CamelContextAware) consumer).setCamelContext(getCamelContext());
+        }
+
         if (consumerProperties != null) {
             // use a defensive copy of the consumer properties as the methods below will remove the used properties
             // and in case we restart routes, we need access to the original consumer properties again
-            Map<String, Object> copy = new HashMap<String, Object>(consumerProperties);
+            Map<String, Object> copy = new HashMap<>(consumerProperties);
 
             // set reference properties first as they use # syntax that fools the regular properties setter
             EndpointHelper.setReferenceProperties(getCamelContext(), consumer, copy);
@@ -475,7 +534,14 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     @Override
     protected void doStart() throws Exception {
-        // noop
+        // the bridgeErrorHandler/exceptionHandler was originally configured with consumer. prefix, such as consumer.bridgeErrorHandler=true
+        // so if they have been configured on the endpoint then map to the old naming style
+        if (bridgeErrorHandler) {
+            getConsumerProperties().put("bridgeErrorHandler", "true");
+        }
+        if (exceptionHandler != null) {
+            getConsumerProperties().put("exceptionHandler", exceptionHandler);
+        }
     }
 
     @Override

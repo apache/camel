@@ -21,12 +21,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Exchanger;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
 import javax.jms.Connection;
 import javax.jms.Destination;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
-import javax.jms.MessageProducer;
 import javax.jms.Session;
 
 import org.apache.camel.AsyncCallback;
@@ -37,10 +37,9 @@ import org.apache.camel.component.sjms.MessageProducerResources;
 import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.component.sjms.SjmsMessage;
 import org.apache.camel.component.sjms.SjmsProducer;
+import org.apache.camel.component.sjms.jms.ConnectionResource;
 import org.apache.camel.component.sjms.jms.JmsConstants;
 import org.apache.camel.component.sjms.jms.JmsMessageHelper;
-import org.apache.camel.component.sjms.jms.JmsObjectFactory;
-import org.apache.camel.component.sjms.tx.SessionTransactionSynchronization;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.pool.BasePoolableObjectFactory;
@@ -51,7 +50,7 @@ import org.apache.commons.pool.impl.GenericObjectPool;
  */
 public class InOutProducer extends SjmsProducer {
 
-    private static final Map<String, Exchanger<Object>> EXCHANGERS = new ConcurrentHashMap<String, Exchanger<Object>>();
+    private static final Map<String, Exchanger<Object>> EXCHANGERS = new ConcurrentHashMap<>();
 
     private static final String GENERATED_CORRELATION_ID_PREFIX = "Camel-";
     private UuidGenerator uuidGenerator;
@@ -77,7 +76,8 @@ public class InOutProducer extends SjmsProducer {
         @Override
         public MessageConsumerResources makeObject() throws Exception {
             MessageConsumerResources answer;
-            Connection conn = getConnectionResource().borrowConnection();
+            ConnectionResource connectionResource = getOrCreateConnectionResource();
+            Connection conn = connectionResource.borrowConnection();
             try {
                 Session session;
                 if (isEndpointTransacted()) {
@@ -92,9 +92,8 @@ public class InOutProducer extends SjmsProducer {
                 } else {
                     replyToDestination = getEndpoint().getDestinationCreationStrategy().createDestination(session, getNamedReplyTo(), isTopic());
                 }
-                MessageConsumer messageConsumer = JmsObjectFactory.createMessageConsumer(session, replyToDestination, null, isTopic(), null, true);
+                MessageConsumer messageConsumer = getEndpoint().getJmsObjectFactory().createMessageConsumer(session, replyToDestination, null, isTopic(), null, true, false, false);
                 messageConsumer.setMessageListener(new MessageListener() {
-
                     @Override
                     public void onMessage(final Message message) {
                         log.debug("Message Received in the Consumer Pool");
@@ -103,9 +102,8 @@ public class InOutProducer extends SjmsProducer {
                             Exchanger<Object> exchanger = EXCHANGERS.get(message.getJMSCorrelationID());
                             exchanger.exchange(message, getResponseTimeOut(), TimeUnit.MILLISECONDS);
                         } catch (Exception e) {
-                            log.error("Unable to exchange message: {}", message, e);
+                            log.warn("Unable to exchange message: {}. This exception is ignored.", message, e);
                         }
-
                     }
                 });
                 answer = new MessageConsumerResources(session, messageConsumer, replyToDestination);
@@ -113,7 +111,7 @@ public class InOutProducer extends SjmsProducer {
                 log.error("Unable to create the MessageConsumerResource: " + e.getLocalizedMessage());
                 throw new CamelException(e);
             } finally {
-                getConnectionResource().returnConnection(conn);
+                connectionResource.returnConnection(conn);
             }
             return answer;
         }
@@ -139,8 +137,13 @@ public class InOutProducer extends SjmsProducer {
 
     @Override
     protected void doStart() throws Exception {
+
+        if (isEndpointTransacted()) {
+            throw new IllegalArgumentException("InOut exchange pattern is incompatible with transacted=true as it cause a deadlock. Please use transacted=false or InOnly exchange pattern.");
+        }
+
         if (ObjectHelper.isEmpty(getNamedReplyTo())) {
-            log.debug("No reply to destination is defined.  Using temporary destinations.");
+            log.debug("No reply to destination is defined. Using temporary destinations.");
         } else {
             log.debug("Using {} as the reply to destination.", getNamedReplyTo());
         }
@@ -149,7 +152,7 @@ public class InOutProducer extends SjmsProducer {
             uuidGenerator = getEndpoint().getCamelContext().getUuidGenerator();
         }
         if (consumers == null) {
-            consumers = new GenericObjectPool<MessageConsumerResources>(new MessageConsumerResourcesFactory());
+            consumers = new GenericObjectPool<>(new MessageConsumerResourcesFactory());
             consumers.setMaxActive(getConsumerCount());
             consumers.setMaxIdle(getConsumerCount());
             while (consumers.getNumIdle() < consumers.getMaxIdle()) {
@@ -168,37 +171,12 @@ public class InOutProducer extends SjmsProducer {
         }
     }
 
-    @Override
-    public MessageProducerResources doCreateProducerModel() throws Exception {
-        MessageProducerResources answer;
-        Connection conn = getConnectionResource().borrowConnection();
-        try {
-            Session session = conn.createSession(isEndpointTransacted(), getAcknowledgeMode());
-            Destination destination = getEndpoint().getDestinationCreationStrategy().createDestination(session, getDestinationName(), isTopic());
-            MessageProducer messageProducer = JmsObjectFactory.createMessageProducer(session, destination, isPersistent(), getTtl());
-
-            answer = new MessageProducerResources(session, messageProducer);
-
-        } catch (Exception e) {
-            log.error("Unable to create the MessageProducer", e);
-            throw e;
-        } finally {
-            getConnectionResource().returnConnection(conn);
-        }
-
-        return answer;
-    }
-
     /**
      * TODO time out is actually double as it waits for the producer and then
      * waits for the response. Use an atomic long to manage the countdown
      */
     @Override
-    public void sendMessage(final Exchange exchange, final AsyncCallback callback, final MessageProducerResources producer) throws Exception {
-        if (isEndpointTransacted()) {
-            exchange.getUnitOfWork().addSynchronization(new SessionTransactionSynchronization(producer.getSession(), getCommitStrategy()));
-        }
-
+    public void sendMessage(final Exchange exchange, final AsyncCallback callback, final MessageProducerResources producer, final ReleaseProducerCallback releaseProducerCallback) throws Exception {
         Message request = getEndpoint().getBinding().makeJmsMessage(exchange, producer.getSession());
 
         String correlationId = exchange.getIn().getHeader(JmsConstants.JMS_CORRELATION_ID, String.class);
@@ -208,7 +186,7 @@ public class InOutProducer extends SjmsProducer {
         }
 
         Object responseObject = null;
-        Exchanger<Object> messageExchanger = new Exchanger<Object>();
+        Exchanger<Object> messageExchanger = new Exchanger<>();
         JmsMessageHelper.setCorrelationId(request, correlationId);
         EXCHANGERS.put(correlationId, messageExchanger);
 
@@ -221,7 +199,7 @@ public class InOutProducer extends SjmsProducer {
         // can move forward
         // without waiting on us to complete the exchange
         try {
-            getProducers().returnObject(producer);
+            releaseProducerCallback.release(producer);
         } catch (Exception exception) {
             // thrown if the pool is full. safe to ignore.
         }

@@ -21,17 +21,24 @@ import java.io.OutputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.codec.binary.Base64OutputStream;
 
-public class Base64DataFormat implements DataFormat {
+public class Base64DataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private int lineLength = Base64.MIME_CHUNK_SIZE;
     private byte[] lineSeparator = {'\r', '\n'};
     private boolean urlSafe;
+
+    @Override
+    public String getDataFormatName() {
+        return "base64";
+    }
 
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
@@ -90,5 +97,15 @@ public class Base64DataFormat implements DataFormat {
 
     public void setUrlSafe(boolean urlSafe) {
         this.urlSafe = urlSafe;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 }

@@ -16,15 +16,13 @@
  */
 package org.apache.camel.component.websocket;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.eclipse.jetty.websocket.WebSocket;
+import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 
 /**
  * Web socket factory interface.
  */
 public interface WebSocketFactory {
 
-    WebSocket newInstance(HttpServletRequest request, String protocol, NodeSynchronization sync, WebsocketConsumer consumer);
+    DefaultWebsocket newInstance(ServletUpgradeRequest request, String protocol, String pathSpec, NodeSynchronization sync, WebsocketConsumer consumer);
 
 }

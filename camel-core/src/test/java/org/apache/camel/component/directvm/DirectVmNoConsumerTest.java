@@ -17,6 +17,7 @@
 package org.apache.camel.component.directvm;
 
 import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -33,6 +34,8 @@ public class DirectVmNoConsumerTest extends ContextTestSupport {
     }
 
     public void testInOnly() throws Exception {
+        context.getComponent("direct-vm", DirectVmComponent.class).setBlock(false);
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -51,6 +54,8 @@ public class DirectVmNoConsumerTest extends ContextTestSupport {
     }
 
     public void testInOut() throws Exception {
+        context.getComponent("direct-vm", DirectVmComponent.class).setBlock(false);
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -70,6 +75,8 @@ public class DirectVmNoConsumerTest extends ContextTestSupport {
 
     @Test
     public void testFailIfNoConsumerFalse() throws Exception {
+        context.getComponent("direct-vm", DirectVmComponent.class).setBlock(false);
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -82,12 +89,14 @@ public class DirectVmNoConsumerTest extends ContextTestSupport {
         try {
             template.sendBody("direct-vm:start", "Hello World");
         } catch (CamelExecutionException e) {
-            fail("Should not throw an exception");
+            assertIsInstanceOf(DirectVmConsumerNotAvailableException.class, e.getCause());
         }
     }
 
     @Test
     public void testFailIfNoConsumersAfterConsumersLeave() throws Exception {
+        context.getComponent("direct-vm", DirectVmComponent.class).setBlock(false);
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -115,6 +124,8 @@ public class DirectVmNoConsumerTest extends ContextTestSupport {
 
     @Test
     public void testFailIfNoConsumersWithValidConsumer() throws Exception {
+        context.getComponent("direct-vm", DirectVmComponent.class).setBlock(false);
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -135,6 +146,8 @@ public class DirectVmNoConsumerTest extends ContextTestSupport {
 
     @Test
     public void testFailIfNoConsumersFalseWithPipeline() throws Exception {
+        context.getComponent("direct-vm", DirectVmComponent.class).setBlock(false);
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -150,11 +163,12 @@ public class DirectVmNoConsumerTest extends ContextTestSupport {
         template.sendBody("direct-vm:in", "Hello World");
 
         assertMockEndpointsSatisfied();
-
     }
 
     @Test
     public void testConfigOnAConsumer() throws Exception {
+        context.getComponent("direct-vm", DirectVmComponent.class).setBlock(false);
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

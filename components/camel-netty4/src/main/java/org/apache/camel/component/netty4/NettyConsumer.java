@@ -86,16 +86,6 @@ public class NettyConsumer extends DefaultConsumer {
         super.doStop();
     }
 
-    @Override
-    protected void doSuspend() throws Exception {
-        ServiceHelper.suspendService(nettyServerBootstrapFactory);
-    }
-
-    @Override
-    protected void doResume() throws Exception {
-        ServiceHelper.resumeService(nettyServerBootstrapFactory);
-    }
-
     public CamelContext getContext() {
         return context;
     }

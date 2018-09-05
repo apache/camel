@@ -21,19 +21,20 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.ws.WebSocket;
-import com.ning.http.client.ws.WebSocketTextListener;
-import com.ning.http.client.ws.WebSocketUpgradeHandler;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.ws.WebSocket;
+import org.asynchttpclient.ws.WebSocketTextListener;
+import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.Before;
 import org.junit.Test;
 
 public class WebsocketClientCamelRouteTest extends CamelTestSupport {
 
-    private static List<String> received = new ArrayList<String>();
+    private static List<String> received = new ArrayList<>();
     private static CountDownLatch latch = new CountDownLatch(10);
 
     protected int port;
@@ -47,7 +48,7 @@ public class WebsocketClientCamelRouteTest extends CamelTestSupport {
 
     @Test
     public void testWSHttpCall() throws Exception {
-        AsyncHttpClient c = new AsyncHttpClient();
+        AsyncHttpClient c = new DefaultAsyncHttpClient();
 
         WebSocket websocket = c.prepareGet("ws://127.0.0.1:" + port + "/test").execute(
             new WebSocketUpgradeHandler.Builder()
@@ -96,6 +97,8 @@ public class WebsocketClientCamelRouteTest extends CamelTestSupport {
             public void configure() {
                 WebsocketComponent websocketComponent = getContext().getComponent("websocket", WebsocketComponent.class);
                 websocketComponent.setPort(port);
+                websocketComponent.setMinThreads(1);
+                websocketComponent.setMaxThreads(25);
 
                 from("websocket://test")
                         .log(">>> Message received from WebSocket Client : ${body}")

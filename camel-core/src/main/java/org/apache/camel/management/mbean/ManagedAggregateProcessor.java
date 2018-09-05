@@ -90,6 +90,10 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
         return processor.getCompletionInterval();
     }
 
+    public long getCompletionTimeoutCheckerInterval() {
+        return processor.getCompletionTimeoutCheckerInterval();
+    }
+
     public int getCompletionSize() {
         return processor.getCompletionSize();
     }
@@ -112,6 +116,10 @@ public class ManagedAggregateProcessor extends ManagedProcessor implements Manag
 
     public boolean isCompletionFromBatchConsumer() {
         return processor.isCompletionFromBatchConsumer();
+    }
+
+    public boolean isCompletionOnNewCorrelationGroup() {
+        return processor.isCompletionOnNewCorrelationGroup();
     }
 
     public boolean isIgnoreInvalidCorrelationKeys() {

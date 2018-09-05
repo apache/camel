@@ -44,6 +44,7 @@ public class XmppRouteTest extends TestCase {
     protected CountDownLatch latch = new CountDownLatch(1);
     protected Endpoint endpoint;
     protected ProducerCache client;
+    private EmbeddedXmppTestServer embeddedXmppTestServer;
 
     public static void main(String[] args) {
         enabled = true;
@@ -89,8 +90,8 @@ public class XmppRouteTest extends TestCase {
         return body;
     }
 
-    @Override
-    protected void setUp() throws Exception {
+   @Override
+   protected void setUp() throws Exception {
         client = new ProducerCache(this, container, 10);
 
         String uriPrefix = getUriPrefix();
@@ -117,15 +118,17 @@ public class XmppRouteTest extends TestCase {
         });
 
         container.start();
+        embeddedXmppTestServer = new EmbeddedXmppTestServer();
     }
 
     protected String getUriPrefix() {
-        return "xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort() + "/camel?login=false&room=camel-anon";
+        return "xmpp://localhost:" + embeddedXmppTestServer.getXmppPort() + "/camel?login=false&room=camel-anon";
     }
-    
-    @Override
-    protected void tearDown() throws Exception {
+
+   @Override
+   protected void tearDown() throws Exception {
         client.stop();
         container.stop();
+        embeddedXmppTestServer.stop();
     }
 }

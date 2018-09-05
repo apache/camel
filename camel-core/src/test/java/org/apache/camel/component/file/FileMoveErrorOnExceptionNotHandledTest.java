@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -26,11 +29,13 @@ import org.apache.camel.builder.RouteBuilder;
 public class FileMoveErrorOnExceptionNotHandledTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/move");
         super.setUp();
     }
 
+    @Test
     public void testMoveError() throws Exception {
         getMockEndpoint("mock:before").expectedMessageCount(1);
         getMockEndpoint("mock:after").expectedMessageCount(0);
@@ -47,7 +52,7 @@ public class FileMoveErrorOnExceptionNotHandledTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/move?moveFailed=error")
+                from("file:target/move?moveFailed=error&initialDelay=0&delay=10")
                     .onException(IllegalArgumentException.class)
                         .to("mock:damn")
                     .end()

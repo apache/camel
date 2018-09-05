@@ -15,10 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -28,14 +32,17 @@ import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
 
+import static org.awaitility.Awaitility.await;
+
 /**
  * @version 
  */
 public class EventNotifierExchangeSentTest extends ContextTestSupport {
 
-    protected static List<EventObject> events = new ArrayList<EventObject>();
+    protected static List<EventObject> events = new ArrayList<>();
 
     @Override
+    @Before
     public void setUp() throws Exception {
         events.clear();
         super.setUp();
@@ -72,6 +79,7 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testExchangeSent() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -107,6 +115,7 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
         assertTrue("Should take about 0.5 sec, was: " + time, time > 400);
     }
 
+    @Test
     public void testExchangeSentRecipient() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -114,8 +123,7 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // give it time to complete
-        Thread.sleep(200);
+        assertTrue(oneExchangeDone.matchesMockWaitTime());
 
         assertEquals(12, events.size());
         ExchangeSendingEvent e0 = assertIsInstanceOf(ExchangeSendingEvent.class, events.get(0));
@@ -145,6 +153,7 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
         assertEquals("direct://foo", e11.getEndpoint().getEndpointUri());
     }
 
+    @Test
     public void testExchangeWireTap() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -153,9 +162,7 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // give it time to complete
-        Thread.sleep(200);
-
-        assertEquals(6, events.size());
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(6, events.size()));
 
         // we should find log:foo which we tapped
         // which runs async so they can be in random order

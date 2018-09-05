@@ -45,7 +45,7 @@ public class DriveCommentsIntegrationTest extends AbstractGoogleDriveTestSupport
         String fileId = testFile.getId();
         
         // 2. comment on that file
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", fileId);
         // parameter type is com.google.api.services.drive.model.Comment
@@ -65,7 +65,7 @@ public class DriveCommentsIntegrationTest extends AbstractGoogleDriveTestSupport
         Comment comment2 = result1.getItems().get(0);
         
         // 4. now try and get that comment 
-        headers = new HashMap<String, Object>();
+        headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", fileId);
         // parameter type is String
@@ -77,7 +77,7 @@ public class DriveCommentsIntegrationTest extends AbstractGoogleDriveTestSupport
         
         // 5. delete the comment
         
-        headers = new HashMap<String, Object>();
+        headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", fileId);
         // parameter type is String
@@ -87,7 +87,7 @@ public class DriveCommentsIntegrationTest extends AbstractGoogleDriveTestSupport
 
         // 6. ensure the comment is gone
         
-        headers = new HashMap<String, Object>();
+        headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", fileId);
         // parameter type is String

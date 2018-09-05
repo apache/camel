@@ -22,12 +22,18 @@ import org.apache.camel.component.cxf.jaxrs.testbean.CustomerService;
 import org.apache.camel.component.cxf.spring.SpringJAXRSClientFactoryBean;
 import org.apache.camel.component.cxf.spring.SpringJAXRSServerFactoryBean;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.apache.cxf.version.Version;
 import org.junit.Test;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfRsSpringEndpointTest extends CamelSpringTestSupport {
+    
+    private static final String BEAN_SERVICE_ENDPOINT_NAME = "serviceEndpoint";
+    private static final String BEAN_SERVICE_ADDRESS = "http://localhost/programmatically";
+    private static final String BEAN_SERVICE_USERNAME = "BEAN_SERVICE_USERNAME";
+    private static final String BEAN_SERVICE_PASSWORD = "BEAN_SERVICE_PASSWORD";
     
     @Test
     public void testCreateCxfRsServerFactoryBean() {
@@ -62,13 +68,44 @@ public class CxfRsSpringEndpointTest extends CamelSpringTestSupport {
 
     }
     
-    @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {
-        String version = Version.getCurrentVersion();
-        if (version.contains("2.5") || version.contains("2.4")) {
-            return new ClassPathXmlApplicationContext(new String("org/apache/camel/component/cxf/jaxrs/CxfRsSpringEndpointBeans.xml"));
-        }
-        return new ClassPathXmlApplicationContext(new String("org/apache/camel/component/cxf/jaxrs/CxfRsSpringEndpointBeans-2.6.xml"));
+    @Test
+    public void testCreateCxfRsClientFactoryBeanProgrammatically() {
+        
+        CxfRsEndpoint endpoint = resolveMandatoryEndpoint("cxfrs://bean://" + BEAN_SERVICE_ENDPOINT_NAME, CxfRsEndpoint.class);
+        SpringJAXRSClientFactoryBean cfb = (SpringJAXRSClientFactoryBean)endpoint.createJAXRSClientFactoryBean();
+        
+        assertNotSame("Got the same object but must be different", super.applicationContext.getBean(BEAN_SERVICE_ENDPOINT_NAME), cfb);
+        assertEquals("Got the wrong address", BEAN_SERVICE_ADDRESS, cfb.getAddress());
+        assertNotNull("Service class must not be null", cfb.getServiceClass());
+        assertEquals("Got the wrong ServiceClass", CustomerService.class, cfb.getServiceClass());
+        assertEquals("Got the wrong username", BEAN_SERVICE_USERNAME, cfb.getUsername());
+        assertEquals("Got the wrong password", BEAN_SERVICE_PASSWORD, cfb.getPassword());                
     }
 
+    public static SpringJAXRSClientFactoryBean serviceEndpoint() {
+
+        SpringJAXRSClientFactoryBean clientFactoryBean = new SpringJAXRSClientFactoryBean();
+        clientFactoryBean.setAddress(BEAN_SERVICE_ADDRESS);
+        clientFactoryBean.setServiceClass(CustomerService.class);
+        clientFactoryBean.setUsername(BEAN_SERVICE_USERNAME);
+        clientFactoryBean.setPassword(BEAN_SERVICE_PASSWORD);
+
+        return clientFactoryBean;
+    }    
+    
+    @Override
+    protected AbstractXmlApplicationContext createApplicationContext() {      
+        
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String("org/apache/camel/component/cxf/jaxrs/CxfRsSpringEndpointBeans.xml"));        
+        emulateBeanRegistrationProgrammatically(applicationContext);
+        
+        return applicationContext;
+    }
+
+    private void emulateBeanRegistrationProgrammatically(ClassPathXmlApplicationContext applicationContext) {
+        
+        DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) applicationContext.getBeanFactory();
+        BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder.rootBeanDefinition(CxfRsSpringEndpointTest.class.getName()).setFactoryMethod("serviceEndpoint");
+        beanFactory.registerBeanDefinition(BEAN_SERVICE_ENDPOINT_NAME, definitionBuilder.getBeanDefinition());
+    }
 }

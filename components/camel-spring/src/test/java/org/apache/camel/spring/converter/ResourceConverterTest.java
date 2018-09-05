@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.converter;
 
+import org.junit.Test;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -30,10 +32,12 @@ import org.springframework.core.io.Resource;
 
 public class ResourceConverterTest extends TestSupport {
 
+    @Test
     public void testResourceConverterRegistry() {
         Assert.assertNotNull(getResourceTypeConverter());
     }
 
+    @Test
     public void testNonNullConversion() throws IOException {
         Resource resource = new ClassPathResource("testresource.txt", ResourceConverterTest.class);
         Assert.assertTrue(resource.exists());

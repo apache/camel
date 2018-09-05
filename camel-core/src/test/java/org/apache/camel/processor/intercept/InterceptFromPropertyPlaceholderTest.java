@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.intercept;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,6 +28,7 @@ import org.apache.camel.component.properties.PropertiesComponent;
  */
 public class InterceptFromPropertyPlaceholderTest extends ContextTestSupport {
 
+    @Test
     public void testInterceptFrom() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(1);

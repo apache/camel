@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -35,6 +37,7 @@ public class DeadLetterChannelRestartFromBeginningTest extends ContextTestSuppor
         return jndi;
     }
 
+    @Test
     public void testRestartFromBeginning() throws Exception {
         // 1 original + 4 redeliveries
         getMockEndpoint("mock:start").expectedBodiesReceived("Camel", "Camel", "Camel", "Camel", "Camel");
@@ -43,7 +46,8 @@ public class DeadLetterChannelRestartFromBeginningTest extends ContextTestSuppor
         // use fire and forget
         template.sendBody("seda:start", "Camel");
 
-        setAssertPeriod(200);
+        setAssertPeriod(500);
+
         assertMockEndpointsSatisfied();
     }
 

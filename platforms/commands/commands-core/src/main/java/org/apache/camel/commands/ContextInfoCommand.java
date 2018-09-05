@@ -31,12 +31,11 @@ import static org.apache.camel.util.ObjectHelper.isEmpty;
 /**
  * Command to display detailed information about a given {@link org.apache.camel.CamelContext}.
  */
-public class ContextInfoCommand extends AbstractCamelCommand {
+public class ContextInfoCommand extends AbstractContextCommand {
 
     public static final String XML_TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
     public static final String OUTPUT_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private StringEscape stringEscape;
-    private String context;
     private boolean verbose;
 
     /**
@@ -44,7 +43,7 @@ public class ContextInfoCommand extends AbstractCamelCommand {
      * @param verbose Whether to output verbose
      */
     public ContextInfoCommand(String context, boolean verbose) {
-        this.context = context;
+        super(context);
         this.verbose = verbose;
     }
 
@@ -56,7 +55,7 @@ public class ContextInfoCommand extends AbstractCamelCommand {
     }
 
     @Override
-    public Object execute(CamelController camelController, PrintStream out, PrintStream err) throws Exception {
+    protected Object performContextCommand(CamelController camelController, String contextName, PrintStream out, PrintStream err) throws Exception {
         Map<String, Object> row = camelController.getCamelContextInformation(context);
         if (row == null || row.isEmpty()) {
             err.println("Camel context " + context + " not found.");
@@ -81,6 +80,7 @@ public class ContextInfoCommand extends AbstractCamelCommand {
         out.println(stringEscape.unescapeJava("\tAllow UseOriginalMessage: " + row.get("allowUseOriginalMessage")));
         out.println(stringEscape.unescapeJava("\tMessage History: " + row.get("messageHistory")));
         out.println(stringEscape.unescapeJava("\tTracing: " + row.get("tracing")));
+        out.println(stringEscape.unescapeJava("\tLog Mask: " + row.get("logMask")));
         out.println("");
         out.println(stringEscape.unescapeJava("\u001B[1mProperties\u001B[0m"));
         for (Map.Entry<String, Object> entry : row.entrySet()) {
@@ -97,6 +97,7 @@ public class ContextInfoCommand extends AbstractCamelCommand {
             out.println(stringEscape.unescapeJava("\tClassResolver: " + row.get("classResolver")));
             out.println(stringEscape.unescapeJava("\tPackageScanClassResolver: " + row.get("packageScanClassResolver")));
             out.println(stringEscape.unescapeJava("\tApplicationContextClassLoader: " + row.get("applicationContextClassLoader")));
+            out.println(stringEscape.unescapeJava("\tHeadersMapFactory: " + row.get("headersMapFactory")));
 
             printStatistics(camelController, out);
 

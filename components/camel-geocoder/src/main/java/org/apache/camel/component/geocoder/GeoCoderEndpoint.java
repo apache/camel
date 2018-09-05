@@ -16,18 +16,23 @@
  */
 package org.apache.camel.component.geocoder;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+
+import com.google.maps.GeoApiContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.geocoder.http.AuthenticationMethod;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * Represents a GeoCoder endpoint.
+ * The geocoder component is used for looking up geocodes (latitude and longitude) for a given address, or reverse lookup.
  */
-@UriEndpoint(scheme = "geocoder", title = "Geocoder", syntax = "geocoder:address:latlng", producerOnly = true, label = "api,location")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "geocoder", title = "Geocoder", syntax = "geocoder:address:latlng", producerOnly = true, label = "api,location")
 public class GeoCoderEndpoint extends DefaultEndpoint {
 
     @UriPath
@@ -36,12 +41,28 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
     private String latlng;
     @UriParam(defaultValue = "en")
     private String language = "en";
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String clientId;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String clientKey;
+    @UriParam(label = "security", secret = true)
+    private String apiKey;
     @UriParam
     private boolean headersOnly;
+    @UriParam(label = "proxy")
+    private String proxyHost;
+    @UriParam(label = "proxy")
+    private Integer proxyPort;
+    @UriParam(label = "proxy")
+    private String proxyAuthMethod;
+    @UriParam(label = "proxy")
+    private String proxyAuthUsername;
+    @UriParam(label = "proxy")
+    private String proxyAuthPassword;
+    @UriParam(label = "proxy")
+    private String proxyAuthDomain;
+    @UriParam(label = "proxy")
+    private String proxyAuthHost;
 
     public GeoCoderEndpoint() {
     }
@@ -126,5 +147,129 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
      */
     public void setClientKey(String clientKey) {
         this.clientKey = clientKey;
+    }
+
+
+    private String getApiKey() {
+        return apiKey;
+    }
+
+    /**
+     * To use google apiKey
+     */
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
+    /**
+     * The proxy host name
+     */
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    public int getProxyPort() {
+        return proxyPort;
+    }
+
+    /**
+     * The proxy port number
+     */
+    public void setProxyPort(int proxyPort) {
+        this.proxyPort = proxyPort;
+    }
+
+
+    public String getProxyAuthMethod() {
+        return proxyAuthMethod;
+    }
+
+    /**
+     * Authentication method for proxy, either as Basic, Digest or NTLM.
+     */
+    public void setProxyAuthMethod(String proxyAuthMethod) {
+        this.proxyAuthMethod = proxyAuthMethod;
+    }
+
+    public String getProxyAuthUsername() {
+        return proxyAuthUsername;
+    }
+
+    /**
+     * Username for proxy authentication
+     */
+    public void setProxyAuthUsername(String proxyAuthUsername) {
+        this.proxyAuthUsername = proxyAuthUsername;
+    }
+
+    public String getProxyAuthPassword() {
+        return proxyAuthPassword;
+    }
+
+    /**
+     * Password for proxy authentication
+     */
+    public void setProxyAuthPassword(String proxyAuthPassword) {
+        this.proxyAuthPassword = proxyAuthPassword;
+    }
+
+    public String getProxyAuthDomain() {
+        return proxyAuthDomain;
+    }
+
+    /**
+     * Domain for proxy NTML authentication
+     */
+    public void setProxyAuthDomain(String proxyAuthDomain) {
+        this.proxyAuthDomain = proxyAuthDomain;
+    }
+
+    public String getProxyAuthHost() {
+        return proxyAuthHost;
+    }
+
+    /**
+     * Optional host for proxy NTML authentication
+     */
+    public void setProxyAuthHost(String proxyAuthHost) {
+        this.proxyAuthHost = proxyAuthHost;
+    }
+
+    GeoApiContext createGeoApiContext() {
+        GeoApiContext.Builder builder = new GeoApiContext.Builder();
+        if (clientId != null) {
+            builder = builder.enterpriseCredentials(clientId, clientKey);
+        } else {
+            builder = builder.apiKey(getApiKey());
+        }
+        if (isProxyDefined()) {
+            builder = builder.proxy(createProxy());
+            if (isProxyAuthDefined()) {
+                builder = configureProxyAuth(builder);
+            }
+        }
+        return builder.build();
+    }
+
+    private GeoApiContext.Builder configureProxyAuth(GeoApiContext.Builder builder) {
+        AuthenticationMethod auth = getCamelContext().getTypeConverter().convertTo(AuthenticationMethod.class, proxyAuthMethod);
+        if (auth == AuthenticationMethod.Basic || auth == AuthenticationMethod.Digest) {
+            builder = builder.proxyAuthentication(proxyAuthUsername, proxyAuthPassword);
+        } else {
+            throw new IllegalArgumentException("Unknown proxyAuthMethod " + proxyAuthMethod);
+        }
+        return builder;
+    }
+
+    private Proxy createProxy() {
+        return new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
+    }
+
+    private boolean isProxyDefined() {
+        return proxyHost != null && proxyPort != null;
+    }
+
+    private boolean isProxyAuthDefined() {
+        return proxyAuthMethod != null;
     }
 }

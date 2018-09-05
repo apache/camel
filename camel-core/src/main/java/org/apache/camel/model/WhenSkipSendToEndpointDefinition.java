@@ -21,15 +21,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
  * Predicate to determine if the message should be sent or not to the endpoint, when using interceptSentToEndpoint.
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration") @AsPredicate
 @XmlRootElement(name = "whenSkipSendToEndpoint")
 public class WhenSkipSendToEndpointDefinition extends WhenDefinition {
+    @Override
+    public String getShortName() {
+        return "whenSkipSendToEndpoint";
+    }
 
     @Override
     protected Predicate createPredicate(RouteContext routeContext) {

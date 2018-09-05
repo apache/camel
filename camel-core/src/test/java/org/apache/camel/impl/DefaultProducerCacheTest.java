@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -35,6 +37,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
     private final AtomicInteger stopCounter = new AtomicInteger();
     private final AtomicInteger shutdownCounter = new AtomicInteger();
 
+    @Test
     public void testCacheProducerAcquireAndRelease() throws Exception {
         ProducerCache cache = new ProducerCache(this, context);
         cache.start();
@@ -48,10 +51,14 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
             cache.releaseProducer(e, p);
         }
 
+        // the eviction is async so force cleanup
+        cache.cleanUp();
+
         assertEquals("Size should be 1000", 1000, cache.size());
         cache.stop();
     }
 
+    @Test
     public void testCacheStopExpired() throws Exception {
         ProducerCache cache = new ProducerCache(this, context, 5);
         cache.start();
@@ -64,7 +71,13 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
             cache.releaseProducer(e, p);
         }
 
+        // the eviction is async so force cleanup
+        cache.cleanUp();
+
         assertEquals("Size should be 5", 5, cache.size());
+
+        // the eviction listener is async so sleep a bit
+        Thread.sleep(1000);
 
         // should have stopped the 3 evicted
         assertEquals(3, stopCounter.get());
@@ -75,6 +88,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         assertEquals(8, stopCounter.get());
     }
 
+    @Test
     public void testReleaseProducerInvokesStopAndShutdownByNonSingletonProducers() throws Exception {
         ProducerCache cache = new ProducerCache(this, context, 1);
         cache.start();
@@ -104,6 +118,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         assertEquals(3, shutdownCounter.get());
     }
 
+    @Test
     public void testExtendedStatistics() throws Exception {
         ProducerCache cache = new ProducerCache(this, context, 5);
         cache.setExtendedStatistics(true);
@@ -185,7 +200,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
 
     private final class MyProducer extends DefaultProducer {
 
-        public MyProducer(Endpoint endpoint) {
+        MyProducer(Endpoint endpoint) {
             super(endpoint);
         }
 

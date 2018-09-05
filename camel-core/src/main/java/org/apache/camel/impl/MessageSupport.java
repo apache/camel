@@ -16,10 +16,14 @@
  */
 package org.apache.camel.impl;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.spi.DataType;
+import org.apache.camel.spi.DataTypeAware;
 
 /**
  * A base class for implementation inheritance providing the core
@@ -29,13 +33,22 @@ import org.apache.camel.TypeConverter;
  * Unless a specific provider wishes to do something particularly clever with
  * headers you probably want to just derive from {@link DefaultMessage}
  *
- * @version 
+ * @version
  */
-public abstract class MessageSupport implements Message {
+public abstract class MessageSupport implements Message, CamelContextAware, DataTypeAware {
+    private CamelContext camelContext;
     private Exchange exchange;
     private Object body;
     private String messageId;
+    private DataType dataType;
 
+    @Override
+    public String toString() {
+        // do not output information about the message as it may contain sensitive information
+        return String.format("Message[%s]", messageId == null ? "" : messageId);
+    }
+
+    @Override
     public Object getBody() {
         if (body == null) {
             body = createBody();
@@ -43,10 +56,12 @@ public abstract class MessageSupport implements Message {
         return body;
     }
 
+    @Override
     public <T> T getBody(Class<T> type) {
         return getBody(type, getBody());
     }
 
+    @Override
     public Object getMandatoryBody() throws InvalidPayloadException {
         Object answer = getBody();
         if (answer == null) {
@@ -85,6 +100,7 @@ public abstract class MessageSupport implements Message {
         return null;
     }
 
+    @Override
     public <T> T getMandatoryBody(Class<T> type) throws InvalidPayloadException {
         // eager same instance type test to avoid the overhead of invoking the type converter
         // if already same type
@@ -104,10 +120,16 @@ public abstract class MessageSupport implements Message {
         throw new InvalidPayloadException(e, type, this);
     }
 
+    @Override
     public void setBody(Object body) {
         this.body = body;
+        // set data type if in use
+        if (body != null && camelContext != null && camelContext.isUseDataType()) {
+            this.dataType = new DataType(body.getClass());
+        }
     }
 
+    @Override
     public <T> void setBody(Object value, Class<T> type) {
         Exchange e = getExchange();
         if (e != null) {
@@ -119,20 +141,80 @@ public abstract class MessageSupport implements Message {
         setBody(value);
     }
 
+    @Override
+    public void setBody(Object body, DataType type) {
+        this.body = body;
+        this.dataType = type;
+    }
+
+    @Override
+    public DataType getDataType() {
+        return this.dataType;
+    }
+
+    @Override
+    public void setDataType(DataType type) {
+        this.dataType = type;
+    }
+
+    @Override
+    public boolean hasDataType() {
+        return dataType != null;
+    }
+
+    @Override
     public Message copy() {
         Message answer = newInstance();
+        // must copy over CamelContext
+        if (answer instanceof CamelContextAware) {
+            ((CamelContextAware) answer).setCamelContext(getCamelContext());
+        }
         answer.copyFrom(this);
         return answer;
     }
 
+    @Override
     public void copyFrom(Message that) {
         if (that == this) {
             // the same instance so do not need to copy
             return;
         }
 
+        // must copy over CamelContext
+        if (that instanceof CamelContextAware) {
+            setCamelContext(((CamelContextAware) that).getCamelContext());
+        }
+        if (that instanceof DataTypeAware && ((DataTypeAware) that).hasDataType()) {
+            setDataType(((DataTypeAware)that).getDataType());
+        }
+        // cover over exchange if none has been assigned
+        if (getExchange() == null) {
+            setExchange(that.getExchange());
+        }
+
+        copyFromWithNewBody(that, that.getBody());
+    }
+
+    @Override
+    public void copyFromWithNewBody(Message that, Object newBody) {
+        if (that == this) {
+            // the same instance so do not need to copy
+            return;
+        }
+
+        // must copy over CamelContext
+        if (that instanceof CamelContextAware) {
+            setCamelContext(((CamelContextAware) that).getCamelContext());
+        }
+        // cover over exchange if none has been assigned
+        if (getExchange() == null) {
+            setExchange(that.getExchange());
+        }
+
+        // should likely not set DataType as the new body may be a different type than the original body
+
         setMessageId(that.getMessageId());
-        setBody(that.getBody());
+        setBody(newBody);
         setFault(that.isFault());
 
         // the headers may be the same instance if the end user has made some mistake
@@ -155,6 +237,7 @@ public abstract class MessageSupport implements Message {
         copyAttachments(that);
     }
 
+    @Override
     public Exchange getExchange() {
         return exchange;
     }
@@ -162,22 +245,33 @@ public abstract class MessageSupport implements Message {
     public void setExchange(Exchange exchange) {
         this.exchange = exchange;
     }
-    
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
     public void copyAttachments(Message that) {
         // the attachments may be the same instance if the end user has made some mistake
         // and set the OUT message with the same attachment instance of the IN message etc
         boolean sameAttachments = false;
-        if (hasAttachments() && that.hasAttachments() && getAttachments() == that.getAttachments()) {
+        if (hasAttachments() && that.hasAttachments() && getAttachmentObjects() == that.getAttachmentObjects()) {
             sameAttachments = true;
         }
 
         if (!sameAttachments) {
             if (hasAttachments()) {
                 // okay its safe to clear the attachments
-                getAttachments().clear();
+                getAttachmentObjects().clear();
             }
             if (that.hasAttachments()) {
-                getAttachments().putAll(that.getAttachments());
+                getAttachmentObjects().putAll(that.getAttachmentObjects());
             }
         }
     }
@@ -198,6 +292,7 @@ public abstract class MessageSupport implements Message {
         return null;
     }
 
+    @Override
     public String getMessageId() {
         if (messageId == null) {
             messageId = createMessageId();
@@ -205,6 +300,7 @@ public abstract class MessageSupport implements Message {
         return this.messageId;
     }
 
+    @Override
     public void setMessageId(String messageId) {
         this.messageId = messageId;
     }

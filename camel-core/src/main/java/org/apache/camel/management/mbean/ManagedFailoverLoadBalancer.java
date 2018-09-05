@@ -54,7 +54,7 @@ public class ManagedFailoverLoadBalancer extends ManagedProcessor implements Man
     }
 
     @Override
-    public synchronized void reset() {
+    public void reset() {
         super.reset();
         processor.reset();
     }

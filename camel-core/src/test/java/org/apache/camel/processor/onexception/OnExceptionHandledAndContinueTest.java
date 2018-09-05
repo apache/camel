@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.onexception;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
@@ -30,6 +32,7 @@ public class OnExceptionHandledAndContinueTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testHandledAndContinued() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

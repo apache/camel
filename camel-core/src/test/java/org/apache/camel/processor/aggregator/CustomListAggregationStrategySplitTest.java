@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +33,7 @@ import org.apache.camel.processor.aggregate.AbstractListAggregationStrategy;
 public class CustomListAggregationStrategySplitTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testCustomAggregationStrategy() throws Exception {
         getMockEndpoint("mock:line").expectedBodiesReceived(100, 150, 130);
 
@@ -39,7 +42,7 @@ public class CustomListAggregationStrategySplitTest extends ContextTestSupport {
         result.expectedMessageCount(1);
         result.message(0).body().isInstanceOf(List.class);
 
-        List<String> body = new ArrayList<String>();
+        List<String> body = new ArrayList<>();
         body.add("100");
         body.add("150");
         body.add("130");

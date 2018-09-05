@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -26,10 +28,11 @@ public class EndpointRegistryKeepRouteEndpointsTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getProperties().put(Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE, "20");
+        context.getGlobalOptions().put(Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE, "20");
         return context;
     }
 
+    @Test
     public void testEndpointRegistryKeepRouteEndpoints() throws Exception {
         assertTrue(context.hasEndpoint("direct://start") != null);
         assertTrue(context.hasEndpoint("log://foo") != null);
@@ -43,23 +46,30 @@ public class EndpointRegistryKeepRouteEndpointsTest extends ContextTestSupport {
             template.sendBody("mock:unknown" + i, "Hello " + i);
         }
 
+        // the eviction is async so force cleanup
+        context.getEndpointRegistry().cleanUp();
+
         // endpoints from routes is always kept in the cache
         assertTrue(context.hasEndpoint("direct://start") != null);
         assertTrue(context.hasEndpoint("log://foo") != null);
         assertTrue(context.hasEndpoint("log://bar") != null);
         assertTrue(context.hasEndpoint("mock://result") != null);
 
-        // and the dynamic cache only keeps the last 20
-        assertFalse(context.hasEndpoint("mock://unknown0") != null);
-        assertFalse(context.hasEndpoint("mock://unknown1") != null);
-        assertTrue(context.hasEndpoint("mock://unknown47") != null);
-        assertTrue(context.hasEndpoint("mock://unknown48") != null);
-        assertTrue(context.hasEndpoint("mock://unknown49") != null);
+        // and the dynamic cache only keeps 20 dynamic endpoints
+        int count = 0;
+        for (int i = 0; i < 50; i++) {
+            String uri = "mock://unknown" + i;
+            if (context.hasEndpoint(uri)  != null) {
+                count++;
+                // and it should be dynamic
+                assertTrue(context.getEndpointRegistry().isDynamic(uri));
+            }
+        }
+        assertEquals("Should only be 20 dynamic endpoints in the cache", 20, count);
 
         // we should have 4 static, 20 dynamic and 24 in total
         assertEquals(4, context.getEndpointRegistry().staticSize());
         assertTrue(context.getEndpointRegistry().isStatic("direct://start"));
-        assertTrue(context.getEndpointRegistry().isDynamic("mock://unknown49"));
 
         assertEquals(20, context.getEndpointRegistry().dynamicSize());
         assertEquals(24, context.getEndpointRegistry().size());

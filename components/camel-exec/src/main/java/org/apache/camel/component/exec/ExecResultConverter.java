@@ -145,7 +145,7 @@ public final class ExecResultConverter {
      * Resets the stream, only if it's a ByteArrayInputStream.
      */
     private static void resetIfByteArrayInputStream(InputStream stream) {
-        if (stream != null && stream instanceof ByteArrayInputStream) {
+        if (stream instanceof ByteArrayInputStream) {
             try {
                 stream.reset();
             } catch (IOException ioe) {

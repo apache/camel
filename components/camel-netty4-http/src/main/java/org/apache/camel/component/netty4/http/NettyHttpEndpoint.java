@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.netty4.http;
 
+import java.util.Map;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -26,37 +29,48 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.netty4.NettyConfiguration;
 import org.apache.camel.component.netty4.NettyEndpoint;
+import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * HTTP based {@link NettyEndpoint}
+ * Netty HTTP server and client using the Netty 4.x library.
  */
-@UriEndpoint(scheme = "netty4-http", extendsScheme = "netty4", title = "Netty4 HTTP",
-        syntax = "netty4-http:host:port/path", consumerClass = NettyHttpConsumer.class, label = "http")
-public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStrategyAware {
+@UriEndpoint(firstVersion = "2.14.0", scheme = "netty4-http", extendsScheme = "netty4", title = "Netty4 HTTP",
+        syntax = "netty4-http:protocol:host:port/path", consumerClass = NettyHttpConsumer.class, label = "http", lenientProperties = true,
+        excludeProperties = "textline,delimiter,autoAppendDelimiter,decoderMaxLineLength,encoding,allowDefaultCodec,udpConnectionlessSending,networkInterface"
+                + ",clientMode,reconnect,reconnectInterval,useByteBuf,udpByteArrayCodec,broadcast,correlationManager")
+public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpEndpoint.class);
     @UriParam
-    private NettyHttpBinding nettyHttpBinding;
-    @UriParam
-    private HeaderFilterStrategy headerFilterStrategy;
-    @UriParam
     private NettyHttpConfiguration configuration;
-    @UriParam
+    @UriParam(label = "advanced", name = "configuration", javaType = "org.apache.camel.component.netty4.http.NettyHttpConfiguration",
+            description = "To use a custom configured NettyHttpConfiguration for configuring this endpoint.")
+    private Object httpConfiguration; // to include in component docs as NettyHttpConfiguration is a @UriParams class
+    @UriParam(label = "advanced")
+    private NettyHttpBinding nettyHttpBinding;
+    @UriParam(label = "advanced")
+    private HeaderFilterStrategy headerFilterStrategy;
+    @UriParam(label = "consumer,advanced")
     private boolean traceEnabled;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private String httpMethodRestrict;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private NettySharedHttpServer nettySharedHttpServer;
-    @UriParam
+    @UriParam(label = "consumer,security")
     private NettyHttpSecurityConfiguration securityConfiguration;
+    @UriParam(label = "consumer,security", prefix = "securityConfiguration.", multiValue = true)
+    private Map<String, Object> securityOptions; // to include in component docs
+    @UriParam(label = "producer")
+    private CookieHandler cookieHandler;
 
     public NettyHttpEndpoint(String endpointUri, NettyHttpComponent component, NettyConfiguration configuration) {
         super(endpointUri, component, configuration);
@@ -206,6 +220,28 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         this.securityConfiguration = securityConfiguration;
     }
 
+    public Map<String, Object> getSecurityOptions() {
+        return securityOptions;
+    }
+
+    /**
+     * To configure NettyHttpSecurityConfiguration using key/value pairs from the map
+     */
+    public void setSecurityOptions(Map<String, Object> securityOptions) {
+        this.securityOptions = securityOptions;
+    }
+
+    public CookieHandler getCookieHandler() {
+        return cookieHandler;
+    }
+
+    /**
+     * Configure a cookie handler to maintain a HTTP session
+     */
+    public void setCookieHandler(CookieHandler cookieHandler) {
+        this.cookieHandler = cookieHandler;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -214,8 +250,8 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         ObjectHelper.notNull(headerFilterStrategy, "headerFilterStrategy", this);
 
         if (securityConfiguration != null) {
-            ObjectHelper.notEmpty(securityConfiguration.getRealm(), "realm", securityConfiguration);
-            ObjectHelper.notEmpty(securityConfiguration.getConstraint(), "restricted", securityConfiguration);
+            StringHelper.notEmpty(securityConfiguration.getRealm(), "realm", securityConfiguration);
+            StringHelper.notEmpty(securityConfiguration.getConstraint(), "restricted", securityConfiguration);
 
             if (securityConfiguration.getSecurityAuthenticator() == null) {
                 // setup default JAAS authenticator if none was configured

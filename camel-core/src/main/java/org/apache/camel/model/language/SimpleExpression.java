@@ -30,11 +30,11 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * For expressions and predicates using the simple language
+ * To use Camels built-in Simple language in Camel expressions or predicates.
  *
  * @version 
  */
-@Metadata(label = "language", title = "Simple")
+@Metadata(firstVersion = "1.1.0", label = "language,core,java", title = "Simple")
 @XmlRootElement(name = "simple")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SimpleExpression extends ExpressionDefinition {

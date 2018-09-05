@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:cxf="http://camel.apache.org/schema/cxf"
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+       xmlns:sec="http://cxf.apache.org/configuration/security"
+       xmlns:httpj="http://cxf.apache.org/transports/http-jetty/configuration"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+       http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+       http://cxf.apache.org/configuration/security http://cxf.apache.org/schemas/configuration/security.xsd
+       http://cxf.apache.org/transports/http-jetty/configuration http://cxf.apache.org/schemas/configuration/http-jetty.xsd
+    ">
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+    <import resource="classpath:META-INF/cxf/cxf.xml"/>
+
+    <httpj:engine-factory bus="cxf">
+        <!-- you just need to specify the TLS Server configuration for the certain port -->
+        <httpj:engine port="${CXFTestSupport.sslPort}">
+            <httpj:tlsServerParameters>
+                <sec:keyManagers keyPassword="changeit">
+                    <sec:keyStore type="JKS" password="changeit"
+                                  resource="/ssl/keystore-server.jks"/>
+                </sec:keyManagers>
+                <sec:clientAuthentication want="false" required="false"/>
+            </httpj:tlsServerParameters>
+        </httpj:engine>
+    </httpj:engine-factory>
+
+    <jaxrs:server id="restService"
+                  address="https://localhost:${CXFTestSupport.sslPort}/CxfRsProducerTest/"
+                  staticSubresourceResolution="true">
+        <jaxrs:serviceBeans>
+            <ref bean="customerService"/>
+        </jaxrs:serviceBeans>
+    </jaxrs:server>
+
+    <sslContextParameters xmlns="http://camel.apache.org/schema/spring"
+                          id="wrongSslContext">
+        <trustManagers>
+            <keyStore type="JKS" resource="/ssl/truststore-wrong.jks"
+                      password="changeit"/>
+        </trustManagers>
+    </sslContextParameters>
+    <sslContextParameters xmlns="http://camel.apache.org/schema/spring"
+                          id="mySslContext">
+        <trustManagers>
+            <keyStore type="JKS" resource="/ssl/truststore-client.jks"
+                      password="changeit"/>
+        </trustManagers>
+    </sslContextParameters>
+
+    <bean id="defaultHostnameVerifier"
+          class="org.apache.cxf.transport.https.httpclient.DefaultHostnameVerifier"/>
+
+    <bean id="customerService" class="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"/>
+
+    <cxf:rsClient id="rsClientHttp" address="https://localhost:${CXFTestSupport.sslPort}/CxfRsProducerTest/"/>
+
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="direct://trust"/>
+            <to uri="cxfrs://bean://rsClientHttp?hostnameVerifier=#defaultHostnameVerifier&amp;synchronous=true"/>
+        </route>
+        <route>
+            <from uri="direct://wrongTrust"/>
+            <to uri="cxfrs://bean://rsClientHttp?sslContextParameters=#wrongSslContext&amp;hostnameVerifier=#defaultHostnameVerifier&amp;synchronous=true"/>
+        </route>
+        <route>
+            <from uri="direct://noTrust"/>
+            <to uri="cxfrs://bean://rsClientHttp?sslContextParameters=#wrongSslContext&amp;hostnameVerifier=#defaultHostnameVerifier&amp;synchronous=true"/>
+        </route>
+    </camelContext>
+
+</beans>

@@ -36,23 +36,27 @@ public class RestletEndpointUpdateEndpointUriTest extends CamelTestSupport {
         RestletComponent component = context.getComponent("restlet", RestletComponent.class);
 
         Endpoint endpoint = component.createEndpoint("restlet:http://localhost:9090/users/user");
-        assertEquals("The restlet endpoint didn't update it's URI properly", "http://localhost:9090/users/user?restletMethods=GET",
+        assertEquals("The restlet endpoint didn't update it's URI properly", "restlet://http://localhost:9090/users/user?restletMethod=GET",
+                     endpoint.getEndpointUri());
+
+        endpoint = component.createEndpoint("restlet:http://localhost:9090/users/user?restletMethod=post");
+        assertEquals("The restlet endpoint didn't update it's URI properly", "restlet://http://localhost:9090/users/user?restletMethod=POST",
                      endpoint.getEndpointUri());
 
         endpoint = component.createEndpoint("restlet:http://localhost:9090/users/user?restletMethods=post");
-        assertEquals("The restlet endpoint didn't update it's URI properly", "http://localhost:9090/users/user?restletMethods=POST",
+        assertEquals("The restlet endpoint didn't update it's URI properly", "restlet://http://localhost:9090/users/user?restletMethods=POST",
                      endpoint.getEndpointUri());
 
         endpoint = component.createEndpoint("restlet:http://localhost:9090/users/user?restletMethods=lock,head");
-        assertEquals("The restlet endpoint didn't update it's URI properly", "http://localhost:9090/users/user?restletMethods=LOCK,HEAD",
+        assertEquals("The restlet endpoint didn't update it's URI properly", "restlet://http://localhost:9090/users/user?restletMethods=LOCK,HEAD",
                      endpoint.getEndpointUri());
 
         endpoint = component.createEndpoint("restlet:http://localhost:9090/users/user?restletMethods=proppatch,mkcol,propfind");
-        assertEquals("The restlet endpoint didn't update it's URI properly", "http://localhost:9090/users/user?restletMethods=PROPPATCH,MKCOL,PROPFIND",
+        assertEquals("The restlet endpoint didn't update it's URI properly", "restlet://http://localhost:9090/users/user?restletMethods=PROPPATCH,MKCOL,PROPFIND",
                      endpoint.getEndpointUri());
 
         endpoint = component.createEndpoint("restlet:http://localhost:9090/users/user?restletMethods=delete,copy,options,connect");
-        assertEquals("The restlet endpoint didn't update it's URI properly", "http://localhost:9090/users/user?restletMethods=DELETE,COPY,OPTIONS,CONNECT",
+        assertEquals("The restlet endpoint didn't update it's URI properly", "restlet://http://localhost:9090/users/user?restletMethods=DELETE,COPY,OPTIONS,CONNECT",
                      endpoint.getEndpointUri());
     }
 

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hdfs;
+import org.junit.After;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -383,6 +384,7 @@ public class HdfsProducerTest extends HdfsTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         if (!canTest()) {
             return;
@@ -402,35 +404,35 @@ public class HdfsProducerTest extends HdfsTestSupport {
 
             @Override
             public void configure() throws Exception {
-                from("direct:start1").to("hdfs:///" + TEMP_DIR.toUri() + "/test-camel1?fileSystemType=LOCAL&valueType=TEXT&fileType=SEQUENCE_FILE");
+                from("direct:start1").to("hdfs:localhost/" + TEMP_DIR.toUri() + "/test-camel1?fileSystemType=LOCAL&valueType=TEXT&fileType=SEQUENCE_FILE");
 
                 /* For testing writables */
-                from("direct:write_boolean").to("hdfs:///" + TEMP_DIR.toUri() + "/test-camel-boolean?fileSystemType=LOCAL&valueType=BOOLEAN&fileType=SEQUENCE_FILE");
+                from("direct:write_boolean").to("hdfs:localhost/" + TEMP_DIR.toUri() + "/test-camel-boolean?fileSystemType=LOCAL&valueType=BOOLEAN&fileType=SEQUENCE_FILE");
 
-                from("direct:write_byte").to("hdfs:///" + TEMP_DIR.toUri() + "/test-camel-byte?fileSystemType=LOCAL&valueType=BYTE&fileType=SEQUENCE_FILE");
+                from("direct:write_byte").to("hdfs:localhost/" + TEMP_DIR.toUri() + "/test-camel-byte?fileSystemType=LOCAL&valueType=BYTE&fileType=SEQUENCE_FILE");
 
-                from("direct:write_int").to("hdfs:///" + TEMP_DIR.toUri() + "/test-camel-int?fileSystemType=LOCAL&valueType=INT&fileType=SEQUENCE_FILE");
+                from("direct:write_int").to("hdfs:localhost/" + TEMP_DIR.toUri() + "/test-camel-int?fileSystemType=LOCAL&valueType=INT&fileType=SEQUENCE_FILE");
 
-                from("direct:write_float").to("hdfs:///" + TEMP_DIR.toUri() + "/test-camel-float?fileSystemType=LOCAL&valueType=FLOAT&fileType=SEQUENCE_FILE");
+                from("direct:write_float").to("hdfs:localhost/" + TEMP_DIR.toUri() + "/test-camel-float?fileSystemType=LOCAL&valueType=FLOAT&fileType=SEQUENCE_FILE");
 
-                from("direct:write_long").to("hdfs:///" + TEMP_DIR.toUri() + "/test-camel-long?fileSystemType=LOCAL&valueType=LONG&fileType=SEQUENCE_FILE");
+                from("direct:write_long").to("hdfs:localhost/" + TEMP_DIR.toUri() + "/test-camel-long?fileSystemType=LOCAL&valueType=LONG&fileType=SEQUENCE_FILE");
 
-                from("direct:write_double").to("hdfs:///" + TEMP_DIR.toUri() + "/test-camel-double?fileSystemType=LOCAL&valueType=DOUBLE&fileType=SEQUENCE_FILE");
+                from("direct:write_double").to("hdfs:localhost/" + TEMP_DIR.toUri() + "/test-camel-double?fileSystemType=LOCAL&valueType=DOUBLE&fileType=SEQUENCE_FILE");
 
-                from("direct:write_text1").to("hdfs:///" + TEMP_DIR.toUri() + "/test-camel-text1?fileSystemType=LOCAL&valueType=TEXT&fileType=SEQUENCE_FILE");
+                from("direct:write_text1").to("hdfs:localhost/" + TEMP_DIR.toUri() + "/test-camel-text1?fileSystemType=LOCAL&valueType=TEXT&fileType=SEQUENCE_FILE");
 
                 /* For testing key and value writing */
-                from("direct:write_text2").to("hdfs:///" + TEMP_DIR.toUri() + "/test-camel-text2?fileSystemType=LOCAL&keyType=TEXT&valueType=TEXT&fileType=SEQUENCE_FILE");
+                from("direct:write_text2").to("hdfs:localhost/" + TEMP_DIR.toUri() + "/test-camel-text2?fileSystemType=LOCAL&keyType=TEXT&valueType=TEXT&fileType=SEQUENCE_FILE");
 
-                from("direct:write_text3").to("hdfs:///" + TEMP_DIR.toUri() + "/test-camel-text3?fileSystemType=LOCAL&keyType=TEXT&valueType=TEXT&fileType=MAP_FILE");
+                from("direct:write_text3").to("hdfs:localhost/" + TEMP_DIR.toUri() + "/test-camel-text3?fileSystemType=LOCAL&keyType=TEXT&valueType=TEXT&fileType=MAP_FILE");
 
                 /* For testing ArrayFile */
-                from("direct:write_text4").to("hdfs:///" + TEMP_DIR.toUri() + "/test-camel-text4?fileSystemType=LOCAL&valueType=TEXT&fileType=ARRAY_FILE");
+                from("direct:write_text4").to("hdfs:localhost/" + TEMP_DIR.toUri() + "/test-camel-text4?fileSystemType=LOCAL&valueType=TEXT&fileType=ARRAY_FILE");
 
                 /* For testing BloomMapFile */
-                from("direct:write_text5").to("hdfs:///" + TEMP_DIR.toUri() + "/test-camel-text5?fileSystemType=LOCAL&keyType=TEXT&valueType=TEXT&fileType=BLOOMMAP_FILE");
+                from("direct:write_text5").to("hdfs:localhost/" + TEMP_DIR.toUri() + "/test-camel-text5?fileSystemType=LOCAL&keyType=TEXT&valueType=TEXT&fileType=BLOOMMAP_FILE");
 
-                from("direct:write_dynamic_filename").to("hdfs:///" + TEMP_DIR.toUri() + "/test-camel-dynamic/?fileSystemType=LOCAL&valueType=TEXT");
+                from("direct:write_dynamic_filename").to("hdfs:localhost/" + TEMP_DIR.toUri() + "/test-camel-dynamic/?fileSystemType=LOCAL&valueType=TEXT");
             }
         };
     }

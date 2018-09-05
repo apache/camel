@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.component.sjms.batch;
+import org.junit.Before;
+import org.junit.After;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.SjmsComponent;
@@ -78,17 +79,17 @@ public class SjmsBatchEndpointTest extends CamelTestSupport {
         return true;
     }
 
-    @Test(expected = FailedToCreateProducerException.class)
+    @Test(expected = FailedToCreateRouteException.class)
     public void testProducerFailure() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:in").to("sjms-batch:testQueue");
+                from("direct:in").to("sjms-batch:testQueue?aggregationStrategy=#unknown");
             }
         });
         context.start();
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = FailedToCreateRouteException.class)
     public void testConsumerNegativePollDuration() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -100,7 +101,7 @@ public class SjmsBatchEndpointTest extends CamelTestSupport {
         context.start();
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = FailedToCreateRouteException.class)
     public void testConsumerNegativeConsumerCount() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

@@ -47,7 +47,7 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
 
     private final BundleContext bundleContext;
     private final Map<CamelContext, ServiceRegistration<?>> registrations 
-        = new ConcurrentHashMap<CamelContext, ServiceRegistration<?>>();
+        = new ConcurrentHashMap<>();
 
     public OsgiCamelContextPublisher(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
@@ -67,7 +67,7 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
                 try {
                     reg.unregister();
                 } catch (Exception e) {
-                    log.warn("Error unregistering CamelContext [{}] from OSGi registry. This exception will be ignored.", context.getName(), e);
+                    log.warn("Error unregistering CamelContext [" + context.getName() + "] from OSGi registry. This exception will be ignored.", e);
                 }
             }
         }
@@ -90,6 +90,17 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
 
     @Override
     protected void doShutdown() throws Exception {
+        // clear and unregister any left-over registration (which should not happen)
+        if (!registrations.isEmpty()) {
+            log.warn("On shutdown there are {} registrations which was supposed to have been unregistered already. Will unregister these now.", registrations.size());
+            for (ServiceRegistration<?> reg : registrations.values()) {
+                try {
+                    reg.unregister();
+                } catch (Exception e) {
+                    log.warn("Error unregistering from OSGi registry. This exception will be ignored.", e);
+                }
+            }
+        }
         registrations.clear();
     }
 
@@ -104,7 +115,7 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
         if (!lookupCamelContext(bundleContext, symbolicName, name)) {
             Version bundleVersion = getBundleVersion(bundleContext.getBundle());
 
-            Dictionary<String, Object > props = new Hashtable<String, Object>();
+            Dictionary<String, Object > props = new Hashtable<>();
             props.put(CONTEXT_SYMBOLIC_NAME_PROPERTY, symbolicName);
             props.put(CONTEXT_VERSION_PROPERTY, bundleVersion);
             props.put(CONTEXT_NAME_PROPERTY, name);
@@ -112,9 +123,7 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
                 props.put(CONTEXT_MANAGEMENT_NAME_PROPERTY, managementName);
             }
 
-            if (log.isDebugEnabled()) {
-                log.debug("Registering CamelContext [{}] of in OSGi registry", camelContext.getName());
-            }
+            log.debug("Registering CamelContext [{}] in OSGi registry", name);
 
             ServiceRegistration<?> reg = bundleContext.registerService(CamelContext.class.getName(), camelContext, props);
             if (reg != null) {

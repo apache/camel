@@ -66,6 +66,11 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
     }
 
     @Override
+    public String getShortName() {
+        return "idempotentConsumer";
+    }
+
+    @Override
     public String getLabel() {
         return "idempotentConsumer[" + getExpression() + "]";
     }
@@ -85,7 +90,7 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
     }
 
     /**
-     * Sets the the message id repository for the idempotent consumer
+     * Sets the message id repository for the idempotent consumer
      *
      * @param idempotentRepository the repository instance of idempotent
      * @return builder
@@ -217,16 +222,11 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = this.createChildProcessor(routeContext, true);
 
-        IdempotentRepository<String> idempotentRepository =
-                (IdempotentRepository<String>) resolveMessageIdRepository(routeContext);
+        IdempotentRepository<String> idempotentRepository = resolveMessageIdRepository(routeContext);
         ObjectHelper.notNull(idempotentRepository, "idempotentRepository", this);
-
-        // add as service to CamelContext so we can managed it and it ensures it will be shutdown when camel shutdowns
-        routeContext.getCamelContext().addService(idempotentRepository);
 
         Expression expression = getExpression().createExpression(routeContext);
 
@@ -234,6 +234,7 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
         boolean eager = getEager() == null || getEager();
         boolean duplicate = getSkipDuplicate() == null || getSkipDuplicate();
         boolean remove = getRemoveOnFailure() == null || getRemoveOnFailure();
+
         // these boolean should be false by default
         boolean completionEager = getCompletionEager() != null && getCompletionEager();
 
@@ -246,10 +247,11 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
      * @param routeContext route context
      * @return the repository
      */
-    protected IdempotentRepository<?> resolveMessageIdRepository(RouteContext routeContext) {
+    @SuppressWarnings("unchecked")
+    protected <T> IdempotentRepository<T> resolveMessageIdRepository(RouteContext routeContext) {
         if (messageIdRepositoryRef != null) {
             idempotentRepository = routeContext.mandatoryLookup(messageIdRepositoryRef, IdempotentRepository.class);
         }
-        return idempotentRepository;
+        return (IdempotentRepository<T>)idempotentRepository;
     }
 }

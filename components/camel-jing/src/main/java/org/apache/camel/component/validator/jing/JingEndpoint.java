@@ -18,6 +18,7 @@ package org.apache.camel.component.validator.jing;
 
 import java.io.InputStream;
 
+import org.apache.camel.util.StringHelper;
 import org.xml.sax.InputSource;
 
 import com.thaiopensource.relaxng.SchemaFactory;
@@ -33,10 +34,12 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 
-@UriEndpoint(scheme = "jing", title = "Jing", syntax = "jing:resourceUri", producerOnly = true, label = "validation")
+/**
+ * Validates the payload of a message using RelaxNG Syntax using Jing library.
+ */
+@UriEndpoint(firstVersion = "1.1.0", scheme = "jing", title = "Jing", syntax = "jing:resourceUri", producerOnly = true, label = "validation")
 public class JingEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")
@@ -123,8 +126,8 @@ public class JingEndpoint extends DefaultEndpoint {
         super.doStart();
 
         if (inputSource == null) {
-            ObjectHelper.notEmpty(resourceUri, "resourceUri", this);
-            InputStream inputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), resourceUri);
+            StringHelper.notEmpty(resourceUri, "resourceUri", this);
+            InputStream inputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), resourceUri);
             inputSource = new InputSource(inputStream);
         }
 

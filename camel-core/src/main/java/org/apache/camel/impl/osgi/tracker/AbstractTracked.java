@@ -110,10 +110,10 @@ abstract class AbstractTracked {
      * AbstractTracked constructor.
      */
     AbstractTracked() {
-        tracked = new HashMap<Object, Object>();
+        tracked = new HashMap<>();
         trackingCount = 0;
-        adding = new ArrayList<Object>(6);
-        initial = new LinkedList<Object>();
+        adding = new ArrayList<>(6);
+        initial = new LinkedList<>();
         closed = false;
     }
 
@@ -415,7 +415,7 @@ abstract class AbstractTracked {
      * @return Customized object for the tracked item or <code>null</code> if
      *         the item is not to be tracked.
      */
-    abstract Object customizerAdding(final Object item, final Object related);
+    abstract Object customizerAdding(Object item, Object related);
 
     /**
      * Call the specific customizer modified method. This method must not be
@@ -425,7 +425,7 @@ abstract class AbstractTracked {
      * @param related Action related object.
      * @param object Customized object for the tracked item.
      */
-    abstract void customizerModified(final Object item, final Object related, final Object object);
+    abstract void customizerModified(Object item, Object related, Object object);
 
     /**
      * Call the specific customizer removed method. This method must not be
@@ -435,5 +435,5 @@ abstract class AbstractTracked {
      * @param related Action related object.
      * @param object Customized object for the tracked item.
      */
-    abstract void customizerRemoved(final Object item, final Object related, final Object object);
+    abstract void customizerRemoved(Object item, Object related, Object object);
 }

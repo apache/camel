@@ -41,12 +41,15 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ExcludesArtifactFilter;
+import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Exclusion;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.artifact.MavenMetadataSource;
@@ -61,7 +64,7 @@ import org.codehaus.mojo.exec.Property;
  *
  * @goal run
  * @requiresDependencyResolution compile+runtime
- * @execute phase="test-compile"
+ * @execute phase="prepare-package"
  */
 public class RunMojo extends AbstractExecMojo {
 
@@ -81,15 +84,33 @@ public class RunMojo extends AbstractExecMojo {
     protected MavenProject project;
 
     /**
-     * The duration to run the application for which by default is in
-     * milliseconds. A value <= 0 will run forever.
-     * Adding a s indicates seconds - eg "5s" means 5 seconds.
+     * Sets the time duration (seconds) that the application will run for before terminating.
+     * A value <= 0 will run forever.
      *
      * @parameter property="camel.duration"
      *            default-value="-1"
      *
      */
     protected String duration;
+
+    /**
+     * Sets the idle time duration (seconds) duration that the application can be idle before terminating.
+     * A value <= 0 will run forever.
+     *
+     * @parameter property="camel.durationIdle"
+     *            default-value="-1"
+     *
+     */
+    protected String durationIdle;
+
+    /**
+     * Sets the duration of maximum number of messages that the application will process before terminating.
+     *
+     * @parameter property="camel.duration.maxMessages"
+     *            default-value="-1"
+     *
+     */
+    protected String durationMaxMessages;
 
     /**
      * Whether to log the classpath when starting
@@ -103,17 +124,15 @@ public class RunMojo extends AbstractExecMojo {
      * Whether to use Blueprint when running, instead of Spring
      *
      * @parameter property="camel.useBlueprint"
-     *            default-value="false"
      */
-    protected boolean useBlueprint;
+    protected Boolean useBlueprint;
 
     /**
      * Whether to use CDI when running, instead of Spring
      *
      * @parameter property="camel.useCDI"
-     *            default-value="false"
      */
-    protected boolean useCDI;
+    protected Boolean useCDI;
     
     protected String extendedPluginDependencyArtifactId;
 
@@ -216,6 +235,14 @@ public class RunMojo extends AbstractExecMojo {
     private String configAdminFileName;
 
     /**
+     * To watch the directory for file changes which triggers
+     * a live reload of the Camel routes on-the-fly.
+     *
+     * @parameter property="camel.fileWatcherDirectory"
+     */
+    private String fileWatcherDirectory;
+
+    /**
      * The class arguments.
      *
      * @parameter property="camel.arguments"
@@ -279,7 +306,7 @@ public class RunMojo extends AbstractExecMojo {
     private ExecutableDependency executableDependency;
 
     /**
-     * Wether to interrupt/join and possibly stop the daemon threads upon
+     * Whether to interrupt/join and possibly stop the daemon threads upon
      * quitting. <br/> If this is <code>false</code>, maven does nothing
      * about the daemon threads. When maven has no more work to do, the VM will
      * normally terminate any remaining daemon threads.
@@ -357,17 +384,44 @@ public class RunMojo extends AbstractExecMojo {
      * @throws MojoFailureException something bad happened...
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
+
+        String skip = System.getProperties().getProperty("maven.test.skip");
+        if (skip == null || "false".equals(skip)) {
+            // lets log a INFO about how to skip tests if you want to so you can run faster
+            getLog().info("You can skip tests from the command line using: mvn camel:run -Dmaven.test.skip=true");
+        }
+
         boolean usingSpringJavaConfigureMain = false;
-        boolean useCdiMain = useCDI;
-        boolean usingBlueprintMain = useBlueprint;
+
+        boolean useCdiMain;
+        if (useCDI != null) {
+            // use configured value
+            useCdiMain = useCDI;
+        } else {
+            // auto detect if we have cdi
+            useCdiMain = detectCDIOnClassPath();
+        }
+        boolean usingBlueprintMain;
+        if (useBlueprint != null) {
+            // use configured value
+            usingBlueprintMain = useBlueprint;
+        } else {
+            // auto detect if we have blueprint
+            usingBlueprintMain = detectBlueprintOnClassPathOrBlueprintXMLFiles();
+        }
+
         if (killAfter != -1) {
             getLog().warn("Warning: killAfter is now deprecated. Do you need it ? Please comment on MEXEC-6.");
         }
 
         // lets create the command line arguments to pass in...
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
         if (trace) {
             args.add("-t");
+        }
+        if (fileWatcherDirectory != null) {
+            args.add("-watch");
+            args.add(fileWatcherDirectory);
         }
 
         if (applicationContextUri != null) {
@@ -388,9 +442,19 @@ public class RunMojo extends AbstractExecMojo {
             args.add(basedPackages);
             usingSpringJavaConfigureMain = true;
         }
- 
-        args.add("-d");
-        args.add(duration);
+
+        if (!duration.equals("-1")) {
+            args.add("-d");
+            args.add(duration);
+        }
+        if (!durationIdle.equals("-1")) {
+            args.add("-di");
+            args.add(durationIdle);
+        }
+        if (!durationMaxMessages.equals("-1")) {
+            args.add("-dm");
+            args.add(durationMaxMessages);
+        }
         if (arguments != null) {
             args.addAll(Arrays.asList(arguments));
         }
@@ -521,7 +585,7 @@ public class RunMojo extends AbstractExecMojo {
     class IsolatedThreadGroup extends ThreadGroup {
         Throwable uncaughtException; // synchronize access to this
 
-        public IsolatedThreadGroup(String name) {
+        IsolatedThreadGroup(String name) {
             super(name);
         }
 
@@ -580,7 +644,7 @@ public class RunMojo extends AbstractExecMojo {
     @SuppressWarnings("deprecation")
     private void terminateThreads(ThreadGroup threadGroup) {
         long startTime = System.currentTimeMillis();
-        Set<Thread> uncooperativeThreads = new HashSet<Thread>(); // these were not responsive
+        Set<Thread> uncooperativeThreads = new HashSet<>(); // these were not responsive
         // to interruption
         for (Collection<Thread> threads = getActiveThreads(threadGroup); !threads.isEmpty(); threads = getActiveThreads(threadGroup), threads
             .removeAll(uncooperativeThreads)) {
@@ -633,8 +697,10 @@ public class RunMojo extends AbstractExecMojo {
                 // even log in future
                 Thread[] threadsArray = new Thread[1];
                 threadGroup.enumerate(threadsArray);
-                getLog().debug("strange; " + activeCount + " thread(s) still active in the group "
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug("strange; " + activeCount + " thread(s) still active in the group "
                                    + threadGroup + " such as " + threadsArray[0]);
+                }
             }
         }
     }
@@ -642,7 +708,7 @@ public class RunMojo extends AbstractExecMojo {
     private Collection<Thread> getActiveThreads(ThreadGroup threadGroup) {
         Thread[] threads = new Thread[threadGroup.activeCount()];
         int numThreads = threadGroup.enumerate(threads);
-        Collection<Thread> result = new ArrayList<Thread>(numThreads);
+        Collection<Thread> result = new ArrayList<>(numThreads);
         for (int i = 0; i < threads.length && threads[i] != null; i++) {
             result.add(threads[i]);
         }
@@ -663,6 +729,41 @@ public class RunMojo extends AbstractExecMojo {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private boolean detectCDIOnClassPath() {
+        List<Dependency> deps = project.getCompileDependencies();
+        for (Dependency dep : deps) {
+            if ("org.apache.camel".equals(dep.getGroupId()) && "camel-cdi".equals(dep.getArtifactId())) {
+                getLog().info("camel-cdi detected on classpath");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean detectBlueprintOnClassPathOrBlueprintXMLFiles() {
+        List<Dependency> deps = project.getCompileDependencies();
+        for (Dependency dep : deps) {
+            if ("org.apache.camel".equals(dep.getGroupId()) && "camel-blueprint".equals(dep.getArtifactId())) {
+                getLog().info("camel-blueprint detected on classpath");
+            }
+        }
+
+        // maybe there is blueprint XML files
+        List<Resource> resources = project.getResources();
+        for (Resource res : resources) {
+            File dir = new File(res.getDirectory());
+            File xml = new File(dir, "OSGI-INF/blueprint");
+            if (xml.exists() && xml.isDirectory()) {
+                getLog().info("OSGi Blueprint XML files detected in directory " + xml);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Set up a classloader for the execution of the main class.
      *
@@ -670,7 +771,7 @@ public class RunMojo extends AbstractExecMojo {
      * @throws MojoExecutionException
      */
     private ClassLoader getClassLoader() throws MojoExecutionException {
-        Set<URL> classpathURLs = new LinkedHashSet<URL>();
+        Set<URL> classpathURLs = new LinkedHashSet<>();
         // project classpath must be first
         this.addRelevantProjectDependenciesToClasspath(classpathURLs);
         // and extra plugin classpath
@@ -707,7 +808,9 @@ public class RunMojo extends AbstractExecMojo {
                 // we must skip org.osgi.core, otherwise we get a
                 // java.lang.NoClassDefFoundError: org.osgi.vendor.framework property not set
                 if (classPathElement.getArtifactId().equals("org.osgi.core")) {
-                    getLog().debug("Skipping org.osgi.core -> " + classPathElement.getGroupId() + "/" + classPathElement.getArtifactId() + "/" + classPathElement.getVersion());
+                    if (getLog().isDebugEnabled()) {
+                        getLog().debug("Skipping org.osgi.core -> " + classPathElement.getGroupId() + "/" + classPathElement.getArtifactId() + "/" + classPathElement.getVersion());
+                    }
                     continue;
                 }
 
@@ -734,7 +837,7 @@ public class RunMojo extends AbstractExecMojo {
         }
 
         try {
-            Set<Artifact> artifacts = new HashSet<Artifact>(this.pluginDependencies);
+            Set<Artifact> artifacts = new HashSet<>(this.pluginDependencies);
             for (Artifact artifact : artifacts) {
                 // must
                 if (artifact.getArtifactId().equals(extraPluginDependencyArtifactId)
@@ -747,23 +850,6 @@ public class RunMojo extends AbstractExecMojo {
                     Set<Artifact> deps = resolveExecutableDependencies(artifact, true);
                     if (deps != null) {
                         for (Artifact dep : deps) {
-
-                            // we must skip org.apache.aries.blueprint.core:, otherwise we get duplicate blueprint extenders
-                            if (dep.getArtifactId().equals("org.apache.aries.blueprint.core")) {
-                                getLog().debug("Skipping org.apache.aries.blueprint.core -> " + dep.getGroupId() + "/" + dep.getArtifactId() + "/" + dep.getVersion());
-                                continue;
-                            }
-
-                            // we skip test scoped
-                            if ("test".equals(dep.getScope())) {
-                                getLog().debug("Skipping test scoped -> " + dep.getGroupId() + "/" + dep.getArtifactId() + "/" + dep.getVersion());
-                                continue;
-                            }
-                            if ("provided".equals(dep.getScope())) {
-                                getLog().debug("Skipping provided scoped -> " + dep.getGroupId() + "/" + dep.getArtifactId() + "/" + dep.getVersion());
-                                continue;
-                            }
-
                             getLog().debug("Adding extra plugin dependency artifact: " + dep.getArtifactId()
                                     + " to classpath");
                             path.add(dep.getFile().toURI().toURL());
@@ -819,7 +905,7 @@ public class RunMojo extends AbstractExecMojo {
     }
 
     private Collection<Artifact> getAllNonTestScopedDependencies() throws MojoExecutionException {
-        List<Artifact> answer = new ArrayList<Artifact>();
+        List<Artifact> answer = new ArrayList<>();
 
         for (Artifact artifact : getAllDependencies()) {
 
@@ -833,7 +919,7 @@ public class RunMojo extends AbstractExecMojo {
 
     // generic method to retrieve all the transitive dependencies
     private Collection<Artifact> getAllDependencies() throws MojoExecutionException {
-        List<Artifact> artifacts = new ArrayList<Artifact>();
+        List<Artifact> artifacts = new ArrayList<>();
 
         for (Iterator<?> dependencies = project.getDependencies().iterator(); dependencies.hasNext();) {
             Dependency dependency = (Dependency)dependencies.next();
@@ -866,10 +952,9 @@ public class RunMojo extends AbstractExecMojo {
                 art.setFile(new File(dependency.getSystemPath()));
             }
 
-            List<String> exclusions = new ArrayList<String>();
-            for (Iterator<?> j = dependency.getExclusions().iterator(); j.hasNext();) {
-                Exclusion e = (Exclusion)j.next();
-                exclusions.add(e.getGroupId() + ":" + e.getArtifactId());
+            List<String> exclusions = new ArrayList<>();
+            for (Exclusion exclusion : dependency.getExclusions()) {
+                exclusions.add(exclusion.getGroupId() + ":" + exclusion.getArtifactId());
             }
 
             ArtifactFilter newFilter = new ExcludesArtifactFilter(exclusions);
@@ -895,7 +980,7 @@ public class RunMojo extends AbstractExecMojo {
         if (this.includePluginDependencies) {
             if (this.executableDependency == null) {
                 getLog().debug("All Plugin Dependencies will be included.");
-                relevantDependencies = new HashSet<Artifact>(this.pluginDependencies);
+                relevantDependencies = new HashSet<>(this.pluginDependencies);
             } else {
                 getLog().debug("Selected plugin Dependencies will be included.");
                 Artifact executableArtifact = this.findExecutableArtifact();
@@ -903,8 +988,26 @@ public class RunMojo extends AbstractExecMojo {
                 relevantDependencies = this.resolveExecutableDependencies(executablePomArtifact, false);
             }
         } else {
-            relevantDependencies = Collections.emptySet();
-            getLog().debug("Plugin Dependencies will be excluded.");
+            getLog().debug("Only Direct Plugin Dependencies will be included.");
+            PluginDescriptor descriptor = (PluginDescriptor) getPluginContext().get("pluginDescriptor");
+            try {
+                relevantDependencies = artifactResolver
+                    .resolveTransitively(MavenMetadataSource
+                        .createArtifacts(this.artifactFactory,
+                            descriptor.getPlugin().getDependencies(),
+                            null, null, null),
+                        this.project.getArtifact(),
+                        Collections.emptyMap(),
+                        this.localRepository,
+                        this.remoteRepositories,
+                        metadataSource,
+                        new ScopeArtifactFilter(Artifact.SCOPE_RUNTIME),
+                        Collections.emptyList())
+                    .getArtifacts();
+            } catch (Exception ex) {
+                throw new MojoExecutionException("Encountered problems resolving dependencies of the plugin "
+                    + "in preparation for its execution.", ex);
+            }
         }
         return relevantDependencies;
     }
@@ -926,7 +1029,7 @@ public class RunMojo extends AbstractExecMojo {
      * @return an artifact which refers to the actual executable tool (not a POM)
      * @throws MojoExecutionException
      */
-    private Artifact findExecutableArtifact() throws MojoExecutionException {
+    protected Artifact findExecutableArtifact() throws MojoExecutionException {
         // ILimitedArtifactIdentifier execToolAssembly =
         // this.getExecutableToolAssembly();
 
@@ -966,14 +1069,13 @@ public class RunMojo extends AbstractExecMojo {
             // not forgetting the Artifact of the project itself
             dependencyArtifacts.add(executableProject.getArtifact());
 
-            // resolve all dependencies transitively to obtain a comprehensive
-            // list of assemblies
+            // resolve runtime dependencies transitively to obtain a comprehensive list of assemblies
             ArtifactResolutionResult result = artifactResolver.resolveTransitively(dependencyArtifacts,
                                                                                    executablePomArtifact,
                                                                                    Collections.emptyMap(),
                                                                                    this.localRepository,
                                                                                    this.remoteRepositories,
-                                                                                   metadataSource, null,
+                                                                                   metadataSource, new ScopeArtifactFilter(Artifact.SCOPE_RUNTIME),
                                                                                    Collections.emptyList());
             executableDependencies = CastUtils.cast(result.getArtifacts());
 

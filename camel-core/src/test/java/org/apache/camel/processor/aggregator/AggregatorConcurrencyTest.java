@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -44,10 +46,11 @@ public class AggregatorConcurrencyTest extends ContextTestSupport {
     private final int size = 100;
     private final String uri = "direct:start";
 
+    @Test
     public void testAggregateConcurrency() throws Exception {
         int total = 0;
         ExecutorService service = Executors.newFixedThreadPool(20);
-        List<Callable<Object>> tasks = new ArrayList<Callable<Object>>();
+        List<Callable<Object>> tasks = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             final int count = i;
             total += i;
@@ -89,7 +92,7 @@ public class AggregatorConcurrencyTest extends ContextTestSupport {
                             int total = SUM.addAndGet(newIndex);
                             answer.getIn().setHeader("total", total);
 
-                            LOG.debug("Index: " + newIndex + ". Total so far: " + total);
+                            LOG.debug("Index: {}. Total so far: {}", newIndex, total);
                             return answer;
                         }
                     }).completionTimeout(60000).completionPredicate(property(Exchange.AGGREGATED_SIZE).isEqualTo(100))

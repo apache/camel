@@ -46,39 +46,35 @@ public class HdfsConfiguration {
     private boolean overwrite = true;
     @UriParam(label = "producer")
     private boolean append;
-    @UriParam
+    @UriParam(label = "advanced")
     private String splitStrategy;
-    @UriParam(defaultValue = "" + HdfsConstants.DEFAULT_BUFFERSIZE)
+    @UriParam(label = "advanced", defaultValue = "" + HdfsConstants.DEFAULT_BUFFERSIZE)
     private int bufferSize = HdfsConstants.DEFAULT_BUFFERSIZE;
-    @UriParam(defaultValue = "" + HdfsConstants.DEFAULT_REPLICATION)
+    @UriParam(label = "advanced", defaultValue = "" + HdfsConstants.DEFAULT_REPLICATION)
     private short replication = HdfsConstants.DEFAULT_REPLICATION;
-    @UriParam(defaultValue = "" + HdfsConstants.DEFAULT_BLOCKSIZE)
+    @UriParam(label = "advanced", defaultValue = "" + HdfsConstants.DEFAULT_BLOCKSIZE)
     private long blockSize = HdfsConstants.DEFAULT_BLOCKSIZE;
-    @UriParam(defaultValue = "NONE")
+    @UriParam(label = "advanced", defaultValue = "NONE")
     private SequenceFile.CompressionType compressionType = HdfsConstants.DEFAULT_COMPRESSIONTYPE;
-    @UriParam(defaultValue = "DEFAULT")
+    @UriParam(label = "advanced", defaultValue = "DEFAULT")
     private HdfsCompressionCodec compressionCodec = HdfsConstants.DEFAULT_CODEC;
     @UriParam(defaultValue = "NORMAL_FILE")
     private HdfsFileType fileType = HdfsFileType.NORMAL_FILE;
     @UriParam(defaultValue = "HDFS")
     private HdfsFileSystemType fileSystemType = HdfsFileSystemType.HDFS;
     @UriParam(defaultValue = "NULL")
-    private HdfsWritableFactories.WritableType keyType = HdfsWritableFactories.WritableType.NULL;
+    private WritableType keyType = WritableType.NULL;
     @UriParam(defaultValue = "BYTES")
-    private HdfsWritableFactories.WritableType valueType = HdfsWritableFactories.WritableType.BYTES;
-    @UriParam(defaultValue = HdfsConstants.DEFAULT_OPENED_SUFFIX)
+    private WritableType valueType = WritableType.BYTES;
+    @UriParam(label = "advanced", defaultValue = HdfsConstants.DEFAULT_OPENED_SUFFIX)
     private String openedSuffix = HdfsConstants.DEFAULT_OPENED_SUFFIX;
-    @UriParam(defaultValue = HdfsConstants.DEFAULT_READ_SUFFIX)
+    @UriParam(label = "advanced", defaultValue = HdfsConstants.DEFAULT_READ_SUFFIX)
     private String readSuffix = HdfsConstants.DEFAULT_READ_SUFFIX;
-    @UriParam(label = "consumer")
-    private long initialDelay;
-    @UriParam(label = "consumer", defaultValue = "" + HdfsConstants.DEFAULT_DELAY)
-    private long delay = HdfsConstants.DEFAULT_DELAY;
     @UriParam(label = "consumer", defaultValue = HdfsConstants.DEFAULT_PATTERN)
     private String pattern = HdfsConstants.DEFAULT_PATTERN;
-    @UriParam(defaultValue = "" + HdfsConstants.DEFAULT_BUFFERSIZE)
+    @UriParam(label = "advanced", defaultValue = "" + HdfsConstants.DEFAULT_BUFFERSIZE)
     private int chunkSize = HdfsConstants.DEFAULT_BUFFERSIZE;
-    @UriParam(defaultValue = "" + HdfsConstants.DEFAULT_CHECK_IDLE_INTERVAL)
+    @UriParam(label = "advanced", defaultValue = "" + HdfsConstants.DEFAULT_CHECK_IDLE_INTERVAL)
     private int checkIdleInterval = HdfsConstants.DEFAULT_CHECK_IDLE_INTERVAL;
     @UriParam(defaultValue = "true")
     private boolean connectOnStartup = true;
@@ -138,10 +134,10 @@ public class HdfsConfiguration {
         }
     }
 
-    private HdfsWritableFactories.WritableType getWritableType(Map<String, Object> hdfsSettings, String param, HdfsWritableFactories.WritableType dflt) {
+    private WritableType getWritableType(Map<String, Object> hdfsSettings, String param, WritableType dflt) {
         String eit = (String) hdfsSettings.get(param);
         if (eit != null) {
-            return HdfsWritableFactories.WritableType.valueOf(eit);
+            return WritableType.valueOf(eit);
         } else {
             return dflt;
         }
@@ -174,7 +170,7 @@ public class HdfsConfiguration {
     }
 
     private List<HdfsProducer.SplitStrategy> getSplitStrategies(Map<String, Object> hdfsSettings) {
-        List<HdfsProducer.SplitStrategy> strategies = new ArrayList<HdfsProducer.SplitStrategy>();
+        List<HdfsProducer.SplitStrategy> strategies = new ArrayList<>();
         for (Object obj : hdfsSettings.keySet()) {
             String key = (String) obj;
             if ("splitStrategy".equals(key)) {
@@ -237,8 +233,6 @@ public class HdfsConfiguration {
         valueType = getWritableType(hdfsSettings, "valueType", valueType);
         openedSuffix = getString(hdfsSettings, "openedSuffix", openedSuffix);
         readSuffix = getString(hdfsSettings, "readSuffix", readSuffix);
-        initialDelay = getLong(hdfsSettings, "initialDelay", initialDelay);
-        delay = getLong(hdfsSettings, "delay", delay);
         pattern = getString(hdfsSettings, "pattern", pattern);
         chunkSize = getInteger(hdfsSettings, "chunkSize", chunkSize);
         splitStrategies = getSplitStrategies(hdfsSettings);
@@ -388,25 +382,25 @@ public class HdfsConfiguration {
         return fileSystemType;
     }
 
-    public HdfsWritableFactories.WritableType getKeyType() {
+    public WritableType getKeyType() {
         return keyType;
     }
 
     /**
      * The type for the key in case of sequence or map files.
      */
-    public void setKeyType(HdfsWritableFactories.WritableType keyType) {
+    public void setKeyType(WritableType keyType) {
         this.keyType = keyType;
     }
 
-    public HdfsWritableFactories.WritableType getValueType() {
+    public WritableType getValueType() {
         return valueType;
     }
 
     /**
      * The type for the key in case of sequence or map files
      */
-    public void setValueType(HdfsWritableFactories.WritableType valueType) {
+    public void setValueType(WritableType valueType) {
         this.valueType = valueType;
     }
 
@@ -430,28 +424,6 @@ public class HdfsConfiguration {
 
     public String getReadSuffix() {
         return readSuffix;
-    }
-
-    /**
-     * For the consumer, how much to wait (milliseconds) before to start scanning the directory.
-     */
-    public void setInitialDelay(long initialDelay) {
-        this.initialDelay = initialDelay;
-    }
-
-    public long getInitialDelay() {
-        return initialDelay;
-    }
-
-    /**
-     * The interval (milliseconds) between the directory scans.
-     */
-    public void setDelay(long delay) {
-        this.delay = delay;
-    }
-
-    public long getDelay() {
-        return delay;
     }
 
     /**

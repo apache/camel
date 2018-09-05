@@ -24,7 +24,10 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
-@UriEndpoint(scheme = "pdf", title = "PDF", syntax = "pdf:operation", producerOnly = true, label = "pdf,printing")
+/**
+ * The pdf components provides the ability to create, modify or extract content from PDF documents.
+ */
+@UriEndpoint(firstVersion = "2.16.0", scheme = "pdf", title = "PDF", syntax = "pdf:operation", producerOnly = true, label = "document,transformation,printing")
 public class PdfEndpoint extends DefaultEndpoint {
 
     @UriParam

@@ -21,23 +21,19 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class UndertowPrefixMatchingTest extends BaseUndertowTest {
-    private static final Logger LOG = LoggerFactory.getLogger(UndertowComponentTest.class);
 
     @Test
     public void passOnExactPath() throws Exception {
-        Exchange response = template.requestBody("http://localhost:{{port}}/myapp/suffix", "Hello Camel!", Exchange.class);
+        template.requestBody("http://localhost:{{port}}/myapp/suffix", "Hello Camel!");
         getMockEndpoint("mock:myapp").expectedHeaderReceived(Exchange.HTTP_RESPONSE_CODE, 200);
     }
 
     @Test
     public void failsOnPrefixPath() throws Exception {
-
         try {
-            String response = template.requestBody("http://localhost:{{port}}/myapp", "Hello Camel!", String.class);
+            template.requestBody("http://localhost:{{port}}/myapp", "Hello Camel!");
             fail("Should fail, something is wrong");
         } catch (CamelExecutionException ex) {
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, ex.getCause());
@@ -47,20 +43,19 @@ public class UndertowPrefixMatchingTest extends BaseUndertowTest {
 
     @Test
     public void passOnPrefixPath() throws Exception {
-        Exchange response = template.requestBody("http://localhost:{{port}}/bar/somethingNotImportant", "Hello Camel!", Exchange.class);
+        template.requestBody("http://localhost:{{port}}/bar/somethingNotImportant", "Hello Camel!");
         getMockEndpoint("mock:myapp").expectedHeaderReceived(Exchange.HTTP_RESPONSE_CODE, 200);
     }
-
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("undertow:http://localhost:{{port}}/myapp/suffix?matchOnUriPrefix=false")
+                from("undertow:http://localhost:{{port}}/myapp/suffix")
                     .transform(bodyAs(String.class).append(" Must match exact path"))
                     .to("mock:myapp");
 
-                from("undertow:http://localhost:{{port}}/bar")
+                from("undertow:http://localhost:{{port}}/bar?matchOnUriPrefix=true")
                     .transform(bodyAs(String.class).append(" Matching prefix"))
                     .to("mock:bar");
             }

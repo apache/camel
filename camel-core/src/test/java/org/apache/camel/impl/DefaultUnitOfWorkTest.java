@@ -15,22 +15,27 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
+import org.junit.Before;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
 import org.apache.camel.CamelContext;
 
-public class DefaultUnitOfWorkTest extends TestCase {
+public class DefaultUnitOfWorkTest extends Assert {
     
     private DefaultUnitOfWork unitOfWork;
 
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
+
         
         CamelContext context = new DefaultCamelContext();
         context.setUuidGenerator(new SimpleUuidGenerator());
         unitOfWork = new DefaultUnitOfWork(new DefaultExchange(context));
     }
 
+    @Test
     public void testGetId() {
         String id = unitOfWork.getId();
         assertNotNull(id);

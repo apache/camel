@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.properties;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,6 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class PropertiesComponentEIPConvertBodyToTest extends ContextTestSupport {
 
+    @Test
     public void testConvertToBytesCharset() throws Exception {
         byte[] body = "Hello World".getBytes("iso-8859-1");
 
@@ -54,7 +57,6 @@ public class PropertiesComponentEIPConvertBodyToTest extends ContextTestSupport 
         CamelContext context = super.createCamelContext();
 
         PropertiesComponent pc = new PropertiesComponent();
-        pc.setCamelContext(context);
         pc.setLocations(new String[]{"classpath:org/apache/camel/component/properties/myproperties.properties"});
         context.addComponent("properties", pc);
 

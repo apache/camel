@@ -28,7 +28,7 @@ public enum MetricsType {
     METER("meter"),
     TIMER("timer");
 
-    private static final Map<String, MetricsType> MAP = new HashMap<String, MetricsType>();
+    private static final Map<String, MetricsType> MAP = new HashMap<>();
 
     private final String name;
 
@@ -38,7 +38,7 @@ public enum MetricsType {
         }
     }
 
-    private MetricsType(String name) {
+    MetricsType(String name) {
         this.name = name;
     }
 

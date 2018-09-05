@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -27,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class SedaWaitForTaskCompleteTest extends ContextTestSupport {
 
+    @Test
     public void testInOut() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
@@ -36,6 +39,7 @@ public class SedaWaitForTaskCompleteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInOnly() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 

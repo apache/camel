@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.controlbus;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ControlBusStartRouteAsyncTest extends ContextTestSupport {
 
+    @Test
     public void testControlBusAsync() throws Exception {
         assertEquals("Stopped", context.getRouteStatus("foo").name());
 

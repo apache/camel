@@ -79,7 +79,7 @@ public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
 
                 transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
-                        Map<String, Object> params = new HashMap<String, Object>(1);
+                        Map<String, Object> params = new HashMap<>(1);
                         params.put("timeNow", timeNow);
 
                         String activityStateQuery = "select x from "

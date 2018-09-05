@@ -29,7 +29,7 @@ import org.junit.Test;
 
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_HISTOGRAM_VALUE;
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_METRIC_NAME;
-import static org.apache.camel.component.metrics.MetricsConstants.HEADER_PERFIX;
+import static org.apache.camel.component.metrics.MetricsConstants.HEADER_PREFIX;
 
 public class MetricsComponentRouteTest extends CamelTestSupport {
 
@@ -58,7 +58,7 @@ public class MetricsComponentRouteTest extends CamelTestSupport {
         mock.expectedBodiesReceived(body);
         mock.expectedHeaderReceived(header1, value1);
         mock.expectedHeaderReceived(header2, value2);
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(header1, value1);
         headers.put(header2, value2);
         template1.sendBodyAndHeaders(body, headers);
@@ -72,14 +72,14 @@ public class MetricsComponentRouteTest extends CamelTestSupport {
         Date now = new Date();
 
         mock.expectedBodiesReceived(body);
-        mock.expectedHeaderReceived("." + HEADER_PERFIX, "value");
+        mock.expectedHeaderReceived("." + HEADER_PREFIX, "value");
         mock.expectedHeaderReceived("date", now);
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(HEADER_METRIC_NAME, "a name");
         headers.put(HEADER_HISTOGRAM_VALUE, 34L);
-        headers.put(HEADER_PERFIX + "notExistingHeader", "?");
-        headers.put("." + HEADER_PERFIX, "value");
+        headers.put(HEADER_PREFIX + "notExistingHeader", "?");
+        headers.put("." + HEADER_PREFIX, "value");
         headers.put("date", now);
 
         template2.sendBodyAndHeaders(body, headers);
@@ -93,7 +93,7 @@ public class MetricsComponentRouteTest extends CamelTestSupport {
             public void configure() {
                 from("direct:start-1")
                         .to("metrics:timer:T?action=start")
-                        .to("metrics:A")
+                        .to("metrics:counter://A")
                         .to("metrics:counter://B")
                         .to("metrics:counter:C?increment=19291")
                         .to("metrics:counter:C?decrement=19292")

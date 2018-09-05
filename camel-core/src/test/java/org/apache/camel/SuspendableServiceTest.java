@@ -16,12 +16,14 @@
  */
 package org.apache.camel;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
 
 /**
  * @version 
  */
-public class SuspendableServiceTest extends TestCase {
+public class SuspendableServiceTest extends Assert {
 
     private static class MyService implements SuspendableService {
 
@@ -46,6 +48,7 @@ public class SuspendableServiceTest extends TestCase {
         }
     }
 
+    @Test
     public void testSuspendable() {
         MyService my = new MyService();
         assertEquals(false, my.isSuspended());

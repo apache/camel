@@ -1,0 +1,182 @@
+[[jbpm-component]]
+== JBPM Component
+
+*Available as of Camel version 2.6*
+
+The *jbpm* component provides integration with Business Process
+Management (BPM) Suit http://www.jbpm.org/[jBPM]. It uses
+kie-remote-client API to interact with jBPM instance over REST. The
+component supports only producer.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-jbpm</artifactId>
+    <version>x.x.x</version><!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------------------------------
+
+### URI format
+
+[source,java]
+---------------------------------------------
+jbpm::hostName[:port][/resourceUri][?options]
+---------------------------------------------
+
+### URI Options
+
+
+// component options: START
+The JBPM component has no options.
+// component options: END
+
+
+
+
+
+// endpoint options: START
+The JBPM endpoint is configured using URI syntax:
+
+----
+jbpm:connectionURL
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *connectionURL* | *Required* The URL to the jBPM server. |  | URL
+|===
+
+
+==== Query Parameters (25 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *attachmentId* (producer) | attachId to use when retrieving attachments |  | Long
+| *contentId* (producer) | contentId to use when retrieving attachments |  | Long
+| *deploymentId* (producer) | *Required* The id of the deployment |  | String
+| *event* (producer) | the data associated with this event when signalEvent operation is performed |  | Object
+| *eventType* (producer) | the type of event to use when signalEvent operation is performed |  | String
+| *identifier* (producer) | identifier the global identifier |  | String
+| *language* (producer) | The language to use when filtering user tasks |  | String
+| *maxNumber* (producer) | the maximum number of rules that should be fired |  | Integer
+| *operation* (producer) | The operation to perform | startProcess | String
+| *processId* (producer) | the id of the process that should be acted upon |  | String
+| *processInstanceId* (producer) | the id of the process instance |  | Long
+| *targetUserId* (producer) | The targetUserId used when delegating a task |  | String
+| *task* (producer) | The task instance to use with task operations |  | Task
+| *taskId* (producer) | the id of the task |  | Long
+| *timeout* (producer) | A timeout value |  | Integer
+| *userId* (producer) | userId to use with task operations |  | String
+| *value* (producer) | the value to assign to the global identifier |  | Object
+| *workItemId* (producer) | the id of the work item |  | Long
+| *entities* (advanced) | The potentialOwners when nominateTask operation is performed |  | List
+| *extraJaxbClasses* (advanced) | To load additional classes when working with XML |  | Class[]
+| *parameters* (advanced) | the variables that should be set for various operations |  | Map
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *statuses* (filter) | The list of status to use when filtering tasks |  | List
+| *password* (security) | Password for authentication |  | String
+| *userName* (security) | Username for authentication |  | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.jbpm.enabled* | Enable jbpm component | true | Boolean
+| *camel.component.jbpm.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+
+### Message Headers
+
+[width="100%",cols="10%,10%,10%,70%",options="header",]
+|=======================================================================
+|Name |Default Value |Type |Description
+
+|CamelJBPMValue |null |Object |the value to assign to the global identifier
+
+|CamelJBPMOperation |PUT |String |The operation to perform. The operation name must be prefixed with
+CamelJBPMOperation and the name of the operation. See the full list
+above. It is case insensitive.
+
+|CamelJBPMProcessId |null |String |the id of the process that should be acted upon
+
+|CamelJBPMProcessInstanceId |0 |Long |the id of the process instance
+
+|CamelJBPMParameters |null |Map<String, Object> |the variables that should be set for various operations
+
+|CamelJBPMEventType |null |String |the type of event to use when signalEvent operation is performed
+
+|CamelJBPMEvent |null |String |The type of the received event. Possible values defined here
+org.infinispan.notifications.cachelistener.event.Event.Type
+
+|CamelJBPMMaxNumber |null |Integer |the maximum number of rules that should be fired
+
+|CamelJBPMIdentifier |null |long |identifier the global identifier
+
+|CamelJBPMWorkItemId |0 |Long |the id of the work item
+
+|CamelJBPMTaskId |0 |Long |the id of the task
+
+|CamelJBPMTask |null |Task |The task instance to use with task operations
+
+|CamelJBPMUserId |null |String |userId to use with task operations
+
+|CamelJBPMTargetUserId |null |String |The targetUserId used when delegating a task
+
+|CamelJBPMLanguage |null |String |The language to use when filtering user tasks
+
+|CamelJBPMAttachmentId |0 |Long |attachId to use when retrieving attachments
+
+|CamelJBPMContentId |0 |Long |contentId to use when retrieving attachments
+
+|CamelJBPMEntityList |null |List<OrganizationalEntity> |The potentialOwners when nominateTask operation is performed
+
+|CamelJBPMStatusList |null |List<Status> |The list of status to use when filtering tasks
+|=======================================================================
+
+### Example
+
+Below is an example route that starts a business process with id
+project1.integration-test and deploymentId
+org.kie.example:project1:1.0.0-SNAPSHOT
+
+[source,java]
+----------------------------------------------------------------------------------------------
+from("direct:start")
+        .setHeader(JBPMConstants.PROCESS_ID, constant("project1.integration-test"))
+        .to("jbpm:http://localhost:8080/business-central?userName=bpmsAdmin&password=pa$word1"
+ + "&deploymentId=org.kie.example:project1:1.0.0-SNAPSHOT");
+----------------------------------------------------------------------------------------------
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
+
+ 

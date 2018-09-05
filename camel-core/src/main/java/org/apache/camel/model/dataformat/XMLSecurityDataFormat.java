@@ -32,9 +32,9 @@ import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 
 /**
- * xml-security data format
+ * The XML Security data format facilitates encryption and decryption of XML payloads.
  */
-@Metadata(label = "dataformat,transformation", title = "XML Security")
+@Metadata(firstVersion = "2.0.0", label = "dataformat,transformation,xml,security", title = "XML Security")
 @XmlRootElement(name = "secureXML")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLSecurityDataFormat extends DataFormatDefinition implements NamespaceAware {
@@ -45,6 +45,8 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     private String xmlCipherAlgorithm;
     @XmlAttribute
     private String passPhrase;
+    @XmlAttribute
+    private byte[] passPhraseByte;
     @XmlAttribute
     private String secureTag;
     @XmlAttribute
@@ -259,8 +261,12 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         boolean isSecureTagContents = getSecureTagContents() != null && getSecureTagContents();
         setProperty(camelContext, dataFormat, "secureTagContents", isSecureTagContents);
 
-        if (passPhrase != null) {
-            setProperty(camelContext, dataFormat, "passPhrase", getPassPhrase().getBytes());
+        if (passPhrase != null || passPhraseByte != null) {
+            if (passPhraseByte != null) {
+                setProperty(camelContext, dataFormat, "passPhrase", passPhraseByte);
+            } else {
+                setProperty(camelContext, dataFormat, "passPhrase", passPhrase.getBytes());
+            }
         } else {
             setProperty(camelContext, dataFormat, "passPhrase", "Just another 24 Byte key".getBytes());
         }
@@ -335,6 +341,20 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
      */
     public void setPassPhrase(String passPhrase) {
         this.passPhrase = passPhrase;
+    }
+    
+    public byte[] getPassPhraseByte() {
+        return passPhraseByte;
+    }
+
+    /**
+     * A byte[] used as passPhrase to encrypt/decrypt content. The passPhrase has to be provided.
+     * If no passPhrase is specified, a default passPhrase is used.
+     * The passPhrase needs to be put together in conjunction with the appropriate encryption algorithm.
+     * For example using TRIPLEDES the passPhase can be a "Only another 24 Byte key"
+     */
+    public void setPassPhraseByte(byte[] passPhraseByte) {
+        this.passPhraseByte = passPhraseByte;
     }
 
     public String getSecureTag() {
@@ -471,9 +491,13 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     @Override
     public void setNamespaces(Map<String, String> nspaces) {
         if (this.namespaces == null) {
-            this.namespaces = new HashMap<String, String>();
+            this.namespaces = new HashMap<>();
         }
         this.namespaces.putAll(nspaces);
     }
-    
+
+    @Override
+    public Map<String, String> getNamespaces() {
+        return namespaces;
+    }
 }

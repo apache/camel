@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.onexception;
 
+import org.junit.Test;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
@@ -32,6 +34,7 @@ public class OnExceptionContinueTwoPredicateTest extends OnExceptionContinueTwoT
     private final AtomicInteger processorInvoked = new AtomicInteger();
 
     @Override
+    @Test
     public void testContinuedTwo() throws Exception {
         getMockEndpoint("mock:me").expectedMessageCount(2);
 

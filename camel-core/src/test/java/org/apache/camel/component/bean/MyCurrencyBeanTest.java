@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -29,6 +31,7 @@ public class MyCurrencyBeanTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testDisplay() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Currency is $");
 
@@ -37,6 +40,7 @@ public class MyCurrencyBeanTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testDisplayPrice() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Price is $123");
 

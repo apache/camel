@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.jetty9;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
@@ -32,24 +35,26 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.StreamCache;
 import org.apache.camel.component.jetty.JettyContentExchange;
 import org.apache.camel.component.jetty.JettyHttpBinding;
+import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.client.api.Result;
-import org.eclipse.jetty.client.util.BufferingResponseListener;
 import org.eclipse.jetty.client.util.BytesContentProvider;
 import org.eclipse.jetty.client.util.InputStreamContentProvider;
+import org.eclipse.jetty.client.util.InputStreamResponseListener;
 import org.eclipse.jetty.client.util.StringContentProvider;
 import org.eclipse.jetty.http.HttpFields;
+import org.eclipse.jetty.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
- * Jetty specific exchange which keeps track of the the request and response.
- *
- * @version 
+ * Jetty specific exchange which keeps track of the request and response.
  */
 public class JettyContentExchange9 implements JettyContentExchange {
 
@@ -68,20 +73,20 @@ public class JettyContentExchange9 implements JettyContentExchange {
 
     private boolean supportRedirect;
 
-    public void init(Exchange exchange, JettyHttpBinding jettyBinding, 
+    public void init(Exchange exchange, JettyHttpBinding jettyBinding,
                      final HttpClient client, AsyncCallback callback) {
         this.exchange = exchange;
         this.jettyBinding = jettyBinding;
         this.client = client;
         this.callback = callback;
     }
-    
+
     protected void onRequestComplete() {
         LOG.trace("onRequestComplete");
         closeRequestContentSource();
     }
 
-    protected void onResponseComplete(Result result, byte[] content, String contentType) {
+    protected void onResponseComplete(Result result, byte[] content) {
         LOG.trace("onResponseComplete");
         done.countDown();
         this.response = result.getResponse();
@@ -135,15 +140,15 @@ public class JettyContentExchange9 implements JettyContentExchange {
             throw new IllegalStateException(e.getMessage(), e);
         }
     }
-    
+
     protected void closeRequestContentSource() {
         tryClose(this.request.getContent());
     }
-    
+
     private void tryClose(Object obj) {
         if (obj instanceof Closeable) {
             try {
-                ((Closeable)obj).close();
+                ((Closeable) obj).close();
             } catch (IOException e) {
                 // Ignore
             }
@@ -175,11 +180,11 @@ public class JettyContentExchange9 implements JettyContentExchange {
     public void setMethod(String method) {
         this.request.method(method);
     }
-    
+
     public void setTimeout(long timeout) {
         this.request.timeout(timeout, TimeUnit.MILLISECONDS);
     }
-    
+
     public void setURL(String url) {
         this.request = client.newRequest(url);
     }
@@ -194,7 +199,11 @@ public class JettyContentExchange9 implements JettyContentExchange {
     }
 
     public void setRequestContent(InputStream ins) {
-        this.request.content(new InputStreamContentProvider(ins), this.requestContentType);        
+        this.request.content(new InputStreamContentProvider(ins), this.requestContentType);
+    }
+
+    public void setRequestContent(InputStream ins, int contentLength) {
+        this.request.content(new CamelInputStreamContentProvider(ins, contentLength), this.requestContentType);
     }
 
     public void addRequestHeader(String key, String s) {
@@ -215,14 +224,40 @@ public class JettyContentExchange9 implements JettyContentExchange {
             }
 
         };
-        BufferingResponseListener responseListener = new BufferingResponseListener() {
+
+        InputStreamResponseListener responseListener = new InputStreamResponseListener() {
+            OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
+
+            @Override
+            public void onContent(Response response, ByteBuffer content, Callback callback) {
+                byte[] buffer = new byte[content.limit()];
+                content.get(buffer);
+                try {
+                    osb.write(buffer);
+                    callback.succeeded();
+                } catch (IOException e) {
+                    callback.failed(e);
+                }
+            }
 
             @Override
             public void onComplete(Result result) {
                 if (result.isFailed()) {
                     doTaskCompleted(result.getFailure());
                 } else {
-                    onResponseComplete(result, getContent(), getMediaType());
+                    try {
+                        Object content = osb.build();
+                        if (content instanceof byte[]) {
+                            onResponseComplete(result, (byte[]) content);
+                        } else {
+                            StreamCache cos = (StreamCache) content;
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            cos.writeTo(baos);
+                            onResponseComplete(result, baos.toByteArray());
+                        }
+                    } catch (IOException e) {
+                        doTaskCompleted(e);
+                    }
                 }
             }
         };
@@ -236,14 +271,39 @@ public class JettyContentExchange9 implements JettyContentExchange {
     public byte[] getResponseContentBytes() {
         return responseContent;
     }
-    
-    public Map<String, Collection<String>> getResponseHeaders() {
-        final HttpFields f = response.getHeaders();
-        Map<String, Collection<String>> ret = new TreeMap<String, Collection<String>>(String.CASE_INSENSITIVE_ORDER);
-        for (String n : f.getFieldNamesCollection()) {
-            ret.put(n,  f.getValuesList(n));
+
+    private Map<String, Collection<String>> getFieldsAsMap(HttpFields fields) {
+        final Map<String, Collection<String>> result = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        for (String name : getFieldNamesCollection(fields)) {
+            result.put(name, fields.getValuesList(name));
         }
-        return ret;
+        return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Collection<String> getFieldNamesCollection(HttpFields fields) {
+        try {
+            return fields.getFieldNamesCollection();
+        } catch (NoSuchMethodError e) {
+            try {
+                // In newer versions of Jetty the return type has been changed to Set.
+                // This causes problems at byte-code level. Try recovering.
+                Method reflGetFieldNamesCollection = HttpFields.class.getMethod("getFieldNamesCollection");
+                Object result = reflGetFieldNamesCollection.invoke(fields);
+                return (Collection<String>) result;
+            } catch (Exception reflectionException) {
+                // Suppress, throwing the original exception
+                throw e;
+            }
+        }
+    }
+
+    public Map<String, Collection<String>> getRequestHeaders() {
+        return getFieldsAsMap(request.getHeaders());
+    }
+
+    public Map<String, Collection<String>> getResponseHeaders() {
+        return getFieldsAsMap(response.getHeaders());
     }
 
     @Override

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.timer;
 
+import org.junit.Test;
+
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.naming.Context;
 
@@ -33,6 +35,7 @@ public class TimerRouteTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(TimerRouteTest.class);
     private MyBean bean = new MyBean();
 
+    @Test
     public void testTimerInvokesBeanMethod() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
@@ -46,7 +49,7 @@ public class TimerRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("timer://foo?fixedRate=true&delay=0&period=100")
+                from("timer://foo?fixedRate=true&delay=0&period=10")
                     .log("Fired timer")
                     .to("bean:myBean", "mock:result");
             }

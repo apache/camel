@@ -37,6 +37,7 @@ import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +62,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor, IdA
     private final String delimiter;
     private boolean parallelProcessing;
     private boolean parallelAggregate;
+    private boolean stopOnAggregateException;
     private boolean stopOnException;
     private boolean ignoreInvalidEndpoints;
     private boolean streaming;
@@ -80,7 +82,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor, IdA
 
     public RecipientList(CamelContext camelContext, String delimiter) {
         notNull(camelContext, "camelContext");
-        ObjectHelper.notEmpty(delimiter, "delimiter");
+        StringHelper.notEmpty(delimiter, "delimiter");
         this.camelContext = camelContext;
         this.delimiter = delimiter;
     }
@@ -93,7 +95,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor, IdA
     public RecipientList(CamelContext camelContext, Expression expression, String delimiter) {
         notNull(camelContext, "camelContext");
         ObjectHelper.notNull(expression, "expression");
-        ObjectHelper.notEmpty(delimiter, "delimiter");
+        StringHelper.notEmpty(delimiter, "delimiter");
         this.camelContext = camelContext;
         this.expression = expression;
         this.delimiter = delimiter;
@@ -145,7 +147,8 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor, IdA
 
         RecipientListProcessor rlp = new RecipientListProcessor(exchange.getContext(), producerCache, iter, getAggregationStrategy(),
                 isParallelProcessing(), getExecutorService(), isShutdownExecutorService(),
-                isStreaming(), isStopOnException(), getTimeout(), getOnPrepare(), isShareUnitOfWork(), isParallelAggregate()) {
+                isStreaming(), isStopOnException(), getTimeout(), getOnPrepare(), isShareUnitOfWork(), isParallelAggregate(),
+                isStopOnAggregateException()) {
             @Override
             protected synchronized ExecutorService createAggregateExecutorService(String name) {
                 // use a shared executor service to avoid creating new thread pools
@@ -166,16 +169,8 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor, IdA
             return true;
         }
 
-        AsyncProcessor target = rlp;
-        if (isShareUnitOfWork()) {
-            // wrap answer in a sub unit of work, since we share the unit of work
-            CamelInternalProcessor internalProcessor = new CamelInternalProcessor(rlp);
-            internalProcessor.addAdvice(new CamelInternalProcessor.SubUnitOfWorkProcessorAdvice());
-            target = internalProcessor;
-        }
-
         // now let the multicast process the exchange
-        return target.process(exchange, callback);
+        return rlp.process(exchange, callback);
     }
 
     protected Endpoint resolveEndpoint(Exchange exchange, Object recipient) {
@@ -256,6 +251,14 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor, IdA
 
     public void setParallelAggregate(boolean parallelAggregate) {
         this.parallelAggregate = parallelAggregate;
+    }
+
+    public boolean isStopOnAggregateException() {
+        return stopOnAggregateException;
+    }
+
+    public void setStopOnAggregateException(boolean stopOnAggregateException) {
+        this.stopOnAggregateException = stopOnAggregateException;
     }
 
     public boolean isStopOnException() {

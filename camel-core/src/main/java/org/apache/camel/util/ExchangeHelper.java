@@ -16,15 +16,15 @@
  */
 package org.apache.camel.util;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
@@ -40,16 +40,18 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.NoSuchPropertyException;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.Route;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.MessageSupport;
+import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 
 /**
  * Some helper methods for working with {@link Exchange} objects
  *
- * @version 
+ * @version
  */
 public final class ExchangeHelper {
 
@@ -123,6 +125,42 @@ public final class ExchangeHelper {
         T answer = exchange.getIn().getHeader(headerName, type);
         if (answer == null) {
             throw new NoSuchHeaderException(exchange, headerName, type);
+        }
+        return answer;
+    }
+
+    /**
+     * Gets the mandatory inbound header of the correct type
+     *
+     * @param message       the message
+     * @param headerName    the header name
+     * @param type          the type
+     * @return the header value
+     * @throws TypeConversionException is thrown if error during type conversion
+     * @throws NoSuchHeaderException is thrown if no headers exists
+     */
+    public static <T> T getMandatoryHeader(Message message, String headerName, Class<T> type) throws TypeConversionException, NoSuchHeaderException {
+        T answer = message.getHeader(headerName, type);
+        if (answer == null) {
+            throw new NoSuchHeaderException(message.getExchange(), headerName, type);
+        }
+        return answer;
+    }
+
+    /**
+     * Gets an header or property of the correct type
+     *
+     * @param exchange      the exchange
+     * @param name          the name of the header or the property
+     * @param type          the type
+     * @return the header or property value
+     * @throws TypeConversionException is thrown if error during type conversion
+     * @throws NoSuchHeaderException is thrown if no headers exists
+     */
+    public static <T> T getHeaderOrProperty(Exchange exchange, String name, Class<T> type) throws TypeConversionException {
+        T answer = exchange.getIn().getHeader(name, type);
+        if (answer == null) {
+            answer = exchange.getProperty(name, type);
         }
         return answer;
     }
@@ -229,6 +267,21 @@ public final class ExchangeHelper {
      * @param useSameMessageId whether to use same message id on the copy message.
      */
     public static Exchange createCorrelatedCopy(Exchange exchange, boolean handover, boolean useSameMessageId) {
+        return createCorrelatedCopy(exchange, handover, useSameMessageId, null);
+    }
+
+    /**
+     * Creates a new instance and copies from the current message exchange so that it can be
+     * forwarded to another destination as a new instance. Unlike regular copy this operation
+     * will not share the same {@link org.apache.camel.spi.UnitOfWork} so its should be used
+     * for async messaging, where the original and copied exchange are independent.
+     *
+     * @param exchange original copy of the exchange
+     * @param handover whether the on completion callbacks should be handed over to the new copy.
+     * @param useSameMessageId whether to use same message id on the copy message.
+     * @param filter whether to handover the on completion
+     */
+    public static Exchange createCorrelatedCopy(Exchange exchange, boolean handover, boolean useSameMessageId, Predicate<Synchronization> filter) {
         String id = exchange.getExchangeId();
 
         // make sure to do a safe copy as the correlated copy can be routed independently of the source.
@@ -246,7 +299,7 @@ public final class ExchangeHelper {
         // hand over on completion to the copy if we got any
         UnitOfWork uow = exchange.getUnitOfWork();
         if (handover && uow != null) {
-            uow.handoverSynchronization(copy);
+            uow.handoverSynchronization(copy, filter);
         }
         // set a correlation id so we can track back the original exchange
         copy.setProperty(Exchange.CORRELATION_ID, id);
@@ -332,8 +385,8 @@ public final class ExchangeHelper {
      * Copies the <code>source</code> exchange to <code>target</code> exchange
      * preserving the {@link ExchangePattern} of <code>target</code>.
      *
-     * @param source source exchange.
      * @param result target exchange.
+     * @param source source exchange.
      */
     public static void copyResultsPreservePattern(Exchange result, Exchange source) {
 
@@ -417,7 +470,7 @@ public final class ExchangeHelper {
      * @return a Map populated with the require variables
      */
     public static Map<String, Object> createVariableMap(Exchange exchange) {
-        Map<String, Object> answer = new HashMap<String, Object>();
+        Map<String, Object> answer = new HashMap<>();
         populateVariableMap(exchange, answer);
         return answer;
     }
@@ -624,7 +677,23 @@ public final class ExchangeHelper {
      * @return <tt>true</tt> if interrupted, <tt>false</tt> otherwise
      */
     public static boolean isInterrupted(Exchange exchange) {
-        return exchange.getException(InterruptedException.class) != null;
+        Object value = exchange.getProperty(Exchange.INTERRUPTED);
+        return value != null && Boolean.TRUE == value;
+    }
+
+    /**
+     * Check whether or not stream caching is enabled for the given route or globally.
+     *
+     * @param exchange  the exchange
+     * @return <tt>true</tt> if enabled, <tt>false</tt> otherwise
+     */
+    public static boolean isStreamCachingEnabled(final Exchange exchange) {
+        Route route = exchange.getContext().getRoute(exchange.getFromRouteId());
+        if (route != null) {
+            return route.getRouteContext().isStreamCaching();
+        } else {
+            return exchange.getContext().getStreamCachingStrategy().isEnabled();
+        }
     }
 
     /**
@@ -704,7 +773,7 @@ public final class ExchangeHelper {
      * @return the result body, can be <tt>null</tt>.
      * @throws CamelExecutionException is thrown if the processing of the exchange failed
      */
-    public static <T> T extractFutureBody(CamelContext context, Future<Object> future, Class<T> type) {
+    public static <T> T extractFutureBody(CamelContext context, Future<?> future, Class<T> type) {
         try {
             return doExtractFutureBody(context, future.get(), type);
         } catch (InterruptedException e) {
@@ -734,7 +803,7 @@ public final class ExchangeHelper {
      * @throws CamelExecutionException is thrown if the processing of the exchange failed
      * @throws java.util.concurrent.TimeoutException is thrown if a timeout triggered
      */
-    public static <T> T extractFutureBody(CamelContext context, Future<Object> future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException {
+    public static <T> T extractFutureBody(CamelContext context, Future<?> future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException {
         try {
             if (timeout > 0) {
                 return doExtractFutureBody(context, future.get(timeout, unit), type);
@@ -788,7 +857,7 @@ public final class ExchangeHelper {
     public static void prepareOutToIn(Exchange exchange) {
         // we are routing using pipes and filters so we need to manually copy OUT to IN
         if (exchange.hasOut()) {
-            exchange.getIn().copyFrom(exchange.getOut());
+            exchange.setIn(exchange.getOut());
             exchange.setOut(null);
         }
     }
@@ -829,7 +898,7 @@ public final class ExchangeHelper {
     public static Exchange copyExchangeAndSetCamelContext(Exchange exchange, CamelContext context, boolean handover) {
         DefaultExchange answer = new DefaultExchange(context, exchange.getPattern());
         if (exchange.hasProperties()) {
-            answer.setProperties(safeCopy(exchange.getProperties()));
+            answer.setProperties(safeCopyProperties(exchange.getProperties()));
         }
         if (handover) {
             // Need to hand over the completion for async invocation
@@ -864,18 +933,62 @@ public final class ExchangeHelper {
         }
     }
 
+    /**
+     * Gets the original IN {@link Message} this Unit of Work was started with.
+     * <p/>
+     * The original message is only returned if the option {@link org.apache.camel.RuntimeConfiguration#isAllowUseOriginalMessage()}
+     * is enabled. If its disabled, then <tt>null</tt> is returned.
+     *
+     * @return the original IN {@link Message}, or <tt>null</tt> if using original message is disabled.
+     */
+    public static Message getOriginalInMessage(Exchange exchange) {
+        Message answer = null;
+
+        // try parent first
+        UnitOfWork uow = exchange.getProperty(Exchange.PARENT_UNIT_OF_WORK, UnitOfWork.class);
+        if (uow != null) {
+            answer = uow.getOriginalInMessage();
+        }
+        // fallback to the current exchange
+        if (answer == null) {
+            uow = exchange.getUnitOfWork();
+            if (uow != null) {
+                answer = uow.getOriginalInMessage();
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * Resolve the component scheme (aka name) from the given endpoint uri
+     *
+     * @param uri  the endpoint uri
+     * @return     the component scheme (name), or <tt>null</tt> if not possible to resolve
+     */
+    public static String resolveScheme(String uri) {
+        String scheme = null;
+        if (uri != null) {
+            // Use the URI prefix to find the component.
+            String splitURI[] = StringHelper.splitOnCharacter(uri, ":", 2);
+            if (splitURI[1] != null) {
+                scheme = splitURI[0];
+            }
+        }
+        return scheme;
+    }
+
     @SuppressWarnings("unchecked")
-    private static Map<String, Object> safeCopy(Map<String, Object> properties) {
+    private static Map<String, Object> safeCopyProperties(Map<String, Object> properties) {
         if (properties == null) {
             return null;
         }
 
-        Map<String, Object> answer = new ConcurrentHashMap<String, Object>(properties);
+        Map<String, Object> answer = new HashMap<>(properties);
 
         // safe copy message history using a defensive copy
         List<MessageHistory> history = (List<MessageHistory>) answer.remove(Exchange.MESSAGE_HISTORY);
         if (history != null) {
-            answer.put(Exchange.MESSAGE_HISTORY, new ArrayList<MessageHistory>(history));
+            answer.put(Exchange.MESSAGE_HISTORY, new LinkedList<>(history));
         }
 
         return answer;

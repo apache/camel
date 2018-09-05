@@ -15,9 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -33,22 +35,24 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
 
-    private final String fileUrl = "file://target/directoryfilter/?recursive=true&filter=#myFilter";
-    private final Set<String> names = new TreeSet<String>();
+    private final String fileUrl = "file://target/directoryfilter/?recursive=true&filter=#myFilter&initialDelay=0&delay=10";
+    private final Set<String> names = new TreeSet<>();
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myFilter", new MyDirectoryFilter<Object>());
+        jndi.bind("myFilter", new MyDirectoryFilter<>());
         return jndi;
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/directoryfilter");
         super.setUp();
     }
 
+    @Test
     public void testFilterFilesWithARegularFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -68,8 +72,8 @@ public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
         // check names
         assertEquals(4, names.size());
         // copy to list so its easier to index
-        List<String> list = new ArrayList<String>(names);
-        Collections.sort(list);
+        List<String> list = new ArrayList<>(names);
+        list.sort(null);
 
         assertEquals("okDir", list.get(0));
         // windows or unix paths

@@ -27,10 +27,7 @@ import com.datastax.driver.core.querybuilder.Update;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.cassandraunit.CassandraCQLUnit;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -38,7 +35,7 @@ import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.set;
 import static com.datastax.driver.core.querybuilder.QueryBuilder.update;
 
-public class CassandraComponentProducerUnpreparedTest extends CamelTestSupport {
+public class CassandraComponentProducerUnpreparedTest extends BaseCassandraTest {
 
     private static final String CQL = "insert into camel_user(login, first_name, last_name) values (?, ?, ?)";
     private static final String NO_PARAMETER_CQL = "select login, first_name, last_name from camel_user";
@@ -51,16 +48,6 @@ public class CassandraComponentProducerUnpreparedTest extends CamelTestSupport {
 
     @Produce(uri = "direct:inputNoParameter")
     ProducerTemplate noParameterProducerTemplate;
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        CassandraUnitUtils.startEmbeddedCassandra();
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        CassandraUnitUtils.cleanEmbeddedCassandra();
-    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -77,7 +64,7 @@ public class CassandraComponentProducerUnpreparedTest extends CamelTestSupport {
 
     @Test
     public void testRequestUriCql() throws Exception {
-        Object response = producerTemplate.requestBody(Arrays.asList("w_jiang", "Willem", "Jiang"));
+        producerTemplate.requestBody(Arrays.asList("w_jiang", "Willem", "Jiang"));
 
         Cluster cluster = CassandraUnitUtils.cassandraCluster();
         Session session = cluster.connect(CassandraUnitUtils.KEYSPACE);
@@ -96,7 +83,6 @@ public class CassandraComponentProducerUnpreparedTest extends CamelTestSupport {
 
         assertNotNull(response);
         assertIsInstanceOf(List.class, response);
-        List<Row> rows = (List<Row>) response;
     }
 
     @Test
@@ -105,13 +91,12 @@ public class CassandraComponentProducerUnpreparedTest extends CamelTestSupport {
 
         assertNotNull(response);
         assertIsInstanceOf(List.class, response);
-        List<Row> rows = (List<Row>) response;
     }
 
     @Test
     public void testRequestMessageCql() throws Exception {
-        Object response = producerTemplate.requestBodyAndHeader(new Object[]{"Claus 2", "Ibsen 2", "c_ibsen"},
-                CassandraConstants.CQL_QUERY, "update camel_user set first_name=?, last_name=? where login=?");
+        producerTemplate.requestBodyAndHeader(new Object[] {"Claus 2", "Ibsen 2", "c_ibsen"}, CassandraConstants.CQL_QUERY,
+                                              "update camel_user set first_name=?, last_name=? where login=?");
 
         Cluster cluster = CassandraUnitUtils.cassandraCluster();
         Session session = cluster.connect(CassandraUnitUtils.KEYSPACE);
@@ -133,8 +118,7 @@ public class CassandraComponentProducerUnpreparedTest extends CamelTestSupport {
                 .with(set("first_name", "Claus 2"))
                 .and(set("last_name", "Ibsen 2"))
                 .where(eq("login", "c_ibsen"));
-        Object response = producerTemplate.requestBodyAndHeader(null,
-                CassandraConstants.CQL_QUERY, update);
+        producerTemplate.requestBodyAndHeader(null, CassandraConstants.CQL_QUERY, update);
 
         Cluster cluster = CassandraUnitUtils.cassandraCluster();
         Session session = cluster.connect(CassandraUnitUtils.KEYSPACE);

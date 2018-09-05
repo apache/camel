@@ -21,38 +21,63 @@
  */
 package $packageName;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Generated;
+
 ## add imports for XStreamConverter and PicklistEnumConverter if needed
 #set ( $hasPicklists = $utility.hasPicklists($desc) )
 #set ( $hasMultiSelectPicklists = $utility.hasMultiSelectPicklists($desc) )
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-#if ( $hasPicklists || $hasMultiSelectPicklists )
+#if ( ($hasPicklists && !$useStringsForPicklists) || $hasMultiSelectPicklists )
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 #end
-#if ( $hasPicklists )
+
+#if ( $hasPicklists && !$useStringsForPicklists )
 import org.apache.camel.component.salesforce.api.PicklistEnumConverter;
 #end
 #if ( $hasMultiSelectPicklists )
+#if ( $useStringsForPicklists )
+import org.apache.camel.component.salesforce.api.StringMultiSelectPicklistConverter;
+import org.apache.camel.component.salesforce.api.StringMultiSelectPicklistDeserializer;
+import org.apache.camel.component.salesforce.api.StringMultiSelectPicklistSerializer;
+#else
 import org.apache.camel.component.salesforce.api.MultiSelectPicklistConverter;
 import org.apache.camel.component.salesforce.api.MultiSelectPicklistDeserializer;
 import org.apache.camel.component.salesforce.api.MultiSelectPicklistSerializer;
 #end
-import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
-import org.codehaus.jackson.annotate.JsonProperty;
+#end
+import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
+import org.apache.camel.component.salesforce.api.dto.ChildRelationShip;
+import org.apache.camel.component.salesforce.api.dto.InfoUrls;
+import org.apache.camel.component.salesforce.api.dto.NamedLayoutInfo;
+import org.apache.camel.component.salesforce.api.dto.RecordTypeInfo;
+import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
+import org.apache.camel.component.salesforce.api.dto.SObjectDescriptionUrls;
+import org.apache.camel.component.salesforce.api.dto.SObjectField;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 #if ( $hasMultiSelectPicklists )
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 #end
 
 /**
  * Salesforce DTO for SObject $desc.Name
  */
+@Generated("org.apache.camel.maven.CamelSalesforceMojo")
 @XStreamAlias("$desc.Name")
-public class $desc.Name extends AbstractSObjectBase {
+public class $desc.Name extends AbstractDescribedSObjectBase {
+
+    private static final SObjectDescription DESCRIPTION = createSObjectDescription();
 
 #foreach ( $field in $desc.Fields )
-#if ( $utility.notBaseField($field.Name) )
+#set ( $fieldType = $utility.getFieldType($desc, $field) )
+#if ( ($utility.notBaseField($field.Name)) && ($fieldType) )
 #set ( $fieldName = $field.Name )
-#set ( $fieldType = $utility.getFieldType($field) )
 #set ( $isMultiSelectPicklist = $utility.isMultiSelectPicklist($field) )
     // $fieldName
 #if ( $utility.isBlobField($field) )
@@ -61,10 +86,14 @@ public class $desc.Name extends AbstractSObjectBase {
 #set ( $propertyName = $fieldName )
 #end
 ## add a converter annotation if needed
-#if ( !$isMultiSelectPicklist && $utility.isPicklist($field) )
+#if ( !$useStringsForPicklists && !$isMultiSelectPicklist && $utility.isPicklist($field) )
     @XStreamConverter(PicklistEnumConverter.class)
 #elseif ( $isMultiSelectPicklist )
+#if ( $useStringsForPicklists )
+    @XStreamConverter(StringMultiSelectPicklistConverter.class)
+#else
     @XStreamConverter(MultiSelectPicklistConverter.class)
+#end
 #else
 ## add an alias for blob field url if needed
 #if ( $propertyName != $fieldName )
@@ -76,7 +105,12 @@ public class $desc.Name extends AbstractSObjectBase {
 
     @JsonProperty("$fieldName")
 #if ( $isMultiSelectPicklist )
+#if ( $useStringsForPicklists )
+    @JsonSerialize(using = StringMultiSelectPicklistSerializer.class)
+#else
     @JsonSerialize(using = MultiSelectPicklistSerializer.class)
+#end
+    @JsonInclude(value = Include.ALWAYS)
 #end
     public $fieldType get$propertyName() {
         return this.$propertyName;
@@ -84,12 +118,98 @@ public class $desc.Name extends AbstractSObjectBase {
 
     @JsonProperty("$fieldName")
 #if ( $isMultiSelectPicklist )
+#if ( $useStringsForPicklists )
+    @JsonDeserialize(using = StringMultiSelectPicklistDeserializer.class)
+#else
     @JsonDeserialize(using = MultiSelectPicklistDeserializer.class)
+#end
 #end
     public void set$propertyName($fieldType $propertyName) {
         this.$propertyName = $propertyName;
     }
 
+#if ( $utility.isLookup($field) )## IS LOOKUP
+#foreach ( $reference in $field.getReferenceTo() )## REFERENCE LOOP
+#foreach ( $externalIds in $utility.externalIdsOf($reference) )## EXTERNAL ID LOOP
+#set( $relationshipAsFieldName = $field.getRelationshipName() )
+#set( $lookupObjectType = $reference )
+    private ${lookupObjectType}_Lookup $relationshipAsFieldName;
+
+    @JsonProperty("$relationshipAsFieldName")
+    public ${lookupObjectType}_Lookup get$relationshipAsFieldName() {
+        return this.$relationshipAsFieldName;
+    }
+
+    @JsonProperty("$relationshipAsFieldName")
+    public void set$relationshipAsFieldName(${lookupObjectType}_Lookup $relationshipAsFieldName) {
+        this.$relationshipAsFieldName = $relationshipAsFieldName;
+    }
+#end## END REFERENCE LOOP
+#end## END EXTERNAL ID LOOP
+#end## END IS LOOKUP
 #end
 #end
+
+##
+## macro to generate source code based on Java beans (supports SObjectDescription properties)
+##
+#macro( generateSource $obj )## MACRO
+#foreach ( $p in $utility.propertiesOf($obj) )## PROPERTY LOOP
+#if ( $utility.notNull(${p.value}) )## VALUE DEFINED CONDITION
+#if ( ${p.value.class.name} == "java.lang.String" )## STRING CONDITION
+        ${utility.current()}.set${p.key}("$esc.escapeJava(${p.value})");
+#elseif ( ${utility.isPrimitiveOrBoxed(${p.value})} )## PRIMITIVE OR BOXED CONDITION
+        ${utility.current()}.set${p.key}(${p.value});
+#elseif ( ${p.value.class.name} == "java.util.ArrayList" )## LIST CONDITION
+#if ( ${utility.includeList(${p.value}, ${p.key})} )## VALUE NOT EMPTY CONDITION
+#set ( $var = ${utility.variableName(${p.key})} )
+
+        final List<${p.value[0].class.simpleName}> ${var} = new ArrayList<>();
+        ${utility.current()}.set${p.key}(${var});
+${utility.push($var)}
+#if ( ${p.value[0].class.name} == "java.lang.String" )## STRING LIST ELEMENTS
+#foreach ( $i in ${p.value} )## STRING LIST LOOP
+        ${utility.current()}.add("${i}");
+#end## END STRING LIST LOOP
+${utility.pop()}
+#else
+#foreach ( $i in ${p.value} )## BEAN LIST LOOP
+#set ( $var = ${utility.variableName(${i.class.simpleName})} )
+#if ( ${i.class.simpleName} == "SObjectField" )
+        final ${i.class.simpleName} $var = createField("${i.name}", "${i.label}", "${i.type}", "${i.soapType}", ${i.length}, ${i.unique}, ${i.nillable}, ${i.nameField}, ${i.externalId}, ${i.custom}, ${i.caseSensitive}, ${i.idLookup});
+        ${utility.current()}.add(${var});
+#else
+        final ${i.class.simpleName} $var = new ${i.class.simpleName}();
+        ${utility.current()}.add(${var});
+${utility.push($var)}
+#generateSource( ${i} )
+${utility.pop()}
+#end## SObjectField CONDITION
+#end## END BEAN LIST LOOP
+${utility.pop()}
+#end## END STRING LIST ELEMENTS
+#end## END VALUE NOT EMPTY CONDITION
+#else
+#set ( $var = ${utility.variableName(${p.value.class.simpleName})} )
+${utility.push($var)}
+        final ${p.value.class.simpleName} $var = new ${p.value.class.simpleName}();
+#generateSource( ${p.value} )
+${utility.pop()}        ${utility.current()}.set${p.key}(${var});
+#end## END TYPE CONDITION
+#end## VALUE DEFINED CONDITION
+#end## END PROPERTY LOOP
+#end## END MACRO
+    @Override
+    public final SObjectDescription description() {
+        return DESCRIPTION;
+    }
+
+    private static SObjectDescription createSObjectDescription() {
+        final SObjectDescription description = new SObjectDescription();
+
+$utility.start("description")
+#generateSource( $desc )
+
+        return description;
+    }
 }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.management;
 
+import org.junit.Test;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -30,6 +32,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class SpringJmxRecipientListRegisterAlwaysTest extends SpringTestSupport {
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringJmxRecipientListTestRegisterAlways.xml");
     }
@@ -38,6 +45,7 @@ public class SpringJmxRecipientListRegisterAlwaysTest extends SpringTestSupport 
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
+    @Test
     public void testJmxEndpointsAddedDynamicallyAlwaysRegister() throws Exception {
         MockEndpoint x = getMockEndpoint("mock:x");
         MockEndpoint y = getMockEndpoint("mock:y");

@@ -34,7 +34,7 @@ import org.apache.camel.util.ResourceHelper;
  */
 public class ExpressionMapper extends BaseConverter {
     
-    private ThreadLocal<Exchange> currentExchange = new ThreadLocal<Exchange>();
+    private ThreadLocal<Exchange> currentExchange = new ThreadLocal<>();
     
     @Override
     public Object convert(Object existingDestinationFieldValue, 
@@ -98,7 +98,7 @@ public class ExpressionMapper extends BaseConverter {
      * @throws IOException is thrown if resource is not found or cannot be loaded
      */
     protected InputStream loadResource(String uri) throws IOException {
-        return ResourceHelper.resolveMandatoryResourceAsInputStream(currentExchange.get().getContext().getClassResolver(), uri);
+        return ResourceHelper.resolveMandatoryResourceAsInputStream(currentExchange.get().getContext(), uri);
     }
     
     /**

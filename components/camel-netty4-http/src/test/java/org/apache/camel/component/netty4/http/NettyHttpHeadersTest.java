@@ -26,7 +26,7 @@ public class NettyHttpHeadersTest extends BaseNettyTest {
     public void testHttpHeaders() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:input").expectedHeaderReceived("beer", "yes");
-        getMockEndpoint("mock:input").expectedHeaderReceived("host", "localhost");
+        getMockEndpoint("mock:input").expectedHeaderReceived("host", "localhost:" + getPort());
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://localhost:" + getPort() + "/foo");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URI, "/foo");

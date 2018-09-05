@@ -22,7 +22,9 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.mina.core.filterchain.IoFilter;
 
@@ -31,9 +33,12 @@ import org.apache.mina.core.filterchain.IoFilter;
  *
  * @version 
  */
-public class Mina2Component extends UriEndpointComponent {
+public class Mina2Component extends UriEndpointComponent implements SSLContextParametersAware {
 
+    @Metadata(label = "advanced")
     private Mina2Configuration configuration;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public Mina2Component() {
         super(Mina2Endpoint.class);
@@ -64,6 +69,10 @@ public class Mina2Component extends UriEndpointComponent {
         config.setProtocol(u.getScheme());
         config.setFilters(resolveAndRemoveReferenceListParameter(parameters, "filters", IoFilter.class));
         setProperties(config, parameters);
+
+        if (config.getSslContextParameters() == null) {
+            config.setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
 
         return createEndpoint(uri, config);
     }
@@ -110,4 +119,18 @@ public class Mina2Component extends UriEndpointComponent {
     public void setConfiguration(Mina2Configuration configuration) {
         this.configuration = configuration;
     }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
 }

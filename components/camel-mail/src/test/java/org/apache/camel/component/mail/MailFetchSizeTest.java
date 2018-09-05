@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+import org.junit.Before;
 
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -33,6 +34,7 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailFetchSizeTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();
@@ -57,8 +59,8 @@ public class MailFetchSizeTest extends CamelTestSupport {
         mock.reset();
         mock.expectedMessageCount(2);
         mock.expectedBodiesReceived("Message 2", "Message 3");
-        // should be done within 5 (delay) + 1 seconds (polling)
-        mock.setResultWaitTime(7000L);
+        // should be done within 2 (delay) + 1 seconds (polling)
+        mock.setResultWaitTime(3000L);
         mock.assertIsSatisfied();
 
         Thread.sleep(500);
@@ -85,6 +87,7 @@ public class MailFetchSizeTest extends CamelTestSupport {
         Message[] messages = new Message[5];
         for (int i = 0; i < 5; i++) {
             messages[i] = new MimeMessage(sender.getSession());
+            messages[i].setHeader("Message-ID", "" + i);
             messages[i].setText("Message " + i);
         }
         folder.appendMessages(messages);
@@ -94,7 +97,7 @@ public class MailFetchSizeTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://jones@localhost?password=secret&fetchSize=2&consumer.delay=5000"
+                from("pop3://jones@localhost?password=secret&fetchSize=2&consumer.delay=2000"
                     + "&delete=true").to("mock:result");
             }
         };

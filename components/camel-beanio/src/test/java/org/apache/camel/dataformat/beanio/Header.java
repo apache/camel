@@ -104,7 +104,7 @@ public class Header implements BeanIOHeader {
 
     @Override
     public Map<String, Object> getHeaders() {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(recordType + "Date", headerDate);
         return headers;
     }

@@ -31,16 +31,16 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * CSV data format
+ * The CSV data format is used for handling CSV payloads.
  */
-@Metadata(label = "dataformat,transformation", title = "CSV")
+@Metadata(firstVersion = "1.3.0", label = "dataformat,transformation,csv", title = "CSV")
 @XmlRootElement(name = "csv")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CsvDataFormat extends DataFormatDefinition {
     // Format options
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "advanced")
     private String formatRef;
-    @XmlAttribute
+    @XmlAttribute @Metadata(enums = "DEFAULT,EXCEL,INFORMIX_UNLOAD,INFORMIX_UNLOAD_CSV,MYSQL,RFC4180")
     private String formatName;
     @XmlAttribute
     private Boolean commentMarkerDisabled;
@@ -76,12 +76,22 @@ public class CsvDataFormat extends DataFormatDefinition {
     private String recordSeparator;
     @XmlAttribute
     private Boolean skipHeaderRecord;
+    @XmlAttribute
+    private String quoteMode;
+    @XmlAttribute
+    private Boolean ignoreHeaderCase;
+    @XmlAttribute
+    private Boolean trim;
+    @XmlAttribute
+    private Boolean trailingDelimiter;
 
     // Unmarshall options
     @XmlAttribute
     private Boolean lazyLoad;
     @XmlAttribute
     private Boolean useMaps;
+    @XmlAttribute
+    private Boolean useOrderedMaps;
     @XmlAttribute
     private String recordConverterRef;
 
@@ -159,6 +169,18 @@ public class CsvDataFormat extends DataFormatDefinition {
         if (skipHeaderRecord != null) {
             setProperty(camelContext, dataFormat, "skipHeaderRecord", skipHeaderRecord);
         }
+        if (quoteMode != null) {
+            setProperty(camelContext, dataFormat, "quoteMode", quoteMode);
+        }
+        if (trim != null) {
+            setProperty(camelContext, dataFormat, "trim", trim);
+        }
+        if (ignoreHeaderCase != null) {
+            setProperty(camelContext, dataFormat, "ignoreHeaderCase", ignoreHeaderCase);
+        }
+        if (trailingDelimiter != null) {
+            setProperty(camelContext, dataFormat, "trailingDelimiter", trailingDelimiter);
+        }
 
         // Unmarshall options
         if (lazyLoad != null) {
@@ -166,6 +188,9 @@ public class CsvDataFormat extends DataFormatDefinition {
         }
         if (useMaps != null) {
             setProperty(camelContext, dataFormat, "useMaps", useMaps);
+        }
+        if (useOrderedMaps != null) {
+            setProperty(camelContext, dataFormat, "useOrderedMaps", useOrderedMaps);
         }
         if (ObjectHelper.isNotEmpty(recordConverterRef)) {
             Object recordConverter = CamelContextHelper.mandatoryLookup(camelContext, recordConverterRef);
@@ -374,7 +399,7 @@ public class CsvDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Sets the record separator (aka new line) which by default is \r\n (CRLF)
+     * Sets the record separator (aka new line) which by default is new line characters (CRLF)
      */
     public void setRecordSeparator(String recordSeparator) {
         this.recordSeparator = recordSeparator;
@@ -389,6 +414,17 @@ public class CsvDataFormat extends DataFormatDefinition {
      */
     public void setSkipHeaderRecord(Boolean skipHeaderRecord) {
         this.skipHeaderRecord = skipHeaderRecord;
+    }
+
+    public String getQuoteMode() {
+        return quoteMode;
+    }
+
+    /**
+     * Sets the quote mode
+     */
+    public void setQuoteMode(String quoteMode) {
+        this.quoteMode = quoteMode;
     }
 
     public Boolean getLazyLoad() {
@@ -407,10 +443,21 @@ public class CsvDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header (either defined or collected).
+     * Whether the unmarshalling should produce maps (HashMap)for the lines values instead of lists. It requires to have header (either defined or collected).
      */
     public void setUseMaps(Boolean useMaps) {
         this.useMaps = useMaps;
+    }
+
+    public Boolean getUseOrderedMaps() {
+        return useOrderedMaps;
+    }
+
+    /**
+     * Whether the unmarshalling should produce ordered maps (LinkedHashMap) for the lines values instead of lists. It requires to have header (either defined or collected).
+     */
+    public void setUseOrderedMaps(Boolean useOrderedMaps) {
+        this.useOrderedMaps = useOrderedMaps;
     }
 
     public String getRecordConverterRef() {
@@ -422,6 +469,39 @@ public class CsvDataFormat extends DataFormatDefinition {
      */
     public void setRecordConverterRef(String recordConverterRef) {
         this.recordConverterRef = recordConverterRef;
+    }
+
+    /**
+     * Sets whether or not to trim leading and trailing blanks.
+     */
+    public void setTrim(Boolean trim) {
+        this.trim = trim;
+    }
+
+    public Boolean getTrim() {
+        return trim;
+    }
+    
+    /**
+     * Sets whether or not to ignore case when accessing header names.
+     */
+    public void setIgnoreHeaderCase(Boolean ignoreHeaderCase) {
+        this.ignoreHeaderCase = ignoreHeaderCase;
+    }
+    
+    public Boolean getIgnoreHeaderCase() {
+        return ignoreHeaderCase;
+    }
+    
+    /**
+     * Sets whether or not to add a trailing delimiter.
+     */
+    public void setTrailingDelimiter(Boolean trailingDelimiter) {
+        this.trailingDelimiter = trailingDelimiter;
+    }
+    
+    public Boolean getTrailingDelimiter() {
+        return trailingDelimiter;
     }
 
 }

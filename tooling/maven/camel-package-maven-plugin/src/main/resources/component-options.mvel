@@ -1,0 +1,13 @@
+@if{componentOptions.isEmpty()}
+The @{title} component has no options.
+@else{}
+The @{title} component supports @{componentOptions.size()} options, which are listed below.
+@end{}
+
+@if{!componentOptions.isEmpty()}
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+@foreach{row : componentOptions}| *@{row.getShortName(25)}* (@{row.shortGroup}) | @{row.description} | @{row.getShortDefaultValue(20)} | @{row.getShortJavaType(25)}
+@end{}|===
+@end{}

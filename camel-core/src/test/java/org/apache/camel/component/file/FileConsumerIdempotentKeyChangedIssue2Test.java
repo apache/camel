@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import org.junit.Test;
+
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -27,10 +29,14 @@ public class FileConsumerIdempotentKeyChangedIssue2Test extends ContextTestSuppo
 
     private Endpoint endpoint;
 
+    @Test
     public void testFile() throws Exception {
         getMockEndpoint("mock:file").expectedBodiesReceived("Hello World");
 
         template.sendBodyAndHeader(endpoint, "Hello World", Exchange.FILE_NAME, "hello.txt");
+
+        context.startAllRoutes();
+
         assertMockEndpointsSatisfied();
         oneExchangeDone.matches(5, TimeUnit.SECONDS);
 
@@ -38,7 +44,7 @@ public class FileConsumerIdempotentKeyChangedIssue2Test extends ContextTestSuppo
         getMockEndpoint("mock:file").expectedBodiesReceived("Hello World Again");
 
         // wait a bit to allow the consumer to poll once and see a non-changed file
-        Thread.sleep(250);
+        Thread.sleep(50);
 
         template.sendBodyAndHeader(endpoint, "Hello World Again", Exchange.FILE_NAME, "hello.txt");
 
@@ -50,10 +56,10 @@ public class FileConsumerIdempotentKeyChangedIssue2Test extends ContextTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                endpoint = endpoint("file:target/changed?noop=true&delay=100"
+                endpoint = endpoint("file:target/changed?noop=true&initialDelay=0&delay=10"
                         + "&idempotentKey=${file:name}-${file:size}-${file:modified}");
 
-                from(endpoint)
+                from(endpoint).noAutoStartup()
                     .convertBodyTo(String.class)
                     .to("log:file")
                     .to("mock:file");

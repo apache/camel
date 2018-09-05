@@ -76,10 +76,10 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
     @Override
     protected Connection createListenerContainer() throws Exception {
 
-        log.debug("Creating connection");
+        log.trace("Creating connection");
         Connection conn = endpoint.connect(executorService);
 
-        log.debug("Creating channel");
+        log.trace("Creating channel");
         Channel channel = conn.createChannel();
         // setup the basicQos
         if (endpoint.isPrefetchEnabled()) {
@@ -89,10 +89,10 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
         //Let the server pick a random name for us
         DeclareOk result = channel.queueDeclare();
-        log.debug("Temporary queue name {}", result.getQueue());
+        log.debug("Using temporary queue name: {}", result.getQueue());
         setReplyTo(result.getQueue());
 
-        //TODO check for the RabbitMQConstants.EXCHANGE_NAME header 
+        //TODO check for the RabbitMQConstants.EXCHANGE_NAME header
         channel.queueBind(getReplyTo(), endpoint.getExchangeName(), getReplyTo());
 
         consumer = new RabbitConsumer(this, channel);
@@ -120,7 +120,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
          *
          * @param channel the channel to which this consumer is attached
          */
-        public RabbitConsumer(TemporaryQueueReplyManager consumer, Channel channel) {
+        RabbitConsumer(TemporaryQueueReplyManager consumer, Channel channel) {
             super(channel);
             this.consumer = consumer;
             this.channel = channel;
@@ -129,7 +129,6 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         @Override
         public void handleDelivery(String consumerTag, Envelope envelope,
                                    AMQP.BasicProperties properties, byte[] body) throws IOException {
-
             consumer.onMessage(properties, body);
         }
 
@@ -137,7 +136,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
          * Bind consumer to channel
          */
         private void start() throws IOException {
-            tag = channel.basicConsume(getReplyTo(), endpoint.isAutoAck(), this);
+            tag = channel.basicConsume(getReplyTo(), true, this);
         }
 
         /**
@@ -152,4 +151,5 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
             }
         }
     }
+
 }

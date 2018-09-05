@@ -220,7 +220,7 @@ public class ComponentConfigurationTest {
         assertEquals("foo", "xyz", endpoint.getFoo());
         assertEquals("bar", 5, endpoint.getBar());
 
-        LOG.info("Created endpoint " + endpoint + " on URI " + endpoint.getEndpointUri());
+        LOG.info("Created endpoint {} on URI {}", endpoint, endpoint.getEndpointUri());
 
         // lets try configure a parameter
         configuration.setEndpointParameter(endpoint, "bar", 6);

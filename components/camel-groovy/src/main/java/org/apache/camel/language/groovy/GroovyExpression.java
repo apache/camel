@@ -86,7 +86,7 @@ public class GroovyExpression extends ExpressionSupport {
     }
 
     private Binding createBinding(Exchange exchange) {
-        Map<String, Object> variables = new HashMap<String, Object>();
+        Map<String, Object> variables = new HashMap<>();
         ExchangeHelper.populateVariableMap(exchange, variables);
         return new Binding(variables);
     }

@@ -31,11 +31,11 @@ public class CellMappingStrategyFactory {
     public static final String BODY = "body";
 
     private static final Logger LOG = LoggerFactory.getLogger(CellMappingStrategyFactory.class);
-    private static final Map<String, CellMappingStrategy> DEFAULT_STRATIGIES = new HashMap<String, CellMappingStrategy>();
+    private static final Map<String, CellMappingStrategy> DEFAULT_STRATEGIES = new HashMap<>();
 
     public CellMappingStrategyFactory() {
-        DEFAULT_STRATIGIES.put(HEADER, new HeaderMappingStrategy());
-        DEFAULT_STRATIGIES.put(BODY, new BodyMappingStrategy());
+        DEFAULT_STRATEGIES.put(HEADER, new HeaderMappingStrategy());
+        DEFAULT_STRATEGIES.put(BODY, new BodyMappingStrategy());
     }
 
     public CellMappingStrategy getStrategy(Message message) {
@@ -43,7 +43,7 @@ public class CellMappingStrategyFactory {
 
         //Check if strategy has been explicitly set.
         if (message.getHeader(STRATEGY) != null) {
-            strategy = DEFAULT_STRATIGIES.get(message.getHeader(STRATEGY, String.class));
+            strategy = DEFAULT_STRATEGIES.get(message.getHeader(STRATEGY, String.class));
         }
 
         if (strategy == null && message.getHeader(STRATEGY_CLASS_NAME) != null) {
@@ -55,7 +55,7 @@ public class CellMappingStrategyFactory {
         }
 
         //Fallback to the default strategy.
-        return DEFAULT_STRATIGIES.get(HEADER);
+        return DEFAULT_STRATEGIES.get(HEADER);
     }
 
     private CellMappingStrategy loadStrategyFromClassName(String strategyClassName) {

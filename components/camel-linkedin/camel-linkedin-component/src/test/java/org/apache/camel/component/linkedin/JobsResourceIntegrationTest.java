@@ -24,9 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.linkedin.internal.JobsResourceApiMethod;
-import org.apache.camel.component.linkedin.internal.LinkedInApiCollection;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -38,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public class JobsResourceIntegrationTest extends AbstractLinkedInTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobsResourceIntegrationTest.class);
-    private static final String PATH_PREFIX = LinkedInApiCollection.getCollection().getApiName(JobsResourceApiMethod.class).getName();
+    private static final String PATH_PREFIX = "jobs";
 
     // TODO provide parameter values for addJob
     @Ignore
@@ -52,7 +49,7 @@ public class JobsResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore
     @Test
     public void testEditJob() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelLinkedIn.partner_job_id", 0L);
         // parameter type is org.apache.camel.component.linkedin.api.model.Job
         headers.put("CamelLinkedIn.job", null);
@@ -64,7 +61,7 @@ public class JobsResourceIntegrationTest extends AbstractLinkedInTestSupport {
     @Ignore
     @Test
     public void testGetJob() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelLinkedIn.job_id", 0L);
         // parameter type is String
         headers.put("CamelLinkedIn.fields", null);

@@ -22,7 +22,6 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -42,7 +41,7 @@ public final class URISupport {
     // Match any key-value pair in the URI query string whose key contains
     // "passphrase" or "password" or secret key (case-insensitive).
     // First capture group is the key, second is the value.
-    private static final Pattern SECRETS = Pattern.compile("([?&][^=]*(?:passphrase|password|secretKey)[^=]*)=([^&]*)",
+    private static final Pattern SECRETS = Pattern.compile("([?&][^=]*(?:passphrase|password|secretKey)[^=]*)=(RAW\\(.*\\)|[^&]*)",
             Pattern.CASE_INSENSITIVE);
     
     // Match the user password in the URI as second capture group
@@ -63,7 +62,7 @@ public final class URISupport {
      * Removes detected sensitive information (such as passwords) from the URI and returns the result.
      *
      * @param uri The uri to sanitize.
-     * @see #SECRETS for the matched pattern
+     * @see #SECRETS and #USERINFO_PASSWORD for the matched pattern
      *
      * @return Returns null if the uri is null, otherwise the URI with the passphrase, password or secretKey sanitized.
      */
@@ -176,7 +175,7 @@ public final class URISupport {
 
         if (uri == null || ObjectHelper.isEmpty(uri)) {
             // return an empty map
-            return new LinkedHashMap<String, Object>(0);
+            return new LinkedHashMap<>(0);
         }
 
         // need to parse the uri query parameters manually as we cannot rely on splitting by &,
@@ -184,7 +183,7 @@ public final class URISupport {
 
         try {
             // use a linked map so the parameters is in the same order
-            Map<String, Object> rc = new LinkedHashMap<String, Object>();
+            Map<String, Object> rc = new LinkedHashMap<>();
 
             boolean isKey = true;
             boolean isValue = false;
@@ -292,7 +291,7 @@ public final class URISupport {
                 list = CastUtils.cast((List<?>) existing);
             } else {
                 // create a new list to hold the multiple values
-                list = new ArrayList<String>();
+                list = new ArrayList<>();
                 String s = existing != null ? existing.toString() : null;
                 if (s != null) {
                     list.add(s);
@@ -319,7 +318,7 @@ public final class URISupport {
             int idx = schemeSpecificPart.indexOf('?');
             if (idx < 0) {
                 // return an empty map
-                return new LinkedHashMap<String, Object>(0);
+                return new LinkedHashMap<>(0);
             } else {
                 query = schemeSpecificPart.substring(idx + 1);
             }
@@ -382,9 +381,9 @@ public final class URISupport {
 
         // assemble string as new uri and replace parameters with the query instead
         String s = uri.toString();
-        String before = ObjectHelper.before(s, "?");
+        String before = StringHelper.before(s, "?");
         if (before == null) {
-            before = ObjectHelper.before(s, "#");
+            before = StringHelper.before(s, "#");
         }
         if (before != null) {
             s = before;
@@ -582,10 +581,10 @@ public final class URISupport {
             return buildUri(scheme, path, null);
         } else {
             // reorder parameters a..z
-            List<String> keys = new ArrayList<String>(parameters.keySet());
-            Collections.sort(keys);
+            List<String> keys = new ArrayList<>(parameters.keySet());
+            keys.sort(null);
 
-            Map<String, Object> sorted = new LinkedHashMap<String, Object>(parameters.size());
+            Map<String, Object> sorted = new LinkedHashMap<>(parameters.size());
             for (String key : keys) {
                 sorted.put(key, parameters.get(key));
             }
@@ -599,5 +598,38 @@ public final class URISupport {
     private static String buildUri(String scheme, String path, String query) {
         // must include :// to do a correct URI all components can work with
         return scheme + "://" + path + (query != null ? "?" + query : "");
+    }
+
+    public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix) {
+        Map<String, Object> rc = new LinkedHashMap<>(properties.size());
+
+        for (Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator(); it.hasNext();) {
+            Map.Entry<String, Object> entry = it.next();
+            String name = entry.getKey();
+            if (name.startsWith(optionPrefix)) {
+                Object value = properties.get(name);
+                name = name.substring(optionPrefix.length());
+                rc.put(name, value);
+                it.remove();
+            }
+        }
+
+        return rc;
+    }
+
+    public static String pathAndQueryOf(final URI uri) {
+        final String path = uri.getPath();
+
+        String pathAndQuery = path;
+        if (ObjectHelper.isEmpty(path)) {
+            pathAndQuery = "/";
+        }
+
+        final String query = uri.getQuery();
+        if (ObjectHelper.isNotEmpty(query)) {
+            pathAndQuery += "?" + query;
+        }
+
+        return pathAndQuery;
     }
 }

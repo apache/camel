@@ -40,6 +40,13 @@ public @interface UriPath {
     String name() default "";
 
     /**
+     * A human display name of the parameter.
+     * <p/>
+     * This is used for documentation and tooling only.
+     */
+    String displayName() default "";
+
+    /**
      * The default value of the parameter.
      * <p/>
      * Note that this attribute is only for documentation purpose. The default value in use at runtime is the value the Java field was assigned.
@@ -78,5 +85,12 @@ public @interface UriPath {
      * The labels is intended for grouping the parameters, such as <tt>consumer</tt>, <tt>producer</tt>, <tt>common</tt>, <tt>security</tt>, etc.
      */
     String label() default "";
+
+    /**
+     * To re-associate the preferred Java type of this parameter.
+     * <p/>
+     * This is used for parameters which are of a specialized type but can be configured by another Java type, such as from a String.
+     */
+    String javaType() default "";
 
 }

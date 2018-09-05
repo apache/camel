@@ -45,7 +45,7 @@ abstract class CsvUnmarshaller {
 
     public static CsvUnmarshaller create(CSVFormat format, CsvDataFormat dataFormat) {
         // If we want to use maps, thus the header must be either fixed or automatic
-        if (dataFormat.isUseMaps() && format.getHeader() == null) {
+        if ((dataFormat.isUseMaps() || dataFormat.isUseOrderedMaps()) && format.getHeader() == null) {
             format = format.withHeader();
         }
         // If we want to skip the header record it must automatic otherwise it's not working
@@ -72,6 +72,8 @@ abstract class CsvUnmarshaller {
     private static CsvRecordConverter<?> extractConverter(CsvDataFormat dataFormat) {
         if (dataFormat.getRecordConverter() != null) {
             return dataFormat.getRecordConverter();
+        } else if (dataFormat.isUseOrderedMaps()) {
+            return CsvRecordConverters.orderedMapConverter();
         } else if (dataFormat.isUseMaps()) {
             return CsvRecordConverters.mapConverter();
         } else {
@@ -99,7 +101,7 @@ abstract class CsvUnmarshaller {
         }
 
         private <T> List<T> asList(Iterator<CSVRecord> iterator, CsvRecordConverter<T> converter) {
-            List<T> answer = new ArrayList<T>();
+            List<T> answer = new ArrayList<>();
             while (iterator.hasNext()) {
                 answer.add(converter.convertRecord(iterator.next()));
             }

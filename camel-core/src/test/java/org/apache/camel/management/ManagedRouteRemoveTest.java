@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.Set;
 import javax.management.MBeanServer;
@@ -31,11 +34,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class ManagedRouteRemoveTest extends ManagementTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/managed");
         super.setUp();
     }
 
+    @Test
     public void testRemove() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -86,7 +91,7 @@ public class ManagedRouteRemoveTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/managed").to("mock:result");
+                from("file://target/managed?initialDelay=0&delay=10").to("mock:result");
             }
         };
     }

@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.linkedin.api;
+import org.junit.Before;
+import org.junit.After;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,7 +45,7 @@ public abstract class AbstractResourceIntegrationTest extends Assert {
     protected static LinkedInOAuthRequestFilter requestFilter;
     private static Properties properties;
     private static OAuthToken token;
-    private static List<Object> resourceList = new ArrayList<Object>();
+    private static List<Object> resourceList = new ArrayList<>();
 
     @BeforeClass
     public static void beforeClass() throws Exception {

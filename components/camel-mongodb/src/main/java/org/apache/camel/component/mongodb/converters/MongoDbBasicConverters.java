@@ -18,16 +18,12 @@ package org.apache.camel.component.mongodb.converters;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 import com.mongodb.util.JSONCallback;
-
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
@@ -42,14 +38,11 @@ public final class MongoDbBasicConverters {
     
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbBasicConverters.class);
 
-    // Jackson's ObjectMapper is thread-safe, so no need to create a pool nor synchronize access to it
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
     private MongoDbBasicConverters() {
     }
     
     @Converter
-    public static DBObject fromMapToDBObject(Map<?, ?> map) {
+    public static BasicDBObject fromMapToDBObject(Map<?, ?> map) {
         return new BasicDBObject(map);
     }
     
@@ -57,47 +50,33 @@ public final class MongoDbBasicConverters {
     public static Map<String, Object> fromBasicDBObjectToMap(BasicDBObject basicDbObject) {
         return basicDbObject;
     }
-    
+
     @Converter
-    public static DBObject fromStringToDBObject(String s) {
-        DBObject answer = null;
-        try {
-            answer = (DBObject) JSON.parse(s);
-        } catch (Exception e) {
-            LOG.warn("String -> DBObject conversion selected, but the following exception occurred. Returning null.", e);
-        }
-        
-        return answer;
-    }
-   
-    @Converter
-    public static DBObject fromFileToDBObject(File f, Exchange exchange) throws FileNotFoundException {
+    public static BasicDBObject fromFileToDBObject(File f, Exchange exchange) throws Exception {
         return fromInputStreamToDBObject(new FileInputStream(f), exchange);
     }
     
     @Converter
-    public static DBObject fromInputStreamToDBObject(InputStream is, Exchange exchange) {
-        DBObject answer = null;
+    public static BasicDBObject fromInputStreamToDBObject(InputStream is, Exchange exchange) throws Exception {
+        BasicDBObject answer;
         try {
             byte[] input = IOConverter.toBytes(is);
             
             if (isBson(input)) {
                 BSONCallback callback = new JSONCallback();
                 new BasicBSONDecoder().decode(input, callback);
-                answer = (DBObject) callback.get();
+                answer = (BasicDBObject) callback.get();
             } else {
-                answer = (DBObject) JSON.parse(IOConverter.toString(input, exchange));
+                answer = (BasicDBObject) JSON.parse(IOConverter.toString(input, exchange));
             }
-        } catch (Exception e) {
-            LOG.warn("String -> DBObject conversion selected, but the following exception occurred. Returning null.", e);
         } finally {
             // we need to make sure to close the input stream
             IOHelper.close(is, "InputStream", LOG);
         }
         return answer;
     }
-   
-    /** 
+
+    /**
      * If the input starts with any number of whitespace characters and then a '{' character, we
      * assume it is JSON rather than BSON. There are probably no useful BSON blobs that fit this pattern
      */
@@ -113,18 +92,4 @@ public final class MongoDbBasicConverters {
         return true;
     }
 
-    @Converter
-    public static DBObject fromAnyObjectToDBObject(Object value) {
-        BasicDBObject answer;
-        try {
-            Map<?, ?> m = OBJECT_MAPPER.convertValue(value, Map.class);
-            answer = new BasicDBObject(m);
-        } catch (Exception e) {
-            LOG.warn("Conversion has fallen back to generic Object -> DBObject, but unable to convert type {}. Returning null.", 
-                    value.getClass().getCanonicalName());
-            return null;
-        }
-        return answer;
-    }
-    
 }

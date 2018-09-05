@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -25,6 +27,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class BeanParameterValueOgnlTest extends ContextTestSupport {
 
+    @Test
     public void testBeanParameterValue() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
@@ -33,6 +36,7 @@ public class BeanParameterValueOgnlTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanParameterValueBodyOgnl() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello Tony");
 
@@ -42,6 +46,7 @@ public class BeanParameterValueOgnlTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanParameterValueHeaderOgnl() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello Kong");
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -37,6 +39,7 @@ public class ManagedRestRegistryTest extends ManagementTestSupport {
         return new DefaultCamelContext(registry);
     }
 
+    @Test
     public void testRestRegistry() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -63,6 +66,10 @@ public class ManagedRestRegistryTest extends ManagementTestSupport {
 
         TabularData data = (TabularData) mbeanServer.invoke(name, "listRestServices", null, null);
         assertEquals(3, data.size());
+
+        // should not be enabled as api-doc is not enabled or camel-swagger-java is not on classpath
+        String json = (String) mbeanServer.invoke(name, "apiDocAsJson", null, null);
+        assertNull(json);
 
         // remove all routes
         for (Route route : context.getRoutes()) {

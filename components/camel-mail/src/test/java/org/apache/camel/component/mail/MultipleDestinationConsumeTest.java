@@ -112,7 +112,7 @@ public class MultipleDestinationConsumeTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("pop3://james@localhost?password=foo").to("mock:result");
+                from("pop3://james@localhost?password=foo&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
             }
         };
     }

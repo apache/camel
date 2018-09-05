@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -31,6 +33,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ProxyReturnFutureListTest extends ContextTestSupport {
 
+    @Test
     public void testFutureList() throws Exception {
         Users service = ProxyHelper.createProxy(context.getEndpoint("direct:echo"), Users.class);
 
@@ -39,11 +42,12 @@ public class ProxyReturnFutureListTest extends ContextTestSupport {
         assertFalse("Should not be done", future.isDone());
         log.info("Waiting for future to be done ...");
 
-        List<String> users = future.get(5, TimeUnit.SECONDS);
+        List<String> users = future.get(2, TimeUnit.SECONDS);
         assertEquals("Claus", users.get(0));
         assertEquals("Jonathan", users.get(1));
     }
 
+    @Test
     public void testFutureListCallTwoTimes() throws Exception {
         Users service = ProxyHelper.createProxy(context.getEndpoint("direct:echo"), Users.class);
 
@@ -52,7 +56,7 @@ public class ProxyReturnFutureListTest extends ContextTestSupport {
         assertFalse("Should not be done", future.isDone());
         log.info("Waiting for future to be done ...");
 
-        List<String> users = future.get(5, TimeUnit.SECONDS);
+        List<String> users = future.get(2, TimeUnit.SECONDS);
         assertEquals("Claus", users.get(0));
         assertEquals("Jonathan", users.get(1));
 
@@ -61,7 +65,7 @@ public class ProxyReturnFutureListTest extends ContextTestSupport {
         assertFalse("Should not be done", future.isDone());
         log.info("Waiting for future to be done ...");
 
-        users = future.get(5, TimeUnit.SECONDS);
+        users = future.get(2, TimeUnit.SECONDS);
         assertEquals("Claus", users.get(0));
         assertEquals("Jonathan", users.get(1));
     }
@@ -72,10 +76,10 @@ public class ProxyReturnFutureListTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:echo")
-                    .delay(2000)
+                    .delay(50)
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            List<String> users = new ArrayList<String>();
+                            List<String> users = new ArrayList<>();
                             users.add("Claus");
                             users.add("Jonathan");
                             exchange.getIn().setBody(users);

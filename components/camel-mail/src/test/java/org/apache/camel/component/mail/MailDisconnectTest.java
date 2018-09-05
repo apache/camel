@@ -38,10 +38,10 @@ public class MailDisconnectTest extends CamelTestSupport {
         Thread.sleep(500);
         template.sendBodyAndHeader("smtp://jones@localhost", "C Bla bla", "Subject", "Hello C");
 
-        Thread.sleep(1500);
+        Thread.sleep(500);
         template.sendBodyAndHeader("smtp://jones@localhost", "D Bla bla", "Subject", "Hello D");
 
-        Thread.sleep(1500);
+        Thread.sleep(500);
         template.sendBodyAndHeader("smtp://jones@localhost", "E Bla bla", "Subject", "Hello E");
 
         assertMockEndpointsSatisfied();
@@ -50,7 +50,7 @@ public class MailDisconnectTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://jones@localhost?password=secret&disconnect=true&delay=1000").to("mock:result");
+                from("pop3://jones@localhost?password=secret&disconnect=true&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
             }
         };
     }

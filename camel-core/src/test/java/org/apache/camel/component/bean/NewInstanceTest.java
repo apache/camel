@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import javax.naming.Context;
 
 import org.apache.camel.Body;
@@ -35,6 +37,7 @@ public class NewInstanceTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
     protected JndiContext jndiContext;
 
+    @Test
     public void testSendMessageToDifferentBeans() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedBodiesReceived(1, 2);
@@ -83,7 +86,7 @@ public class NewInstanceTest extends ContextTestSupport {
         }
 
         public int read(@Body String body) {
-            LOG.info("read() method called with: " + body + " on " + this);
+            LOG.info("read() method called with: {} on {}", body, this);
             return id;
         }
     }

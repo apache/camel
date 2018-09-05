@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.olingo2.api.Olingo2ResponseHandler;
 import org.apache.camel.component.olingo2.internal.Olingo2ApiName;
+import org.apache.camel.component.olingo2.internal.Olingo2Constants;
 import org.apache.camel.component.olingo2.internal.Olingo2PropertiesHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.component.AbstractApiProducer;
@@ -38,6 +39,8 @@ public class Olingo2Producer extends AbstractApiProducer<Olingo2ApiName, Olingo2
 
     private static final Logger LOG = LoggerFactory.getLogger(Olingo2Producer.class);
 
+    private static final String RESPONSE_HTTP_HEADERS = "responseHttpHeaders";
+
     public Olingo2Producer(Olingo2Endpoint endpoint) {
         super(endpoint, Olingo2PropertiesHelper.getHelper());
     }
@@ -45,7 +48,7 @@ public class Olingo2Producer extends AbstractApiProducer<Olingo2ApiName, Olingo2
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         // properties for method arguments
-        final Map<String, Object> properties = new HashMap<String, Object>();
+        final Map<String, Object> properties = new HashMap<>();
         properties.putAll(endpoint.getEndpointProperties());
         propertiesHelper.getExchangeProperties(exchange, properties);
 
@@ -56,11 +59,14 @@ public class Olingo2Producer extends AbstractApiProducer<Olingo2ApiName, Olingo2
         // create response handler
         properties.put(Olingo2Endpoint.RESPONSE_HANDLER_PROPERTY, new Olingo2ResponseHandler<Object>() {
             @Override
-            public void onResponse(Object response) {
+            public void onResponse(Object response, Map<String, String> responseHeaders) {
                 // producer returns a single response, even for methods with List return types
                 exchange.getOut().setBody(response);
                 // copy headers
                 exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+                
+                // Add http response headers
+                exchange.getOut().setHeader(Olingo2Constants.PROPERTY_PREFIX + RESPONSE_HTTP_HEADERS, responseHeaders);
 
                 interceptResult(response, exchange);
 

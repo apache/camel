@@ -198,7 +198,7 @@ public class HipchatComponentProducerTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("hipchat://?authToken=anything")
+                        .to("hipchat:http:api.hipchat.com?authToken=anything")
                         .to("mock:result");
             }
         };

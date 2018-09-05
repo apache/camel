@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -28,6 +30,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
  */
 public class AggregatorAndOnExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testAggregateAndOnException() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");

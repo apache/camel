@@ -33,7 +33,10 @@ import org.slf4j.LoggerFactory;
 /**
  * A component implementation for endpoints which are annotated with UriEndpoint to describe
  * their configurable parameters via annotations
+ *
+ * @deprecated use {@link DefaultComponent}
  */
+@Deprecated
 public abstract class UriEndpointComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(UriEndpointComponent.class);
 
@@ -70,7 +73,7 @@ public abstract class UriEndpointComponent extends DefaultComponent {
      */
     public static SortedMap<String, ParameterConfiguration> createParameterConfigurationMap(
             Class<? extends Endpoint> endpointClass) {
-        SortedMap<String, ParameterConfiguration> answer = new TreeMap<String, ParameterConfiguration>();
+        SortedMap<String, ParameterConfiguration> answer = new TreeMap<>();
         populateParameterConfigurationMap(answer, endpointClass, "");
         return answer;
     }
@@ -101,7 +104,7 @@ public abstract class UriEndpointComponent extends DefaultComponent {
                         populateParameterConfigurationMap(parameterMap, fieldType, nestedPrefix);
                     } else {
                         if (parameterMap.containsKey(propertyName)) {
-                            LOG.warn("Duplicate property name " + propertyName + " defined on field " + field);
+                            LOG.warn("Duplicate property name {} defined on field {}", propertyName, field);
                         } else {
                             parameterMap.put(propertyName,
                                     ParameterConfiguration.newInstance(propertyName, field, uriParam));
@@ -123,7 +126,7 @@ public abstract class UriEndpointComponent extends DefaultComponent {
         if (parameterConfigurationMap == null) {
             parameterConfigurationMap = createParameterConfigurationMap(getEndpointClass());
         }
-        return new TreeMap<String, ParameterConfiguration>(parameterConfigurationMap);
+        return new TreeMap<>(parameterConfigurationMap);
     }
 
 }

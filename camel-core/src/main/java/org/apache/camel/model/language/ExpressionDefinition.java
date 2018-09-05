@@ -31,8 +31,10 @@ import javax.xml.namespace.QName;
 
 import org.apache.camel.AfterPropertiesConfigured;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.OtherAttributesAware;
 import org.apache.camel.spi.Language;
@@ -156,6 +158,9 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
             } else if (getExpression() != null) {
                 ObjectHelper.notNull("language", getLanguage());
                 Language language = camelContext.resolveLanguage(getLanguage());
+                if (language == null) {
+                    throw new NoSuchLanguageException(getLanguage());
+                }
                 String exp = getExpression();
                 // should be true by default
                 boolean isTrim = getTrim() == null || getTrim();
@@ -169,6 +174,10 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
                 predicate = language.createPredicate(exp);
                 configurePredicate(camelContext, predicate);
             }
+        }
+        // inject CamelContext if its aware
+        if (predicate instanceof CamelContextAware) {
+            ((CamelContextAware) predicate).setCamelContext(camelContext);
         }
         return predicate;
     }
@@ -184,6 +193,9 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
             } else if (getExpression() != null) {
                 ObjectHelper.notNull("language", getLanguage());
                 Language language = camelContext.resolveLanguage(getLanguage());
+                if (language == null) {
+                    throw new NoSuchLanguageException(getLanguage());
+                }
                 String exp = getExpression();
                 // should be true by default
                 boolean isTrim = getTrim() == null || getTrim();
@@ -197,6 +209,10 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
                 setExpressionValue(language.createExpression(exp));
                 configureExpression(camelContext, getExpressionValue());
             }
+        }
+        // inject CamelContext if its aware
+        if (getExpressionValue() instanceof CamelContextAware) {
+            ((CamelContextAware) getExpressionValue()).setCamelContext(camelContext);
         }
         return getExpressionValue();
     }
@@ -285,7 +301,6 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
         this.expressionType = expressionType;
     }
 
-    @SuppressWarnings("unchecked")
     protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
         // allows to perform additional logic after the properties has been configured which may be needed
         // in the various camel components outside camel-core
@@ -294,7 +309,6 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
         }
     }
 
-    @SuppressWarnings("unchecked")
     protected void configureExpression(CamelContext camelContext, Expression expression) {
         // allows to perform additional logic after the properties has been configured which may be needed
         // in the various camel components outside camel-core

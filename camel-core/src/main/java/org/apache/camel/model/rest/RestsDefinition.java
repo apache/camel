@@ -36,7 +36,7 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinition> implements RestContainer {
     @XmlElementRef
-    private List<RestDefinition> rests = new ArrayList<RestDefinition>();
+    private List<RestDefinition> rests = new ArrayList<>();
     @XmlTransient
     private ModelCamelContext camelContext;
 
@@ -46,6 +46,11 @@ public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinitio
     @Override
     public String toString() {
         return "Rests: " + rests;
+    }
+
+    @Override
+    public String getShortName() {
+        return "rests";
     }
 
     public String getLabel() {
@@ -59,6 +64,9 @@ public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinitio
         return rests;
     }
 
+    /**
+     * The rest services
+     */
     public void setRests(List<RestDefinition> rests) {
         this.rests = rests;
     }

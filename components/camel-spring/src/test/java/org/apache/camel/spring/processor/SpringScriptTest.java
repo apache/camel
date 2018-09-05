@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -29,6 +32,7 @@ public class SpringScriptTest extends ContextTestSupport {
 
     protected MockEndpoint resultEndpoint;
 
+    @Test
     public void testScript() throws Exception {
         resultEndpoint.expectedBodiesReceived("Hello");
 
@@ -38,7 +42,8 @@ public class SpringScriptTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         resultEndpoint = getMockEndpoint("mock:result");

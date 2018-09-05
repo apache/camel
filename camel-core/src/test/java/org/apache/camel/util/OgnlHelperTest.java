@@ -16,15 +16,18 @@
  */
 package org.apache.camel.util;
 
+import org.junit.Test;
+
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 
 /**
  *
  */
-public class OgnlHelperTest extends TestCase {
+public class OgnlHelperTest extends Assert {
     
+    @Test
     public void testSplitOgnlSimple() throws Exception {
         List<String> methods = OgnlHelper.splitOgnl(null);
         assertEquals(0, methods.size());
@@ -49,6 +52,7 @@ public class OgnlHelperTest extends TestCase {
         assertEquals(".baz", methods.get(2));
     }
 
+    @Test
     public void testSplitOgnlSquare() throws Exception {
         List<String> methods = OgnlHelper.splitOgnl("foo");
         assertEquals(1, methods.size());
@@ -85,6 +89,7 @@ public class OgnlHelperTest extends TestCase {
         assertEquals("?.bar[0]", methods.get(1));
     }
 
+    @Test
     public void testSplitOgnlParenthesis() throws Exception {
         List<String> methods = OgnlHelper.splitOgnl("foo()");
         assertEquals(1, methods.size());
@@ -115,6 +120,7 @@ public class OgnlHelperTest extends TestCase {
         assertEquals(".baz['key']", methods.get(2));
     }
 
+    @Test
     public void testSplitOgnlParenthesisAndBracket() throws Exception {
         List<String> methods = OgnlHelper.splitOgnl("foo(${body['key']})");
         assertEquals(1, methods.size());

@@ -88,8 +88,7 @@ public class ContextCreationTimeoutTest extends Assert {
             ts.getCamelContextCreationTimeout();
             fail();
         } catch (IllegalArgumentException e) {
-            assertTrue(e.getCause() != null
-                    && e.getCause() instanceof NumberFormatException);
+            assertTrue(e.getCause() instanceof NumberFormatException);
         }
     }
     
@@ -127,12 +126,11 @@ public class ContextCreationTimeoutTest extends Assert {
 
     }
 
-    private static class OverridingTestSupport extends
-            CamelBlueprintTestSupport {
+    private static class OverridingTestSupport extends CamelBlueprintTestSupport {
 
         private final Long timeout;
 
-        public OverridingTestSupport(Long timeout) {
+        OverridingTestSupport(Long timeout) {
             this.timeout = timeout;
         }
 

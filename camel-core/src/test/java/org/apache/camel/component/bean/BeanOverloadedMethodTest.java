@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Header;
@@ -31,6 +33,7 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testHelloOverloadedHeString() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -50,6 +53,7 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHelloOverloadedWildcard() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -69,6 +73,7 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHelloOverloadedStringString() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -89,6 +94,7 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHelloOverloadedWildcardString() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -108,6 +114,7 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHelloOverloadedWildcardWildcard() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -128,6 +135,7 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHelloOverloadedPickCamelAnnotated() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -147,6 +155,7 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHelloOverloadedAmbiguousStringStringString() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -168,6 +177,7 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testHelloOverloadedStringInt() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -189,6 +199,7 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testHelloOverloadedIntString() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -210,6 +221,7 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testTimesOverloadedStringInt() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -229,6 +241,7 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTimesOverloadedBytesInt() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

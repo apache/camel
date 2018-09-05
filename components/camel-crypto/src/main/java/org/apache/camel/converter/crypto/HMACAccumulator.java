@@ -16,7 +16,6 @@
  */
 package org.apache.camel.converter.crypto;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.Key;
@@ -114,7 +113,7 @@ public class HMACAccumulator {
         return maclength;
     }
 
-    public void attachStream(ByteArrayOutputStream outputStream) {
+    public void attachStream(final OutputStream outputStream) {
         this.outputStream = outputStream;
     }
 
@@ -124,7 +123,7 @@ public class HMACAccumulator {
         private int read;
         private int available;
 
-        public CircularBuffer(int bufferSize) {
+        CircularBuffer(int bufferSize) {
             buffer = new byte[bufferSize];
             available = bufferSize;
         }

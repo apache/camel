@@ -16,6 +16,8 @@
  */
 package org.apache.camel.converter;
 
+import org.junit.Test;
+
 import java.io.File;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -28,6 +30,7 @@ import org.apache.camel.Exchange;
  */
 public class NIOConverterTest extends ContextTestSupport {
 
+    @Test
     public void testToByteArray() {
         ByteBuffer bb = ByteBuffer.wrap("Hello".getBytes());
         byte[] out = NIOConverter.toByteArray(bb);
@@ -40,6 +43,7 @@ public class NIOConverterTest extends ContextTestSupport {
      * 
      * If byteBuffer capacity is bigger that limit, we MUST return data only to the limit.
      */
+    @Test
     public void testToByteArrayBigBuffer() {
         ByteBuffer bb = ByteBuffer.allocate(100);
         bb.put("Hello".getBytes());
@@ -49,6 +53,7 @@ public class NIOConverterTest extends ContextTestSupport {
         assertEquals(5, out.length);
     }
 
+    @Test
     public void testToString() throws Exception {
         ByteBuffer bb = ByteBuffer.wrap("Hello".getBytes());
         String out = NIOConverter.toString(bb, null);
@@ -59,6 +64,7 @@ public class NIOConverterTest extends ContextTestSupport {
     /**
      * ToString need to deal the array size issue as ToByteArray does 
      */
+    @Test
     public void testByteBufferToStringConversion() throws Exception {
         String str = "123456789";
         ByteBuffer buffer = ByteBuffer.allocate(16);
@@ -68,18 +74,20 @@ public class NIOConverterTest extends ContextTestSupport {
         String out = NIOConverter.toString(buffer, null);
         assertEquals(str, out);
     }
-    
 
+    @Test
     public void testToByteBuffer() {
         ByteBuffer bb = NIOConverter.toByteBuffer("Hello".getBytes());
         assertNotNull(bb);
     }
 
+    @Test
     public void testToByteBufferString() {
         ByteBuffer bb = NIOConverter.toByteBuffer("Hello", null);
         assertNotNull(bb);
     }
 
+    @Test
     public void testToByteBufferFile() throws Exception {
         template.sendBodyAndHeader("file://target/nio", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
@@ -89,36 +97,42 @@ public class NIOConverterTest extends ContextTestSupport {
         assertEquals("Hello World", NIOConverter.toString(bb, null));
     }
 
+    @Test
     public void testToByteBufferShort() {
         ByteBuffer bb = NIOConverter.toByteBuffer(Short.valueOf("2"));
         assertNotNull(bb);
         assertEquals(2, bb.getShort());
     }
 
+    @Test
     public void testToByteBufferInteger() {
         ByteBuffer bb = NIOConverter.toByteBuffer(Integer.valueOf("2"));
         assertNotNull(bb);
         assertEquals(2, bb.getInt());
     }
 
+    @Test
     public void testToByteBufferLong() {
         ByteBuffer bb = NIOConverter.toByteBuffer(Long.valueOf("2"));
         assertNotNull(bb);
         assertEquals(2, bb.getLong());
     }
 
+    @Test
     public void testToByteBufferDouble() {
         ByteBuffer bb = NIOConverter.toByteBuffer(Double.valueOf("2"));
         assertNotNull(bb);
-        assertEquals(2.0d, bb.getDouble());
+        assertEquals(2.0d, bb.getDouble(), 1e-5d);
     }
 
+    @Test
     public void testToByteBufferFloat() {
         ByteBuffer bb = NIOConverter.toByteBuffer(Float.valueOf("2"));
         assertNotNull(bb);
-        assertEquals(2.0f, bb.getFloat());
+        assertEquals(2.0f, bb.getFloat(), 1e-5f);
     }
 
+    @Test
     public void testToInputStream() throws Exception {
         ByteBuffer bb = ByteBuffer.wrap("Hello".getBytes());
 

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -26,18 +29,21 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileProducerRenameUsingCopyTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/file");
         super.setUp();
     }
 
+    @Test
     public void testMove() throws Exception {
         final String body = "Hello Camel";
-        template.sendBodyAndHeader("file://target/file", body, Exchange.FILE_NAME, "hello.txt");
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedFileExists("target/file/done/hello.txt", body);
+
+        template.sendBodyAndHeader("file://target/file", body, Exchange.FILE_NAME, "hello.txt");
+
         assertMockEndpointsSatisfied();
 
         assertTrue("File not copied", new File("target/file/done/hello.txt").exists());

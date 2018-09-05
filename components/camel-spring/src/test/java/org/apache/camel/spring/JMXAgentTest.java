@@ -15,15 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.spring;
+import org.junit.After;
 
 import javax.management.MBeanServerConnection;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.spi.ManagementAgent;
-import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -42,7 +40,8 @@ public class JMXAgentTest extends DefaultJMXAgentTest {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         if (clientConnector != null) {
             try {
                 clientConnector.close();

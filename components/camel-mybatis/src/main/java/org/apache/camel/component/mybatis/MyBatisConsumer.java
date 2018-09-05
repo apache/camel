@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.impl.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
@@ -49,19 +50,8 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
     protected volatile ShutdownRunningTask shutdownRunningTask;
     protected volatile int pendingExchanges;
 
-    /**
-     * Statement to run after data has been processed in the route
-     */
     private String onConsume;
-
-    /**
-     * Process resultset individually or as a list
-     */
     private boolean useIterator = true;
-
-    /**
-     * Whether allow empty resultset to be routed to the next hop
-     */
     private boolean routeEmptyResultSet;
 
     public MyBatisConsumer(MyBatisEndpoint endpoint, Processor processor) {
@@ -87,7 +77,7 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
         List<?> data = endpoint.getProcessingStrategy().poll(this, getEndpoint());
 
         // create a list of exchange objects with the data
-        Queue<DataHolder> answer = new LinkedList<DataHolder>();
+        Queue<DataHolder> answer = new LinkedList<>();
         if (useIterator) {
             for (Object item : data) {
                 Exchange exchange = createExchange(item);
@@ -117,7 +107,7 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
 
         // limit if needed
         if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
-            LOG.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there was " + total + " messages in this poll.");
+            LOG.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there were " + total + " messages in this poll.");
             total = maxMessagesPerPoll;
         }
 
@@ -145,6 +135,16 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
                 }
             } catch (Exception e) {
                 handleException(e);
+            }
+
+            if (getEndpoint().isTransacted() && exchange.isFailed()) {
+                // break out as we are transacted and should rollback
+                Exception cause = exchange.getException();
+                if (cause != null) {
+                    throw cause;
+                } else {
+                    throw new RollbackExchangeException("Rollback transaction due error processing exchange", exchange);
+                }
             }
         }
 

@@ -23,37 +23,40 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.URISupport;
-import org.jivesoftware.smack.Chat;
-import org.jivesoftware.smack.ChatManager;
-import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.MessageListener;
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.chat2.Chat;
+import org.jivesoftware.smack.chat2.ChatManager;
+import org.jivesoftware.smack.chat2.IncomingChatMessageListener;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.MessageTypeFilter;
 import org.jivesoftware.smack.filter.OrFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Message.Type;
-import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smackx.muc.DiscussionHistory;
+import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
+import org.jivesoftware.smackx.muc.MucEnterConfiguration;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.MultiUserChatException;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
+import org.jxmpp.jid.EntityBareJid;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Resourcepart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A {@link org.apache.camel.Consumer Consumer} which listens to XMPP packets
  */
-public class XmppConsumer extends DefaultConsumer implements PacketListener, MessageListener, ChatManagerListener {
+public class XmppConsumer extends DefaultConsumer implements IncomingChatMessageListener, MessageListener, StanzaListener {
     private static final Logger LOG = LoggerFactory.getLogger(XmppConsumer.class);
     private final XmppEndpoint endpoint;
     private MultiUserChat muc;
     private Chat privateChat;
     private ChatManager chatManager;
-    private XMPPConnection connection;
+    private XMPPTCPConnection connection;
     private ScheduledExecutorService scheduledExecutor;
 
     public XmppConsumer(XmppEndpoint endpoint, Processor processor) {
@@ -79,46 +82,32 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
         }
 
         chatManager = ChatManager.getInstanceFor(connection);
-        chatManager.addChatListener(this);
+        chatManager.addIncomingListener(this);
 
         OrFilter pubsubPacketFilter = new OrFilter();
         if (endpoint.isPubsub()) {
             //xep-0060: pubsub#notification_type can be 'headline' or 'normal'
-            pubsubPacketFilter.addFilter(new MessageTypeFilter(Type.headline));
-            pubsubPacketFilter.addFilter(new MessageTypeFilter(Type.normal));
-            connection.addPacketListener(this, pubsubPacketFilter);
+            pubsubPacketFilter.addFilter(MessageTypeFilter.HEADLINE);
+            pubsubPacketFilter.addFilter(MessageTypeFilter.NORMAL);
+            connection.addSyncStanzaListener(this, pubsubPacketFilter);
         }
 
         if (endpoint.getRoom() == null) {
-            privateChat = chatManager.getThreadChat(endpoint.getChatId());
-
-            if (privateChat != null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Adding listener to existing chat opened to " + privateChat.getParticipant());
-                }
-                privateChat.addMessageListener(this);
-            } else {
-                privateChat = ChatManager.getInstanceFor(connection).createChat(endpoint.getParticipant(), endpoint.getChatId(), this);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Opening private chat to " + privateChat.getParticipant());
-                }
-            }
+            privateChat = chatManager.chatWith(JidCreate.entityBareFrom(endpoint.getChatId()));
         } else {
             // add the presence packet listener to the connection so we only get packets that concerns us
             // we must add the listener before creating the muc
-           
-            final AndFilter packetFilter = new AndFilter(new PacketTypeFilter(Presence.class));
-            connection.addPacketListener(this, packetFilter);
 
-            muc = new MultiUserChat(connection, endpoint.resolveRoom(connection));
+            final AndFilter packetFilter = new AndFilter(new StanzaTypeFilter(Presence.class));
+            connection.addSyncStanzaListener(this, packetFilter);
+            MultiUserChatManager mucm = MultiUserChatManager.getInstanceFor(connection);
+            muc = mucm.getMultiUserChat(JidCreate.entityBareFrom(endpoint.resolveRoom(connection)));
             muc.addMessageListener(this);
-            DiscussionHistory history = new DiscussionHistory();
-            history.setMaxChars(0); // we do not want any historical messages
-
-            muc.join(endpoint.getNickname(), null, history, SmackConfiguration.getDefaultPacketReplyTimeout());
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Joined room: {} as: {}", muc.getRoom(), endpoint.getNickname());
-            }
+            MucEnterConfiguration mucc = muc.getEnterConfigurationBuilder(Resourcepart.from(endpoint.getNickname()))
+                    .requestNoHistory()
+                    .build();
+            muc.join(mucc);
+            LOG.info("Joined room: {} as: {}", muc.getRoom(), endpoint.getNickname());
         }
 
         this.startRobustConnectionMonitor();
@@ -162,8 +151,9 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
             LOG.info("Attempting to reconnect to: {}", XmppEndpoint.getConnectionMessage(connection));
             try {
                 connection.connect();
+                LOG.debug("Successfully connected to XMPP server through: {}", connection);
             } catch (SmackException e) {
-                LOG.warn(e.getMessage());
+                LOG.warn("Connection to XMPP server failed. Will try to reconnect later again.", e);
             }
         }
     }
@@ -186,9 +176,7 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
         }
 
         if (muc != null) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Leaving room: {}", muc.getRoom());
-            }
+            LOG.info("Leaving room: {}", muc.getRoom());
             muc.removeMessageListener(this);
             muc.leave();
             muc = null;
@@ -198,24 +186,26 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
         }
     }
 
-    public void chatCreated(Chat chat, boolean createdLocally) {
-        if (!createdLocally) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Accepting incoming chat session from " + chat.getParticipant());
-            }
-            chat.addMessageListener(this);
-        }
+    @Override
+    public void newIncomingMessage(EntityBareJid from, Message message, Chat chat) {
+        processMessage(message);
     }
 
-    public void processPacket(Packet packet) {
-        if (packet instanceof Message) {
-            processMessage(null, (Message) packet);
+    @Override
+    public void processMessage(Message message) {
+        processMessage(null, message);
+    }
+
+    @Override
+    public void processStanza(Stanza stanza) throws SmackException.NotConnectedException, InterruptedException {
+        if (stanza instanceof Message) {
+            processMessage((Message) stanza);
         }
     }
 
     public void processMessage(Chat chat, Message message) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Received XMPP message for {} from {} : {}", new Object[]{endpoint.getUser(), endpoint.getParticipant(), message.getBody()});
+            LOG.debug("Received XMPP message for {} from {} : {}", new Object[] {endpoint.getUser(), endpoint.getParticipant(), message.getBody()});
         }
 
         Exchange exchange = endpoint.createExchange(message);
@@ -232,7 +222,11 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
             // pollMessage is a non blocking method
             // (see http://issues.igniterealtime.org/browse/SMACK-129)
             if (muc != null) {
-                muc.pollMessage();
+                try {
+                    muc.pollMessage();
+                } catch (MultiUserChatException.MucNotJoinedException e) {
+                    LOG.debug("Error while polling message from MultiUserChat. This exception will be ignored.", e);
+                }
             }
         }
     }

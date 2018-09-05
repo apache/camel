@@ -185,7 +185,7 @@ public final class PGPDataFormatUtil {
         if (keyRing != null) {
             is = new ByteArrayInputStream(keyRing);
         } else {
-            is = ResourceHelper.resolveMandatoryResourceAsInputStream(context.getClassResolver(), filename);
+            is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, filename);
         }
         return is;
     }
@@ -207,9 +207,8 @@ public final class PGPDataFormatUtil {
         return findPublicKeys(userids, forEncryption, pgpSec);
     }
 
-    @SuppressWarnings("unchecked")
     public static List<PGPPublicKey> findPublicKeys(List<String> useridParts, boolean forEncryption, PGPPublicKeyRingCollection pgpPublicKeyringCollection) {
-        List<PGPPublicKey> result = new ArrayList<PGPPublicKey>(useridParts.size());
+        List<PGPPublicKey> result = new ArrayList<>(useridParts.size());
         for (Iterator<PGPPublicKeyRing> keyRingIter = pgpPublicKeyringCollection.getKeyRings(); keyRingIter.hasNext();) {
             PGPPublicKeyRing keyRing = keyRingIter.next();
             PGPPublicKey primaryKey = keyRing.getPublicKey();
@@ -406,13 +405,13 @@ public final class PGPDataFormatUtil {
 
     public static List<PGPSecretKeyAndPrivateKeyAndUserId> findSecretKeysWithPrivateKeyAndUserId(Map<String, String> sigKeyUserId2Password,
             String provider, PGPSecretKeyRingCollection pgpSec) throws PGPException {
-        List<PGPSecretKeyAndPrivateKeyAndUserId> result = new ArrayList<PGPSecretKeyAndPrivateKeyAndUserId>(sigKeyUserId2Password.size());
+        List<PGPSecretKeyAndPrivateKeyAndUserId> result = new ArrayList<>(sigKeyUserId2Password.size());
         for (Iterator<?> i = pgpSec.getKeyRings(); i.hasNext();) {
             Object data = i.next();
             if (data instanceof PGPSecretKeyRing) {
                 PGPSecretKeyRing keyring = (PGPSecretKeyRing) data;
                 PGPSecretKey primaryKey = keyring.getSecretKey();
-                List<String> useridParts = new ArrayList<String>(sigKeyUserId2Password.keySet());
+                List<String> useridParts = new ArrayList<>(sigKeyUserId2Password.keySet());
                 String[] foundKeyUserIdForUserIdPart = findFirstKeyUserIdContainingOneOfTheParts(useridParts, primaryKey.getPublicKey());
                 if (foundKeyUserIdForUserIdPart == null) {
                     LOG.debug("No User ID found in primary key with key ID {} containing one of the parts {}", primaryKey.getKeyID(),
@@ -422,8 +421,7 @@ public final class PGPDataFormatUtil {
                 LOG.debug("User ID {} found in primary key with key ID {} containing one of the parts {}", new Object[] {
                     foundKeyUserIdForUserIdPart[0], primaryKey.getKeyID(), useridParts });
                 // add all signing keys
-                for (@SuppressWarnings("unchecked")
-                Iterator<PGPSecretKey> iterKey = keyring.getSecretKeys(); iterKey.hasNext();) {
+                for (Iterator<PGPSecretKey> iterKey = keyring.getSecretKeys(); iterKey.hasNext();) {
                     PGPSecretKey secKey = iterKey.next();
                     if (isSigningKey(secKey)) {
                         PGPPrivateKey privateKey = secKey.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider(provider)

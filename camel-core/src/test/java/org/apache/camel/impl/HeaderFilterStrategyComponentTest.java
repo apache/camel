@@ -16,9 +16,11 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.util.Map;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
@@ -29,11 +31,11 @@ import org.apache.camel.spi.HeaderFilterStrategyAware;
 /**
  * @version 
  */
-public class HeaderFilterStrategyComponentTest extends TestCase {
+public class HeaderFilterStrategyComponentTest extends Assert {
 
     private static class MyComponent extends HeaderFilterStrategyComponent {
 
-        public MyComponent(Class<? extends Endpoint> endpointClass) {
+        MyComponent(Class<? extends Endpoint> endpointClass) {
             super(endpointClass);
         }
 
@@ -67,6 +69,7 @@ public class HeaderFilterStrategyComponentTest extends TestCase {
         }
     }
 
+    @Test
     public void testHeaderFilterStrategyComponent() {
         MyComponent comp = new MyComponent(MyEndpoint.class);
         assertNull(comp.getHeaderFilterStrategy());
@@ -77,6 +80,7 @@ public class HeaderFilterStrategyComponentTest extends TestCase {
         assertSame(strategy, comp.getHeaderFilterStrategy());
     }
 
+    @Test
     public void testHeaderFilterStrategyAware() {
         MyComponent comp = new MyComponent(MyEndpoint.class);
         assertNull(comp.getHeaderFilterStrategy());

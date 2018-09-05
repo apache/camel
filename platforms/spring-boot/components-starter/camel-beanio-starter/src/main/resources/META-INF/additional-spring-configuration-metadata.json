@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.beanio.enabled",
+      "description": "Enable beanio dataformat",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

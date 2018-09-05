@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.leveldb;
+import org.junit.Before;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,6 +38,7 @@ public class LevelDBSpringAggregateRecoverWithRedeliveryPolicyTest extends Camel
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/data");
         super.setUp();

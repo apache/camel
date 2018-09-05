@@ -16,16 +16,23 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ServiceHelper;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  *
  */
 public class SedaConsumerSuspendResumeTest extends ContextTestSupport {
 
+    @Test
     public void testSuspendResume() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:bar");
         mock.expectedMessageCount(1);
@@ -50,11 +57,13 @@ public class SedaConsumerSuspendResumeTest extends ContextTestSupport {
 
         // wait a bit to ensure consumer is suspended, as it could be in a poll mode where
         // it would poll and route (there is a little slack (up till 1 sec) before suspension is empowered)
-        Thread.sleep(2000);
+        await().atMost(1, TimeUnit.SECONDS).until(() ->
+            context.getEndpoint("seda:foo", SedaEndpoint.class).getQueue().size() == 0
+            && context.getEndpoint("seda:bar", SedaEndpoint.class).getQueue().size() == 0);
 
         template.sendBody("seda:foo", "B");
-        // wait 2 sec to ensure seda consumer thread would have tried to poll otherwise
-        mock.assertIsSatisfied(2000);
+        // wait a little to ensure seda consumer thread would have tried to poll otherwise
+        mock.assertIsSatisfied(50);
 
         // resume consumer
         resetMocks();

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.remote;
+import org.junit.Before;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,6 +34,7 @@ public class FtpProducerFileWithCharsetTest extends FtpServerTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         byte[] utf = payload.getBytes("utf-8");
         byte[] iso = payload.getBytes("iso-8859-1");

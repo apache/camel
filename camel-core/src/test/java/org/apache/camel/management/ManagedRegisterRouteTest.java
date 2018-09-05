@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -28,6 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ManagedRegisterRouteTest extends ManagementTestSupport {
 
+    @Test
     public void testRoutes() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -47,6 +50,15 @@ public class ManagedRegisterRouteTest extends ManagementTestSupport {
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
         // the route has this starting endpoint uri
         assertEquals("direct://start", uri);
+
+        String id = (String) mbeanServer.getAttribute(on, "RouteId");
+        assertEquals("myRoute", id);
+
+        String group = (String) mbeanServer.getAttribute(on, "RouteGroup");
+        assertEquals("myGroup", group);
+
+        String desc = (String) mbeanServer.getAttribute(on, "Description");
+        assertEquals("my cool route", desc);
 
         Integer val = (Integer) mbeanServer.getAttribute(on, "InflightExchanges");
         // the route has no inflight exchanges
@@ -72,7 +84,8 @@ public class ManagedRegisterRouteTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("log:foo").to("mock:result");
+                from("direct:start").routeId("myRoute").routeGroup("myGroup").description("my cool route")
+                    .to("log:foo").to("mock:result");
             }
         };
     }

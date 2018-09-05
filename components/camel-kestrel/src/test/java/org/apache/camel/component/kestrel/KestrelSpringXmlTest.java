@@ -44,7 +44,7 @@ public class KestrelSpringXmlTest extends AbstractJUnit4SpringContextTests {
     @DirtiesContext
     @Test
     public void testProduceAndConsume() throws Exception {
-        List<String> bodies = new ArrayList<String>();
+        List<String> bodies = new ArrayList<>();
         for (int k = 0; k < 10; ++k) {
             bodies.add("this is body #" + k);
         }

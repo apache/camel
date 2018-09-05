@@ -1,0 +1,31 @@
+{
+  "allOrNone" : true,
+  "compositeRequest" : [ {
+    "method" : "PATCH",
+    "url" : "/services/data/v38.0/sobjects/Account/001xx000003DIpcAAG",
+    "referenceId" : "UpdatedAccount",
+    "body" : {
+      "Name" : "Salesforce",
+      "BillingStreet" : "Landmark @ 1 Market Street",
+      "BillingCity" : "San Francisco",
+      "BillingState" : "California",
+      "Industry" : "Technology"
+    }
+  }, {
+    "method" : "POST",
+    "url" : "/services/data/v38.0/sobjects/Contact/",
+    "referenceId" : "NewContact",
+    "body" : {
+      "LastName" : "John Doe",
+      "Phone" : "1234567890"
+    }
+  }, {
+    "method" : "POST",
+    "url" : "/services/data/v38.0/sobjects/null/",
+    "referenceId" : "JunctionRecord",
+    "body" : {
+      "account__c" : "001xx000003DIpcAAG",
+      "contactId__c" : "@{NewContact.id}"
+    }
+  } ]
+}

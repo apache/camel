@@ -15,19 +15,22 @@
  * limitations under the License.
  */
 package org.apache.camel.spi;
+import org.junit.After;
+
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 
-public class ContainerTest extends TestCase {
+public class ContainerTest extends Assert {
 
     private final class MyContainer implements Container {
 
-        private List<String> names = new ArrayList<String>();
+        private List<String> names = new ArrayList<>();
 
         @Override
         public void manage(CamelContext camelContext) {
@@ -35,17 +38,22 @@ public class ContainerTest extends TestCase {
         }
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         Container.Instance.set(null);
-        super.tearDown();
+
     }
 
+    @Test
     public void testContainerSet() throws Exception {
         MyContainer myContainer = new MyContainer();
 
         CamelContext camel1 = new DefaultCamelContext();
         CamelContext camel2 = new DefaultCamelContext();
+
+        // Must call start to make contexts 'managed'
+        camel1.start();
+        camel2.start();
 
         assertEquals(0, myContainer.names.size());
         Container.Instance.set(myContainer);
@@ -53,6 +61,8 @@ public class ContainerTest extends TestCase {
         assertEquals(2, myContainer.names.size());
 
         CamelContext camel3 = new DefaultCamelContext();
+        camel3.start();
+
         assertEquals(3, myContainer.names.size());
         assertEquals(camel1.getName(), myContainer.names.get(0));
         assertEquals(camel2.getName(), myContainer.names.get(1));
@@ -63,11 +73,15 @@ public class ContainerTest extends TestCase {
         camel3.stop();
     }
 
+    @Test
     public void testNoContainerSet() throws Exception {
         MyContainer myContainer = new MyContainer();
 
         CamelContext camel1 = new DefaultCamelContext();
         CamelContext camel2 = new DefaultCamelContext();
+
+        camel1.start();
+        camel2.start();
 
         assertEquals(0, myContainer.names.size());
 

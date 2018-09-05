@@ -58,6 +58,8 @@ public class RedeliveryPolicyDefinition {
     @XmlAttribute
     private LoggingLevel retryAttemptedLogLevel;
     @XmlAttribute
+    private String retryAttemptedLogInterval;
+    @XmlAttribute
     private String logRetryAttempted;
     @XmlAttribute
     private String logStackTrace;
@@ -73,6 +75,8 @@ public class RedeliveryPolicyDefinition {
     private String logExhausted;
     @XmlAttribute
     private String logExhaustedMessageHistory;
+    @XmlAttribute
+    private String logExhaustedMessageBody;
     @XmlAttribute
     private String disableRedelivery;
     @XmlAttribute
@@ -110,6 +114,9 @@ public class RedeliveryPolicyDefinition {
             }
             if (retryAttemptedLogLevel != null) {
                 answer.setRetryAttemptedLogLevel(retryAttemptedLogLevel);
+            }
+            if (retryAttemptedLogInterval != null) {
+                answer.setRetryAttemptedLogInterval(CamelContextHelper.parseInteger(context, retryAttemptedLogInterval));
             }
             if (backOffMultiplier != null) {
                 answer.setBackOffMultiplier(CamelContextHelper.parseDouble(context, backOffMultiplier));
@@ -150,19 +157,22 @@ public class RedeliveryPolicyDefinition {
             if (logExhaustedMessageHistory != null) {
                 answer.setLogExhaustedMessageHistory(CamelContextHelper.parseBoolean(context, logExhaustedMessageHistory));
             }
+            if (logExhaustedMessageBody != null) {
+                answer.setLogExhaustedMessageBody(CamelContextHelper.parseBoolean(context, logExhaustedMessageBody));
+            }
             if (disableRedelivery != null) {
                 if (CamelContextHelper.parseBoolean(context, disableRedelivery)) {
                     answer.setMaximumRedeliveries(0);
                 }
             }
             if (delayPattern != null) {
-                answer.setDelayPattern(delayPattern);
+                answer.setDelayPattern(CamelContextHelper.parseText(context, delayPattern));
             }
             if (allowRedeliveryWhileStopping != null) {
                 answer.setAllowRedeliveryWhileStopping(CamelContextHelper.parseBoolean(context, allowRedeliveryWhileStopping));
             }
             if (exchangeFormatterRef != null) {
-                answer.setExchangeFormatterRef(exchangeFormatterRef);
+                answer.setExchangeFormatterRef(CamelContextHelper.parseText(context, exchangeFormatterRef));
             }
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
@@ -180,7 +190,8 @@ public class RedeliveryPolicyDefinition {
     //-------------------------------------------------------------------------
 
     /**
-     * Allow synchronous delayed redelivery.
+     * Allow synchronous delayed redelivery. The route, in particular the consumer's component,
+     * must support the Asynchronous Routing Engine (e.g. seda).
      *
      * @return the builder
      */
@@ -303,6 +314,17 @@ public class RedeliveryPolicyDefinition {
      */
     public RedeliveryPolicyDefinition retryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
         setRetryAttemptedLogLevel(retryAttemptedLogLevel);
+        return this;
+    }
+
+    /**
+     * Sets the interval to use for logging retry attempts
+     *
+     * @param retryAttemptedLogInterval  the retry logging interval
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition retryAttemptedLogInterval(String retryAttemptedLogInterval) {
+        setRetryAttemptedLogInterval(retryAttemptedLogInterval);
         return this;
     }
 
@@ -496,6 +518,30 @@ public class RedeliveryPolicyDefinition {
     }
 
     /**
+     * Sets whether exhausted message body should be logged including message history or not (supports property placeholders).
+     * Can be used to include or reduce verbose. Requires <tt>logExhaustedMessageHistory</tt> to be enabled.
+     *
+     * @param logExhaustedMessageBody  whether exhausted message body should be logged with message history
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition logExhaustedMessageBody(boolean logExhaustedMessageBody) {
+        setLogExhaustedMessageBody(Boolean.toString(logExhaustedMessageBody));
+        return this;
+    }
+
+    /**
+     * Sets whether exhausted message body should be logged including message history or not (supports property placeholders).
+     * Can be used to include or reduce verbose. Requires <tt>logExhaustedMessageHistory</tt> to be enabled.
+     *
+     * @param logExhaustedMessageBody  whether exhausted message body should be logged with message history
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition logExhaustedMessageBody(String logExhaustedMessageBody) {
+        setLogExhaustedMessageBody(logExhaustedMessageBody);
+        return this;
+    }
+
+    /**
      * Sets the maximum redeliveries
      * <ul>
      *   <li>x = redeliver at most x times</li>
@@ -684,6 +730,14 @@ public class RedeliveryPolicyDefinition {
         this.retryAttemptedLogLevel = retryAttemptedLogLevel;
     }
 
+    public String getRetryAttemptedLogInterval() {
+        return retryAttemptedLogInterval;
+    }
+
+    public void setRetryAttemptedLogInterval(String retryAttemptedLogInterval) {
+        this.retryAttemptedLogInterval = retryAttemptedLogInterval;
+    }
+
     public String getLogRetryAttempted() {
         return logRetryAttempted;
     }
@@ -746,6 +800,14 @@ public class RedeliveryPolicyDefinition {
 
     public void setLogExhaustedMessageHistory(String logExhaustedMessageHistory) {
         this.logExhaustedMessageHistory = logExhaustedMessageHistory;
+    }
+
+    public String getLogExhaustedMessageBody() {
+        return logExhaustedMessageBody;
+    }
+
+    public void setLogExhaustedMessageBody(String logExhaustedMessageBody) {
+        this.logExhaustedMessageBody = logExhaustedMessageBody;
     }
 
     public String getDisableRedelivery() {

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.io.File;
 
 import org.w3c.dom.NodeList;
@@ -29,6 +31,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class TransformXpathTest extends ContextTestSupport {
 
+    @Test
     public void testTransformWithXpath() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

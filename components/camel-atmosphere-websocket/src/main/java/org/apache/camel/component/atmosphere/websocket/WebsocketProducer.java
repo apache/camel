@@ -18,6 +18,9 @@ package org.apache.camel.component.atmosphere.websocket;
 
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -71,46 +74,75 @@ public class WebsocketProducer extends DefaultProducer {
         } else if (message instanceof InputStream) {
             message = in.getBody(byte[].class);
         }
-        
+
         log.debug("Sending to {}", message);
         if (getEndpoint().isSendToAll()) {
             log.debug("Sending to all -> {}", message);
             //TODO consider using atmosphere's broadcast or a more configurable async send
             for (final WebSocket websocket : getEndpoint().getWebSocketStore().getAllWebSockets()) {
-                final Object msg = message;
-                executor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        sendMessage(websocket, msg);
-                    }
-                });
-            }
-        } else {
-            // look for connection key and get Websocket
-            String connectionKey = in.getHeader(WebsocketConstants.CONNECTION_KEY, String.class);
-            if (connectionKey != null) {
-                WebSocket websocket = getEndpoint().getWebSocketStore().getWebSocket(connectionKey);
-                log.debug("Sending to connection key {} -> {}", connectionKey, message);
                 sendMessage(websocket, message);
-            } else {
-                throw new IllegalArgumentException("Failed to send message to single connection; connetion key not set.");
             }
-            
+        } else if (in.getHeader(WebsocketConstants.CONNECTION_KEY_LIST) != null) {
+            List<String> connectionKeyList = in.getHeader(WebsocketConstants.CONNECTION_KEY_LIST, List.class);
+            messageDistributor(connectionKeyList, message);
+        } else {
+            String connectionKey = in.getHeader(WebsocketConstants.CONNECTION_KEY, String.class);
+            messageDistributor(Arrays.asList(connectionKey), message);
         }
     }
 
-    private void sendMessage(WebSocket websocket, Object message) {
-        try {
-            if (message instanceof String) {
-                websocket.write((String)message);
-            } else if (message instanceof byte[]) {
-                websocket.write((byte[])message, 0, ((byte[])message).length);
-            } else {
-                // this should not happen unless one of the supported types is missing above.
-                LOG.error("unexpected message type {}", message == null ? null : message.getClass());
-            }
-        } catch (Exception e) {
-            LOG.error("Error when writing to websocket", e);
+    private void messageDistributor(final List<String> connectionKeyList, final Object message) {
+        if (connectionKeyList == null) {
+            throw new IllegalArgumentException("Failed to send message to multiple connections; connetion key list is not set.");
         }
+
+        List<String> notValidConnectionKeys = new ArrayList<>();
+
+        for (final String connectionKey : connectionKeyList) {
+            log.debug("Sending to connection key {} -> {}", connectionKey, message);
+            sendMessage(getWebSocket(connectionKey, notValidConnectionKeys), message);
+        }
+
+        if (!notValidConnectionKeys.isEmpty()) {
+            log.debug("Some connections have not received the message {}",  message);
+            getEndpoint().getWebsocketConsumer().sendNotDeliveredMessage(notValidConnectionKeys, message);
+        }
+    }
+
+    private void sendMessage(final WebSocket websocket, final Object message) {
+        if (websocket != null && message != null) {
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (message instanceof String) {
+                            websocket.write((String) message);
+                        } else if (message instanceof byte[]) {
+                            websocket.write((byte[]) message, 0, ((byte[]) message).length);
+                        } else {
+                            // this should not happen unless one of the supported types is missing above.
+                            LOG.warn("unexpected message type {}", message.getClass());
+                        }
+                    } catch (Exception e) {
+                        LOG.error("Error when writing to websocket", e);
+                    }
+                }
+            });
+        }
+    }
+
+    private WebSocket getWebSocket(final String connectionKey, final List<String> notValidConnectionKeys) {
+        WebSocket websocket;
+        if (connectionKey == null) {
+            throw new IllegalArgumentException("Failed to send message to single connection; connection key is not set.");
+        } else {
+            websocket = getEndpoint().getWebSocketStore().getWebSocket(connectionKey);
+            if (websocket == null) {
+                //collect for call back to handle not sent message(s) to guaranty delivery
+                notValidConnectionKeys.add(connectionKey);
+                log.debug("Failed to send message to single connection; connetion key is not valid. {}",  connectionKey);
+            }
+        }
+        return websocket;
     }
 }

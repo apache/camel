@@ -19,7 +19,7 @@ package org.apache.camel.component.spring.integration;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.springframework.integration.message.GenericMessage;
+import org.springframework.messaging.support.GenericMessage;
 
 /**
  * The helper class for Mapping between the Spring Integration message and the Camel Message.
@@ -32,20 +32,20 @@ public final class SpringIntegrationBinding {
         // Helper class
     }
 
-    public static org.springframework.integration.Message<?> createSpringIntegrationMessage(Exchange exchange) {
+    public static org.springframework.messaging.Message<?> createSpringIntegrationMessage(Exchange exchange) {
         return createSpringIntegrationMessage(exchange, exchange.getIn().getHeaders());
     }
 
-    public static org.springframework.integration.Message<?> createSpringIntegrationMessage(Exchange exchange, Map<String, Object> headers) {
+    public static org.springframework.messaging.Message<?> createSpringIntegrationMessage(Exchange exchange, Map<String, Object> headers) {
         org.apache.camel.Message message = exchange.getIn();
-        return new GenericMessage<Object>(message.getBody(), headers);
+        return new GenericMessage<>(message.getBody(), headers);
     }
 
-    public static org.springframework.integration.Message<?> storeToSpringIntegrationMessage(org.apache.camel.Message message) {
-        return new GenericMessage<Object>(message.getBody(), message.getHeaders());
+    public static org.springframework.messaging.Message<?> storeToSpringIntegrationMessage(org.apache.camel.Message message) {
+        return new GenericMessage<>(message.getBody(), message.getHeaders());
     }
 
-    public static void storeToCamelMessage(org.springframework.integration.Message<?> siMessage, org.apache.camel.Message cMessage) {
+    public static void storeToCamelMessage(org.springframework.messaging.Message<?> siMessage, org.apache.camel.Message cMessage) {
         cMessage.setBody(siMessage.getPayload());
         cMessage.setHeaders(siMessage.getHeaders());
     }

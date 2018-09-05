@@ -16,6 +16,8 @@
  */
 package org.apache.camel.support;
 
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
@@ -30,12 +32,12 @@ import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 
 /**
  *
  */
-public class XMLTokenExpressionIteratorCharsetTest extends TestCase {
+public class XMLTokenExpressionIteratorCharsetTest extends Assert {
     private static final String DATA_TEMPLATE = 
         "<?xml version=\"1.0\" encoding=\"{0}\"?>"
         + "<Statements xmlns=\"http://www.apache.org/xml/test\">"
@@ -63,6 +65,7 @@ public class XMLTokenExpressionIteratorCharsetTest extends TestCase {
         return null;
     }
     
+    @Test
     public void testTokenzeWithUTF8() throws Exception {
         XMLTokenExpressionIterator xtei = new XMLTokenExpressionIterator("//statement", 'i');
         xtei.setNamespaces(NSMAP);
@@ -70,6 +73,7 @@ public class XMLTokenExpressionIteratorCharsetTest extends TestCase {
         invokeAndVerify(xtei.createIterator(new ByteArrayInputStream(DATA_UTF8), "utf-8"));
     }
 
+    @Test
     public void testTokenizeWithISOLatin() throws Exception {
         XMLTokenExpressionIterator xtei = new XMLTokenExpressionIterator("//statement", 'i');
         xtei.setNamespaces(NSMAP);
@@ -77,6 +81,7 @@ public class XMLTokenExpressionIteratorCharsetTest extends TestCase {
         invokeAndVerify(xtei.createIterator(new ByteArrayInputStream(DATA_ISOLATIN), "iso-8859-1"));
     }
 
+    @Test
     public void testTokenizeWithReader() throws Exception {
         XMLTokenExpressionIterator xtei = new XMLTokenExpressionIterator("//statement", 'i');
         xtei.setNamespaces(NSMAP);
@@ -85,7 +90,7 @@ public class XMLTokenExpressionIteratorCharsetTest extends TestCase {
     }
 
     private void invokeAndVerify(Iterator<?> tokenizer) throws IOException, XMLStreamException {
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         while (tokenizer.hasNext()) {
             String token = (String)tokenizer.next();
             results.add(token);

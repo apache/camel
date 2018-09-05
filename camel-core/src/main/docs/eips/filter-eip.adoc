@@ -1,0 +1,102 @@
+[[filter-eip]]
+== Filter EIP
+
+The http://www.enterpriseintegrationpatterns.com/Filter.html[Message
+Filter] from the link:enterprise-integration-patterns.html[EIP patterns]
+allows you to filter messages
+
+image:http://www.enterpriseintegrationpatterns.com/img/MessageFilter.gif[image]
+
+The following example shows how to create a Message Filter route
+consuming messages from an endpoint called *queue:a*, which if the
+link:predicate.html[Predicate] is true will be dispatched to *queue:b*
+
+=== EIP options
+
+// eip options: START
+The Filter EIP has no options.
+// eip options: END
+
+=== Samples
+
+Here is a little example in Java DSL:
+
+[source,java]
+----
+from("direct:a")
+    .filter(simple("${header.foo} == 'bar'"))
+        .to("direct:b");
+----
+
+You can use many different languages as the predicate, such as XPath:
+[source,java]
+----
+from("direct:start").
+        filter().xpath("/person[@name='James']").
+        to("mock:result");
+----
+
+Here is another example of using a bean to define the filter behavior
+
+[source,java]
+----
+from("direct:start")
+    .filter().method(MyBean.class, "isGoldCustomer")
+      .to("mock:gold")
+    .end()
+    .to("mock:all");
+
+public static class MyBean {
+    public boolean isGoldCustomer(@Header("level") String level) { 
+        return level.equals("gold"); 
+    }
+}
+----
+
+And the example in XML:
+
+[source,xml]
+----
+<bean id="myBean" class="com.foo.MyBean"/>
+
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:a"/>
+        <filter>
+            <method ref="myBean" method="isGoldCustomer"/>
+            <to uri="direct:b"/>
+        </filter>
+    </route>
+</camelContext>
+----
+
+
+=== Using stop
+
+Stop is a bit different than a message filter as it will filter out all
+messages and end the route entirely (filter only applies to its child
+processor). Stop is convenient to use in a
+link:content-based-router.html[Content Based Router] when you for
+example need to stop further processing in one of the predicates.
+
+In the example below we do not want to route messages any further that
+has the word `Bye` in the message body. Notice how we prevent this in
+the when predicate by using the `.stop()`.
+
+=== Knowing if Exchange was filtered or not
+
+*Available as of Camel 2.5*
+
+The link:message-filter.html[Message Filter] EIP will add a property on
+the link:exchange.html[Exchange] that states if it was filtered or not.
+
+The property has the key `Exchange.FILTER_MATCHED`, which has the String
+value of `CamelFilterMatched`. Its value is a boolean indicating `true`
+or `false`. If the value is `true` then the link:exchange.html[Exchange]
+was routed in the filter block. This property will be visible within the
+link:message-filter.html[Message Filter] block who's
+link:predicate.html[Predicate] matches (value set to `true`), and to the
+steps immediately following the link:message-filter.html[Message Filter]
+with the value set based on the results of the last
+link:message-filter.html[Message Filter] link:predicate.html[Predicate]
+evaluated.

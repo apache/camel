@@ -16,16 +16,26 @@
  */
 package org.apache.camel.component.kura;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Dictionary;
+import java.util.Hashtable;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+import org.osgi.service.cm.Configuration;
+import org.osgi.service.cm.ConfigurationAdmin;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;   
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
@@ -36,16 +46,22 @@ public class KuraRouterTest extends Assert {
 
     BundleContext bundleContext = mock(BundleContext.class, RETURNS_DEEP_STUBS);
 
+    ConfigurationAdmin configurationAdmin = mock(ConfigurationAdmin.class);
+
+    Configuration configuration = mock(Configuration.class);
+
     @Before
     public void before() throws Exception {
         given(bundleContext.getBundle().getVersion().toString()).willReturn("version");
+        given(bundleContext.getBundle().getSymbolicName()).willReturn("symbolic_name");
+        given(bundleContext.getService(any(ServiceReference.class))).willReturn(configurationAdmin);
 
         router.start(bundleContext);
     }
 
     @After
     public void after() throws Exception {
-        router.start(bundleContext);
+        router.stop(bundleContext);
     }
 
     @Test
@@ -71,18 +87,57 @@ public class KuraRouterTest extends Assert {
         mockEndpoint.assertIsSatisfied();
     }
 
-}
-
-class TestKuraRouter extends KuraRouter {
-
-    @Override
-    public void configure() throws Exception {
-        from("direct:start").to("mock:test");
+    @Test
+    public void shouldCreateConsumerTemplate() throws Exception {
+        assertNotNull(router.consumerTemplate);
     }
 
-    @Override
-    protected CamelContext createCamelContext() {
-        return new DefaultCamelContext();
+    @Test
+    public void shouldReturnNoService() {
+        given(bundleContext.getServiceReference(any(String.class))).willReturn(null);
+        assertNull(router.service(ConfigurationAdmin.class));
+    }
+
+    @Test
+    public void shouldReturnService() {
+        assertNotNull(router.service(ConfigurationAdmin.class));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void shouldValidateLackOfService() {
+        given(bundleContext.getServiceReference(any(String.class))).willReturn(null);
+        router.requiredService(ConfigurationAdmin.class);
+    }
+
+    @Test
+    public void shouldLoadXmlRoutes() throws Exception {
+        // Given
+        given(configurationAdmin.getConfiguration(anyString())).willReturn(configuration);
+        Dictionary<String, Object> properties = new Hashtable<>();
+        String routeDefinition = IOUtils.toString(getClass().getResource("/route.xml"), StandardCharsets.UTF_8);
+        properties.put("kura.camel.symbolic_name.route", routeDefinition);
+        given(configuration.getProperties()).willReturn(properties);
+
+        // When
+        router.start(router.bundleContext);
+
+        // Then
+        assertNotNull(router.camelContext.getRouteDefinition("loaded"));
+    }
+
+    static class TestKuraRouter extends KuraRouter {
+
+        @Override
+        public void configure() throws Exception {
+            from("direct:start").to("mock:test");
+        }
+
+        @Override
+        protected CamelContext createCamelContext() {
+            return new DefaultCamelContext();
+        }
+
     }
 
 }
+

@@ -19,7 +19,6 @@ package org.apache.camel.util.component;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -40,13 +39,14 @@ public abstract class ApiMethodParser<T> {
     public static final Pattern ARGS_PATTERN = Pattern.compile("\\s*([^<\\s]+)\\s*(<[^>]+>)?\\s+([^\\s,]+)\\s*,?");
 
     private static final String METHOD_PREFIX = "^(\\s*(public|final|synchronized|native)\\s+)*(\\s*<[^>]>)?\\s*(\\S+)\\s+([^\\(]+\\s*)\\(";
-    private static final Pattern METHOD_PATTERN = Pattern.compile("\\s*([^<\\s]+)\\s*(<[^>]+>)?\\s+(\\S+)\\s*\\(\\s*([\\S\\s,]*)\\)\\s*;?\\s*");
+    private static final Pattern METHOD_PATTERN = Pattern.compile("\\s*([^<\\s]+)?\\s*(<[^>]+>)?(<(?<genericTypeParameterName>\\S+)\\s+extends\\s+"
+            + "(?<genericTypeParameterUpperBound>\\S+)>\\s+(?<returnType>\\S+))?\\s+(\\S+)\\s*\\(\\s*(?<signature>[\\S\\s,]*)\\)\\s*;?\\s*");
 
     private static final String JAVA_LANG = "java.lang.";
     private static final Map<String, Class<?>> PRIMITIVE_TYPES;
 
     static {
-        PRIMITIVE_TYPES = new HashMap<String, Class<?>>();
+        PRIMITIVE_TYPES = new HashMap<>();
         PRIMITIVE_TYPES.put("int", Integer.TYPE);
         PRIMITIVE_TYPES.put("long", Long.TYPE);
         PRIMITIVE_TYPES.put("double", Double.TYPE);
@@ -78,7 +78,7 @@ public abstract class ApiMethodParser<T> {
     }
 
     public final void setSignatures(List<String> signatures) {
-        this.signatures = new ArrayList<String>();
+        this.signatures = new ArrayList<>();
         this.signatures.addAll(signatures);
     }
 
@@ -96,7 +96,7 @@ public abstract class ApiMethodParser<T> {
      */
     public final List<ApiMethodModel> parse() {
         // parse sorted signatures and generate descriptions
-        List<ApiMethodModel> result = new ArrayList<ApiMethodModel>();
+        List<ApiMethodModel> result = new ArrayList<>();
         for (String signature : signatures) {
 
             // skip comment or empty lines
@@ -111,31 +111,49 @@ public abstract class ApiMethodParser<T> {
             // remove all redundant spaces in generic parameters
             signature = signature.replaceAll("\\s*<\\s*", "<").replaceAll("\\s*>", ">");
 
-            log.debug("Processing " + signature);
+            log.debug("Processing {}", signature);
 
             final Matcher methodMatcher = METHOD_PATTERN.matcher(signature);
             if (!methodMatcher.matches()) {
                 throw new IllegalArgumentException("Invalid method signature " + signature);
             }
+            // handle generic methods with single bounded type parameters
+            String genericTypeParameterName = null;
+            String genericTypeParameterUpperBound = null;
+            String returnType = null;
+            try {
+                genericTypeParameterName = methodMatcher.group("genericTypeParameterName");
+                genericTypeParameterUpperBound = methodMatcher.group("genericTypeParameterUpperBound");
+                returnType = methodMatcher.group("returnType");
+                if (returnType != null && returnType.equals(genericTypeParameterName)) {
+                    returnType = genericTypeParameterUpperBound;
+                }
+            } catch (IllegalArgumentException e) {
+                // ignore
+            }
 
-            // ignore generic type parameters in result, if any
-            final Class<?> resultType = forName(methodMatcher.group(1));
-            final String name = methodMatcher.group(3);
-            final String argSignature = methodMatcher.group(4);
+            final Class<?> resultType = returnType != null ? forName(returnType) : forName(methodMatcher.group(1));
+            final String name = methodMatcher.group(7);
+            final String argSignature = methodMatcher.group(8);
 
-            final List<Argument> arguments = new ArrayList<Argument>();
-            final List<Class<?>> argTypes = new ArrayList<Class<?>>();
+            final List<ApiMethodArg> arguments = new ArrayList<>();
+            final List<Class<?>> argTypes = new ArrayList<>();
 
             final Matcher argsMatcher = ARGS_PATTERN.matcher(argSignature);
             while (argsMatcher.find()) {
-
-                final Class<?> type = forName(argsMatcher.group(1));
+                String genericParameterName = argsMatcher.group(1);
+                if (genericTypeParameterName != null && genericTypeParameterName.equals(genericParameterName)) {
+                    genericParameterName = genericTypeParameterUpperBound;
+                }
+                final Class<?> type = forName(genericParameterName);
                 argTypes.add(type);
-
-                final String typeArgsGroup = argsMatcher.group(2);
-                final String typeArgs = typeArgsGroup != null
-                    ? typeArgsGroup.substring(1, typeArgsGroup.length() - 1).replaceAll(" ", "") : null;
-                arguments.add(new Argument(argsMatcher.group(3), type, typeArgs));
+                String genericParameterUpperbound = argsMatcher.group(2);
+                String typeArgs = genericParameterUpperbound != null
+                    ? genericParameterUpperbound.substring(1, genericParameterUpperbound.length() - 1).replaceAll(" ", "") : null;
+                if (typeArgs != null && typeArgs.equals(genericTypeParameterName)) {
+                    typeArgs = genericTypeParameterUpperBound;
+                }
+                arguments.add(new ApiMethodArg(argsMatcher.group(3), type, typeArgs));
             }
 
             Method method;
@@ -151,9 +169,9 @@ public abstract class ApiMethodParser<T> {
         result = processResults(result);
 
         // check that argument names have the same type across methods
-        Map<String, Class<?>> allArguments = new HashMap<String, Class<?>>();
+        Map<String, Class<?>> allArguments = new HashMap<>();
         for (ApiMethodModel model : result) {
-            for (Argument argument : model.getArguments()) {
+            for (ApiMethodArg argument : model.getArguments()) {
                 String name = argument.getName();
                 Class<?> argClass = allArguments.get(name);
                 Class<?> type = argument.getType();
@@ -170,7 +188,7 @@ public abstract class ApiMethodParser<T> {
         }
         allArguments.clear();
 
-        Collections.sort(result, new Comparator<ApiMethodModel>() {
+        result.sort(new Comparator<ApiMethodModel>() {
             @Override
             public int compare(ApiMethodModel model1, ApiMethodModel model2) {
                 final int nameCompare = model1.name.compareTo(model2.name);
@@ -185,13 +203,13 @@ public abstract class ApiMethodParser<T> {
                     } else {
                         // same number of args, compare arg names, kinda arbitrary to use alphabetized order
                         for (int i = 0; i < nArgs1; i++) {
-                            final int argCompare = model1.arguments.get(i).name.compareTo(model2.arguments.get(i).name);
+                            final int argCompare = model1.arguments.get(i).getName().compareTo(model2.arguments.get(i).getName());
                             if (argCompare != 0) {
                                 return argCompare;
                             }
                         }
                         // duplicate methods???
-                        log.warn("Duplicate methods found [" + model1 + "], [" + model2 + "]");
+                        log.warn("Duplicate methods found [{}], [{}]", model1, model2);
                         return 0;
                     }
                 }
@@ -199,7 +217,7 @@ public abstract class ApiMethodParser<T> {
         });
 
         // assign unique names to every method model
-        final Map<String, Integer> dups = new HashMap<String, Integer>();
+        final Map<String, Integer> dups = new HashMap<>();
         for (ApiMethodModel model : result) {
             // locale independent upper case conversion
             final String name = model.getName();
@@ -237,7 +255,7 @@ public abstract class ApiMethodParser<T> {
     }
 
     public static Class<?> forName(String className, ClassLoader classLoader) throws ClassNotFoundException {
-        Class<?> result;
+        Class<?> result = null;
         try {
             // lookup primitive types first
             result = PRIMITIVE_TYPES.get(className);
@@ -249,10 +267,32 @@ public abstract class ApiMethodParser<T> {
             if (className.endsWith("[]")) {
                 final int firstDim = className.indexOf('[');
                 final int nDimensions = (className.length() - firstDim) / 2;
-                return Array.newInstance(forName(className.substring(0, firstDim), classLoader), new int[nDimensions]).getClass();
+                result = Array.newInstance(forName(className.substring(0, firstDim), classLoader), new int[nDimensions]).getClass();
+            } else if (className.indexOf('.') != -1) {
+                // try replacing last '.' with $ to look for inner classes
+                String innerClass = className;
+                while (result == null && innerClass.indexOf('.') != -1) {
+                    int endIndex = innerClass.lastIndexOf('.');
+                    innerClass = innerClass.substring(0, endIndex) + "$" + innerClass.substring(endIndex + 1);
+                    try {
+                        result = Class.forName(innerClass, true, classLoader);
+                    } catch (ClassNotFoundException ignore) {
+                        // ignore
+                    }
+                }
             }
-            // try loading from default Java package java.lang
-            result = Class.forName(JAVA_LANG + className, true, classLoader);
+            if (result == null && !className.startsWith(JAVA_LANG)) {
+                // try loading from default Java package java.lang
+                try {
+                    result = forName(JAVA_LANG + className, classLoader);
+                } catch (ClassNotFoundException ignore) {
+                    // ignore
+                }
+            }
+        }
+
+        if (result == null) {
+            throw new ClassNotFoundException(className);
         }
 
         return result;
@@ -261,19 +301,19 @@ public abstract class ApiMethodParser<T> {
     public static final class ApiMethodModel {
         private final String name;
         private final Class<?> resultType;
-        private final List<Argument> arguments;
+        private final List<ApiMethodArg> arguments;
         private final Method method;
 
         private String uniqueName;
 
-        protected ApiMethodModel(String name, Class<?> resultType, List<Argument> arguments, Method method) {
+        protected ApiMethodModel(String name, Class<?> resultType, List<ApiMethodArg> arguments, Method method) {
             this.name = name;
             this.resultType = resultType;
             this.arguments = arguments;
             this.method = method;
         }
 
-        protected ApiMethodModel(String uniqueName, String name, Class<?> resultType, List<Argument> arguments, Method method) {
+        protected ApiMethodModel(String uniqueName, String name, Class<?> resultType, List<ApiMethodArg> arguments, Method method) {
             this.name = name;
             this.uniqueName = uniqueName;
             this.resultType = resultType;
@@ -297,7 +337,7 @@ public abstract class ApiMethodParser<T> {
             return method;
         }
 
-        public List<Argument> getArguments() {
+        public List<ApiMethodArg> getArguments() {
             return arguments;
         }
 
@@ -306,7 +346,7 @@ public abstract class ApiMethodParser<T> {
             StringBuilder builder = new StringBuilder();
             builder.append(resultType.getName()).append(" ");
             builder.append(name).append("(");
-            for (Argument argument : arguments) {
+            for (ApiMethodArg argument : arguments) {
                 builder.append(argument.getType().getCanonicalName()).append(" ");
                 builder.append(argument.getName()).append(", ");
             }
@@ -314,41 +354,6 @@ public abstract class ApiMethodParser<T> {
                 builder.delete(builder.length() - 2, builder.length());
             }
             builder.append(");");
-            return builder.toString();
-        }
-    }
-
-    public static final class Argument {
-        private final String name;
-        private final Class<?> type;
-        private final String typeArgs;
-
-        public Argument(String name, Class<?> type, String typeArgs) {
-            this.name = name;
-            this.type = type;
-            this.typeArgs = typeArgs;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public Class<?> getType() {
-            return type;
-        }
-
-        public String getTypeArgs() {
-            return typeArgs;
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder builder = new StringBuilder();
-            builder.append(type.getCanonicalName());
-            if (typeArgs != null) {
-                builder.append("<").append(typeArgs).append(">");
-            }
-            builder.append(" ").append(name);
             return builder.toString();
         }
     }

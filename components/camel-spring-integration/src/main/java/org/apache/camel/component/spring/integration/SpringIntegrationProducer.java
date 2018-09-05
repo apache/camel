@@ -21,13 +21,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.ObjectHelper;
-import org.springframework.integration.Message;
-import org.springframework.integration.MessageChannel;
-import org.springframework.integration.MessageHeaders;
+import org.apache.camel.util.StringHelper;
 import org.springframework.integration.channel.DirectChannel;
-import org.springframework.integration.core.MessageHandler;
 import org.springframework.integration.support.channel.BeanFactoryChannelResolver;
-import org.springframework.integration.support.channel.ChannelResolver;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessageHandler;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.core.DestinationResolver;
 
 /**
  * A producer of exchanges for the Spring Integration
@@ -37,13 +38,13 @@ import org.springframework.integration.support.channel.ChannelResolver;
  * @version 
  */
 public class SpringIntegrationProducer extends DefaultProducer implements Processor {    
-    private final ChannelResolver channelResolver;
+    private final DestinationResolver<MessageChannel> destinationResolver;
     private DirectChannel inputChannel;
     private MessageChannel outputChannel;
 
     public SpringIntegrationProducer(SpringCamelContext context, SpringIntegrationEndpoint endpoint) {
         super(endpoint);
-        this.channelResolver = new BeanFactoryChannelResolver(context.getApplicationContext());
+        this.destinationResolver = new BeanFactoryChannelResolver(context.getApplicationContext());
     }
 
     @Override
@@ -61,8 +62,8 @@ public class SpringIntegrationProducer extends DefaultProducer implements Proces
                 outputChannelName = getEndpoint().getInputChannel();
             }
 
-            ObjectHelper.notEmpty(outputChannelName, "OutputChannelName", getEndpoint());
-            outputChannel = channelResolver.resolveChannelName(outputChannelName);
+            StringHelper.notEmpty(outputChannelName, "OutputChannelName", getEndpoint());
+            outputChannel = destinationResolver.resolveDestination(outputChannelName);
         } else {
             outputChannel = getEndpoint().getMessageChannel();
         }
@@ -74,8 +75,8 @@ public class SpringIntegrationProducer extends DefaultProducer implements Proces
         // if we do in-out we need to setup the input channel as well
         if (getEndpoint().isInOut()) {
             // we need to setup right inputChannel for further processing
-            ObjectHelper.notEmpty(getEndpoint().getInputChannel(), "InputChannel", getEndpoint());
-            inputChannel = (DirectChannel)channelResolver.resolveChannelName(getEndpoint().getInputChannel());
+            StringHelper.notEmpty(getEndpoint().getInputChannel(), "InputChannel", getEndpoint());
+            inputChannel = (DirectChannel)destinationResolver.resolveDestination(getEndpoint().getInputChannel());
 
             if (inputChannel == null) {
                 throw new IllegalArgumentException("Cannot resolve InputChannel on " + getEndpoint());
@@ -90,7 +91,7 @@ public class SpringIntegrationProducer extends DefaultProducer implements Proces
             if (inputChannel == null) {
                 throw new IllegalArgumentException("InputChannel has not been configured on " + getEndpoint());
             }
-            exchange.getIn().getHeaders().put(MessageHeaders.REPLY_CHANNEL , inputChannel);
+            exchange.getIn().getHeaders().put(MessageHeaders.REPLY_CHANNEL, inputChannel);
 
             // subscribe so we can receive the reply from spring integration
             inputChannel.subscribe(new MessageHandler() {
@@ -100,7 +101,7 @@ public class SpringIntegrationProducer extends DefaultProducer implements Proces
                 }
             });
         }
-        org.springframework.integration.Message<?> siOutmessage = SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
+        org.springframework.messaging.Message<?> siOutmessage = SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
 
         // send the message to spring integration
         log.debug("Sending {} to OutputChannel: {}", siOutmessage, outputChannel);

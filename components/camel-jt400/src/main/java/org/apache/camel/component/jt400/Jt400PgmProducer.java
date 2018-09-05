@@ -27,6 +27,7 @@ import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.AS400Text;
 import com.ibm.as400.access.ProgramCall;
 import com.ibm.as400.access.ProgramParameter;
+import com.ibm.as400.access.ServiceProgramCall;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.impl.DefaultProducer;
@@ -52,7 +53,14 @@ public class Jt400PgmProducer extends DefaultProducer {
         String commandStr = getISeriesEndpoint().getObjectPath();
         ProgramParameter[] parameterList = getParameterList(exchange);
 
-        ProgramCall pgmCall = new ProgramCall(iSeries);
+        ProgramCall pgmCall;
+        if (getISeriesEndpoint().getType() == Jt400Type.PGM) {
+            pgmCall = new ProgramCall(iSeries);
+        } else {
+            pgmCall = new ServiceProgramCall(iSeries);
+            ((ServiceProgramCall)pgmCall).setProcedureName(getISeriesEndpoint().getProcedureName());
+            ((ServiceProgramCall)pgmCall).setReturnValueFormat(ServiceProgramCall.NO_RETURN_VALUE);
+        }
         pgmCall.setProgram(commandStr);
         pgmCall.setParameterList(parameterList);
 
@@ -114,7 +122,11 @@ public class Jt400PgmProducer extends DefaultProducer {
 
             if (input && output) {
                 LOG.trace("Parameter {} is both input and output.", i);
-                parameterList[i] = new ProgramParameter(inputData, length);
+                if (getISeriesEndpoint().getType() == Jt400Type.PGM) {
+                    parameterList[i] = new ProgramParameter(inputData, length);
+                } else {
+                    parameterList[i] = new ProgramParameter(ProgramParameter.PASS_BY_REFERENCE, inputData, length);
+                }
             } else if (input) {
                 LOG.trace("Parameter {} is input.", i);
                 if (inputData != null) {
@@ -139,7 +151,7 @@ public class Jt400PgmProducer extends DefaultProducer {
         Object body = exchange.getIn().getMandatoryBody();
         Object[] params = (Object[]) body;
 
-        List<Object> results = new ArrayList<Object>();
+        List<Object> results = new ArrayList<>();
 
         int i = 1;
         for (ProgramParameter pgmParam : pgmCall.getParameterList()) {

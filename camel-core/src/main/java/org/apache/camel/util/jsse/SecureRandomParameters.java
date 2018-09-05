@@ -118,12 +118,10 @@ public class SecureRandomParameters extends JsseParameters {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("SecureRandomParameters [algorithm=");
+        builder.append("SecureRandomParameters[algorithm=");
         builder.append(algorithm);
         builder.append(", provider=");
         builder.append(provider);
-        builder.append(", getContext()=");
-        builder.append(getCamelContext());
         builder.append("]");
         return builder.toString();
     }

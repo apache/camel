@@ -1,0 +1,76 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.aws-swf.enabled",
+      "description": "Enable aws-swf component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.aws-ses.enabled",
+      "description": "Enable aws-ses component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.aws-sns.enabled",
+      "description": "Enable aws-sns component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.aws-sdb.enabled",
+      "description": "Enable aws-sdb component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.aws-kinesis.enabled",
+      "description": "Enable aws-kinesis component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.aws-ddbstream.enabled",
+      "description": "Enable aws-ddbstream component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.aws-s3.enabled",
+      "description": "Enable aws-s3 component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.aws-sqs.enabled",
+      "description": "Enable aws-sqs component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.aws-ec2.enabled",
+      "description": "Enable aws-ec2 component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.aws-cw.enabled",
+      "description": "Enable aws-cw component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.aws-ddb.enabled",
+      "description": "Enable aws-ddb component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.aws-kinesis-firehose.enabled",
+      "description": "Enable aws-kinesis-firehose component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

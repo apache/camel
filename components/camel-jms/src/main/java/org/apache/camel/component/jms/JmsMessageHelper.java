@@ -24,6 +24,7 @@ import javax.jms.DeliveryMode;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.Session;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.util.ExchangeHelper;
@@ -33,12 +34,12 @@ import static org.apache.camel.component.jms.JmsConfiguration.QUEUE_PREFIX;
 import static org.apache.camel.component.jms.JmsConfiguration.TEMP_QUEUE_PREFIX;
 import static org.apache.camel.component.jms.JmsConfiguration.TEMP_TOPIC_PREFIX;
 import static org.apache.camel.component.jms.JmsConfiguration.TOPIC_PREFIX;
-import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
+import static org.apache.camel.util.StringHelper.removeStartingCharacters;
 
 /**
  * Utility class for {@link javax.jms.Message}.
  *
- * @version 
+ * @version
  */
 public final class JmsMessageHelper {
 
@@ -65,7 +66,7 @@ public final class JmsMessageHelper {
         // as the JMS API is a bit strict as we are not allowed to
         // clear a single property, but must clear them all and redo
         // the properties
-        Map<String, Object> map = new LinkedHashMap<String, Object>();
+        Map<String, Object> map = new LinkedHashMap<>();
         Enumeration<?> en = jmsMessage.getPropertyNames();
         while (en.hasMoreElements()) {
             String key = (String) en.nextElement();
@@ -118,6 +119,38 @@ public final class JmsMessageHelper {
             value = jmsMessage.getStringProperty(name);
         }
         return value;
+    }
+
+    /**
+     * Gets a JMS property in a safe way
+     *
+     * @param jmsMessage the JMS message
+     * @param name       name of the property to get
+     * @return the property value, or <tt>null</tt> if does not exists or failure to get the value
+     */
+    public static Long getSafeLongProperty(Message jmsMessage, String name) {
+        try {
+            return jmsMessage.getLongProperty(name);
+        } catch (Exception e) {
+            // ignore
+        }
+        return null;
+    }
+
+    /**
+     * Is the JMS session from a given vendor
+     *
+     * @param session the JMS session
+     * @param vendor the vendor, such as <tt>ActiveMQ</tt>, or <tt>Artemis</tt>
+     * @return <tt>true</tt> if from the vendor, <tt>false</tt> if not or not possible to determine
+     */
+    public static boolean isVendor(Session session, String vendor) {
+        if ("Artemis".equals(vendor)) {
+            return session.getClass().getName().startsWith("org.apache.activemq.artemis");
+        } else if ("ActiveMQ".equals(vendor)) {
+            return !isVendor(session, "Artemis") && session.getClass().getName().startsWith("org.apache.activemq");
+        }
+        return false;
     }
 
     /**
@@ -300,7 +333,7 @@ public final class JmsMessageHelper {
 
         return null;
     }
-    
+
     /**
      * Gets the String Properties from the message.
      *
@@ -342,6 +375,22 @@ public final class JmsMessageHelper {
     public static String getJMSMessageID(Message message) {
         try {
             return message.getJMSMessageID();
+        } catch (Exception e) {
+            // ignore if JMS broker do not support this
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets the JMSDestination from the message.
+     *
+     * @param message  the message
+     * @return the JMSDestination, or <tt>null</tt> if not able to get
+     */
+    public static Destination getJMSDestination(Message message) {
+        try {
+            return message.getJMSDestination();
         } catch (Exception e) {
             // ignore if JMS broker do not support this
         }
@@ -397,11 +446,17 @@ public final class JmsMessageHelper {
      */
     public static String getJMSCorrelationIDAsBytes(Message message) {
         try {
-            return new String(message.getJMSCorrelationIDAsBytes());
+            byte[] bytes = message.getJMSCorrelationIDAsBytes();
+            boolean isNull = true;
+            for (byte b : bytes) {
+                if (b != 0) {
+                    isNull = false;
+                }
+            }
+            return isNull ? null : new String(bytes);
         } catch (Exception e) {
             // ignore if JMS broker do not support this
         }
-
         return null;
     }
 }

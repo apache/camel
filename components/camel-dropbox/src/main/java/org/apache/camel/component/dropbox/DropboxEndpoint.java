@@ -27,6 +27,7 @@ import org.apache.camel.component.dropbox.integration.producer.DropboxGetProduce
 import org.apache.camel.component.dropbox.integration.producer.DropboxMoveProducer;
 import org.apache.camel.component.dropbox.integration.producer.DropboxPutProducer;
 import org.apache.camel.component.dropbox.integration.producer.DropboxSearchProducer;
+import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxException;
 import org.apache.camel.component.dropbox.util.DropboxOperation;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -35,9 +36,10 @@ import org.apache.camel.spi.UriParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.dropbox.util.DropboxConstants.POLL_CONSUMER_DELAY;
-
-@UriEndpoint(scheme = "dropbox", title = "Dropbox", syntax = "dropbox:operation", consumerClass = DropboxScheduledPollConsumer.class, label = "api,file")
+/**
+ * For uploading, downloading and managing files, folders, groups, collaborations, etc on dropbox DOT com.
+ */
+@UriEndpoint(firstVersion = "2.14.0", scheme = "dropbox", title = "Dropbox", syntax = "dropbox:operation", consumerClass = DropboxScheduledPollConsumer.class, label = "api,file")
 public class DropboxEndpoint extends DefaultEndpoint {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxEndpoint.class);
@@ -89,14 +91,14 @@ public class DropboxEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         LOG.trace("Resolve consumer dropbox endpoint {" + configuration.getOperation().toString() + "}");
         LOG.trace("Resolve consumer dropbox attached client:" + configuration.getClient());
-        DropboxScheduledPollConsumer consumer = null;
+        DropboxScheduledPollConsumer consumer;
         if (this.configuration.getOperation() == DropboxOperation.search) {
             consumer = new DropboxScheduledPollSearchConsumer(this, processor, configuration);
-            consumer.setDelay(POLL_CONSUMER_DELAY);
+            consumer.setDelay(DropboxConstants.POLL_CONSUMER_DELAY);
             return consumer;
         } else if (this.configuration.getOperation() == DropboxOperation.get) {
             consumer = new DropboxScheduledPollGetConsumer(this, processor, configuration);
-            consumer.setDelay(POLL_CONSUMER_DELAY);
+            consumer.setDelay(DropboxConstants.POLL_CONSUMER_DELAY);
             return consumer;
         } else {
             throw new DropboxException("Operation specified is not valid for consumer!");

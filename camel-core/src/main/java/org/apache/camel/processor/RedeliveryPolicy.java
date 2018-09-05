@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,12 +45,14 @@ import org.slf4j.LoggerFactory;
  *   <li>useCollisionAvoidance = false</li>
  *   <li>retriesExhaustedLogLevel = LoggingLevel.ERROR</li>
  *   <li>retryAttemptedLogLevel = LoggingLevel.DEBUG</li>
+ *   <li>retryAttemptedLogInterval = 1</li>
  *   <li>logRetryAttempted = true</li>
  *   <li>logRetryStackTrace = false</li>
  *   <li>logStackTrace = true</li>
  *   <li>logHandled = false</li>
  *   <li>logExhausted = true</li>
  *   <li>logExhaustedMessageHistory = true</li>
+ *   <li>logExhaustedMessageBody = false</li>
  *   <li>logNewException = true</li>
  *   <li>allowRedeliveryWhileStopping = true</li>
  * </ul>
@@ -91,6 +94,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     protected boolean useCollisionAvoidance;
     protected LoggingLevel retriesExhaustedLogLevel = LoggingLevel.ERROR;
     protected LoggingLevel retryAttemptedLogLevel = LoggingLevel.DEBUG;
+    protected int retryAttemptedLogInterval = 1;
     protected boolean logStackTrace = true;
     protected boolean logRetryStackTrace;
     protected boolean logHandled;
@@ -98,6 +102,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     protected boolean logExhausted = true;
     protected boolean logNewException = true;
     protected Boolean logExhaustedMessageHistory;
+    protected Boolean logExhaustedMessageBody;
     protected boolean logRetryAttempted = true;
     protected String delayPattern;
     protected boolean asyncDelayedRedelivery;
@@ -116,6 +121,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
             + ", allowRedeliveryWhileStopping=" + allowRedeliveryWhileStopping
             + ", retriesExhaustedLogLevel=" + retriesExhaustedLogLevel
             + ", retryAttemptedLogLevel=" + retryAttemptedLogLevel
+            + ", retryAttemptedLogInterval=" + retryAttemptedLogInterval
             + ", logRetryAttempted=" + logRetryAttempted
             + ", logStackTrace=" + logStackTrace
             + ", logRetryStackTrace=" + logRetryStackTrace
@@ -124,6 +130,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
             + ", logExhausted=" + logExhausted
             + ", logNewException=" + logNewException
             + ", logExhaustedMessageHistory=" + logExhaustedMessageHistory
+            + ", logExhaustedMessageBody=" + logExhaustedMessageBody
             + ", useExponentialBackOff="  + useExponentialBackOff
             + ", backOffMultiplier=" + backOffMultiplier
             + ", useCollisionAvoidance=" + useCollisionAvoidance
@@ -245,8 +252,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         // find the group where the redelivery counter matches
         long answer = 0;
         for (String group : groups) {
-            long delay = Long.valueOf(ObjectHelper.after(group, ":"));
-            int count = Integer.valueOf(ObjectHelper.before(group, ":"));
+            long delay = Long.valueOf(StringHelper.after(group, ":"));
+            int count = Integer.valueOf(StringHelper.before(group, ":"));
             if (count > redeliveryCounter) {
                 break;
             } else {
@@ -349,6 +356,14 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
+     * Sets the interval to log retry attempts
+     */
+    public RedeliveryPolicy retryAttemptedLogInterval(int logRetryAttemptedInterval) {
+        setRetryAttemptedLogInterval(logRetryAttemptedInterval);
+        return this;
+    }
+
+    /**
      * Sets whether to log retry attempts
      */
     public RedeliveryPolicy logRetryAttempted(boolean logRetryAttempted) {
@@ -401,6 +416,14 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
      */
     public RedeliveryPolicy logExhaustedMessageHistory(boolean logExhaustedMessageHistory) {
         setLogExhaustedMessageHistory(logExhaustedMessageHistory);
+        return this;
+    }
+
+    /**
+     * Sets whether to log exhausted errors including message body (requires message history to be enabled)
+     */
+    public RedeliveryPolicy logExhaustedMessageBody(boolean logExhaustedMessageBody) {
+        setLogExhaustedMessageBody(logExhaustedMessageBody);
         return this;
     }
 
@@ -598,6 +621,17 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         return retryAttemptedLogLevel;
     }
 
+    public int getRetryAttemptedLogInterval() {
+        return retryAttemptedLogInterval;
+    }
+
+    /**
+     * Sets the interval to log retry attempts
+     */
+    public void setRetryAttemptedLogInterval(int retryAttemptedLogInterval) {
+        this.retryAttemptedLogInterval = retryAttemptedLogInterval;
+    }
+
     public String getDelayPattern() {
         return delayPattern;
     }
@@ -706,6 +740,29 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
      */
     public void setLogExhaustedMessageHistory(boolean logExhaustedMessageHistory) {
         this.logExhaustedMessageHistory = logExhaustedMessageHistory;
+    }
+
+    public boolean isLogExhaustedMessageBody() {
+        // should default be disabled
+        return logExhaustedMessageBody != null && logExhaustedMessageBody;
+    }
+
+    /**
+     * Whether the option logExhaustedMessageBody has been configured or not
+     *
+     * @return <tt>null</tt> if not configured, or the configured value as true or false
+     * @see #isLogExhaustedMessageBody()
+     */
+    public Boolean getLogExhaustedMessageBody() {
+        return logExhaustedMessageBody;
+    }
+
+    /**
+     * Sets whether exhausted message body/headers should be logged with message history included
+     * (requires logExhaustedMessageHistory to be enabled).
+     */
+    public void setLogExhaustedMessageBody(Boolean logExhaustedMessageBody) {
+        this.logExhaustedMessageBody = logExhaustedMessageBody;
     }
 
     public boolean isAsyncDelayedRedelivery() {

@@ -35,9 +35,12 @@ import javax.mail.search.SearchTerm;
 import com.sun.mail.imap.SortTerm;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
+import org.apache.camel.FallbackConverter;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.spi.TypeConverterRegistry;
 
 /**
  * JavaMail specific converters.
@@ -62,7 +65,7 @@ public final class MailConverters {
     @Converter
     public static String toString(Message message) throws MessagingException, IOException {
         Object content = message.getContent();
-        if (content instanceof MimeMultipart) {
+        while (content instanceof MimeMultipart) {
             MimeMultipart multipart = (MimeMultipart) content;
             if (multipart.getCount() > 0) {
                 BodyPart part = multipart.getBodyPart(0);
@@ -84,6 +87,14 @@ public final class MailConverters {
         int size = multipart.getCount();
         for (int i = 0; i < size; i++) {
             BodyPart part = multipart.getBodyPart(i);
+            Object content = part.getContent();
+            while (content instanceof MimeMultipart) {
+                if (multipart.getCount() < 1) {
+                    break;
+                }
+                part = ((MimeMultipart)content).getBodyPart(0);
+                content = part.getContent();
+            }
             if (part.getContentType().toLowerCase().startsWith("text")) {
                 return part.getContent().toString();
             }
@@ -104,14 +115,37 @@ public final class MailConverters {
      * must be text based (ie start with text). Can return null.
      */
     @Converter
-    public static InputStream toInputStream(Multipart multipart) throws IOException, MessagingException {
+    public static InputStream toInputStream(Multipart multipart, Exchange exchange) throws IOException, MessagingException {
         String s = toString(multipart);
         if (s == null) {
             return null;
         }
-        return IOConverter.toInputStream(s, null);
+        return IOConverter.toInputStream(s, exchange);
     }
 
+    /**
+     * Converts a JavaMail multipart into a body of any type a String can be
+     * converted into. The content-type of the part must be text based.
+     */
+    @FallbackConverter
+    public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) throws MessagingException, IOException {
+        if (Multipart.class.isAssignableFrom(value.getClass())) {
+            TypeConverter tc = registry.lookup(type, String.class);
+            if (tc != null) {
+                String s = toString((Multipart)value);
+                if (s != null) {
+                    return tc.convertTo(type, s);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Converters the simple search term builder to search term.
+     *
+     * This should not be a @Converter method
+     */
     public static SearchTerm toSearchTerm(SimpleSearchTerm simple, TypeConverter typeConverter) throws ParseException, NoTypeConversionAvailableException {
         SearchTermBuilder builder = new SearchTermBuilder();
         if (simple.isUnseen()) {
@@ -120,7 +154,9 @@ public final class MailConverters {
 
         if (simple.getSubjectOrBody() != null) {
             String text = simple.getSubjectOrBody();
-            builder = builder.subject(text).body(SearchTermBuilder.Op.or, text);
+            SearchTermBuilder builderTemp = new SearchTermBuilder();
+            builderTemp = builderTemp.subject(text).body(SearchTermBuilder.Op.or, text);
+            builder = builder.and(builderTemp.build());
         }
         if (simple.getSubject() != null) {
             builder = builder.subject(simple.getSubject());
@@ -183,11 +219,11 @@ public final class MailConverters {
     }
 
     /*
-     * Converts from comma separated list of sort terms to SortTerm obj array
+     * Converts from comma separated list of sort terms to SortTerm obj array.
+     * This should not be a @Converter method
      */
-    @Converter
     public static SortTerm[] toSortTerm(String sortTerm) {
-        ArrayList<SortTerm> result = new ArrayList<SortTerm>();
+        ArrayList<SortTerm> result = new ArrayList<>();
         
         if (sortTerm == null) {
             return null;

@@ -22,10 +22,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dropbox.integration.DropboxTestSupport;
+import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
-
 
 public class DropboxProducerMoveTest extends DropboxTestSupport {
 
@@ -53,13 +53,41 @@ public class DropboxProducerMoveTest extends DropboxTestSupport {
         assertNotNull(body);
     }
 
+    @Test
+    public void testCamelDropboxWithOptionInHeader() throws Exception {
+        template.send("direct:start2", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader("test", "test");
+            }
+        });
+
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+        assertMockEndpointsSatisfied();
+
+        List<Exchange> exchanges = mock.getReceivedExchanges();
+        Exchange exchange = exchanges.get(0);
+        Object header =  exchange.getIn().getHeader(DropboxResultHeader.MOVED_PATH.name());
+        Object body = exchange.getIn().getBody();
+        assertNotNull(header);
+        assertNotNull(body);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("dropbox://move?" + getAuthParams() + "&remotePath=/XXX&newRemotePath=/XXX")
+                        .to("dropbox://move?accessToken={{accessToken}}&remotePath=/XXX&newRemotePath=/XXX")
                         .to("mock:result");
+
+                from("direct:start2")
+                    .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant("/XXX"))
+                    .setHeader(DropboxConstants.HEADER_NEW_REMOTE_PATH, constant("/XXX"))
+                    .to("dropbox://move?accessToken={{accessToken}}")
+                    .to("mock:result");
             }
         };
     }

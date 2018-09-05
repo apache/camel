@@ -25,11 +25,18 @@ import javax.management.openmbean.TabularData;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.management.ManagedCamelContextTest;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
+@Ignore("Does not run well on CI due test uses JMX mbeans")
 public class SpringManagedCamelContextTest extends ManagedCamelContextTest {
+
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
 
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/management/SpringManagedCamelContextTest.xml");
@@ -95,7 +102,6 @@ public class SpringManagedCamelContextTest extends ManagedCamelContextTest {
 
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
 
-        @SuppressWarnings("unchecked")
         TabularData data = (TabularData) mbeanServer.invoke(on, "listEips", null, null);
         assertNotNull(data);
         assertTrue(data.size() > 150);

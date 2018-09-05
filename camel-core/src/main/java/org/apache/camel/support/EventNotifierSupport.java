@@ -42,6 +42,11 @@ public abstract class EventNotifierSupport extends ServiceSupport implements Eve
         return ignoreCamelContextEvents;
     }
 
+    @Override
+    public boolean isDisabled() {
+        return false;
+    }
+
     public void setIgnoreCamelContextEvents(boolean ignoreCamelContextEvents) {
         this.ignoreCamelContextEvents = ignoreCamelContextEvents;
     }

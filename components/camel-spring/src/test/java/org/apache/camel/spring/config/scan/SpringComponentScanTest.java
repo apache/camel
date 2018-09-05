@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.config.scan;
+import org.junit.Before;
+import org.junit.After;
+
+import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 
@@ -30,7 +34,8 @@ public class SpringComponentScanTest extends ContextTestSupport {
     private AbstractApplicationContext applicationContext;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         if (context != null) {
             context.stop();
@@ -41,23 +46,26 @@ public class SpringComponentScanTest extends ContextTestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         // we're done so let's properly close the application context
         IOHelper.close(applicationContext);
 
         super.tearDown();
     }
 
+    @Test
     public void testExcludedRoute() throws InterruptedException {
         assertEquals(1, context.getRoutes().size());
         MockEndpoint mock = getMockEndpoint("mock:definitelyShouldNeverReceiveExchange");
         mock.expectedMessageCount(0);
 
-        sendBody("direct:shouldNeverRecieveExchange", "dropped like a hot rock");
+        sendBody("seda:shouldNeverRecieveExchange", "dropped like a hot rock");
         mock.await(500, TimeUnit.MILLISECONDS);
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testSpringComponentScanFeature() throws InterruptedException {
         template.sendBody("direct:start", "request");
         MockEndpoint mock = getMockEndpoint("mock:end");

@@ -61,7 +61,7 @@ public class S3ComponentFileTest extends CamelTestSupport {
     public void setup() throws Exception {
         super.setUp();
 
-        testFile = FileUtil.createTempFile("test", "file");
+        testFile = FileUtil.createTempFile("test", "file", null);
 
         FileWriter writer = new FileWriter(testFile);
         writer.write("This is my bucket content.");
@@ -88,7 +88,7 @@ public class S3ComponentFileTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertResultExchange(result.getExchanges().get(0), false);
+        assertResultExchange(result.getExchanges().get(0), true);
 
         PutObjectRequest putObjectRequest = client.putObjectRequests.get(0);
         assertEquals(getCamelBucket(), putObjectRequest.getBucketName());
@@ -118,7 +118,7 @@ public class S3ComponentFileTest extends CamelTestSupport {
         assertNull(resultExchange.getIn().getHeader(S3Constants.CONTENT_DISPOSITION));
         assertNull(resultExchange.getIn().getHeader(S3Constants.CONTENT_MD5));
         assertNull(resultExchange.getIn().getHeader(S3Constants.CACHE_CONTROL));
-        assertNull(resultExchange.getIn().getHeader(S3Constants.USER_METADATA));
+        assertNotNull(resultExchange.getIn().getHeader(S3Constants.USER_METADATA));
         assertEquals(0, resultExchange.getIn().getHeader(S3Constants.S3_HEADERS, Map.class).size());
     }
 

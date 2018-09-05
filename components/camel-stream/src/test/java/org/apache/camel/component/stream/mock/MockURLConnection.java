@@ -20,10 +20,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class MockURLConnection extends URLConnection {
 
-    private static final ThreadLocal<OutputStream> THREAD_OUTPUT_STREAM = new ThreadLocal<OutputStream>();
+    private static final ThreadLocal<OutputStream> THREAD_OUTPUT_STREAM = new ThreadLocal<>();
+
+    private static final Map<String, String> HEADERS = new LinkedHashMap<>();
 
     public MockURLConnection(URL url) {
         super(url);
@@ -42,4 +46,12 @@ public class MockURLConnection extends URLConnection {
         return THREAD_OUTPUT_STREAM.get();
     }
 
+    @Override
+    public void addRequestProperty(String key, String value) {
+        HEADERS.put(key, value);
+    }
+
+    public static Map<String, String> getHeaders() {
+        return HEADERS;
+    }
 }

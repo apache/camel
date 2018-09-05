@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -33,6 +36,7 @@ public class BeanRecipientListTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanRecipientListTest.class);
     protected MyBean myBean = new MyBean();
 
+    @Test
     public void testSendMessage() throws Exception {
         final String expectedBody = "Wibble";
 
@@ -45,7 +49,8 @@ public class BeanRecipientListTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         checkBean();
     }
@@ -85,7 +90,7 @@ public class BeanRecipientListTest extends ContextTestSupport {
 
         @org.apache.camel.RecipientList
         public String[] route(String body) {
-            LOG.debug("Called " + this + " with body: " + body);
+            LOG.debug("Called {} with body: {}", this, body);
             return new String[] {"mock:a", "mock:b"};
         }
     }

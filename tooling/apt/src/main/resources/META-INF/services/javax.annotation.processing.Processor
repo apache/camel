@@ -14,5 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-org.apache.camel.tools.apt.EipAnnotationProcessor
+
+### only specify ModelAnnotationProcessor as it delegates to CoreEip or Spring accordingly
+org.apache.camel.tools.apt.ModelAnnotationProcessor
 org.apache.camel.tools.apt.EndpointAnnotationProcessor
+org.apache.camel.tools.apt.ConverterProcessor

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.disruptor.vm;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -26,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class SameDisruptorVmQueueSizeAndNoSizeTest extends ContextTestSupport {
 
+    @Test
     public void testSameQueue() throws Exception {
         for (int i = 0; i < 128; i++) {
             template.sendBody("disruptor-vm:foo?blockWhenFull=false", "" + i);
@@ -40,6 +43,7 @@ public class SameDisruptorVmQueueSizeAndNoSizeTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testSameQueueDifferentSize() throws Exception {
         try {
             template.sendBody("disruptor-vm:foo?size=256", "Should fail");
@@ -52,6 +56,7 @@ public class SameDisruptorVmQueueSizeAndNoSizeTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testSameQueueDifferentSizeBar() throws Exception {
         try {
             template.sendBody("disruptor-vm:bar?size=256", "Should fail");

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.PollingConsumer;
@@ -25,6 +27,7 @@ import org.apache.camel.PollingConsumer;
  */
 public class DefaultConsumerCacheTest extends ContextTestSupport {
 
+    @Test
     public void testCacheConsumers() throws Exception {
         ConsumerCache cache = new ConsumerCache(this, context);
         cache.start();
@@ -37,6 +40,9 @@ public class DefaultConsumerCacheTest extends ContextTestSupport {
             PollingConsumer p = cache.getConsumer(e);
             assertNotNull("the polling consumer should not be null", p);
         }
+
+        // the eviction is async so force cleanup
+        cache.cleanUp();
 
         assertEquals("Size should be 1000", 1000, cache.size());
         cache.stop();

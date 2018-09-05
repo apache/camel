@@ -74,7 +74,7 @@ public class DisruptorConcurrentTest extends CamelTestSupport {
         mock.setMinimumResultWaitTime(3000);
 
         final ExecutorService executors = Executors.newFixedThreadPool(10);
-        final List<Object> replies = new ArrayList<Object>(20);
+        final List<Object> replies = new ArrayList<>(20);
         for (int i = 0; i < 20; i++) {
             final int num = i;
             final Object out = executors.submit(new Callable<Object>() {
@@ -107,7 +107,7 @@ public class DisruptorConcurrentTest extends CamelTestSupport {
         // must start the template
         pt.start();
 
-        final List<Future<Object>> replies = new ArrayList<Future<Object>>(20);
+        final List<Future<Object>> replies = new ArrayList<>(20);
         for (int i = 0; i < 20; i++) {
             final Future<Object> out = pt.asyncRequestBody("disruptor:bar", "Message " + i);
             replies.add(out);

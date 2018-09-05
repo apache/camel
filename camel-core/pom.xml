@@ -1,33 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Licensed to the Apache Software Foundation (ASF) under one or more
-  contributor license agreements.  See the NOTICE file distributed with
-  this work for additional information regarding copyright ownership.
-  The ASF licenses this file to You under the Apache License, Version 2.0
-  (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.16-SNAPSHOT</version>
+    <version>2.23.0-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
   <artifactId>camel-core</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Core</name>
   <description>The Core Camel Java DSL based router</description>
 
@@ -39,8 +42,11 @@
     <camel.osgi.import>
       org.apache.camel.tools.*;resolution:=optional,
       !org.apache.camel.*,
-      !com.googlecode.concurrentlinkedhashmap,
+      !com.github.benmanes.caffeine.cache,
+      !org.json.simple,
       ${camel.osgi.import.defaults},
+      org.springframework.transaction;resolution:=optional,
+      org.apache.camel.spring.spi;resolution:=optional,
       org.apache.xalan.xsltc.trax;resolution:=optional,
       javax.activation;resolution:=optional,
       javax.xml.bind;resolution:=optional,
@@ -50,6 +56,7 @@
       javax.xml.transform.stax;resolution:=optional,
       net.sf.saxon.event;resolution:=optional,
       net.sf.saxon.serialize;resolution:=optional,
+      net.sf.saxon.xpath;resolution:=optional,
       *
     </camel.osgi.import>
     <camel.osgi.export.service>
@@ -69,8 +76,10 @@
       org.apache.camel.spi.ComponentResolver;component=properties,
       org.apache.camel.spi.ComponentResolver;component=ref,
       org.apache.camel.spi.ComponentResolver;component=rest,
-      org.apache.camel.spi.ComponentResolver;component=seda,
+      org.apache.camel.spi.ComponentResolver;component=rest-api,
       org.apache.camel.spi.ComponentResolver;component=scheduler,
+      org.apache.camel.spi.ComponentResolver;component=saga,
+      org.apache.camel.spi.ComponentResolver;component=seda,
       org.apache.camel.spi.ComponentResolver;component=stub,
       org.apache.camel.spi.ComponentResolver;component=test,
       org.apache.camel.spi.ComponentResolver;component=timer,
@@ -83,9 +92,9 @@
       org.apache.camel.spi.DataFormatResolver;dataformat=zip,
       org.apache.camel.spi.LanguageResolver;language=bean,
       org.apache.camel.spi.LanguageResolver;language=constant,
+      org.apache.camel.spi.LanguageResolver;language=exchangeProperty,
       org.apache.camel.spi.LanguageResolver;language=file,
       org.apache.camel.spi.LanguageResolver;language=header,
-      org.apache.camel.spi.LanguageResolver;language=property,
       org.apache.camel.spi.LanguageResolver;language=ref,
       org.apache.camel.spi.LanguageResolver;language=simple,
       org.apache.camel.spi.LanguageResolver;language=tokenize,
@@ -100,13 +109,14 @@
       net.sf.saxon
     </camel.osgi.dynamic>
     <camel.osgi.provide.capability>
-      osgi.extender; osgi.extender="org.apache.camel"; uses:="org.apache.camel.impl.osgi"; version:Version="$(version;==;${camel.osgi.version.clean})"
+      osgi.extender; osgi.extender="org.apache.camel"; uses:="org.apache.camel.impl.osgi";
+      version:Version="$(version;==;${camel.osgi.version.clean})"
     </camel.osgi.provide.capability>
     <camel.osgi.activator>
       org.apache.camel.impl.osgi.Activator
     </camel.osgi.activator>
     <!-- do not skip any tests by default -->
-    <platform.skip.tests />
+    <platform.skip.tests/>
   </properties>
 
   <dependencies>
@@ -123,8 +133,14 @@
     <!-- required dependencies by camel-core -->
     <!-- which we shade into camel-core so its available for everybody out of the box -->
     <dependency>
-      <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
-      <artifactId>concurrentlinkedhashmap-lru</artifactId>
+      <groupId>com.github.ben-manes.caffeine</groupId>
+      <artifactId>caffeine</artifactId>
+    </dependency>
+    <!-- we shade our patched ordered json-simple parser -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>json-simple-ordered</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <!-- required dependencies by camel-core -->
@@ -146,18 +162,57 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>hamcrest-core</artifactId>
+          <groupId>org.hamcrest</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>java-hamcrest</artifactId>
+      <version>${hamcrest-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>hamcrest-core</artifactId>
+          <groupId>org.hamcrest</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>${assertj-version}</version>
+      <scope>test</scope>
     </dependency>
 
     <!-- logging -->
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
       <scope>test</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.easymock</groupId>
-      <artifactId>easymock</artifactId>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -165,8 +220,12 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>${jackson2-version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <scope>test</scope>
     </dependency>
 
     <!-- validator -->
@@ -182,37 +241,39 @@
 
   <build>
     <pluginManagement>
-        <plugins>
-            <!-- Eclipse m2e Lifecycle Management -->
-            <plugin>
-                <groupId>org.eclipse.m2e</groupId>
-                <artifactId>lifecycle-mapping</artifactId>
-                <version>${lifecycle-mapping-version}</version>
-                <configuration>
-                    <lifecycleMappingMetadata>
-                        <pluginExecutions>
-                            <pluginExecution>
-                                <pluginExecutionFilter>
-                                    <groupId>org.apache.camel</groupId>
-                                    <artifactId>camel-package-maven-plugin</artifactId>
-                                    <versionRange>${project.version}</versionRange>
-                                    <goals>
-                                        <goal>generate-eips-list</goal>
-                                    </goals>
-                                </pluginExecutionFilter>
-                                <action>
-                                    <ignore />
-                                </action>
-                            </pluginExecution>
-                        </pluginExecutions>
-                    </lifecycleMappingMetadata>
-                </configuration>
-            </plugin>
-        </plugins>
+      <plugins>
+        <!-- Eclipse m2e Lifecycle Management -->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>${lifecycle-mapping-version}</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-package-maven-plugin</artifactId>
+                    <versionRange>${project.version}</versionRange>
+                    <goals>
+                      <goal>generate-eips-list</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore/>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
     </pluginManagement>
+
     <plugins>
 
-      <!-- shade concurrent hashmap for faster Camel and spi-annotations as needed by everybody -->
+      <!-- shade caffeine cache for faster Camel and spi-annotations as needed by everybody -->
+      <!-- shade json-simple for parsing Camel component JSon schema files -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -225,7 +286,9 @@
             <configuration>
               <artifactSet>
                 <includes>
-                  <include>com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru</include>
+                  <include>com.github.ben-manes.caffeine:caffeine</include>
+                  <include>org.apache.camel:json-simple-ordered</include>
+                  <include>org.apache.camel:spi-annotations</include>
                 </includes>
                 <excludes>
                   <exclude>org.apache.camel:apt</exclude>
@@ -233,14 +296,47 @@
               </artifactSet>
               <relocations>
                 <relocation>
-                  <pattern>com.googlecode.concurrentlinkedhashmap</pattern>
-                  <shadedPattern>org.apache.camel.com.googlecode.concurrentlinkedhashmap</shadedPattern>
+                  <pattern>com.github.benmanes.caffeine</pattern>
+                  <shadedPattern>org.apache.camel.com.github.benmanes.caffeine</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.json.simple</pattern>
+                  <!-- scala compiler do not like org.apache.camel.org so its just json.simple instead of org.json.simple -->
+                  <shadedPattern>org.apache.camel.json.simple</shadedPattern>
                 </relocation>
               </relocations>
             </configuration>
           </execution>
         </executions>
       </plugin>
+
+      <!-- include additional metadata from target/generated into the camel-core JAR -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>include-metadata</id>
+            <phase>package</phase>
+            <configuration>
+              <target>
+                <echo>Including metadata properties files in camel-core.jar</echo>
+                <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}.jar"
+                     update="true">
+                  <fileset dir="${basedir}/target/generated/camel/components/" includes="**/*"/>
+                  <fileset dir="${basedir}/target/generated/camel/dataformats/" includes="**/*"/>
+                  <fileset dir="${basedir}/target/generated/camel/languages/" includes="**/*"/>
+                  <fileset dir="${basedir}/target/generated/camel/models/" includes="**/*"/>
+                </jar>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
       <!-- generate the attached tests jar -->
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
@@ -317,9 +413,18 @@
             <id>validate</id>
             <goals>
               <goal>validate-components</goal>
+              <goal>prepare-spring-boot-starter</goal>
+              <goal>prepare-spring-boot-auto-configuration</goal>
             </goals>
             <phase>prepare-package</phase>
-         </execution>
+          </execution>
+          <execution>
+            <id>readme</id>
+            <goals>
+              <goal>update-readme</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
         </executions>
       </plugin>
     </plugins>
@@ -337,7 +442,6 @@
           </links>
           <linksource>true</linksource>
           <maxmemory>256m</maxmemory>
-
           <groups>
             <group>
               <title>Camel API</title>
@@ -348,12 +452,12 @@
               <packages>org.apache.camel.builder:org.apache.camel.builder.*</packages>
             </group>
             <group>
-              <title>The bean and JAXB2 model for EIP rule definitions</title>
+              <title>EIP model</title>
               <packages>org.apache.camel.model:org.apache.camel.model.*</packages>
             </group>
             <group>
-              <title>Strategy APIs for implementors extending Camel</title>
-              <packages>org.apache.camel.spi</packages>
+              <title>Camel Components</title>
+              <packages>org.apache.camel.component:org.apache.camel.component.*</packages>
             </group>
             <group>
               <title>Language APIs and plugins for Expressions and Predicates</title>
@@ -364,20 +468,24 @@
               <packages>org.apache.camel.processor:org.apache.camel.processor.*</packages>
             </group>
             <group>
-              <title>Camel Components</title>
-              <packages>org.apache.camel.component.*</packages>
+              <title>Strategy APIs for implementors extending Camel</title>
+              <packages>org.apache.camel.spi</packages>
             </group>
             <group>
               <title>Support APIs for implementors</title>
-              <packages>org.apache.camel.support.*</packages>
+              <packages>org.apache.camel.support:org.apache.camel.support.*</packages>
             </group>
             <group>
-              <title>Main class for running Camel standalone</title>
-              <packages>org.apache.camel.main.*</packages>
+              <title>Management (JMX) API</title>
+              <packages>org.apache.camel.management:org.apache.camel.management.*:org.apache.camel.api.management.mbean</packages>
             </group>
             <group>
               <title>Camel Runtime</title>
               <packages>org.apache.camel.impl:org.apache.camel.impl.*</packages>
+            </group>
+            <group>
+              <title>Camel Main to run Camel standalone</title>
+              <packages>org.apache.camel.main</packages>
             </group>
             <group>
               <title>Type conversion helper classes</title>
@@ -393,8 +501,25 @@
     </plugins>
   </reporting>
 
-
   <profiles>
+    <profile>
+      <id>validate</id>
+      <build>
+        <plugins>
+          <!-- to validate Camel endpoints: mvn camel:validate -Pvalidate -->
+          <plugin>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-maven-plugin</artifactId>
+            <version>${project.version}</version>
+            <configuration>
+              <failOnError>true</failOnError>
+              <includeTest>true</includeTest>
+              <ignoreLenientProperties>false</ignoreLenientProperties>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
     <profile>
       <id>release</id>
       <build>
@@ -428,12 +553,12 @@
                   <packages>org.apache.camel.builder:org.apache.camel.builder.*</packages>
                 </group>
                 <group>
-                  <title>The bean and JAXB2 model for EIP rule definitions</title>
+                  <title>EIP model</title>
                   <packages>org.apache.camel.model:org.apache.camel.model.*</packages>
                 </group>
                 <group>
-                  <title>Strategy APIs for implementors extending Camel</title>
-                  <packages>org.apache.camel.spi</packages>
+                  <title>Camel Components</title>
+                  <packages>org.apache.camel.component:org.apache.camel.component.*</packages>
                 </group>
                 <group>
                   <title>Language APIs and plugins for Expressions and Predicates</title>
@@ -444,27 +569,23 @@
                   <packages>org.apache.camel.processor:org.apache.camel.processor.*</packages>
                 </group>
                 <group>
-                  <title>Camel Components</title>
-                  <packages>org.apache.camel.component.*</packages>
-                </group>
-                <group>
-                  <title>Camel Support having base classes to extend</title>
-                  <packages>org.apache.camel.support</packages>
+                  <title>Strategy APIs for implementors extending Camel</title>
+                  <packages>org.apache.camel.spi</packages>
                 </group>
                 <group>
                   <title>Support APIs for implementors</title>
-                  <packages>org.apache.camel.support.*</packages>
+                  <packages>org.apache.camel.support:org.apache.camel.support.*</packages>
                 </group>
                 <group>
-                  <title>Main class for running Camel standalone</title>
-                  <packages>org.apache.camel.main.*</packages>
+                  <title>Management (JMX) API</title>
+                  <packages>org.apache.camel.management:org.apache.camel.management.*:org.apache.camel.api.management.mbean</packages>
                 </group>
                 <group>
                   <title>Camel Runtime</title>
                   <packages>org.apache.camel.impl:org.apache.camel.impl.*</packages>
                 </group>
                 <group>
-                  <title>Camel Starters</title>
+                  <title>Camel Main to run Camel standalone</title>
                   <packages>org.apache.camel.main</packages>
                 </group>
                 <group>
@@ -490,13 +611,14 @@
       </activation>
 
       <dependencies>
+
         <!-- enable the APT processor -->
         <dependency>
           <groupId>org.apache.camel</groupId>
           <artifactId>apt</artifactId>
-          <version>${project.version}</version>
           <scope>provided</scope>
         </dependency>
+
       </dependencies>
     </profile>
 
@@ -513,8 +635,8 @@
       </properties>
     </profile>
     <profile>
-       <id>xalan</id>
-       <dependencies>
+      <id>xalan</id>
+      <dependencies>
         <!-- enable the Xalan processor -->
         <dependency>
           <groupId>xalan</groupId>
@@ -524,8 +646,8 @@
       </dependencies>
     </profile>
     <profile>
-       <id>xerces</id>
-       <dependencies>
+      <id>xerces</id>
+      <dependencies>
         <!-- enable the xerces processor -->
         <dependency>
           <groupId>xerces</groupId>
@@ -535,19 +657,75 @@
       </dependencies>
     </profile>
     <profile>
-       <id>woodstox</id>
-       <activation>
-         <activeByDefault>true</activeByDefault>
-       </activation>
-       <dependencies>
-          <!-- xmltokenizer using woodstox -->
-          <dependency>
-            <groupId>org.codehaus.woodstox</groupId>
-            <artifactId>woodstox-core-asl</artifactId>
-            <version>${woodstox-version}</version>
-            <scope>test</scope>
-          </dependency>
-        </dependencies>
+      <id>woodstox</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <!-- xmltokenizer using woodstox -->
+        <dependency>
+          <groupId>org.codehaus.woodstox</groupId>
+          <artifactId>woodstox-core-asl</artifactId>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
+      <id>jdk9+-build</id>
+      <activation>
+        <jdk>[9,)</jdk>
+      </activation>
+      <dependencies>
+
+        <!-- enable the APT processor -->
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>apt</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <!-- xmltokenizer using woodstox -->
+        <dependency>
+          <groupId>org.codehaus.woodstox</groupId>
+          <artifactId>woodstox-core-asl</artifactId>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <!-- skip file stress tests as they are intended to run manually -->
+              <excludes>
+                <exclude>org/apache/camel/component/file/stress/**.java</exclude>
+                <exclude>**/DistributedCompletionIntervalTest.java</exclude>
+                <exclude>**/DistributedConcurrentPerCorrelationKeyTest.java</exclude>
+                <exclude>${platform.skip.tests}</exclude>
+              </excludes>
+              <forkedProcessTimeoutInSeconds>3000</forkedProcessTimeoutInSeconds>
+              <!-- needed for testing the properties component -->
+              <environmentVariables>
+              <FOO_SERVICE_HOST>myserver</FOO_SERVICE_HOST>
+              <FOO_SERVICE_PORT>8081</FOO_SERVICE_PORT>
+              </environmentVariables>
+              <argLine>--add-modules java.xml.bind,java.xml.ws --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED</argLine>
+            </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-core</artifactId>
+                <version>${jaxb-version}</version>
+              </dependency>
+              <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-impl</artifactId>
+                <version>${jaxb-version}</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 

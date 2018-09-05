@@ -48,18 +48,21 @@ import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper
 import static org.apache.camel.component.facebook.data.FacebookPropertiesHelper.getEndpointPropertyNames;
 
 /**
- * Represents a Facebook endpoint.
+ * The Facebook component provides access to all of the Facebook APIs accessible using Facebook4J.
+ *
+ * It allows producing messages to retrieve, add, and delete posts, likes, comments, photos, albums, videos, photos,
+ * checkins, locations, links, etc. It also supports APIs that allow polling for posts, users, checkins, groups, locations, etc.
  */
-@UriEndpoint(scheme = "facebook", title = "Facebook", syntax = "facebook:methodName", consumerClass = FacebookConsumer.class, label = "social")
+@UriEndpoint(firstVersion = "2.14.0", scheme = "facebook", title = "Facebook", syntax = "facebook:methodName", consumerClass = FacebookConsumer.class, label = "social")
 public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstants {
 
     private static final Logger LOG = LoggerFactory.getLogger(FacebookEndpoint.class);
 
     private FacebookNameStyle nameStyle;
-    private String method;
 
-    // Facebook4J method name
-    @UriPath(description = "What operation to perform") @Metadata(required = "true")
+    @UriPath(name = "methodName", description = "What operation to perform") @Metadata(required = "true")
+
+    private String method;
     private FacebookMethodsType methodName;
     @UriParam
     private FacebookEndpointConfiguration configuration;
@@ -121,7 +124,7 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
 
     private void initState() {
         // get endpoint property names
-        final Set<String> arguments = new HashSet<String>();
+        final Set<String> arguments = new HashSet<>();
         arguments.addAll(getEndpointPropertyNames(configuration));
         // add inBody argument for producers
         if (inBody != null) {
@@ -129,7 +132,7 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
         }
         final String[] argNames = arguments.toArray(new String[arguments.size()]);
 
-        candidates = new ArrayList<FacebookMethodsType>();
+        candidates = new ArrayList<>();
         candidates.addAll(getCandidateMethods(method, argNames));
         if (!candidates.isEmpty()) {
             // found an exact name match, allows disambiguation if needed
@@ -202,8 +205,13 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
         this.inBody = inBody;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
+    /**
+     * Sets the {@link FacebookEndpointConfiguration} to use
+     * 
+     * @param configuration the {@link FacebookEndpointConfiguration} to use
+     */
+    public void setConfiguration(FacebookEndpointConfiguration configuration) {
+        this.configuration = configuration;
     }
+
 }

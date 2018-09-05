@@ -16,13 +16,14 @@
  */
 package org.apache.camel.component.salesforce;
 
+import java.time.ZonedDateTime;
+
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
 import org.apache.camel.component.salesforce.internal.dto.QueryRecordsPushTopic;
-import org.joda.time.DateTime;
 import org.junit.Test;
 
 public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
@@ -35,9 +36,15 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
         mock.expectedHeaderReceived("CamelSalesforceTopicName", "CamelTestTopic");
         mock.expectedHeaderReceived("CamelSalesforceChannel", "/topic/CamelTestTopic");
 
+        MockEndpoint rawPayloadMock = getMockEndpoint("mock:RawPayloadCamelTestTopic");
+        rawPayloadMock.expectedMessageCount(1);
+        // assert expected static headers
+        rawPayloadMock.expectedHeaderReceived("CamelSalesforceTopicName", "CamelTestTopic");
+        rawPayloadMock.expectedHeaderReceived("CamelSalesforceChannel", "/topic/CamelTestTopic");
+
         Merchandise__c merchandise = new Merchandise__c();
         merchandise.setName("TestNotification");
-        merchandise.setDescription__c("Merchandise for testing Streaming API updated on " + new DateTime().toString());
+        merchandise.setDescription__c("Merchandise for testing Streaming API updated on " + ZonedDateTime.now().toString());
         merchandise.setPrice__c(9.99);
         merchandise.setTotal_Inventory__c(1000.0);
         CreateSObjectResult result = template().requestBody(
@@ -49,6 +56,7 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
             mock.assertIsSatisfied();
             final Message in = mock.getExchanges().get(0).getIn();
             merchandise = in.getMandatoryBody(Merchandise__c.class);
+
             assertNotNull("Missing event body", merchandise);
             log.info("Merchandise notification: {}", merchandise.toString());
             assertNotNull("Missing field Id", merchandise.getId());
@@ -58,6 +66,11 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
             assertNotNull("Missing header CamelSalesforceClientId", in.getHeader("CamelSalesforceClientId"));
             assertNotNull("Missing header CamelSalesforceEventType", in.getHeader("CamelSalesforceEventType"));
             assertNotNull("Missing header CamelSalesforceCreatedDate", in.getHeader("CamelSalesforceCreatedDate"));
+
+            // validate raw payload message
+            rawPayloadMock.assertIsSatisfied();
+            final Message inRaw = rawPayloadMock.getExchanges().get(0).getIn();
+            assertTrue("Expected String message body for Raw Payload", inRaw.getBody() instanceof String);
 
         } finally {
             // remove the test record
@@ -87,6 +100,11 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
                     + "sObjectName=Merchandise__c&"
                     + "updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c").
                     to("mock:CamelTestTopic");
+
+                from("salesforce:CamelTestTopic?rawPayload=true&notifyForFields=ALL&"
+                    + "notifyForOperationCreate=true&notifyForOperationDelete=true&notifyForOperationUpdate=true&"
+                    + "updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c").
+                    to("mock:RawPayloadCamelTestTopic");
 
                 // route for creating test record
                 from("direct:upsertSObject").

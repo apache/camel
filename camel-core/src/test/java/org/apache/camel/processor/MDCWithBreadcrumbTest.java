@@ -40,7 +40,7 @@ public class MDCWithBreadcrumbTest extends MDCTest {
                             public void process(Exchange exchange) throws Exception {
                                 assertEquals("route-a", MDC.get("camel.routeId"));
                                 assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-                                assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.breadcrumbId"));
+                                assertEquals(exchange.getExchangeId(), MDC.get("camel.breadcrumbId"));
                             }
                         })
                         .to("log:foo").to("direct:b");
@@ -50,7 +50,7 @@ public class MDCWithBreadcrumbTest extends MDCTest {
                             public void process(Exchange exchange) throws Exception {
                                 assertEquals("route-b", MDC.get("camel.routeId"));
                                 assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-                                assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.breadcrumbId"));
+                                assertEquals(exchange.getExchangeId(), MDC.get("camel.breadcrumbId"));
                             }
                         })
                         .to("log:bar").to("mock:result");

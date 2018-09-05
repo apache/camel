@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -30,7 +33,8 @@ public class FilerProducerAbsoluteTest extends ContextTestSupport {
     private String path;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         File dir = new File("target/reports/absolute");
         path = dir.getAbsolutePath();
         deleteDirectory(dir);
@@ -38,6 +42,7 @@ public class FilerProducerAbsoluteTest extends ContextTestSupport {
         super.setUp();
     }
 
+    @Test
     public void testProduceAbsoluteFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

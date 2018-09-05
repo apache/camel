@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,6 +26,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 public class AggregateFromWireTapTest extends ContextTestSupport {
 
+    @Test
     public void testAggregateFromWireTap() throws Exception {
         MockEndpoint end = getMockEndpoint("mock:end");
         end.expectedBodiesReceived("A", "B");

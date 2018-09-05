@@ -40,7 +40,10 @@ import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_LAYER_SEPARA
 import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_RESOURCE_URI;
 import static org.apache.camel.component.chunk.ChunkConstants.CHUNK_TEMPLATE;
 
-@UriEndpoint(scheme = "chunk", title = "Chunk", syntax = "chunk:resourceUri", producerOnly = true, label = "transformation")
+/**
+ * Transforms the message using a Chunk template.
+ */
+@UriEndpoint(firstVersion = "2.15.0", scheme = "chunk", title = "Chunk", syntax = "chunk:resourceUri", producerOnly = true, label = "transformation")
 public class ChunkEndpoint extends ResourceEndpoint {
 
     private Theme theme;
@@ -176,6 +179,11 @@ public class ChunkEndpoint extends ResourceEndpoint {
             }
             if (encoding != null) {
                 theme.setEncoding(encoding);
+            }
+
+            ClassLoader apcl = getCamelContext().getApplicationContextClassLoader();
+            if (apcl != null) {
+                theme.setJarContext(apcl);
             }
         }
         return theme;

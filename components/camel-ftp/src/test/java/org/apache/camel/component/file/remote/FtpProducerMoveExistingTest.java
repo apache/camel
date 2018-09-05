@@ -53,6 +53,18 @@ public class FtpProducerMoveExistingTest extends FtpServerTestSupport {
     }
 
     @Test
+    public void testExistingFileExistsTempFilename() throws Exception {
+        template.sendBodyAndHeader(getFtpUrl() + "&tempFileName=${file:onlyname}.temp&moveExisting=${file:parent}/renamed-${file:onlyname}", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(getFtpUrl() + "&tempFileName=${file:onlyname}.temp&moveExisting=${file:parent}/renamed-${file:onlyname}", "Bye World", Exchange.FILE_NAME, "hello.txt");
+
+        assertFileExists(FTP_ROOT_DIR + "/move/hello.txt");
+        assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, new File(FTP_ROOT_DIR + "/move/hello.txt")));
+
+        assertFileExists(FTP_ROOT_DIR + "/move/renamed-hello.txt");
+        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File(FTP_ROOT_DIR + "/move/renamed-hello.txt")));
+    }
+
+    @Test
     public void testExistingFileExistsMoveSubDir() throws Exception {
         template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=backup", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader(getFtpUrl() + "&moveExisting=backup", "Bye World", Exchange.FILE_NAME, "hello.txt");

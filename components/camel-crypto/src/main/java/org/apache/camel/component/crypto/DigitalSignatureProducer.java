@@ -32,10 +32,6 @@ public class DigitalSignatureProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        try {
-            processor.process(exchange);
-        } catch (Exception e) {
-            exchange.setException(e);
-        }
+        processor.process(exchange);
     }
 }

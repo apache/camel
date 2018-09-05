@@ -31,6 +31,7 @@ import org.apache.camel.util.IntrospectionSupport;
  * Default implementation for components which do not inherit from {@link UriEndpointComponent} and
  * do not have Endpoint classes annotated with {@link org.apache.camel.spi.UriEndpoint}
  */
+@Deprecated
 public class DefaultComponentConfiguration extends ComponentConfigurationSupport {
 
     public DefaultComponentConfiguration(Component component) {
@@ -68,7 +69,7 @@ public class DefaultComponentConfiguration extends ComponentConfigurationSupport
      */
     @Override
     public SortedMap<String, ParameterConfiguration> getParameterConfigurationMap() {
-        SortedMap<String, ParameterConfiguration> answer = new TreeMap<String, ParameterConfiguration>();
+        SortedMap<String, ParameterConfiguration> answer = new TreeMap<>();
         Set<Map.Entry<String, Object>> entries = getParameters().entrySet();
         for (Map.Entry<String, Object> entry : entries) {
             String name = entry.getKey();

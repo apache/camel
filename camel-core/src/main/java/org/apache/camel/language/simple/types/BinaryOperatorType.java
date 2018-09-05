@@ -21,8 +21,9 @@ package org.apache.camel.language.simple.types;
  */
 public enum BinaryOperatorType {
 
-    EQ, EQ_IGNORE, GT, GTE, LT, LTE, NOT_EQ, CONTAINS, NOT_CONTAINS, REGEX, NOT_REGEX,
-    IN, NOT_IN, IS, NOT_IS, RANGE, NOT_RANGE;
+    EQ, EQ_IGNORE, GT, GTE, LT, LTE, NOT_EQ, CONTAINS, NOT_CONTAINS, 
+    CONTAINS_IGNORECASE, REGEX, NOT_REGEX,
+    IN, NOT_IN, IS, NOT_IS, RANGE, NOT_RANGE, STARTS_WITH, ENDS_WITH;
 
     public static BinaryOperatorType asOperator(String text) {
         if ("==".equals(text)) {
@@ -43,6 +44,8 @@ public enum BinaryOperatorType {
             return CONTAINS;
         } else if ("not contains".equals(text)) {
             return NOT_CONTAINS;
+        } else if ("~~".equals(text)) {
+            return CONTAINS_IGNORECASE;
         } else if ("regex".equals(text)) {
             return REGEX;
         } else if ("not regex".equals(text)) {
@@ -59,6 +62,10 @@ public enum BinaryOperatorType {
             return RANGE;
         } else if ("not range".equals(text)) {
             return NOT_RANGE;
+        } else if ("starts with".equals(text)) {
+            return STARTS_WITH;
+        } else if ("ends with".equals(text)) {
+            return ENDS_WITH;
         }
         throw new IllegalArgumentException("Operator not supported: " + text);
     }
@@ -82,6 +89,8 @@ public enum BinaryOperatorType {
             return "contains";
         } else if (operator == NOT_CONTAINS) {
             return "not contains";
+        } else if (operator == CONTAINS_IGNORECASE) {
+            return "~~";
         } else if (operator == REGEX) {
             return "regex";
         } else if (operator == NOT_REGEX) {
@@ -98,6 +107,10 @@ public enum BinaryOperatorType {
             return "range";
         } else if (operator == NOT_RANGE) {
             return "not range";
+        } else if (operator == STARTS_WITH) {
+            return "starts with";
+        } else if (operator == ENDS_WITH) {
+            return "ends with";
         }
         return "";
     }
@@ -114,7 +127,7 @@ public enum BinaryOperatorType {
      * </ul>
      */
     public enum ParameterType {
-        Literal, LiteralWithFunction, Function, NumericValue, BooleanValue, NullValue;
+        Literal, LiteralWithFunction, Function, NumericValue, BooleanValue, NullValue, MinusValue;
 
         public boolean isLiteralSupported() {
             return this == Literal;
@@ -138,6 +151,10 @@ public enum BinaryOperatorType {
 
         public boolean isNullValueSupported() {
             return this == NullValue;
+        }
+        
+        public boolean isMinusValueSupported() {
+            return this == MinusValue;
         }
     }
 
@@ -166,6 +183,8 @@ public enum BinaryOperatorType {
             return null;
         } else if (operator == NOT_CONTAINS) {
             return null;
+        } else if (operator == CONTAINS_IGNORECASE) {
+            return null;
         } else if (operator == REGEX) {
             return new ParameterType[]{ParameterType.Literal, ParameterType.Function};
         } else if (operator == NOT_REGEX) {
@@ -182,6 +201,10 @@ public enum BinaryOperatorType {
             return new ParameterType[]{ParameterType.LiteralWithFunction, ParameterType.Function};
         } else if (operator == NOT_RANGE) {
             return new ParameterType[]{ParameterType.LiteralWithFunction, ParameterType.Function};
+        } else if (operator == STARTS_WITH) {
+            return null;
+        } else if (operator == ENDS_WITH) {
+            return null;
         }
         return null;
     }

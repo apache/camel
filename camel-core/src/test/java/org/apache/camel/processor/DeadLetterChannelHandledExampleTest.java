@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.Map;
 
 import org.apache.camel.Body;
@@ -30,6 +32,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class DeadLetterChannelHandledExampleTest extends ContextTestSupport {
 
+    @Test
     public void testOrderOK() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Order OK");
@@ -44,6 +47,7 @@ public class DeadLetterChannelHandledExampleTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOrderERROR() throws Exception {
         MockEndpoint error = getMockEndpoint("mock:error");
         error.expectedBodiesReceived("Order ERROR");

@@ -15,33 +15,39 @@
  * limitations under the License.
  */
 package org.apache.camel.util.concurrent;
+import org.junit.Before;
+import org.junit.After;
+
+import org.junit.Test;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 
 /**
  * @version 
  */
-public class SubmitOrderedCompletionServiceTest extends TestCase {
+public class SubmitOrderedCompletionServiceTest extends Assert {
 
     private ExecutorService executor;
     private SubmitOrderedCompletionService<Object> service;
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         executor = Executors.newFixedThreadPool(5);
-        service = new SubmitOrderedCompletionService<Object>(executor);
+        service = new SubmitOrderedCompletionService<>(executor);
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         executor.shutdownNow();
     }
 
+    @Test
     public void testSubmitOrdered() throws Exception {
 
         service.submit(new Callable<Object>() {
@@ -63,6 +69,7 @@ public class SubmitOrderedCompletionServiceTest extends TestCase {
         assertEquals("B", b);
     }
 
+    @Test
     public void testSubmitOrderedFirstTaskIsSlow() throws Exception {
 
         service.submit(new Callable<Object>() {
@@ -86,6 +93,7 @@ public class SubmitOrderedCompletionServiceTest extends TestCase {
         assertEquals("B", b);
     }
 
+    @Test
     public void testSubmitOrderedFirstTaskIsSlowUsingPollTimeout() throws Exception {
 
         service.submit(new Callable<Object>() {
@@ -109,12 +117,15 @@ public class SubmitOrderedCompletionServiceTest extends TestCase {
         assertEquals("B", b);
     }
 
+    @Test
     public void testSubmitOrderedFirstTaskIsSlowUsingPoll() throws Exception {
+
+        final CountDownLatch latch = new CountDownLatch(1);
 
         service.submit(new Callable<Object>() {
             public Object call() throws Exception {
                 // this task should be slower than B but we should still get it first
-                Thread.sleep(1000);
+                latch.await(5, TimeUnit.SECONDS);
                 return "A";
             }
         });
@@ -129,11 +140,12 @@ public class SubmitOrderedCompletionServiceTest extends TestCase {
         Object a = service.poll();
         assertNull(a);
 
-        Thread.sleep(100);
-
         // and neither the 2nd time
         a = service.poll();
         assertNull(a);
+
+        // okay complete task
+        latch.countDown();
 
         // okay take them
         a = service.take().get();
@@ -143,6 +155,7 @@ public class SubmitOrderedCompletionServiceTest extends TestCase {
         assertEquals("B", b);
     }
 
+    @Test
     public void testSubmitOrderedSecondTaskIsSlow() throws Exception {
 
         service.submit(new Callable<Object>() {
@@ -153,7 +166,7 @@ public class SubmitOrderedCompletionServiceTest extends TestCase {
 
         service.submit(new Callable<Object>() {
             public Object call() throws Exception {
-                Thread.sleep(200);
+                Thread.sleep(100);
                 return "B";
             }
         });
@@ -165,6 +178,7 @@ public class SubmitOrderedCompletionServiceTest extends TestCase {
         assertEquals("B", b);
     }
 
+    @Test
     public void testSubmitOrderedSecondTaskIsSlowUsingPollTimeout() throws Exception {
 
         service.submit(new Callable<Object>() {
@@ -175,7 +189,7 @@ public class SubmitOrderedCompletionServiceTest extends TestCase {
 
         service.submit(new Callable<Object>() {
             public Object call() throws Exception {
-                Thread.sleep(200);
+                Thread.sleep(100);
                 return "B";
             }
         });
@@ -187,7 +201,10 @@ public class SubmitOrderedCompletionServiceTest extends TestCase {
         assertEquals("B", b);
     }
 
+    @Test
     public void testSubmitOrderedLastTaskIsSlowUsingPoll() throws Exception {
+
+        final CountDownLatch latch = new CountDownLatch(1);
 
         service.submit(new Callable<Object>() {
             public Object call() throws Exception {
@@ -197,27 +214,28 @@ public class SubmitOrderedCompletionServiceTest extends TestCase {
 
         service.submit(new Callable<Object>() {
             public Object call() throws Exception {
-                Thread.sleep(1000);
+                latch.await(5, TimeUnit.SECONDS);
                 return "B";
             }
         });
 
         // take a
-        Object a = service.take().get();
+        Object a = service.take().get(5, TimeUnit.SECONDS);
         assertNotNull(a);
 
         // poll should not get it the first time
         Object b = service.poll();
         assertNull(b);
 
-        Thread.sleep(100);
-
         // and neither the 2nd time
         b = service.poll();
         assertNull(b);
 
+        // okay complete task
+        latch.countDown();
+
         // okay take it
-        b = service.take().get();
+        b = service.take().get(5, TimeUnit.SECONDS);
 
         assertEquals("A", a);
         assertEquals("B", b);

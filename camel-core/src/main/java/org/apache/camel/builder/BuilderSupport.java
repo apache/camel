@@ -29,6 +29,7 @@ import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.HeaderExpression;
+import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * Base class for implementation inheritance for different clauses in the <a
  * href="http://camel.apache.org/dsl.html">Java DSL</a>
  *
- * @version 
+ * @version
  */
 public abstract class BuilderSupport {
     private ModelCamelContext context;
@@ -71,7 +72,7 @@ public abstract class BuilderSupport {
         Expression exp = new ExchangePropertyExpression(name);
         return new ValueBuilder(exp);
     }
-    
+
     /**
      * Returns a value builder for the given exchange property
      */
@@ -146,7 +147,7 @@ public abstract class BuilderSupport {
     public <T> ValueBuilder faultBodyAs(Class<T> type) {
         return Builder.faultBodyAs(type);
     }
-                             
+
     /**
      * Returns a value builder for the given system property
      */
@@ -169,6 +170,26 @@ public abstract class BuilderSupport {
     }
 
     /**
+     * Returns a JSonPath expression value builder
+     */
+    public ValueBuilder jsonpath(String value) {
+        JsonPathExpression exp = new JsonPathExpression(value);
+        return new ValueBuilder(exp);
+    }
+
+    /**
+     * Returns a JSonPath expression value builder
+     *
+     * @param value      The JSonPath expression
+     * @param resultType The result type that the JSonPath expression will return.
+     */
+    public ValueBuilder jsonpath(String value, Class<?> resultType) {
+        JsonPathExpression exp = new JsonPathExpression(value);
+        exp.setResultType(resultType);
+        return new ValueBuilder(exp);
+    }
+
+    /**
      * Returns a language expression value builder
      */
     public ValueBuilder language(String language, String expression) {
@@ -181,7 +202,7 @@ public abstract class BuilderSupport {
     public SimpleBuilder simple(String value) {
         return SimpleBuilder.simple(value);
     }
-    
+
     /**
      * Returns a simple expression value builder
      */
@@ -190,21 +211,43 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Returns a xpath expression value builder
-     * @param value The XPath expression
-     * @return A new XPathBuilder object
+     * Returns a simple expression value builder, using String.format style
      */
-    public XPathBuilder xpath(String value) {
-        return XPathBuilder.xpath(value);
+    public SimpleBuilder simpleF(String format, Object...values) {
+        return SimpleBuilder.simpleF(format, values);
     }
-    
+
+    /**
+     * Returns a simple expression value builder, using String.format style
+     */
+    public SimpleBuilder simpleF(String format, Class<?> resultType, Object...values) {
+        return SimpleBuilder.simpleF(format, resultType, values);
+    }
+
     /**
      * Returns a xpath expression value builder
-     * @param value The XPath expression
-     * @param resultType The result type that the XPath expression will return.
-     * @return A new XPathBuilder object
+     *
+     * @param value the XPath expression
+     * @return the builder
      */
-    public static XPathBuilder xpath(String value, Class<?> resultType) {
+    public XPathBuilder xpath(String value) {
+        return xpath(value, null);
+    }
+
+    /**
+     * Returns a xpath expression value builder
+     *
+     * @param value      the XPath expression
+     * @param resultType the result type that the XPath expression will return.
+     * @return the builder
+     */
+    public XPathBuilder xpath(String value, Class<?> resultType) {
+        // the value may contain property placeholders as it may be used directly from Java DSL
+        try {
+            value = getContext().resolvePropertyPlaceholders(value);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
         return XPathBuilder.xpath(value, resultType);
     }
 
@@ -222,7 +265,7 @@ public abstract class BuilderSupport {
     public ValueBuilder bean(Object beanOrBeanRef) {
         return bean(beanOrBeanRef, null);
     }
-    
+
     /**
      * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a>
      * value builder
@@ -251,7 +294,7 @@ public abstract class BuilderSupport {
     public ValueBuilder bean(Class<?> beanType) {
         return Builder.bean(beanType);
     }
-    
+
     /**
      * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a>
      * value builder
@@ -329,7 +372,7 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Returns an expression value builder that replaces all occurrences of the 
+     * Returns an expression value builder that replaces all occurrences of the
      * regular expression with the given replacement
      */
     public ValueBuilder regexReplaceAll(Expression content, String regex, String replacement) {
@@ -337,13 +380,13 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Returns an expression value builder that replaces all occurrences of the 
+     * Returns an expression value builder that replaces all occurrences of the
      * regular expression with the given replacement
      */
     public ValueBuilder regexReplaceAll(Expression content, String regex, Expression replacement) {
         return Builder.regexReplaceAll(content, regex, replacement);
-    }    
-    
+    }
+
     /**
      * Returns a exception expression value builder
      */
@@ -392,7 +435,7 @@ public abstract class BuilderSupport {
      * @return list of endpoints
      */
     public List<Endpoint> endpoints(String... uris) throws NoSuchEndpointException {
-        List<Endpoint> endpoints = new ArrayList<Endpoint>();
+        List<Endpoint> endpoints = new ArrayList<>();
         for (String uri : uris) {
             endpoints.add(endpoint(uri));
         }
@@ -406,7 +449,7 @@ public abstract class BuilderSupport {
      * @return list of the given endpoints
      */
     public List<Endpoint> endpoints(Endpoint... endpoints) {
-        List<Endpoint> answer = new ArrayList<Endpoint>();
+        List<Endpoint> answer = new ArrayList<>();
         answer.addAll(Arrays.asList(endpoints));
         return answer;
     }
@@ -435,7 +478,9 @@ public abstract class BuilderSupport {
      * which just logs errors
      *
      * @return the builder
+     * @deprecated use dead letter channel with a log endpoint
      */
+    @Deprecated
     public LoggingErrorHandlerBuilder loggingErrorHandler() {
         return new LoggingErrorHandlerBuilder();
     }
@@ -445,7 +490,9 @@ public abstract class BuilderSupport {
      * which just logs errors
      *
      * @return the builder
+     * @deprecated use dead letter channel with a log endpoint
      */
+    @Deprecated
     public LoggingErrorHandlerBuilder loggingErrorHandler(String log) {
         return loggingErrorHandler(LoggerFactory.getLogger(log));
     }
@@ -455,7 +502,9 @@ public abstract class BuilderSupport {
      * which just logs errors
      *
      * @return the builder
+     * @deprecated use dead letter channel with a log endpoint
      */
+    @Deprecated
     public LoggingErrorHandlerBuilder loggingErrorHandler(Logger log) {
         return new LoggingErrorHandlerBuilder(log);
     }
@@ -465,7 +514,9 @@ public abstract class BuilderSupport {
      * which just logs errors
      *
      * @return the builder
+     * @deprecated use dead letter channel with a log endpoint
      */
+    @Deprecated
     public LoggingErrorHandlerBuilder loggingErrorHandler(Logger log, LoggingLevel level) {
         return new LoggingErrorHandlerBuilder(log, level);
     }
@@ -498,7 +549,7 @@ public abstract class BuilderSupport {
     public ModelCamelContext getContext() {
         return context;
     }
-    
+
     public void setContext(CamelContext context) {
         ObjectHelper.notNull(context, "CamelContext", this);
         this.context = context.adapt(ModelCamelContext.class);

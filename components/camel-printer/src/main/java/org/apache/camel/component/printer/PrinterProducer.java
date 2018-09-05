@@ -17,7 +17,7 @@
 package org.apache.camel.component.printer;
 
 import java.io.InputStream;
-
+import java.util.Locale;
 import javax.print.DocFlavor;
 import javax.print.PrintException;
 import javax.print.PrintService;
@@ -53,8 +53,8 @@ public class PrinterProducer extends DefaultProducer {
     
     private void print(InputStream body, String jobName) throws PrintException { 
         if (printerOperations.getPrintService().isDocFlavorSupported(printerOperations.getFlavor())) {
-            PrintDocument printDoc = new PrintDocument(body, printerOperations.getFlavor());        
-            printerOperations.print(printDoc, config.getCopies(), config.isSendToPrinter(), config.getMimeType(), jobName); 
+            PrintDocument printDoc = new PrintDocument(body, printerOperations.getFlavor());
+            printerOperations.print(printDoc, config.isSendToPrinter(), config.getMimeType(), jobName); 
         }
     }
 
@@ -121,7 +121,7 @@ public class PrinterProducer extends DefaultProducer {
                 // no hostname for localhost printers
                 name = config.getPrintername();
             } else {
-                name = "\\\\" + config.getHostname() + "\\" + config.getPrintername();
+                name = config.getHostname() + "/" + config.getPrintername();
                 if (config.getPrinterPrefix() != null) {
                     name = config.getPrinterPrefix() + name;
                 }
@@ -139,8 +139,16 @@ public class PrinterProducer extends DefaultProducer {
     
     private int findPrinter(PrintService[] services, String printer) {
         int position = -1;
+        // align slashes so we match / or \
+        printer = printer.toLowerCase(Locale.US);
+        printer = printer.replace('\\', '/');
         for (int i = 0; i < services.length; i++) {
-            if (services[i].getName().toLowerCase().endsWith(printer.toLowerCase())) {
+            String printerName = services[i].getName();
+            log.debug("Printer service printer name: {}", printerName);
+            // align slashes so we match / or \
+            printerName = printerName.toLowerCase(Locale.US);
+            printerName = printerName.replace('\\', '/');
+            if (printerName.endsWith(printer)) {
                 position = i;
                 break;
             }

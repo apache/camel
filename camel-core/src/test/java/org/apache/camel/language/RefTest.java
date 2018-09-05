@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language;
 
+import org.junit.Test;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.impl.JndiRegistry;
@@ -30,19 +32,22 @@ public class RefTest extends LanguageTestSupport {
         return jndi;
     }
 
+    @Test
     public void testRefExpressions() throws Exception {
         assertExpression("myExp", "Hello World");
     }
  
+    @Test
     public void testRefExpressionsNotFound() throws Exception {
         try {
             assertExpression("foo", "Hello World");
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("Cannot find expression in registry with ref: foo", e.getMessage());
+            assertEquals("Cannot find expression or predicate in registry with ref: foo", e.getMessage());
         }
     }
 
+    @Test
     public void testPredicates() throws Exception {
         assertPredicate("myExp");
     }

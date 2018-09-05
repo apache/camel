@@ -26,7 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonService;
 import org.apache.http.HttpResponse;
@@ -98,7 +98,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
     
     private void invokeRsService(String getUrl, String expected) throws Exception {
         HttpGet get = new HttpGet(getUrl);
-        get.addHeader("Accept" , "application/json");
+        get.addHeader("Accept", "application/json");
         get.addHeader("key", "customer");
         CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
@@ -171,7 +171,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
     @Test
     public void testPostConsumer() throws Exception {
         HttpPost post = new HttpPost("http://localhost:" + PORT1 + "/customerservice/customers");
-        post.addHeader("Accept" , "text/xml");
+        post.addHeader("Accept", "text/xml");
         StringEntity entity = new StringEntity(POST_REQUEST, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
         post.setEntity(entity);
@@ -191,7 +191,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
     @Test
     public void testPostConsumerUniqueResponseCode() throws Exception {
         HttpPost post = new HttpPost("http://localhost:" + PORT1 + "/customerservice/customersUniqueResponseCode");
-        post.addHeader("Accept" , "text/xml");
+        post.addHeader("Accept", "text/xml");
         StringEntity entity = new StringEntity(POST2_REQUEST, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
         post.setEntity(entity);
@@ -217,7 +217,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
             HttpResponse response = httpclient.execute(get);
             assertEquals(200, response.getStatusLine().getStatusCode());
             String customers = EntityUtils.toString(response.getEntity());
-            String before = ObjectHelper.before(customers, "</id><name>" + name + "</name></Customer>");
+            String before = StringHelper.before(customers, "</id><name>" + name + "</name></Customer>");
             String answer = before.substring(before.lastIndexOf(">") + 1, before.length());
             return answer;
         } finally {
@@ -228,7 +228,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
     @Test
     public void testJaxWsBean() throws Exception {        
         HttpPost post = new HttpPost("http://localhost:" + PORT2 + "/customerservice/customers");
-        post.addHeader("Accept" , "text/xml");
+        post.addHeader("Accept", "text/xml");
         String body = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
             + "<soap:Body><GetPerson xmlns=\"http://camel.apache.org/wsdl-first/types\">" 
             + "<personId>hello</personId></GetPerson></soap:Body></soap:Envelope>";
@@ -261,10 +261,10 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
             .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                  "http://localhost:" + CXFTestSupport.getPort1() + "/CxfBeanTest/PersonService/");
         
-        Holder<String> personId = new Holder<String>();
+        Holder<String> personId = new Holder<>();
         personId.value = "hello";
-        Holder<String> ssn = new Holder<String>();
-        Holder<String> name = new Holder<String>();
+        Holder<String> ssn = new Holder<>();
+        Holder<String> name = new Holder<>();
         client.getPerson(personId, ssn, name);
         assertEquals("Get a wrong personId", "hello", personId.value);
         assertEquals("Get a wrong SSN", "000-000-0000", ssn.value);

@@ -17,17 +17,20 @@
 package org.apache.camel.script.osgi;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
-
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 
@@ -44,6 +47,7 @@ import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.framework.wiring.BundleWiring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +61,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
     private ServiceRegistration<LanguageResolver> registration;
 
     private Map<Long, List<BundleScriptEngineResolver>> resolvers 
-        = new ConcurrentHashMap<Long, List<BundleScriptEngineResolver>>();
+        = new ConcurrentHashMap<>();
 
     public static BundleContext getBundleContext() {
         return context;
@@ -84,7 +88,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
     }
 
     public Object addingBundle(Bundle bundle, BundleEvent event) {
-        List<BundleScriptEngineResolver> r = new ArrayList<BundleScriptEngineResolver>();
+        List<BundleScriptEngineResolver> r = new ArrayList<>();
         registerScriptEngines(bundle, r);
         for (BundleScriptEngineResolver service : r) {
             service.register();
@@ -112,7 +116,8 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
     }
 
     private String[] getAvailableScriptNames() {
-        List<String> names = new ArrayList<String>();
+        // use a set to avoid duplicate names
+        Set<String> names = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
         for (List<BundleScriptEngineResolver> list : resolvers.values()) {
             for (BundleScriptEngineResolver r : list) {
                 names.addAll(r.getScriptNames());
@@ -169,13 +174,14 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
     }
 
     protected void registerScriptEngines(Bundle bundle, List<BundleScriptEngineResolver> resolvers) {
-        URL configURL = null;
-        for (Enumeration<?> e = bundle.findEntries(META_INF_SERVICES_DIR, SCRIPT_ENGINE_SERVICE_FILE, false); e != null && e.hasMoreElements();) {
-            configURL = (URL) e.nextElement();
-        }
-        if (configURL != null) {
-            LOG.info("Found ScriptEngineFactory in " + bundle.getSymbolicName());
-            resolvers.add(new BundleScriptEngineResolver(bundle, configURL));
+        try {
+            for (Enumeration<?> e = bundle.adapt(BundleWiring.class).getClassLoader().getResources(META_INF_SERVICES_DIR + "/" + SCRIPT_ENGINE_SERVICE_FILE); e != null && e.hasMoreElements();) {
+                URL configURL = (URL) e.nextElement();
+                LOG.info("Found ScriptEngineFactory in bundle: {}", bundle.getSymbolicName());
+                resolvers.add(new BundleScriptEngineResolver(bundle, configURL));
+            }
+        } catch (IOException e) {
+            LOG.info("Error loading script engine factory", e);
         }
     }
 
@@ -210,13 +216,14 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
             return getScriptNames(getFactory());
         }
 
+        @SuppressWarnings("unchecked")
         private List<String> getScriptNames(ScriptEngineFactory factory) {
-            List<String> names = null;
+            List<String> names;
             if (factory != null) {
                 names = factory.getNames();
             } else {
                 // return an empty script name list
-                names = new ArrayList<String>(0);
+                names = Collections.EMPTY_LIST;
             }
             return names;
         }
@@ -224,7 +231,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
         private ScriptEngineFactory getFactory() {
             try {
                 BufferedReader in = IOHelper.buffered(new InputStreamReader(configFile.openStream()));
-                String className = null;
+                String className;
                 while ((className = in.readLine()) != null) {
                     if ("".equals(className.trim()) || className.trim().startsWith("#")) {
                         continue;
@@ -238,8 +245,9 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
                 }
                 in.close();
                 Class<?> cls = bundle.loadClass(className);
+                // OSGi classloading trouble (with jruby)
                 if (!ScriptEngineFactory.class.isAssignableFrom(cls)) {
-                    throw new IllegalStateException("Invalid ScriptEngineFactory: " + cls.getName());
+                    return null;
                 }
                 return (ScriptEngineFactory) cls.newInstance();
             } catch (Exception e) {
@@ -251,28 +259,32 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
         public ScriptEngine resolveScriptEngine(String name) {
             try {
                 ScriptEngineFactory factory = getFactory();
-                List<String> names = getScriptNames(factory);
-                for (String test : names) {
-                    if (test.equals(name)) {
-                        ClassLoader old = Thread.currentThread().getContextClassLoader();
-                        ScriptEngine engine;
-                        try {
-                            // JRuby seems to require the correct TCCL to call getScriptEngine
-                            Thread.currentThread().setContextClassLoader(factory.getClass().getClassLoader());
-                            engine = factory.getScriptEngine();
-                        } finally {
-                            Thread.currentThread().setContextClassLoader(old);
+                if (factory != null) {
+                    List<String> names = getScriptNames(factory);
+                    for (String test : names) {
+                        if (test.equals(name)) {
+                            ClassLoader old = Thread.currentThread().getContextClassLoader();
+                            ScriptEngine engine;
+                            try {
+                                // JRuby seems to require the correct TCCL to call getScriptEngine
+                                Thread.currentThread().setContextClassLoader(factory.getClass().getClassLoader());
+                                engine = factory.getScriptEngine();
+                            } finally {
+                                Thread.currentThread().setContextClassLoader(old);
+                            }
+                            LOG.trace("Resolved ScriptEngineFactory: {} for expected name: {}", engine, name);
+                            return engine;
                         }
-                        LOG.trace("Resolved ScriptEngineFactory: {} for expected name: {}", engine, name);
-                        return engine;
                     }
+                    LOG.debug("ScriptEngineFactory: {} does not match expected name: {}", factory.getEngineName(), name);
+                    return null;
                 }
-                LOG.debug("ScriptEngineFactory: {} does not match expected name: {}", factory.getEngineName(), name);
-                return null;
             } catch (Exception e) {
                 LOG.warn("Cannot create ScriptEngineFactory: " + e.getClass().getName(), e);
                 return null;
             }
+
+            return null;
         }
 
         @Override

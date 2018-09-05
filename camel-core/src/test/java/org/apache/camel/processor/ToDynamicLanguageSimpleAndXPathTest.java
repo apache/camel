@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class ToDynamicLanguageSimpleAndXPathTest extends ContextTestSupport {
 
+    @Test
     public void testToDynamic() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("<order uri=\"foo\"/>");
         getMockEndpoint("mock:bar").expectedBodiesReceived("<order uri=\"bar\"/>");
@@ -37,7 +40,7 @@ public class ToDynamicLanguageSimpleAndXPathTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .toD("mock:+xpath:/order/@uri");
+                    .toD("mock:+language:xpath:/order/@uri");
             }
         };
     }

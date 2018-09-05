@@ -22,8 +22,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.junit.Test;
-
 /**
  * Indicates that the annotated method returns a {@link java.util.Properties} for use in the test, and that
  * those properties override any existing properties configured on the {@link org.apache.camel.component.properties.PropertiesComponent}.

@@ -24,16 +24,33 @@ import java.util.Map;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.Parser;
+import ca.uhn.hl7v2.parser.ParserConfiguration;
+import ca.uhn.hl7v2.parser.UnexpectedSegmentBehaviourEnum;
 import ca.uhn.hl7v2.util.Terser;
+import ca.uhn.hl7v2.validation.ValidationContext;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 
-import static org.apache.camel.component.hl7.HL7Constants.*;
+import static org.apache.camel.component.hl7.HL7Constants.HL7_CHARSET;
+import static org.apache.camel.component.hl7.HL7Constants.HL7_CONTEXT;
+import static org.apache.camel.component.hl7.HL7Constants.HL7_MESSAGE_CONTROL;
+import static org.apache.camel.component.hl7.HL7Constants.HL7_MESSAGE_TYPE;
+import static org.apache.camel.component.hl7.HL7Constants.HL7_PROCESSING_ID;
+import static org.apache.camel.component.hl7.HL7Constants.HL7_RECEIVING_APPLICATION;
+import static org.apache.camel.component.hl7.HL7Constants.HL7_RECEIVING_FACILITY;
+import static org.apache.camel.component.hl7.HL7Constants.HL7_SECURITY;
+import static org.apache.camel.component.hl7.HL7Constants.HL7_SENDING_APPLICATION;
+import static org.apache.camel.component.hl7.HL7Constants.HL7_SENDING_FACILITY;
+import static org.apache.camel.component.hl7.HL7Constants.HL7_TIMESTAMP;
+import static org.apache.camel.component.hl7.HL7Constants.HL7_TRIGGER_EVENT;
+import static org.apache.camel.component.hl7.HL7Constants.HL7_VERSION_ID;
 
 /**
  * HL7 DataFormat (supports v2.x of the HL7 protocol).
@@ -70,9 +87,9 @@ import static org.apache.camel.component.hl7.HL7Constants.*;
  *
  * @see org.apache.camel.component.hl7.HL7MLLPCodec
  */
-public class HL7DataFormat extends ServiceSupport implements DataFormat {
+public class HL7DataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
-    private static final Map<String, String> HEADER_MAP = new HashMap<String, String>();
+    private static final Map<String, String> HEADER_MAP = new HashMap<>();
 
     private HapiContext hapiContext;
     private Parser parser;
@@ -93,10 +110,15 @@ public class HL7DataFormat extends ServiceSupport implements DataFormat {
         HEADER_MAP.put(HL7_CHARSET, "MSH-18");
     }
 
+    @Override
+    public String getDataFormatName() {
+        return "hl7";
+    }
+
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
         Message message = ExchangeHelper.convertToMandatoryType(exchange, Message.class, body);
         String charsetName = HL7Charset.getCharsetName(message, exchange);
-        String encoded = HL7Converter.encode(message, parser);
+        String encoded = parser.encode(message);
         outputStream.write(encoded.getBytes(charsetName));
     }
 
@@ -104,7 +126,7 @@ public class HL7DataFormat extends ServiceSupport implements DataFormat {
         byte[] body = ExchangeHelper.convertToMandatoryType(exchange, byte[].class, inputStream);
         String charsetName = HL7Charset.getCharsetName(body, guessCharsetName(body, exchange));
         String bodyAsString = new String(body, charsetName);
-        Message message = HL7Converter.parse(bodyAsString, parser);
+        Message message = parser.parse(bodyAsString);
 
         // add MSH fields as message out headers
         Terser terser = new Terser(message);
@@ -143,13 +165,27 @@ public class HL7DataFormat extends ServiceSupport implements DataFormat {
     @Override
     protected void doStart() throws Exception {
         if (hapiContext == null) {
-            hapiContext = new DefaultHapiContext();
+            ValidationContext validationContext;
+            if (validate) {
+                validationContext = ValidationContextFactory.defaultValidation();
+            } else {
+                validationContext = ValidationContextFactory.noValidation();
+            }
+            ParserConfiguration parserConfiguration;
+            if (parser == null) {
+                parserConfiguration = new ParserConfiguration();
+                parserConfiguration.setDefaultObx2Type("ST");
+                parserConfiguration.setInvalidObx2Type("ST");
+                parserConfiguration.setUnexpectedSegmentBehaviour(UnexpectedSegmentBehaviourEnum.ADD_INLINE);
+            } else {
+                parserConfiguration = parser.getParserConfiguration();
+            }
+
+            hapiContext = new DefaultHapiContext(parserConfiguration, validationContext, new DefaultModelClassFactory());
         }
+
         if (parser == null) {
             parser = hapiContext.getGenericParser();
-        }
-        if (!validate) {
-            parser.setValidationContext(ValidationContextFactory.noValidation());
         }
     }
 

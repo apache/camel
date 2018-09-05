@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.simple;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,6 +29,7 @@ import org.apache.camel.component.properties.PropertiesComponent;
  */
 public class SimplePropertiesNestedTest extends ContextTestSupport {
 
+    @Test
     public void testSimplePropertiesNested() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -55,7 +58,6 @@ public class SimplePropertiesNestedTest extends ContextTestSupport {
         CamelContext context = super.createCamelContext();
 
         PropertiesComponent pc = new PropertiesComponent();
-        pc.setCamelContext(context);
         pc.setLocations(new String[]{"org/apache/camel/component/properties/bar.properties"});
         context.addComponent("properties", pc);
 

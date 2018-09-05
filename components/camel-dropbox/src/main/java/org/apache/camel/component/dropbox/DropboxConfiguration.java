@@ -18,9 +18,8 @@ package org.apache.camel.component.dropbox;
 
 import java.util.Locale;
 
-import com.dropbox.core.DbxClient;
 import com.dropbox.core.DbxRequestConfig;
-import org.apache.camel.component.dropbox.util.DropboxException;
+import com.dropbox.core.v2.DbxClientV2;
 import org.apache.camel.component.dropbox.util.DropboxOperation;
 import org.apache.camel.component.dropbox.util.DropboxUploadMode;
 import org.apache.camel.spi.Metadata;
@@ -53,30 +52,29 @@ public class DropboxConfiguration {
     @UriParam
     private DropboxUploadMode uploadMode;
     //id of the app
-    @UriParam @Metadata(required = "true")
-    private String clientIdentifier;
-    //reference to dropboxclient
     @UriParam
-    private DbxClient client;
+    private String clientIdentifier;
+    //reference to dropbox client
+    @UriParam
+    private DbxClientV2 client;
 
     /**
      * To use an existing DbxClient instance as DropBox client.
      */
-    public void setClient(DbxClient client) {
+    public void setClient(DbxClientV2 client) {
         this.client = client;
     }
 
-    public DbxClient getClient() {
+    public DbxClientV2 getClient() {
         return client;
     }
 
     /**
      * Obtain a new instance of DbxClient and store it in configuration.
      */
-    public void createClient() throws DropboxException {
+    public void createClient() {
         DbxRequestConfig config = new DbxRequestConfig(clientIdentifier, Locale.getDefault().toString());
-        DbxClient client = new DbxClient(config, accessToken);
-        this.client = client;
+        this.client = new DbxClientV2(config, accessToken);
     }
 
     public String getAccessToken() {
@@ -95,7 +93,8 @@ public class DropboxConfiguration {
     }
 
     /**
-     * Folder or file to upload on Dropbox from the local filesystem.
+     * Optional folder or file to upload on Dropbox from the local filesystem.
+     * If this option has not been configured then the message body is used as the content to upload.
      */
     public void setLocalPath(String localPath) {
         this.localPath = localPath;
@@ -128,7 +127,7 @@ public class DropboxConfiguration {
     }
 
     /**
-     * A space-separated list of substrings to search for. A file matches only if it contains all the substrings. If this option is not set, all files will be matched.
+     * A space-separated list of sub-strings to search for. A file matches only if it contains all the sub-strings. If this option is not set, all files will be matched.
      */
     public void setQuery(String query) {
         this.query = query;

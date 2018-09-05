@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.strategy;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.FileOutputStream;
 import java.util.Date;
@@ -34,20 +37,23 @@ public class FileChangedReadLockMinAgeShortCircuitTest extends ContextTestSuppor
     private static final Logger LOG = LoggerFactory.getLogger(FileChangedReadLockMinAgeShortCircuitTest.class);
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/changed/");
         createDirectory("target/changed/in");
         writeFile();
-        Thread.sleep(1000);
+        // sleep to make the file a little bit old
+        Thread.sleep(100);
         super.setUp();
     }
 
+    @Test
     public void testChangedReadLockMinAge() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedFileExists("target/changed/out/file.dat");
         // We should get the file on the first poll
-        mock.expectedMessagesMatches(property(Exchange.RECEIVED_TIMESTAMP).convertTo(long.class).isLessThan(new Date().getTime() + 15000));
+        mock.expectedMessagesMatches(exchangeProperty(Exchange.RECEIVED_TIMESTAMP).convertTo(long.class).isLessThan(new Date().getTime() + 15000));
 
         assertMockEndpointsSatisfied();
     }
@@ -67,7 +73,7 @@ public class FileChangedReadLockMinAgeShortCircuitTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/changed/in?readLock=changed&readLockMinAge=500&readLockCheckInterval=30000&readLockTimeout=90000")
+                from("file:target/changed/in?initialDelay=0&delay=10&readLock=changed&readLockMinAge=10&readLockCheckInterval=30000&readLockTimeout=90000")
                         .to("file:target/changed/out", "mock:result");
             }
         };

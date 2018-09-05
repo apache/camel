@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -28,17 +31,19 @@ import org.apache.camel.builder.RouteBuilder;
 public class FilerConsumerDoneFileNameTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/done");
         super.setUp();
     }
 
+    @Test
     public void testDoneFile() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
         template.sendBodyAndHeader("file:target/done", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        // wait a bit and it should not pickup the written file as there are no done file
+        // wait a bit and it should not pickup the written file as there is no done file
         Thread.sleep(250);
 
         assertMockEndpointsSatisfied();

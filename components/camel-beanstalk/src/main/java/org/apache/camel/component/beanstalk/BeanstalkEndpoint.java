@@ -17,6 +17,7 @@
 package org.apache.camel.component.beanstalk;
 
 import com.surftools.BeanstalkClient.Client;
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -33,8 +34,11 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "beanstalk", title = "Beanstalk", syntax = "beanstalk:connectionSettings", consumerClass = BeanstalkConsumer.class, label = "messaging")
-public class BeanstalkEndpoint extends ScheduledPollEndpoint {
+/**
+ * The beanstalk component is used for job retrieval and post-processing of Beanstalk jobs.
+ */
+@UriEndpoint(firstVersion = "2.15.0", scheme = "beanstalk", title = "Beanstalk", syntax = "beanstalk:connectionSettings", consumerClass = BeanstalkConsumer.class, label = "messaging")
+public class BeanstalkEndpoint extends ScheduledPollEndpoint implements AsyncEndpoint {
     final ConnectionSettings conn;
 
     @UriPath(description = "Connection settings host:port/tube")

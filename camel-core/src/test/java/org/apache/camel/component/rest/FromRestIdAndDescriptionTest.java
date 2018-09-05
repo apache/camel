@@ -16,12 +16,16 @@
  */
 package org.apache.camel.component.rest;
 
+import org.junit.Test;
+
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestParamType;
 
 public class FromRestIdAndDescriptionTest extends FromRestGetTest {
 
+    @Test
     public void testFromRestModel() throws Exception {
         super.testFromRestModel();
 
@@ -53,12 +57,15 @@ public class FromRestIdAndDescriptionTest extends FromRestGetTest {
                 rest("/say/bye").description("bye", "Bye Service", "en")
                         .get().description("Says bye to you").consumes("application/json")
                         .param().type(RestParamType.header).description("header param description1").dataType("integer").allowableValues("1", "2", "3", "4")
-                        .defaultValue("1").allowMultiple(false).name("header_count").required(true).access("acc1")
+                        .defaultValue("1").name("header_count").required(true)
                         .endParam().
                         param().type(RestParamType.query).description("header param description2").dataType("string").allowableValues("a", "b", "c", "d")
-                        .defaultValue("b").allowMultiple(true).name("header_letter").required(false).access("acc2")
+                        .defaultValue("b").collectionFormat(CollectionFormat.multi).name("header_letter").required(false)
                         .endParam()
-                        .responseMessage().code(300).message("test msg").responseModel(Integer.class).endResponseMessage()
+                        .responseMessage().code(300).message("test msg").responseModel(Integer.class)
+                            .header("rate").description("Rate limit").dataType("integer").endHeader()
+                        .endResponseMessage()
+                        .responseMessage().code("error").message("does not work").endResponseMessage()
                         .to("direct:bye")
                         .post().description("Updates the bye message").to("mock:update");
 

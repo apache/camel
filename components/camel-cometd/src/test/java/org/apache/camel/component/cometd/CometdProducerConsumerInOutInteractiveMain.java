@@ -65,7 +65,7 @@ public class CometdProducerConsumerInOutInteractiveMain {
 
                 from(URI, URIS).setExchangePattern(ExchangePattern.InOut).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        Message out = new DefaultMessage();
+                        Message out = new DefaultMessage(exchange.getContext());
                         out.setBody("reply: " + exchange.getIn().getBody());
                         exchange.setOut(out);
                     }

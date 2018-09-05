@@ -30,6 +30,7 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
  *
  * @version 
  */
+@Deprecated
 public abstract class DefaultEndpointConfiguration implements EndpointConfiguration {
 
     private final CamelContext camelContext;

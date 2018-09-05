@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -34,7 +37,8 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
     public static final String TEST_DIRECTORY = "target/fileProducerChmodOptionTest/";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory(TEST_DIRECTORY);
         super.setUp();
     }
@@ -44,6 +48,7 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
         return !isPlatform("windows");
     }
 
+    @Test
     public void testWriteValidChmod0755() throws Exception {
         if (!canTest()) {
             return;
@@ -52,6 +57,7 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
         runChmodCheck("0755", "rwxr-xr-x");
     }
 
+    @Test
     public void testWriteValidChmod666() throws Exception {
         if (!canTest()) {
             return;
@@ -78,6 +84,7 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInvalidChmod() throws Exception {
         if (!canTest()) {
             return;
@@ -95,7 +102,7 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
             });
             fail("Expected FailedToCreateRouteException");
         } catch (Exception e) {
-            assertTrue("Expected FailedToCreateRouteException, was " + e.getClass().getCanonicalName() , e instanceof FailedToCreateRouteException);
+            assertTrue("Expected FailedToCreateRouteException, was " + e.getClass().getCanonicalName(), e instanceof FailedToCreateRouteException);
             assertTrue("Message was [" + e.getMessage() + "]", e.getMessage().endsWith("conversion possible: chmod option [abc] is not valid"));
         }
     }
@@ -104,6 +111,7 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
      * Write a file without chmod set, should work normally and not throw an exception for invalid chmod value
      * @throws Exception
      */
+    @Test
     public void testWriteNoChmod() throws Exception {
         if (!canTest()) {
             return;

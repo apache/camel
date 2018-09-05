@@ -57,6 +57,9 @@ public class KestrelConfiguration implements Cloneable {
         return addresses;
     }
 
+    /**
+     * The addresses
+     */
     public void setAddresses(String[] addresses) {
         this.addresses = addresses;
     }
@@ -65,6 +68,9 @@ public class KestrelConfiguration implements Cloneable {
         return waitTimeMs;
     }
 
+    /**
+     * The wait time in milliseconds
+     */
     public void setWaitTimeMs(int waitTimeMs) {
         this.waitTimeMs = waitTimeMs;
     }
@@ -73,6 +79,9 @@ public class KestrelConfiguration implements Cloneable {
         return concurrentConsumers;
     }
 
+    /**
+     * The number of concurrent consumers
+     */
     public void setConcurrentConsumers(int concurrentConsumers) {
         if (concurrentConsumers <= 0) {
             throw new IllegalArgumentException("Invalid value for concurrentConsumers: " + concurrentConsumers);
@@ -92,7 +101,7 @@ public class KestrelConfiguration implements Cloneable {
     }
 
     public List<InetSocketAddress> getInetSocketAddresses() {
-        List<InetSocketAddress> list = new ArrayList<InetSocketAddress>();
+        List<InetSocketAddress> list = new ArrayList<>();
         for (String address : addresses) {
             String[] tok = address.split(":");
             String host;

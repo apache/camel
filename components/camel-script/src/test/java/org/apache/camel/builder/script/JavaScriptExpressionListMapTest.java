@@ -36,8 +36,8 @@ public class JavaScriptExpressionListMapTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        List<Map<String, Object>> grid = new ArrayList<Map<String, Object>>();
-        Map<String, Object> cells = new LinkedHashMap<String, Object>();
+        List<Map<String, Object>> grid = new ArrayList<>();
+        Map<String, Object> cells = new LinkedHashMap<>();
         cells.put("foo", "bar");
         grid.add(cells);
 

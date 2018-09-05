@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.remote;
+import org.junit.Before;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -37,7 +38,7 @@ public class FtpBadLoginMockNoopConnectionLeakTest extends FtpServerTestSupport 
     /**
      * Mapping of socket hashcode to two element tab ([connect() called, close() called])
      */
-    private Map<Integer, boolean[]> socketAudits = new HashMap<Integer, boolean[]>();
+    private Map<Integer, boolean[]> socketAudits = new HashMap<>();
 
     private String getFtpUrl() {
         return "ftp://dummy@localhost:" + getPort() + "/badlogin?password=cantremeber&maximumReconnectAttempts=3"
@@ -45,6 +46,7 @@ public class FtpBadLoginMockNoopConnectionLeakTest extends FtpServerTestSupport 
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
 

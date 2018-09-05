@@ -28,12 +28,14 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ProcessClause;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.EvaluateExpressionProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
+import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
@@ -82,6 +84,8 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     private Integer cacheSize;
     @XmlAttribute
     private Boolean parallelAggregate;
+    @XmlAttribute
+    private Boolean stopOnAggregateException;
 
     public RecipientListDefinition() {
     }
@@ -100,6 +104,11 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     }
 
     @Override
+    public String getShortName() {
+        return "recipientList";
+    }
+
+    @Override
     public String getLabel() {
         return "recipientList[" + getExpression() + "]";
     }
@@ -114,6 +123,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         boolean isShareUnitOfWork = getShareUnitOfWork() != null && getShareUnitOfWork();
         boolean isStopOnException = getStopOnException() != null && getStopOnException();
         boolean isIgnoreInvalidEndpoints = getIgnoreInvalidEndpoints() != null && getIgnoreInvalidEndpoints();
+        boolean isStopOnAggregateException = getStopOnAggregateException() != null && getStopOnAggregateException();
 
         RecipientList answer;
         if (delimiter != null) {
@@ -128,6 +138,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         answer.setShareUnitOfWork(isShareUnitOfWork);
         answer.setStopOnException(isStopOnException);
         answer.setIgnoreInvalidEndpoints(isIgnoreInvalidEndpoints);
+        answer.setStopOnAggregateException(isStopOnAggregateException);
         if (getCacheSize() != null) {
             answer.setCacheSize(getCacheSize());
         }
@@ -153,7 +164,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         // create a pipeline with two processors
         // the first is the eval processor which evaluates the expression to use
         // the second is the recipient list
-        List<Processor> pipe = new ArrayList<Processor>(2);
+        List<Processor> pipe = new ArrayList<>(2);
 
         // the eval processor must be wrapped in error handler, so in case there was an
         // error during evaluation, the error handler can deal with it
@@ -192,13 +203,19 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
                 throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: " + strategyRef);
             }
         }
+
         if (strategy == null) {
-            // fallback to use latest
+            // default to use latest aggregation strategy
             strategy = new UseLatestAggregationStrategy();
         }
 
         if (strategy instanceof CamelContextAware) {
             ((CamelContextAware) strategy).setCamelContext(routeContext.getCamelContext());
+        }
+
+        if (shareUnitOfWork != null && shareUnitOfWork) {
+            // wrap strategy in share unit of work
+            strategy = new ShareUnitOfWorkAggregationStrategy(strategy);
         }
 
         return strategy;
@@ -315,6 +332,20 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     }
 
     /**
+     * If enabled, unwind exceptions occurring at aggregation time to the error handler when parallelProcessing is used.
+     * Currently, aggregation time exceptions do not stop the route processing when parallelProcessing is used.
+     * Enabling this option allows to work around this behavior.
+     *
+     * The default value is <code>false</code> for the sake of backward compatibility.
+     *
+     * @return the builder
+     */
+    public RecipientListDefinition<Type> stopOnAggregateException() {
+        setStopOnAggregateException(true);
+        return this;
+    }
+
+    /**
      * If enabled then Camel will process replies out-of-order, eg in the order they come back.
      * If disabled, Camel will process replies in the same order as defined by the recipient list.
      *
@@ -372,6 +403,15 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     public RecipientListDefinition<Type> onPrepare(Processor onPrepare) {
         setOnPrepare(onPrepare);
         return this;
+    }
+
+    /**
+     * Sets the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be used send using a fluent buidler.
+     */
+    public ProcessClause<RecipientListDefinition<Type>> onPrepare() {
+        ProcessClause<RecipientListDefinition<Type>> clause = new ProcessClause<>(this);
+        setOnPrepare(clause);
+        return clause;
     }
 
     /**
@@ -591,5 +631,13 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
 
     public void setParallelAggregate(Boolean parallelAggregate) {
         this.parallelAggregate = parallelAggregate;
+    }
+
+    public Boolean getStopOnAggregateException() {
+        return stopOnAggregateException;
+    }
+
+    public void setStopOnAggregateException(Boolean stopOnAggregateException) {
+        this.stopOnAggregateException = stopOnAggregateException;
     }
 }

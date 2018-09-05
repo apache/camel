@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.language.jxpath.enabled",
+      "description": "Enable jxpath language",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

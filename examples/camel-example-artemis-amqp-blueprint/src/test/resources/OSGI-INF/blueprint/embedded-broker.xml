@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+       xsi:schemaLocation="
+         http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+         http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd
+         http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd">
+
+
+  <!-- Security Manager with default user -->
+  <bean id="securityManager" class="org.apache.activemq.artemis.spi.core.security.ActiveMQJAASSecurityManager">
+    <argument value="org.apache.activemq.artemis.spi.core.security.jaas.InVMLoginModule"/>
+    <argument>
+       <bean class="org.apache.activemq.artemis.core.config.impl.SecurityConfiguration">
+          <argument>
+             <map>
+                <entry key="guest" value="guest"/>
+             </map>
+          </argument>
+          <argument>
+             <map>
+                <entry key="guest">
+                   <list>
+                      <value>guest</value>
+                   </list>
+                </entry>
+             </map>
+          </argument>
+          <property name="defaultUser" value="guest"/>
+       </bean>
+    </argument>
+  </bean>
+
+  <!-- Blueprint does not support Bean inheritance (necessary for Artemis EmbeddedJMS)
+       We need therefore a 'support' class -->
+  <bean id="embeddedJMS"
+        class="org.apache.camel.example.artemis.amqp.EmbeddedBrokerSupport"
+        destroy-method="close">
+    <argument ref="securityManager"/>
+  </bean>
+
+
+
+</blueprint>

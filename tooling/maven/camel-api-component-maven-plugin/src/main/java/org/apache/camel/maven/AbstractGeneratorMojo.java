@@ -28,7 +28,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -38,8 +37,9 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.VelocityException;
 import org.apache.velocity.runtime.RuntimeConstants;
-import org.apache.velocity.runtime.log.Log4JLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base class for API based generation MOJOs.
@@ -56,7 +56,7 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
     private static boolean sharedProjectState;
 
     // used for velocity logging, to avoid creating velocity.log
-    protected final Logger log = Logger.getLogger(this.getClass());
+    protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Parameter(defaultValue = OUT_PACKAGE)
     protected String outPackage;
@@ -87,17 +87,21 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
         }
     }
 
-    protected static VelocityEngine getEngine() {
+    protected static VelocityEngine getEngine() throws MojoExecutionException {
         if (engine == null) {
             // initialize velocity to load resources from class loader and use Log4J
             Properties velocityProperties = new Properties();
             velocityProperties.setProperty(RuntimeConstants.RESOURCE_LOADER, "cloader");
             velocityProperties.setProperty("cloader.resource.loader.class", ClasspathResourceLoader.class.getName());
-            velocityProperties.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, Log4JLogChute.class.getName());
-            final Logger velocityLogger = Logger.getLogger("org.apache.camel.maven.Velocity");
-            velocityProperties.setProperty(Log4JLogChute.RUNTIME_LOG_LOG4J_LOGGER, velocityLogger.getName());
-            engine = new VelocityEngine(velocityProperties);
-            engine.init();
+            final Logger velocityLogger = LoggerFactory.getLogger("org.apache.camel.maven.Velocity");
+            velocityProperties.setProperty(RuntimeConstants.RUNTIME_LOG_NAME, velocityLogger.getName());
+            try {
+                engine = new VelocityEngine(velocityProperties);
+                engine.init();
+            } catch (Exception e) {
+                throw new MojoExecutionException(e.getMessage(), e);
+            }
+            
         }
         return engine;
     }
@@ -137,9 +141,15 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
         context.put("generatedDate", new Date().toString());
         // add output package
         context.put("packageName", outPackage);
+        context.put("newLine", "\n");
 
         // load velocity template
-        final Template template = getEngine().getTemplate(templateName, "UTF-8");
+        Template template = null;
+        try {
+            template = getEngine().getTemplate(templateName, "UTF-8");
+        } catch (Exception e) {
+            throw new MojoExecutionException(e.getMessage(), e);
+        }
 
         // generate file
         BufferedWriter writer = null;

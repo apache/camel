@@ -42,6 +42,7 @@ import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
 import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.util.ReflectionHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -52,18 +53,20 @@ public abstract class AbstractCamelRunner implements Runnable {
 
     public static final int START_DELAY = 5000;
     public static final String PROPERTY_PREFIX = "camel.scr.properties.prefix";
-    
-    protected Logger log = LoggerFactory.getLogger(getClass());
-    protected CamelContext context;
-    protected SimpleRegistry registry = new SimpleRegistry();
-    protected boolean active;
 
+    protected Logger log = LoggerFactory.getLogger(getClass());
+
+    // Configured fields
+    private String camelContextId;
+    private boolean active;
+
+    private CamelContext context;
     private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private ScheduledFuture starter;
     private volatile boolean activated;
     private volatile boolean started;
 
-    public synchronized void activate(final BundleContext bundleContext, final Map<String, String> props) throws Exception {
+    public final synchronized void activate(final BundleContext bundleContext, final Map<String, String> props) throws Exception {
         if (activated) {
             return;
         }
@@ -76,45 +79,41 @@ public abstract class AbstractCamelRunner implements Runnable {
         runWithDelay(this);
     }
 
-    public synchronized void prepare(final BundleContext bundleContext, final Map<String, String> props) throws Exception {
+    public final synchronized void prepare(final BundleContext bundleContext, final Map<String, String> props) throws Exception {
         createCamelContext(bundleContext, props);
 
         // Configure fields from properties
         configure(context, this, log, true);
 
-        setupCamelContext(bundleContext);
+        setupCamelContext(bundleContext, camelContextId);
     }
 
     protected void createCamelContext(final BundleContext bundleContext, final Map<String, String> props) {
         if (bundleContext != null) {
-            context = new OsgiDefaultCamelContext(bundleContext, registry);
+            context = new OsgiDefaultCamelContext(bundleContext, createRegistry(bundleContext));
             // Setup the application context classloader with the bundle classloader
             context.setApplicationContextClassLoader(new BundleDelegatingClassLoader(bundleContext.getBundle()));
             // and make sure the TCCL is our classloader
             Thread.currentThread().setContextClassLoader(context.getApplicationContextClassLoader());
         } else {
-            context = new DefaultCamelContext(registry);
+            context = new DefaultCamelContext(createRegistry());
         }
         setupPropertiesComponent(context, props, log);
-
-        String name = props.remove("camelContextId");
-        if (name != null) {
-            context.setNameStrategy(new ExplicitCamelContextNameStrategy(name));
-        }
-
-        // ensure we publish this CamelContext to the OSGi service registry
-        context.getManagementStrategy().addEventNotifier(new OsgiCamelContextPublisher(bundleContext));
     }
-    
-    protected void setupCamelContext(final BundleContext bundleContext) throws Exception {
+
+    protected void setupCamelContext(final BundleContext bundleContext, final String camelContextId) throws Exception {
         // Set up CamelContext
-        context.setUseMDCLogging(true);
-        context.setUseBreadcrumb(true);
+        if (camelContextId != null) {
+            context.setNameStrategy(new ExplicitCamelContextNameStrategy(camelContextId));
+        }
 
         // Add routes
         for (RoutesBuilder route : getRouteBuilders()) {
             context.addRoutes(configure(context, route, log));
         }
+
+        // ensure we publish this CamelContext to the OSGi service registry
+        context.getManagementStrategy().addEventNotifier(new OsgiCamelContextPublisher(bundleContext));
     }
 
     public static void setupPropertiesComponent(final CamelContext context, final Map<String, String> props, Logger log) {
@@ -127,25 +126,19 @@ public abstract class AbstractCamelRunner implements Runnable {
         }
 
         // Set property prefix
-        if (null != System.getProperty(PROPERTY_PREFIX)) {
+        if (System.getProperty(PROPERTY_PREFIX) != null) {
             pc.setPropertyPrefix(System.getProperty(PROPERTY_PREFIX) + ".");
         }
 
-        if (null != props) {
+        if (props != null) {
             Properties initialProps = new Properties();
             initialProps.putAll(props);
             log.debug(String.format("Added %d initial properties", props.size()));
-            try {
-                pc.setInitialProperties(initialProps);
-            } catch (NoSuchMethodError e) {
-                // For Camel versions without setInitialProperties
-                pc.setOverrideProperties(initialProps);
-                pc.setLocation("default.properties");
-            }
+            pc.setInitialProperties(initialProps);
         }
     }
 
-    protected abstract List<RoutesBuilder> getRouteBuilders();
+    protected abstract List<RoutesBuilder> getRouteBuilders() throws Exception;
 
     // Run after a delay unless the method is called again
     private void runWithDelay(final Runnable runnable) {
@@ -163,11 +156,11 @@ public abstract class AbstractCamelRunner implements Runnable {
         }
     }
 
-    public synchronized void run() {
+    public final synchronized void run() {
         startCamelContext();
     }
 
-    public synchronized void deactivate() {
+    public final synchronized void deactivate() {
         if (!activated) {
             return;
         }
@@ -180,7 +173,7 @@ public abstract class AbstractCamelRunner implements Runnable {
         stop();
     }
 
-    public synchronized void stop() {
+    public final synchronized void stop() {
         stopCamelContext();
     }
 
@@ -195,6 +188,7 @@ public abstract class AbstractCamelRunner implements Runnable {
             context.start();
             started = true;
         } catch (Exception e) {
+            // we should have a better way - than just try every 5th second to try to start the bundle
             log.warn("Failed to start Camel context. Will try again when more Camel components have been registered.", e);
         }
     }
@@ -206,23 +200,23 @@ public abstract class AbstractCamelRunner implements Runnable {
         try {
             context.stop();
         } catch (Exception e) {
-            log.error("Failed to stop Camel context.", e);
+            log.warn("Failed to stop Camel context.", e);
         } finally {
             // Even if stopping failed we consider Camel context stopped
             started = false;
         }
     }
     
-    public CamelContext getContext() {
+    public final CamelContext getContext() {
         return context;
     }
 
-    protected void gotCamelComponent(final ServiceReference serviceReference) {
+    protected final void gotCamelComponent(final ServiceReference serviceReference) {
         log.trace("Got a new Camel Component.");
         runWithDelay(this);
     }
 
-    protected void lostCamelComponent(final ServiceReference serviceReference) {
+    protected final void lostCamelComponent(final ServiceReference serviceReference) {
         log.trace("Lost a Camel Component.");
     }
 
@@ -233,7 +227,7 @@ public abstract class AbstractCamelRunner implements Runnable {
     public static <T> T configure(final CamelContext context, final T target, final Logger log, final boolean deep) {
         Class<?> clazz = target.getClass();
         log.debug("Configuring {}", clazz.getName());
-        Collection<Field> fields = new ArrayList<Field>();
+        Collection<Field> fields = new ArrayList<>();
         fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
         if (deep) {
             fields.addAll(Arrays.asList(clazz.getFields()));
@@ -255,7 +249,7 @@ public abstract class AbstractCamelRunner implements Runnable {
                     log.debug("Configured field {} with value {}", field.getName(), propertyValue);
                 }
             } catch (Exception e) {
-                log.error("Error setting field " + field.getName() + " due: " + e.getMessage() + ". This exception is ignored.", e);
+                log.warn("Error setting field " + field.getName() + " due: " + e.getMessage() + ". This exception is ignored.", e);
             }
         }
         return target;
@@ -268,11 +262,9 @@ public abstract class AbstractCamelRunner implements Runnable {
         } else if (type instanceof Class) {
             clazz = (Class<?>) type;
         }
-        if (null != value) {
-            if (clazz.isInstance(value)) {
-                return value;
-            } else if (clazz == String.class) {
-                return value;
+        if (clazz != null && value != null) {
+            if (clazz.isAssignableFrom(value.getClass())) {
+                return clazz.cast(value);
             } else if (clazz == Boolean.class || clazz == boolean.class) {
                 return Boolean.parseBoolean(value);
             } else if (clazz == Integer.class || clazz == int.class) {
@@ -288,10 +280,26 @@ public abstract class AbstractCamelRunner implements Runnable {
             } else if (clazz == URL.class) {
                 return new URL(value);
             } else {
-                throw new IllegalArgumentException("Unsupported type: " + (clazz != null ? clazz.getName() : null));
+                throw new IllegalArgumentException("Unsupported type: " + clazz.getName());
             }
         } else {
             return null;
         }
+    }
+
+    public static <T extends Registry> T getRegistry(CamelContext context, Class<T> type) throws Exception {
+        T result = context.getRegistry(type);
+        if (result == null) {
+            throw new Exception(type.getName() + " not available in " + context.getName());
+        }
+        return result;
+    }
+
+    protected Registry createRegistry() {
+        return new SimpleRegistry();
+    }
+
+    protected Registry createRegistry(BundleContext bundleContext) {
+        return createRegistry();
     }
 }

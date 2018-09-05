@@ -84,7 +84,7 @@ public class HttpsAuthenticationTest extends BaseHttpsTest {
     public void httpsGetWithAuthentication() throws Exception {
 
         Exchange exchange = template.request("https4://127.0.0.1:" + localServer.getLocalPort() 
-            + "/?authUsername=camel&authPassword=password&x509HostnameVerifier=x509HostnameVerifier", new Processor() {
+            + "/?authUsername=camel&authPassword=password&x509HostnameVerifier=#x509HostnameVerifier", new Processor() {
                 public void process(Exchange exchange) throws Exception {
                 }
             });
@@ -94,9 +94,9 @@ public class HttpsAuthenticationTest extends BaseHttpsTest {
 
     @Override
     protected HttpProcessor getBasicHttpProcessor() {
-        List<HttpRequestInterceptor> requestInterceptors = new ArrayList<HttpRequestInterceptor>();
+        List<HttpRequestInterceptor> requestInterceptors = new ArrayList<>();
         requestInterceptors.add(new RequestBasicAuth());
-        List<HttpResponseInterceptor> responseInterceptors = new ArrayList<HttpResponseInterceptor>();
+        List<HttpResponseInterceptor> responseInterceptors = new ArrayList<>();
         responseInterceptors.add(new ResponseContent());
         responseInterceptors.add(new ResponseBasicUnauthorized());
         ImmutableHttpProcessor httpproc = new ImmutableHttpProcessor(requestInterceptors, responseInterceptors);

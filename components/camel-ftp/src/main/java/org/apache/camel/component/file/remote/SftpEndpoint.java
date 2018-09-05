@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.file.remote;
 
-import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.Proxy;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFileConfiguration;
@@ -25,15 +24,16 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * Secure FTP endpoint
+ *  The sftp (FTP over SSH) component is used for uploading or downloading files from SFTP servers.
  */
-@UriEndpoint(scheme = "sftp", extendsScheme = "file", title = "SFTP",
-        syntax = "sftp:host:port/directoryName", consumerClass = SftpConsumer.class, label = "file")
-public class SftpEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
+@UriEndpoint(firstVersion = "1.1.0", scheme = "sftp", extendsScheme = "file", title = "SFTP",
+        syntax = "sftp:host:port/directoryName", consumerClass = SftpConsumer.class, label = "file",
+        excludeProperties = "binary,passiveMode,receiveBufferSize,siteCommand")
+public class SftpEndpoint extends RemoteFileEndpoint<SftpRemoteFile> {
 
     @UriParam
     protected SftpConfiguration configuration;
-    @UriParam
+    @UriParam(label = "advanced")
     protected Proxy proxy;
     
     public SftpEndpoint() {
@@ -60,15 +60,15 @@ public class SftpEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
     }
 
     @Override
-    protected RemoteFileConsumer<ChannelSftp.LsEntry> buildConsumer(Processor processor) {
-        return new SftpConsumer(this, processor, createRemoteFileOperations());
+    protected RemoteFileConsumer<SftpRemoteFile> buildConsumer(Processor processor) {
+        return new SftpConsumer(this, processor, createRemoteFileOperations(), createGenericFileStrategy());
     }
 
-    protected GenericFileProducer<ChannelSftp.LsEntry> buildProducer() {
-        return new RemoteFileProducer<ChannelSftp.LsEntry>(this, createRemoteFileOperations());
+    protected GenericFileProducer<SftpRemoteFile> buildProducer() {
+        return new RemoteFileProducer<>(this, createRemoteFileOperations());
     }
 
-    public RemoteFileOperations<ChannelSftp.LsEntry> createRemoteFileOperations() {
+    public RemoteFileOperations<SftpRemoteFile> createRemoteFileOperations() {
         SftpOperations operations = new SftpOperations(proxy);
         operations.setEndpoint(this);
         return operations;

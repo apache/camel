@@ -19,6 +19,7 @@ package org.apache.camel.jaxb;
 import javax.xml.bind.JAXBElement;
 
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
@@ -86,6 +87,7 @@ public class CamelJaxbTest extends CamelTestSupport {
 
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
+        resultEndpoint.expectedHeaderReceived(Exchange.CONTENT_TYPE, "application/xml");
         template.sendBody("direct:marshal", person);
         resultEndpoint.assertIsSatisfied();
 
@@ -102,12 +104,26 @@ public class CamelJaxbTest extends CamelTestSupport {
 
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
+        resultEndpoint.expectedHeaderReceived(Exchange.CONTENT_TYPE, "application/xml");
         template.sendBody("direct:marshal", person);
         resultEndpoint.assertIsSatisfied();
 
         String body = resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(String.class);
         assertTrue("We should get the schemaLocation here", body
                 .contains("schemaLocation=\"person.xsd\""));
+    }
+
+    @Test
+    public void testMarshalWithoutContentType() throws Exception {
+        PersonType person = new PersonType();
+        person.setFirstName("foo");
+        person.setLastName("bar");
+
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(1);
+        resultEndpoint.expectedHeaderReceived(Exchange.CONTENT_TYPE, null);
+        template.sendBody("direct:marshalWithoutContentType", person);
+        resultEndpoint.assertIsSatisfied();
     }
 
     @Test
@@ -176,6 +192,10 @@ public class CamelJaxbTest extends CamelTestSupport {
                 dataFormat.setSchemaLocation("person.xsd");
                 dataFormat.setIgnoreJAXBElement(false);
 
+                JaxbDataFormat dataFormatWithoutContentType = new JaxbDataFormat("org.apache.camel.foo.bar");
+                dataFormat.setIgnoreJAXBElement(false);
+                dataFormatWithoutContentType.setContentTypeHeader(false);
+
                 JaxbDataFormat filterEnabledFormat = new JaxbDataFormat("org.apache.camel.foo.bar");
                 filterEnabledFormat.setFilterNonXmlChars(true);
 
@@ -200,6 +220,10 @@ public class CamelJaxbTest extends CamelTestSupport {
 
                 from("direct:marshal")
                     .marshal(dataFormat)
+                    .to("mock:result");
+
+                from("direct:marshalWithoutContentType")
+                    .marshal(dataFormatWithoutContentType)
                     .to("mock:result");
 
                 from("direct:marshalFilteringEnabled")

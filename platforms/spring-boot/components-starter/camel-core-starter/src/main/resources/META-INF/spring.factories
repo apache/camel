@@ -1,0 +1,61 @@
+## ---------------------------------------------------------------------------
+## Licensed to the Apache Software Foundation (ASF) under one or more
+## contributor license agreements.  See the NOTICE file distributed with
+## this work for additional information regarding copyright ownership.
+## The ASF licenses this file to You under the Apache License, Version 2.0
+## (the "License"); you may not use this file except in compliance with
+## the License.  You may obtain a copy of the License at
+##
+##      http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
+## ---------------------------------------------------------------------------
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.apache.camel.component.direct.springboot.DirectComponentAutoConfiguration,\
+org.apache.camel.component.vm.springboot.VmComponentAutoConfiguration,\
+org.apache.camel.component.directvm.springboot.DirectVmComponentAutoConfiguration,\
+org.apache.camel.component.seda.springboot.SedaComponentAutoConfiguration,\
+org.apache.camel.component.log.springboot.LogComponentAutoConfiguration,\
+org.apache.camel.component.stub.springboot.StubComponentAutoConfiguration,\
+org.apache.camel.component.scheduler.springboot.SchedulerComponentAutoConfiguration,\
+org.apache.camel.component.xslt.springboot.XsltComponentAutoConfiguration,\
+org.apache.camel.component.validator.springboot.ValidatorComponentAutoConfiguration,\
+org.apache.camel.component.properties.springboot.PropertiesComponentAutoConfiguration,\
+org.apache.camel.impl.springboot.StringDataFormatAutoConfiguration,\
+org.apache.camel.impl.springboot.ZipDataFormatAutoConfiguration,\
+org.apache.camel.impl.springboot.GzipDataFormatAutoConfiguration,\
+org.apache.camel.impl.springboot.SerializationDataFormatAutoConfiguration,\
+org.apache.camel.language.constant.springboot.ConstantLanguageAutoConfiguration,\
+org.apache.camel.language.simple.springboot.SimpleLanguageAutoConfiguration,\
+org.apache.camel.language.ref.springboot.RefLanguageAutoConfiguration,\
+org.apache.camel.language.bean.springboot.BeanLanguageAutoConfiguration,\
+org.apache.camel.language.header.springboot.HeaderLanguageAutoConfiguration,\
+org.apache.camel.language.xpath.springboot.XPathLanguageAutoConfiguration,\
+org.apache.camel.language.simple.springboot.FileLanguageAutoConfiguration,\
+org.apache.camel.language.property.springboot.ExchangePropertyLanguageAutoConfiguration,\
+org.apache.camel.language.tokenizer.springboot.TokenizeLanguageAutoConfiguration,\
+org.apache.camel.language.tokenizer.springboot.XMLTokenizeLanguageAutoConfiguration,\
+org.apache.camel.component.rest.springboot.RestComponentAutoConfiguration,\
+org.apache.camel.component.ref.springboot.RefComponentAutoConfiguration,\
+org.apache.camel.component.controlbus.springboot.ControlBusComponentAutoConfiguration,\
+org.apache.camel.component.mock.springboot.MockComponentAutoConfiguration,\
+org.apache.camel.component.browse.springboot.BrowseComponentAutoConfiguration,\
+org.apache.camel.component.language.springboot.LanguageComponentAutoConfiguration,\
+org.apache.camel.component.file.springboot.FileComponentAutoConfiguration,\
+org.apache.camel.component.file.springboot.cluster.FileLockClusterServiceAutoConfiguration,\
+org.apache.camel.component.timer.springboot.TimerComponentAutoConfiguration,\
+org.apache.camel.component.test.springboot.TestComponentAutoConfiguration,\
+org.apache.camel.component.beanclass.springboot.ClassComponentAutoConfiguration,\
+org.apache.camel.component.dataset.springboot.DataSetComponentAutoConfiguration,\
+org.apache.camel.component.binding.springboot.BindingNameComponentAutoConfiguration,\
+org.apache.camel.component.bean.springboot.BeanComponentAutoConfiguration,\
+org.apache.camel.component.dataformat.springboot.DataFormatComponentAutoConfiguration,\
+org.apache.camel.component.rest.springboot.RestApiComponentAutoConfiguration,\
+org.apache.camel.model.rest.springboot.RestConfigurationDefinitionAutoConfiguration,\
+org.apache.camel.component.saga.springboot.SagaComponentAutoConfiguration
+
+

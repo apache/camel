@@ -16,6 +16,7 @@
  */
 package org.apache.camel.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -31,7 +32,10 @@ import java.net.URLDecoder;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.spi.ClassResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +59,20 @@ public final class ResourceHelper {
      * If not then the returned value is returned as-is.
      */
     public static String resolveOptionalExternalScript(CamelContext camelContext, String expression) {
+        return resolveOptionalExternalScript(camelContext, null, expression);
+    }
+
+    /**
+     * Resolves the expression/predicate whether it refers to an external script on the file/classpath etc.
+     * This requires to use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
+     * <tt>resource:file:/var/myscript.groovy</tt>.
+     * <p/>
+     * If not then the returned value is returned as-is.
+     * <p/>
+     * If the exchange is provided (not null), then the external script can be referred via simple language for dynamic values, etc.
+     * <tt>resource:classpath:${header.myFileName}</tt>
+     */
+    public static String resolveOptionalExternalScript(CamelContext camelContext, Exchange exchange, String expression) {
         if (expression == null) {
             return null;
         }
@@ -72,9 +90,15 @@ public final class ResourceHelper {
             external = external.substring(9);
 
             if (hasScheme(external)) {
+
+                if (exchange != null && SimpleLanguage.hasSimpleFunction(external)) {
+                    SimpleLanguage simple = (SimpleLanguage) exchange.getContext().resolveLanguage("simple");
+                    external = simple.createExpression(external).evaluate(exchange, String.class);
+                }
+
                 InputStream is = null;
                 try {
-                    is = resolveMandatoryResourceAsInputStream(camelContext.getClassResolver(), external);
+                    is = resolveMandatoryResourceAsInputStream(camelContext, external);
                     expression = camelContext.getTypeConverter().convertTo(String.class, is);
                 } catch (IOException e) {
                     throw new RuntimeCamelException("Cannot load resource " + external, e);
@@ -118,13 +142,75 @@ public final class ResourceHelper {
     /**
      * Resolves the mandatory resource.
      * <p/>
+     * The resource uri can refer to the following systems to be loaded from
+     * <ul>
+     *     <il>file:nameOfFile - to refer to the file system</il>
+     *     <il>classpath:nameOfFile - to refer to the classpath (default)</il>
+     *     <il>http:uri - to load the resource using HTTP</il>
+     *     <il>ref:nameOfBean - to lookup the resource in the {@link org.apache.camel.spi.Registry}</il>
+     *     <il>bean:nameOfBean.methodName or bean:nameOfBean::methodName - to lookup a bean in the {@link org.apache.camel.spi.Registry} and call the method</il>
+     *     <il><customProtocol>:uri - to lookup the resource using a custom {@link java.net.URLStreamHandler} registered for the <customProtocol>,
+     *     on how to register it @see java.net.URL#URL(java.lang.String, java.lang.String, int, java.lang.String)</il>
+     * </ul>
+     * If no prefix has been given, then the resource is loaded from the classpath
+     * <p/>
+     * If possible recommended to use {@link #resolveMandatoryResourceAsUrl(org.apache.camel.spi.ClassResolver, String)}
+     *
+     * @param camelContext the Camel Context
+     * @param uri URI of the resource
+     * @return the resource as an {@link InputStream}.  Remember to close this stream after usage.
+     * @throws java.io.IOException is thrown if the resource file could not be found or loaded as {@link InputStream}
+     */
+    public static InputStream resolveMandatoryResourceAsInputStream(CamelContext camelContext, String uri) throws IOException {
+        if (uri.startsWith("ref:")) {
+            String ref = uri.substring(4);
+            String value = CamelContextHelper.mandatoryLookup(camelContext, ref, String.class);
+            return new ByteArrayInputStream(value.getBytes());
+        } else if (uri.startsWith("bean:")) {
+            String bean = uri.substring(5);
+            Exchange dummy = new DefaultExchange(camelContext);
+            Object out = camelContext.resolveLanguage("bean").createExpression(bean).evaluate(dummy, Object.class);
+            if (dummy.getException() != null) {
+                IOException io = new IOException("Cannot find resource: " + uri + " from calling the bean");
+                io.initCause(dummy.getException());
+                throw io;
+            }
+            if (out != null) {
+                InputStream is = camelContext.getTypeConverter().tryConvertTo(InputStream.class, dummy, out);
+                if (is == null) {
+                    String text = camelContext.getTypeConverter().tryConvertTo(String.class, dummy, out);
+                    if (text != null) {
+                        return new ByteArrayInputStream(text.getBytes());
+                    }
+                } else {
+                    return is;
+                }
+            } else {
+                throw new IOException("Cannot find resource: " + uri + " from calling the bean");
+            }
+        }
+
+        InputStream is = resolveResourceAsInputStream(camelContext.getClassResolver(), uri);
+        if (is == null) {
+            String resolvedName = resolveUriPath(uri);
+            throw new FileNotFoundException("Cannot find resource: " + resolvedName + " in classpath for URI: " + uri);
+        } else {
+            return is;
+        }
+    }
+
+    /**
+     * Resolves the mandatory resource.
+     * <p/>
      * If possible recommended to use {@link #resolveMandatoryResourceAsUrl(org.apache.camel.spi.ClassResolver, String)}
      *
      * @param classResolver the class resolver to load the resource from the classpath
      * @param uri URI of the resource
      * @return the resource as an {@link InputStream}.  Remember to close this stream after usage.
      * @throws java.io.IOException is thrown if the resource file could not be found or loaded as {@link InputStream}
+     * @deprecated use {@link #resolveMandatoryResourceAsInputStream(CamelContext, String)}
      */
+    @Deprecated
     public static InputStream resolveMandatoryResourceAsInputStream(ClassResolver classResolver, String uri) throws IOException {
         InputStream is = resolveResourceAsInputStream(classResolver, uri);
         if (is == null) {
@@ -147,7 +233,7 @@ public final class ResourceHelper {
      */
     public static InputStream resolveResourceAsInputStream(ClassResolver classResolver, String uri) throws IOException {
         if (uri.startsWith("file:")) {
-            uri = ObjectHelper.after(uri, "file:");
+            uri = StringHelper.after(uri, "file:");
             uri = tryDecodeUri(uri);
             LOG.trace("Loading resource: {} from file system", uri);
             return new FileInputStream(uri);
@@ -167,8 +253,13 @@ public final class ResourceHelper {
                 throw e;
             }
         } else if (uri.startsWith("classpath:")) {
-            uri = ObjectHelper.after(uri, "classpath:");
+            uri = StringHelper.after(uri, "classpath:");
             uri = tryDecodeUri(uri);
+        } else if (uri.contains(":")) {
+            LOG.trace("Loading resource: {} with UrlHandler for protocol {}", uri, uri.split(":")[0]);
+            URL url = new URL(uri);
+            URLConnection con = url.openConnection();
+            return con.getInputStream();
         }
 
         // load from classpath by default
@@ -207,7 +298,7 @@ public final class ResourceHelper {
     public static URL resolveResourceAsUrl(ClassResolver classResolver, String uri) throws MalformedURLException {
         if (uri.startsWith("file:")) {
             // check if file exists first
-            String name = ObjectHelper.after(uri, "file:");
+            String name = StringHelper.after(uri, "file:");
             uri = tryDecodeUri(uri);
             LOG.trace("Loading resource: {} from file system", uri);
             File file = new File(name);
@@ -219,8 +310,11 @@ public final class ResourceHelper {
             LOG.trace("Loading resource: {} from HTTP", uri);
             return new URL(uri);
         } else if (uri.startsWith("classpath:")) {
-            uri = ObjectHelper.after(uri, "classpath:");
+            uri = StringHelper.after(uri, "classpath:");
             uri = tryDecodeUri(uri);
+        } else if (uri.contains(":")) {
+            LOG.trace("Loading resource: {} with UrlHandler for protocol {}", uri, uri.split(":")[0]);
+            return new URL(uri);
         }
 
         // load from classpath by default

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language;
 
+import org.junit.Test;
+
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
@@ -31,6 +33,7 @@ public class BeanLanguageOGNLWithDotInParameterPropertyPlaceholderTest extends C
 
     private Properties myProp;
 
+    @Test
     public void testDot() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedHeaderReceived("goto", "mock:MyAppV1.2.3/blah");

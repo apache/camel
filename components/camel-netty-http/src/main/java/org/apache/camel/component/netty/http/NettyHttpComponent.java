@@ -25,12 +25,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.netty.NettyComponent;
 import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 import org.apache.camel.component.netty.http.handlers.HttpServerMultiplexChannelHandler;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.util.FileUtil;
@@ -46,16 +49,21 @@ import org.slf4j.LoggerFactory;
 /**
  * Netty HTTP based component.
  */
-public class NettyHttpComponent extends NettyComponent implements HeaderFilterStrategyAware, RestConsumerFactory {
+public class NettyHttpComponent extends NettyComponent implements HeaderFilterStrategyAware, RestConsumerFactory, RestApiConsumerFactory, SSLContextParametersAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpComponent.class);
 
     // factories which is created by this component and therefore manage their lifecycles
-    private final Map<Integer, HttpServerConsumerChannelFactory> multiplexChannelHandlers = new HashMap<Integer, HttpServerConsumerChannelFactory>();
-    private final Map<String, HttpServerBootstrapFactory> bootstrapFactories = new HashMap<String, HttpServerBootstrapFactory>();
+    private final Map<Integer, HttpServerConsumerChannelFactory> multiplexChannelHandlers = new HashMap<>();
+    private final Map<String, HttpServerBootstrapFactory> bootstrapFactories = new HashMap<>();
+    @Metadata(label = "advanced")
     private NettyHttpBinding nettyHttpBinding;
+    @Metadata(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy;
+    @Metadata(label = "security")
     private NettyHttpSecurityConfiguration securityConfiguration;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public NettyHttpComponent() {
         // use the http configuration and filter strategy
@@ -80,7 +88,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         // merge any custom bootstrap configuration on the config
         NettyServerBootstrapConfiguration bootstrapConfiguration = resolveAndRemoveReferenceParameter(parameters, "bootstrapConfiguration", NettyServerBootstrapConfiguration.class);
         if (bootstrapConfiguration != null) {
-            Map<String, Object> options = new HashMap<String, Object>();
+            Map<String, Object> options = new HashMap<>();
             if (IntrospectionSupport.getProperties(bootstrapConfiguration, options, null, false)) {
                 IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), config, options);
             }
@@ -90,19 +98,57 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         NettyHttpSecurityConfiguration securityConfiguration = resolveAndRemoveReferenceParameter(parameters, "securityConfiguration", NettyHttpSecurityConfiguration.class);
         Map<String, Object> securityOptions = IntrospectionSupport.extractProperties(parameters, "securityConfiguration.");
 
-        config = parseConfiguration(config, remaining, parameters);
-        setProperties(config, parameters);
-
-        // validate config
-        config.validateConfiguration();
-
         // are we using a shared http server?
+        int sharedPort = -1;
         NettySharedHttpServer shared = resolveAndRemoveReferenceParameter(parameters, "nettySharedHttpServer", NettySharedHttpServer.class);
         if (shared != null) {
             // use port number from the shared http server
             LOG.debug("Using NettySharedHttpServer: {} with port: {}", shared, shared.getPort());
-            config.setPort(shared.getPort());
+            sharedPort = shared.getPort();
         }
+
+        // we must include the protocol in the remaining
+        boolean hasProtocol = remaining.startsWith("http://") || remaining.startsWith("http:")
+                || remaining.startsWith("https://") || remaining.startsWith("https:");
+        if (!hasProtocol) {
+            // http is the default protocol
+            remaining = "http://" + remaining;
+        }
+        boolean hasSlash = remaining.startsWith("http://") || remaining.startsWith("https://");
+        if (!hasSlash) {
+            // must have double slash after protocol
+            if (remaining.startsWith("http:")) {
+                remaining = "http://" + remaining.substring(5);
+            } else {
+                remaining = "https://" + remaining.substring(6);
+            }
+        }
+        LOG.debug("Netty http url: {}", remaining);
+
+        // set port on configuration which is either shared or using default values
+        if (sharedPort != -1) {
+            config.setPort(sharedPort);
+        } else if (config.getPort() == -1 || config.getPort() == 0) {
+            if (remaining.startsWith("http:")) {
+                config.setPort(80);
+            } else if (remaining.startsWith("https:")) {
+                config.setPort(443);
+            }
+        }
+        if (config.getPort() == -1) {
+            throw new IllegalArgumentException("Port number must be configured");
+        }
+
+        // configure configuration
+        config = parseConfiguration(config, remaining, parameters);
+        setProperties(config, parameters);
+
+        if (config.getSslContextParameters() == null) {
+            config.setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
+
+        // validate config
+        config.validateConfiguration();
 
         // create the address uri which includes the remainder parameters (which is not configuration parameters for this component)
         URI u = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(remaining));
@@ -179,6 +225,15 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         this.nettyHttpBinding = nettyHttpBinding;
     }
 
+    @Override
+    public NettyHttpConfiguration getConfiguration() {
+        return (NettyHttpConfiguration) super.getConfiguration();
+    }
+
+    public void setConfiguration(NettyHttpConfiguration configuration) {
+        super.setConfiguration(configuration);
+    }
+
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
@@ -199,6 +254,19 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
      */
     public void setSecurityConfiguration(NettyHttpSecurityConfiguration securityConfiguration) {
         this.securityConfiguration = securityConfiguration;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     public synchronized HttpServerConsumerChannelFactory getMultiplexChannelHandler(int port) {
@@ -225,7 +293,19 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
 
     @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+                                   String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+        return doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, consumes, produces, configuration, parameters, false);
+    }
+
+    @Override
+    public Consumer createApiConsumer(CamelContext camelContext, Processor processor, String contextPath,
+                                      RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+        // reuse the createConsumer method we already have. The api need to use GET and match on uri prefix
+        return doCreateConsumer(camelContext, processor, "GET", contextPath, null, null, null, configuration, parameters, true);
+    }
+
+    Consumer doCreateConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
+                              String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters, boolean api) throws Exception {
 
         String path = basePath;
         if (uriTemplate != null) {
@@ -243,7 +323,10 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         int port = 0;
 
         // if no explicit port/host configured, then use port from rest configuration
-        RestConfiguration config = getCamelContext().getRestConfiguration("netty-http", true);
+        RestConfiguration config = configuration;
+        if (config == null) {
+            config = camelContext.getRestConfiguration("netty-http", true);
+        }
         if (config.getScheme() != null) {
             scheme = config.getScheme();
         }
@@ -255,30 +338,56 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             port = num;
         }
 
+        // prefix path with context-path if configured in rest-dsl configuration
+        String contextPath = config.getContextPath();
+        if (ObjectHelper.isNotEmpty(contextPath)) {
+            contextPath = FileUtil.stripTrailingSeparator(contextPath);
+            contextPath = FileUtil.stripLeadingSeparator(contextPath);
+            if (ObjectHelper.isNotEmpty(contextPath)) {
+                path = contextPath + "/" + path;
+            }
+        }
+        
         // if no explicit hostname set then resolve the hostname
         if (ObjectHelper.isEmpty(host)) {
-            if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+            if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
+                host = "0.0.0.0";
+            } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
                 host = HostUtils.getLocalHostName();
             } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
                 host = HostUtils.getLocalIp();
             }
         }
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         // build query string, and append any endpoint configuration properties
-        if (config != null && (config.getComponent() == null || config.getComponent().equals("netty-http"))) {
+        if (config.getComponent() == null || config.getComponent().equals("netty-http")) {
             // setup endpoint options
             if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
                 map.putAll(config.getEndpointProperties());
             }
         }
 
+        boolean cors = config.isEnableCORS();
+        if (cors) {
+            // allow HTTP Options as we want to handle CORS in rest-dsl
+            map.put("optionsEnabled", "true");
+        }
+
         String query = URISupport.createQueryString(map);
 
-        String url = "netty-http:%s://%s:%s/%s?httpMethodRestrict=%s";
+        String url;
+        if (api) {
+            url = "netty-http:%s://%s:%s/%s?matchOnUriPrefix=true&httpMethodRestrict=%s";
+        } else {
+            url = "netty-http:%s://%s:%s/%s?httpMethodRestrict=%s";
+        }
         
         // must use upper case for restrict
         String restrict = verb.toUpperCase(Locale.US);
+        if (cors) {
+            restrict += ",OPTIONS";
+        }
         // get the endpoint
         url = String.format(url, scheme, host, port, path, restrict);
         
@@ -286,17 +395,27 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             url = url + "&" + query;
         }
 
-        
         NettyHttpEndpoint endpoint = camelContext.getEndpoint(url, NettyHttpEndpoint.class);
-        setProperties(endpoint, parameters);
+        setProperties(camelContext, endpoint, parameters);
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
-        if (config != null && config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
-            setProperties(consumer, config.getConsumerProperties());
+        if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
+            setProperties(camelContext, consumer, config.getConsumerProperties());
         }
 
         return consumer;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        RestConfiguration config = getCamelContext().getRestConfiguration("netty-http", true);
+        // configure additional options on netty-http configuration
+        if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
+            setProperties(this, config.getComponentProperties());
+        }
     }
 
     @Override

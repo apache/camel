@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xslt;
 
+import org.junit.Test;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -37,6 +39,7 @@ public class ManagedXsltOutputBytesTest extends ContextTestSupport {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
+    @Test
     public void testXsltOutput() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>");

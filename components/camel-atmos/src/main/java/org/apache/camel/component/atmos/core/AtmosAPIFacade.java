@@ -91,7 +91,7 @@ public final class AtmosAPIFacade {
 
         if (!atmosPath.equals(ATMOS_FILE_SEPARATOR)) {
             if (AtmosAPIFacade.client.getSystemMetadata(atmosEntry) == null) {
-                throw new AtmosException(atmosPath + " does not exist or can't obtain metadata");
+                throw new AtmosException(atmosPath + " does not exist or cannot obtain metadata");
             }
         }
 
@@ -103,7 +103,7 @@ public final class AtmosAPIFacade {
                 throw new AtmosException(atmosPath + " exists on atmos and is not a folder!");
             }
             atmosPath = atmosPath + fileLocalPath.getName();
-            resultEntries = new HashMap<String, AtmosResultCode>(1);
+            resultEntries = new HashMap<>(1);
             try {
                 ObjectId uploadedFile = putSingleFile(fileLocalPath, atmosPath);
                 if (uploadedFile == null) {
@@ -129,9 +129,9 @@ public final class AtmosAPIFacade {
             //list all files in a dir
             Collection<File> listFiles = FileUtils.listFiles(fileLocalPath, null, true);
             if (listFiles == null || listFiles.isEmpty()) {
-                throw new AtmosException(localPath + " doesn't contain any files");
+                throw new AtmosException(localPath + " does not contain any files");
             }
-            resultEntries = new HashMap<String, AtmosResultCode>(listFiles.size());
+            resultEntries = new HashMap<>(listFiles.size());
             for (File file : listFiles) {
                 String absPath = file.getAbsolutePath();
                 int indexRemainingPath = localPath.length();
@@ -141,7 +141,7 @@ public final class AtmosAPIFacade {
                 String remainingPath = absPath.substring(indexRemainingPath);
                 atmosPath = atmosPath + remainingPath;
                 try {
-                    LOG.info("uploading:" + fileLocalPath + "," + atmosPath);
+                    LOG.debug("uploading: {} to {}", fileLocalPath, atmosPath);
                     ObjectId uploadedFile = putSingleFile(file, atmosPath);
                     if (uploadedFile == null) {
                         resultEntries.put(atmosPath, AtmosResultCode.KO);
@@ -216,7 +216,7 @@ public final class AtmosAPIFacade {
     public AtmosResult get(String remotePath) throws AtmosException {
         AtmosResult result = new AtmosFileDownloadResult();
         //a map representing for each path the result of the baos
-        Map<String, ByteArrayOutputStream> resultEntries = new HashMap<String, ByteArrayOutputStream>();
+        Map<String, ByteArrayOutputStream> resultEntries = new HashMap<>();
         //iterate from the remotePath
         downloadFilesInFolder(remotePath, resultEntries);
         //put the map of baos as result
@@ -227,10 +227,10 @@ public final class AtmosAPIFacade {
     private void downloadFilesInFolder(String atmosPath, Map<String, ByteArrayOutputStream> resultEntries) throws AtmosException {
         ObjectPath atmosEntry = new ObjectPath(atmosPath);
         if (AtmosAPIFacade.client.getSystemMetadata(atmosEntry) == null) {
-            throw new AtmosException(atmosPath + " does not exist or can't obtain metadata");
+            throw new AtmosException(atmosPath + " does not exist or cannot obtain metadata");
         }
         if (!atmosEntry.isDirectory()) {
-            LOG.info("downloading a single file...");
+            LOG.debug("downloading a single file...");
             downloadSingleFile(atmosPath, resultEntries);
             return;
         }
@@ -242,7 +242,7 @@ public final class AtmosAPIFacade {
                     //get the baos of the file
                     downloadSingleFile(atmosEntry.getPath().concat(entry.getFilename()), resultEntries);
                 } catch (AtmosException e) {
-                    LOG.warn("can't download from " + entry.getFilename());
+                    LOG.warn("Cannot download from " + entry.getFilename());
                 }
             } else {
                 //iterate on folder
@@ -258,11 +258,11 @@ public final class AtmosAPIFacade {
             content = AtmosAPIFacade.client.readObject(new ObjectPath(path), byte[].class);
             baos.write(content);
         } catch (IOException e) {
-            throw new AtmosException(path + " can't obtain a stream", e);
+            throw new AtmosException(path + " cannot obtain a stream", e);
         }
         if (content != null) {
             resultEntries.put(path, baos);
-            LOG.info("downloaded path:" + path + " - baos size:" + baos.size());
+            LOG.debug("Downloaded path: {} size:", path, baos.size());
         }
 
     }

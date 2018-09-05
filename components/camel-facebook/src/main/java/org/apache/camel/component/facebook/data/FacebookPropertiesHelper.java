@@ -39,11 +39,11 @@ import org.slf4j.LoggerFactory;
 public final class FacebookPropertiesHelper {
 
     // set of field names which are specific to Facebook4J api, to be excluded from method argument considerations
-    private static final Set<String> COMPONENT_CONFIG_FIELDS = new HashSet<String>();
+    private static final Set<String> COMPONENT_CONFIG_FIELDS = new HashSet<>();
 
     private static final Logger LOG = LoggerFactory.getLogger(FacebookPropertiesHelper.class);
 
-    private static final Set<String> ENDPOINT_CONFIG_FIELDS = new HashSet<String>();
+    private static final Set<String> ENDPOINT_CONFIG_FIELDS = new HashSet<>();
 
     static {
         for (Field field : FacebookConfiguration.class.getDeclaredFields()) {
@@ -69,22 +69,23 @@ public final class FacebookPropertiesHelper {
             options, FacebookConstants.READING_PREFIX);
         if (!readingProperties.isEmpty()) {
             try {
-
                 // add to an existing reading reference?
                 // NOTE Reading class does not support overwriting properties!!!
                 Reading reading = configuration.getReading();
-                if (reading == null) {
-                    reading = new Reading();
+
+                if (reading != null) {
+                    Reading readingUpdate = new Reading();
+                    ReadingBuilder.setProperties(readingUpdate, readingProperties);
+                    reading = ReadingBuilder.merge(reading, readingUpdate);
                 } else {
-                    reading = ReadingBuilder.copy(reading, false);
+                    reading = new Reading();
+                    ReadingBuilder.setProperties(reading, readingProperties);
                 }
                 // set properties
-                ReadingBuilder.setProperties(reading,
-                    readingProperties);
+                ReadingBuilder.setProperties(reading, readingProperties);
 
                 // update reading in configuration
                 configuration.setReading(reading);
-
             } catch (Exception e) {
                 throw new IllegalArgumentException(readingProperties.toString(), e);
             }
@@ -106,8 +107,7 @@ public final class FacebookPropertiesHelper {
         int nProperties = 0;
         for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
             if (entry.getKey().startsWith(FacebookConstants.FACEBOOK_PROPERTY_PREFIX)) {
-                properties.put(entry.getKey().substring(FacebookConstants.FACEBOOK_PROPERTY_PREFIX.length()),
-                    entry.getValue());
+                properties.put(entry.getKey().substring(FacebookConstants.FACEBOOK_PROPERTY_PREFIX.length()), entry.getValue());
                 nProperties++;
             }
         }
@@ -129,7 +129,7 @@ public final class FacebookPropertiesHelper {
     }
 
     public static Set<String> getEndpointPropertyNames(FacebookEndpointConfiguration configuration) {
-        Map<String, Object> properties = new HashMap<String, Object>();
+        Map<String, Object> properties = new HashMap<>();
         getEndpointProperties(configuration, properties);
         return Collections.unmodifiableSet(properties.keySet());
     }

@@ -16,18 +16,21 @@
  */
 package org.apache.camel.processor.aggregator;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 
-public class OptimisticLockRetryPolicyTest extends TestCase {
+public class OptimisticLockRetryPolicyTest extends Assert {
 
     private static long precision = 100L; // give or take 100ms
 
+    @Test
     public void testRandomBackOff() throws Exception {
         OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
         policy.setRandomBackOff(true);
         policy.setExponentialBackOff(false);
-        policy.setMaximumRetryDelay(500L);
+        policy.setMaximumRetryDelay(100L);
 
         for (int i = 0; i < 10; i++) {
             long elapsed = doDelay(policy, i);
@@ -36,25 +39,27 @@ public class OptimisticLockRetryPolicyTest extends TestCase {
         }
     }
 
+    @Test
     public void testExponentialBackOff() throws Exception {
         OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
         policy.setRandomBackOff(false);
         policy.setExponentialBackOff(true);
         policy.setMaximumRetryDelay(0L);
-        policy.setRetryDelay(50L);
+        policy.setRetryDelay(10L);
 
         for (int i = 0; i < 6; i++) {
             long elapsed = doDelay(policy, i);
 
-            assertDelay(50L << i, elapsed);
+            assertDelay(10L << i, elapsed);
         }
     }
 
+    @Test
     public void testExponentialBackOffMaximumRetryDelay() throws Exception {
         OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
         policy.setRandomBackOff(false);
         policy.setExponentialBackOff(true);
-        policy.setMaximumRetryDelay(200L);
+        policy.setMaximumRetryDelay(100L);
         policy.setRetryDelay(50L);
 
         for (int i = 0; i < 10; i++) {
@@ -68,12 +73,13 @@ public class OptimisticLockRetryPolicyTest extends TestCase {
                 assertDelay(100L, elapsed);
                 break;
             default:
-                assertDelay(200L, elapsed);
+                assertDelay(100L, elapsed);
                 break;
             }
         }
     }
 
+    @Test
     public void testRetryDelay() throws Exception {
         OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
         policy.setRandomBackOff(false);
@@ -88,6 +94,7 @@ public class OptimisticLockRetryPolicyTest extends TestCase {
         }
     }
 
+    @Test
     public void testMaximumRetries() throws Exception {
         OptimisticLockRetryPolicy policy = new OptimisticLockRetryPolicy();
         policy.setRandomBackOff(false);

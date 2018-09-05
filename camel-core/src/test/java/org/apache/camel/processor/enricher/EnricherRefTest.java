@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.enricher;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -40,6 +42,7 @@ public class EnricherRefTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testEnrichRef() throws Exception {
         cool.whenAnyExchangeReceived(new Processor() {
             public void process(Exchange exchange) throws Exception {

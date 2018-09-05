@@ -69,8 +69,8 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     private static final Logger LOG = LoggerFactory.getLogger(AnnotationTypeConverterLoader.class);
     private static final Charset UTF8 = Charset.forName("UTF-8");
     protected PackageScanClassResolver resolver;
-    protected Set<Class<?>> visitedClasses = new HashSet<Class<?>>();
-    protected Set<String> visitedURIs = new HashSet<String>();
+    protected Set<Class<?>> visitedClasses = new HashSet<>();
+    protected Set<String> visitedURIs = new HashSet<>();
 
     public AnnotationTypeConverterLoader(PackageScanClassResolver resolver) {
         this.resolver = resolver;
@@ -105,10 +105,10 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
 
         // filter out package names which can be loaded as a class directly so we avoid package scanning which
         // is much slower and does not work 100% in all runtime containers
-        Set<Class<?>> classes = new HashSet<Class<?>>();
+        Set<Class<?>> classes = new HashSet<>();
         packageNames = filterPackageNamesOnly(resolver, packageNames, classes);
         if (!classes.isEmpty()) {
-            LOG.debug("Loaded " + classes.size() + " @Converter classes");
+            LOG.debug("Loaded {} @Converter classes", classes.size());
         }
 
         // if there is any packages to scan and load @Converter classes, then do it
@@ -118,7 +118,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
             if (scannedClasses.isEmpty()) {
                 throw new TypeConverterLoaderException("Cannot find any type converter classes from the following packages: " + Arrays.asList(packageNames));
             }
-            LOG.debug("Found " + packageNames.length + " packages with " + scannedClasses.size() + " @Converter classes to load");
+            LOG.debug("Found {} packages with {} @Converter classes to load", packageNames.length, scannedClasses.size());
             classes.addAll(scannedClasses);
         }
 
@@ -158,7 +158,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         }
 
         // the filtered packages to return
-        List<String> packages = new ArrayList<String>();
+        List<String> packages = new ArrayList<>();
 
         // try to load it as a class first
         for (String name : packageNames) {
@@ -198,7 +198,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
      * @throws IOException is thrown for IO related errors
      */
     protected String[] findPackageNames() throws IOException {
-        Set<String> packages = new HashSet<String>();
+        Set<String> packages = new HashSet<>();
         ClassLoader ccl = Thread.currentThread().getContextClassLoader();
         if (ccl != null) {
             findPackages(packages, ccl);
@@ -285,7 +285,19 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                 loadConverterMethods(registry, superclass);
             }
         } catch (NoClassDefFoundError e) {
-            LOG.warn("Ignoring converter type: " + type.getCanonicalName() + " as a dependent class could not be found: " + e, e);
+            boolean ignore = false;
+            // does the class allow to ignore the type converter when having load errors
+            if (ObjectHelper.hasAnnotation(type, Converter.class, true)) {
+                if (type.getAnnotation(Converter.class) != null) {
+                    ignore = type.getAnnotation(Converter.class).ignoreOnLoadError();
+                }
+            }
+            // if we should ignore then only log at debug level
+            if (ignore) {
+                LOG.debug("Ignoring converter type: " + type.getCanonicalName() + " as a dependent class could not be found: " + e, e);
+            } else {
+                LOG.warn("Ignoring converter type: " + type.getCanonicalName() + " as a dependent class could not be found: " + e, e);
+            }
         }
     }
 
@@ -308,7 +320,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                                 new StaticMethodTypeConverter(method, allowNull));
                     } else {
                         if (injector == null) {
-                            injector = new CachingInjector<Object>(registry, CastUtils.cast(type, Object.class));
+                            injector = new CachingInjector<>(registry, CastUtils.cast(type, Object.class));
                         }
                         registerTypeConverter(registry, method, toType, fromType,
                                 new InstanceMethodTypeConverter(injector, method, registry, allowNull));
@@ -339,7 +351,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                         registerFallbackTypeConverter(registry, new StaticMethodFallbackTypeConverter(method, registry, allowNull), method);
                     } else {
                         if (injector == null) {
-                            injector = new CachingInjector<Object>(registry, CastUtils.cast(type, Object.class));
+                            injector = new CachingInjector<>(registry, CastUtils.cast(type, Object.class));
                         }
                         registerFallbackTypeConverter(registry, new InstanceMethodFallbackTypeConverter(injector, method, registry, allowNull), method);
                     }
@@ -388,7 +400,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
      */
     protected static String[] filterUnwantedPackage(String name, String[] packageNames) {
         // the filtered packages to return
-        List<String> packages = new ArrayList<String>();
+        List<String> packages = new ArrayList<>();
 
         for (String s : packageNames) {
             if (!name.equals(s)) {

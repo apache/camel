@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.elasticsearch;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,12 +26,17 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
+import org.elasticsearch.client.Client;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 
 /**
  * Represents the component that manages {@link ElasticsearchEndpoint}.
  */
 public class ElasticsearchComponent extends UriEndpointComponent {
+
+    @Metadata(label = "advanced")
+    private Client client;
 
     public ElasticsearchComponent() {
         super(ElasticsearchEndpoint.class);
@@ -60,17 +67,16 @@ public class ElasticsearchComponent extends UriEndpointComponent {
         
         config.setTransportAddressesList(parseTransportAddresses(config.getTransportAddresses(), config));
         
-        Endpoint endpoint = new ElasticsearchEndpoint(uri, this, config);
-        
+        Endpoint endpoint = new ElasticsearchEndpoint(uri, this, config, client);
         return endpoint;
     }
     
-    private List<InetSocketTransportAddress> parseTransportAddresses(String ipsString, ElasticsearchConfiguration config) {
+    private List<InetSocketTransportAddress> parseTransportAddresses(String ipsString, ElasticsearchConfiguration config) throws UnknownHostException {
         if (ipsString == null || ipsString.isEmpty()) {
             return null;
         }
         List<String> addressesStr = Arrays.asList(ipsString.split(ElasticsearchConstants.TRANSPORT_ADDRESSES_SEPARATOR_REGEX));
-        List<InetSocketTransportAddress> addressesTrAd = new ArrayList<InetSocketTransportAddress>(addressesStr.size());
+        List<InetSocketTransportAddress> addressesTrAd = new ArrayList<>(addressesStr.size());
         for (String address : addressesStr) {
             String[] split = address.split(ElasticsearchConstants.IP_PORT_SEPARATOR_REGEX);
             String hostname;
@@ -80,8 +86,19 @@ public class ElasticsearchComponent extends UriEndpointComponent {
                 throw new IllegalArgumentException();
             }
             Integer port = split.length > 1 ? Integer.parseInt(split[1]) : ElasticsearchConstants.DEFAULT_PORT;
-            addressesTrAd.add(new InetSocketTransportAddress(hostname, port));
+            addressesTrAd.add(new InetSocketTransportAddress(InetAddress.getByName(hostname), port));
         }
         return addressesTrAd;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    /**
+     * To use an existing configured Elasticsearch client, instead of creating a client per endpoint.
+     */
+    public void setClient(Client client) {
+        this.client = client;
     }
 }

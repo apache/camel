@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -29,6 +31,7 @@ public class DoubleLoadBalancerMisconfigurationTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testMisconfiguration() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -45,6 +48,7 @@ public class DoubleLoadBalancerMisconfigurationTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testMisconfiguration2() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -61,6 +65,7 @@ public class DoubleLoadBalancerMisconfigurationTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testMisconfiguration3() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {

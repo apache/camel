@@ -23,6 +23,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 public class SpringFromRestGetRouteOnExceptionTest extends FromRestGetRouteOnExceptionTest {
 
     protected CamelContext createCamelContext() throws Exception {
+        System.setProperty("CamelSedaPollTimeout", "10");
         return createSpringCamelContext(this, "org/apache/camel/component/rest/SpringFromRestGetRouteOnExceptionTest.xml");
     }
 

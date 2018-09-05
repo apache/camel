@@ -74,8 +74,8 @@ public class CxfMtomPOJOProducerTest extends AbstractJUnit4SpringContextTests {
             return;
         }
 
-        final Holder<byte[]> photo = new Holder<byte[]>(MtomTestHelper.REQ_PHOTO_DATA);
-        final Holder<Image> image = new Holder<Image>(getImage("/java.jpg"));
+        final Holder<byte[]> photo = new Holder<>(MtomTestHelper.REQ_PHOTO_DATA);
+        final Holder<Image> image = new Holder<>(getImage("/java.jpg"));
         
         Exchange exchange = context.createProducerTemplate().send("direct://testEndpoint", new Processor() {
 
@@ -87,8 +87,7 @@ public class CxfMtomPOJOProducerTest extends AbstractJUnit4SpringContextTests {
             
         });
         
-        // Make sure we don't put the attachement into out message
-        assertEquals("The attachement size should be 0 ", 0, exchange.getOut().getAttachments().size());
+        assertEquals("The attachement size should be 2 ", 2, exchange.getOut().getAttachments().size());
         
         Object[] result = exchange.getOut().getBody(Object[].class);
         Holder<byte[]> photo1 = (Holder<byte[]>) result[1];

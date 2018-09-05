@@ -24,7 +24,7 @@ public class EC2OperationsTest {
 
     @Test
     public void supportedOperationCount() {
-        assertEquals(9, EC2Operations.values().length);
+        assertEquals(11, EC2Operations.values().length);
     }
     
     @Test
@@ -38,6 +38,8 @@ public class EC2OperationsTest {
         assertEquals(EC2Operations.rebootInstances, EC2Operations.valueOf("rebootInstances"));
         assertEquals(EC2Operations.monitorInstances, EC2Operations.valueOf("monitorInstances"));
         assertEquals(EC2Operations.unmonitorInstances, EC2Operations.valueOf("unmonitorInstances"));
+        assertEquals(EC2Operations.createTags, EC2Operations.valueOf("createTags"));
+        assertEquals(EC2Operations.deleteTags, EC2Operations.valueOf("deleteTags"));
     }
     
     @Test
@@ -51,5 +53,7 @@ public class EC2OperationsTest {
         assertEquals(EC2Operations.rebootInstances.toString(), "rebootInstances");
         assertEquals(EC2Operations.monitorInstances.toString(), "monitorInstances");
         assertEquals(EC2Operations.unmonitorInstances.toString(), "unmonitorInstances");
+        assertEquals(EC2Operations.createTags.toString(), "createTags");
+        assertEquals(EC2Operations.deleteTags.toString(), "deleteTags");
     }
 }

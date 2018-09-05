@@ -58,7 +58,7 @@ import quickfix.field.TargetSubID;
 public class TradeExecutorComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(TradeExecutorComponent.class);
 
-    private Map<String, TradeExecutorEndpoint> endpoints = new HashMap<String, TradeExecutorEndpoint>();
+    private Map<String, TradeExecutorEndpoint> endpoints = new HashMap<>();
     private final Executor executor;
 
     public TradeExecutorComponent() {
@@ -93,9 +93,9 @@ public class TradeExecutorComponent extends DefaultComponent {
 
     private class TradeExecutorEndpoint extends DefaultEndpoint {
         private final TradeExecutor tradeExecutor;
-        private List<Processor> processors = new CopyOnWriteArrayList<Processor>();
+        private List<Processor> processors = new CopyOnWriteArrayList<>();
         
-        public TradeExecutorEndpoint(String uri, TradeExecutor tradeExecutor) {
+        TradeExecutorEndpoint(String uri, TradeExecutor tradeExecutor) {
             super(uri, TradeExecutorComponent.this);
             this.tradeExecutor = tradeExecutor;
             tradeExecutor.addListener(new QuickfixjMessageListener() {

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -33,6 +35,7 @@ public class RedeliveryErrorHandlerBlockedDelayTest extends ContextTestSupport {
 
     private static volatile int attempt;
 
+    @Test
     public void testRedelivery() throws Exception {
         MockEndpoint before = getMockEndpoint("mock:result");
         before.expectedBodiesReceived("Hello World", "Hello Camel");
@@ -54,14 +57,14 @@ public class RedeliveryErrorHandlerBlockedDelayTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // will by default block
                 errorHandler(defaultErrorHandler()
-                    .maximumRedeliveries(5).redeliveryDelay(2000));
+                    .maximumRedeliveries(5).redeliveryDelay(10));
 
                 from("seda:start")
                     .to("log:before")
                     .to("mock:before")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            LOG.info("Processing at attempt " + attempt + " " + exchange);
+                            LOG.info("Processing at attempt {} {}", attempt, exchange);
 
                             String body = exchange.getIn().getBody(String.class);
                             if (body.contains("World")) {
@@ -72,7 +75,7 @@ public class RedeliveryErrorHandlerBlockedDelayTest extends ContextTestSupport {
                             }
 
                             exchange.getIn().setBody("Hello " + body);
-                            LOG.info("Processing at attempt " + attempt + " complete " + exchange);
+                            LOG.info("Processing at attempt {} complete {}", attempt, exchange);
                         }
                     })
                     .to("log:after")

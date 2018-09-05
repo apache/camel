@@ -52,7 +52,7 @@ public class SqlProducerNamedParameterNotExistTest extends CamelTestSupport {
 
     @Test
     public void testNamedParameterNotExistFromBody() throws Exception {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("foo", "ASF");
 
         try {

@@ -81,4 +81,19 @@ public class SObjectDescription extends SObject {
     public void setNamedLayoutInfos(List<NamedLayoutInfo> namedLayoutInfos) {
         this.namedLayoutInfos = namedLayoutInfos;
     }
+
+    /**
+     * Removes some of the less used properties from this object. Useful to reduce serialized form or for code
+     * generation that relies on reflection.
+     */
+    public SObjectDescription prune() {
+        final SObjectDescription pruned = new SObjectDescription();
+        pruned.setName(getName());
+        pruned.setLabel(getLabel());
+        pruned.setLabelPlural(getLabelPlural());
+        pruned.fields = fields;
+        pruned.urls = urls;
+
+        return pruned;
+    }
 }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.salesforce;
 
+import org.junit.Test;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,7 +40,7 @@ public class BulkApiBatchIntegrationTest extends AbstractBulkApiTestBase {
 
     @DataPoints
     public static BatchTest[] getBatches() {
-        List<BatchTest> result = new ArrayList<BatchTest>();
+        List<BatchTest> result = new ArrayList<>();
         BatchTest test = new BatchTest();
         test.contentType = ContentType.XML;
         test.stream = BulkApiBatchIntegrationTest.class.getResourceAsStream(TEST_REQUEST_XML);
@@ -54,6 +56,7 @@ public class BulkApiBatchIntegrationTest extends AbstractBulkApiTestBase {
     }
 
     @Theory
+    @Test
     public void testBatchLifecycle(BatchTest request) throws Exception {
         log.info("Testing Batch lifecycle with {} content", request.contentType);
 
@@ -66,7 +69,7 @@ public class BulkApiBatchIntegrationTest extends AbstractBulkApiTestBase {
         jobInfo = createJob(jobInfo);
 
         // test createBatch
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(SalesforceEndpointConfig.JOB_ID, jobInfo.getId());
         headers.put(SalesforceEndpointConfig.CONTENT_TYPE, jobInfo.getContentType());
         BatchInfo batchInfo  = template().requestBodyAndHeaders("direct:createBatch",

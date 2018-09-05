@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.javaspace.enabled",
+      "description": "Enable javaspace component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

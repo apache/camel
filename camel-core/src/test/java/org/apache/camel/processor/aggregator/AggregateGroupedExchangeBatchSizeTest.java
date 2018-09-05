@@ -16,12 +16,15 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 
 /**
  * Unit test for aggregate grouped exchanges.
@@ -29,6 +32,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class AggregateGroupedExchangeBatchSizeTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testGrouped() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
 
@@ -75,12 +79,10 @@ public class AggregateGroupedExchangeBatchSizeTest extends ContextTestSupport {
                 // our route is aggregating from the direct queue and sending the response to the mock
                 from("direct:start")
                     .log("Aggregator received ${body}")
-                    // aggregated all use same expression
-                    .aggregate(constant(true)).completionSize(2)
+                    // aggregated all use same expression and group the exchanges so we get one single exchange containing all the others
+                    .aggregate(new GroupedExchangeAggregationStrategy()).constant(true).completionSize(2)
                     // wait for 0.5 seconds to aggregate
                     .completionTimeout(500L)
-                    // group the exchanges so we get one single exchange containing all the others
-                    .groupExchanges()
                     .to("mock:result");
                 // END SNIPPET: e1
             }

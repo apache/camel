@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -31,6 +33,7 @@ import org.slf4j.MDC;
  */
 public class MDCResetTest extends ContextTestSupport {
 
+    @Test
     public void testMDC() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Good Afternoon World");
@@ -40,6 +43,7 @@ public class MDCResetTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMDCTwoMessages() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Good Afternoon World", "Good Afternoon World");

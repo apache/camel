@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.hipchat.integration;
 
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
@@ -31,6 +30,7 @@ import org.junit.Test;
 
 @Ignore("Must be manually tested. Provide your own auth key, user, & room from https://www.hipchat.com/docs/apiv2/auth")
 public class HipchatConsumerIntegrationTest extends CamelTestSupport {
+
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
 
@@ -52,7 +52,7 @@ public class HipchatConsumerIntegrationTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String hipchatEndpointUri = "hipchat://?authToken=XXXX&consumeUsers=@ShreyasPurohit&delay=1000";
+                String hipchatEndpointUri = "hipchat:http:api.hipchat.com?authToken=XXXX&consumeUsers=@ShreyasPurohit&delay=1000";
 
                 from(hipchatEndpointUri)
                     .idempotentConsumer(

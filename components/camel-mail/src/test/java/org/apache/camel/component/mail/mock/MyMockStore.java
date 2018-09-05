@@ -29,7 +29,7 @@ import org.jvnet.mock_javamail.MockStore;
 
 public class MyMockStore extends MockStore {
 
-    private Map<String, Folder> folders = new HashMap<String, Folder>();
+    private Map<String, Folder> folders = new HashMap<>();
     private String address;
 
     public MyMockStore(Session session, URLName urlname) {

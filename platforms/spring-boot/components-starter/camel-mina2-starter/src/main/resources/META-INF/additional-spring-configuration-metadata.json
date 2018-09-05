@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.mina2.enabled",
+      "description": "Enable mina2 component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

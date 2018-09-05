@@ -30,6 +30,7 @@ import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.EndpointCompleter;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 
@@ -39,6 +40,7 @@ import org.apache.camel.util.ObjectHelper;
 public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S extends ApiCollection<E, T>>
         extends UriEndpointComponent implements EndpointCompleter {
 
+    @Metadata(label = "advanced")
     protected T configuration;
 
     // API collection
@@ -108,7 +110,7 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
     protected abstract Endpoint createEndpoint(String uri, String methodName, E apiName, T endpointConfiguration);
 
     protected T createEndpointConfiguration(E name) throws Exception {
-        final Map<String, Object> componentProperties = new HashMap<String, Object>();
+        final Map<String, Object> componentProperties = new HashMap<>();
         // copy component configuration, if set
         if (configuration != null) {
             IntrospectionSupport.getProperties(configuration, componentProperties, null, false);
@@ -130,7 +132,7 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
 
     @Override
     public List<String> completeEndpointPath(ComponentConfiguration configuration, String completionText) {
-        final List<String> result = new ArrayList<String>();
+        final List<String> result = new ArrayList<>();
 
         final Set<String> apiNames = collection.getApiNames();
         boolean useDefaultName = apiNames.size() == 1 && apiNames.contains("");
@@ -213,7 +215,7 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
                 try {
                     final List<Object> arguments = helper.getArguments(methodName);
                     final int nArgs = arguments.size();
-                    final Set<String> options = new HashSet<String>();
+                    final Set<String> options = new HashSet<>();
                     for (int i = 1; i < nArgs; i += 2) {
                         options.add((String) arguments.get(i));
                     }

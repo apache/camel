@@ -46,59 +46,67 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private long requestTimeout;
     @UriParam(defaultValue = "true")
     private boolean sync = true;
-    @UriParam
+    @UriParam(label = "codec")
     private boolean textline;
-    @UriParam(defaultValue = "LINE")
+    @UriParam(label = "codec", defaultValue = "LINE")
     private TextLineDelimiter delimiter = TextLineDelimiter.LINE;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "codec", defaultValue = "true")
     private boolean autoAppendDelimiter = true;
-    @UriParam(defaultValue = "1024")
+    @UriParam(label = "codec", defaultValue = "1024")
     private int decoderMaxLineLength = 1024;
-    @UriParam
+    @UriParam(label = "codec")
     private String encoding;
-    private List<ChannelHandler> encoders = new ArrayList<ChannelHandler>();
-    private List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
+    @UriParam(label = "codec", description = "To use a single encoder. This options is deprecated use encoders instead.")
+    @Deprecated
+    private ChannelHandler encoder;
+    @UriParam(label = "codec", javaType = "java.lang.String")
+    private List<ChannelHandler> encoders = new ArrayList<>();
+    @UriParam(label = "codec", description = "To use a single decoder. This options is deprecated use encoders instead.")
+    @Deprecated
+    private ChannelHandler decoder;
+    @UriParam(label = "codec", javaType = "java.lang.String")
+    private List<ChannelHandler> decoders = new ArrayList<>();
     @UriParam
     private boolean disconnect;
-    @UriParam(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean lazyChannelCreation = true;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean transferExchange;
-    @UriParam(label = "consumer", defaultValue = "true")
+    @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean disconnectOnNoReply = true;
-    @UriParam(label = "consumer", defaultValue = "WARN")
+    @UriParam(label = "consumer,advanced", defaultValue = "WARN")
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
-    @UriParam(label = "consumer", defaultValue = "WARN")
+    @UriParam(label = "consumer,advanced", defaultValue = "WARN")
     private LoggingLevel serverExceptionCaughtLogLevel = LoggingLevel.WARN;
-    @UriParam(label = "consumer", defaultValue = "DEBUG")
+    @UriParam(label = "consumer,advanced", defaultValue = "DEBUG")
     private LoggingLevel serverClosedChannelExceptionCaughtLogLevel = LoggingLevel.DEBUG;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "codec", defaultValue = "true")
     private boolean allowDefaultCodec = true;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,advanced")
     private ClientPipelineFactory clientPipelineFactory;
     //CAMEL-8031 Moved this option to NettyComponent
     private int maximumPoolSize = 16;
-    @UriParam(label = "consumer", defaultValue = "true")
+    @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean orderedThreadPoolExecutor = true;
-    @UriParam(label = "producer", defaultValue = "-1")
+    @UriParam(label = "producer,advanced", defaultValue = "-1")
     private int producerPoolMaxActive = -1;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,advanced")
     private int producerPoolMinIdle;
-    @UriParam(label = "producer", defaultValue = "100")
+    @UriParam(label = "producer,advanced", defaultValue = "100")
     private int producerPoolMaxIdle = 100;
-    @UriParam(label = "producer", defaultValue = "" + 5 * 60 * 1000L)
+    @UriParam(label = "producer,advanced", defaultValue = "" + 5 * 60 * 1000L)
     private long producerPoolMinEvictableIdle = 5 * 60 * 1000L;
-    @UriParam(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean producerPoolEnabled = true;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,advanced")
     private boolean udpConnectionlessSending;
     @UriParam(label = "consumer")
     private boolean clientMode;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer,advanced")
     private boolean useChannelBuffer;
-    @UriParam(label = "consumer", defaultValue = "" + 10 * 1024 * 1024L)
+    @UriParam(label = "consumer,advanced", defaultValue = "" + 10 * 1024 * 1024L)
     private long maxChannelMemorySize = 10 * 1024 * 1024L; 
-    @UriParam(label = "consumer", defaultValue = "" + 200 * 1024 * 1024L)
+    @UriParam(label = "consumer,advanced", defaultValue = "" + 200 * 1024 * 1024L)
     private long maxTotalMemorySize = 200 * 1024 * 1024L;
 
     /**
@@ -108,9 +116,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         try {
             NettyConfiguration answer = (NettyConfiguration) clone();
             // make sure the lists is copied in its own instance
-            List<ChannelHandler> encodersCopy = new ArrayList<ChannelHandler>(encoders);
+            List<ChannelHandler> encodersCopy = new ArrayList<>(encoders);
             answer.setEncoders(encodersCopy);
-            List<ChannelHandler> decodersCopy = new ArrayList<ChannelHandler>(decoders);
+            List<ChannelHandler> decodersCopy = new ArrayList<>(decoders);
             answer.setDecoders(decodersCopy);
             return answer;
         } catch (CloneNotSupportedException e) {
@@ -165,7 +173,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         }
 
         setHost(uri.getHost());
-        setPort(uri.getPort());
+        if (uri.getPort() != -1) {
+            setPort(uri.getPort());
+        }
 
         ssl = component.getAndRemoveOrResolveReferenceParameter(parameters, "ssl", boolean.class, false);
         sslHandler = component.getAndRemoveOrResolveReferenceParameter(parameters, "sslHandler", SslHandler.class, sslHandler);
@@ -474,10 +484,12 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     /**
      * The core pool size for the ordered thread pool, if its in use.
      */
+    @Deprecated
     public int getMaximumPoolSize() {
         return maximumPoolSize;
     }
 
+    @Deprecated
     public void setMaximumPoolSize(int maximumPoolSize) {
         this.maximumPoolSize = maximumPoolSize;
     }

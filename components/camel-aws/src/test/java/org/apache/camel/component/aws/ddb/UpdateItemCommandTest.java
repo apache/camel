@@ -49,17 +49,17 @@ public class UpdateItemCommandTest {
 
     @Test
     public void execute() {
-        Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
+        Map<String, AttributeValue> key = new HashMap<>();
         key.put("1", new AttributeValue("Key_1"));
         exchange.getIn().setHeader(DdbConstants.KEY, key);
 
-        Map<String, AttributeValueUpdate> attributeMap = new HashMap<String, AttributeValueUpdate>();
+        Map<String, AttributeValueUpdate> attributeMap = new HashMap<>();
         AttributeValueUpdate attributeValue = new AttributeValueUpdate(
                 new AttributeValue("new value"), AttributeAction.ADD);
         attributeMap.put("name", attributeValue);
         exchange.getIn().setHeader(DdbConstants.UPDATE_VALUES, attributeMap);
 
-        Map<String, ExpectedAttributeValue> expectedAttributeValueMap = new HashMap<String, ExpectedAttributeValue>();
+        Map<String, ExpectedAttributeValue> expectedAttributeValueMap = new HashMap<>();
         expectedAttributeValueMap
                 .put("name", new ExpectedAttributeValue(new AttributeValue("expected value")));
         exchange.getIn().setHeader(DdbConstants.UPDATE_CONDITION, expectedAttributeValueMap);

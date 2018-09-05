@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -28,11 +31,13 @@ import org.apache.camel.builder.RouteBuilder;
 public class ZipDataFormatFileDeleteTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/zip");
         super.setUp();
     }
 
+    @Test
     public void testZipFileDelete() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBodyAndHeader("file:target/zip", "Hello World", Exchange.FILE_NAME, "hello.txt");
@@ -53,7 +58,7 @@ public class ZipDataFormatFileDeleteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/zip?delete=true")
+                from("file:target/zip?initialDelay=0&delay=10&delete=true")
                     .marshal().zip()
                     .to("file:target/zip/out?fileName=${file:name}.zip")
                     .to("mock:result");

@@ -16,6 +16,8 @@
  */
 
 package org.apache.camel.component.cxf;
+import org.junit.Before;
+import org.junit.After;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -90,7 +92,7 @@ public class CxfMixedModeRouterTest extends CamelTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         CxfPayload<?> message =  exchange.getIn().getBody(CxfPayload.class);
 
-                        List<String> params = new ArrayList<String>();
+                        List<String> params = new ArrayList<>();
 
                         if (message != null) {
                             // convert CxfPayload to list of objects any way you like
@@ -121,10 +123,10 @@ public class CxfMixedModeRouterTest extends CamelTestSupport {
                                 + "<return xmlns=\"http://cxf.component.camel.apache.org/\">" 
                                 + list.get(0) 
                                 + "</return></ns1:echoResponse>";
-                            List<Element> body = new ArrayList<Element>();
+                            List<Element> body = new ArrayList<>();
                             body.add(StaxUtils.read(new StringReader(s)).getDocumentElement());
 
-                            message = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(), body);
+                            message = new CxfPayload<>(new ArrayList<SoapHeader>(), body);
                         }
                         
                         exchange.getIn().setBody(message);

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +34,7 @@ public class RecipientListExchangePropertyAggregationStrategyTest extends Contex
 
     private final MyAggregationStrategy strategy = new MyAggregationStrategy();
 
+    @Test
     public void testRecipientExchangeProperty() throws Exception {
         getMockEndpoint("mock:a").expectedPropertyReceived(Exchange.RECIPIENT_LIST_ENDPOINT, "direct://a");
         getMockEndpoint("mock:a").expectedPropertyReceived(Exchange.TO_ENDPOINT, "mock://a");
@@ -72,7 +75,7 @@ public class RecipientListExchangePropertyAggregationStrategyTest extends Contex
 
     private static class MyAggregationStrategy implements AggregationStrategy {
 
-        private List<String> uris = new ArrayList<String>();
+        private List<String> uris = new ArrayList<>();
 
         @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {

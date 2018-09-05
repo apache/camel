@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -26,11 +29,13 @@ import org.apache.camel.builder.RouteBuilder;
 public class FileLanguageCBRTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/cbr");
         super.setUp();
     }
 
+    @Test
     public void testTxt() throws Exception {
         getMockEndpoint("mock:txt").expectedMessageCount(1);
         getMockEndpoint("mock:dat").expectedMessageCount(0);
@@ -41,6 +46,7 @@ public class FileLanguageCBRTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testDat() throws Exception {
         getMockEndpoint("mock:txt").expectedMessageCount(0);
         getMockEndpoint("mock:dat").expectedMessageCount(1);
@@ -51,6 +57,7 @@ public class FileLanguageCBRTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOther() throws Exception {
         getMockEndpoint("mock:txt").expectedMessageCount(0);
         getMockEndpoint("mock:dat").expectedMessageCount(0);
@@ -66,7 +73,7 @@ public class FileLanguageCBRTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/cbr?delete=true")
+                from("file://target/cbr?delete=true&initialDelay=0&delay=10")
                     .convertBodyTo(String.class)
                     .choice()
                         .when().simple("${file:ext} == 'txt'").to("mock:txt")

@@ -26,7 +26,7 @@ public class UserTimeLinePollingTest extends CamelTwitterConsumerTestSupport {
 
     @Override
     protected String getUri() {
-        return "twitter://timeline/user?type=polling&user=brettemeyer&";
+        return "twitter-timeline://user?type=polling&user=brettemeyer&";
     }
 
     @Override

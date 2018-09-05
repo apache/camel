@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
@@ -27,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ManagedMulticastTest extends ManagementTestSupport {
 
+    @Test
     public void testMulticast() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -67,7 +70,7 @@ public class ManagedMulticastTest extends ManagementTestSupport {
 
         data = (TabularData) mbeanServer.invoke(name, "explain", new Object[]{true}, new String[]{"boolean"});
         assertNotNull(data);
-        assertEquals(14, data.size());
+        assertEquals(15, data.size());
 
         String json = (String) mbeanServer.invoke(name, "informationJson", null, null);
         assertNotNull(json);

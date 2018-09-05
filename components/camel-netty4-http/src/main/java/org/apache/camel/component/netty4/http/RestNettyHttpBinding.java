@@ -24,9 +24,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.HeaderFilterStrategy;
 
-
 /**
- * A {@link org.apache.camel.component.netty.http.NettyHttpBinding} that supports the Rest DSL.
+ * A {@link org.apache.camel.component.netty4.http.NettyHttpBinding} that supports the Rest DSL.
  */
 public class RestNettyHttpBinding extends DefaultNettyHttpBinding {
 
@@ -49,7 +48,7 @@ public class RestNettyHttpBinding extends DefaultNettyHttpBinding {
     public void populateCamelHeaders(FullHttpRequest request, Map<String, Object> headers, Exchange exchange, NettyHttpConfiguration configuration) throws Exception {
         super.populateCamelHeaders(request, headers, exchange, configuration);
 
-        String path = request.getUri();
+        String path = request.uri();
         if (path == null) {
             return;
         }

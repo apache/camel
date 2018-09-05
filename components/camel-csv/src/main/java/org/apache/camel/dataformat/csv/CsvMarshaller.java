@@ -22,7 +22,6 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -74,7 +73,7 @@ abstract class CsvMarshaller {
      * @throws IOException                        if we cannot write into the given stream
      */
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws NoTypeConversionAvailableException, IOException {
-        CSVPrinter printer = new CSVPrinter(new OutputStreamWriter(outputStream), format);
+        CSVPrinter printer = new CSVPrinter(new OutputStreamWriter(outputStream, IOHelper.getCharsetName(exchange)), format);
         try {
             Iterator it = ObjectHelper.createIterator(object);
             while (it.hasNext()) {
@@ -118,7 +117,7 @@ abstract class CsvMarshaller {
 
         @Override
         protected Iterable<?> getMapRecordValues(Map<?, ?> map) {
-            List<Object> result = new ArrayList<Object>(fixedColumns.length);
+            List<Object> result = new ArrayList<>(fixedColumns.length);
             for (String key : fixedColumns) {
                 result.add(map.get(key));
             }
@@ -130,17 +129,14 @@ abstract class CsvMarshaller {
      * This marshaller adapts the columns but always keep them in the same order
      */
     private static final class DynamicColumnsMarshaller extends CsvMarshaller {
-        private final LinkedHashSet<Object> columns = new LinkedHashSet<Object>();
-
         private DynamicColumnsMarshaller(CSVFormat format) {
             super(format);
         }
 
         @Override
         protected Iterable<?> getMapRecordValues(Map<?, ?> map) {
-            columns.addAll(map.keySet());
-            List<Object> result = new ArrayList<Object>(columns.size());
-            for (Object key : columns) {
+            List<Object> result = new ArrayList<>(map.size());
+            for (Object key : map.keySet()) {
                 result.add(map.get(key));
             }
             return result;

@@ -21,6 +21,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -36,11 +37,12 @@ import org.apache.camel.spi.RouteContext;
  * @version
  */
 @XmlAccessorType(XmlAccessType.FIELD)
+@XmlTransient
 public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
     @XmlElementRef
     private ExpressionDefinition expression;
     @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
     public ExpressionNode() {
     }

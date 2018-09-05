@@ -327,7 +327,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
     protected void removeSignatureElements(Node node) {
         Document doc = XmlSignatureHelper.getDocument(node);
         NodeList nl = doc.getElementsByTagNameNS(XMLSignature.XMLNS, "Signature");
-        List<Node> nodesToBeRemoved = new ArrayList<Node>(nl.getLength());
+        List<Node> nodesToBeRemoved = new ArrayList<>(nl.getLength());
         for (int i = 0; i < nl.getLength(); i++) {
             // you cannot remove the nodes within this loop, because nl list would change
             nodesToBeRemoved.add(nl.item(i));
@@ -452,7 +452,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
     }
 
     protected List<XMLObject> getReferencedSameDocumentObjects(List<Reference> relevantReferences, List<XMLObject> relevantObjects) {
-        List<XMLObject> referencedObjects = new ArrayList<XMLObject>(1);
+        List<XMLObject> referencedObjects = new ArrayList<>(1);
 
         for (Reference ref : relevantReferences) {
             String refUri = getSameDocumentReferenceUri(ref);

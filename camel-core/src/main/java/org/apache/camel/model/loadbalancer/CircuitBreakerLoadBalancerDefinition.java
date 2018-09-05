@@ -40,15 +40,18 @@ import org.apache.camel.util.ObjectHelper;
  * If there are failures and the threshold is reached, it moves to open state and rejects all calls until halfOpenAfter
  * timeout is reached. After this timeout is reached, if there is a new call, it will pass and if the result is
  * success the Circuit Breaker will move to closed state, or to open state if there was an error.
+ *
+ * @deprecated use Hystrix EIP instead which is the popular Netflix implementation of circuit breaker
  */
-@Metadata(label = "configuration,loadbalance")
+@Metadata(label = "eip,routing,loadbalance,circuitbreaker")
 @XmlRootElement(name = "circuitBreaker")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class CircuitBreakerLoadBalancerDefinition extends LoadBalancerDefinition {
     @XmlTransient
-    private List<Class<?>> exceptionTypes = new ArrayList<Class<?>>();
+    private List<Class<?>> exceptionTypes = new ArrayList<>();
     @XmlElement(name = "exception")
-    private List<String> exceptions = new ArrayList<String>();
+    private List<String> exceptions = new ArrayList<>();
     @XmlAttribute
     private Long halfOpenAfter;
     @XmlAttribute
@@ -67,7 +70,7 @@ public class CircuitBreakerLoadBalancerDefinition extends LoadBalancerDefinition
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
         CircuitBreakerLoadBalancer answer;
 
-        List<Class<?>> classes = new ArrayList<Class<?>>();
+        List<Class<?>> classes = new ArrayList<>();
         if (!exceptionTypes.isEmpty()) {
             classes.addAll(exceptionTypes);
         } else if (!exceptions.isEmpty()) {

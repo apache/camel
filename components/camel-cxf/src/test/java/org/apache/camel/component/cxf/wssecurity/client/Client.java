@@ -46,7 +46,7 @@ public final class Client {
 
     public static WSS4JOutInterceptor getWSS4JOutInterceptor() throws Exception {
 
-        Map<String, Object> outProps = new HashMap<String, Object>();
+        Map<String, Object> outProps = new HashMap<>();
         outProps.put("action", "Signature");
         // outProps.put("action", "UsernameToken Timestamp Signature Encrypt");
 
@@ -80,7 +80,7 @@ public final class Client {
 
     public static WSS4JInInterceptor getWSS4JInInterceptor() throws Exception {
 
-        Map<String, Object> inProps = new HashMap<String, Object>();
+        Map<String, Object> inProps = new HashMap<>();
 
         inProps.put("action", "Signature");
         // inProps.put("action", "UsernameToken Timestamp Signature Encrypt");

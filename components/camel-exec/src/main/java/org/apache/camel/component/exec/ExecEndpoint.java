@@ -26,17 +26,12 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
- * The endpoint utilizes an {@link ExecCommandExecutor} to execute a system
- * command when it receives message exchanges.
- *
- * @see ExecBinding
- * @see ExecCommandExecutor
- * @see ExecCommand
- * @see ExecResult
+ * The exec component can be used to execute OS system commands.
  */
-@UriEndpoint(scheme = "exec", title = "Exec", syntax = "exec:executable", producerOnly = true, label = "system")
+@UriEndpoint(firstVersion = "2.3.0", scheme = "exec", title = "Exec", syntax = "exec:executable", producerOnly = true, label = "system")
 public class ExecEndpoint extends DefaultEndpoint {
 
     /**
@@ -88,7 +83,7 @@ public class ExecEndpoint extends DefaultEndpoint {
      * <code>null</code>.
      */
     public void setExecutable(String executable) {
-        ObjectHelper.notEmpty(executable, "executable");
+        StringHelper.notEmpty(executable, "executable");
         this.executable = executable;
     }
 
@@ -137,7 +132,7 @@ public class ExecEndpoint extends DefaultEndpoint {
      * If no outFile is set, the standard output (stdout) of the executable will be used instead.
      */
     public void setOutFile(String outFile) {
-        ObjectHelper.notEmpty(outFile, "outFile");
+        StringHelper.notEmpty(outFile, "outFile");
         this.outFile = outFile;
     }
 

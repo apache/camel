@@ -16,23 +16,29 @@
  */
 package org.apache.camel.component.grape
 
-import groovy.transform.Immutable
+import groovy.transform.ImmutableBase
 
-@Immutable
+@ImmutableBase
 class MavenCoordinates {
 
-    private final String groupId
+    private String groupId
 
-    private final String artifactId
+    private String artifactId
 
-    private final String version
+    private String version
+
+    private String classifier
 
     static MavenCoordinates parseMavenCoordinates(String coordinates) {
         def coordinatesParts = coordinates.split('/')
-        if(coordinatesParts.length != 3) {
+        def clazzifier = ''
+        if (coordinatesParts.length < 3 || coordinatesParts.length > 4) {
             throw new IllegalArgumentException("Invalid coordinates: ${coordinates}")
         }
-        new MavenCoordinates(groupId: coordinatesParts[0], artifactId: coordinatesParts[1], version: coordinatesParts[2])
+        if (coordinatesParts.length == 4) {
+            clazzifier = coordinatesParts[3]
+        }
+        new MavenCoordinates(groupId: coordinatesParts[0], artifactId: coordinatesParts[1], version: coordinatesParts[2], classifier: clazzifier)
     }
 
     String getGroupId() {
@@ -47,4 +53,7 @@ class MavenCoordinates {
         return version
     }
 
+    String getClassifier() {
+        return classifier
+    }
 }

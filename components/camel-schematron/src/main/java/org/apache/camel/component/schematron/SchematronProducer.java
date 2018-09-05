@@ -50,7 +50,6 @@ public class SchematronProducer extends DefaultProducer {
      * @throws Exception
      */
     public void process(Exchange exchange) throws Exception {
-
         String payload = exchange.getIn().getBody(String.class);
         logger.debug("Applying schematron validation on payload: {}", payload);
         String report = SchematronProcessorFactory.newScehamtronEngine(endpoint.getRules()).validate(payload);
@@ -69,7 +68,7 @@ public class SchematronProducer extends DefaultProducer {
      */
     private void setValidationReport(Exchange exchange, String report, String status) {
         // if exchange pattern is In and Out set details on the Out message.
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(Constants.VALIDATION_STATUS, status);
         headers.put(Constants.VALIDATION_REPORT, report);
         if (exchange.getPattern().isOutCapable()) {
@@ -87,7 +86,6 @@ public class SchematronProducer extends DefaultProducer {
      * @return
      */
     private String getValidationStatus(final String report) {
-
         String status = report.contains(Constants.FAILED_ASSERT) ? Constants.FAILED : Constants.SUCCESS;
         if (this.endpoint.isAbort() && Constants.FAILED.equals(status)) {
             throw new SchematronValidationException("Schematron validation failure \n" + report);

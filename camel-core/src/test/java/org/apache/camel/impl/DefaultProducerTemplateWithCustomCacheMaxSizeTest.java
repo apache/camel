@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -30,10 +32,11 @@ public class DefaultProducerTemplateWithCustomCacheMaxSizeTest extends ContextTe
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getProperties().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "200");
+        context.getGlobalOptions().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "200");
         return context;
     }
 
+    @Test
     public void testCacheProducers() throws Exception {
         ProducerTemplate template = context.createProducerTemplate();
 
@@ -45,6 +48,9 @@ public class DefaultProducerTemplateWithCustomCacheMaxSizeTest extends ContextTe
             template.sendBody(e, "Hello");
         }
 
+        // the eviction is async so force cleanup
+        template.cleanUp();
+
         assertEquals("Size should be 200", 200, template.getCurrentCacheSize());
         template.stop();
 
@@ -52,8 +58,9 @@ public class DefaultProducerTemplateWithCustomCacheMaxSizeTest extends ContextTe
         assertEquals("Size should be 0", 0, template.getCurrentCacheSize());
     }
 
+    @Test
     public void testInvalidSizeABC() {
-        context.getProperties().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "ABC");
+        context.getGlobalOptions().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "ABC");
         try {
             context.createProducerTemplate();
             fail("Should have thrown an exception");
@@ -62,8 +69,9 @@ public class DefaultProducerTemplateWithCustomCacheMaxSizeTest extends ContextTe
         }
     }
 
+    @Test
     public void testInvalidSizeZero() {
-        context.getProperties().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "0");
+        context.getGlobalOptions().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "0");
         try {
             context.createProducerTemplate();
             fail("Should have thrown an exception");

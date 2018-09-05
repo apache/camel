@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -29,15 +28,15 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.util.UnitOfWorkHelper;
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.io.CachedOutputStream;
+import org.apache.cxf.message.Exchange;
+import org.apache.cxf.message.Message;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.apache.cxf.staxutils.W3CDOMStreamWriter;
-
 
 public final class CxfUtils {
     
@@ -54,44 +53,12 @@ public final class CxfUtils {
     }
     
     public static String elementToString(Element element) throws Exception {
-        Map<String, String> namespaces = new HashMap<String, String>();
+        Map<String, String> namespaces = new HashMap<>();
         visitNodesForNameSpace(element, namespaces);
         W3CDOMStreamWriter writer = new W3CDOMStreamWriter();
         writeElement(element, writer, namespaces);
         XmlConverter converter = new XmlConverter();
         return converter.toString(converter.toDOMSource(writer.getDocument()), null);
-    }
-    
-    public static void copyHttpHeadersFromCxfToCamel(org.apache.cxf.message.Message cxfMessage,
-                                                     org.apache.camel.Message camelMessage) {
-        copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.REQUEST_URI, Exchange.HTTP_URI);
-        
-        copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.HTTP_REQUEST_METHOD, Exchange.HTTP_METHOD);
-        
-        // We need remove the BASE_PATH from the PATH_INFO
-        String pathInfo = (String)cxfMessage.get(org.apache.cxf.message.Message.PATH_INFO);
-        String basePath = (String)cxfMessage.get(org.apache.cxf.message.Message.BASE_PATH);
-        if (pathInfo != null && basePath != null && pathInfo.startsWith(basePath)) {
-            pathInfo = pathInfo.substring(basePath.length());
-        }
-        if (pathInfo != null) {
-            camelMessage.setHeader(Exchange.HTTP_PATH, pathInfo);
-        }
-        
-        copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.CONTENT_TYPE, Exchange.CONTENT_TYPE);
-        
-        copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.ENCODING, Exchange.HTTP_CHARACTER_ENCODING);
-        
-        copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.QUERY_STRING, Exchange.HTTP_QUERY);
-        
-        copyMessageHeader(cxfMessage, camelMessage, org.apache.cxf.message.Message.ACCEPT_CONTENT_TYPE, Exchange.ACCEPT_CONTENT_TYPE);
-        
-    }
-    
-    private static void copyMessageHeader(org.apache.cxf.message.Message cxfMessage, Message camelMessage, String cxfKey, String camelKey) {
-        if (cxfMessage.get(cxfKey) != null) {
-            camelMessage.setHeader(camelKey, cxfMessage.get(cxfKey));
-        }
     }
     
     private static void writeElement(Element e,
@@ -204,6 +171,15 @@ public final class CxfUtils {
             }
         }
     }
-    
 
+
+    public static void closeCamelUnitOfWork(Message message) {
+        Exchange cxfExchange = null;
+        if ((cxfExchange = message.getExchange()) != null) {
+            org.apache.camel.Exchange exchange = cxfExchange.get(org.apache.camel.Exchange.class);
+            if (exchange != null) {
+                UnitOfWorkHelper.doneUow(exchange.getUnitOfWork(), exchange);
+            }
+        }
+    }
 }

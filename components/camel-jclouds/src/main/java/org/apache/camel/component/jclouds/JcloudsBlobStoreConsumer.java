@@ -63,7 +63,7 @@ public class JcloudsBlobStoreConsumer extends ScheduledBatchPollingConsumer {
         shutdownRunningTask = null;
         pendingExchanges = 0;
 
-        Queue<Exchange> queue = new LinkedList<Exchange>();
+        Queue<Exchange> queue = new LinkedList<>();
         String directory = endpoint.getDirectory();
 
         ListContainerOptions opt = new ListContainerOptions();

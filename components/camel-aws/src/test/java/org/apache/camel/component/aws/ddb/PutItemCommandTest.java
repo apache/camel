@@ -47,12 +47,12 @@ public class PutItemCommandTest {
 
     @Test
     public void execute() {
-        Map<String, AttributeValue> attributeMap = new HashMap<String, AttributeValue>();
+        Map<String, AttributeValue> attributeMap = new HashMap<>();
         AttributeValue attributeValue = new AttributeValue("test value");
         attributeMap.put("name", attributeValue);
         exchange.getIn().setHeader(DdbConstants.ITEM, attributeMap);
 
-        Map<String, ExpectedAttributeValue> expectedAttributeValueMap = new HashMap<String, ExpectedAttributeValue>();
+        Map<String, ExpectedAttributeValue> expectedAttributeValueMap = new HashMap<>();
         expectedAttributeValueMap.put("name", new ExpectedAttributeValue(attributeValue));
         exchange.getIn().setHeader(DdbConstants.UPDATE_CONDITION, expectedAttributeValueMap);
 

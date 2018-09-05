@@ -17,14 +17,20 @@
 package org.apache.camel.component.stomp;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -45,8 +51,11 @@ import static org.fusesource.stomp.client.Constants.SEND;
 import static org.fusesource.stomp.client.Constants.SUBSCRIBE;
 import static org.fusesource.stomp.client.Constants.UNSUBSCRIBE;
 
-@UriEndpoint(scheme = "stomp", title = "Stomp", syntax = "stomp:destination", consumerClass = StompConsumer.class, label = "messaging")
-public class StompEndpoint extends DefaultEndpoint {
+/**
+ * The stomp component is used for communicating with Stomp compliant message brokers.
+ */
+@UriEndpoint(firstVersion = "2.12.0", scheme = "stomp", title = "Stomp", syntax = "stomp:destination", consumerClass = StompConsumer.class, label = "messaging")
+public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
     @UriPath(description = "Name of the queue") @Metadata(required = "true")
     private String destination;
@@ -54,8 +63,10 @@ public class StompEndpoint extends DefaultEndpoint {
     private StompConfiguration configuration;
     private CallbackConnection connection;
     private Stomp stomp;
+    @UriParam(label = "advanced", description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
+    private HeaderFilterStrategy headerFilterStrategy;
 
-    private final List<StompConsumer> consumers = new CopyOnWriteArrayList<StompConsumer>();
+    private final List<StompConsumer> consumers = new CopyOnWriteArrayList<>();
 
     public StompEndpoint(String uri, StompComponent component, StompConfiguration configuration, String destination) {
         super(uri, component);
@@ -77,11 +88,14 @@ public class StompEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStart() throws Exception {
-        final Promise<CallbackConnection> promise = new Promise<CallbackConnection>();
+        final Promise<CallbackConnection> promise = new Promise<>();
 
         stomp = new Stomp(configuration.getBrokerURL());
         stomp.setLogin(configuration.getLogin());
         stomp.setPasscode(configuration.getPasscode());
+        if (configuration.getSslContextParameters() != null) {
+            stomp.setSslContext(configuration.getSslContextParameters().createSSLContext(getCamelContext()));
+        }
         stomp.connectCallback(promise);
         if (configuration.getHost() != null && !configuration.getHost().isEmpty()) {
             stomp.setHost(configuration.getHost());
@@ -130,8 +144,10 @@ public class StompEndpoint extends DefaultEndpoint {
 
     protected void send(final Exchange exchange, final AsyncCallback callback) {
         final StompFrame frame = new StompFrame(SEND);
+        populateCamelMessageHeadersToStompFrames(exchange, frame);
         frame.addHeader(DESTINATION, StompFrame.encodeHeader(destination));
-        frame.content(utf8(exchange.getIn().getBody().toString()));
+        //Fix for CAMEL-9506 leveraging the camel converter to do the change
+        frame.content(utf8(exchange.getIn().getBody(String.class)));
 
         connection.getDispatchQueue().execute(new Task() {
             @Override
@@ -150,6 +166,20 @@ public class StompEndpoint extends DefaultEndpoint {
                 });
             }
         });
+    }
+
+    private void populateCamelMessageHeadersToStompFrames(final Exchange exchange, final StompFrame frame) {
+        Set<Map.Entry<String, Object>> entries = exchange.getIn().getHeaders().entrySet();        
+        for (Map.Entry<String, Object> entry : entries) {
+            String headerName = entry.getKey();
+            Object headerValue = entry.getValue();
+            if (!headerName.toLowerCase().startsWith("camel") 
+                && !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue, exchange)) {
+                if (headerValue != null) {
+                    frame.addHeader(new AsciiBuffer(headerName), StompFrame.encodeHeader(headerValue.toString()));
+                }
+            }
+        }
     }
 
     void addConsumer(final StompConsumer consumer) {
@@ -180,5 +210,19 @@ public class StompEndpoint extends DefaultEndpoint {
 
     AsciiBuffer getNextId() {
         return connection.nextId();
+    }
+    
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        if (headerFilterStrategy == null) {
+            headerFilterStrategy = new DefaultHeaderFilterStrategy();
+        }
+        return headerFilterStrategy;
+    }
+
+    /**
+     * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+     */
+    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
+        this.headerFilterStrategy = strategy;
     }
 }

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.example.reportincident;
+import org.junit.Before;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -65,10 +66,10 @@ public class ReportIncidentRoutesTest extends CamelSpringTestSupport {
     }
 
     protected static ReportIncidentEndpoint createCXFClient(String url) {
-        List<Interceptor<? extends Message>> outInterceptors = new ArrayList<Interceptor<? extends Message>>();
+        List<Interceptor<? extends Message>> outInterceptors = new ArrayList<>();
 
         // Define WSS4j properties for flow outgoing
-        Map<String, Object> outProps = new HashMap<String, Object>();
+        Map<String, Object> outProps = new HashMap<>();
         outProps.put("action", "UsernameToken Timestamp");
 
         outProps.put("passwordType", "PasswordDigest");

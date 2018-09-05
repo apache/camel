@@ -36,7 +36,7 @@ import org.apache.camel.spi.ShutdownAware;
 public class KestrelConsumer extends DefaultConsumer implements ShutdownAware {
     private final KestrelEndpoint endpoint;
     private final MemcachedClient memcachedClient;
-    private final BlockingQueue<Exchanger<?>> exchangerQueue = new LinkedBlockingQueue<Exchanger<?>>();
+    private final BlockingQueue<Exchanger<?>> exchangerQueue = new LinkedBlockingQueue<>();
     private ExecutorService pollerExecutor;
     private ExecutorService handlerExecutor;
     private volatile boolean shutdownPending;
@@ -106,7 +106,7 @@ public class KestrelConsumer extends DefaultConsumer implements ShutdownAware {
     }
 
     @Override
-    public void prepareShutdown(boolean forced) {
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
         // Signal to our threads that shutdown is happening
         shutdownPending = true;
 
@@ -251,7 +251,7 @@ public class KestrelConsumer extends DefaultConsumer implements ShutdownAware {
     }
 
     private final class Handler implements Runnable {
-        private Exchanger<Handler> exchanger = new Exchanger<Handler>();
+        private Exchanger<Handler> exchanger = new Exchanger<>();
 
         public void run() {
             if (log.isTraceEnabled()) {

@@ -128,7 +128,7 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
             }
             processPDU(pdu, event);
         } else {
-            LOG.debug("Received invalid trap PDU: " + pdu);
+            LOG.debug("Received invalid trap PDU");
         }
     }
     
@@ -140,7 +140,10 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
-            getExceptionHandler().handleException(e);
+            exchange.setException(e);
+        }
+        if (exchange.getException() != null) {
+            getExceptionHandler().handleException(exchange.getException());
         }
     }
 }

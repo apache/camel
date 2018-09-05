@@ -22,11 +22,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.ObjectHelper;
-import org.springframework.integration.MessageChannel;
-import org.springframework.integration.core.MessageHandler;
-import org.springframework.integration.core.SubscribableChannel;
+import org.apache.camel.util.StringHelper;
 import org.springframework.integration.support.channel.BeanFactoryChannelResolver;
-import org.springframework.integration.support.channel.ChannelResolver;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessageHandler;
+import org.springframework.messaging.SubscribableChannel;
+import org.springframework.messaging.core.DestinationResolver;
 
 /**
  * A consumer of exchanges for the Spring Integration
@@ -38,14 +39,14 @@ import org.springframework.integration.support.channel.ChannelResolver;
  */
 public class SpringIntegrationConsumer  extends DefaultConsumer implements MessageHandler {
     private final SpringCamelContext context;
-    private final ChannelResolver channelResolver;
+    private final DestinationResolver<MessageChannel> destinationResolver;
     private SubscribableChannel inputChannel;
     private MessageChannel outputChannel;
 
     public SpringIntegrationConsumer(SpringIntegrationEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.context = (SpringCamelContext) endpoint.getCamelContext();
-        this.channelResolver = new BeanFactoryChannelResolver(context.getApplicationContext());
+        this.destinationResolver = new BeanFactoryChannelResolver(context.getApplicationContext());
     }
 
     @Override
@@ -67,8 +68,8 @@ public class SpringIntegrationConsumer  extends DefaultConsumer implements Messa
                 inputChannelName = getEndpoint().getInputChannel();
             }
 
-            ObjectHelper.notEmpty(inputChannelName, "inputChannelName", getEndpoint());
-            inputChannel = (SubscribableChannel) channelResolver.resolveChannelName(inputChannelName);
+            StringHelper.notEmpty(inputChannelName, "inputChannelName", getEndpoint());
+            inputChannel = (SubscribableChannel) destinationResolver.resolveDestination(inputChannelName);
         } else {
             inputChannel = (SubscribableChannel) getEndpoint().getMessageChannel();
         }
@@ -80,8 +81,8 @@ public class SpringIntegrationConsumer  extends DefaultConsumer implements Messa
         // if we do in-out we need to setup the input channel as well
         if (getEndpoint().isInOut()) {
             // we need to setup right outputChannel for further processing
-            ObjectHelper.notEmpty(getEndpoint().getOutputChannel(), "OutputChannel", getEndpoint());
-            outputChannel = channelResolver.resolveChannelName(getEndpoint().getOutputChannel());
+            StringHelper.notEmpty(getEndpoint().getOutputChannel(), "OutputChannel", getEndpoint());
+            outputChannel = destinationResolver.resolveDestination(getEndpoint().getOutputChannel());
 
             if (outputChannel == null) {
                 throw new IllegalArgumentException("Cannot resolve OutputChannel on " + getEndpoint());
@@ -91,7 +92,7 @@ public class SpringIntegrationConsumer  extends DefaultConsumer implements Messa
         inputChannel.subscribe(this);
     }
 
-    public void handleMessage(org.springframework.integration.Message<?> siInMessage) {
+    public void handleMessage(org.springframework.messaging.Message<?> siInMessage) {
         // we received a message from spring integration
         // wrap that in a Camel Exchange and process it
         Exchange exchange = getEndpoint().createExchange(getEndpoint().isInOut() ? ExchangePattern.InOut : ExchangePattern.InOnly);
@@ -101,7 +102,7 @@ public class SpringIntegrationConsumer  extends DefaultConsumer implements Messa
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
-            getExceptionHandler().handleException("Error processing exchange" , exchange, e);
+            getExceptionHandler().handleException("Error processing exchange", exchange, e);
             return;
         }
 
@@ -131,7 +132,7 @@ public class SpringIntegrationConsumer  extends DefaultConsumer implements Messa
             }
 
             // put the message back the outputChannel if we need
-            org.springframework.integration.Message<?> siOutMessage =
+            org.springframework.messaging.Message<?> siOutMessage =
                 SpringIntegrationBinding.storeToSpringIntegrationMessage(exchange.getOut());
 
             // send the message to spring integration

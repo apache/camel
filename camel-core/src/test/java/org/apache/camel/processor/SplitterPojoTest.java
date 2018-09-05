@@ -16,10 +16,13 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Body;
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
@@ -41,6 +44,7 @@ public class SplitterPojoTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testSplitBodyWithPojoBean() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.reset();
@@ -51,6 +55,7 @@ public class SplitterPojoTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testSplitMessageWithPojoBean() throws Exception {
         String users[] = {"James", "Jonathan", "Hadrian", "Claus", "Willem"};
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -100,7 +105,7 @@ public class SplitterPojoTest extends ContextTestSupport {
             // of the box support for splitting a String based on comma
             // but this is for show and tell, since this is java code
             // you have the full power how you like to split your messages
-            List<String> answer = new ArrayList<String>();
+            List<String> answer = new ArrayList<>();
             String[] parts = body.split(",");
             for (String part : parts) {
                 answer.add(part);
@@ -115,17 +120,17 @@ public class SplitterPojoTest extends ContextTestSupport {
          * @param body the payload of the incoming message
          * @return a list containing each part splitted
          */
-        public List<Message> splitMessage(@Header(value = "user") String header, @Body String body) {
+        public List<Message> splitMessage(@Header(value = "user") String header, @Body String body, CamelContext camelContext) {
             // we can leverage the Parameter Binding Annotations  
             // http://camel.apache.org/parameter-binding-annotations.html
             // to access the message header and body at same time, 
             // then create the message that we want, splitter will
             // take care rest of them.
             // *NOTE* this feature requires Camel version >= 1.6.1
-            List<Message> answer = new ArrayList<Message>();
+            List<Message> answer = new ArrayList<>();
             String[] parts = header.split(",");
             for (String part : parts) {
-                DefaultMessage message = new DefaultMessage();
+                DefaultMessage message = new DefaultMessage(camelContext);
                 message.setHeader("user", part);
                 message.setBody(body);
                 answer.add(message);

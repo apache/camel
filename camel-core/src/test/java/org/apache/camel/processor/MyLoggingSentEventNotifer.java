@@ -28,17 +28,16 @@ import org.apache.camel.support.EventNotifierSupport;
 public class MyLoggingSentEventNotifer extends EventNotifierSupport {
 
     public void notify(EventObject event) throws Exception {
-
+        // react only when its the sent event
         if (event instanceof ExchangeSentEvent) {
             ExchangeSentEvent sent = (ExchangeSentEvent) event;
-            log.info("Took " + sent.getTimeTaken() + " millis to send to: " + sent.getEndpoint());
+            log.info("Took {} millis to send to: {}", sent.getTimeTaken(), sent.getEndpoint());
         }
 
     }
 
     public boolean isEnabled(EventObject event) {
-        // we only want the sent events
-        return event instanceof ExchangeSentEvent;
+        return true;
     }
 
     protected void doStart() throws Exception {

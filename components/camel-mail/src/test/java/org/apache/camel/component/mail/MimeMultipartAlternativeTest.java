@@ -60,9 +60,6 @@ public class MimeMultipartAlternativeTest extends CamelTestSupport {
     }
     
     private void verifyTheRecivedEmail(String expectString) throws Exception {
-        // need some time for the mail to arrive on the inbox (consumed and sent to the mock)
-        Thread.sleep(1000);
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.assertIsSatisfied();
 
@@ -98,7 +95,7 @@ public class MimeMultipartAlternativeTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://ryan@mymailserver.com?password=secret&consumer.delay=1000").to("mock:result");
+                from("pop3://ryan@mymailserver.com?password=secret&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
             }
         };
     }

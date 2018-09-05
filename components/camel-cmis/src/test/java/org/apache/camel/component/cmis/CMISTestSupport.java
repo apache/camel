@@ -53,7 +53,7 @@ public class CMISTestSupport extends CamelTestSupport {
     protected static final String CMIS_ENDPOINT_TEST_SERVER
         = "http://localhost:%s/chemistry-opencmis-server-inmemory/atom11";
     protected static final String OPEN_CMIS_SERVER_WAR_PATH
-        = "target/dependency/chemistry-opencmis-server-inmemory-0.13.0.war";
+        = "target/dependency/chemistry-opencmis-server-inmemory.war";
 
     protected static Server cmisServer;
     protected static int port;
@@ -95,7 +95,7 @@ public class CMISTestSupport extends CamelTestSupport {
 
     protected Session createSession() {
         SessionFactory sessionFactory = SessionFactoryImpl.newInstance();
-        Map<String, String> parameter = new HashMap<String, String>();
+        Map<String, String> parameter = new HashMap<>();
         parameter.put(SessionParameter.ATOMPUB_URL, getUrl());
         parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
 
@@ -128,7 +128,7 @@ public class CMISTestSupport extends CamelTestSupport {
     }
 
     protected Folder createChildFolderWithName(Folder parent, String childName) {
-        Map<String, String> newFolderProps = new HashMap<String, String>();
+        Map<String, String> newFolderProps = new HashMap<>();
         newFolderProps.put(PropertyIds.OBJECT_TYPE_ID, "cmis:folder");
         newFolderProps.put(PropertyIds.NAME, childName);
         return parent.createFolder(newFolderProps);
@@ -141,7 +141,7 @@ public class CMISTestSupport extends CamelTestSupport {
         ContentStream contentStream = createSession().getObjectFactory()
                 .createContentStream(fileName, buf.length, "text/plain; charset=UTF-8", input);
 
-        Map<String, Object> properties = new HashMap<String, Object>();
+        Map<String, Object> properties = new HashMap<>();
         properties.put(PropertyIds.OBJECT_TYPE_ID, "cmis:document");
         properties.put(PropertyIds.NAME, fileName);
         newFolder.createDocument(properties, contentStream, VersioningState.NONE);

@@ -31,37 +31,46 @@ public class SftpConfiguration extends RemoteFileConfiguration {
 
     public static final int DEFAULT_SFTP_PORT = 22;
 
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String knownHostsFile;
-    @UriParam
+    @UriParam(label = "security", defaultValue = "true")
+    private boolean useUserKnownHostsFile = true;
+    @UriParam(label = "security", secret = true)
     private String knownHostsUri;
+    @UriParam(label = "security", secret = true)
     private byte[] knownHosts;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String privateKeyFile;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String privateKeyUri;
+    @UriParam(label = "security", secret = true)
     private byte[] privateKey;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String privateKeyPassphrase;
+    @UriParam(label = "security", secret = true)
     private KeyPair keyPair;
-    @UriParam(defaultValue = "no", enums = "no,yes")
+    @UriParam(defaultValue = "no", enums = "no,yes", label = "security")
     private String strictHostKeyChecking = "no";
-    @UriParam
+    @UriParam(label = "advanced")
     private int serverAliveInterval;
-    @UriParam(defaultValue = "1")
+    @UriParam(defaultValue = "1", label = "advanced")
     private int serverAliveCountMax = 1;
-    @UriParam
+    @UriParam(label = "producer,advanced")
     private String chmod;
-    // comma separated list of ciphers. 
+    // comma separated list of ciphers.
     // null means default jsch list will be used
-    @UriParam
+    @UriParam(label = "security")
     private String ciphers;
-    @UriParam
+    @UriParam(label = "advanced")
     private int compression;
-    @UriParam
+    @UriParam(label = "security")
     private String preferredAuthentications;
     @UriParam(defaultValue = "WARN")
     private LoggingLevel jschLoggingLevel = LoggingLevel.WARN;
+    @UriParam(label = "advanced")
+    private Integer bulkRequests;
+    @UriParam(label = "advanced")
+    private String bindAddress;
 
     public SftpConfiguration() {
         setProtocol("sftp");
@@ -91,6 +100,17 @@ public class SftpConfiguration extends RemoteFileConfiguration {
         return knownHostsUri;
     }
 
+    public boolean isUseUserKnownHostsFile() {
+        return useUserKnownHostsFile;
+    }
+
+    /**
+     * If knownHostFile has not been explicit configured then use the host file from System.getProperty(user.home)/.ssh/known_hosts
+     */
+    public void setUseUserKnownHostsFile(boolean useUserKnownHostsFile) {
+        this.useUserKnownHostsFile = useUserKnownHostsFile;
+    }
+
     /**
      * Sets the known_hosts file (loaded from classpath by default), so that the SFTP endpoint can do host key verification.
      */
@@ -102,6 +122,9 @@ public class SftpConfiguration extends RemoteFileConfiguration {
         return knownHosts;
     }
 
+    /**
+     * Sets the known_hosts from the byte array, so that the SFTP endpoint can do host key verification.
+     */
     public void setKnownHosts(byte[] knownHosts) {
         this.knownHosts = knownHosts;
     }
@@ -111,7 +134,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Set the private key file to that the SFTP endpoint can do private key verification.
+     * Set the private key file so that the SFTP endpoint can do private key verification.
      */
     public void setPrivateKeyFile(String privateKeyFile) {
         this.privateKeyFile = privateKeyFile;
@@ -122,7 +145,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Set the private key file (loaded from classpath by default) to that the SFTP endpoint can do private key verification.
+     * Set the private key file (loaded from classpath by default) so that the SFTP endpoint can do private key verification.
      */
     public void setPrivateKeyUri(String privateKeyUri) {
         this.privateKeyUri = privateKeyUri;
@@ -133,7 +156,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Set the private key as byte[] to that the SFTP endpoint can do private key verification.
+     * Set the private key as byte[] so that the SFTP endpoint can do private key verification.
      */
     public void setPrivateKey(byte[] privateKey) {
         this.privateKey = privateKey;
@@ -144,7 +167,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     }
 
     /**
-     * Set the private key file passphrase to that the SFTP endpoint can do private key verification.
+     * Set the private key file passphrase so that the SFTP endpoint can do private key verification.
      */
     public void setPrivateKeyPassphrase(String privateKeyFilePassphrase) {
         this.privateKeyPassphrase = privateKeyFilePassphrase;
@@ -164,6 +187,9 @@ public class SftpConfiguration extends RemoteFileConfiguration {
         return keyPair;
     }
 
+    /**
+     * Sets a key pair of the public and private key so to that the SFTP endpoint can do public/private key verification.
+     */
     public void setKeyPair(KeyPair keyPair) {
         this.keyPair = keyPair;
     }
@@ -244,7 +270,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     public void setPreferredAuthentications(String pAuthentications) {
         this.preferredAuthentications = pAuthentications;
     }
-    
+
     public String getPreferredAuthentications() {
         return preferredAuthentications;
     }
@@ -259,5 +285,28 @@ public class SftpConfiguration extends RemoteFileConfiguration {
      */
     public void setJschLoggingLevel(LoggingLevel jschLoggingLevel) {
         this.jschLoggingLevel = jschLoggingLevel;
+    }
+
+    /**
+     * Specifies how many requests may be outstanding at any one time. Increasing this value may
+     * slightly improve file transfer speed but will increase memory usage.
+     */
+    public void setBulkRequests(Integer bulkRequests) {
+        this.bulkRequests = bulkRequests;
+    }
+
+    public Integer getBulkRequests() {
+        return bulkRequests;
+    }
+
+    /**
+     * Specifies the address of the local interface against which the connection should bind.
+     */
+    public void setBindAddress(String bindAddress) {
+        this.bindAddress = bindAddress;
+    }
+
+    public String getBindAddress() {
+        return bindAddress;
     }
 }

@@ -24,6 +24,7 @@ import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * The <a href="http://camel.apache.org/language-component.html">Language component</a> enables sending
@@ -40,8 +41,8 @@ public class LanguageComponent extends UriEndpointComponent {
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String name = ObjectHelper.before(remaining, ":");
-        String script = ObjectHelper.after(remaining, ":");
+        String name = StringHelper.before(remaining, ":");
+        String script = StringHelper.after(remaining, ":");
         // no script then remaining is the language name
         if (name == null && script == null) {
             name = remaining;

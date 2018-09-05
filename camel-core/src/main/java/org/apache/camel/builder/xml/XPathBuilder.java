@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.xml.namespace.QName;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -38,18 +39,21 @@ import javax.xml.xpath.XPathFunction;
 import javax.xml.xpath.XPathFunctionException;
 import javax.xml.xpath.XPathFunctionResolver;
 
+import org.apache.camel.util.StringHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.converter.jaxp.ThreadSafeNodeList;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
@@ -82,19 +86,22 @@ import static org.apache.camel.builder.xml.Namespaces.isMatchingNamespaceOrEmpty
  *
  * @see XPathConstants#NODESET
  */
-public class XPathBuilder extends ServiceSupport implements Expression, Predicate, NamespaceAware {
+public class XPathBuilder extends ServiceSupport implements CamelContextAware, Expression, Predicate, NamespaceAware {
     private static final Logger LOG = LoggerFactory.getLogger(XPathBuilder.class);
     private static final String SAXON_OBJECT_MODEL_URI = "http://saxon.sf.net/jaxp/xpath/om";
+    private static final String SAXON_FACTORY_CLASS_NAME = "net.sf.saxon.xpath.XPathFactoryImpl";
     private static final String OBTAIN_ALL_NS_XPATH = "//*/namespace::*";
 
     private static volatile XPathFactory defaultXPathFactory;
 
-    private final Queue<XPathExpression> pool = new ConcurrentLinkedQueue<XPathExpression>();
-    private final Queue<XPathExpression> poolLogNamespaces = new ConcurrentLinkedQueue<XPathExpression>();
+    private CamelContext camelContext;
+    private final Queue<XPathExpression> pool = new ConcurrentLinkedQueue<>();
+    private final Queue<XPathExpression> poolLogNamespaces = new ConcurrentLinkedQueue<>();
     private final String text;
-    private final ThreadLocal<Exchange> exchange = new ThreadLocal<Exchange>();
+    private final ThreadLocal<Exchange> exchange = new ThreadLocal<>();
     private final MessageVariableResolver variableResolver = new MessageVariableResolver(exchange);
-    private final Map<String, String> namespaces = new ConcurrentHashMap<String, String>();
+    private final Map<String, String> namespaces = new ConcurrentHashMap<>();
+    private boolean threadSafety;
     private volatile XPathFactory xpathFactory;
     private volatile Class<?> documentType = Document.class;
     // For some reason the default expression of "a/b" on a document such as
@@ -104,6 +111,7 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
     private volatile Class<?> resultType;
     private volatile QName resultQName = XPathConstants.NODESET;
     private volatile String objectModelUri;
+    private volatile String factoryClassName;
     private volatile DefaultNamespaceContext namespaceContext;
     private volatile boolean logNamespaces;
     private volatile XPathFunctionResolver functionResolver;
@@ -141,13 +149,25 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
      */
     public static XPathBuilder xpath(String text, Class<?> resultType) {
         XPathBuilder builder = new XPathBuilder(text);
-        builder.setResultType(resultType);
+        if (resultType != null) {
+            builder.setResultType(resultType);
+        }
         return builder;
     }
 
     @Override
     public String toString() {
         return "XPath: " + text;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     public boolean matches(Exchange exchange) {
@@ -322,6 +342,18 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
         return this;
     }
 
+
+    /**
+     * Sets the factory class name to use
+     *
+     * @return the current builder
+     */
+    public XPathBuilder factoryClassName(String factoryClassName) {
+        this.factoryClassName = factoryClassName;
+        return this;
+    }
+
+
     /**
      * Configures to use Saxon as the XPathFactory which allows you to use XPath 2.0 functions
      * which may not be part of the build in JDK XPath parser.
@@ -330,6 +362,7 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
      */
     public XPathBuilder saxon() {
         this.objectModelUri = SAXON_OBJECT_MODEL_URI;
+        this.factoryClassName = SAXON_FACTORY_CLASS_NAME;
         return this;
     }
 
@@ -433,6 +466,25 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
         return this;
     }
 
+    /**
+     * Whether to enable thread-safety for the returned result of the xpath expression.
+     * This applies to when using NODESET as the result type, and the returned set has
+     * multiple elements. In this situation there can be thread-safety issues if you
+     * process the NODESET concurrently such as from a Camel Splitter EIP in parallel processing mode.
+     * This option prevents concurrency issues by doing defensive copies of the nodes.
+     * <p/>
+     * It is recommended to turn this option on if you are using camel-saxon or Saxon in your application.
+     * Saxon has thread-safety issues which can be prevented by turning this option on.
+     * <p/>
+     * Thread-safety is disabled by default
+     *
+     * @return the current builder.
+     */
+    public XPathBuilder threadSafety(boolean threadSafety) {
+        setThreadSafety(threadSafety);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -480,6 +532,14 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
         this.headerName = headerName;
     }
 
+    public boolean isThreadSafety() {
+        return threadSafety;
+    }
+
+    public void setThreadSafety(boolean threadSafety) {
+        this.threadSafety = threadSafety;
+    }
+
     /**
      * Gets the namespace context, can be <tt>null</tt> if no custom context has been assigned.
      * <p/>
@@ -507,6 +567,10 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
     public void setNamespaces(Map<String, String> namespaces) {
         this.namespaces.clear();
         this.namespaces.putAll(namespaces);
+    }
+
+    public Map<String, String> getNamespaces() {
+        return namespaces;
     }
 
     /**
@@ -727,20 +791,29 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
         return logNamespaces;
     }
 
-    public String getObjectModelUri() {
-        return objectModelUri;
-    }
-
     /**
      * Enables Saxon on this particular XPath expression, as {@link #saxon()} sets the default static XPathFactory which may have already been initialised
      * by previous XPath expressions
      */
     public void enableSaxon() {
         this.setObjectModelUri(SAXON_OBJECT_MODEL_URI);
+        this.setFactoryClassName(SAXON_FACTORY_CLASS_NAME);
+    }
+
+    public String getObjectModelUri() {
+        return objectModelUri;
     }
 
     public void setObjectModelUri(String objectModelUri) {
         this.objectModelUri = objectModelUri;
+    }
+
+    public String getFactoryClassName() {
+        return factoryClassName;
+    }
+
+    public void setFactoryClassName(String factoryClassName) {
+        this.factoryClassName = factoryClassName;
     }
 
     // Implementation methods
@@ -812,6 +885,15 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
             } else if (document instanceof DOMSource) {
                 DOMSource source = (DOMSource) document;
                 answer = (NodeList) xpathExpression.evaluate(source.getNode(), XPathConstants.NODESET);
+            } else if (document instanceof SAXSource) {
+                SAXSource source = (SAXSource) document;
+                // since its a SAXSource it may not return an NodeList (for example if using Saxon)
+                Object result = xpathExpression.evaluate(source.getInputSource(), XPathConstants.NODESET);
+                if (result instanceof NodeList) {
+                    answer = (NodeList) result;
+                } else {
+                    answer = null;
+                }
             } else {
                 answer = (NodeList) xpathExpression.evaluate(document, XPathConstants.NODESET);
             }
@@ -829,7 +911,7 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
     }
 
     private void logDiscoveredNamespaces(NodeList namespaces) {
-        Map<String, HashSet<String>> map = new LinkedHashMap<String, HashSet<String>>();
+        Map<String, HashSet<String>> map = new LinkedHashMap<>();
         for (int i = 0; i < namespaces.getLength(); i++) {
             Node n = namespaces.item(i);
             if (n.getNodeName().equals("xmlns:xml")) {
@@ -917,6 +999,24 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
         } finally {
             // IOHelper can handle if is is null
             IOHelper.close(is);
+        }
+
+        if (threadSafety && answer != null && answer instanceof NodeList) {
+            try {
+                NodeList list = (NodeList) answer;
+
+                // when the result is NodeList and it has 2+ elements then its not thread-safe to use concurrently
+                // and we need to clone each node and build a thread-safe list to be used instead
+                boolean threadSafetyNeeded = list.getLength() >= 2;
+                if (threadSafetyNeeded) {
+                    answer = new ThreadSafeNodeList(list);
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Created thread-safe result from: {} as: {}", list.getClass().getName(), answer.getClass().getName());
+                    }
+                }
+            } catch (Exception e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
         }
 
         if (LOG.isTraceEnabled()) {
@@ -1179,8 +1279,34 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
 
     protected synchronized XPathFactory createXPathFactory() throws XPathFactoryConfigurationException {
         if (objectModelUri != null) {
-            xpathFactory = XPathFactory.newInstance(objectModelUri);
-            LOG.info("Using objectModelUri " + objectModelUri + " when created XPathFactory {}", xpathFactory);
+            String xpathFactoryClassName = factoryClassName;
+            if (objectModelUri.equals(SAXON_OBJECT_MODEL_URI) && (xpathFactoryClassName == null || SAXON_FACTORY_CLASS_NAME.equals(xpathFactoryClassName))) {
+                // from Saxon 9.7 onwards you should favour to create the class directly
+                // https://www.saxonica.com/html/documentation/xpath-api/jaxp-xpath/factory.html
+                try {
+                    if (camelContext != null) {
+                        Class<XPathFactory> clazz = camelContext.getClassResolver().resolveClass(SAXON_FACTORY_CLASS_NAME, XPathFactory.class);
+                        if (clazz != null) {
+                            LOG.debug("Creating Saxon XPathFactory using class: {})", clazz);
+                            xpathFactory = camelContext.getInjector().newInstance(clazz);
+                            LOG.info("Created Saxon XPathFactory: {}", xpathFactory);
+                        }
+                    }
+                } catch (Throwable e) {
+                    LOG.warn("Attempted to create Saxon XPathFactory by creating a new instance of " + SAXON_FACTORY_CLASS_NAME
+                        + " failed. Will fallback and create XPathFactory using JDK API. This exception is ignored (stacktrace in DEBUG logging level).");
+                    LOG.debug("Error creating Saxon XPathFactory. This exception is ignored.", e);
+                }
+            }
+
+            if (xpathFactory == null) {
+                LOG.debug("Creating XPathFactory from objectModelUri: {}", objectModelUri);
+                xpathFactory = ObjectHelper.isEmpty(xpathFactoryClassName)
+                    ? XPathFactory.newInstance(objectModelUri)
+                    : XPathFactory.newInstance(objectModelUri, xpathFactoryClassName, null);
+                LOG.info("Created XPathFactory: {} from objectModelUri: {}", xpathFactory, objectModelUri);
+            }
+
             return xpathFactory;
         }
 
@@ -1198,7 +1324,7 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
         for (Map.Entry<Object, Object> prop : properties.entrySet()) {
             String key = (String) prop.getKey();
             if (key.startsWith(XPathFactory.DEFAULT_PROPERTY_NAME)) {
-                String uri = ObjectHelper.after(key, ":");
+                String uri = StringHelper.after(key, ":");
                 if (uri != null) {
                     factory = XPathFactory.newInstance(uri);
                     LOG.info("Using system property {} with value {} when created default XPathFactory {}", new Object[]{key, uri, factory});

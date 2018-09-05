@@ -16,13 +16,23 @@
  */
 package org.apache.camel.api.management.mbean;
 
+import javax.management.openmbean.TabularData;
+
+import org.apache.camel.Experimental;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
+import org.apache.camel.spi.RouteError;
 
 public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
 
     @ManagedAttribute(description = "Route ID")
     String getRouteId();
+
+    @ManagedAttribute(description = "Route Group")
+    String getRouteGroup();
+
+    @ManagedAttribute(description = "Route Properties")
+    TabularData getRouteProperties();
 
     @ManagedAttribute(description = "Route Description")
     String getDescription();
@@ -32,6 +42,12 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
 
     @ManagedAttribute(description = "Route State")
     String getState();
+
+    @ManagedAttribute(description = "Route Uptime [human readable text]")
+    String getUptime();
+
+    @ManagedAttribute(description = "Route Uptime [milliseconds]")
+    long getUptimeMillis();
 
     /**
      * @deprecated use {@link #getExchangesInflight()}
@@ -96,8 +112,17 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedOperation(description = "Remove route (must be stopped)")
     boolean remove() throws Exception;
 
+    @ManagedOperation(description = "Restarts route (1 second delay before starting)")
+    void restart() throws Exception;
+
+    @ManagedOperation(description = "Restarts route (using delay in seconds before starting)")
+    void restart(long delay) throws Exception;
+
     @ManagedOperation(description = "Dumps the route as XML")
     String dumpRouteAsXml() throws Exception;
+
+    @ManagedOperation(description = "Dumps the route as XML")
+    String dumpRouteAsXml(boolean resolvePlaceholders) throws Exception;
 
     @ManagedOperation(description = "Updates the route from XML")
     void updateRouteFromXml(String xml) throws Exception;
@@ -120,5 +145,11 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Oldest inflight exchange id")
     String getOldestInflightExchangeId();
 
+    @Experimental
+    @ManagedAttribute(description = "Route controller")
+    Boolean getHasRouteController();
 
+    @Experimental
+    @ManagedAttribute(description = "Last error")
+    RouteError getLastError();
 }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
@@ -30,6 +32,7 @@ public class BigRouteTest extends ContextTestSupport {
         return true;
     }
 
+    @Test
     public void testBigRoute() throws Exception {
         for (int i = 0; i < 1000; i++) {
             getMockEndpoint("mock:" + i).expectedMessageCount(1);

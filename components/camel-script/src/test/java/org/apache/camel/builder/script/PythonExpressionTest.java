@@ -33,7 +33,7 @@ public class PythonExpressionTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:unmatched").expectedMessageCount(0);
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("foo", "bar");
         sendBody("direct:start", "hello", headers);
 
@@ -45,7 +45,7 @@ public class PythonExpressionTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:unmatched").expectedMessageCount(1);
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("foo", "foo");
         sendBody("direct:start", "hello", headers);
 

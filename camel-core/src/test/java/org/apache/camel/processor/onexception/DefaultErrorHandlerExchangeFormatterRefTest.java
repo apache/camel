@@ -16,13 +16,14 @@
  */
 package org.apache.camel.processor.onexception;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.ExchangeFormatter;
-
 
 public class DefaultErrorHandlerExchangeFormatterRefTest extends ContextTestSupport {
 
@@ -35,6 +36,7 @@ public class DefaultErrorHandlerExchangeFormatterRefTest extends ContextTestSupp
         return jndi;
     }
 
+    @Test
     public void testRetryUntil() throws Exception {
         try {
             template.requestBody("direct:start", "Hello World");
@@ -50,7 +52,6 @@ public class DefaultErrorHandlerExchangeFormatterRefTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-               
                 errorHandler(defaultErrorHandler().exchangeFormatterRef("myExchangeFormatter"));
 
                 from("direct:start").process(new MyProcessor());
@@ -61,9 +62,7 @@ public class DefaultErrorHandlerExchangeFormatterRefTest extends ContextTestSupp
     public static class MyProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
-
             throw new MyFunctionalException("Sorry you cannot do this");
-
         }
     }
 

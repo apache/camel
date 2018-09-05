@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.simple;
 
+import org.junit.Test;
+
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.Predicate;
 
@@ -25,6 +27,7 @@ import org.apache.camel.Predicate;
  */
 public class SimpleParserRegexpPredicateTest extends ExchangeTestSupport {
 
+    @Test
     public void testSimpleRegexp() throws Exception {
         exchange.getIn().setBody("12.34.5678");
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,8 +31,9 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class DynamicRouterExchangeHeadersTest extends ContextTestSupport {
 
-    private static List<String> bodies = new ArrayList<String>();
+    private static List<String> bodies = new ArrayList<>();
 
+    @Test
     public void testDynamicRouter() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:a").expectedHeaderReceived("invoked", 1);

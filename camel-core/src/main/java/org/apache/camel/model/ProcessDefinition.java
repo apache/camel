@@ -32,7 +32,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Calls a Camel processor.
+ * Calls a Camel processor
  *
  * @version 
  */
@@ -61,6 +61,11 @@ public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
             String id = ObjectHelper.getIdentityHashCode(processor);
             return "process[Processor@" + id + "]";
         }
+    }
+
+    @Override
+    public String getShortName() {
+        return "process";
     }
 
     @Override

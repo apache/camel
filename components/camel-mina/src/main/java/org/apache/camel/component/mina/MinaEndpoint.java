@@ -37,11 +37,9 @@ import org.apache.mina.common.IoConnectorConfig;
 import org.apache.mina.common.IoSession;
 
 /**
- * Endpoint for Camel MINA.
- *
- * @version 
+ * Socket level networking using TCP or UDP with the Apache Mina 1.x library.
  */
-@UriEndpoint(scheme = "mina", title = "Mina", syntax = "mina:protocol:host:port", consumerClass = MinaConsumer.class, label = "networking,tcp,udp")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "mina", title = "Mina", syntax = "mina:protocol:host:port", consumerClass = MinaConsumer.class, label = "networking,tcp,udp")
 public class MinaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     /** The key of the IoSession which is stored in the message header*/
@@ -61,7 +59,7 @@ public class MinaEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     private IoConnectorConfig connectorConfig;
     @UriParam
     private MinaConfiguration configuration;
-    private final List<ExecutorService> executors = new ArrayList<ExecutorService>();
+    private final List<ExecutorService> executors = new ArrayList<>();
 
     public MinaEndpoint() {
     }

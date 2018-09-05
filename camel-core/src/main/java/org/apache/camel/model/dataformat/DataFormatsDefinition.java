@@ -38,6 +38,7 @@ public class DataFormatsDefinition {
 
     // cannot use @XmlElementRef as it doesn't allow optional properties
     @XmlElements({
+        @XmlElement(required = false, name = "asn1", type = ASN1DataFormat.class),
         @XmlElement(required = false, name = "avro", type = AvroDataFormat.class),
         @XmlElement(required = false, name = "barcode", type = BarcodeDataFormat.class),
         @XmlElement(required = false, name = "base64", type = Base64DataFormat.class),
@@ -47,14 +48,21 @@ public class DataFormatsDefinition {
         @XmlElement(required = false, name = "castor", type = CastorDataFormat.class),
         @XmlElement(required = false, name = "crypto", type = CryptoDataFormat.class),
         @XmlElement(required = false, name = "csv", type = CsvDataFormat.class),
+        // TODO: Camel 3.0 - Should be named customDataFormat to avoid naming clash with custom loadbalancer
         @XmlElement(required = false, name = "custom", type = CustomDataFormat.class),
+        @XmlElement(required = false, name = "fhirJson", type = FhirJsonDataFormat.class),
+        @XmlElement(required = false, name = "fhirXml", type = FhirXmlDataFormat.class),
         @XmlElement(required = false, name = "flatpack", type = FlatpackDataFormat.class),
         @XmlElement(required = false, name = "gzip", type = GzipDataFormat.class),
+        @XmlElement(required = false, name = "hessian", type = HessianDataFormat.class),
         @XmlElement(required = false, name = "hl7", type = HL7DataFormat.class),
         @XmlElement(required = false, name = "ical", type = IcalDataFormat.class),
+        @XmlElement(required = false, name = "jacksonxml", type = JacksonXMLDataFormat.class),
         @XmlElement(required = false, name = "jaxb", type = JaxbDataFormat.class),
         @XmlElement(required = false, name = "jibx", type = JibxDataFormat.class),
         @XmlElement(required = false, name = "json", type = JsonDataFormat.class),
+        @XmlElement(required = false, name = "lzf", type = LZFDataFormat.class),
+        @XmlElement(required = false, name = "mimeMultipart", type = MimeMultipartDataFormat.class),
         @XmlElement(required = false, name = "protobuf", type = ProtobufDataFormat.class),
         @XmlElement(required = false, name = "rss", type = RssDataFormat.class),
         @XmlElement(required = false, name = "secureXML", type = XMLSecurityDataFormat.class),
@@ -62,6 +70,8 @@ public class DataFormatsDefinition {
         @XmlElement(required = false, name = "soapjaxb", type = SoapJaxbDataFormat.class),
         @XmlElement(required = false, name = "string", type = StringDataFormat.class),
         @XmlElement(required = false, name = "syslog", type = SyslogDataFormat.class),
+        @XmlElement(required = false, name = "tarfile", type = TarFileDataFormat.class),
+        @XmlElement(required = false, name = "thrift", type = ThriftDataFormat.class),
         @XmlElement(required = false, name = "tidyMarkup", type = TidyMarkupDataFormat.class),
         @XmlElement(required = false, name = "univocity-csv", type = UniVocityCsvDataFormat.class),
         @XmlElement(required = false, name = "univocity-fixed", type = UniVocityFixedWidthDataFormat.class),
@@ -71,6 +81,7 @@ public class DataFormatsDefinition {
         @XmlElement(required = false, name = "xmlrpc", type = XmlRpcDataFormat.class),
         @XmlElement(required = false, name = "xstream", type = XStreamDataFormat.class),
         @XmlElement(required = false, name = "pgp", type = PGPDataFormat.class),
+        @XmlElement(required = false, name = "yaml", type = YAMLDataFormat.class),
         @XmlElement(required = false, name = "zip", type = ZipDataFormat.class),
         @XmlElement(required = false, name = "zipFile", type = ZipFileDataFormat.class)}
         )
@@ -91,7 +102,7 @@ public class DataFormatsDefinition {
      * @return A Map of the contained DataFormatType's indexed by id.
      */
     public Map<String, DataFormatDefinition> asMap() {
-        Map<String, DataFormatDefinition> dataFormatsAsMap = new HashMap<String, DataFormatDefinition>();
+        Map<String, DataFormatDefinition> dataFormatsAsMap = new HashMap<>();
         for (DataFormatDefinition dataFormatType : getDataFormats()) {
             dataFormatsAsMap.put(dataFormatType.getId(), dataFormatType);
         }

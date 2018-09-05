@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.util.function.Predicate;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -53,7 +55,6 @@ public interface UnitOfWork extends Service {
     boolean containsSynchronization(Synchronization synchronization);
 
     /**
-    /**
      * Handover all the registered synchronizations to the target {@link org.apache.camel.Exchange}.
      * <p/>
      * This is used when a route turns into asynchronous and the {@link org.apache.camel.Exchange} that
@@ -63,6 +64,18 @@ public interface UnitOfWork extends Service {
      * @param target the target exchange
      */
     void handoverSynchronization(Exchange target);
+
+    /**
+     * Handover all the registered synchronizations to the target {@link org.apache.camel.Exchange}.
+     * <p/>
+     * This is used when a route turns into asynchronous and the {@link org.apache.camel.Exchange} that
+     * is continued and routed in the async thread should do the on completion callbacks instead of the
+     * original synchronous thread.
+     *
+     * @param target the target exchange
+     * @param filter optional filter to only handover if filter returns <tt>true</tt>
+     */
+    void handoverSynchronization(Exchange target, Predicate<Synchronization> filter);
 
     /**
      * Invoked when this unit of work has been completed, whether it has failed or completed
@@ -98,7 +111,7 @@ public interface UnitOfWork extends Service {
      * Gets the original IN {@link Message} this Unit of Work was started with.
      * <p/>
      * The original message is only returned if the option {@link org.apache.camel.RuntimeConfiguration#isAllowUseOriginalMessage()}
-     * is enabled. If its disabled, then <tt>null</tt> is returned.
+     * is enabled. If its disabled an <tt>IllegalStateException</tt> is thrown.
      *
      * @return the original IN {@link Message}, or <tt>null</tt> if using original message is disabled.
      */
@@ -109,6 +122,7 @@ public interface UnitOfWork extends Service {
      *
      * @return trace information
      */
+    @Deprecated
     TracedRouteNodes getTracedRouteNodes();
 
     /**

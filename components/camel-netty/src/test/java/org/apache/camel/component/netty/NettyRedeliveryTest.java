@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty;
+import org.junit.After;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
@@ -62,7 +63,7 @@ public class NettyRedeliveryTest extends CamelTestSupport {
     @EndpointInject(uri = "mock:downstream")
     private MockEndpoint downstream;
 
-    private Deque<Callable<?>> tasks = new LinkedBlockingDeque<Callable<?>>();
+    private Deque<Callable<?>> tasks = new LinkedBlockingDeque<>();
     private int port;
     private boolean alive = true;
 
@@ -96,6 +97,7 @@ public class NettyRedeliveryTest extends CamelTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         alive = false;
@@ -196,7 +198,7 @@ public class NettyRedeliveryTest extends CamelTestSupport {
     private class ClosingClientRunnable implements Runnable {
         private final Socket socket;
 
-        public ClosingClientRunnable(Socket socket) {
+        ClosingClientRunnable(Socket socket) {
             this.socket = socket;
         }
 

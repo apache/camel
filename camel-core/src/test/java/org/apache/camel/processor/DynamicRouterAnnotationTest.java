@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +30,9 @@ import org.apache.camel.builder.RouteBuilder;
 public class DynamicRouterAnnotationTest extends ContextTestSupport {
 
     private static int invoked;
-    private static List<String> bodies = new ArrayList<String>();
+    private static List<String> bodies = new ArrayList<>();
 
+    @Test
     public void testDynamicRouterAnnotation() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");

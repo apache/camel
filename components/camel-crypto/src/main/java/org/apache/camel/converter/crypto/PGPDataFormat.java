@@ -123,7 +123,7 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
 
     public Map<String, String> determineSignatureKeyUserId2Password(List<String> sigKeyUserids, String sigKeyPassword) {
         // we want to keep the order of the entries, therefore we use LinkedHashMap
-        Map<String, String> sigKeyUserId2Password = new LinkedHashMap<String, String>(sigKeyUserids.size());
+        Map<String, String> sigKeyUserId2Password = new LinkedHashMap<>(sigKeyUserids.size());
         for (String sigKeyUserid : sigKeyUserids) {
             if (sigKeyPassword == null) {
                 sigKeyPassword = passphraseAccessor.getPassphrase(sigKeyUserid);

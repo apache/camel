@@ -82,7 +82,7 @@ public class MultiPartFormTest extends BaseJettyTest {
 
                     public void process(Exchange exchange) throws Exception {
                         Message in = exchange.getIn();
-                        assertEquals("Get a wrong attachement size", 1, in.getAttachments().size());
+                        assertEquals("Get a wrong attachement size", 2, in.getAttachments().size());
                         // The file name is attachment id
                         DataHandler data = in.getAttachment("NOTICE.txt");
 
@@ -102,6 +102,12 @@ public class MultiPartFormTest extends BaseJettyTest {
 
                         // The other form date can be get from the message
                         // header
+
+                        // For binary attachment, header should also be populated by DataHandler but not payload
+                        Object header = in.getHeader("NOTICE.txt");
+                        assertEquals(DataHandler.class, header.getClass());
+                        assertEquals(data, header);
+
                         exchange.getOut().setBody(in.getHeader("comment"));
                     }
 

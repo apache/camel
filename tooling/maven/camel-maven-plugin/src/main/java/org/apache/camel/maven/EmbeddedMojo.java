@@ -37,7 +37,7 @@ import org.codehaus.mojo.exec.AbstractExecMojo;
  *
  * @goal embedded
  * @requiresDependencyResolution compile+runtime
- * @execute phase="test-compile"
+ * @execute phase="prepare-package"
  */
 public class EmbeddedMojo extends AbstractExecMojo {
 
@@ -171,7 +171,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
 
     protected String[] createArguments() {
 
-        List<String> args = new ArrayList<String>(5);
+        List<String> args = new ArrayList<>(5);
 
         if (applicationContextUri != null) {
             args.add("-applicationContext");

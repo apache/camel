@@ -59,6 +59,11 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
     }
 
     @Override
+    public String getShortName() {
+        return "threadPoolProfile";
+    }
+
+    @Override
     public String getLabel() {
         return "ThreadPoolProfile " + getId();
     }

@@ -23,16 +23,27 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.VerifiableComponent;
+import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonComponent;
 import org.apache.camel.http.common.HttpConfiguration;
+import org.apache.camel.http.common.HttpRestHeaderFilterStrategy;
 import org.apache.camel.http.common.UrlRewrite;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.util.CollectionHelper;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.commons.httpclient.HttpConnectionManager;
@@ -43,18 +54,25 @@ import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 /**
  * The <a href="http://camel.apache.org/http.html">HTTP Component</a>
  *
- * @version 
  */
-public class HttpComponent extends HttpCommonComponent {
+@Metadata(label = "verifiers", enums = "parameters,connectivity")
+public class HttpComponent extends HttpCommonComponent implements RestProducerFactory, VerifiableComponent, SSLContextParametersAware {
+
+    @Metadata(label = "advanced")
     protected HttpClientConfigurer httpClientConfigurer;
+    @Metadata(label = "advanced")
     protected HttpConnectionManager httpConnectionManager;
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public HttpComponent() {
-        super(HttpEndpoint.class);
+        this(HttpEndpoint.class);
     }
 
     public HttpComponent(Class<? extends HttpEndpoint> endpointClass) {
         super(endpointClass);
+
+        registerExtension(HttpComponentVerifierExtension::new);
     }
 
     /**
@@ -65,28 +83,23 @@ public class HttpComponent extends HttpCommonComponent {
      */
     protected HttpClientConfigurer createHttpClientConfigurer(Map<String, Object> parameters, Set<AuthMethod> authMethods) {
         // prefer to use endpoint configured over component configured
-        // TODO cmueller: remove the "httpClientConfigurerRef" look up in Camel 3.0
-        HttpClientConfigurer configurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurerRef", HttpClientConfigurer.class);
-        if (configurer == null) {
-            // try without ref
-            configurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurer", HttpClientConfigurer.class);
-        }
+        HttpClientConfigurer configurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurer", HttpClientConfigurer.class);
         if (configurer == null) {
             // fallback to component configured
             configurer = getHttpClientConfigurer();
         }
 
         // authentication can be endpoint configured
-        String authUsername = getAndRemoveParameter(parameters, "authUsername", String.class);
-        String authMethod = getAndRemoveParameter(parameters, "authMethod", String.class);
+        String authUsername = getParameter(parameters, "authUsername", String.class);
+        String authMethod = getParameter(parameters, "authMethod", String.class);
         // validate that if auth username is given then the auth method is also provided
         if (authUsername != null && authMethod == null) {
             throw new IllegalArgumentException("Option authMethod must be provided to use authentication");
         }
         if (authMethod != null) {
-            String authPassword = getAndRemoveParameter(parameters, "authPassword", String.class);
-            String authDomain = getAndRemoveParameter(parameters, "authDomain", String.class);
-            String authHost = getAndRemoveParameter(parameters, "authHost", String.class);
+            String authPassword = getParameter(parameters, "authPassword", String.class);
+            String authDomain = getParameter(parameters, "authDomain", String.class);
+            String authHost = getParameter(parameters, "authHost", String.class);
             configurer = configureAuth(configurer, authMethod, authUsername, authPassword, authDomain, authHost, authMethods);
         } else if (httpConfiguration != null) {
             // or fallback to use component configuration
@@ -95,16 +108,16 @@ public class HttpComponent extends HttpCommonComponent {
         }
 
         // proxy authentication can be endpoint configured
-        String proxyAuthUsername = getAndRemoveParameter(parameters, "proxyAuthUsername", String.class);
-        String proxyAuthMethod = getAndRemoveParameter(parameters, "proxyAuthMethod", String.class);
+        String proxyAuthUsername = getParameter(parameters, "proxyAuthUsername", String.class);
+        String proxyAuthMethod = getParameter(parameters, "proxyAuthMethod", String.class);
         // validate that if proxy auth username is given then the proxy auth method is also provided
         if (proxyAuthUsername != null && proxyAuthMethod == null) {
             throw new IllegalArgumentException("Option proxyAuthMethod must be provided to use proxy authentication");
         }
         if (proxyAuthMethod != null) {
-            String proxyAuthPassword = getAndRemoveParameter(parameters, "proxyAuthPassword", String.class);
-            String proxyAuthDomain = getAndRemoveParameter(parameters, "proxyAuthDomain", String.class);
-            String proxyAuthHost = getAndRemoveParameter(parameters, "proxyAuthHost", String.class);
+            String proxyAuthPassword = getParameter(parameters, "proxyAuthPassword", String.class);
+            String proxyAuthDomain = getParameter(parameters, "proxyAuthDomain", String.class);
+            String proxyAuthHost = getParameter(parameters, "proxyAuthHost", String.class);
             configurer = configureProxyAuth(configurer, proxyAuthMethod, proxyAuthUsername, proxyAuthPassword, proxyAuthDomain, proxyAuthHost, authMethods);
         } else if (httpConfiguration != null) {
             // or fallback to use component configuration
@@ -198,29 +211,24 @@ public class HttpComponent extends HttpCommonComponent {
         if (uri.startsWith("https:")) {
             addressUri = "https://" + remaining;
         }
-        Map<String, Object> httpClientParameters = new HashMap<String, Object>(parameters);
+        Map<String, Object> httpClientParameters = new HashMap<>(parameters);
         // must extract well known parameters before we create the endpoint
-        // TODO cmueller: remove the "httpBindingRef" look up in Camel 3.0
-        HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBindingRef", HttpBinding.class);
-        if (binding == null) {
-            // try without ref
-            binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
-        }
-        String proxyHost = getAndRemoveParameter(parameters, "proxyHost", String.class);
-        Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class);
-        String authMethodPriority = getAndRemoveParameter(parameters, "authMethodPriority", String.class);
+        HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
         HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
         UrlRewrite urlRewrite = resolveAndRemoveReferenceParameter(parameters, "urlRewrite", UrlRewrite.class);
         // http client can be configured from URI options
         HttpClientParams clientParams = new HttpClientParams();
-        IntrospectionSupport.setProperties(clientParams, parameters, "httpClient.");
+        Map<String, Object> httpClientOptions = IntrospectionSupport.extractProperties(parameters, "httpClient.");
+        IntrospectionSupport.setProperties(clientParams, httpClientOptions);
         // validate that we could resolve all httpClient. parameters as this component is lenient
-        validateParameters(uri, parameters, "httpClient.");       
+        validateParameters(uri, httpClientOptions, null);
         // http client can be configured from URI options
         HttpConnectionManagerParams connectionManagerParams = new HttpConnectionManagerParams();
         // setup the httpConnectionManagerParams
-        IntrospectionSupport.setProperties(connectionManagerParams, parameters, "httpConnectionManager.");
-        validateParameters(uri, parameters, "httpConnectionManager.");
+        Map<String, Object> httpConnectionManagerOptions = IntrospectionSupport.extractProperties(parameters, "httpConnectionManager.");
+        IntrospectionSupport.setProperties(connectionManagerParams, httpConnectionManagerOptions);
+        // validate that we could resolve all httpConnectionManager. parameters as this component is lenient
+        validateParameters(uri, httpConnectionManagerOptions, null);
         // make sure the component httpConnectionManager is take effect
         HttpConnectionManager thisHttpConnectionManager = httpConnectionManager;
         if (thisHttpConnectionManager == null) {
@@ -229,14 +237,21 @@ public class HttpComponent extends HttpCommonComponent {
             thisHttpConnectionManager.setParams(connectionManagerParams);
         }
         // create the configurer to use for this endpoint (authMethods contains the used methods created by the configurer)
-        final Set<AuthMethod> authMethods = new LinkedHashSet<AuthMethod>();
+        final Set<AuthMethod> authMethods = new LinkedHashSet<>();
         HttpClientConfigurer configurer = createHttpClientConfigurer(parameters, authMethods);
         addressUri = UnsafeUriCharactersEncoder.encodeHttpURI(addressUri);
         URI endpointUri = URISupport.createRemainingURI(new URI(addressUri), httpClientParameters);
        
         // create the endpoint and connectionManagerParams already be set
         HttpEndpoint endpoint = createHttpEndpoint(endpointUri.toString(), this, clientParams, thisHttpConnectionManager, configurer);
-        
+
+        // configure the endpoint with the common configuration from the component
+        if (getHttpConfiguration() != null) {
+            Map<String, Object> properties = new HashMap<>();
+            IntrospectionSupport.getProperties(getHttpConfiguration(), properties, null);
+            setProperties(endpoint, properties);
+        }
+
         if (headerFilterStrategy != null) {
             endpoint.setHeaderFilterStrategy(headerFilterStrategy);
         } else {
@@ -257,25 +272,6 @@ public class HttpComponent extends HttpCommonComponent {
         if (binding != null) {
             endpoint.setBinding(binding);
         }
-        if (proxyHost != null) {
-            endpoint.setProxyHost(proxyHost);
-            endpoint.setProxyPort(proxyPort);
-        } else if (httpConfiguration != null) {
-            endpoint.setProxyHost(httpConfiguration.getProxyHost());
-            endpoint.setProxyPort(httpConfiguration.getProxyPort());
-        }
-        if (authMethodPriority != null) {
-            endpoint.setAuthMethodPriority(authMethodPriority);
-        } else if (httpConfiguration != null && httpConfiguration.getAuthMethodPriority() != null) {
-            endpoint.setAuthMethodPriority(httpConfiguration.getAuthMethodPriority());
-        } else {
-            // no explicit auth method priority configured, so use convention over configuration
-            // and set priority based on auth method
-            if (!authMethods.isEmpty()) {
-                authMethodPriority = CollectionHelper.collectionAsCommaDelimitedString(authMethods);
-                endpoint.setAuthMethodPriority(authMethodPriority);
-            }
-        }
         setProperties(endpoint, parameters);
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(new URI(addressUri), parameters);
@@ -290,6 +286,7 @@ public class HttpComponent extends HttpCommonComponent {
             }
         }
         endpoint.setHttpUri(httpUri);
+        endpoint.setHttpClientOptions(httpClientOptions);
         return endpoint;
     }
 
@@ -297,7 +294,58 @@ public class HttpComponent extends HttpCommonComponent {
                                               HttpConnectionManager connectionManager, HttpClientConfigurer configurer) throws URISyntaxException {
         return new HttpEndpoint(uri, component, clientParams, connectionManager, configurer);
     }
-    
+
+    @Override
+    public Producer createProducer(CamelContext camelContext, String host,
+                                   String verb, String basePath, String uriTemplate, String queryParameters,
+                                   String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+
+        // avoid leading slash
+        basePath = FileUtil.stripLeadingSeparator(basePath);
+        uriTemplate = FileUtil.stripLeadingSeparator(uriTemplate);
+
+        // get the endpoint
+        String url = host;
+        if (!ObjectHelper.isEmpty(basePath)) {
+            url += "/" + basePath;
+        }
+        if (!ObjectHelper.isEmpty(uriTemplate)) {
+            url += "/" + uriTemplate;
+        }
+        
+        RestConfiguration config = configuration;
+        if (config == null) {
+            config = camelContext.getRestConfiguration("http", true);
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        // build query string, and append any endpoint configuration properties
+        if (config.getComponent() == null || config.getComponent().equals("http")) {
+            // setup endpoint options
+            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
+                map.putAll(config.getEndpointProperties());
+            }
+        }
+
+        // get the endpoint
+        String query = URISupport.createQueryString(map);
+        if (!query.isEmpty()) {
+            url = url + "?" + query;
+        }
+
+        HttpEndpoint endpoint = camelContext.getEndpoint(url, HttpEndpoint.class);
+        if (parameters != null && !parameters.isEmpty()) {
+            setProperties(camelContext, endpoint, parameters);
+        }
+        String path = uriTemplate != null ? uriTemplate : basePath;
+        endpoint.setHeaderFilterStrategy(new HttpRestHeaderFilterStrategy(path, queryParameters));
+
+        // the endpoint must be started before creating the producer
+        ServiceHelper.startService(endpoint);
+
+        return endpoint.createProducer();
+    }
+
     public HttpClientConfigurer getHttpClientConfigurer() {
         return httpClientConfigurer;
     }
@@ -336,5 +384,35 @@ public class HttpComponent extends HttpCommonComponent {
     public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
         // need to override and call super for component docs
         super.setHttpConfiguration(httpConfiguration);
+    }
+
+    /**
+     * Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object
+     * <p/>
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
+     * data from the request to Java and that can be a potential security risk.
+     */
+    @Override
+    public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
+        // need to override and call super for component docs
+        super.setAllowJavaSerializedObject(allowJavaSerializedObject);
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
+    @Override
+    public ComponentVerifier getVerifier() {
+        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 }

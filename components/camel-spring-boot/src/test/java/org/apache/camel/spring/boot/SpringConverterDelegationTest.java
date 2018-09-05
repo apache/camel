@@ -22,16 +22,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@DirtiesContext
+@RunWith(SpringRunner.class)
 @EnableAutoConfiguration
-@SpringApplicationConfiguration(classes = SpringConverterDelegationTest.class)
-@IntegrationTest
+@SpringBootTest(classes = SpringConverterDelegationTest.class, properties = "camel.springboot.typeConversion=true")
 public class SpringConverterDelegationTest extends Assert {
 
     @Autowired
@@ -43,21 +44,22 @@ public class SpringConverterDelegationTest extends Assert {
         assertEquals("converted!", result);
     }
 
-    @Bean
-    ConvertableConverter convertableConverter() {
-        return new ConvertableConverter();
+    @Configuration
+    public static class Config {
+        @Bean
+        ConvertableConverter convertableConverter() {
+            return new ConvertableConverter();
+        }
+
     }
 
-}
-
-class Convertable {
-}
-
-class ConvertableConverter implements Converter<Convertable, String> {
-
-    @Override
-    public String convert(Convertable source) {
-        return "converted!";
+    public static class Convertable {
     }
 
+    public static class ConvertableConverter implements Converter<Convertable, String> {
+        @Override
+        public String convert(Convertable source) {
+            return "converted!";
+        }
+    }
 }

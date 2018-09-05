@@ -57,7 +57,7 @@ public interface FactoryFinder {
     <T> List<T> newInstances(String key, Injector injector, Class<T> type) throws ClassNotFoundException, IOException;
 
     /**
-     * Finds the given factory class using the the key to lookup.
+     * Finds the given factory class using the key to lookup.
      *
      * @param key is the key to add to the path to find a text file containing the factory name
      * @return the factory class
@@ -67,7 +67,7 @@ public interface FactoryFinder {
     Class<?> findClass(String key) throws ClassNotFoundException, IOException;
 
     /**
-     * Finds the given factory class using the the key to lookup.
+     * Finds the given factory class using the key to lookup.
      *
      * @param key is the key to add to the path to find a text file containing the factory name
      * @param propertyPrefix prefix on key
@@ -78,7 +78,7 @@ public interface FactoryFinder {
     Class<?> findClass(String key, String propertyPrefix) throws ClassNotFoundException, IOException;
 
     /**
-     * Finds the given factory class using the the key to lookup.
+     * Finds the given factory class using the key to lookup.
      *
      * @param key is the key to add to the path to find a text file containing the factory name
      * @param propertyPrefix prefix on key

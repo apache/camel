@@ -28,11 +28,19 @@ import org.apache.chemistry.opencmis.client.api.QueryResult;
  * The CMIS Query producer.
  */
 public class CMISQueryProducer extends DefaultProducer {
-    private final CMISSessionFacade cmisSessionFacade;
 
-    public CMISQueryProducer(CMISEndpoint endpoint, CMISSessionFacade cmisSessionFacade) {
+    private final CMISSessionFacadeFactory sessionFacadeFactory;
+    private CMISSessionFacade sessionFacade;
+
+    public CMISQueryProducer(CMISEndpoint endpoint, CMISSessionFacadeFactory sessionFacadeFactory) {
         super(endpoint);
-        this.cmisSessionFacade = cmisSessionFacade;
+        this.sessionFacadeFactory = sessionFacadeFactory;
+        this.sessionFacade = null;
+    }
+
+    @Override
+    public CMISEndpoint getEndpoint() {
+        return (CMISEndpoint) super.getEndpoint();
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -46,8 +54,8 @@ public class CMISQueryProducer extends DefaultProducer {
         Boolean retrieveContent = getRetrieveContent(exchange);
         Integer readSize = getReadSize(exchange);
 
-        ItemIterable<QueryResult> itemIterable = cmisSessionFacade.executeQuery(query);
-        return cmisSessionFacade.retrieveResult(retrieveContent, readSize, itemIterable);
+        ItemIterable<QueryResult> itemIterable = getSessionFacade().executeQuery(query);
+        return getSessionFacade().retrieveResult(retrieveContent, readSize, itemIterable);
     }
 
     private Integer getReadSize(Exchange exchange) {
@@ -56,5 +64,14 @@ public class CMISQueryProducer extends DefaultProducer {
 
     private Boolean getRetrieveContent(Exchange exchange) {
         return exchange.getIn().getHeader(CamelCMISConstants.CAMEL_CMIS_RETRIEVE_CONTENT, Boolean.class);
+    }
+
+    private CMISSessionFacade getSessionFacade() throws Exception {
+        if (sessionFacade == null) {
+            sessionFacade = sessionFacadeFactory.create(getEndpoint());
+            sessionFacade.initSession();
+        }
+
+        return sessionFacade;
     }
 }

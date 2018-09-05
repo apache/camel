@@ -36,8 +36,8 @@ public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
             return;
         }
 
-        final Holder<byte[]> photo = new Holder<byte[]>("RequestFromCXF".getBytes("UTF-8"));
-        final Holder<Image> image = new Holder<Image>(getImage("/java.jpg"));
+        final Holder<byte[]> photo = new Holder<>("RequestFromCXF".getBytes("UTF-8"));
+        final Holder<Image> image = new Holder<>(getImage("/java.jpg"));
         
         Exchange exchange = context.createProducerTemplate().send(MTOM_ENDPOINT_URI_MTOM_ENABLE, new Processor() {
 

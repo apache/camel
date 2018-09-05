@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import javax.management.JMX;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -24,6 +26,7 @@ import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 
 public class ManagedCamelContextNewProxyTest extends ManagementTestSupport {
 
+    @Test
     public void testNewProxy() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

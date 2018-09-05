@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
@@ -30,6 +32,7 @@ import org.apache.camel.spi.RouteContext;
  */
 public class AdviceWithPolicyTest extends ContextTestSupport {
 
+    @Test
     public void testAdviceWithPolicy() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         route.adviceWith(context, new AdviceWithRouteBuilder() {

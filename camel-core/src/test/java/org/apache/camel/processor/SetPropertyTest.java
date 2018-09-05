@@ -16,6 +16,9 @@
  */
 
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.List;
 
@@ -29,6 +32,7 @@ public class SetPropertyTest extends ContextTestSupport {
     private String propertyName = "foo";
     private String expectedPropertyValue = "bar";
 
+    @Test
     public void testSetExchangePropertyMidRoute() throws Exception {
         end.expectedMessageCount(1);
 
@@ -46,7 +50,8 @@ public class SetPropertyTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         end = getMockEndpoint("mock:end");
     }

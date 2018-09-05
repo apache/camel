@@ -19,6 +19,8 @@ package org.apache.camel.component.aws.ec2;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.amazonaws.services.ec2.model.CreateTagsResult;
+import com.amazonaws.services.ec2.model.DeleteTagsResult;
 import com.amazonaws.services.ec2.model.DescribeInstanceStatusResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.InstanceStateName;
@@ -80,7 +82,7 @@ public class EC2ProducerTest extends CamelTestSupport {
                 exchange.getIn().setHeader(EC2Constants.INSTANCE_TYPE, InstanceType.T2Micro);
                 exchange.getIn().setHeader(EC2Constants.INSTANCE_MIN_COUNT, 1);
                 exchange.getIn().setHeader(EC2Constants.INSTANCE_MAX_COUNT, 1);
-                Collection<String> secGroups = new ArrayList<String>();
+                Collection<String> secGroups = new ArrayList<>();
                 secGroups.add("secgroup-1");
                 secGroups.add("secgroup-2");
                 exchange.getIn().setHeader(EC2Constants.INSTANCE_SECURITY_GROUPS, secGroups);
@@ -213,7 +215,7 @@ public class EC2ProducerTest extends CamelTestSupport {
     public void ec2CreateAndRunKoTest() throws Exception {
 
         mock.expectedMessageCount(0);
-        Exchange exchange = template.request("direct:createAndRun", new Processor() {
+        template.request("direct:createAndRun", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(EC2Constants.OPERATION, EC2Operations.createAndRunInstances);
@@ -235,7 +237,7 @@ public class EC2ProducerTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:start", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("test-1");
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
             }
@@ -256,7 +258,7 @@ public class EC2ProducerTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:stop", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("test-1");
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
             }
@@ -278,7 +280,7 @@ public class EC2ProducerTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:terminate", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("test-1");
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
             }
@@ -319,7 +321,7 @@ public class EC2ProducerTest extends CamelTestSupport {
             
             @Override
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("instance-1");
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
             }
@@ -358,7 +360,7 @@ public class EC2ProducerTest extends CamelTestSupport {
             
             @Override
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("test-1");
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
             }
@@ -375,11 +377,11 @@ public class EC2ProducerTest extends CamelTestSupport {
     public void ec2RebootInstancesTest() throws Exception {
 
         mock.expectedMessageCount(1);
-        Exchange exchange = template.request("direct:reboot", new Processor() {
+        template.request("direct:reboot", new Processor() {
             
             @Override
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("test-1");
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
             }
@@ -397,7 +399,7 @@ public class EC2ProducerTest extends CamelTestSupport {
             
             @Override
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("test-1");
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
             }
@@ -420,7 +422,7 @@ public class EC2ProducerTest extends CamelTestSupport {
             
             @Override
             public void process(Exchange exchange) throws Exception {
-                Collection l = new ArrayList();
+                Collection<String> l = new ArrayList<>();
                 l.add("test-1");
                 exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);   
             }
@@ -433,6 +435,54 @@ public class EC2ProducerTest extends CamelTestSupport {
         assertEquals(resultGet.getInstanceMonitorings().size(), 1);
         assertEquals(resultGet.getInstanceMonitorings().get(0).getInstanceId(), "test-1");
         assertEquals(resultGet.getInstanceMonitorings().get(0).getMonitoring().getState(), MonitoringState.Disabled.toString());
+    }
+    
+    @Test
+    public void ec2CreateTagsTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:createTags", new Processor() {
+            
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Collection<String> l = new ArrayList<>();
+                l.add("test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);
+                Collection<String> tags = new ArrayList<>();
+                tags.add("pacific");
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_TAGS, tags);
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+        
+        CreateTagsResult resultGet = (CreateTagsResult) exchange.getIn().getBody();
+        
+        assertNotNull(resultGet);
+    }
+    
+    @Test
+    public void ec2DeleteTagsTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:deleteTags", new Processor() {
+            
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Collection<String> l = new ArrayList<>();
+                l.add("test-1");
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_IDS, l);
+                Collection<String> tags = new ArrayList<>();
+                tags.add("pacific");
+                exchange.getIn().setHeader(EC2Constants.INSTANCES_TAGS, tags);
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+        
+        DeleteTagsResult resultGet = (DeleteTagsResult) exchange.getIn().getBody();
+        
+        assertNotNull(resultGet);
     }
     
     @Override
@@ -477,6 +527,12 @@ public class EC2ProducerTest extends CamelTestSupport {
                     .to("mock:result");
                 from("direct:unmonitor")
                     .to("aws-ec2://test?amazonEc2Client=#amazonEc2Client&operation=unmonitorInstances")
+                    .to("mock:result");
+                from("direct:createTags")
+                    .to("aws-ec2://test?amazonEc2Client=#amazonEc2Client&operation=createTags")
+                    .to("mock:result");
+                from("direct:deleteTags")
+                    .to("aws-ec2://test?amazonEc2Client=#amazonEc2Client&operation=deleteTags")
                     .to("mock:result");
             }
         };

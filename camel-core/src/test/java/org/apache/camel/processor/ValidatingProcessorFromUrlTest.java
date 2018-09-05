@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.net.URL;
 
@@ -27,7 +30,8 @@ import org.apache.camel.util.ObjectHelper;
 public class ValidatingProcessorFromUrlTest extends ValidatingProcessorTest {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         validating = new ValidatingProcessor();
@@ -39,6 +43,7 @@ public class ValidatingProcessorFromUrlTest extends ValidatingProcessorTest {
     }
 
     @Override
+    @Test
     public void testValidatingOptions() throws Exception {
         assertNotNull(validating.getErrorHandler());
         assertNotNull(validating.getSchema());

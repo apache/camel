@@ -72,6 +72,11 @@ public class EnrichDefinition extends NoOutputExpressionNode {
     }
     
     @Override
+    public String getShortName() {
+        return "enrich";
+    }
+
+    @Override
     public String getLabel() {
         return "enrich[" + getExpression() + "]";
     }
@@ -114,7 +119,7 @@ public class EnrichDefinition extends NoOutputExpressionNode {
             }
         }
 
-        if (strategy != null && strategy instanceof CamelContextAware) {
+        if (strategy instanceof CamelContextAware) {
             ((CamelContextAware) strategy).setCamelContext(routeContext.getCamelContext());
         }
 

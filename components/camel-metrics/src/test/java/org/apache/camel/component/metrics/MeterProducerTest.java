@@ -26,12 +26,13 @@ import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_METER_MARK;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
@@ -64,7 +65,6 @@ public class MeterProducerTest {
     public void setUp() throws Exception {
         producer = new MeterProducer(endpoint);
         inOrder = Mockito.inOrder(endpoint, registry, meter, exchange, in);
-        when(endpoint.getRegistry()).thenReturn(registry);
         when(registry.meter(METRICS_NAME)).thenReturn(meter);
         when(exchange.getIn()).thenReturn(in);
     }
@@ -72,7 +72,7 @@ public class MeterProducerTest {
     @Test
     public void testMeterProducer() throws Exception {
         assertThat(producer, is(notNullValue()));
-        assertThat(producer.getEndpoint().equals(endpoint), is(true));
+        assertThat(producer.getEndpoint(), is(equalTo(endpoint)));
     }
 
     @Test
@@ -103,25 +103,14 @@ public class MeterProducerTest {
 
     @Test
     public void testProcessMarkNotSet() throws Exception {
+        Object action = null;
         when(endpoint.getMark()).thenReturn(null);
-        when(in.getHeader(HEADER_METER_MARK, null, Long.class)).thenReturn(null);
         producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(registry, times(1)).meter(METRICS_NAME);
         inOrder.verify(endpoint, times(1)).getMark();
-        inOrder.verify(in, times(1)).getHeader(HEADER_METER_MARK, null, Long.class);
+        inOrder.verify(in, times(1)).getHeader(HEADER_METER_MARK, action, Long.class);
         inOrder.verify(meter, times(1)).mark();
         inOrder.verifyNoMoreInteractions();
     }
 
-    @Test
-    public void testProcessMarkNotSetOverrideByHeaderValue() throws Exception {
-        when(endpoint.getMark()).thenReturn(null);
-        when(in.getHeader(HEADER_METER_MARK, null, Long.class)).thenReturn(MARK);
-        producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
-        inOrder.verify(registry, times(1)).meter(METRICS_NAME);
-        inOrder.verify(endpoint, times(1)).getMark();
-        inOrder.verify(in, times(1)).getHeader(HEADER_METER_MARK, null, Long.class);
-        inOrder.verify(meter, times(1)).mark(MARK);
-        inOrder.verifyNoMoreInteractions();
-    }
 }

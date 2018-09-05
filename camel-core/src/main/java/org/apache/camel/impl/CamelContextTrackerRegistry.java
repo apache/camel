@@ -36,7 +36,7 @@ public final class CamelContextTrackerRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelContextTrackerRegistry.class);
 
-    private final Set<CamelContextTracker> trackers = new LinkedHashSet<CamelContextTracker>();
+    private final Set<CamelContextTracker> trackers = new LinkedHashSet<>();
 
     private CamelContextTrackerRegistry() {
         // hide constructor
@@ -53,7 +53,9 @@ public final class CamelContextTrackerRegistry {
     synchronized void contextCreated(CamelContext camelContext) {
         for (CamelContextTracker tracker : trackers) {
             try {
-                tracker.contextCreated(camelContext);
+                if (tracker.accept(camelContext)) {
+                    tracker.contextCreated(camelContext);
+                }
             } catch (Exception e) {
                 LOG.warn("Error calling CamelContext tracker. This exception is ignored.", e);
             }

@@ -18,22 +18,17 @@ package org.apache.camel.itest.karaf;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class CamelDisruptorTest extends AbstractFeatureTest {
+public class CamelDisruptorTest extends BaseKarafTest {
+
+    public static final String COMPONENT = extractName(CamelDisruptorTest.class);
 
     @Test
     public void test() throws Exception {
-        testComponent("disruptor");
-        testComponent("disruptor-vm");
-    }
-
-    @Configuration
-    public static Option[] configure() {
-        return configure("disruptor");
+        testComponent(COMPONENT, "disruptor");
+        testComponent(COMPONENT, "disruptor-vm");
     }
 
 }

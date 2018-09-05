@@ -1,0 +1,28 @@
+{
+  "baseScheme" : "rest-swagger",
+  "baseGroupId" : "org.apache.camel",
+  "baseArtifactId" : "camel-rest-swagger",
+  "baseVersion" : "2.22.0-SNAPSHOT",
+  "baseJavaType" : "org.apache.camel.component.rest.swagger.RestSwaggerComponent",
+  "name" : "PetStore",
+  "scheme" : "petstore",
+  "javaType" : "org.foo.connector.PetStoreComponent",
+  "groupId" : "org.foo",
+  "artifactId" : "petstore-connector",
+  "version" : "2.22.0-SNAPSHOT",
+  "description" : "Pets in the store",
+  "labels" : [ "api", "rest" ],
+  "pattern" : "From",
+  "scheduler" : "timer",
+  "inputDataType" : "none",
+  "outputDataType" : "json",
+  "componentOptions" : [ "specificationUri" ],
+  "globalOptions" : [ "specificationUri" ],
+  "endpointOptions" : [ "operationId", "schedulerPeriod" ],
+  "componentValues" : {
+    "specificationUri" : "http://petstore.swagger.io/v2/swagger.json"
+  },
+  "endpointValues" : {
+    "schedulerPeriod" : 5000
+  }
+}

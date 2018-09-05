@@ -28,7 +28,7 @@ public class FileConsumerPreMoveCopyAndDeleteOnRenameFailFalseTest extends FileC
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/premove?preMove=work/work-${file:name}&initialDelay=0&delay=100&copyAndDeleteOnRenameFail=false")
+                from("file://target/premove?preMove=work/work-${file:name}&initialDelay=0&delay=10&copyAndDeleteOnRenameFail=false")
                     .process(new MyPreMoveCheckerProcessor())
                     .to("mock:result");
             }

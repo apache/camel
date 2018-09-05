@@ -20,23 +20,34 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.ObjectHelper;
 
-/**
- * Defines the <a href="http://aws.amazon.com/cloudwatch/">AWS CloudWatch Component</a>
- */
-public class CwComponent extends UriEndpointComponent {
+public class CwComponent extends DefaultComponent {
 
+    @Metadata
+    private String accessKey;
+    @Metadata
+    private String secretKey;
+    @Metadata
+    private String region;
+    @Metadata(label = "advanced")    
+    private CwConfiguration configuration;
+    
     public CwComponent() {
-        super(CwEndpoint.class);
+        this(null);
     }
 
     public CwComponent(CamelContext context) {
-        super(context, CwEndpoint.class);
+        super(context);
+        
+        this.configuration = new CwConfiguration();
+        registerExtension(new CwComponentVerifierExtension());
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        CwConfiguration configuration = new CwConfiguration();
+        CwConfiguration configuration = this.configuration.copy();
         setProperties(configuration, parameters);
 
         if (remaining == null || remaining.trim().length() == 0) {
@@ -44,11 +55,64 @@ public class CwComponent extends UriEndpointComponent {
         }
         configuration.setNamespace(remaining);
 
+        if (ObjectHelper.isEmpty(configuration.getAccessKey())) {
+            setAccessKey(accessKey);
+        }
+        if (ObjectHelper.isEmpty(configuration.getSecretKey())) {
+            setSecretKey(secretKey);
+        }
+        if (ObjectHelper.isEmpty(configuration.getRegion())) {
+            setRegion(region);
+        }
         if (configuration.getAmazonCwClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonCwClient or accessKey and secretKey must be specified");
         }
 
         CwEndpoint endpoint = new CwEndpoint(uri, this, configuration);
         return endpoint;
+    }
+    
+    public CwConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    /**
+     * The AWS CW default configuration
+     */
+    public void setConfiguration(CwConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    public String getAccessKey() {
+        return configuration.getAccessKey();
+    }
+
+    /**
+     * Amazon AWS Access Key
+     */
+    public void setAccessKey(String accessKey) {
+        configuration.setAccessKey(accessKey);
+    }
+
+    public String getSecretKey() {
+        return configuration.getSecretKey();
+    }
+
+    /**
+     * Amazon AWS Secret Key
+     */
+    public void setSecretKey(String secretKey) {
+        configuration.setSecretKey(secretKey);
+    }
+    
+    /**
+     * The region in which CW client needs to work
+     */
+    public String getRegion() {
+        return configuration.getRegion();
+    }
+
+    public void setRegion(String region) {
+        configuration.setRegion(region);
     }
 }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ResequenceStreamNotIgnoreInvalidExchangesTest extends ContextTestSupport {
 
+    @Test
     public void testBadFirstMessage() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("B", "C", "D");
 
@@ -41,6 +44,7 @@ public class ResequenceStreamNotIgnoreInvalidExchangesTest extends ContextTestSu
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBadSecondMessage() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("B", "C", "D");
 
@@ -57,6 +61,7 @@ public class ResequenceStreamNotIgnoreInvalidExchangesTest extends ContextTestSu
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBadThirdMessage() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("B", "C", "D");
 
@@ -73,6 +78,7 @@ public class ResequenceStreamNotIgnoreInvalidExchangesTest extends ContextTestSu
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBadForthMessage() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("B", "C", "D");
 
@@ -95,7 +101,7 @@ public class ResequenceStreamNotIgnoreInvalidExchangesTest extends ContextTestSu
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .resequence(header("seqno")).stream().timeout(1000)
+                    .resequence(header("seqno")).stream().timeout(50).deliveryAttemptInterval(10)
                     .to("mock:result");
             }
         };

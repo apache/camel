@@ -29,6 +29,7 @@ import org.apache.avro.io.Decoder;
 import org.apache.avro.io.DecoderFactory;
 import org.apache.avro.io.Encoder;
 import org.apache.avro.io.EncoderFactory;
+import org.apache.avro.specific.SpecificData;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificDatumWriter;
 import org.apache.camel.CamelContext;
@@ -36,10 +37,11 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
-public class AvroDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
+public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final String GENERIC_CONTAINER_CLASSNAME = GenericContainer.class.getName();
     private CamelContext camelContext;
@@ -52,6 +54,11 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, CamelC
 
     public AvroDataFormat(Schema schema) {
         this.schema = schema;
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "avro";
     }
 
     public CamelContext getCamelContext() {
@@ -119,7 +126,7 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, CamelC
         // the schema should be from the graph class name
         Schema useSchema = actualSchema != null ? actualSchema : loadSchema(graph.getClass().getName());
 
-        DatumWriter<Object> datum = new SpecificDatumWriter<Object>(useSchema);
+        DatumWriter<Object> datum = new SpecificDatumWriter<>(useSchema);
         Encoder encoder = EncoderFactory.get().binaryEncoder(outputStream, null);
         datum.write(graph, encoder);
         encoder.flush();
@@ -128,7 +135,15 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, CamelC
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
         ObjectHelper.notNull(actualSchema, "schema", this);
 
-        DatumReader<GenericRecord> reader = new SpecificDatumReader<GenericRecord>(actualSchema);
+        ClassLoader classLoader = null;
+        Class<?> clazz = camelContext.getClassResolver().resolveClass(actualSchema.getFullName());
+
+        if (clazz != null) {
+            classLoader = clazz.getClassLoader();
+        }
+        SpecificData specificData = new SpecificDataNoCache(classLoader);
+        DatumReader<GenericRecord> reader = new SpecificDatumReader<>(null, null, specificData);
+        reader.setSchema(actualSchema);
         Decoder decoder = DecoderFactory.get().binaryDecoder(inputStream, null);
         Object result = reader.read(null, decoder);
         return result;

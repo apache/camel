@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.async;
 
+import org.junit.Test;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.ContextTestSupport;
@@ -44,6 +46,7 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:foo").expectedHeaderReceived("foo", "was wrapped");

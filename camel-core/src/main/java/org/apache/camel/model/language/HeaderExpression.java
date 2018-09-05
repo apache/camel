@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * An expression which extracts the named exchange header
+ * To use a Camel Message header in expressions or predicates.
  *
  * @version 
  */
-@Metadata(label = "language", title = "Header")
+@Metadata(firstVersion = "1.5.0", label = "language,core", title = "Header")
 @XmlRootElement(name = "header")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HeaderExpression extends ExpressionDefinition {

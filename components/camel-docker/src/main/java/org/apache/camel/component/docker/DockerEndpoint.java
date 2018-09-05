@@ -22,15 +22,17 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.docker.consumer.DockerEventsConsumer;
 import org.apache.camel.component.docker.consumer.DockerStatsConsumer;
 import org.apache.camel.component.docker.exception.DockerException;
+import org.apache.camel.component.docker.producer.AsyncDockerProducer;
 import org.apache.camel.component.docker.producer.DockerProducer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * Represents a Docker endpoint.
+ * The docker component is used for managing Docker containers.
  */
-@UriEndpoint(scheme = "docker", title = "Docker", syntax = "docker:operation", consumerClass = DockerEventsConsumer.class, label = "container,cloud,platform")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "docker", title = "Docker", syntax = "docker:operation",
+        label = "container,cloud,paas", lenientProperties = true)
 public class DockerEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -48,18 +50,23 @@ public class DockerEndpoint extends DefaultEndpoint {
         super(endpointUri);
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         DockerOperation operation = configuration.getOperation();
 
         if (operation != null && operation.canProduce()) {
-            return new DockerProducer(this);
+            if (operation.isAsync()) {
+                return new AsyncDockerProducer(this);
+            } else {
+                return new DockerProducer(this);
+            }
         } else {
             throw new DockerException(operation + " is not a valid producer operation");
         }
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-
         DockerOperation operation = configuration.getOperation();
 
         switch (operation) {
@@ -71,7 +78,8 @@ public class DockerEndpoint extends DefaultEndpoint {
             throw new DockerException(operation + " is not a valid consumer operation");
         }
     }
-
+    
+    @Override
     public boolean isSingleton() {
         return true;
     }
@@ -84,6 +92,7 @@ public class DockerEndpoint extends DefaultEndpoint {
     public boolean isLenientProperties() {
         return true;
     }
+
 
 
 }

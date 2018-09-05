@@ -19,7 +19,7 @@ package org.apache.camel.component.direct;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
-import org.apache.camel.SuspendableService;
+import org.apache.camel.Suspendable;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.spi.ShutdownAware;
 
@@ -28,7 +28,7 @@ import org.apache.camel.spi.ShutdownAware;
  *
  * @version 
  */
-public class DirectConsumer extends DefaultConsumer implements ShutdownAware, SuspendableService {
+public class DirectConsumer extends DefaultConsumer implements ShutdownAware, Suspendable {
 
     private DirectEndpoint endpoint;
 
@@ -44,19 +44,14 @@ public class DirectConsumer extends DefaultConsumer implements ShutdownAware, Su
 
     @Override
     protected void doStart() throws Exception {
-        // add consumer to endpoint
-        boolean existing = this == endpoint.getConsumer();
-        if (!existing && endpoint.hasConsumer(this)) {
-            throw new IllegalArgumentException("Cannot add a 2nd consumer to the same endpoint. Endpoint " + endpoint + " only allows one consumer.");
-        }
-        if (!existing) {
-            endpoint.addConsumer(this);
-        }
+        super.doStart();
+        endpoint.addConsumer(this);
     }
 
     @Override
     protected void doStop() throws Exception {
         endpoint.removeConsumer(this);
+        super.doStop();
     }
 
     @Override
@@ -67,7 +62,7 @@ public class DirectConsumer extends DefaultConsumer implements ShutdownAware, Su
     @Override
     protected void doResume() throws Exception {
         // resume by using the start logic
-        doStart();
+        endpoint.addConsumer(this);
     }
 
     public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
@@ -82,7 +77,7 @@ public class DirectConsumer extends DefaultConsumer implements ShutdownAware, Su
         return 0;
     }
 
-    public void prepareShutdown(boolean forced) {
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
         // noop
     }
 }

@@ -25,14 +25,22 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import facebook4j.FacebookException;
 import facebook4j.api.SearchMethods;
+
+import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultPollingConsumerPollStrategy;
+import org.apache.camel.impl.ScheduledPollConsumer;
 import org.junit.Test;
 
 public class FacebookComponentConsumerTest extends CamelFacebookTestSupport {
+    public static final String APACHE_FOUNDATION_PAGE_ID = "6538157161";
 
-    private final Set<String> searchNames = new HashSet<String>();
+    private final Set<String> searchNames = new HashSet<>();
     private List<String> excludedNames;
 
     public FacebookComponentConsumerTest() throws Exception {
@@ -44,7 +52,7 @@ public class FacebookComponentConsumerTest extends CamelFacebookTestSupport {
             }
         }
 
-        excludedNames = Arrays.asList("places", "users", "search");
+        excludedNames = Arrays.asList("places", "users", "search", "pages", "searchPosts");
     }
 
     @Test
@@ -75,17 +83,44 @@ public class FacebookComponentConsumerTest extends CamelFacebookTestSupport {
     }
 
     @Test
-    public void testGetPosts() throws Exception {
-        final MockEndpoint mock = getMockEndpoint("mock:testGetPosts");
+    public void testPage() throws Exception {
+        final MockEndpoint mock = getMockEndpoint("mock:testPage");
         mock.expectedMinimumMessageCount(1);
         mock.assertIsSatisfied();
+    }
+
+    @Override
+    protected void doPostSetup() throws Exception {
+        ignoreDeprecatedApiError();
+    }
+
+    private void ignoreDeprecatedApiError() {
+        for (final Route route : context().getRoutes()) {
+            ((ScheduledPollConsumer)route.getConsumer()).setPollStrategy(new DefaultPollingConsumerPollStrategy() {
+                @Override
+                public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) throws Exception {
+                    if (e.getCause() instanceof FacebookException) {
+                        FacebookException facebookException = (FacebookException) e.getCause();
+                        if (facebookException.getErrorCode() == 11 || facebookException.getErrorCode() == 12 || facebookException.getErrorCode() == 1) {
+                            context().stopRoute(route.getId());
+                            String method = ((FacebookEndpoint) route.getEndpoint()).getMethod();
+                            MockEndpoint mock = getMockEndpoint("mock:consumeQueryResult" + method);
+                            mock.expectedMinimumMessageCount(0);
+                            MockEndpoint mock2 = getMockEndpoint("mock:consumeResult" + method);
+                            mock2.expectedMinimumMessageCount(0);
+                            log.warn("Ignoring failed Facebook deprecated API call", facebookException);
+                        }
+                    }
+                    return super.rollback(consumer, endpoint, retryCounter, e);
+                }
+            });
+        }
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-
                 // start with a 30 day window for the first delayed poll
                 String since = "RAW(" + new SimpleDateFormat(FacebookConstants.FACEBOOK_DATE_FORMAT).format(
                     new Date(System.currentTimeMillis() - TimeUnit.MILLISECONDS.convert(30, TimeUnit.DAYS))) + ")";
@@ -110,8 +145,8 @@ public class FacebookComponentConsumerTest extends CamelFacebookTestSupport {
                 // test unix timestamp support
                 long unixSince =  TimeUnit.SECONDS.convert(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
                     - TimeUnit.SECONDS.convert(30, TimeUnit.DAYS);
-                from("facebook://posts?reading.limit=10&reading.since=" + unixSince + "&" + getOauthParams())
-                        .to("mock:testGetPosts");
+                from("facebook://page?pageId=" + APACHE_FOUNDATION_PAGE_ID + "&reading.limit=10&reading.since=" + unixSince + "&" + getOauthParams())
+                        .to("mock:testPage");
 
                 // TODO add tests for the rest of the supported methods
             }

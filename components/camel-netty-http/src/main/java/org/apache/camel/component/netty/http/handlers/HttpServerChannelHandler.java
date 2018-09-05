@@ -35,6 +35,7 @@ import org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration;
 import org.apache.camel.component.netty.http.SecurityAuthenticator;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.ChannelHandlerContext;
@@ -108,9 +109,10 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
             response.setChunked(false);
             response.headers().set("Allow", s);
-            response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+            // do not include content-type as that would indicate to the caller that we can only do text/plain
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
-            messageEvent.getChannel().write(response);
+            messageEvent.getChannel().write(response).syncUninterruptibly();
+            messageEvent.getChannel().close();
             return;
         }
         if (consumer.getEndpoint().getHttpMethodRestrict() != null
@@ -153,7 +155,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
             // drop parameters from url
             if (url.contains("?")) {
-                url = ObjectHelper.before(url, "?");
+                url = StringHelper.before(url, "?");
             }
 
             // we need the relative path without the hostname and port
@@ -253,16 +255,16 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
     protected static HttpPrincipal extractBasicAuthSubject(HttpRequest request) {
         String auth = request.headers().get("Authorization");
         if (auth != null) {
-            String constraint = ObjectHelper.before(auth, " ");
+            String constraint = StringHelper.before(auth, " ");
             if (constraint != null) {
                 if ("Basic".equalsIgnoreCase(constraint.trim())) {
-                    String decoded = ObjectHelper.after(auth, " ");
+                    String decoded = StringHelper.after(auth, " ");
                     // the decoded part is base64 encoded, so we need to decode that
                     ChannelBuffer buf = ChannelBuffers.copiedBuffer(decoded.getBytes());
                     ChannelBuffer out = Base64.decode(buf);
                     String userAndPw = out.toString(Charset.defaultCharset());
-                    String username = ObjectHelper.before(userAndPw, ":");
-                    String password = ObjectHelper.after(userAndPw, ":");
+                    String username = StringHelper.before(userAndPw, ":");
+                    String password = StringHelper.after(userAndPw, ":");
                     HttpPrincipal principal = new HttpPrincipal(username, password);
 
                     LOG.debug("Extracted Basic Auth principal from HTTP header: {}", principal);
@@ -314,7 +316,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             if (exceptionEvent.getCause() instanceof ClosedChannelException) {
                 LOG.debug("Channel already closed. Ignoring this exception.");
             } else {
-                LOG.warn("Closing channel as an exception was thrown from Netty", exceptionEvent.getCause());
+                LOG.debug("Closing channel as an exception was thrown from Netty", exceptionEvent.getCause());
                 // close channel in case an exception was thrown
                 NettyHelper.close(exceptionEvent.getChannel());
             }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model.dataformat;
 
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,14 +27,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * JAXB data format
+ * JAXB data format uses the JAXB2 XML marshalling standard to unmarshal an XML payload into Java objects or to marshal Java objects into an XML payload.
  *
  * @version 
  */
-@Metadata(label = "dataformat,transformation", title = "JAXB")
+@Metadata(firstVersion = "1.0.0", label = "dataformat,transformation,xml", title = "JAXB")
 @XmlRootElement(name = "jaxb")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxbDataFormat extends DataFormatDefinition {
@@ -41,8 +43,12 @@ public class JaxbDataFormat extends DataFormatDefinition {
     private String contextPath;
     @XmlAttribute
     private String schema;
+    @XmlAttribute @Metadata(enums = "0,1,2", defaultValue = "0")
+    private Integer schemaSeverityLevel;
     @XmlAttribute
     private Boolean prettyPrint;
+    @XmlAttribute
+    private Boolean objectFactory;
     @XmlAttribute
     private Boolean ignoreJAXBElement;
     @XmlAttribute
@@ -60,10 +66,14 @@ public class JaxbDataFormat extends DataFormatDefinition {
     private String partNamespace;
     @XmlAttribute
     private String namespacePrefixRef;
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "advanced")
     private String xmlStreamWriterWrapper;
     @XmlAttribute
     private String schemaLocation;
+    @XmlAttribute
+    private String noNamespaceSchemaLocation;
+    @XmlAttribute @Metadata(label = "advanced")
+    private String jaxbProviderProperties;
 
     public JaxbDataFormat() {
         super("jaxb");
@@ -98,6 +108,20 @@ public class JaxbDataFormat extends DataFormatDefinition {
         this.schema = schema;
     }
 
+    public Integer getSchemaSeverityLevel() {
+        return schemaSeverityLevel;
+    }
+
+    /**
+     * Sets the schema severity level to use when validating against a schema.
+     * This level determines the minimum severity error that triggers JAXB to stop continue parsing.
+     * The default value of 0 (warning) means that any error (warning, error or fatal error) will trigger
+     * JAXB to stop. There are the following three levels: 0=warning, 1=error, 2=fatal error.
+     */
+    public void setSchemaSeverityLevel(Integer schemaSeverityLevel) {
+        this.schemaSeverityLevel = schemaSeverityLevel;
+    }
+
     public Boolean getPrettyPrint() {
         return prettyPrint;
     }
@@ -109,6 +133,18 @@ public class JaxbDataFormat extends DataFormatDefinition {
      */
     public void setPrettyPrint(Boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
+    }
+
+    public Boolean getObjectFactory() {
+        return objectFactory;
+    }
+
+    /**
+     * Whether to allow using ObjectFactory classes to create the POJO classes during marshalling.
+     * This only applies to POJO classes that has not been annotated with JAXB and providing jaxb.index descriptor files.
+     */
+    public void setObjectFactory(Boolean objectFactory) {
+        this.objectFactory = objectFactory;
     }
 
     public Boolean getIgnoreJAXBElement() {
@@ -232,6 +268,29 @@ public class JaxbDataFormat extends DataFormatDefinition {
         this.schemaLocation = schemaLocation;
     }
 
+    public String getNoNamespaceSchemaLocation() {
+        return noNamespaceSchemaLocation;
+    }
+
+    /**
+     * To define the location of the namespaceless schema
+     */
+    public void setNoNamespaceSchemaLocation(String schemaLocation) {
+        this.noNamespaceSchemaLocation = schemaLocation;
+    }
+
+    public String getJaxbProviderProperties() {
+        return jaxbProviderProperties;
+    }
+
+    /**
+     * Refers to a custom java.util.Map to lookup in the registry containing custom JAXB provider properties
+     * to be used with the JAXB marshaller.
+     */
+    public void setJaxbProviderProperties(String jaxbProviderProperties) {
+        this.jaxbProviderProperties = jaxbProviderProperties;
+    }
+
     @Override
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         Boolean answer = ObjectHelper.toBoolean(getPrettyPrint());
@@ -239,6 +298,12 @@ public class JaxbDataFormat extends DataFormatDefinition {
             setProperty(camelContext, dataFormat, "prettyPrint", Boolean.FALSE);
         } else { // the default value is true
             setProperty(camelContext, dataFormat, "prettyPrint", Boolean.TRUE);
+        }
+        answer = ObjectHelper.toBoolean(getObjectFactory());
+        if (answer != null && !answer) {
+            setProperty(camelContext, dataFormat, "objectFactory", Boolean.FALSE);
+        } else { // the default value is true
+            setProperty(camelContext, dataFormat, "objectFactory", Boolean.TRUE);
         }
         answer = ObjectHelper.toBoolean(getIgnoreJAXBElement());
         if (answer != null && !answer) {
@@ -264,6 +329,8 @@ public class JaxbDataFormat extends DataFormatDefinition {
         } else { // the default value is false
             setProperty(camelContext, dataFormat, "fragment", Boolean.FALSE);
         }
+
+        setProperty(camelContext, dataFormat, "contextPath", contextPath);
         if (partClass != null) {
             setProperty(camelContext, dataFormat, "partClass", partClass);
         }
@@ -276,15 +343,24 @@ public class JaxbDataFormat extends DataFormatDefinition {
         if (namespacePrefixRef != null) {
             setProperty(camelContext, dataFormat, "namespacePrefixRef", namespacePrefixRef);
         }
-        setProperty(camelContext, dataFormat, "contextPath", contextPath);
         if (schema != null) {
             setProperty(camelContext, dataFormat, "schema", schema);
+        }
+        if (schemaSeverityLevel != null) {
+            setProperty(camelContext, dataFormat, "schemaSeverityLevel", schemaSeverityLevel);
         }
         if (xmlStreamWriterWrapper != null) {
             setProperty(camelContext, dataFormat, "xmlStreamWriterWrapper", xmlStreamWriterWrapper);
         }
         if (schemaLocation != null) {
             setProperty(camelContext, dataFormat, "schemaLocation", schemaLocation);
+        }
+        if (noNamespaceSchemaLocation != null) {
+            setProperty(camelContext, dataFormat, "noNamespaceSchemaLocation", noNamespaceSchemaLocation);
+        }
+        if (jaxbProviderProperties != null) {
+            Map map = CamelContextHelper.mandatoryLookup(camelContext, jaxbProviderProperties, Map.class);
+            setProperty(camelContext, dataFormat, "jaxbProviderProperties", map);
         }
     }
 }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.routingslip;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -25,6 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 
 public class RoutingSlipPOJOTest extends ContextTestSupport {
     
+    @Test
     public void testRoutingSlipPOJO() throws Exception {
         MockEndpoint foo = getMockEndpoint("mock:foo");
         MockEndpoint result = getMockEndpoint("mock:result");

@@ -16,17 +16,20 @@
  */
 package org.apache.camel.component.rabbitmq;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.LongString;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +37,8 @@ import org.slf4j.LoggerFactory;
 public class RabbitMQMessageConverter {
     protected static final Logger LOG = LoggerFactory.getLogger(RabbitMQMessageConverter.class);
 
+    private boolean allowNullHeaders;
+    
     /**
      * Will take an {@link Exchange} and add header values back to the {@link Exchange#getIn()}
      */
@@ -75,6 +80,9 @@ public class RabbitMQMessageConverter {
         if (properties.getUserId() != null) {
             exchange.getIn().setHeader(RabbitMQConstants.USERID, properties.getUserId());
         }
+        if (properties.getDeliveryMode() != null) {
+            exchange.getIn().setHeader(RabbitMQConstants.DELIVERY_MODE, properties.getDeliveryMode());
+        }
     }
 
     public AMQP.BasicProperties.Builder buildProperties(Exchange exchange) {
@@ -87,89 +95,87 @@ public class RabbitMQMessageConverter {
             msg = exchange.getIn();
         }
 
-        final Object contentType = msg.getHeader(RabbitMQConstants.CONTENT_TYPE);
+        final Object contentType = msg.removeHeader(RabbitMQConstants.CONTENT_TYPE);
         if (contentType != null) {
             properties.contentType(contentType.toString());
         }
 
-        final Object priority = msg.getHeader(RabbitMQConstants.PRIORITY);
+        final Object priority = msg.removeHeader(RabbitMQConstants.PRIORITY);
         if (priority != null) {
             properties.priority(Integer.parseInt(priority.toString()));
         }
 
-        final Object messageId = msg.getHeader(RabbitMQConstants.MESSAGE_ID);
+        final Object messageId = msg.removeHeader(RabbitMQConstants.MESSAGE_ID);
         if (messageId != null) {
             properties.messageId(messageId.toString());
         }
 
-        final Object clusterId = msg.getHeader(RabbitMQConstants.CLUSTERID);
+        final Object clusterId = msg.removeHeader(RabbitMQConstants.CLUSTERID);
         if (clusterId != null) {
             properties.clusterId(clusterId.toString());
         }
 
-        final Object replyTo = msg.getHeader(RabbitMQConstants.REPLY_TO);
+        final Object replyTo = msg.removeHeader(RabbitMQConstants.REPLY_TO);
         if (replyTo != null) {
             properties.replyTo(replyTo.toString());
         }
 
-        final Object correlationId = msg.getHeader(RabbitMQConstants.CORRELATIONID);
+        final Object correlationId = msg.removeHeader(RabbitMQConstants.CORRELATIONID);
         if (correlationId != null) {
             properties.correlationId(correlationId.toString());
         }
 
-        final Object deliveryMode = msg.getHeader(RabbitMQConstants.DELIVERY_MODE);
+        final Object deliveryMode = msg.removeHeader(RabbitMQConstants.DELIVERY_MODE);
         if (deliveryMode != null) {
             properties.deliveryMode(Integer.parseInt(deliveryMode.toString()));
         }
 
-        final Object userId = msg.getHeader(RabbitMQConstants.USERID);
+        final Object userId = msg.removeHeader(RabbitMQConstants.USERID);
         if (userId != null) {
             properties.userId(userId.toString());
         }
 
-        final Object type = msg.getHeader(RabbitMQConstants.TYPE);
+        final Object type = msg.removeHeader(RabbitMQConstants.TYPE);
         if (type != null) {
             properties.type(type.toString());
         }
 
-        final Object contentEncoding = msg.getHeader(RabbitMQConstants.CONTENT_ENCODING);
+        final Object contentEncoding = msg.removeHeader(RabbitMQConstants.CONTENT_ENCODING);
         if (contentEncoding != null) {
             properties.contentEncoding(contentEncoding.toString());
         }
 
-        final Object expiration = msg.getHeader(RabbitMQConstants.EXPIRATION);
+        final Object expiration = msg.removeHeader(RabbitMQConstants.EXPIRATION);
         if (expiration != null) {
             properties.expiration(expiration.toString());
         }
 
-        final Object appId = msg.getHeader(RabbitMQConstants.APP_ID);
+        final Object appId = msg.removeHeader(RabbitMQConstants.APP_ID);
         if (appId != null) {
             properties.appId(appId.toString());
         }
 
-        final Object timestamp = msg.getHeader(RabbitMQConstants.TIMESTAMP);
+        final Object timestamp = msg.removeHeader(RabbitMQConstants.TIMESTAMP);
         if (timestamp != null) {
-            properties.timestamp(new Date(Long.parseLong(timestamp.toString())));
+            properties.timestamp(convertTimestamp(timestamp));
         }
 
         final Map<String, Object> headers = msg.getHeaders();
-        Map<String, Object> filteredHeaders = new HashMap<String, Object>();
+        Map<String, Object> filteredHeaders = new HashMap<>();
 
         // TODO: Add support for a HeaderFilterStrategy. See: org.apache.camel.component.jms.JmsBinding#shouldOutputHeader
         for (Map.Entry<String, Object> header : headers.entrySet()) {
-
             // filter header values.
             Object value = getValidRabbitMQHeaderValue(header.getValue());
-            if (value != null) {
+            
+            if (value != null || isAllowNullHeaders()) {
                 filteredHeaders.put(header.getKey(), header.getValue());
             } else if (LOG.isDebugEnabled()) {
                 if (header.getValue() == null) {
                     LOG.debug("Ignoring header: {} with null value", header.getKey());
                 } else {
                     LOG.debug("Ignoring header: {} of class: {} with value: {}",
-                                    new Object[] {
-                                                    header.getKey(), ObjectHelper.classCanonicalName(header.getValue()), header.getValue()
-                                    });
+                              header.getKey(), ObjectHelper.classCanonicalName(header.getValue()), header.getValue());
                 }
             }
         }
@@ -177,6 +183,13 @@ public class RabbitMQMessageConverter {
         properties.headers(filteredHeaders);
 
         return properties;
+    }
+
+    private Date convertTimestamp(Object timestamp) {
+        if (timestamp instanceof Date) {
+            return (Date)timestamp;
+        }
+        return new Date(Long.parseLong(timestamp.toString()));
     }
 
     /**
@@ -192,8 +205,6 @@ public class RabbitMQMessageConverter {
     private Object getValidRabbitMQHeaderValue(Object headerValue) {
         if (headerValue instanceof String) {
             return headerValue;
-        } else if (headerValue instanceof BigDecimal) {
-            return headerValue;
         } else if (headerValue instanceof Number) {
             return headerValue;
         } else if (headerValue instanceof Boolean) {
@@ -204,18 +215,105 @@ public class RabbitMQMessageConverter {
             return headerValue;
         } else if (headerValue instanceof LongString) {
             return headerValue;
-        } else if (headerValue instanceof Timestamp) {
-            return headerValue;
-        } else if (headerValue instanceof Byte) {
-            return headerValue;
-        } else if (headerValue instanceof Double) {
-            return headerValue;
-        } else if (headerValue instanceof Float) {
-            return headerValue;
-        } else if (headerValue instanceof Long) {
-            return headerValue;
         }
 
         return null;
+    }
+
+    public void populateRabbitExchange(Exchange camelExchange, Envelope envelope, AMQP.BasicProperties properties, byte[] body, final boolean out) {
+        Message message = resolveMessageFrom(camelExchange, out);
+        populateMessageHeaders(message, envelope, properties);
+        populateMessageBody(message, camelExchange, properties, body);
+    }
+
+    private Message resolveMessageFrom(final Exchange camelExchange, final boolean out) {
+        Message message;
+        if (out) {
+            // use OUT message
+            message = camelExchange.getOut();
+        }  else {
+            if (camelExchange.getIn() != null) {
+                // Use the existing message so we keep the headers
+                message = camelExchange.getIn();
+            } else {
+                message = new DefaultMessage(camelExchange.getContext());
+                camelExchange.setIn(message);
+            }
+        }
+        return message;
+    }
+
+    private void populateMessageHeaders(final Message message, final Envelope envelope, final AMQP.BasicProperties properties) {
+        populateRoutingInfoHeaders(message, envelope);
+        populateMessageHeadersFromRabbitMQHeaders(message, properties);
+    }
+
+    private void populateRoutingInfoHeaders(final Message message, final Envelope envelope) {
+        if (envelope != null) {
+            message.setHeader(RabbitMQConstants.ROUTING_KEY, envelope.getRoutingKey());
+            message.setHeader(RabbitMQConstants.EXCHANGE_NAME, envelope.getExchange());
+            message.setHeader(RabbitMQConstants.DELIVERY_TAG, envelope.getDeliveryTag());
+            message.setHeader(RabbitMQConstants.REDELIVERY_TAG, envelope.isRedeliver());
+        }
+    }
+
+    private void populateMessageHeadersFromRabbitMQHeaders(final Message message, final AMQP.BasicProperties properties) {
+        Map<String, Object> headers = properties.getHeaders();
+        if (headers != null) {
+            for (Map.Entry<String, Object> entry : headers.entrySet()) {
+                // Convert LongStrings to String.
+                if (entry.getValue() instanceof LongString) {
+                    message.setHeader(entry.getKey(), entry.getValue().toString());
+                } else {
+                    message.setHeader(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+    }
+
+    private void populateMessageBody(final Message message, final Exchange camelExchange, final AMQP.BasicProperties properties, final byte[] body) {
+        if (hasSerializeHeader(properties)) {
+            deserializeBody(camelExchange, message, body);
+        } else {
+            // Set the body as a byte[] and let the type converter deal with it
+            message.setBody(body);
+        }
+    }
+
+    private void deserializeBody(final Exchange camelExchange, final Message message, final byte[] body) {
+        Object messageBody = null;
+        try (InputStream b = new ByteArrayInputStream(body);
+             ObjectInputStream o = new ObjectInputStream(b)) {
+            messageBody = o.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            LOG.warn("Could not deserialize the object");
+            camelExchange.setException(e);
+        }
+        if (messageBody instanceof Throwable) {
+            LOG.debug("Reply was an Exception. Setting the Exception on the Exchange");
+            camelExchange.setException((Throwable) messageBody);
+        } else {
+            message.setBody(messageBody);
+        }
+    }
+
+    private boolean hasSerializeHeader(AMQP.BasicProperties properties) {
+        return hasHeaders(properties) && Boolean.TRUE.equals(isSerializeHeaderEnabled(properties));
+    }
+
+    private boolean hasHeaders(final AMQP.BasicProperties properties) {
+        return properties != null && properties.getHeaders() != null;
+    }
+
+    private Object isSerializeHeaderEnabled(final AMQP.BasicProperties properties) {
+        return properties.getHeaders().get(RabbitMQEndpoint.SERIALIZE_HEADER);
+    }
+
+    public boolean isAllowNullHeaders() {
+        return allowNullHeaders;
+    }
+
+    public void setAllowNullHeaders(boolean allowNullHeaders) {
+        this.allowNullHeaders = allowNullHeaders;
     }
 }

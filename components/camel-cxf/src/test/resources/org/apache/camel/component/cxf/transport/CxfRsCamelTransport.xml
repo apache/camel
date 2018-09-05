@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:cxf="http://camel.apache.org/schema/cxf"
+       xmlns:camel="http://cxf.apache.org/transports/camel"
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://cxf.apache.org/transports/camel http://cxf.apache.org/transports/camel.xsd
+       http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+       http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+    ">
+
+    <jaxrs:server id="rsServer" address="camel://direct:cxf.out">
+        <jaxrs:serviceBeans>
+            <bean class="org.apache.camel.component.cxf.transport.CxfRsCamelTransportTest.GreetingResourceBean" />
+        </jaxrs:serviceBeans>
+    </jaxrs:server>
+    <cxf:rsClient id="rsClient" address="camel://direct:cxf.in"
+                  serviceClass="org.apache.camel.component.cxf.transport.CxfRsCamelTransportTest.GreetingResource"
+                  loggingFeatureEnabled="true" />
+
+    <camel:conduit name="*.camel-conduit" camelContextId="cxfrs-camel-transport" />
+    <camel:destination name="*.camel-destination" camelContextId="cxfrs-camel-transport" />
+
+    <camelContext id="cxfrs-camel-transport" xmlns="http://camel.apache.org/schema/spring">
+        <!-- CXFRS producer -->
+        <route>
+            <from uri="direct:input" />
+            <!-- using HttpClientAPI -->
+            <setHeader headerName="CamelHttpMethod">
+                <constant>GET</constant>
+            </setHeader>
+            <setHeader headerName="Content-Type">
+                <constant>text/plain</constant>
+            </setHeader>
+            <setHeader headerName="CamelHttpPath">
+                <simple>/greeting/hello/${body}</simple>
+            </setHeader>
+            <setHeader headerName="CamelHttpMethod">
+                <constant>GET</constant>
+            </setHeader>
+            <inOut uri="cxfrs:bean:rsClient" />
+            <to uri="mock:result" />
+        </route>
+        <!-- CXFRS consumer -->
+        <route>
+            <from uri="direct:cxf.in" />
+            <to uri="direct:cxf.out" />
+        </route>
+    </camelContext>
+
+</beans>

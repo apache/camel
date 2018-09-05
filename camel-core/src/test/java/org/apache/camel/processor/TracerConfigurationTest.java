@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,6 +29,7 @@ import org.apache.camel.processor.interceptor.Tracer;
  */
 public class TracerConfigurationTest extends ContextTestSupport {
 
+    @Test
     public void testTracerConfiguration() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

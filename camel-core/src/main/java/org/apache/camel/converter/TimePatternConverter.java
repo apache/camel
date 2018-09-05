@@ -25,15 +25,15 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Converter from String syntax to milli seconds.
+ * Code is copied to org.apache.camel.catalog.TimePatternConverter in camel-catalog
  */
 @Converter
 public final class TimePatternConverter {   
     private static final Logger LOG = LoggerFactory.getLogger(TimePatternConverter.class);
-    private static final String NUMBERS_ONLY_STRING_PATTERN = "^[-]?(\\d)+$";
-    private static final String REPLACEMENT_PATTERN = "[our|inute|econd](s)?";
-    private static final String HOUR_REGEX_PATTERN = "((\\d)*(\\d))[h|H]";
-    private static final String MINUTES_REGEX_PATTERN = "((\\d)*(\\d))[m|M]";
-    private static final String SECONDS_REGEX_PATTERN = "((\\d)*(\\d))[s|S]";
+    private static final Pattern NUMBERS_ONLY_STRING_PATTERN = Pattern.compile("^[-]?(\\d)+$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern HOUR_REGEX_PATTERN = Pattern.compile("((\\d)*(\\d))h(our(s)?)?", Pattern.CASE_INSENSITIVE);
+    private static final Pattern MINUTES_REGEX_PATTERN = Pattern.compile("((\\d)*(\\d))m(in(ute(s)?)?)?", Pattern.CASE_INSENSITIVE);
+    private static final Pattern SECONDS_REGEX_PATTERN = Pattern.compile("((\\d)*(\\d))s(ec(ond)?(s)?)?", Pattern.CASE_INSENSITIVE);
 
     /**
      * Utility classes should not have a public constructor.
@@ -43,8 +43,28 @@ public final class TimePatternConverter {
     
     @Converter
     public static long toMilliSeconds(String source) throws IllegalArgumentException {
+        // quick conversion if its only digits
+        boolean digit = true;
+        for (int i = 0; i < source.length(); i++) {
+            char ch = source.charAt(i);
+            // special for fist as it can be negative number
+            if (i == 0 && ch == '-') {
+                continue;
+            }
+            // quick check if its 0..9
+            if (ch < '0' || ch > '9') {
+                digit = false;
+                break;
+            }
+        }
+        if (digit) {
+            return Long.valueOf(source);
+        }
+
         long milliseconds = 0;
         boolean foundFlag = false;
+
+        checkCorrectnessOfPattern(source);
         Matcher matcher;
 
         matcher = createMatcher(NUMBERS_ONLY_STRING_PATTERN, source);
@@ -53,18 +73,13 @@ public final class TimePatternConverter {
             //       This String -> long converter will be used for all strings.
             milliseconds = Long.valueOf(source);
         } else {            
-            matcher = createMatcher(REPLACEMENT_PATTERN, source);
-            String replacedSource = matcher.replaceAll(""); 
-            
-            LOG.trace("Replaced original source {} to {}", source, replacedSource);
-            
-            matcher = createMatcher(HOUR_REGEX_PATTERN, replacedSource);
+            matcher = createMatcher(HOUR_REGEX_PATTERN, source);
             if (matcher.find()) {
                 milliseconds = milliseconds + (3600000 * Long.valueOf(matcher.group(1)));
                 foundFlag = true;
             }
             
-            matcher = createMatcher(MINUTES_REGEX_PATTERN, replacedSource);            
+            matcher = createMatcher(MINUTES_REGEX_PATTERN, source);
             if (matcher.find()) {
                 long minutes = Long.valueOf(matcher.group(1));
                 if ((minutes > 59) && foundFlag) {
@@ -74,7 +89,7 @@ public final class TimePatternConverter {
                 milliseconds = milliseconds + (60000 * minutes);
             }
                
-            matcher = createMatcher(SECONDS_REGEX_PATTERN, replacedSource);
+            matcher = createMatcher(SECONDS_REGEX_PATTERN, source);
             if (matcher.find()) {
                 long seconds = Long.valueOf(matcher.group(1));
                 if ((seconds > 59) && foundFlag) {
@@ -96,8 +111,38 @@ public final class TimePatternConverter {
         return milliseconds;
     }
 
-    private static Matcher createMatcher(String regexPattern, String source) {
-        Pattern pattern = Pattern.compile(regexPattern, Pattern.CASE_INSENSITIVE);
+    private static void checkCorrectnessOfPattern(String source) {
+        //replace only numbers once
+        Matcher matcher = createMatcher(NUMBERS_ONLY_STRING_PATTERN, source);
+        String replaceSource = matcher.replaceFirst("");
+
+        //replace hour string once
+        matcher = createMatcher(HOUR_REGEX_PATTERN, replaceSource);
+        if (matcher.find() && matcher.find()) {
+            throw new IllegalArgumentException("Hours should not be specified more then once: " + source);
+        }
+        replaceSource = matcher.replaceFirst("");
+
+        //replace minutes once
+        matcher = createMatcher(MINUTES_REGEX_PATTERN, replaceSource);
+        if (matcher.find() && matcher.find()) {
+            throw new IllegalArgumentException("Minutes should not be specified more then once: " + source);
+        }
+        replaceSource = matcher.replaceFirst("");
+
+        //replace seconds once
+        matcher = createMatcher(SECONDS_REGEX_PATTERN, replaceSource);
+        if (matcher.find() && matcher.find()) {
+            throw new IllegalArgumentException("Seconds should not be specified more then once: " + source);
+        }
+        replaceSource = matcher.replaceFirst("");
+
+        if (replaceSource.length() > 0) {
+            throw new IllegalArgumentException("Illegal characters: " + source);
+        }
+    }
+
+    private static Matcher createMatcher(Pattern pattern, String source) {
         return pattern.matcher(source);        
     }    
 }

@@ -77,4 +77,25 @@ public class HttpSOTimeoutTest extends BaseHttpTest {
         Exception e = reply.getException();
         assertNotNull("Should have thrown an exception", e);
     }
+
+    @Test
+    public void httpGetUriOption() throws Exception {
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "?socketTimeout=5000", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+            }
+        });
+
+        assertExchange(exchange);
+    }
+
+    @Test
+    public void httpGetUriOptionShouldThrowASocketTimeoutException() throws Exception {
+        Exchange reply = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "?socketTimeout=1000", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+            }
+        });
+        Exception e = reply.getException();
+        assertNotNull("Should have thrown an exception", e);
+    }
+
 }

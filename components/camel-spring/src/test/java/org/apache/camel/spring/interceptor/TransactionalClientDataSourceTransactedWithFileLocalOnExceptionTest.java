@@ -28,12 +28,12 @@ public class TransactionalClientDataSourceTransactedWithFileLocalOnExceptionTest
         return new SpringRouteBuilder() {
             public void configure() throws Exception {
 
-                from("file://target/transacted/okay")
+                from("file://target/transacted/okay?initialDelay=0&delay=10")
                     .transacted()
                     .setBody(constant("Tiger in Action")).bean("bookService")
                     .setBody(constant("Elephant in Action")).bean("bookService");
 
-                from("file://target/transacted/fail?moveFailed=../failed")
+                from("file://target/transacted/fail?initialDelay=0&delay=10&moveFailed=../failed")
                     .onException(IllegalArgumentException.class)
                         .handled(false)
                         .to("mock:error")

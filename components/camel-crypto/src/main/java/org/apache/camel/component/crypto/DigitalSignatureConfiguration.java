@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.crypto;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -41,15 +39,19 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
 
     @UriPath @Metadata(required = "true")
     private CryptoOperation cryptoOperation;
-    @UriParam
+    @UriPath @Metadata(required = "true")
+    private String name;
+    @UriParam(secret = true)
     private PrivateKey privateKey;
+    @UriParam(label = "advanced")
+    private KeyStoreParameters keyStoreParameters;
     @UriParam
     private KeyStore keystore;
-    @UriParam
+    @UriParam(label = "advanced", secret = true)
     private SecureRandom secureRandom;
     @UriParam(defaultValue = "SHA1WithDSA")
     private String algorithm = "SHA1WithDSA";
-    @UriParam(defaultValue = "" + 2048)
+    @UriParam(label = "advanced", defaultValue = "" + 2048)
     private Integer bufferSize = 2048;
     @UriParam
     private String provider;
@@ -57,11 +59,11 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     private String signatureHeaderName;
     @UriParam
     private String alias;
-    @UriParam
+    @UriParam(label = "security", javaType = "java.lang.String", secret = true)
     private char[] password;
-    @UriParam
+    @UriParam(label = "advanced")
     private PublicKey publicKey;
-    @UriParam
+    @UriParam(label = "advanced")
     private Certificate certificate;
 
     /** references that should be resolved when the context changes */
@@ -69,13 +71,13 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     private String publicKeyName;
     @UriParam
     private String certificateName;
-    @UriParam
+    @UriParam(secret = true)
     private String privateKeyName;
     @UriParam
     private String keystoreName;
     @UriParam
     private String secureRandomName;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "advanced", defaultValue = "true")
     private boolean clearHeaders = true;
 
     public DigitalSignatureConfiguration copy() {
@@ -99,6 +101,17 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
         setPrivateKeyName(privateKeyName);
         setCertificateName(certificateName);
         setSecureRandomName(secureRandomName);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * The logical name of this operation.
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
@@ -323,11 +336,24 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     public void setPassword(char[] password) {
         this.password = password;
     }
-    
-    public void setKeyStoreParameters(KeyStoreParameters parameters) 
-        throws GeneralSecurityException, IOException {
-        if (parameters != null) {
-            this.keystore = parameters.createKeyStore();
+
+    public KeyStoreParameters getKeyStoreParameters() {
+        return keyStoreParameters;
+    }
+
+    /**
+     * Sets the KeyStore that can contain keys and Certficates for use in
+     * signing and verifying exchanges based on the given KeyStoreParameters.
+     * A {@link KeyStore} is typically used
+     * with an alias, either one supplied in the Route definition or dynamically
+     * via the message header "CamelSignatureKeyStoreAlias". If no alias is
+     * supplied and there is only a single entry in the Keystore, then this
+     * single entry will be used.
+     */
+    public void setKeyStoreParameters(KeyStoreParameters keyStoreParameters) throws Exception {
+        this.keyStoreParameters = keyStoreParameters;
+        if (keyStoreParameters != null) {
+            this.keystore = keyStoreParameters.createKeyStore();
         }
     }
 
@@ -447,7 +473,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     }
 
     /**
-     * Gets the Crypto operation that was supplied in the the crypto scheme in the endpoint uri
+     * Gets the Crypto operation that was supplied in the crypto scheme in the endpoint uri
      */
     public CryptoOperation getCryptoOperation() {
         return cryptoOperation;

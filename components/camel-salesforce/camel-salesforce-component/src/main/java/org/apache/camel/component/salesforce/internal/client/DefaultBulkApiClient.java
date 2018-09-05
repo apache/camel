@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.salesforce.internal.client;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -28,6 +31,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.api.dto.bulk.BatchInfo;
@@ -39,12 +43,12 @@ import org.apache.camel.component.salesforce.api.dto.bulk.JobStateEnum;
 import org.apache.camel.component.salesforce.api.dto.bulk.ObjectFactory;
 import org.apache.camel.component.salesforce.api.dto.bulk.QueryResultList;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
-import org.eclipse.jetty.client.ContentExchange;
-import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.HttpExchange;
-import org.eclipse.jetty.http.HttpHeaders;
-import org.eclipse.jetty.http.HttpMethods;
-import org.eclipse.jetty.io.ByteArrayBuffer;
+import org.eclipse.jetty.client.api.Request;
+import org.eclipse.jetty.client.api.Response;
+import org.eclipse.jetty.client.util.BytesContentProvider;
+import org.eclipse.jetty.client.util.InputStreamContentProvider;
+import org.eclipse.jetty.http.HttpHeader;
+import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.util.StringUtil;
 
 public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiClient {
@@ -55,7 +59,7 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
     private JAXBContext context;
     private ObjectFactory objectFactory;
 
-    public DefaultBulkApiClient(String version, SalesforceSession session, HttpClient httpClient)
+    public DefaultBulkApiClient(String version, SalesforceSession session, SalesforceHttpClient httpClient)
         throws SalesforceException {
         super(version, session, httpClient);
 
@@ -70,22 +74,22 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
     }
 
     @Override
-    public void createJob(JobInfo request, final JobInfoResponseCallback callback) {
+    public void createJob(JobInfo request, Map<String, List<String>> headers, final JobInfoResponseCallback callback) {
         // clear system fields if set
         sanitizeJobRequest(request);
 
-        final ContentExchange post = getContentExchange(HttpMethods.POST, jobUrl(null));
+        final Request post = getRequest(HttpMethod.POST, jobUrl(null), headers);
         try {
             marshalRequest(objectFactory.createJobInfo(request), post, APPLICATION_XML_UTF8);
         } catch (SalesforceException e) {
-            callback.onResponse(null, e);
+            callback.onResponse(null, Collections.emptyMap(), e);
             return;
         }
 
         // make the call and parse the result in callback
         doHttpRequest(post, new ClientResponseCallback() {
             @Override
-            public void onResponse(InputStream response, SalesforceException ex) {
+            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
                 JobInfo value = null;
                 if (response != null) {
                     try {
@@ -94,7 +98,7 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
                         ex = e;
                     }
                 }
-                callback.onResponse(value, ex);
+                callback.onResponse(value, headers, ex);
             }
         });
 
@@ -122,239 +126,248 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
     }
 
     @Override
-    public void getJob(String jobId, final JobInfoResponseCallback callback) {
-        final ContentExchange get = getContentExchange(HttpMethods.GET, jobUrl(jobId));
+    public void getJob(String jobId, Map<String, List<String>> headers, final JobInfoResponseCallback callback) {
+        final Request get = getRequest(HttpMethod.GET, jobUrl(jobId), headers);
 
         // make the call and parse the result
         doHttpRequest(get, new ClientResponseCallback() {
             @Override
-            public void onResponse(InputStream response, SalesforceException ex) {
+            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
                 JobInfo value = null;
                 try {
                     value = unmarshalResponse(response, get, JobInfo.class);
                 } catch (SalesforceException e) {
                     ex = e;
                 }
-                callback.onResponse(value, ex);
+                callback.onResponse(value, headers, ex);
             }
         });
     }
 
     @Override
-    public void closeJob(String jobId, final JobInfoResponseCallback callback) {
+    public void closeJob(String jobId, Map<String, List<String>> headers, final JobInfoResponseCallback callback) {
         final JobInfo request = new JobInfo();
         request.setState(JobStateEnum.CLOSED);
 
-        final ContentExchange post = getContentExchange(HttpMethods.POST, jobUrl(jobId));
+        final Request post = getRequest(HttpMethod.POST, jobUrl(jobId), headers);
         try {
             marshalRequest(objectFactory.createJobInfo(request), post, APPLICATION_XML_UTF8);
         } catch (SalesforceException e) {
-            callback.onResponse(null, e);
+            callback.onResponse(null, Collections.emptyMap(), e);
             return;
         }
 
         // make the call and parse the result
         doHttpRequest(post, new ClientResponseCallback() {
             @Override
-            public void onResponse(InputStream response, SalesforceException ex) {
+            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
                 JobInfo value = null;
                 try {
                     value = unmarshalResponse(response, post, JobInfo.class);
                 } catch (SalesforceException e) {
                     ex = e;
                 }
-                callback.onResponse(value, ex);
+                callback.onResponse(value, headers, ex);
             }
         });
     }
 
     @Override
-    public void abortJob(String jobId, final JobInfoResponseCallback callback) {
+    public void abortJob(String jobId, Map<String, List<String>> headers, final JobInfoResponseCallback callback) {
         final JobInfo request = new JobInfo();
         request.setState(JobStateEnum.ABORTED);
 
-        final ContentExchange post = getContentExchange(HttpMethods.POST, jobUrl(jobId));
+        final Request post = getRequest(HttpMethod.POST, jobUrl(jobId), headers);
         try {
             marshalRequest(objectFactory.createJobInfo(request), post, APPLICATION_XML_UTF8);
         } catch (SalesforceException e) {
-            callback.onResponse(null, e);
+            callback.onResponse(null, Collections.emptyMap(), e);
             return;
         }
 
         // make the call and parse the result
         doHttpRequest(post, new ClientResponseCallback() {
             @Override
-            public void onResponse(InputStream response, SalesforceException ex) {
+            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
                 JobInfo value = null;
                 try {
                     value = unmarshalResponse(response, post, JobInfo.class);
                 } catch (SalesforceException e) {
                     ex = e;
                 }
-                callback.onResponse(value, ex);
+                callback.onResponse(value, headers, ex);
             }
         });
     }
 
     @Override
     public void createBatch(InputStream batchStream, String jobId, ContentType contentTypeEnum, 
-        final BatchInfoResponseCallback callback) {
-        final ContentExchange post = getContentExchange(HttpMethods.POST, batchUrl(jobId, null));
-        post.setRequestContentSource(batchStream);
-        post.setRequestContentType(getContentType(contentTypeEnum) + ";charset=" + StringUtil.__UTF8);
+        Map<String, List<String>> headers, final BatchInfoResponseCallback callback) {
+        final Request post = getRequest(HttpMethod.POST, batchUrl(jobId, null), headers);
+        post.content(new InputStreamContentProvider(batchStream));
+        post.header(HttpHeader.CONTENT_TYPE, getContentType(contentTypeEnum) + ";charset=" + StringUtil.__UTF8);
 
         // make the call and parse the result
         doHttpRequest(post, new ClientResponseCallback() {
             @Override
-            public void onResponse(InputStream response, SalesforceException ex) {
+            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
                 BatchInfo value = null;
                 try {
                     value = unmarshalResponse(response, post, BatchInfo.class);
                 } catch (SalesforceException e) {
                     ex = e;
                 }
-                callback.onResponse(value, ex);
+                callback.onResponse(value, headers, ex);
             }
         });
     }
 
     @Override
-    public void getBatch(String jobId, String batchId, final BatchInfoResponseCallback callback) {
-        final ContentExchange get = getContentExchange(HttpMethods.GET, batchUrl(jobId, batchId));
+    public void getBatch(String jobId, String batchId, Map<String, List<String>> headers, final BatchInfoResponseCallback callback) {
+        final Request get = getRequest(HttpMethod.GET, batchUrl(jobId, batchId), headers);
 
         // make the call and parse the result
         doHttpRequest(get, new ClientResponseCallback() {
             @Override
-            public void onResponse(InputStream response, SalesforceException ex) {
+            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
                 BatchInfo value = null;
                 try {
                     value = unmarshalResponse(response, get, BatchInfo.class);
                 } catch (SalesforceException e) {
                     ex = e;
                 }
-                callback.onResponse(value, ex);
+                callback.onResponse(value, headers, ex);
             }
         });
     }
 
     @Override
-    public void getAllBatches(String jobId, final BatchInfoListResponseCallback callback) {
-        final ContentExchange get = getContentExchange(HttpMethods.GET, batchUrl(jobId, null));
+    public void getAllBatches(String jobId, Map<String, List<String>> headers, final BatchInfoListResponseCallback callback) {
+        final Request get = getRequest(HttpMethod.GET, batchUrl(jobId, null), headers);
 
         // make the call and parse the result
         doHttpRequest(get, new ClientResponseCallback() {
             @Override
-            public void onResponse(InputStream response, SalesforceException ex) {
+            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
                 BatchInfoList value = null;
                 try {
                     value = unmarshalResponse(response, get, BatchInfoList.class);
                 } catch (SalesforceException e) {
                     ex = e;
                 }
-                callback.onResponse(value != null ? value.getBatchInfo() : null, ex);
+                callback.onResponse(value != null ? value.getBatchInfo() : null, headers, ex);
             }
         });
     }
 
     @Override
-    public void getRequest(String jobId, String batchId, final StreamResponseCallback callback) {
-        final ContentExchange get = getContentExchange(HttpMethods.GET, batchUrl(jobId, batchId));
+    public void getRequest(String jobId, String batchId, Map<String, List<String>> headers, final StreamResponseCallback callback) {
+        final Request get = getRequest(HttpMethod.GET, batchRequestUrl(jobId, batchId, null), headers);
 
         // make the call and parse the result
         doHttpRequest(get, new ClientResponseCallback() {
             @Override
-            public void onResponse(InputStream response, SalesforceException ex) {
-                callback.onResponse(response, ex);
+            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
+                callback.onResponse(response, headers, ex);
             }
         });
     }
 
     @Override
-    public void getResults(String jobId, String batchId, final StreamResponseCallback callback) {
-        final ContentExchange get = getContentExchange(HttpMethods.GET, batchResultUrl(jobId, batchId, null));
+    public void getResults(String jobId, String batchId, Map<String, List<String>> headers, final StreamResponseCallback callback) {
+        final Request get = getRequest(HttpMethod.GET, batchResultUrl(jobId, batchId, null), headers);
 
         // make the call and return the result
         doHttpRequest(get, new ClientResponseCallback() {
             @Override
-            public void onResponse(InputStream response, SalesforceException ex) {
-                callback.onResponse(response, ex);
+            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
+                callback.onResponse(response, headers, ex);
             }
         });
     }
 
     @Override
     public void createBatchQuery(String jobId, String soqlQuery, ContentType jobContentType,
-        final BatchInfoResponseCallback callback) {
-        final ContentExchange post = getContentExchange(HttpMethods.POST, batchUrl(jobId, null));
-        byte[] queryBytes = soqlQuery.getBytes(StringUtil.__UTF8_CHARSET);
-        post.setRequestContent(new ByteArrayBuffer(queryBytes));
-        post.setRequestContentType(getContentType(jobContentType) + ";charset=" + StringUtil.__UTF8);
+        Map<String, List<String>> headers, final BatchInfoResponseCallback callback) {
+        final Request post = getRequest(HttpMethod.POST, batchUrl(jobId, null), headers);
+        final byte[] queryBytes;
+        try {
+            queryBytes = soqlQuery.getBytes(StringUtil.__UTF8);
+        } catch (UnsupportedEncodingException e) {
+            callback.onResponse(null, Collections.emptyMap(), new SalesforceException("Unexpected exception: " + e.getMessage(), e));
+            return;
+        }
+        post.content(new BytesContentProvider(queryBytes));
+        post.header(HttpHeader.CONTENT_TYPE, getContentType(jobContentType) + ";charset=" + StringUtil.__UTF8);
 
         // make the call and parse the result
         doHttpRequest(post, new ClientResponseCallback() {
             @Override
-            public void onResponse(InputStream response, SalesforceException ex) {
+            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
                 BatchInfo value = null;
                 try {
                     value = unmarshalResponse(response, post, BatchInfo.class);
                 } catch (SalesforceException e) {
                     ex = e;
                 }
-                callback.onResponse(value, ex);
+                callback.onResponse(value, headers, ex);
             }
         });
     }
 
     @Override
-    public void getQueryResultIds(String jobId, String batchId, final QueryResultIdsCallback callback) {
-        final ContentExchange get = getContentExchange(HttpMethods.GET, batchResultUrl(jobId, batchId, null));
+    public void getQueryResultIds(String jobId, String batchId, Map<String, List<String>> headers,
+        final QueryResultIdsCallback callback) {
+        final Request get = getRequest(HttpMethod.GET, batchResultUrl(jobId, batchId, null), headers);
 
         // make the call and parse the result
         doHttpRequest(get, new ClientResponseCallback() {
             @Override
-            public void onResponse(InputStream response, SalesforceException ex) {
+            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
                 QueryResultList value = null;
                 try {
                     value = unmarshalResponse(response, get, QueryResultList.class);
                 } catch (SalesforceException e) {
                     ex = e;
                 }
-                callback.onResponse(value != null ? Collections.unmodifiableList(value.getResult()) : null, ex);
+                callback.onResponse(value != null ? Collections.unmodifiableList(value.getResult()) : null, headers, ex);
             }
         });
     }
 
     @Override
-    public void getQueryResult(String jobId, String batchId, String resultId, final StreamResponseCallback callback) {
-        final ContentExchange get = getContentExchange(HttpMethods.GET, batchResultUrl(jobId, batchId, resultId));
+    public void getQueryResult(String jobId, String batchId, String resultId, Map<String, List<String>> headers,
+        final StreamResponseCallback callback) {
+        final Request get = getRequest(HttpMethod.GET, batchResultUrl(jobId, batchId, resultId), headers);
 
         // make the call and parse the result
         doHttpRequest(get, new ClientResponseCallback() {
             @Override
-            public void onResponse(InputStream response, SalesforceException ex) {
-                callback.onResponse(response, ex);
+            public void onResponse(InputStream response, Map<String, String> headers, SalesforceException ex) {
+                callback.onResponse(response, headers, ex);
             }
         });
     }
 
     @Override
-    protected void setAccessToken(HttpExchange httpExchange) {
-        httpExchange.setRequestHeader(TOKEN_HEADER, accessToken);
+    protected void setAccessToken(Request request) {
+        // replace old token
+        request.getHeaders().put(TOKEN_HEADER, accessToken);
     }
 
     @Override
-    protected void doHttpRequest(ContentExchange request, ClientResponseCallback callback) {
+    protected void doHttpRequest(Request request, ClientResponseCallback callback) {
         // set access token for all requests
         setAccessToken(request);
 
         // set default charset
-        request.setRequestHeader(HttpHeaders.ACCEPT_CHARSET, StringUtil.__UTF8);
+        request.header(HttpHeader.ACCEPT_CHARSET, StringUtil.__UTF8);
 
         // TODO check if this is really needed or not, since SF response content type seems fixed
         // check if the default accept content type must be used
-        if (!request.getRequestFields().containsKey(HttpHeaders.ACCEPT)) {
+        if (!request.getHeaders().contains(HttpHeader.ACCEPT)) {
             final String contentType = getContentType(DEFAULT_ACCEPT_TYPE);
-            request.setRequestHeader(HttpHeaders.ACCEPT, contentType);
+            request.header(HttpHeader.ACCEPT, contentType);
             // request content type and charset is set by the request entity
         }
 
@@ -386,24 +399,23 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
     }
 
     @Override
-    protected SalesforceException createRestException(ContentExchange request, String reason) {
+    protected SalesforceException createRestException(Response response, InputStream responseContent) {
         // this must be of type Error
         try {
-            final Error error = unmarshalResponse(new ByteArrayInputStream(request.getResponseContentBytes()),
-                    request, Error.class);
+            final Error error = unmarshalResponse(responseContent, response.getRequest(), Error.class);
 
             final RestError restError = new RestError();
             restError.setErrorCode(error.getExceptionCode());
             restError.setMessage(error.getExceptionMessage());
 
-            return new SalesforceException(Arrays.asList(restError), request.getResponseStatus());
+            return new SalesforceException(Arrays.asList(restError), response.getStatus());
         } catch (SalesforceException e) {
             String msg = "Error un-marshaling Salesforce Error: " + e.getMessage();
             return new SalesforceException(msg, e);
         }
     }
 
-    private <T> T unmarshalResponse(InputStream response, ContentExchange request, Class<T> resultClass)
+    private <T> T unmarshalResponse(InputStream response, Request request, Class<T> resultClass)
         throws SalesforceException {
         try {
             Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -412,32 +424,32 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
         } catch (JAXBException e) {
             throw new SalesforceException(
                     String.format("Error unmarshaling response {%s:%s} : %s",
-                            request.getMethod(), request.getRequestURI(), e.getMessage()),
+                            request.getMethod(), request.getURI(), e.getMessage()),
                     e);
         } catch (IllegalArgumentException e) {
             throw new SalesforceException(
                     String.format("Error unmarshaling response for {%s:%s} : %s",
-                            request.getMethod(), request.getRequestURI(), e.getMessage()),
+                            request.getMethod(), request.getURI(), e.getMessage()),
                     e);
         }
     }
 
-    private void marshalRequest(Object input, ContentExchange request, String contentType) throws SalesforceException {
+    private void marshalRequest(Object input, Request request, String contentType) throws SalesforceException {
         try {
             Marshaller marshaller = context.createMarshaller();
             ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
             marshaller.marshal(input, byteStream);
-            request.setRequestContent(new ByteArrayBuffer(byteStream.toByteArray()));
-            request.setRequestContentType(contentType);
+
+            request.content(new BytesContentProvider(contentType, byteStream.toByteArray()));
         } catch (JAXBException e) {
             throw new SalesforceException(
                     String.format("Error marshaling request for {%s:%s} : %s",
-                            request.getMethod(), request.getRequestURI(), e.getMessage()),
+                            request.getMethod(), request.getURI(), e.getMessage()),
                     e);
         } catch (IllegalArgumentException e) {
             throw new SalesforceException(
                     String.format("Error marshaling request for {%s:%s} : %s",
-                            request.getMethod(), request.getRequestURI(), e.getMessage()),
+                            request.getMethod(), request.getURI(), e.getMessage()),
                     e);
         }
     }
@@ -463,6 +475,14 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
             return batchUrl(jobId, batchId) + "/result/" + resultId;
         } else {
             return batchUrl(jobId, batchId) + "/result";
+        }
+    }
+
+    private String batchRequestUrl(String jobId, String batchId, String requestId) {
+        if (requestId != null) {
+            return batchUrl(jobId, batchId) + "/request/" + requestId;
+        } else {
+            return batchUrl(jobId, batchId) + "/request";
         }
     }
 }

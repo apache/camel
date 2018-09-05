@@ -36,7 +36,6 @@ import java.util.Properties;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -47,6 +46,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
@@ -59,16 +59,20 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 import org.apache.camel.BytesSource;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.StringSource;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,10 +91,14 @@ public class XmlConverter {
     public static final String DOCUMENT_BUILDER_FACTORY_FEATURE = "org.apache.camel.xmlconverter.documentBuilderFactory.feature";
     public static String defaultCharset = ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
 
+    private static final String JDK_FALLBACK_TRANSFORMER_FACTORY = "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl";
+    private static final String XALAN_TRANSFORMER_FACTORY = "org.apache.xalan.processor.TransformerFactoryImpl";
     private static final Logger LOG = LoggerFactory.getLogger(XmlConverter.class);
+    private static final ErrorHandler DOCUMENT_BUILDER_LOGGING_ERROR_HANDLER = new DocumentBuilderLoggingErrorHandler();
 
-    private DocumentBuilderFactory documentBuilderFactory;
-    private TransformerFactory transformerFactory;
+    private volatile DocumentBuilderFactory documentBuilderFactory;
+    private volatile TransformerFactory transformerFactory;
+    private volatile XMLReaderPool xmlReaderPool;
 
     public XmlConverter() {
     }
@@ -129,6 +137,11 @@ public class XmlConverter {
             throw new TransformerException("Could not create a transformer - JAXP is misconfigured!");
         }
         transformer.setOutputProperties(outputProperties);
+        if (this.transformerFactory.getClass().getName().equals(XALAN_TRANSFORMER_FACTORY)
+            && (source instanceof StAXSource)) {
+            //external xalan can't handle StAXSource, so convert StAXSource to SAXSource.
+            source = new StAX2SAXSource(((StAXSource) source).getXMLStreamReader());
+        }
         transformer.transform(source, result);
     }
 
@@ -167,8 +180,6 @@ public class XmlConverter {
 
     /**
      * Converts the given Node to a Source
-     * @throws TransformerException
-     * @throws ParserConfigurationException
      * @deprecated  use toDOMSource instead
      */
     @Deprecated
@@ -178,8 +189,6 @@ public class XmlConverter {
 
     /**
      * Converts the given Node to a Source
-     * @throws TransformerException
-     * @throws ParserConfigurationException
      */
     @Converter
     public DOMSource toDOMSource(Node node) throws ParserConfigurationException, TransformerException {
@@ -283,13 +292,31 @@ public class XmlConverter {
     }
 
     /**
+     * Converts the given Document to into text
+     * @param document The document to convert
+     * @param outputOptions The {@link OutputKeys} properties to control various aspects of the XML output
+     * @return The string representation of the document
+     * @throws TransformerException
+     */
+    public String toStringFromDocument(Document document, Properties outputOptions) throws TransformerException {
+        if (document == null) {
+            return null;
+        }
+
+        DOMSource source = new DOMSource(document);
+        StringWriter buffer = new StringWriter();
+        toResult(source, new StreamResult(buffer), outputOptions);
+        return buffer.toString();
+    }
+
+    /**
      * Converts the source instance to a {@link DOMSource} or returns null if the conversion is not
      * supported (making it easy to derive from this class to add new kinds of conversion).
      * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
      */
     @Deprecated
     public DOMSource toDOMSource(Source source) throws ParserConfigurationException, IOException, SAXException, TransformerException {
-        return toDOMSource(source, (Exchange)null);
+        return toDOMSource(source, null);
     }
     
     /**
@@ -581,31 +608,25 @@ public class XmlConverter {
         }
         inputSource.setSystemId(source.getSystemId());
         inputSource.setPublicId(source.getPublicId());
+
         XMLReader xmlReader = null;
-        SAXParserFactory sfactory = null;
-        //Need to setup XMLReader security feature by default
         try {
             // use the SAXPaserFactory which is set from exchange
             if (exchange != null) {
-                sfactory = exchange.getProperty(Exchange.SAXPARSER_FACTORY, SAXParserFactory.class);
-            }
-            if (sfactory == null) {
-                sfactory = SAXParserFactory.newInstance();
-                try {
-                    sfactory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
-                } catch (Exception e) {
-                    LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.", new Object[]{javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e});
-                }
-                try {
-                    sfactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-                } catch (SAXException e) {
-                    LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}."
-                            , new Object[]{"http://xml.org/sax/features/external-general-entities", false, e});                
+                SAXParserFactory sfactory = exchange.getProperty(Exchange.SAXPARSER_FACTORY, SAXParserFactory.class);
+                if (sfactory != null) {
+                    if (!sfactory.isNamespaceAware()) {
+                        sfactory.setNamespaceAware(true);
+                    }
+                    xmlReader = sfactory.newSAXParser().getXMLReader();
                 }
             }
-            sfactory.setNamespaceAware(true);
-            SAXParser parser = sfactory.newSAXParser();
-            xmlReader = parser.getXMLReader();
+            if (xmlReader == null) {
+                if (xmlReaderPool == null) {
+                    xmlReaderPool = new XMLReaderPool(createSAXParserFactory());
+                }
+                xmlReader = xmlReaderPool.createXMLReader();
+            }
         } catch (Exception ex) {
             LOG.warn("Cannot create the SAXParser XMLReader, due to {}", ex);
         }
@@ -642,7 +663,7 @@ public class XmlConverter {
     public DOMSource toDOMSource(InputStream is, Exchange exchange) throws ParserConfigurationException, IOException, SAXException {
         InputSource source = new InputSource(is);
         String systemId = source.getSystemId();
-        DocumentBuilder builder = getDocumentBuilderFactory(exchange).newDocumentBuilder();
+        DocumentBuilder builder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
         Document document = builder.parse(source);
         return new DOMSource(document, systemId);
     }
@@ -674,7 +695,7 @@ public class XmlConverter {
         Document document;
         String systemId = source.getSystemId();
 
-        DocumentBuilder builder = getDocumentBuilderFactory(exchange).newDocumentBuilder();
+        DocumentBuilder builder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
         Reader reader = source.getReader();
         if (reader != null) {
             document = builder.parse(new InputSource(reader));
@@ -824,7 +845,7 @@ public class XmlConverter {
      */
     @Converter
     public Document toDOMDocument(byte[] data, Exchange exchange) throws IOException, SAXException, ParserConfigurationException {
-        DocumentBuilder documentBuilder = getDocumentBuilderFactory(exchange).newDocumentBuilder();
+        DocumentBuilder documentBuilder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
         return documentBuilder.parse(new ByteArrayInputStream(data));
     }
 
@@ -849,12 +870,19 @@ public class XmlConverter {
      */
     @Converter
     public Document toDOMDocument(InputStream in, Exchange exchange) throws IOException, SAXException, ParserConfigurationException {
-        DocumentBuilder documentBuilder = getDocumentBuilderFactory(exchange).newDocumentBuilder();
-        return documentBuilder.parse(in);
+        DocumentBuilder documentBuilder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
+        if (in instanceof IOConverter.EncodingInputStream) {
+            // DocumentBuilder detects encoding from XML declaration, so we need to
+            // revert the converted encoding for the input stream
+            IOConverter.EncodingInputStream encIn = (IOConverter.EncodingInputStream) in;
+            return documentBuilder.parse(encIn.toOriginalInputStream());
+        } else {
+            return documentBuilder.parse(in);
+        }
     }
 
     /**
-     * Converts the given {@link InputStream} to a DOM document
+     * Converts the given {@link Reader} to a DOM document
      *
      * @param in is the data to be parsed
      * @return the parsed document
@@ -866,7 +894,7 @@ public class XmlConverter {
     }
     
     /**
-     * Converts the given {@link InputStream} to a DOM document
+     * Converts the given {@link Reader} to a DOM document
      *
      * @param in is the data to be parsed
      * @param exchange is the exchange to be used when calling the converter
@@ -886,7 +914,7 @@ public class XmlConverter {
      */
     @Deprecated
     public Document toDOMDocument(InputSource in) throws IOException, SAXException, ParserConfigurationException {
-        return toDOMDocument(in, (Exchange)null);
+        return toDOMDocument(in, null);
     }
     
     /**
@@ -898,7 +926,7 @@ public class XmlConverter {
      */
     @Converter
     public Document toDOMDocument(InputSource in, Exchange exchange) throws IOException, SAXException, ParserConfigurationException {
-        DocumentBuilder documentBuilder = getDocumentBuilderFactory(exchange).newDocumentBuilder();
+        DocumentBuilder documentBuilder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
         return documentBuilder.parse(in);
     }
 
@@ -947,7 +975,7 @@ public class XmlConverter {
      */
     @Converter
     public Document toDOMDocument(File file, Exchange exchange) throws IOException, SAXException, ParserConfigurationException {
-        DocumentBuilder documentBuilder = getDocumentBuilderFactory(exchange).newDocumentBuilder();
+        DocumentBuilder documentBuilder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
         return documentBuilder.parse(file);
     }
 
@@ -1054,6 +1082,9 @@ public class XmlConverter {
     }
 
     public void setTransformerFactory(TransformerFactory transformerFactory) {
+        if (transformerFactory != null) {
+            configureSaxonTransformerFactory(transformerFactory);
+        }
         this.transformerFactory = transformerFactory;
     }
 
@@ -1062,11 +1093,11 @@ public class XmlConverter {
 
     protected void setupFeatures(DocumentBuilderFactory factory) {
         Properties properties = System.getProperties();
-        List<String> features = new ArrayList<String>();
+        List<String> features = new ArrayList<>();
         for (Map.Entry<Object, Object> prop : properties.entrySet()) {
             String key = (String) prop.getKey();
             if (key.startsWith(XmlConverter.DOCUMENT_BUILDER_FACTORY_FEATURE)) {
-                String uri = ObjectHelper.after(key, ":");
+                String uri = StringHelper.after(key, ":");
                 Boolean value = Boolean.valueOf((String)prop.getValue());
                 try {
                     factory.setFeature(uri, value);
@@ -1111,8 +1142,8 @@ public class XmlConverter {
             // Disable the external-general-entities by default
             factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         } catch (ParserConfigurationException e) {
-            LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}."
-                     , new Object[]{"http://xml.org/sax/features/external-general-entities", false, e});
+            LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
+                     new Object[]{"http://xml.org/sax/features/external-general-entities", false, e});
         }
         // setup the SecurityManager by default if it's apache xerces
         try {
@@ -1123,8 +1154,8 @@ public class XmlConverter {
                 factory.setAttribute("http://apache.org/xml/properties/security-manager", sm);
             }
         } catch (Exception e) {
-            LOG.warn("DocumentBuilderFactory doesn't support the attribute {}, due to {}."
-                     , new Object[]{"http://apache.org/xml/properties/security-manager", e});
+            LOG.warn("DocumentBuilderFactory doesn't support the attribute {}, due to {}.",
+                     new Object[]{"http://apache.org/xml/properties/security-manager", e});
         }
         // setup the feature from the system property
         setupFeatures(factory);
@@ -1132,8 +1163,13 @@ public class XmlConverter {
     }
 
     public DocumentBuilder createDocumentBuilder() throws ParserConfigurationException {
-        DocumentBuilderFactory factory = getDocumentBuilderFactory();
-        return factory.newDocumentBuilder();
+        return createDocumentBuilder(getDocumentBuilderFactory());
+    }
+
+    public DocumentBuilder createDocumentBuilder(DocumentBuilderFactory factory) throws ParserConfigurationException {
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        builder.setErrorHandler(DOCUMENT_BUILDER_LOGGING_ERROR_HANDLER);
+        return builder;
     }
 
     public Document createDocument() throws ParserConfigurationException {
@@ -1155,7 +1191,23 @@ public class XmlConverter {
     }
 
     public TransformerFactory createTransformerFactory() {
-        TransformerFactory factory = TransformerFactory.newInstance();
+        TransformerFactory factory;
+        TransformerFactoryConfigurationError cause;
+        try {
+            factory = TransformerFactory.newInstance();
+        } catch (TransformerFactoryConfigurationError e) {
+            cause = e;
+            // try fallback from the JDK
+            try {
+                LOG.debug("Cannot create/load TransformerFactory due: {}. Will attempt to use JDK fallback TransformerFactory: {}", e.getMessage(), JDK_FALLBACK_TRANSFORMER_FACTORY);
+                factory = TransformerFactory.newInstance(JDK_FALLBACK_TRANSFORMER_FACTORY, null);
+            } catch (Throwable t) {
+                // okay we cannot load fallback then throw original exception
+                throw cause;
+            }
+        }
+        LOG.debug("Created TransformerFactory: {}", factory);
+
         // Enable the Security feature by default
         try {
             factory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
@@ -1163,7 +1215,83 @@ public class XmlConverter {
             LOG.warn("TransformerFactory doesn't support the feature {} with value {}, due to {}.", new Object[]{javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e});
         }
         factory.setErrorListener(new XmlErrorListener());
+        configureSaxonTransformerFactory(factory);
         return factory;
     }
 
+    /**
+     * Make a Saxon TransformerFactory more JAXP compliant by configuring it to
+     * send &lt;xsl:message&gt; output to the ErrorListener.
+     *
+     * @param factory
+     *            the TransformerFactory
+     */
+    public void configureSaxonTransformerFactory(TransformerFactory factory) {
+        // check whether we have a Saxon TransformerFactory ("net.sf.saxon" for open source editions (HE / B)
+        // and "com.saxonica" for commercial editions (PE / EE / SA))
+        Class<?> factoryClass = factory.getClass();
+        if (factoryClass.getName().startsWith("net.sf.saxon")
+                || factoryClass.getName().startsWith("com.saxonica")) {
+
+            // just in case there are multiple class loaders with different Saxon versions, use the
+            // TransformerFactory's class loader to find Saxon support classes
+            ClassLoader loader = factoryClass.getClassLoader();
+
+            // try to find Saxon's MessageWarner class that redirects <xsl:message> to the ErrorListener
+            Class<?> messageWarner = null;
+            try {
+                // Saxon >= 9.3
+                messageWarner = loader.loadClass("net.sf.saxon.serialize.MessageWarner");
+            } catch (ClassNotFoundException cnfe) {
+                try {
+                    // Saxon < 9.3 (including Saxon-B / -SA)
+                    messageWarner = loader.loadClass("net.sf.saxon.event.MessageWarner");
+                } catch (ClassNotFoundException cnfe2) {
+                    LOG.warn("Error loading Saxon's net.sf.saxon.serialize.MessageWarner class from the classpath!"
+                            + " <xsl:message> output will not be redirected to the ErrorListener!");
+                }
+            }
+
+            if (messageWarner != null) {
+                // set net.sf.saxon.FeatureKeys.MESSAGE_EMITTER_CLASS
+                factory.setAttribute("http://saxon.sf.net/feature/messageEmitterClass", messageWarner.getName());
+            }
+        }
+    }
+
+    public SAXParserFactory createSAXParserFactory() {
+        SAXParserFactory sfactory = SAXParserFactory.newInstance();
+        // Need to setup XMLReader security feature by default
+        try {
+            sfactory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        } catch (Exception e) {
+            LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.", new Object[]{javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e});
+        }
+        try {
+            sfactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        } catch (Exception e) {
+            LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.",
+                     new Object[]{"http://xml.org/sax/features/external-general-entities", false, e});
+        }
+        sfactory.setNamespaceAware(true);
+        return sfactory;
+    }
+
+    private static class DocumentBuilderLoggingErrorHandler implements ErrorHandler {
+
+        @Override
+        public void warning(SAXParseException exception) throws SAXException {
+            LOG.warn(exception.getMessage(), exception);
+        }
+
+        @Override
+        public void error(SAXParseException exception) throws SAXException {
+            LOG.error(exception.getMessage(), exception);
+        }
+
+        @Override
+        public void fatalError(SAXParseException exception) throws SAXException {
+            LOG.error(exception.getMessage(), exception);
+        }
+    }
 }

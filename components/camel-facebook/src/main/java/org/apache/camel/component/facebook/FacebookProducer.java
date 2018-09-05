@@ -31,6 +31,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.facebook.config.FacebookEndpointConfiguration;
 import org.apache.camel.component.facebook.data.FacebookMethodsType;
 import org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper;
+import org.apache.camel.component.facebook.data.FacebookPropertiesHelper;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.ThreadPoolProfile;
@@ -63,9 +64,11 @@ public class FacebookProducer extends DefaultAsyncProducer {
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         // properties for method arguments
-        final Map<String, Object> properties = new HashMap<String, Object>();
-        getEndpointProperties(endpoint.getConfiguration(), properties);
+        final Map<String, Object> properties = new HashMap<>();
+
         getExchangeProperties(exchange, properties);
+        FacebookPropertiesHelper.configureReadingProperties(endpoint.getConfiguration(), properties);
+        getEndpointProperties(endpoint.getConfiguration(), properties);
 
         // decide which method to invoke
         final FacebookMethodsType method = findMethod(exchange, properties);
@@ -120,6 +123,15 @@ public class FacebookProducer extends DefaultAsyncProducer {
         };
 
         getExecutorService(getEndpoint().getCamelContext()).submit(invocation);
+        return false;
+    }
+
+    private boolean hasReadingParameters(Map<String, Object> properties) {
+        for (String parameterName : properties.keySet()) {
+            if (parameterName.startsWith(FacebookConstants.READING_PREFIX)) {
+                return true;
+            }
+        }
         return false;
     }
 

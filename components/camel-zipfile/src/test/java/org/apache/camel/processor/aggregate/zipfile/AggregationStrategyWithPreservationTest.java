@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregate.zipfile;
+import org.junit.Before;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,6 +36,7 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
     private static final int EXPECTED_NO_FILES = 5;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/out");
         super.setUp();
@@ -53,7 +55,7 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
         assertTrue("Should be a file in target/out directory", files.length > 0);
         
         File resultFile = files[0];
-        Set<String> expectedZipFiles = new HashSet<String>(Arrays.asList("another" + File.separator + "hello.txt", 
+        Set<String> expectedZipFiles = new HashSet<>(Arrays.asList("another" + File.separator + "hello.txt", 
                                                                          "other" + File.separator + "greetings.txt",
                                                                          "chiau.txt", "hi.txt", "hola.txt"));
         ZipInputStream zin = new ZipInputStream(new FileInputStream(resultFile));

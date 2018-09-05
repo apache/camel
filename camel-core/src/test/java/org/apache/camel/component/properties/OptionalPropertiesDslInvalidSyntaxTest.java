@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.properties;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
@@ -26,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class OptionalPropertiesDslInvalidSyntaxTest extends ContextTestSupport {
 
+    @Test
     public void testPlaceholderDslKeyNotFoundTest() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -44,6 +47,7 @@ public class OptionalPropertiesDslInvalidSyntaxTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testPlaceholderDslSetterNotFoundTest() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

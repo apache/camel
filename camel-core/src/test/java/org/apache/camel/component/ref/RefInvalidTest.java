@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.ref;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NoSuchBeanException;
@@ -31,6 +33,7 @@ public class RefInvalidTest extends ContextTestSupport {
 
     private SimpleRegistry registry = new SimpleRegistry();
 
+    @Test
     public void testOk() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -39,6 +42,7 @@ public class RefInvalidTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInvalid() throws Exception {
         try {
             template.sendBody("ref:xxx", "Hello World");

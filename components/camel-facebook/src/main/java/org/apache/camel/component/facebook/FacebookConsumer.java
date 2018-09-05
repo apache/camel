@@ -45,8 +45,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static org.apache.camel.component.facebook.FacebookConstants.FACEBOOK_DATE_FORMAT;
-import static org.apache.camel.component.facebook.FacebookConstants.READING_PPROPERTY;
 import static org.apache.camel.component.facebook.FacebookConstants.READING_PREFIX;
+import static org.apache.camel.component.facebook.FacebookConstants.READING_PROPERTY;
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.filterMethods;
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.getHighestPriorityMethod;
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.getMissingProperties;
@@ -75,11 +75,11 @@ public class FacebookConsumer extends ScheduledPollConsumer {
         this.method = findMethod();
 
         // get endpoint properties in a map
-        final HashMap<String, Object> properties = new HashMap<String, Object>();
+        final HashMap<String, Object> properties = new HashMap<>();
         FacebookPropertiesHelper.getEndpointProperties(endpoint.getConfiguration(), properties);
 
         // skip since and until fields?
-        final Reading reading = (Reading) properties.get(READING_PPROPERTY);
+        final Reading reading = (Reading) properties.get(READING_PROPERTY);
         if (reading != null) {
             final String queryString = reading.toString();
             if (queryString.contains(SINCE_PREFIX)) {
@@ -94,8 +94,7 @@ public class FacebookConsumer extends ScheduledPollConsumer {
                 try {
                     this.sinceTime = URLDecoder.decode(strSince, "UTF-8");
                 } catch (UnsupportedEncodingException e) {
-                    throw new RuntimeCamelException(String.format("Error decoding %s.since with value %s due to: %s"
-                            , READING_PREFIX, strSince, e.getMessage()), e);
+                    throw new RuntimeCamelException(String.format("Error decoding %s.since with value %s due to: %s", READING_PREFIX, strSince, e.getMessage()), e);
                 }
                 LOG.debug("Using supplied property {}since value {}", READING_PREFIX, this.sinceTime);
             }
@@ -116,11 +115,11 @@ public class FacebookConsumer extends ScheduledPollConsumer {
 
         FacebookMethodsType result;
         // find one that takes the largest subset of endpoint parameters
-        final Set<String> argNames = new HashSet<String>();
+        final Set<String> argNames = new HashSet<>();
         argNames.addAll(FacebookPropertiesHelper.getEndpointPropertyNames(endpoint.getConfiguration()));
 
         // add reading property for polling, if it doesn't already exist!
-        argNames.add(READING_PPROPERTY);
+        argNames.add(READING_PROPERTY);
 
         final String[] argNamesArray = argNames.toArray(new String[argNames.size()]);
         List<FacebookMethodsType> filteredMethods = filterMethods(
@@ -210,10 +209,10 @@ public class FacebookConsumer extends ScheduledPollConsumer {
     private Map<String, Object> getMethodArguments() {
         // start by setting the Reading since and until fields,
         // these are used to avoid reading duplicate results across polls
-        Map<String, Object> arguments = new HashMap<String, Object>();
+        Map<String, Object> arguments = new HashMap<>();
         arguments.putAll(endpointProperties);
 
-        Reading reading = (Reading) arguments.remove(READING_PPROPERTY);
+        Reading reading = (Reading) arguments.remove(READING_PROPERTY);
         if (reading == null) {
             reading = new Reading();
         } else {
@@ -221,10 +220,10 @@ public class FacebookConsumer extends ScheduledPollConsumer {
                 reading = ReadingBuilder.copy(reading, true);
             } catch (NoSuchFieldException e) {
                 throw new IllegalArgumentException(String.format("Error creating property [%s]: %s",
-                    READING_PPROPERTY, e.getMessage()), e);
+                        READING_PROPERTY, e.getMessage()), e);
             } catch (IllegalAccessException e) {
                 throw new IllegalArgumentException(String.format("Error creating property [%s]: %s",
-                    READING_PPROPERTY, e.getMessage()), e);
+                        READING_PROPERTY, e.getMessage()), e);
             }
         }
 
@@ -245,7 +244,7 @@ public class FacebookConsumer extends ScheduledPollConsumer {
         reading.since(this.sinceTime);
         reading.until(this.untilTime);
 
-        arguments.put(READING_PPROPERTY, reading);
+        arguments.put(READING_PROPERTY, reading);
 
         return arguments;
     }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.direct;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -29,6 +31,7 @@ public class DirectShouldUseSameThreadTest extends ContextTestSupport {
 
     private static long id;
 
+    @Test
     public void testUseSameThread() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -41,7 +44,7 @@ public class DirectShouldUseSameThreadTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                final ThreadLocal<String> local = new ThreadLocal<String>();
+                final ThreadLocal<String> local = new ThreadLocal<>();
 
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

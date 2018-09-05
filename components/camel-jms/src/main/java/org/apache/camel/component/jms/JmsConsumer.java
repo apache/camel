@@ -21,7 +21,9 @@ import javax.jms.Connection;
 
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.Processor;
-import org.apache.camel.SuspendableService;
+import org.apache.camel.Suspendable;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.impl.DefaultConsumer;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.support.JmsUtils;
@@ -34,7 +36,8 @@ import org.springframework.jms.support.JmsUtils;
  * @see DefaultJmsMessageListenerContainer
  * @see SimpleJmsMessageListenerContainer
  */
-public class JmsConsumer extends DefaultConsumer implements SuspendableService {
+@ManagedResource(description = "Managed JMS Consumer")
+public class JmsConsumer extends DefaultConsumer implements Suspendable {
     private volatile AbstractMessageListenerContainer listenerContainer;
     private volatile EndpointMessageListener messageListener;
     private volatile boolean initialized;
@@ -185,6 +188,7 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
         // then we will use updated configuration from jms endpoint that may have been managed using JMX
         listenerContainer = null;
         messageListener = null;
+        initialized = false;
 
         // shutdown thread pool if listener container was using a private thread pool
         if (shutdownExecutorService && executorService != null) {
@@ -236,6 +240,8 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
         } else {
             if (listenerContainer != null) {
                 startListenerContainer();
+            } else {
+                log.warn("The listenerContainer is not instantiated. Probably there was a timeout during the Suspend operation. Please restart your consumer route.");
             }
         }
     }
@@ -245,6 +251,31 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
             return listenerContainer.getDestination().toString();
         } else {
             return listenerContainer.getDestinationName();
+        }
+    }
+
+    /**
+     * Set the JMS message selector expression (or {@code null} if none).
+     * Default is none.
+     * <p>See the JMS specification for a detailed definition of selector expressions.
+     * <p>Note: The message selector may be replaced at runtime, with the listener
+     * container picking up the new selector value immediately (works e.g. with
+     * DefaultMessageListenerContainer, as long as the cache level is less than
+     * CACHE_CONSUMER). However, this is considered advanced usage; use it with care!
+     */
+    @ManagedAttribute(description = "Changes the JMS selector, as long the cache level is less than CACHE_CONSUMER.")
+    public String getMessageSelector() {
+        if (listenerContainer != null) {
+            return listenerContainer.getMessageSelector();
+        } else {
+            return null;
+        }
+    }
+
+    @ManagedAttribute(description = "Changes the JMS selector, as long the cache level is less than CACHE_CONSUMER.")
+    public void setMessageSelector(String messageSelector) {
+        if (listenerContainer != null) {
+            listenerContainer.setMessageSelector(messageSelector);
         }
     }
 

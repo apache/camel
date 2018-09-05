@@ -16,18 +16,18 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.io.StringWriter;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.log.ConsumingAppender;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
-import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.LoggingEvent;
+import org.apache.logging.log4j.Level;
 import org.junit.Before;
 import org.slf4j.LoggerFactory;
 
@@ -41,41 +41,22 @@ public class LogProcessorWithProvidedLoggerTest extends ContextTestSupport {
 
     // to capture the logs
     private static StringWriter sw;
-    // to capture the warnings from LogComponent
-    private static StringWriter sw2;
-
-    private static final class CapturingAppender extends AppenderSkeleton {
-        private StringWriter sw;
-
-        private CapturingAppender(StringWriter sw) {
-            this.sw = sw;
-        }
-
-        @Override
-        protected void append(LoggingEvent event) {
-            this.sw.append(event.getLoggerName() + " " + event.getLevel().toString() + " " + event.getMessage());
-        }
-
-        @Override
-        public void close() {
-        }
-
-        @Override
-        public boolean requiresLayout() {
-            return false;
-        }
-    }
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
         sw = new StringWriter();
-        Logger.getLogger("org.apache.camel.customlogger").removeAllAppenders();
-        Logger.getLogger("org.apache.camel.customlogger").addAppender(new CapturingAppender(sw));
-        Logger.getLogger("org.apache.camel.customlogger").setLevel(Level.TRACE);
+
+        ConsumingAppender.newAppender(
+            "org.apache.camel.customlogger",
+            "customlogger",
+            Level.TRACE,
+            event -> sw.append(event.getLoggerName() + " " + event.getLevel().toString() + " " + event.getMessage().getFormattedMessage())
+        );
     }
 
+    @Test
     public void testLogProcessorWithRegistryLogger() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
 
@@ -86,6 +67,7 @@ public class LogProcessorWithProvidedLoggerTest extends ContextTestSupport {
         assertThat(sw.toString(), equalTo("org.apache.camel.customlogger INFO Got Bye World"));
     }
 
+    @Test
     public void testLogProcessorWithProvidedLogger() throws Exception {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
 

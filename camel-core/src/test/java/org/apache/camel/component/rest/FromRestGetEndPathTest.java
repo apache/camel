@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.rest;
 
+import org.junit.Test;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 
 public class FromRestGetEndPathTest extends FromRestGetTest {
 
+    @Test
     public void testFromRestModel() throws Exception {
         assertEquals(getExpectedNumberOfRoutes(), context.getRoutes().size());
 
@@ -38,7 +41,7 @@ public class FromRestGetEndPathTest extends FromRestGetTest {
         assertEquals("/say/bye", rest.getPath());
         assertEquals(2, rest.getVerbs().size());
         assertEquals("application/json", rest.getVerbs().get(0).getConsumes());
-        to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getRoute().getOutputs().get(1));
+        to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getRoute().getOutputs().get(0));
         assertEquals("direct:bye", to.getUri());
 
         // the rest becomes routes and the input is a seda endpoint created by the DummyRestConsumerFactory

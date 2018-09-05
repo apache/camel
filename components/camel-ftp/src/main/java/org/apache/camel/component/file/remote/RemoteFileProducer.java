@@ -30,6 +30,8 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
 
     private boolean loggedIn;
     
+    private transient String remoteFileProducerToString;
+    
     protected RemoteFileProducer(RemoteFileEndpoint<T> endpoint, RemoteFileOperations<T> operations) {
         super(endpoint, operations);
     }
@@ -142,8 +144,13 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
     }
 
     @Override
-    public void postWriteCheck() {
+    public void postWriteCheck(Exchange exchange) {
         try {
+            boolean isLast = exchange.getProperty(Exchange.BATCH_COMPLETE, false, Boolean.class);
+            if (isLast && getEndpoint().isDisconnectOnBatchComplete()) {
+                log.trace("postWriteCheck disconnect on batch complete from: {}", getEndpoint());
+                disconnect();
+            }
             if (getEndpoint().isDisconnect()) {
                 log.trace("postWriteCheck disconnect from: {}", getEndpoint());
                 disconnect();
@@ -195,7 +202,20 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
         // recover by re-creating operations which should most likely be able to recover
         if (!loggedIn) {
             log.debug("Trying to recover connection to: {} with a new FTP client.", getEndpoint());
-            setOperations(getEndpoint().createRemoteFileOperations());
+            // we want to preserve last FTP activity listener when we set a new operations
+            if (operations instanceof FtpOperations) {
+                FtpOperations ftpOperations = (FtpOperations) operations;
+                FtpClientActivityListener listener = ftpOperations.getClientActivityListener();
+                setOperations(getEndpoint().createRemoteFileOperations());
+                getOperations().setEndpoint(getEndpoint());
+                if (listener != null) {
+                    ftpOperations = (FtpOperations) getOperations();
+                    ftpOperations.setClientActivityListener(listener);
+                }
+            } else {
+                setOperations(getEndpoint().createRemoteFileOperations());
+                getOperations().setEndpoint(getEndpoint());
+            }
             connectIfNecessary();
         }
     }
@@ -219,6 +239,9 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
 
     @Override
     public String toString() {
-        return "RemoteFileProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (remoteFileProducerToString == null) {
+            remoteFileProducerToString = "RemoteFileProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return remoteFileProducerToString;
     }
 }

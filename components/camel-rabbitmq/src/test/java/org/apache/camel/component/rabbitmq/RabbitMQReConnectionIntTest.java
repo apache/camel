@@ -28,21 +28,21 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Integration test to check that RabbitMQ Endpoint is able to reconnect to broker when broker
- * is not avaibable.
+ * is not available.
  * <ul>
  * <li>Stop the broker</li>
  * <li>Run the test: the producer complains it can not send messages, the consumer is silent</li>
  * <li>Start the broker: the producer sends messages, and the consumer receives messages</li>
  * <li>Stop the broker: the producer complains it can not send messages, the consumer is silent</li>
  * <li>Start the broker: the producer sends messages, and the consumer receives messages</li>
+ * <li>Kill all connections from the broker: the producer sends messages, and the consumer receives messages</li>
  * </ul>
  */
-public class RabbitMQReConnectionIntTest extends CamelTestSupport {
+public class RabbitMQReConnectionIntTest extends AbstractRabbitMQIntTest {
     private static final String EXCHANGE = "ex3";
 
     @Produce(uri = "direct:rabbitMQ")
@@ -64,6 +64,7 @@ public class RabbitMQReConnectionIntTest extends CamelTestSupport {
         return new RouteBuilder() {
 
             @Override
+            @SuppressWarnings("unchecked")
             public void configure() throws Exception {
                 from("direct:rabbitMQ")
                         .id("producingRoute")

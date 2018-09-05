@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregate.cassandra;
+import org.junit.After;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
@@ -33,25 +34,39 @@ public class CassandraAggregationTest extends CamelTestSupport {
     private Cluster cluster;
     private CassandraAggregationRepository aggregationRepository;
 
+    public static boolean canTest() {
+        // we cannot test on CI
+        return System.getenv("BUILD_ID") == null;
+    }
+
     @Override
     protected void doPreSetup() throws Exception {
-        CassandraUnitUtils.startEmbeddedCassandra();
-        cluster = CassandraUnitUtils.cassandraCluster();
-        Session rootSession = cluster.connect();
-        CassandraUnitUtils.loadCQLDataSet(rootSession, "NamedAggregationDataSet.cql");
-        rootSession.close();
-        aggregationRepository = new NamedCassandraAggregationRepository(cluster, CassandraUnitUtils.KEYSPACE, "ID");
-        aggregationRepository.setTable("NAMED_CAMEL_AGGREGATION");
-        aggregationRepository.start();
+        if (canTest()) {
+            CassandraUnitUtils.startEmbeddedCassandra();
+            cluster = CassandraUnitUtils.cassandraCluster();
+            Session rootSession = cluster.connect();
+            CassandraUnitUtils.loadCQLDataSet(rootSession, "NamedAggregationDataSet.cql");
+            rootSession.close();
+            aggregationRepository = new NamedCassandraAggregationRepository(cluster, CassandraUnitUtils.KEYSPACE, "ID");
+            aggregationRepository.setTable("NAMED_CAMEL_AGGREGATION");
+            aggregationRepository.start();
+        }
         super.doPreSetup();
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
-        aggregationRepository.stop();
-        cluster.close();
-        CassandraUnitUtils.cleanEmbeddedCassandra();
+        if (canTest()) {
+            aggregationRepository.stop();
+            cluster.close();
+            try {
+                CassandraUnitUtils.cleanEmbeddedCassandra();
+            } catch (Throwable e) {
+                // ignore shutdown errors
+            }
+        }
     }
 
     @Override
@@ -86,6 +101,10 @@ public class CassandraAggregationTest extends CamelTestSupport {
 
     @Test
     public void testAggregationRoute() throws Exception {
+        if (!canTest()) {
+            return;
+        }
+
         // Given
         MockEndpoint mockOutput = getMockEndpoint("mock:output");
         mockOutput.expectedMessageCount(2);
@@ -98,6 +117,5 @@ public class CassandraAggregationTest extends CamelTestSupport {
         send("1", "E");
         // Then
         mockOutput.assertIsSatisfied(4000L);
-
     }
 }

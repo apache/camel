@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,7 +26,6 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
@@ -34,9 +36,10 @@ import org.apache.camel.support.EventNotifierSupport;
  */
 public class EventNotifierExchangeCompletedTest extends ContextTestSupport {
 
-    private static List<EventObject> events = new ArrayList<EventObject>();
+    private static List<EventObject> events = new ArrayList<>();
 
     @Override
+    @Before
     public void setUp() throws Exception {
         events.clear();
         super.setUp();
@@ -69,6 +72,7 @@ public class EventNotifierExchangeCompletedTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testExchangeCompleted() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -85,7 +89,7 @@ public class EventNotifierExchangeCompletedTest extends ContextTestSupport {
         assertEquals("direct://start", event.getExchange().getFromEndpoint().getEndpointUri());
 
         // grab the created timestamp
-        Date created = event.getExchange().getProperty(Exchange.CREATED_TIMESTAMP, Date.class);
+        Date created = event.getExchange().getCreated();
         assertNotNull(created);
 
         // calculate elapsed time

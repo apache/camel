@@ -15,8 +15,15 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -27,6 +34,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.idempotent.FileIdempotentRepository;
 import org.apache.camel.spi.IdempotentRepository;
+import org.hamcrest.collection.IsIterableContainingInOrder;
+import org.junit.Assert;
 
 /**
  * @version 
@@ -37,6 +46,7 @@ public class FileIdempotentTrunkStoreTest extends ContextTestSupport {
     private File store = new File("target/idempotentfilestore.dat");
     private IdempotentRepository<String> repo;
 
+    @Test
     public void testTrunkFileStore() throws Exception {
         resultEndpoint.expectedBodiesReceived("A", "B", "C", "D", "E");
 
@@ -49,28 +59,26 @@ public class FileIdempotentTrunkStoreTest extends ContextTestSupport {
         sendMessage("EEEEEEEEEE", "E");
 
         resultEndpoint.assertIsSatisfied();
+
         resultEndpoint.reset();
         resultEndpoint.expectedBodiesReceived("Z", "X");
 
         // should trunk the file store
         sendMessage("ZZZZZZZZZZ", "Z");
-
-        // load in new store and verify we only have the last 5 elements
-        IdempotentRepository<String> repo2 = FileIdempotentRepository.fileIdempotentRepository(store);
-        repo2.start();
-        assertFalse(repo2.contains("AAAAAAAAAA"));
-        assertTrue(repo2.contains("BBBBBBBBBB"));
-        assertTrue(repo2.contains("CCCCCCCCCC"));
-        assertTrue(repo2.contains("DDDDDDDDDD"));
-        assertTrue(repo2.contains("EEEEEEEEEE"));
-        assertTrue(repo2.contains("ZZZZZZZZZZ"));
-
-        // should trunk the file store
         sendMessage("XXXXXXXXXX", "X");
 
         resultEndpoint.assertIsSatisfied();
-        assertFalse(repo.contains("BBBBBBBBBB"));
+
         assertTrue(repo.contains("XXXXXXXXXX"));
+
+        // check the file should only have the last 2 entries as it was trunked
+        Stream<String> fileContent = Files.lines(store.toPath());
+        List<String> fileEntries = fileContent.collect(Collectors.toList());
+        fileContent.close();
+        //expected order
+        Assert.assertThat(fileEntries, IsIterableContainingInOrder.contains(
+            "ZZZZZZZZZZ",
+            "XXXXXXXXXX"));
     }
 
     protected void sendMessage(final Object messageId, final Object body) {
@@ -85,7 +93,8 @@ public class FileIdempotentTrunkStoreTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // delete file store before testing
         if (store.exists()) {
             store.delete();

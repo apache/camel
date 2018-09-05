@@ -40,16 +40,18 @@ import org.junit.Test;
 public class CustomFiltersTest extends BaseJettyTest {
 
     private static class MyTestFilter implements Filter {
+        private String keyWord;
         @Override
         public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {            
             // set a marker attribute to show that this filter class was used
             ((HttpServletResponse)response).addHeader("MyTestFilter", "true");
-            chain.doFilter(request , response);
+            ((HttpServletResponse)response).setHeader("KeyWord", keyWord);
+            chain.doFilter(request, response);
         }
 
         @Override
         public void init(FilterConfig filterConfig) throws ServletException {
-            // do nothing here
+            keyWord = filterConfig.getInitParameter("keyWord");
         }
 
         @Override
@@ -73,6 +75,9 @@ public class CustomFiltersTest extends BaseJettyTest {
         String result = httppost.getResponseBodyAsString();
         assertEquals("Get a wrong result", "This is a test response", result);
         assertNotNull("Did not use custom multipart filter", httppost.getResponseHeader("MyTestFilter"));
+
+        // just make sure the KeyWord header is set
+        assertEquals("Did not set the right KeyWord header", "KEY", httppost.getResponseHeader("KeyWord").getValue());
     }
     
     @Test
@@ -83,7 +88,7 @@ public class CustomFiltersTest extends BaseJettyTest {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        List<Filter> filters = new ArrayList<Filter>();
+        List<Filter> filters = new ArrayList<>();
         filters.add(new MyTestFilter());
         jndi.bind("myFilters", filters);
         return jndi;
@@ -94,7 +99,7 @@ public class CustomFiltersTest extends BaseJettyTest {
             public void configure() throws Exception {
                                 
                 // Test the filter list options
-                from("jetty://http://localhost:{{port}}/testFilters?filtersRef=myFilters").process(new Processor() {
+                from("jetty://http://localhost:{{port}}/testFilters?filtersRef=myFilters&filterInit.keyWord=KEY").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Message in = exchange.getIn();
                         String request = in.getBody(String.class);

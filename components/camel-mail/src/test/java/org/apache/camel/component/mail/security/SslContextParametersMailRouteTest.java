@@ -18,18 +18,14 @@ package org.apache.camel.component.mail.security;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.net.ssl.SSLHandshakeException;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mail.MailTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.jsse.KeyManagersParameters;
-import org.apache.camel.util.jsse.KeyStoreParameters;
-import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.TrustManagersParameters;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -40,9 +36,7 @@ import org.junit.Test;
  */
 @Ignore
 public class SslContextParametersMailRouteTest extends CamelTestSupport {
-    
-    protected static final String KEY_STORE_PASSWORD = "changeit";
-    
+
     private String email = "USERNAME@gmail.com";
     private String username = "USERNAME@gmail.com";
     private String imapHost = "imap.gmail.com";
@@ -56,7 +50,7 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
             public void configure() {
                 
                 from("imaps://" + imapHost + "?username=" + username + "&password=" + password
-                        + "&delete=false&unseen=true&fetchSize=1&consumer.useFixedDelay=true&consumer.delay=1000")
+                        + "&delete=false&unseen=true&fetchSize=1&consumer.useFixedDelay=true&consumer.initialDelay=100&consumer.delay=100")
                      .to("mock:in");
                 
                 from("direct:in")
@@ -69,7 +63,7 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:in");
         resultEndpoint.expectedBodiesReceived("Test Email Body\r\n");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("To", email);
         headers.put("From", email);
         headers.put("Reply-to", email);
@@ -94,7 +88,7 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
         
         context.start();
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("To", email);
         headers.put("From", email);
         headers.put("Reply-to", email);
@@ -120,22 +114,7 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
     }
     
     protected void addSslContextParametersToRegistry(JndiRegistry registry) {
-        KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.ks").toString());
-        ksp.setPassword(KEY_STORE_PASSWORD);
-
-        KeyManagersParameters kmp = new KeyManagersParameters();
-        kmp.setKeyPassword(KEY_STORE_PASSWORD);
-        kmp.setKeyStore(ksp);
-
-        TrustManagersParameters tmp = new TrustManagersParameters();
-        tmp.setKeyStore(ksp);
-        
-        SSLContextParameters sslContextParameters = new SSLContextParameters();
-        sslContextParameters.setKeyManagers(kmp);
-        sslContextParameters.setTrustManagers(tmp);
-
-        registry.bind("sslContextParameters", sslContextParameters);
+        registry.bind("sslContextParameters", MailTestHelper.createSslContextParameters());
     }
     
     /**

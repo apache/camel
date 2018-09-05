@@ -23,7 +23,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 
 public class CompositeHttpConfigurer implements HttpClientConfigurer {
 
-    private final List<HttpClientConfigurer> configurers = new ArrayList<HttpClientConfigurer>();
+    private final List<HttpClientConfigurer> configurers = new ArrayList<>();
 
     public void addConfigurer(HttpClientConfigurer configurer) {
         if (configurer != null) {

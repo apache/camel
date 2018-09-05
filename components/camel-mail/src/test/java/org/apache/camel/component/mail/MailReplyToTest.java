@@ -82,7 +82,7 @@ public class MailReplyToTest extends CamelTestSupport {
                 from("direct:b")
                     .to("smtp://christian@localhost?subject=Camel&replyTo=noReply1@localhost,noReply2@localhost");
 
-                from("pop3://localhost?username=christian&password=secret&consumer.delay=1000")
+                from("pop3://localhost?username=christian&password=secret&consumer.initialDelay=100&consumer.delay=100")
                     .to("mock:result");
             }
         };

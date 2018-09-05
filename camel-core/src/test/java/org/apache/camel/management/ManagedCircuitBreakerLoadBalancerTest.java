@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.management.MBeanServer;
@@ -33,6 +35,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class ManagedCircuitBreakerLoadBalancerTest extends ManagementTestSupport {
 
+    @Test
     public void testManageCircuitBreakerLoadBalancer() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

@@ -123,6 +123,13 @@ public class SimpleTokenType {
     public boolean isNullValue() {
         return type == TokenType.nullValue;
     }
+    
+    /**
+     * Whether the type is a minus operator
+     */
+    public boolean isMinusValue() {
+        return type == TokenType.minusValue;
+    }
 
     @Override
     public String toString() {

@@ -17,6 +17,8 @@
 package org.apache.camel.component.file.strategy;
 
 import java.io.File;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -43,11 +45,16 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport imp
     private static final transient Logger LOG = LoggerFactory.getLogger(FileIdempotentRepositoryReadLockStrategy.class);
 
     private GenericFileEndpoint<File> endpoint;
-    private LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;
+    private LoggingLevel readLockLoggingLevel = LoggingLevel.DEBUG;
     private CamelContext camelContext;
     private IdempotentRepository<String> idempotentRepository;
     private boolean removeOnRollback = true;
     private boolean removeOnCommit;
+    private int readLockIdempotentReleaseDelay;
+    private boolean readLockIdempotentReleaseAsync;
+    private int readLockIdempotentReleaseAsyncPoolSize;
+    private ScheduledExecutorService readLockIdempotentReleaseExecutorService;
+    private boolean shutdownExecutorService;
 
     @Override
     public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) throws Exception {
@@ -81,22 +88,48 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport imp
     @Override
     public void releaseExclusiveReadLockOnRollback(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         String key = asKey(file);
-        if (removeOnRollback) {
-            idempotentRepository.remove(key);
+        Runnable r = () -> {
+            if (removeOnRollback) {
+                idempotentRepository.remove(key);
+            } else {
+                // okay we should not remove then confirm it instead
+                idempotentRepository.confirm(key);
+            }
+        };
+
+        if (readLockIdempotentReleaseDelay > 0 && readLockIdempotentReleaseExecutorService != null) {
+            LOG.debug("Scheduling readlock release task to run asynchronous delayed after {} millis", readLockIdempotentReleaseDelay);
+            readLockIdempotentReleaseExecutorService.schedule(r, readLockIdempotentReleaseDelay, TimeUnit.MILLISECONDS);
+        } else if (readLockIdempotentReleaseDelay > 0) {
+            LOG.debug("Delaying readlock release task {} millis", readLockIdempotentReleaseDelay);
+            Thread.sleep(readLockIdempotentReleaseDelay);
+            r.run();
         } else {
-            // okay we should not remove then confirm it instead
-            idempotentRepository.confirm(key);
+            r.run();
         }
     }
 
     @Override
     public void releaseExclusiveReadLockOnCommit(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         String key = asKey(file);
-        if (removeOnCommit) {
-            idempotentRepository.remove(key);
+        Runnable r = () -> {
+            if (removeOnCommit) {
+                idempotentRepository.remove(key);
+            } else {
+                // confirm on commit
+                idempotentRepository.confirm(key);
+            }
+        };
+
+        if (readLockIdempotentReleaseDelay > 0 && readLockIdempotentReleaseExecutorService != null) {
+            LOG.debug("Scheduling readlock release task to run asynchronous delayed after {} millis", readLockIdempotentReleaseDelay);
+            readLockIdempotentReleaseExecutorService.schedule(r, readLockIdempotentReleaseDelay, TimeUnit.MILLISECONDS);
+        } else if (readLockIdempotentReleaseDelay > 0) {
+            LOG.debug("Delaying readlock release task {} millis", readLockIdempotentReleaseDelay);
+            Thread.sleep(readLockIdempotentReleaseDelay);
+            r.run();
         } else {
-            // confirm on commit
-            idempotentRepository.confirm(key);
+            r.run();
         }
     }
 
@@ -178,6 +211,50 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport imp
         this.removeOnCommit = removeOnCommit;
     }
 
+    public int getReadLockIdempotentReleaseDelay() {
+        return readLockIdempotentReleaseDelay;
+    }
+
+    /**
+     * Whether to delay the release task for a period of millis.
+     */
+    public void setReadLockIdempotentReleaseDelay(int readLockIdempotentReleaseDelay) {
+        this.readLockIdempotentReleaseDelay = readLockIdempotentReleaseDelay;
+    }
+
+    public boolean isReadLockIdempotentReleaseAsync() {
+        return readLockIdempotentReleaseAsync;
+    }
+
+    /**
+     * Whether the delayed release task should be synchronous or asynchronous.
+     */
+    public void setReadLockIdempotentReleaseAsync(boolean readLockIdempotentReleaseAsync) {
+        this.readLockIdempotentReleaseAsync = readLockIdempotentReleaseAsync;
+    }
+
+    public int getReadLockIdempotentReleaseAsyncPoolSize() {
+        return readLockIdempotentReleaseAsyncPoolSize;
+    }
+
+    /**
+     * The number of threads in the scheduled thread pool when using asynchronous release tasks.
+     */
+    public void setReadLockIdempotentReleaseAsyncPoolSize(int readLockIdempotentReleaseAsyncPoolSize) {
+        this.readLockIdempotentReleaseAsyncPoolSize = readLockIdempotentReleaseAsyncPoolSize;
+    }
+
+    public ScheduledExecutorService getReadLockIdempotentReleaseExecutorService() {
+        return readLockIdempotentReleaseExecutorService;
+    }
+
+    /**
+     * To use a custom and shared thread pool for asynchronous release tasks.
+     */
+    public void setReadLockIdempotentReleaseExecutorService(ScheduledExecutorService readLockIdempotentReleaseExecutorService) {
+        this.readLockIdempotentReleaseExecutorService = readLockIdempotentReleaseExecutorService;
+    }
+
     protected String asKey(GenericFile<File> file) {
         // use absolute file path as default key, but evaluate if an expression key was configured
         String key = file.getAbsoluteFilePath();
@@ -193,13 +270,18 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport imp
         ObjectHelper.notNull(camelContext, "camelContext", this);
         ObjectHelper.notNull(idempotentRepository, "idempotentRepository", this);
 
-        // ensure the idempotent repository is added as a service so CamelContext will stop the repo when it shutdown itself
-        camelContext.addService(idempotentRepository, true);
+        if (readLockIdempotentReleaseAsync && readLockIdempotentReleaseExecutorService == null) {
+            readLockIdempotentReleaseExecutorService = camelContext.getExecutorServiceManager().newScheduledThreadPool(this, "ReadLockIdempotentReleaseTask", readLockIdempotentReleaseAsyncPoolSize);
+            shutdownExecutorService = true;
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
-        // noop
+        if (shutdownExecutorService && readLockIdempotentReleaseExecutorService != null) {
+            camelContext.getExecutorServiceManager().shutdownGraceful(readLockIdempotentReleaseExecutorService, 30000);
+            readLockIdempotentReleaseExecutorService = null;
+        }
     }
 
 }

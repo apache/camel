@@ -45,7 +45,7 @@ public class BindySimpleKeyValuePairWithoutSectionMarshallDslTest extends Abstra
     private static final String URI_MOCK_ERROR = "mock:error";
     private static final String URI_DIRECT_START = "direct:start";
 
-    private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+    private List<Map<String, Object>> models = new ArrayList<>();
 
     @Produce(uri = URI_DIRECT_START)
     private ProducerTemplate template;
@@ -78,7 +78,7 @@ public class BindySimpleKeyValuePairWithoutSectionMarshallDslTest extends Abstra
     }
 
     public List<Map<String, Object>> generateModel() {
-        Map<String, Object> modelObjects = new HashMap<String, Object>();
+        Map<String, Object> modelObjects = new HashMap<>();
 
         Order order = new Order();
         order.setAccount("BE.CHM.001");

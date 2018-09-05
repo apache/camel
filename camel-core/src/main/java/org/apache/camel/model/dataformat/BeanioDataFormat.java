@@ -27,11 +27,11 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * BeanIO data format
+ * The BeanIO data format is used for working with flat payloads (such as CSV, delimited, or fixed length formats).
  *
  * @version 
  */
-@Metadata(label = "dataformat,transformation", title = "BeanIO")
+@Metadata(firstVersion = "2.10.0", label = "dataformat,transformation,csv", title = "BeanIO")
 @XmlRootElement(name = "beanio")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BeanioDataFormat extends DataFormatDefinition {
@@ -48,6 +48,10 @@ public class BeanioDataFormat extends DataFormatDefinition {
     private Boolean ignoreInvalidRecords;
     @XmlAttribute
     private String encoding;
+    @XmlAttribute @Metadata(label = "advanced")
+    private String beanReaderErrorHandlerType;
+    @XmlAttribute @Metadata(label = "advanced")
+    private Boolean unmarshalSingleObject;
 
     public BeanioDataFormat() {
         super("beanio");
@@ -68,6 +72,12 @@ public class BeanioDataFormat extends DataFormatDefinition {
         }
         if (encoding != null) {
             setProperty(camelContext, dataFormat, "encoding", encoding);
+        }
+        if (beanReaderErrorHandlerType != null) {
+            setProperty(camelContext, dataFormat, "beanReaderErrorHandlerType", beanReaderErrorHandlerType);
+        }
+        if (unmarshalSingleObject != null) {
+            setProperty(camelContext, dataFormat, "unmarshalSingleObject", unmarshalSingleObject);
         }
     }
 
@@ -140,4 +150,29 @@ public class BeanioDataFormat extends DataFormatDefinition {
         this.encoding = encoding;
     }
 
+    public String getBeanReaderErrorHandlerType() {
+        return beanReaderErrorHandlerType;
+    }
+
+    /**
+     * To use a custom org.apache.camel.dataformat.beanio.BeanIOErrorHandler as error handler
+     * while parsing. Configure the fully qualified class name of the error handler.
+     * Notice the options ignoreUnidentifiedRecords, ignoreUnexpectedRecords, and ignoreInvalidRecords
+     * may not be in use when you use a custom error handler.
+     */
+    public void setBeanReaderErrorHandlerType(String beanReaderErrorHandlerType) {
+        this.beanReaderErrorHandlerType = beanReaderErrorHandlerType;
+    }
+
+    public Boolean getUnmarshalSingleObject() {
+        return unmarshalSingleObject;
+    }
+
+    /**
+     * This options controls whether to unmarshal as a list of objects or as a single object only. The former is the default mode, and the latter
+     * is only intended in special use-cases where beanio maps the Camel message to a single POJO bean.
+     */
+    public void setUnmarshalSingleObject(Boolean unmarshalSingleObject) {
+        this.unmarshalSingleObject = unmarshalSingleObject;
+    }
 }

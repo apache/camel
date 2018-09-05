@@ -23,13 +23,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * For EL expressions and predicates
+ * To use EL scripts in Camel expressions or predicates.
  *
  * @version 
  */
-@Metadata(label = "language", title = "EL")
+@Metadata(firstVersion = "1.1.0", label = "language,script", title = "EL")
 @XmlRootElement(name = "el")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class ELExpression extends ExpressionDefinition {
 
     public ELExpression() {

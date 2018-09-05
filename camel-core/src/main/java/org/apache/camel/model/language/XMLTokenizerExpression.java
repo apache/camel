@@ -28,11 +28,11 @@ import org.apache.camel.language.tokenizer.XMLTokenizeLanguage;
 import org.apache.camel.spi.Metadata;
 
 /**
- * For expressions and predicates using a body or header tokenizer.
+ * To use Camel message body or header with a XML tokenizer in Camel expressions or predicates.
  *
  * @see XMLTokenizeLanguage
  */
-@Metadata(label = "language", title = "XML Tokenize")
+@Metadata(firstVersion = "2.14.0", label = "language,core,xml", title = "XML Tokenize")
 @XmlRootElement(name = "xtokenize")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLTokenizerExpression extends NamespaceAwareExpression {

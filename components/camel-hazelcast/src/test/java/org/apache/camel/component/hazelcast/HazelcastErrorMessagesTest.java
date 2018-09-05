@@ -36,7 +36,7 @@ public class HazelcastErrorMessagesTest extends HazelcastCamelTestSupport {
         } catch (Exception e) {
             assertTrue(e.getMessage().contains(
                     "Your URI does not provide a correct 'type' prefix. It should be anything like "
-                            + "'hazelcast:[map:|multimap:|atomicvalue:|instance:|queue:|seda:|list:|replicatedmap:|set:]name' but is 'hazelcast://error:foo"));
+                            + "'hazelcast:[map:|multimap:|atomicvalue:|instance:|queue:|seda:|list:|replicatedmap:|set:|ringbuffer:]name' but is 'hazelcast://error:foo"));
         }
     }
 
@@ -44,7 +44,7 @@ public class HazelcastErrorMessagesTest extends HazelcastCamelTestSupport {
     public void testAtomicNumberConsumer() {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() throws Exception {
-                from("hazelcast:atomicvalue:foo").to("seda:out");
+                from("hazelcast-atomicvalue:foo").to("seda:out");
             }
         };
         try {
@@ -52,7 +52,7 @@ public class HazelcastErrorMessagesTest extends HazelcastCamelTestSupport {
             context.start();
             fail("Should have thrown exception");
         } catch (Exception e) {
-            assertTrue(e.getMessage().contains("You cannot send messages to this endpoint: hazelcast://atomicvalue:foo"));
+            assertTrue(e.getMessage().contains("You cannot send messages to this endpoint: hazelcast-atomicvalue://foo"));
         }
     }
 
@@ -60,7 +60,7 @@ public class HazelcastErrorMessagesTest extends HazelcastCamelTestSupport {
     public void testInstanceProducer() {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:foo").to("hazelcast:instance:foo");
+                from("direct:foo").to("hazelcast-instance:foo");
             }
         };
 
@@ -69,7 +69,7 @@ public class HazelcastErrorMessagesTest extends HazelcastCamelTestSupport {
             context.start();
             fail("Should have thrown exception");
         } catch (Exception e) {
-            assertTrue(e.getMessage().contains("You cannot send messages to this endpoint: hazelcast://instance:foo"));
+            assertTrue(e.getMessage().contains("You cannot send messages to this endpoint: hazelcast-instance://foo"));
         }
     }
 

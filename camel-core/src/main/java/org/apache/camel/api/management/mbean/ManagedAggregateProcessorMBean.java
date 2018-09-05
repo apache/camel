@@ -39,6 +39,9 @@ public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "Completion interval in millis")
     long getCompletionInterval();
 
+    @ManagedAttribute(description = "Completion timeout checker interval in millis")
+    long getCompletionTimeoutCheckerInterval();
+
     @ManagedAttribute(description = "Completion size")
     int getCompletionSize();
 
@@ -50,6 +53,9 @@ public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "Complete from batch consumers")
     boolean isCompletionFromBatchConsumer();
+
+    @ManagedAttribute(description = "Complete all previous groups on new incoming correlation group")
+    boolean isCompletionOnNewCorrelationGroup();
 
     @ManagedAttribute(description = "Ignore invalid correlation keys")
     boolean isIgnoreInvalidCorrelationKeys();

@@ -16,17 +16,18 @@
  */
 package org.apache.camel.component.seda;
 
-
 import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * Implementation of {@link BlockingQueueFactory} producing {@link java.util.concurrent.ArrayBlockingQueue}
  */
 public class ArrayBlockingQueueFactory<E> implements BlockingQueueFactory<E> {
+
     /**
      * Capacity used when none provided
      */
     private int defaultCapacity = 50;
+
     /**
      * Lock fairness. null means default fairness
      */
@@ -68,6 +69,6 @@ public class ArrayBlockingQueueFactory<E> implements BlockingQueueFactory<E> {
     @Override
     public ArrayBlockingQueue<E> create(int capacity) {
         return fair == null
-            ? new ArrayBlockingQueue<E>(defaultCapacity) : new ArrayBlockingQueue<E>(defaultCapacity, fair);
+            ? new ArrayBlockingQueue<>(defaultCapacity) : new ArrayBlockingQueue<>(defaultCapacity, fair);
     }
 }

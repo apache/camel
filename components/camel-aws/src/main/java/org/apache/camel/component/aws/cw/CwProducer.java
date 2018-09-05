@@ -39,6 +39,8 @@ import org.apache.camel.util.URISupport;
  */
 public class CwProducer extends DefaultProducer {
 
+    private transient String cwProducerToString;
+    
     public CwProducer(Endpoint endpoint) {
         super(endpoint);
     }
@@ -81,7 +83,7 @@ public class CwProducer extends DefaultProducer {
         } else {
             Map<String, String> dimensions = exchange.getIn().getHeader(CwConstants.METRIC_DIMENSIONS, Map.class);
             if (dimensions != null) {
-                Collection<Dimension> dimensionCollection = new ArrayList<Dimension>();
+                Collection<Dimension> dimensionCollection = new ArrayList<>();
                 for (Map.Entry<String, String> dimensionEntry : dimensions.entrySet()) {
                     Dimension dimension = new Dimension().withName(dimensionEntry.getKey()).withValue(dimensionEntry.getValue());
                     dimensionCollection.add(dimension);
@@ -137,7 +139,10 @@ public class CwProducer extends DefaultProducer {
 
     @Override
     public String toString() {
-        return "CwProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (cwProducerToString == null) {
+            cwProducerToString = "CwProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return cwProducerToString;
     }
 
     @Override

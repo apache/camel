@@ -22,11 +22,11 @@ import java.io.InputStream;
 
 class ZipInputStreamWrapper extends BufferedInputStream {
 
-    public ZipInputStreamWrapper(InputStream in, int size) {
+    ZipInputStreamWrapper(InputStream in, int size) {
         super(in, size);
     }
 
-    public ZipInputStreamWrapper(InputStream in) {
+    ZipInputStreamWrapper(InputStream in) {
         super(in);
     }
 

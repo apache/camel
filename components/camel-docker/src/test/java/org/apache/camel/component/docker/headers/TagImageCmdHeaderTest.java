@@ -23,9 +23,10 @@ import com.github.dockerjava.api.command.TagImageCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+
+import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Validates Tag Image Request headers are applied properly
@@ -60,7 +61,7 @@ public class TagImageCmdHeaderTest extends BaseDockerHeaderTest<TagImageCmd> {
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.tagImageCmd(Matchers.anyString(), Matchers.anyString(), Matchers.anyString())).thenReturn(mockObject);
+        Mockito.when(dockerClient.tagImageCmd(anyString(), anyString(), anyString())).thenReturn(mockObject);
     }
 
     @Override

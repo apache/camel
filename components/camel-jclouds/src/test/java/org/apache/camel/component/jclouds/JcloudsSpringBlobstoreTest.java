@@ -15,21 +15,19 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jclouds;
+import org.junit.Before;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.compute.domain.Image;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -112,7 +110,7 @@ public class JcloudsSpringBlobstoreTest extends CamelSpringTestSupport {
         assertEquals(true, result);
         List blobsToRemove = new ArrayList<>();
         blobsToRemove.add("testName");
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(JcloudsConstants.OPERATION, JcloudsConstants.REMOVE_BLOBS);
         headers.put(JcloudsConstants.CONTAINER_NAME, "foo");
         headers.put(JcloudsConstants.BLOB_NAME_LIST, blobsToRemove);

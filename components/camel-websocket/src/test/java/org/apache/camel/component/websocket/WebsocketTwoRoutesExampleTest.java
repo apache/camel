@@ -15,28 +15,31 @@
  * limitations under the License.
  */
 package org.apache.camel.component.websocket;
+import org.junit.Before;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.ws.WebSocket;
-import com.ning.http.client.ws.WebSocketTextListener;
-import com.ning.http.client.ws.WebSocketUpgradeHandler;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.ws.WebSocket;
+import org.asynchttpclient.ws.WebSocketTextListener;
+import org.asynchttpclient.ws.WebSocketUpgradeHandler;
 import org.junit.Test;
 
 public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
 
-    private static List<String> received = new ArrayList<String>();
+    private static List<String> received = new ArrayList<>();
     private static CountDownLatch latch;
     private int port;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         port = AvailablePortFinder.getNextAvailable(16310);
         super.setUp();
@@ -49,7 +52,7 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
         received.clear();
         latch = new CountDownLatch(1);
 
-        AsyncHttpClient c = new AsyncHttpClient();
+        AsyncHttpClient c = new DefaultAsyncHttpClient();
 
         WebSocket websocket = c.prepareGet("ws://localhost:" + port + "/bar").execute(
             new WebSocketUpgradeHandler.Builder()
@@ -88,7 +91,7 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
         received.clear();
         latch = new CountDownLatch(1);
 
-        c = new AsyncHttpClient();
+        c = new DefaultAsyncHttpClient();
 
         websocket = c.prepareGet("ws://localhost:" + port + "/pub").execute(
                 new WebSocketUpgradeHandler.Builder()
@@ -129,7 +132,10 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-
+                WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
+                websocketComponent.setMinThreads(1);
+                websocketComponent.setMaxThreads(25);
+                
                 from("websocket://localhost:" + port + "/bar")
                     .log(">>> Message received from BAR WebSocket Client : ${body}")
                     .transform().simple("The bar has ${body}")

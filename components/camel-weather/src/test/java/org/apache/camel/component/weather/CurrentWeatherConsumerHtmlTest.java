@@ -22,7 +22,7 @@ public class CurrentWeatherConsumerHtmlTest extends BaseWeatherConsumerTest {
 
     @Override
     protected void checkWeatherContent(String weather) {
-        log.debug("The weather in {} format is {}{}", new Object[] {WeatherMode.HTML, LS, weather});
+        log.debug("The weather in {} format is {}{}", WeatherMode.HTML, LS, weather);
 
         assertStringContains(weather, "<!DOCTYPE html>");
         assertStringContains(weather, "<head>");
@@ -35,7 +35,7 @@ public class CurrentWeatherConsumerHtmlTest extends BaseWeatherConsumerTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("weather:foo?mode=HTML").to("mock:result");
+                from("weather:foo?mode=HTML&appid=9162755b2efa555823cfe0451d7fff38&geolocationAccessKey=test&geolocationRequestHostIP=test").to("mock:result");
             }
         };
     }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
@@ -27,6 +29,7 @@ import org.apache.camel.util.URISupport;
  */
 public class DefaultEndpointTest extends ContextTestSupport {
 
+    @Test
     public void testSanitizeUri() {
         assertNull(URISupport.sanitizeUri(null));
         assertEquals("", URISupport.sanitizeUri(""));
@@ -42,12 +45,12 @@ public class DefaultEndpointTest extends ContextTestSupport {
             URISupport.sanitizeUri("aws-sqs://MyQueue?accessKey=1672t4rflhnhli3&secretKey=qi472qfberu33dqjncq"));
     }
 
+    @Test
     public void testToString() {
         final String epstr = "myep:///test";
         MyEndpoint ep = new MyEndpoint();
-        assertNotNull(ep.toString());
         ep.setEndpointUri(epstr);
-        assertTrue(ep.toString().indexOf(epstr) > 0);
+        assertTrue(ep.toString().contains(epstr));
     }
 
     /**

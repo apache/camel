@@ -121,6 +121,8 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
     private String deadLetterUri;
 
     private int maximumRedeliveries;
+    
+    private boolean allowSerializedHeaders;
 
     public CassandraAggregationRepository() {
     }
@@ -188,7 +190,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
         final Object[] idValues = getPKValues(key);
         LOGGER.debug("Inserting key {} exchange {}", idValues, exchange);
         try {
-            ByteBuffer marshalledExchange = exchangeCodec.marshallExchange(camelContext, exchange);
+            ByteBuffer marshalledExchange = exchangeCodec.marshallExchange(camelContext, exchange, allowSerializedHeaders);
             Object[] cqlParams = concat(idValues, new Object[]{exchange.getExchangeId(), marshalledExchange});
             getSession().execute(insertStatement.bind(cqlParams));
             return exchange;
@@ -204,7 +206,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
         Select select = generateSelect(table,
                 getAllColumns(),
                 pkColumns);
-        select = (Select) applyConsistencyLevel(select, readConsistencyLevel);
+        select = applyConsistencyLevel(select, readConsistencyLevel);
         LOGGER.debug("Generated Select {}", select);
         selectStatement = getSession().prepare(select);
     }
@@ -299,7 +301,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
     @Override
     public Set<String> getKeys() {
         List<Row> rows = selectKeyIds();
-        Set<String> keys = new HashSet<String>(rows.size());
+        Set<String> keys = new HashSet<>(rows.size());
         String keyColumnName = getKeyColumn();
         for (Row row : rows) {
             keys.add(row.getString(keyColumnName));
@@ -316,7 +318,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
     @Override
     public Set<String> scan(CamelContext camelContext) {
         List<Row> rows = selectKeyIds();
-        Set<String> exchangeIds = new HashSet<String>(rows.size());
+        Set<String> exchangeIds = new HashSet<>(rows.size());
         for (Row row : rows) {
             exchangeIds.add(row.getString(exchangeIdColumn));
         }
@@ -467,4 +469,11 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
         this.maximumRedeliveries = maximumRedeliveries;
     }
 
+    public boolean isAllowSerializedHeaders() {
+        return allowSerializedHeaders;
+    }
+
+    public void setAllowSerializedHeaders(boolean allowSerializedHeaders) {
+        this.allowSerializedHeaders = allowSerializedHeaders;
+    }
 }

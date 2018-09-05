@@ -17,7 +17,7 @@
 package org.apache.camel.tests.partialclasspath;
 
 import org.apache.camel.Converter;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * @version 
@@ -26,7 +26,7 @@ import org.apache.camel.util.ObjectHelper;
 public class MyConverter {
     @Converter
     public MyBean fromString(String text) {
-        String[] values = ObjectHelper.splitOnCharacter(text, ":", 2);
+        String[] values = StringHelper.splitOnCharacter(text, ":", 2);
         return new MyBean(values[0], values[1]);
     }
 }

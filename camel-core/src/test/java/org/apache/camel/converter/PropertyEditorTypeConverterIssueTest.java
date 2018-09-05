@@ -16,6 +16,8 @@
  */
 package org.apache.camel.converter;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.util.StopWatch;
 
@@ -24,6 +26,7 @@ import org.apache.camel.util.StopWatch;
  */
 public class PropertyEditorTypeConverterIssueTest extends ContextTestSupport {
 
+    @Test
     public void testPropertyEditorTypeConverter() throws Exception {
         // test that converters a custom object (MyBean) to a String which causes
         // PropertyEditorTypeConverter to be used. And this test times how fast
@@ -37,6 +40,6 @@ public class PropertyEditorTypeConverterIssueTest extends ContextTestSupport {
             log.debug(s);
             assertNotNull(s);
         }
-        log.info("Time taken: " + watch.stop());
+        log.info("Time taken: " + watch.taken());
     }
 }

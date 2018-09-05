@@ -16,32 +16,33 @@
  */
 package org.apache.camel.component.websocket;
 
-import org.eclipse.jetty.websocket.WebSocket.Connection;
+import java.net.InetSocketAddress;
+
+import org.eclipse.jetty.websocket.api.Session;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
-/**
- *
- */
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultWebsocketTest {
 
     private static final int CLOSE_CODE = -1;
     private static final String MESSAGE = "message";
     private static final String CONNECTION_KEY = "random-connection-key";
+    private static final InetSocketAddress ADDRESS = InetSocketAddress.createUnresolved("127.0.0.1", 12345);
 
     @Mock
-    private Connection connection;
+    private Session session;
     @Mock
     private WebsocketConsumer consumer;
     @Mock
@@ -49,62 +50,62 @@ public class DefaultWebsocketTest {
 
     private DefaultWebsocket defaultWebsocket;
 
+
     @Before
     public void setUp() throws Exception {
-        defaultWebsocket = new DefaultWebsocket(sync, consumer);
+        defaultWebsocket = new DefaultWebsocket(sync, null, consumer);
         defaultWebsocket.setConnectionKey(CONNECTION_KEY);
+        when(session.getRemoteAddress()).thenReturn(ADDRESS);
     }
 
     @Test
     public void testOnClose() {
         defaultWebsocket.onClose(CLOSE_CODE, MESSAGE);
-        InOrder inOrder = inOrder(connection, consumer, sync);
+        InOrder inOrder = inOrder(session, consumer, sync);
         inOrder.verify(sync, times(1)).removeSocket(defaultWebsocket);
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
-    public void testOnOpen() {
-        defaultWebsocket.onOpen(connection);
+    public void testOnConnect() {
+        defaultWebsocket.onConnect(session);
 
-        /*
-         * keyCaptor not functional anymore, because addSocket cannot be called with connectionKey
-         * 
-         * InOrder inOrder = inOrder(connection, consumer, sync); ArgumentCaptor<String> keyCaptor = ArgumentCaptor.forClass(String.class); inOrder.verify(sync,
-         * times(1)).addSocket((eq(defaultWebsocket))); inOrder.verifyNoMoreInteractions();
-         */
+        InOrder inOrder = inOrder(session, consumer, sync);
+        inOrder.verify(sync, times(1)).addSocket(defaultWebsocket);
+        inOrder.verifyNoMoreInteractions();
 
-        assertEquals(connection, defaultWebsocket.getConnection());
+        assertEquals(session, defaultWebsocket.getSession());
     }
 
     @Test
     public void testOnMessage() {
         defaultWebsocket.setConnectionKey(CONNECTION_KEY);
+        defaultWebsocket.setSession(session);
         defaultWebsocket.onMessage(MESSAGE);
-        InOrder inOrder = inOrder(connection, consumer, sync);
-        inOrder.verify(consumer, times(1)).sendMessage(CONNECTION_KEY, MESSAGE);
+        InOrder inOrder = inOrder(session, consumer, sync);
+        inOrder.verify(consumer, times(1)).sendMessage(CONNECTION_KEY, MESSAGE, ADDRESS);
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
     public void testOnMessageWithNullConsumer() {
-        defaultWebsocket = new DefaultWebsocket(sync, null);
+        defaultWebsocket = new DefaultWebsocket(sync, null, null);
         defaultWebsocket.setConnectionKey(CONNECTION_KEY);
         defaultWebsocket.onMessage(MESSAGE);
-        InOrder inOrder = inOrder(connection, consumer, sync);
-        inOrder.verify(consumer, times(0)).sendMessage(CONNECTION_KEY, MESSAGE);
+        InOrder inOrder = inOrder(session, consumer, sync);
+        inOrder.verify(consumer, times(0)).sendMessage(CONNECTION_KEY, MESSAGE, ADDRESS);
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
     public void testGetConnection() {
-        assertNull(defaultWebsocket.getConnection());
-        defaultWebsocket.onOpen(connection);
-        assertEquals(connection, defaultWebsocket.getConnection());
-        defaultWebsocket.setConnection(null);
-        assertNull(defaultWebsocket.getConnection());
-        defaultWebsocket.setConnection(connection);
-        assertEquals(connection, defaultWebsocket.getConnection());
+        assertNull(defaultWebsocket.getSession());
+        defaultWebsocket.onConnect(session);
+        assertEquals(session, defaultWebsocket.getSession());
+        defaultWebsocket.setSession(null);
+        assertNull(defaultWebsocket.getSession());
+        defaultWebsocket.setSession(session);
+        assertEquals(session, defaultWebsocket.getSession());
     }
 
     @Test
@@ -116,7 +117,7 @@ public class DefaultWebsocketTest {
     public void testGetConnectionKey() {
         defaultWebsocket.setConnectionKey(null);
         assertNull(defaultWebsocket.getConnectionKey());
-        defaultWebsocket.onOpen(connection);
+        defaultWebsocket.onConnect(session);
         assertNotNull(defaultWebsocket.getConnectionKey());
         defaultWebsocket.setConnectionKey(CONNECTION_KEY);
         assertEquals(CONNECTION_KEY, defaultWebsocket.getConnectionKey());

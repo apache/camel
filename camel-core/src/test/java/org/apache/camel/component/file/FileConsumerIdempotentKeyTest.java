@@ -27,7 +27,7 @@ public class FileConsumerIdempotentKeyTest extends FileConsumerIdempotentTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/idempotent/?idempotent=true&idempotentKey=${file:onlyname}&move=done/${file:name}&delay=10")
+                from("file://target/idempotent/?idempotent=true&idempotentKey=${file:onlyname}&move=done/${file:name}&initialDelay=0&delay=10")
                         .convertBodyTo(String.class).to("mock:result");
             }
         };

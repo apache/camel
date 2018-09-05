@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * For OGNL expressions and predicates
+ * To use OGNL scripts in Camel expressions or predicates.
  *
  * @version 
  */
-@Metadata(label = "language", title = "OGNL")
+@Metadata(firstVersion = "1.1.0", label = "language,java", title = "OGNL")
 @XmlRootElement(name = "ognl")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OgnlExpression extends ExpressionDefinition {

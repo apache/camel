@@ -32,7 +32,13 @@ public class JpaCloseEntityManagerOnCompletion extends SynchronizationAdapter {
 
     @Override
     public void onDone(Exchange exchange) {
-        entityManager.close();
+        try {
+            if (entityManager.isOpen()) {
+                entityManager.close();
+            }
+        } catch (Exception e) {
+            // ignore
+        }
     }
 
     @Override

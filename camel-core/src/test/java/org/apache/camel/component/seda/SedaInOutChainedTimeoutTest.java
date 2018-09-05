@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangeTimedOutException;
@@ -27,6 +29,7 @@ import org.apache.camel.util.StopWatch;
  */
 public class SedaInOutChainedTimeoutTest extends ContextTestSupport {
 
+    @Test
     public void testSedaInOutChainedTimeout() throws Exception {
         // time timeout after 2 sec should trigger a immediately reply
         StopWatch watch = new StopWatch();
@@ -37,7 +40,7 @@ public class SedaInOutChainedTimeoutTest extends ContextTestSupport {
             ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
             assertEquals(2000, cause.getTimeout());
         }
-        long delta = watch.stop();
+        long delta = watch.taken();
 
         assertTrue("Should be faster than 4000 millis, was: " + delta, delta < 4000);
     }

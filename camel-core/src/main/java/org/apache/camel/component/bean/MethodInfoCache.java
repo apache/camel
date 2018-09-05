@@ -20,7 +20,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.util.LRUSoftCache;
+import org.apache.camel.util.LRUCacheFactory;
 
 /**
  * Represents a cache of {@link MethodInfo} objects to avoid the expense of introspection for each
@@ -75,9 +75,10 @@ public class MethodInfoCache {
         return new BeanInfo(camelContext, declaringClass);
     }
 
+    @SuppressWarnings("unchecked")
     protected static <K, V> Map<K, V> createLruCache(int size) {
         // use a soft cache
-        return new LRUSoftCache<K, V>(size);
+        return LRUCacheFactory.newLRUSoftCache(size);
     }
 
     private static Map<Class<?>, BeanInfo> createClassCache(int size) {

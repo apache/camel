@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  */
 @Deprecated
 public abstract class TestSupport extends TestCase {
-    protected static final String LS = System.getProperty("line.separator");
+    protected static final String LS = System.lineSeparator();
     private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class);
     protected Logger log = LoggerFactory.getLogger(getClass());
     

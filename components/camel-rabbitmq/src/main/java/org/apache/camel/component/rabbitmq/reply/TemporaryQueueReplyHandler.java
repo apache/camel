@@ -23,7 +23,6 @@ import org.apache.camel.Exchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * {@link ReplyHandler} to handle processing replies when using temporary queues.
  *
@@ -53,8 +52,8 @@ public class TemporaryQueueReplyHandler implements ReplyHandler {
     }
 
     public void onReply(String correlationId, AMQP.BasicProperties properties, byte[] reply) {
-        // create holder object with the the reply
-        log.info("in onReply with correlationId= {}", correlationId);
+        // create holder object with the reply
+        log.debug("onReply with correlationId: {}", correlationId);
         ReplyHolder holder = new ReplyHolder(exchange, callback, originalCorrelationId, correlationId, properties, reply);
         // process the reply
         replyManager.processReply(holder);
@@ -62,7 +61,7 @@ public class TemporaryQueueReplyHandler implements ReplyHandler {
 
     public void onTimeout(String correlationId) {
         // create holder object without the reply which means a timeout occurred
-        log.info("in onTimeout with correlationId= {}", correlationId);
+        log.debug("onTimeout with correlationId: {}", correlationId);
         ReplyHolder holder = new ReplyHolder(exchange, callback, originalCorrelationId, correlationId, timeout);
         // process timeout
         replyManager.processReply(holder);

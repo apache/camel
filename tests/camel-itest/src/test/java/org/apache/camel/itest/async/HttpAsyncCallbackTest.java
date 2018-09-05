@@ -70,7 +70,7 @@ public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
         // below the String elements are added in the context of different threads so that we should make
         // sure that this's done in a thread-safe manner, that's no two threads should call the data.add()
         // method below concurrently, so why we use Vector here and not e.g. ArrayList
-        private final List<String> data = new Vector<String>();
+        private final List<String> data = new Vector<>();
 
         @Override
         public void onComplete(Exchange exchange) {

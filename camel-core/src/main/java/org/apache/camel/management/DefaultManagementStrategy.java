@@ -24,7 +24,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.management.event.DefaultEventFactory;
-import org.apache.camel.management.mbean.Statistic;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
@@ -54,7 +53,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultManagementStrategy extends ServiceSupport implements ManagementStrategy, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultManagementStrategy.class);
-    private List<EventNotifier> eventNotifiers = new CopyOnWriteArrayList<EventNotifier>();
+    private List<EventNotifier> eventNotifiers = new CopyOnWriteArrayList<>();
     private EventFactory eventFactory = new DefaultEventFactory();
     private ManagementNamingStrategy managementNamingStrategy;
     private ManagementObjectStrategy managementObjectStrategy;
@@ -188,11 +187,6 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
                 }
             }
         }
-    }
-
-    public Statistic createStatistic(String name, Object owner, Statistic.UpdateMode updateMode) {
-        // noop
-        return null;
     }
 
     @Deprecated

@@ -25,22 +25,27 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.impl.JndiRegistry;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.query.SortQuery;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class RedisKeyTest extends RedisTestSupport {
-    private RedisTemplate redisTemplate;
+
+    @Mock
+    private RedisTemplate<String, Integer> redisTemplate;
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -49,15 +54,9 @@ public class RedisKeyTest extends RedisTestSupport {
         return registry;
     }
 
-    @Before
-    public void setUp() throws Exception {
-        redisTemplate = mock(RedisTemplate.class);
-        super.setUp();
-    }
-
     @Test
     public void shouldExecuteDEL() throws Exception {
-        Collection<String> keys = new HashSet<String>();
+        Collection<String> keys = new HashSet<>();
         keys.add("key1");
         keys.add("key2");
         sendHeaders(
@@ -109,7 +108,7 @@ public class RedisKeyTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteKEYS() throws Exception {
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         keys.add("key1");
         keys.add("key2");
         when(redisTemplate.keys(anyString())).thenReturn(keys);
@@ -211,15 +210,15 @@ public class RedisKeyTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteSORT() throws Exception {
-        List<Integer> list = new ArrayList<Integer>();
+        List<Integer> list = new ArrayList<>();
         list.add(5);
-        when(redisTemplate.sort(any(SortQuery.class))).thenReturn(list);
+        when(redisTemplate.sort(ArgumentMatchers.<SortQuery<String>>any())).thenReturn(list);
 
         Object result = sendHeaders(
                 RedisConstants.COMMAND, "SORT",
                 RedisConstants.KEY, "key");
 
-        verify(redisTemplate).sort(any(SortQuery.class));
+        verify(redisTemplate).sort(ArgumentMatchers.<SortQuery<String>>any());
         assertEquals(list, result);
     }
 

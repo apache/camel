@@ -50,6 +50,11 @@ public class SpringInjector implements Injector {
         return newInstance(type);
     }
 
+    @Override
+    public boolean supportsAutoWiring() {
+        return true;
+    }
+
     public int getAutowireMode() {
         return autowireMode;
     }

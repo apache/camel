@@ -56,14 +56,14 @@ public class XPathBasedRoutingPerformanceTest extends AbstractBasePerformanceTes
         execute(count);
 
         assertMockEndpointsSatisfied();
-        log.warn("Ran {} tests in {} ms", count, watch.taken());
+        log.warn("Ran {} tests in {}ms", count, watch.taken());
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                Map<String, String> namespaces = new HashMap<String, String>();
+                Map<String, String> namespaces = new HashMap<>();
                 namespaces.put("soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
                 namespaces.put("m", "http://services.samples/xsd");
 

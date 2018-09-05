@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -25,12 +26,12 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.MessageHistory;
+import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
 import org.apache.camel.StreamCache;
 import org.apache.camel.api.management.PerformanceCounter;
-import org.apache.camel.impl.DefaultMessageHistory;
 import org.apache.camel.management.DelegatePerformanceCounter;
 import org.apache.camel.management.mbean.ManagedPerformanceCounter;
 import org.apache.camel.model.ProcessorDefinition;
@@ -39,11 +40,14 @@ import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.DefaultBacklogTracerEventMessage;
 import org.apache.camel.spi.InflightRepository;
+import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.MessageHelper;
+import org.apache.camel.util.OrderedComparator;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.UnitOfWorkHelper;
 import org.slf4j.Logger;
@@ -60,6 +64,7 @@ import org.slf4j.LoggerFactory;
  *     <li>Debugging</li>
  *     <li>Message History</li>
  *     <li>Stream Caching</li>
+ *     <li>{@link Transformer}</li>
  * </ul>
  * ... and more.
  * <p/>
@@ -72,11 +77,13 @@ import org.slf4j.LoggerFactory;
  * <b>Debugging tips:</b> Camel end users whom want to debug their Camel applications with the Camel source code, then make sure to
  * read the source code of this class about the debugging tips, which you can find in the
  * {@link #process(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)} method.
+ * <p/>
+ * The added advices can implement {@link Ordered} to control in which order the advices are executed.
  */
 public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelInternalProcessor.class);
-    private final List<CamelInternalProcessorAdvice> advices = new ArrayList<CamelInternalProcessorAdvice>();
+    private final List<CamelInternalProcessorAdvice> advices = new ArrayList<>();
 
     public CamelInternalProcessor() {
     }
@@ -92,6 +99,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
      */
     public void addAdvice(CamelInternalProcessorAdvice advice) {
         advices.add(advice);
+        // ensure advices are sorted so they are in the order we want
+        advices.sort(OrderedComparator.get());
     }
 
     /**
@@ -125,18 +134,20 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         // you can see in the code below.
         // ----------------------------------------------------------
 
-
         if (processor == null || !continueProcessing(exchange)) {
             // no processor or we should not continue then we are done
             callback.done(true);
             return true;
         }
 
-        final List<Object> states = new ArrayList<Object>(advices.size());
-        for (CamelInternalProcessorAdvice task : advices) {
+        // optimise to use object array for states
+        final Object[] states = new Object[advices.size()];
+        // optimise for loop using index access to avoid creating iterator object
+        for (int i = 0; i < advices.size(); i++) {
+            CamelInternalProcessorAdvice task = advices.get(i);
             try {
                 Object state = task.before(exchange);
-                states.add(state);
+                states[i] = state;
             } catch (Throwable e) {
                 exchange.setException(e);
                 callback.done(true);
@@ -215,17 +226,18 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
      */
     private final class InternalCallback implements AsyncCallback {
 
-        private final List<Object> states;
+        private final Object[] states;
         private final Exchange exchange;
         private final AsyncCallback callback;
 
-        private InternalCallback(List<Object> states, Exchange exchange, AsyncCallback callback) {
+        private InternalCallback(Object[] states, Exchange exchange, AsyncCallback callback) {
             this.states = states;
             this.exchange = exchange;
             this.callback = callback;
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public void done(boolean doneSync) {
             // NOTE: if you are debugging Camel routes, then all the code in the for loop below is internal only
             // so you can step straight to the finally block and invoke the callback
@@ -234,10 +246,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             try {
                 for (int i = advices.size() - 1; i >= 0; i--) {
                     CamelInternalProcessorAdvice task = advices.get(i);
-                    Object state = states.get(i);
+                    Object state = states[i];
                     try {
                         task.after(exchange, state);
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
                         exchange.setException(e);
                         // allow all advices to complete even if there was an exception
                     }
@@ -271,9 +283,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         // determine if we can still run, or the camel context is forcing a shutdown
         boolean forceShutdown = exchange.getContext().getShutdownStrategy().forceShutdown(this);
         if (forceShutdown) {
-            LOG.debug("Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: {}", exchange);
+            String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: " + exchange;
+            LOG.debug(msg);
             if (exchange.getException() == null) {
-                exchange.setException(new RejectedExecutionException());
+                exchange.setException(new RejectedExecutionException(msg));
             }
             return false;
         }
@@ -381,7 +394,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         public void after(Exchange exchange, StopWatch watch) throws Exception {
             // record end time
             if (watch != null) {
-                recordTime(exchange, watch.stop());
+                recordTime(exchange, watch.taken());
             }
         }
     }
@@ -521,7 +534,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     /**
      * Advice to execute the {@link BacklogTracer} if enabled.
      */
-    public static final class BacklogTracerAdvice implements CamelInternalProcessorAdvice {
+    public static final class BacklogTracerAdvice implements CamelInternalProcessorAdvice, Ordered {
 
         private final BacklogTracer backlogTracer;
         private final ProcessorDefinition<?> processorDefinition;
@@ -563,12 +576,19 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         public void after(Exchange exchange, Object data) throws Exception {
             // noop
         }
+
+        @Override
+        public int getOrder() {
+            // we want tracer just before calling the processor
+            return Ordered.LOWEST - 1;
+        }
+
     }
 
     /**
      * Advice to execute the {@link org.apache.camel.processor.interceptor.BacklogDebugger} if enabled.
      */
-    public static final class BacklogDebuggerAdvice implements CamelInternalProcessorAdvice<StopWatch> {
+    public static final class BacklogDebuggerAdvice implements CamelInternalProcessorAdvice<StopWatch>, Ordered {
 
         private final BacklogDebugger backlogDebugger;
         private final Processor target;
@@ -596,8 +616,14 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         @Override
         public void after(Exchange exchange, StopWatch stopWatch) throws Exception {
             if (stopWatch != null) {
-                backlogDebugger.afterProcess(exchange, target, definition, stopWatch.stop());
+                backlogDebugger.afterProcess(exchange, target, definition, stopWatch.taken());
             }
+        }
+
+        @Override
+        public int getOrder() {
+            // we want debugger just before calling the processor
+            return Ordered.LOWEST;
         }
     }
 
@@ -608,9 +634,13 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     public static class UnitOfWorkProcessorAdvice implements CamelInternalProcessorAdvice<UnitOfWork> {
 
         private final RouteContext routeContext;
+        private String routeId;
 
         public UnitOfWorkProcessorAdvice(RouteContext routeContext) {
             this.routeContext = routeContext;
+            if (routeContext != null) {
+                this.routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+            }
         }
 
         @Override
@@ -618,7 +648,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             // if the exchange doesn't have from route id set, then set it if it originated
             // from this unit of work
             if (routeContext != null && exchange.getFromRouteId() == null) {
-                String routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+                if (routeId == null) {
+                    routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+                }
                 exchange.setFromRouteId(routeId);
             }
 
@@ -710,10 +742,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     @SuppressWarnings("unchecked")
     public static class MessageHistoryAdvice implements CamelInternalProcessorAdvice<MessageHistory> {
 
+        private final MessageHistoryFactory factory;
         private final ProcessorDefinition<?> definition;
         private final String routeId;
 
-        public MessageHistoryAdvice(ProcessorDefinition<?> definition) {
+        public MessageHistoryAdvice(MessageHistoryFactory factory, ProcessorDefinition<?> definition) {
+            this.factory = factory;
             this.definition = definition;
             this.routeId = ProcessorDefinitionHelper.getRouteId(definition);
         }
@@ -722,10 +756,21 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         public MessageHistory before(Exchange exchange) throws Exception {
             List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
             if (list == null) {
-                list = new ArrayList<MessageHistory>();
+                list = new LinkedList<>();
                 exchange.setProperty(Exchange.MESSAGE_HISTORY, list);
             }
-            MessageHistory history = new DefaultMessageHistory(routeId, definition, new Date());
+
+            // we may be routing outside a route in an onException or interceptor and if so then grab
+            // route id from the exchange UoW state
+            String targetRouteId = this.routeId;
+            if (targetRouteId == null) {
+                UnitOfWork uow = exchange.getUnitOfWork();
+                if (uow != null && uow.getRouteContext() != null) {
+                    targetRouteId = uow.getRouteContext().getRoute().getId();
+                }
+            }
+
+            MessageHistory history = factory.newMessageHistory(targetRouteId, definition, System.currentTimeMillis());
             list.add(history);
             return history;
         }
@@ -741,7 +786,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     /**
      * Advice for {@link org.apache.camel.spi.StreamCachingStrategy}
      */
-    public static class StreamCachingAdvice implements CamelInternalProcessorAdvice<StreamCache> {
+    public static class StreamCachingAdvice implements CamelInternalProcessorAdvice<StreamCache>, Ordered {
 
         private final StreamCachingStrategy strategy;
 
@@ -771,16 +816,22 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         @Override
         public void after(Exchange exchange, StreamCache sc) throws Exception {
-            Object body = null;
+            Object body;
             if (exchange.hasOut()) {
                 body = exchange.getOut().getBody();
             } else {
                 body = exchange.getIn().getBody();
             }
-            if (body != null && body instanceof StreamCache) {
+            if (body instanceof StreamCache) {
                 // reset so the cache is ready to be reused after processing
                 ((StreamCache) body).reset();
             }
+        }
+
+        @Override
+        public int getOrder() {
+            // we want stream caching first
+            return Ordered.HIGHEST;
         }
     }
 
@@ -813,5 +864,4 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             // noop
         }
     }
-
 }

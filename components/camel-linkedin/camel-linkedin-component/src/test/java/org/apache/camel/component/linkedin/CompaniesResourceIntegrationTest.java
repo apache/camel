@@ -25,9 +25,6 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.linkedin.api.model.EventType;
-import org.apache.camel.component.linkedin.internal.CompaniesResourceApiMethod;
-import org.apache.camel.component.linkedin.internal.LinkedInApiCollection;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -40,14 +37,14 @@ import org.slf4j.LoggerFactory;
 public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(CompaniesResourceIntegrationTest.class);
-    private static final String PATH_PREFIX = LinkedInApiCollection.getCollection().getApiName(CompaniesResourceApiMethod.class).getName();
+    private static final String PATH_PREFIX = "companies";
     private static final Long TEST_COMPANY_ID = 1337L;
 
     // TODO provide parameter values for addCompanyUpdateCommentAsCompany
     @Ignore
     @Test
     public void testAddCompanyUpdateCommentAsCompany() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelLinkedIn.company_id", 0L);
         // parameter type is String
         headers.put("CamelLinkedIn.update_key", null);
@@ -61,7 +58,7 @@ public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSuppor
     @Ignore
     @Test
     public void testAddShare() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelLinkedIn.company_id", 0L);
         // parameter type is org.apache.camel.component.linkedin.api.model.Share
         headers.put("CamelLinkedIn.share", null);
@@ -71,7 +68,7 @@ public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSuppor
 
     @Test
     public void testGetCompanies() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // use defaults
         // parameter type is String
 //        headers.put("CamelLinkedIn.fields", null);
@@ -88,7 +85,7 @@ public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSuppor
 
     @Test
     public void testGetCompanyById() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelLinkedIn.company_id", TEST_COMPANY_ID);
         // use default value
 /*
@@ -104,7 +101,7 @@ public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSuppor
 
     @Test
     public void testGetCompanyByName() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelLinkedIn.universal_name", "linkedin");
         // use default fields
@@ -123,7 +120,7 @@ public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSuppor
     @Ignore
     @Test
     public void testGetCompanyUpdateComments() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelLinkedIn.company_id", 0L);
         // parameter type is String
         headers.put("CamelLinkedIn.update_key", null);
@@ -142,7 +139,7 @@ public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSuppor
     @Ignore
     @Test
     public void testGetCompanyUpdateLikes() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelLinkedIn.company_id", 0L);
         // parameter type is String
         headers.put("CamelLinkedIn.update_key", null);
@@ -159,7 +156,7 @@ public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSuppor
 
     @Test
     public void testGetCompanyUpdates() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelLinkedIn.company_id", TEST_COMPANY_ID);
         // parameter type is String
 //        headers.put("CamelLinkedIn.fields", null);
@@ -182,7 +179,7 @@ public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSuppor
     @Ignore
     @Test
     public void testGetHistoricalFollowStatistics() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelLinkedIn.company_id", 0L);
         // parameter type is Long
         headers.put("CamelLinkedIn.start_timestamp", null);
@@ -201,7 +198,7 @@ public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSuppor
     @Ignore
     @Test
     public void testGetHistoricalStatusUpdateStatistics() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelLinkedIn.company_id", TEST_COMPANY_ID);
         // parameter type is Long
         headers.put("CamelLinkedIn.start_timestamp", null);
@@ -220,7 +217,7 @@ public class CompaniesResourceIntegrationTest extends AbstractLinkedInTestSuppor
 
     @Test
     public void testGetNumberOfFollowers() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelLinkedIn.company_id", TEST_COMPANY_ID);
         // parameter type is java.util.List
         headers.put("CamelLinkedIn.geos", null);

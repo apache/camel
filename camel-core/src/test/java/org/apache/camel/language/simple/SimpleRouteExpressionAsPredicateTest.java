@@ -16,11 +16,14 @@
  */
 package org.apache.camel.language.simple;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class SimpleRouteExpressionAsPredicateTest extends ContextTestSupport {
 
+    @Test
     public void testSimpleRouteExpressionAsPredicateTest() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived(true);
         getMockEndpoint("mock:bar").expectedBodiesReceived("ABC == ABC");

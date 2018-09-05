@@ -44,11 +44,12 @@ import org.apache.camel.converter.jaxp.StaxConverter;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * An {@link org.apache.camel.language.tokenizer.XMLTokenizeLanguage} based iterator.
  */
 public class XMLTokenExpressionIterator extends ExpressionAdapter implements NamespaceAware {
     protected final String path;
@@ -61,7 +62,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
     }
 
     public XMLTokenExpressionIterator(String path, char mode, int group) {
-        ObjectHelper.notEmpty(path, "path");
+        StringHelper.notEmpty(path, "path");
         this.path = path;
         this.mode = mode;
         this.group = group > 1 ? group : 1;
@@ -70,6 +71,11 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
     @Override
     public void setNamespaces(Map<String, String> nsmap) {
         this.nsmap = nsmap;
+    }
+
+    @Override
+    public Map<String, String> getNamespaces() {
+        return nsmap;
     }
 
     public void setMode(char mode) {
@@ -89,19 +95,11 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
     }
 
     protected Iterator<?> createIterator(InputStream in, String charset) throws XMLStreamException, UnsupportedEncodingException {
-        Reader reader;
-        if (charset == null) {
-            reader = new InputStreamReader(in);
-        } else {
-            reader = new InputStreamReader(in, charset);
-        }
-        XMLTokenIterator iterator = new XMLTokenIterator(path, nsmap, mode, group, reader);
-        return iterator;
+        return new XMLTokenIterator(path, nsmap, mode, group, in, charset);
     }
 
     protected Iterator<?> createIterator(Reader in) throws XMLStreamException {
-        XMLTokenIterator iterator = new XMLTokenIterator(path, nsmap, mode, group, in);
-        return iterator;
+        return new XMLTokenIterator(path, nsmap, mode, group, in);
     }
 
     @Override
@@ -158,6 +156,8 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         private static final Logger LOG = LoggerFactory.getLogger(XMLTokenIterator.class);
         private static final Pattern NAMESPACE_PATTERN = Pattern.compile("xmlns(:\\w+|)\\s*=\\s*('[^']*'|\"[^\"]*\")");
 
+        private transient InputStream originalInputStream;
+
         private AttributedQName[] splitpath;
         private int index;
         private char mode;
@@ -178,23 +178,25 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
 
         private Object nextToken;
         
-        public XMLTokenIterator(String path, Map<String, String> nsmap, char mode, InputStream in, String charset) 
+        XMLTokenIterator(String path, Map<String, String> nsmap, char mode, InputStream in, String charset) 
             throws XMLStreamException, UnsupportedEncodingException {
             // woodstox's getLocation().etCharOffset() does not return the offset correctly for InputStream, so use Reader instead.
             this(path, nsmap, mode, 1, new InputStreamReader(in, charset));
+            this.originalInputStream = in;
         }
 
-        public XMLTokenIterator(String path, Map<String, String> nsmap, char mode, int group, InputStream in, String charset) 
+        XMLTokenIterator(String path, Map<String, String> nsmap, char mode, int group, InputStream in, String charset) 
             throws XMLStreamException, UnsupportedEncodingException {
             // woodstox's getLocation().etCharOffset() does not return the offset correctly for InputStream, so use Reader instead.
-            this(path, nsmap, mode, new InputStreamReader(in, charset));
+            this(path, nsmap, mode, group, new InputStreamReader(in, charset));
+            this.originalInputStream = in;
         }
 
-        public XMLTokenIterator(String path, Map<String, String> nsmap, char mode, Reader in) throws XMLStreamException {
+        XMLTokenIterator(String path, Map<String, String> nsmap, char mode, Reader in) throws XMLStreamException {
             this(path, nsmap, mode, 1, in);
         }
 
-        public XMLTokenIterator(String path, Map<String, String> nsmap, char mode, int group, Reader in) throws XMLStreamException {
+        XMLTokenIterator(String path, Map<String, String> nsmap, char mode, int group, Reader in) throws XMLStreamException {
             final String[] sl = path.substring(1).split("/");
             this.splitpath = new AttributedQName[sl.length];
             for (int i = 0; i < sl.length; i++) {
@@ -221,18 +223,18 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 throw new XMLStreamException("reader not supporting Location");
             }
 
-            this.path = new ArrayList<QName>();
+            this.path = new ArrayList<>();
             
             // wrapped mode needs the segments and the injected mode needs the namespaces
             if (this.mode == 'w') {
-                this.segments = new ArrayList<String>();
-                this.segmentlog = new ArrayList<QName>();
+                this.segments = new ArrayList<>();
+                this.segmentlog = new ArrayList<>();
             } else if (this.mode == 'i') {
-                this.namespaces = new ArrayList<Map<String, String>>();
+                this.namespaces = new ArrayList<>();
             }
             // when grouping the tokens, allocate the storage to temporarily store tokens. 
             if (this.group > 1) {
-                this.tokens = new ArrayList<String>();
+                this.tokens = new ArrayList<>();
             }       
             this.nextToken = getNextToken();
         }
@@ -278,7 +280,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             return c;
         }
         
-        private String getCurrenText() {
+        private String getCurrentText() {
             int pos = reader.getLocation().getCharacterOffset();
             String txt = in.getText(pos - consumed);
             consumed = pos;
@@ -313,7 +315,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         }
 
         private void pushNamespaces(XMLStreamReader reader) {
-            Map<String, String> m = new HashMap<String, String>();
+            Map<String, String> m = new HashMap<>();
             if (namespaces.size() > 0) {
                 m.putAll(namespaces.get(namespaces.size() - 1));
             }
@@ -357,7 +359,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             readCurrent(true);
             popName();
             
-            String token = createContextualToken(getCurrenText());
+            String token = createContextualToken(getCurrentText());
             if (mode == 'i') {
                 popNamespaces();
             }
@@ -379,7 +381,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
 
             } else if (mode == 'i') {
                 final String stag = token.substring(0, token.indexOf('>') + 1);
-                Set<String> skip = new HashSet<String>();
+                Set<String> skip = new HashSet<>();
                 Matcher matcher = NAMESPACE_PATTERN.matcher(stag);
                 char quote = 0;
                 while (matcher.find()) {
@@ -466,7 +468,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                         LOG.trace("se={}; depth={}; trackdepth={}", new Object[]{name, depth, trackdepth});
                     }
                     
-                    String token = getCurrenText();
+                    String token = getCurrentText();
                     // perform the second compliance test
                     if (!compliant) {
                         if (token != null && token.startsWith("<") && !token.startsWith("<?")) {
@@ -600,8 +602,12 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         public void close() throws IOException {
             try {
                 reader.close();
-            } catch (XMLStreamException e) {
-                throw new IOException(e);
+            } catch (Exception e) {
+                // ignore
+            }
+            // need to close the original input stream as well as the reader do not delegate close it
+            if (originalInputStream != null) {
+                IOHelper.close(originalInputStream);
             }
         }
     }
@@ -611,17 +617,17 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         private Pattern lcpattern;
         private boolean nsany;
         
-        public AttributedQName(String localPart) {
+        AttributedQName(String localPart) {
             super(localPart);
             checkWildcard("", localPart);
         }
 
-        public AttributedQName(String namespaceURI, String localPart, String prefix) {
+        AttributedQName(String namespaceURI, String localPart, String prefix) {
             super(namespaceURI, localPart, prefix);
             checkWildcard(namespaceURI, localPart);
         }
 
-        public AttributedQName(String namespaceURI, String localPart) {
+        AttributedQName(String namespaceURI, String localPart) {
             super(namespaceURI, localPart);
             checkWildcard(namespaceURI, localPart);
         }

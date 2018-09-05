@@ -16,13 +16,18 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.mock.MockEndpoint;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * Extended test to see if mbeans is removed and stats are correct
@@ -31,6 +36,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class ManagedRouteStopAndStartCleanupTest extends ManagedRouteStopAndStartTest {
 
+    @Test
     public void testStopAndStartRoute() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -52,11 +58,11 @@ public class ManagedRouteStopAndStartCleanupTest extends ManagedRouteStopAndStar
         assertEquals("Should be started", ServiceStatus.Started.name(), state);
 
         // need a bit time to let JMX update
-        Thread.sleep(1000);
-
-        // should have 1 completed exchange
-        Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
-        assertEquals(1, completed.longValue());
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+            // should have 1 completed exchange
+            Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
+            assertEquals(1, completed.longValue());
+        });
 
         // should be 1 consumer and 2 processors
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=consumers,*"), null);
@@ -82,8 +88,8 @@ public class ManagedRouteStopAndStartCleanupTest extends ManagedRouteStopAndStar
 
         mock.reset();
         mock.expectedBodiesReceived("Bye World");
-        // wait 3 seconds while route is stopped to verify that file was not consumed
-        mock.setResultWaitTime(3000);
+        // wait 2 seconds while route is stopped to verify that file was not consumed
+        mock.setResultWaitTime(2000);
 
         template.sendBodyAndHeader("file://target/managed", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
@@ -113,10 +119,13 @@ public class ManagedRouteStopAndStartCleanupTest extends ManagedRouteStopAndStar
         mock.assertIsSatisfied();
 
         // need a bit time to let JMX update
-        Thread.sleep(1000);
+        await().atMost(1, TimeUnit.SECONDS).until(() -> {
+            Long num = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
+            return num == 2;
+        });
 
         // should have 2 completed exchange
-        completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
+        Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(2, completed.longValue());
     }
 

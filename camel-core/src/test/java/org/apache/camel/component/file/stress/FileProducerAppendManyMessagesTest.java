@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.stress;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -22,16 +25,19 @@ import java.io.FileOutputStream;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Ignore;
 
 /**
  *
  */
+@Ignore("Manual test")
 public class FileProducerAppendManyMessagesTest extends ContextTestSupport {
 
     private boolean enabled;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         if (!enabled) {
             return;
         }
@@ -51,6 +57,7 @@ public class FileProducerAppendManyMessagesTest extends ContextTestSupport {
         super.setUp();
     }
 
+    @Test
     public void testBigFile() throws Exception {
         if (!enabled) {
             return;

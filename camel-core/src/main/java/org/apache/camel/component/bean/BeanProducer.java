@@ -18,7 +18,9 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * Bean {@link org.apache.camel.Producer}
@@ -26,20 +28,46 @@ import org.apache.camel.impl.DefaultAsyncProducer;
 public class BeanProducer extends DefaultAsyncProducer {
 
     private final BeanProcessor processor;
+    private boolean beanStarted;
 
     public BeanProducer(BeanEndpoint endpoint, BeanProcessor processor) {
         super(endpoint);
         this.processor = processor;
+        this.beanStarted = false;
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        try {
-            processor.process(exchange);
-        } catch (Exception e) {
-            exchange.setException(e);
+        return processor.process(exchange, callback);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (processor.getBeanHolder() instanceof ConstantBeanHolder) {
+            try {
+                // Start the bean if it implements Service interface and if cached
+                // so meant to be reused
+                ServiceHelper.startService(processor.getBean());
+                beanStarted = true;
+            } catch (NoSuchBeanException e) {
+            }
         }
-        callback.done(true);
-        return true;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (beanStarted) {
+            try {
+                // Stop the bean if it implements Service interface and if cached
+                // so meant to be reused
+                ServiceHelper.stopService(processor.getBean());
+                beanStarted = false;
+            } catch (NoSuchBeanException e) {
+            }
+        }
+
+        super.doStop();
     }
 }

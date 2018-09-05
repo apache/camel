@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.xslt;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
 public class XsltMessageTerminateTest extends ContextTestSupport {
 
+    @Test
     public void testXsltTerminate() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:dead").expectedMessageCount(1);
@@ -47,7 +50,7 @@ public class XsltMessageTerminateTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("file:src/test/data/?fileName=terminate.xml&noop=true")
+                from("file:src/test/data/?fileName=terminate.xml&noop=true&initialDelay=0&delay=10")
                     .to("xslt:org/apache/camel/component/xslt/terminate.xsl")
                     .to("log:foo")
                     .to("mock:result");

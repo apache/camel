@@ -19,13 +19,16 @@ package org.apache.camel.component.docker.headers;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.AttachContainerCmd;
-
+import com.github.dockerjava.core.command.AttachContainerResultCallback;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 
 /**
  * Validates Attach Container Request headers are applied properly
@@ -34,6 +37,9 @@ public class AttachContainerCmdHeaderTest extends BaseDockerHeaderTest<AttachCon
 
     @Mock
     private AttachContainerCmd mockObject;
+
+    @Mock
+    private AttachContainerResultCallback callback;
 
     @Test
     public void attachContainerHeaderTest() {
@@ -53,21 +59,26 @@ public class AttachContainerCmdHeaderTest extends BaseDockerHeaderTest<AttachCon
         headers.put(DockerConstants.DOCKER_TIMESTAMPS, timestamps);
         headers.put(DockerConstants.DOCKER_LOGS, logs);
 
-
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).attachContainerCmd(containerId);
-        Mockito.verify(mockObject, Mockito.times(1)).withFollowStream(Matchers.eq(followStream));
-        Mockito.verify(mockObject, Mockito.times(1)).withLogs(Matchers.eq(logs));
-        Mockito.verify(mockObject, Mockito.times(1)).withStdErr(Matchers.eq(stdErr));
-        Mockito.verify(mockObject, Mockito.times(1)).withStdOut(Matchers.eq(stdOut));
-        Mockito.verify(mockObject, Mockito.times(1)).withTimestamps(Matchers.eq(timestamps));
+        Mockito.verify(mockObject, Mockito.times(1)).withFollowStream(eq(followStream));
+        Mockito.verify(mockObject, Mockito.times(1)).withLogs(eq(logs));
+        Mockito.verify(mockObject, Mockito.times(1)).withStdErr(eq(stdErr));
+        Mockito.verify(mockObject, Mockito.times(1)).withStdOut(eq(stdOut));
+        Mockito.verify(mockObject, Mockito.times(1)).withTimestamps(eq(timestamps));
 
     }
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.attachContainerCmd(Matchers.anyString())).thenReturn(mockObject);
+        Mockito.when(dockerClient.attachContainerCmd(anyString())).thenReturn(mockObject);
+        Mockito.when(mockObject.exec(any())).thenReturn(callback);
+        try {
+            Mockito.when(callback.awaitCompletion()).thenReturn(callback);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -29,6 +29,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
+import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.log.LogEndpoint;
 import org.apache.camel.impl.ScheduledPollConsumer;
@@ -36,12 +37,16 @@ import org.apache.camel.management.mbean.ManagedAggregateProcessor;
 import org.apache.camel.management.mbean.ManagedBeanProcessor;
 import org.apache.camel.management.mbean.ManagedBrowsableEndpoint;
 import org.apache.camel.management.mbean.ManagedCamelContext;
+import org.apache.camel.management.mbean.ManagedCamelHealth;
 import org.apache.camel.management.mbean.ManagedChoice;
 import org.apache.camel.management.mbean.ManagedCircuitBreakerLoadBalancer;
+import org.apache.camel.management.mbean.ManagedClaimCheck;
+import org.apache.camel.management.mbean.ManagedClusterService;
 import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
 import org.apache.camel.management.mbean.ManagedConvertBody;
 import org.apache.camel.management.mbean.ManagedCustomLoadBalancer;
+import org.apache.camel.management.mbean.ManagedDataFormat;
 import org.apache.camel.management.mbean.ManagedDelayer;
 import org.apache.camel.management.mbean.ManagedDynamicRouter;
 import org.apache.camel.management.mbean.ManagedEndpoint;
@@ -69,6 +74,7 @@ import org.apache.camel.management.mbean.ManagedResequencer;
 import org.apache.camel.management.mbean.ManagedRollback;
 import org.apache.camel.management.mbean.ManagedRoundRobinLoadBalancer;
 import org.apache.camel.management.mbean.ManagedRoute;
+import org.apache.camel.management.mbean.ManagedRouteController;
 import org.apache.camel.management.mbean.ManagedRoutingSlip;
 import org.apache.camel.management.mbean.ManagedSamplingThrottler;
 import org.apache.camel.management.mbean.ManagedScheduledPollConsumer;
@@ -95,6 +101,7 @@ import org.apache.camel.management.mbean.ManagedUnmarshal;
 import org.apache.camel.management.mbean.ManagedValidate;
 import org.apache.camel.management.mbean.ManagedWeightedLoadBalancer;
 import org.apache.camel.management.mbean.ManagedWireTapProcessor;
+import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessDefinition;
@@ -103,6 +110,7 @@ import org.apache.camel.model.RecipientListDefinition;
 import org.apache.camel.model.ThreadsDefinition;
 import org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition;
 import org.apache.camel.processor.ChoiceProcessor;
+import org.apache.camel.processor.ClaimCheckProcessor;
 import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.processor.Delayer;
 import org.apache.camel.processor.DynamicRouter;
@@ -153,6 +161,7 @@ import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 import org.apache.camel.processor.loadbalancer.WeightedLoadBalancer;
 import org.apache.camel.processor.validation.PredicateValidatingProcessor;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementObjectStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -168,6 +177,12 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
         return mc;
     }
 
+    public Object getManagedObjectForCamelHealth(CamelContext context) {
+        ManagedCamelHealth mch = new ManagedCamelHealth(context);
+        mch.init(context.getManagementStrategy());
+        return mch;
+    }
+
     @SuppressWarnings({"deprecation", "unchecked"})
     public Object getManagedObjectForComponent(CamelContext context, Component component, String name) {
         if (component instanceof org.apache.camel.spi.ManagementAware) {
@@ -176,6 +191,17 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             ManagedComponent mc = new ManagedComponent(name, component);
             mc.init(context.getManagementStrategy());
             return mc;
+        }
+    }
+
+    @SuppressWarnings({"deprecation", "unchecked"})
+    public Object getManagedObjectForDataFormat(CamelContext context, DataFormat dataFormat) {
+        if (dataFormat instanceof org.apache.camel.spi.ManagementAware) {
+            return ((org.apache.camel.spi.ManagementAware<DataFormat>) dataFormat).getManagedObject(dataFormat);
+        } else {
+            ManagedDataFormat md = new ManagedDataFormat(context, dataFormat);
+            md.init(context.getManagementStrategy());
+            return md;
         }
     }
 
@@ -204,6 +230,12 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
         ManagedErrorHandler me = new ManagedErrorHandler(routeContext, errorHandler, errorHandlerBuilder);
         me.init(context.getManagementStrategy());
         return me;
+    }
+
+    public Object getManagedObjectForRouteController(CamelContext context) {
+        ManagedRouteController mrc = new ManagedRouteController((ModelCamelContext)context);
+        mrc.init(context.getManagementStrategy());
+        return mrc;
     }
 
     public Object getManagedObjectForRoute(CamelContext context, Route route) {
@@ -253,6 +285,12 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
         return mc;
     }
 
+    public Object getManagedObjectForClusterService(CamelContext context, CamelClusterService service) {
+        ManagedClusterService mcs = new ManagedClusterService(context, service);
+        mcs.init(context.getManagementStrategy());
+        return mcs;
+    }
+
     @SuppressWarnings({"deprecation", "unchecked"})
     public Object getManagedObjectForProcessor(CamelContext context, Processor processor,
                                                ProcessorDefinition<?> definition, Route route) {
@@ -285,6 +323,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedConvertBody(context, (ConvertBodyProcessor) target, definition);
             } else if (target instanceof ChoiceProcessor) {
                 answer = new ManagedChoice(context, (ChoiceProcessor) target, definition);
+            } else if (target instanceof ClaimCheckProcessor) {
+                answer = new ManagedClaimCheck(context, (ClaimCheckProcessor) target, definition);
             } else if (target instanceof Delayer) {
                 answer = new ManagedDelayer(context, (Delayer) target, definition);
             } else if (target instanceof Throttler) {
@@ -294,7 +334,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             } else if (target instanceof RoutingSlip) {
                 answer = new ManagedRoutingSlip(context, (RoutingSlip) target, (org.apache.camel.model.RoutingSlipDefinition) definition);
             } else if (target instanceof FilterProcessor) {
-                answer = new ManagedFilter(context, (FilterProcessor) target, (org.apache.camel.model.FilterDefinition) definition);
+                answer = new ManagedFilter(context, (FilterProcessor) target, (ExpressionNode)definition);
             } else if (target instanceof LogProcessor) {
                 answer = new ManagedLog(context, (LogProcessor) target, definition);
             } else if (target instanceof LoopProcessor) {

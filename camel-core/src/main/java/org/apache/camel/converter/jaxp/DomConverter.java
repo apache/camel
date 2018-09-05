@@ -126,7 +126,7 @@ public final class DomConverter {
 
     @Converter
     public static List<?> toList(NodeList nodeList) {
-        List<Object> answer = new ArrayList<Object>();
+        List<Object> answer = new ArrayList<>();
         Iterator<Object> it = ObjectHelper.createIterator(nodeList);
         while (it.hasNext()) {
             answer.add(it.next());

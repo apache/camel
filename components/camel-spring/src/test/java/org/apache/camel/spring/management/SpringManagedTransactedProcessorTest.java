@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.management;
 
+import org.junit.Test;
+
 import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -30,6 +32,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class SpringManagedTransactedProcessorTest extends SpringTestSupport {
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringManagedTransactedProcessorTest.xml");
     }
@@ -38,6 +45,7 @@ public class SpringManagedTransactedProcessorTest extends SpringTestSupport {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
+    @Test
     public void testTransacted() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);

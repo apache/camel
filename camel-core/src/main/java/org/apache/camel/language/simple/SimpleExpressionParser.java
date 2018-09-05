@@ -18,6 +18,7 @@ package org.apache.camel.language.simple;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Expression;
@@ -38,13 +39,23 @@ import org.apache.camel.language.simple.types.TokenType;
  */
 public class SimpleExpressionParser extends BaseSimpleParser {
 
+    // use caches to avoid re-parsing the same expressions over and over again
+    private Map<String, Expression> cacheExpression;
+
     @Deprecated
     public SimpleExpressionParser(String expression) {
         super(expression, true);
     }
 
+    @Deprecated
     public SimpleExpressionParser(String expression, boolean allowEscape) {
         super(expression, allowEscape);
+    }
+
+    public SimpleExpressionParser(String expression, boolean allowEscape,
+                                  Map<String, Expression> cacheExpression) {
+        super(expression, allowEscape);
+        this.cacheExpression = cacheExpression;
     }
 
     public Expression parseExpression() {
@@ -72,7 +83,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         }
 
         // now after parsing we need a bit of work to do, to make it easier to turn the tokens
-        // into and ast, and then from the ast, to Camel expression(s).
+        // into an ast, and then from the ast, to Camel expression(s).
         // hence why there is a number of tasks going on below to accomplish this
 
         // turn the tokens into the ast model
@@ -141,7 +152,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         if (token.getType().isFunctionStart()) {
             // starting a new function
             functions.incrementAndGet();
-            return new SimpleFunctionStart(token);
+            return new SimpleFunctionStart(token, cacheExpression);
         } else if (functions.get() > 0 && token.getType().isFunctionEnd()) {
             // there must be a start function already, to let this be a end function
             functions.decrementAndGet();
@@ -158,7 +169,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
     }
 
     private List<Expression> createExpressions() {
-        List<Expression> answer = new ArrayList<Expression>();
+        List<Expression> answer = new ArrayList<>();
         for (SimpleNode token : nodes) {
             Expression exp = token.createExpression(expression);
             if (exp != null) {

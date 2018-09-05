@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.seda;
 
-
 import java.util.concurrent.BlockingQueue;
 import org.apache.camel.Exchange;
 
@@ -25,11 +24,13 @@ import org.apache.camel.Exchange;
  * @param <E> Element type, usually {@link Exchange}
  */
 public interface BlockingQueueFactory<E> {
+
     /**
      * Create a new {@link java.util.concurrent.BlockingQueue} with default capacity
      * @return New {@link java.util.concurrent.BlockingQueue}
      */
     BlockingQueue<E> create();
+
     /**
      * Create a new {@link java.util.concurrent.BlockingQueue} with given capacity
      * @return New {@link java.util.concurrent.BlockingQueue}

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
@@ -30,8 +32,16 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class LogDebugBodyStreamsTest extends ContextTestSupport {
 
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("logFormatter", new TraceExchangeFormatter());
+        return jndi;
+    }
+
+    @Test
     public void testLogBodyStreamStringSourceDisabled() throws Exception {
-        context.getProperties().put(Exchange.LOG_DEBUG_BODY_STREAMS, "false");
+        context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_STREAMS, "false");
 
         StringSource body = new StringSource("<?xml version=\"1.0\"?><person><name>Claus</name></person>");
 
@@ -43,12 +53,14 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // should be logged anyway
-        String msg = mock.getReceivedExchanges().get(0).getIn().toString();
-        assertEquals("Message: <?xml version=\"1.0\"?><person><name>Claus</name></person>", msg);
+        TraceExchangeFormatter myFormatter = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
+        String msg = myFormatter.getMessage();
+        assertTrue(msg.endsWith("Body: <?xml version=\"1.0\"?><person><name>Claus</name></person>]"));
     }
 
+    @Test
     public void testLogBodyStreamStringSourceDisabledByDefault() throws Exception {
-        context.getProperties().remove(Exchange.LOG_DEBUG_BODY_STREAMS);
+        context.getGlobalOptions().remove(Exchange.LOG_DEBUG_BODY_STREAMS);
 
         StringSource body = new StringSource("<?xml version=\"1.0\"?><person><name>Claus</name></person>");
 
@@ -60,12 +72,14 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // should be logged anyway
-        String msg = mock.getReceivedExchanges().get(0).getIn().toString();
-        assertEquals("Message: <?xml version=\"1.0\"?><person><name>Claus</name></person>", msg);
+        TraceExchangeFormatter myFormatter = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
+        String msg = myFormatter.getMessage();
+        assertTrue(msg.endsWith("Body: <?xml version=\"1.0\"?><person><name>Claus</name></person>]"));
     }
 
+    @Test
     public void testLogBodyStreamStringSourceEnabled() throws Exception {
-        context.getProperties().put(Exchange.LOG_DEBUG_BODY_STREAMS, "true");
+        context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_STREAMS, "true");
 
         StringSource body = new StringSource("<?xml version=\"1.0\"?><person><name>Claus</name></person>");
 
@@ -77,12 +91,14 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // should be logged anyway
-        String msg = mock.getReceivedExchanges().get(0).getIn().toString();
-        assertEquals("Message: <?xml version=\"1.0\"?><person><name>Claus</name></person>", msg);
+        TraceExchangeFormatter myFormatter = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
+        String msg = myFormatter.getMessage();
+        assertTrue(msg.endsWith("Body: <?xml version=\"1.0\"?><person><name>Claus</name></person>]"));
     }
 
+    @Test
     public void testLogBodyStreamDisabled() throws Exception {
-        context.getProperties().put(Exchange.LOG_DEBUG_BODY_STREAMS, "false");
+        context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_STREAMS, "false");
         
         InputStream body = new ByteArrayInputStream("Hello World".getBytes());
 
@@ -94,12 +110,14 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // should NOT be logged
-        String msg = mock.getReceivedExchanges().get(0).getIn().toString();
-        assertEquals("Message: [Body is instance of java.io.InputStream]", msg);
+        TraceExchangeFormatter myFormatter = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
+        String msg = myFormatter.getMessage();
+        assertTrue(msg.endsWith("Body: [Body is instance of java.io.InputStream]]"));
     }
 
+    @Test
     public void testLogBodyStreamDisabledByDefault() throws Exception {
-        context.getProperties().remove(Exchange.LOG_DEBUG_BODY_STREAMS);
+        context.getGlobalOptions().remove(Exchange.LOG_DEBUG_BODY_STREAMS);
 
         InputStream body = new ByteArrayInputStream("Hello World".getBytes());
 
@@ -111,12 +129,14 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // should NOT be logged
-        String msg = mock.getReceivedExchanges().get(0).getIn().toString();
-        assertEquals("Message: [Body is instance of java.io.InputStream]", msg);
+        TraceExchangeFormatter myFormatter = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
+        String msg = myFormatter.getMessage();
+        assertTrue(msg.endsWith("Body: [Body is instance of java.io.InputStream]]"));
     }
 
+    @Test
     public void testLogBodyStreamEnabled() throws Exception {
-        context.getProperties().put(Exchange.LOG_DEBUG_BODY_STREAMS, "true");
+        context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_STREAMS, "true");
 
         InputStream body = new ByteArrayInputStream("Hello World".getBytes());
 
@@ -128,8 +148,9 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // should be logged
-        String msg = mock.getReceivedExchanges().get(0).getIn().toString();
-        assertNotSame("Message: [Body is instance of java.io.InputStream]", msg);
+        TraceExchangeFormatter myFormatter = context.getRegistry().lookupByNameAndType("logFormatter", TraceExchangeFormatter.class);
+        String msg = myFormatter.getMessage();
+        assertTrue(msg.endsWith("Body: [Body is instance of java.io.InputStream]]"));
         assertIsInstanceOf(InputStream.class, mock.getReceivedExchanges().get(0).getIn().getBody());
     }
 

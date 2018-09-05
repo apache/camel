@@ -73,16 +73,16 @@ public class DefaultThreadPoolFactory implements ThreadPoolFactory {
         BlockingQueue<Runnable> workQueue;
         if (corePoolSize == 0 && maxQueueSize <= 0) {
             // use a synchronous queue for direct-handover (no tasks stored on the queue)
-            workQueue = new SynchronousQueue<Runnable>();
+            workQueue = new SynchronousQueue<>();
             // and force 1 as pool size to be able to create the thread pool by the JDK
             corePoolSize = 1;
             maxPoolSize = 1;
         } else if (maxQueueSize <= 0) {
             // use a synchronous queue for direct-handover (no tasks stored on the queue)
-            workQueue = new SynchronousQueue<Runnable>();
+            workQueue = new SynchronousQueue<>();
         } else {
             // bounded task queue to store tasks on the queue
-            workQueue = new LinkedBlockingQueue<Runnable>(maxQueueSize);
+            workQueue = new LinkedBlockingQueue<>(maxQueueSize);
         }
 
         ThreadPoolExecutor answer = new RejectableThreadPoolExecutor(corePoolSize, maxPoolSize, keepAliveTime, timeUnit, workQueue);

@@ -30,7 +30,10 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.lightcouch.CouchDbClient;
 
-@UriEndpoint(scheme = "couchdb", title = "CouchDB", syntax = "couchdb:protocol:hostname:port/database", consumerClass = CouchDbConsumer.class, label = "database,nosql")
+/**
+ * The couchdb component is used for integrate with CouchDB databases.
+ */
+@UriEndpoint(firstVersion = "2.11.0", scheme = "couchdb", title = "CouchDB", syntax = "couchdb:protocol:hostname:port/database", consumerClass = CouchDbConsumer.class, label = "database,nosql")
 public class CouchDbEndpoint extends DefaultEndpoint {
 
     public static final String DEFAULT_STYLE = "main_only";
@@ -47,20 +50,22 @@ public class CouchDbEndpoint extends DefaultEndpoint {
     private int port;
     @UriPath @Metadata(required = "true")
     private String database;
-    @UriParam(enums = "all_docs,main_only", defaultValue = DEFAULT_STYLE)
+    @UriParam(label = "consumer", enums = "all_docs,main_only", defaultValue = DEFAULT_STYLE)
     private String style = DEFAULT_STYLE;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String username;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String password;
-    @UriParam(defaultValue = "" + DEFAULT_HEARTBEAT)
+    @UriParam(label = "consumer", defaultValue = "" + DEFAULT_HEARTBEAT)
     private long heartbeat = DEFAULT_HEARTBEAT;
     @UriParam
     private boolean createDatabase;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "consumer", defaultValue = "true")
     private boolean deletes = true;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "consumer", defaultValue = "true")
     private boolean updates = true;
+    @UriParam(label = "consumer")
+    private String since;
 
     public CouchDbEndpoint() {
     }
@@ -240,5 +245,17 @@ public class CouchDbEndpoint extends DefaultEndpoint {
      */
     public void setUpdates(boolean updates) {
         this.updates = updates;
+    }
+
+    public String getSince() {
+        return since;
+    }
+
+    /**
+     * Start tracking changes immediately after the given update sequence.
+     * The default, null, will start monitoring from the latest sequence.
+     */
+    public void setSince(String since) {
+        this.since = since;
     }
 }

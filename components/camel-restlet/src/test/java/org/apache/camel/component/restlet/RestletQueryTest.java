@@ -53,7 +53,7 @@ public class RestletQueryTest extends RestletTestSupport {
     public void testPostBody() throws Exception {
         HttpResponse response = doExecute(new HttpGet("http://localhost:" + portNum + "/users/homer?" + QUERY_STRING));
 
-        assertHttpResponse(response, 200, "text/plain");
+        assertHttpResponse(response, 204, "text/plain");
     }
     
     
@@ -67,7 +67,7 @@ public class RestletQueryTest extends RestletTestSupport {
                 
             }
         });
-        assertEquals(200, ex.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals(204, ex.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
         
     }
 }

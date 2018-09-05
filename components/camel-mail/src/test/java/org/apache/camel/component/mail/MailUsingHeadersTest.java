@@ -36,7 +36,7 @@ public class MailUsingHeadersTest extends CamelTestSupport {
         Mailbox.clearAll();
 
         // START SNIPPET: e1
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("To", "davsclaus@apache.org");
         map.put("From", "jstrachan@apache.org");
         map.put("Subject", "Camel rocks");
@@ -61,7 +61,7 @@ public class MailUsingHeadersTest extends CamelTestSupport {
     public void testMailWithFromInEndpoint() throws Exception {
         Mailbox.clearAll();
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("Subject", "Camel rocks");
 
         String body = "Hello Claus.\nYes it does.\n\nRegards James.";

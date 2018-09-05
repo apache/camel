@@ -18,35 +18,34 @@ package org.apache.camel.management;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.Ordered;
+import org.apache.camel.Processor;
 import org.apache.camel.api.management.PerformanceCounter;
 import org.apache.camel.management.mbean.ManagedPerformanceCounter;
+import org.apache.camel.processor.CamelInternalProcessorAdvice;
 import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * JMX enabled processor that uses the {@link org.apache.camel.management.mbean.ManagedCounter} for instrumenting
+ * JMX enabled processor or advice that uses the {@link org.apache.camel.management.mbean.ManagedCounter} for instrumenting
  * processing of exchanges.
+ * <p/>
+ * This implementation has been optimised to work in dual mode, either as an advice or as a processor.
+ * The former is faster and the latter is required when the error handler has been configured with redelivery enabled.
  *
  * @version 
  */
-public class InstrumentationProcessor extends DelegateAsyncProcessor {
+public class InstrumentationProcessor extends DelegateAsyncProcessor implements CamelInternalProcessorAdvice<StopWatch>, Ordered {
 
     private static final Logger LOG = LoggerFactory.getLogger(InstrumentationProcessor.class);
     private PerformanceCounter counter;
     private String type;
 
-    public InstrumentationProcessor() {
-    }
-
-    public InstrumentationProcessor(PerformanceCounter counter) {
-        this.counter = counter;
-    }
-
-    @Override
-    public String toString() {
-        return "Instrumentation" + (type != null ? ":" + type : "") + "[" + processor + "]";
+    public InstrumentationProcessor(String type, Processor processor) {
+        super(processor);
+        this.type = type;
     }
 
     public void setCounter(Object counter) {
@@ -79,7 +78,7 @@ public class InstrumentationProcessor extends DelegateAsyncProcessor {
                 try {
                     // record end time
                     if (watch != null) {
-                        recordTime(exchange, watch.stop());
+                        recordTime(exchange, watch.taken());
                     }
                 } finally {
                     // and let the original callback know we are done as well
@@ -116,5 +115,34 @@ public class InstrumentationProcessor extends DelegateAsyncProcessor {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    @Override
+    public StopWatch before(Exchange exchange) throws Exception {
+        // only record time if stats is enabled
+        StopWatch answer = counter != null && counter.isStatisticsEnabled() ? new StopWatch() : null;
+        if (answer != null) {
+            beginTime(exchange);
+        }
+        return answer;
+    }
+
+    @Override
+    public void after(Exchange exchange, StopWatch watch) throws Exception {
+        // record end time
+        if (watch != null) {
+            recordTime(exchange, watch.taken());
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "InstrumentProcessorAdvice";
+    }
+
+    @Override
+    public int getOrder() {
+        // we want instrumentation before calling the processor (but before tracer/debugger)
+        return Ordered.LOWEST - 2;
     }
 }

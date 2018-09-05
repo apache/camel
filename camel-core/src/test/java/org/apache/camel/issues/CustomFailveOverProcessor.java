@@ -70,7 +70,7 @@ public class CustomFailveOverProcessor extends ContextTestSupport {
         private List<String> uris;
         private ProducerTemplate template;
 
-        public MyFailOverProcessor(ProducerTemplate template, String... uris) {
+        MyFailOverProcessor(ProducerTemplate template, String... uris) {
             this.template = template;
             this.uris = Arrays.asList(uris);
         }

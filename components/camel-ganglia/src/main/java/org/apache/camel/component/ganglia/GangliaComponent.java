@@ -21,10 +21,12 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 public class GangliaComponent extends UriEndpointComponent {
 
+    @Metadata(label = "advanced")
     private GangliaConfiguration configuration;
 
     public GangliaComponent() {

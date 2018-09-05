@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -40,10 +42,11 @@ public class PredicateBuilderConcurrentTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testPredicateBuilderConcurrent() throws Exception {
         context.start();
 
-        List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
+        List<Future<Boolean>> futures = new ArrayList<>();
 
         ExecutorService pool = Executors.newFixedThreadPool(10);
         for (int i = 0; i < 1000; i++) {

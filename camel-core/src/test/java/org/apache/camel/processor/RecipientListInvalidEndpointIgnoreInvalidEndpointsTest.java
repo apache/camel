@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class RecipientListInvalidEndpointIgnoreInvalidEndpointsTest extends ContextTestSupport {
 
+    @Test
     public void testRecipientListInvalidEndpointIgnoreInvalidEndpoints() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:dead").expectedMessageCount(0);

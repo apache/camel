@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.io.InputStream;
 
 import org.apache.camel.ContextTestSupport;
@@ -27,6 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class StreamCachingInOutTest extends ContextTestSupport {
     private static final String TEST_FILE = "org/apache/camel/processor/simple.txt";
 
+    @Test
     public void testStreamCachingPerRoute() throws Exception {
         MockEndpoint c = getMockEndpoint("mock:c");
         c.expectedMessageCount(1);

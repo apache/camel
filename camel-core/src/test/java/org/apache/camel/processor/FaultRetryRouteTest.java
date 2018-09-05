@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.ContextTestSupport;
@@ -40,6 +43,7 @@ public class FaultRetryRouteTest extends ContextTestSupport {
         }
     };
 
+    @Test
     public void testSuccessfulRetry() throws Exception {
         a.expectedBodiesReceived("in");
         b.expectedBodiesReceived("in");
@@ -51,7 +55,8 @@ public class FaultRetryRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         a = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
         b = resolveMandatoryEndpoint("mock:b", MockEndpoint.class);

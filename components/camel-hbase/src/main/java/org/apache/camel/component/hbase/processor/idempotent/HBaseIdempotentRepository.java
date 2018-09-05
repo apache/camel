@@ -16,23 +16,22 @@
  */
 package org.apache.camel.component.hbase.processor.idempotent;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 
 import org.apache.camel.component.hbase.HBaseHelper;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.IOHelper;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.client.Connection;
+import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
-import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.hbase.client.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,15 +41,18 @@ public class HBaseIdempotentRepository extends ServiceSupport implements Idempot
 
     private final String tableName;
     private final String family;
-    private final String qualifer;
-    private final HTable table;
+    private final String qualifier;
+    private final Configuration configuration;
+    private Connection connection;
+    private Table table;
 
     public HBaseIdempotentRepository(Configuration configuration, String tableName, String family, String qualifier) throws IOException {
         this.tableName = tableName;
         this.family = family;
-        this.qualifer = qualifier;
-        //In the case of idempotent repository we do not want to catch exceptions related to HTable.
-        this.table = new HTable(configuration, tableName);
+        this.qualifier = qualifier;
+        this.configuration = configuration;
+        this.connection = null;
+        this.table = null;
     }
 
     @Override
@@ -60,11 +62,10 @@ public class HBaseIdempotentRepository extends ServiceSupport implements Idempot
                 if (contains(o)) {
                     return false;
                 }
-                byte[] b = toBytes(o);
+                byte[] b = HBaseHelper.toBytes(o);
                 Put put = new Put(b);
-                put.add(HBaseHelper.getHBaseFieldAsBytes(family), HBaseHelper.getHBaseFieldAsBytes(qualifer), b);
+                put.addColumn(HBaseHelper.getHBaseFieldAsBytes(family), HBaseHelper.getHBaseFieldAsBytes(qualifier), b);
                 table.put(put);
-                table.flushCommits();
                 return true;
             }
         } catch (Exception e) {
@@ -76,9 +77,9 @@ public class HBaseIdempotentRepository extends ServiceSupport implements Idempot
     @Override
     public boolean contains(Object o) {
         try {
-            byte[] b = toBytes(o);
+            byte[] b = HBaseHelper.toBytes(o);
             Get get = new Get(b);
-            get.addColumn(HBaseHelper.getHBaseFieldAsBytes(family), HBaseHelper.getHBaseFieldAsBytes(qualifer));
+            get.addColumn(HBaseHelper.getHBaseFieldAsBytes(family), HBaseHelper.getHBaseFieldAsBytes(qualifier));
             return table.exists(get);
         } catch (Exception e) {
             LOG.warn("Error reading object {} from HBase repository.", o);
@@ -89,7 +90,7 @@ public class HBaseIdempotentRepository extends ServiceSupport implements Idempot
     @Override
     public boolean remove(Object o) {
         try {
-            byte[] b = toBytes(o);
+            byte[] b = HBaseHelper.toBytes(o);
             if (table.exists(new Get(b))) {
                 Delete delete = new Delete(b);
                 table.delete(delete);
@@ -125,43 +126,18 @@ public class HBaseIdempotentRepository extends ServiceSupport implements Idempot
 
     @Override
     protected void doStart() throws Exception {
-        // noop
+        this.connection = ConnectionFactory.createConnection(configuration);
+        this.table = this.connection.getTable(TableName.valueOf(tableName));
     }
 
     @Override
     protected void doStop() throws Exception {
-        // noop
-    }
+        if (table != null) {
+            table.close();
+        }
 
-    private byte[] toBytes(Object obj) {
-        if (obj instanceof byte[]) {
-            return (byte[]) obj;
-        } else if (obj instanceof Byte) {
-            return Bytes.toBytes((Byte) obj);
-        } else if (obj instanceof Short) {
-            return Bytes.toBytes((Short) obj);
-        } else if (obj instanceof Integer) {
-            return Bytes.toBytes((Integer) obj);
-        }  else if (obj instanceof Long) {
-            return Bytes.toBytes((Long) obj);
-        }  else if (obj instanceof Double) {
-            return Bytes.toBytes((Double) obj);
-        }  else if (obj instanceof String) {
-            return Bytes.toBytes((String) obj);
-        } else {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = null;
-            try {
-                oos = new ObjectOutputStream(baos);
-                oos.writeObject(obj);
-                return  baos.toByteArray();
-            } catch (IOException e) {
-                LOG.warn("Error while serializing object. Null will be used.", e);
-                return null;
-            } finally {
-                IOHelper.close(oos);
-                IOHelper.close(baos);
-            }
+        if (connection != null) {
+            connection.close();
         }
     }
 }

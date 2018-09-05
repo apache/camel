@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -27,16 +30,19 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileConsumerProducerRouteTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/file-test");
         super.setUp();
-        template.sendBodyAndHeader("file://target/file-test/a", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/file-test/a", "Bye World", Exchange.FILE_NAME, "bye.txt");
     }
 
+    @Test
     public void testFileRoute() throws Exception {
         MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         result.expectedMessageCount(2);
+
+        template.sendBodyAndHeader("file://target/file-test/a", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/file-test/a", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         result.assertIsSatisfied();
     }
@@ -45,8 +51,8 @@ public class FileConsumerProducerRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("file:target/file-test/a").to("file:target/file-test/b");
-                from("file:target/file-test/b").to("mock:result");
+                from("file:target/file-test/a?initialDelay=0&delay=10").to("file:target/file-test/b");
+                from("file:target/file-test/b?initialDelay=0&delay=10").to("mock:result");
             }
         };
     }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +38,7 @@ public class RecipientListBeanTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testRecipientListWithBean() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello c");
@@ -46,11 +49,12 @@ public class RecipientListBeanTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRecipientListWithParams() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello b");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("one", 21);
         headers.put("two", "direct:a,direct:b,direct:c");
 

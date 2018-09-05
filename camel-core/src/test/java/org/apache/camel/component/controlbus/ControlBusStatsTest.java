@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.controlbus;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -29,6 +31,7 @@ public class ControlBusStatsTest extends ContextTestSupport {
         return true;
     }
 
+    @Test
     public void testControlBusRouteStat() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
 
@@ -45,6 +48,24 @@ public class ControlBusStatsTest extends ContextTestSupport {
         assertTrue(xml.contains("exchangesCompleted=\"1\""));
     }
 
+    @Test
+    public void testControlBusCurrentRouteStat() throws Exception {
+        getMockEndpoint("mock:current").expectedBodiesReceived("Hello World");
+
+        template.sendBody("direct:current", "Hello World");
+
+        assertMockEndpointsSatisfied();
+
+        String xml = template.requestBody("controlbus:route?routeId=current&action=stats", null, String.class);
+        assertNotNull(xml);
+
+        assertTrue(xml.contains("routeStat"));
+        assertTrue(xml.contains("processorStat"));
+        assertTrue(xml.contains("id=\"current\""));
+        assertTrue(xml.contains("exchangesCompleted=\"1\""));
+    }
+
+    @Test
     public void testControlBusContextStat() throws Exception {
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
 
@@ -69,9 +90,10 @@ public class ControlBusStatsTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:foo").routeId("foo")
                     .to("mock:foo");
-
                 from("direct:bar").routeId("bar")
                     .to("mock:bar");
+                from("direct:current").routeId("current")
+                    .to("mock:current");
             }
         };
     }

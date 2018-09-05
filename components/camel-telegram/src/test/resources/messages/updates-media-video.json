@@ -1,0 +1,36 @@
+{
+  "ok": true,
+  "result": [
+    {
+      "update_id": 525704123,
+      "message": {
+        "message_id": 2311,
+        "from": {
+          "id": 149961111,
+          "first_name": "John",
+          "last_name": "Doe"
+        },
+        "chat": {
+          "id": 149961666,
+          "first_name": "John",
+          "last_name": "Doe",
+          "type": "private"
+        },
+        "date": 1463668803,
+        "video": {
+          "duration": 2,
+          "width": 640,
+          "height": 360,
+          "thumb": {
+            "file_id": "AAQEABMlaUQZAAT1dG3FV4N-WhUrXXXX",
+            "file_size": 1958,
+            "width": 90,
+            "height": 50
+          },
+          "file_id": "BAADBAADAgADyzvwCC7_4AyvdAXXXX",
+          "file_size": 299284
+        }
+      }
+    }
+  ]
+}

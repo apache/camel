@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.stream;
+import org.junit.After;
 
 import java.io.ByteArrayOutputStream;
 
@@ -41,6 +42,7 @@ public class StreamToUrlTest extends CamelTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         if (existingHandlers != null) {
             System.setProperty("java.protocol.handler.pkgs", existingHandlers);
@@ -51,7 +53,7 @@ public class StreamToUrlTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").to("stream:url?url=mock:");
+                from("direct:start").to("stream:url?url=mock:&httpHeaders.foo=123&httpHeaders.bar=yes");
             }
         };
     }
@@ -64,6 +66,9 @@ public class StreamToUrlTest extends CamelTestSupport {
         // Then
         String messageReceived = new String(buffer.toByteArray()).trim();
         assertEquals(message, messageReceived);
+
+        assertEquals("123", MockURLConnection.getHeaders().get("foo"));
+        assertEquals("yes", MockURLConnection.getHeaders().get("bar"));
     }
 
 }

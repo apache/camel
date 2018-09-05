@@ -24,9 +24,9 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * Represents a Yammer endpoint.
+ * The yammer component allows you to interact with the Yammer enterprise social network.
  */
-@UriEndpoint(scheme = "yammer", title = "Yammer", syntax = "yammer:function", consumerClass = YammerMessagePollingConsumer.class, label = "social")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "yammer", title = "Yammer", syntax = "yammer:function", consumerClass = YammerMessagePollingConsumer.class, label = "social")
 public class YammerEndpoint extends ScheduledPollEndpoint {
 
     @UriParam

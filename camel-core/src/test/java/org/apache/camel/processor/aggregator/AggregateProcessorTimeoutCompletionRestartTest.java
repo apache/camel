@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregator;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -45,11 +48,13 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         executorService = Executors.newSingleThreadExecutor();
     }
 
+    @Test
     public void testAggregateProcessorTimeoutRestart() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+B");
@@ -61,7 +66,8 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
 
         AggregateProcessor ap = new AggregateProcessor(context, done, corr, as, executorService, true);
         // start with a high timeout so no completes before we stop
-        ap.setCompletionTimeout(2000);
+        ap.setCompletionTimeout(250);
+        ap.setCompletionTimeoutCheckerInterval(10);
         ap.start();
 
         Exchange e1 = new DefaultExchange(context);
@@ -75,7 +81,7 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
         ap.process(e1);
         ap.process(e2);
 
-        // shutdown before the 2 sec timeout occurs
+        // shutdown before the 1/4 sec timeout occurs
         // however we use stop instead of shutdown as shutdown will clear the in memory aggregation repository,
         ap.stop();
 
@@ -92,6 +98,7 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
         ap.shutdown();
     }
 
+    @Test
     public void testAggregateProcessorTimeoutExpressionRestart() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+B");
@@ -104,22 +111,23 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
         AggregateProcessor ap = new AggregateProcessor(context, done, corr, as, executorService, true);
         // start with a high timeout so no completes before we stop
         ap.setCompletionTimeoutExpression(header("myTimeout"));
+        ap.setCompletionTimeoutCheckerInterval(10);
         ap.start();
 
         Exchange e1 = new DefaultExchange(context);
         e1.getIn().setBody("A");
         e1.getIn().setHeader("id", 123);
-        e1.getIn().setHeader("myTimeout", 2000);
+        e1.getIn().setHeader("myTimeout", 250);
 
         Exchange e2 = new DefaultExchange(context);
         e2.getIn().setBody("B");
         e2.getIn().setHeader("id", 123);
-        e2.getIn().setHeader("myTimeout", 2000);
+        e2.getIn().setHeader("myTimeout", 250);
 
         ap.process(e1);
         ap.process(e2);
 
-        // shutdown before the 2 sec timeout occurs
+        // shutdown before the 1/4 sec timeout occurs
         // however we use stop instead of shutdown as shutdown will clear the in memory aggregation repository,
         ap.stop();
 
@@ -136,6 +144,7 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
         ap.shutdown();
     }
 
+    @Test
     public void testAggregateProcessorTwoTimeoutExpressionRestart() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("C+D", "A+B");
@@ -148,34 +157,35 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
         AggregateProcessor ap = new AggregateProcessor(context, done, corr, as, executorService, true);
         // start with a high timeout so no completes before we stop
         ap.setCompletionTimeoutExpression(header("myTimeout"));
+        ap.setCompletionTimeoutCheckerInterval(10);
         ap.start();
 
         Exchange e1 = new DefaultExchange(context);
         e1.getIn().setBody("A");
         e1.getIn().setHeader("id", 123);
-        e1.getIn().setHeader("myTimeout", 3000);
+        e1.getIn().setHeader("myTimeout", 300);
 
         Exchange e2 = new DefaultExchange(context);
         e2.getIn().setBody("B");
         e2.getIn().setHeader("id", 123);
-        e2.getIn().setHeader("myTimeout", 3000);
+        e2.getIn().setHeader("myTimeout", 300);
 
         Exchange e3 = new DefaultExchange(context);
         e3.getIn().setBody("C");
         e3.getIn().setHeader("id", 456);
-        e3.getIn().setHeader("myTimeout", 2000);
+        e3.getIn().setHeader("myTimeout", 250);
 
         Exchange e4 = new DefaultExchange(context);
         e4.getIn().setBody("D");
         e4.getIn().setHeader("id", 456);
-        e4.getIn().setHeader("myTimeout", 2000);
+        e4.getIn().setHeader("myTimeout", 250);
 
         ap.process(e1);
         ap.process(e2);
         ap.process(e3);
         ap.process(e4);
 
-        // shutdown before the 2 sec timeout occurs
+        // shutdown before the 1/4 sec timeout occurs
         // however we use stop instead of shutdown as shutdown will clear the in memory aggregation repository,
         ap.stop();
 

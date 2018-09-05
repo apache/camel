@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +32,7 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 public class AggregatorTest extends ContextTestSupport {
     protected int messageCount = 100;
 
+    @Test
     public void testSendingLotsOfMessagesGetAggregatedToTheLatestMessage() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
 
@@ -44,11 +47,12 @@ public class AggregatorTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testOneMessage() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
 
         resultEndpoint.expectedMessageCount(1);
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("cheese", 123);
         headers.put("bar", "viper bar");
 
@@ -57,6 +61,7 @@ public class AggregatorTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testBatchTimeoutExpiry() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
@@ -66,6 +71,7 @@ public class AggregatorTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testAggregatorNotAtStart() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
@@ -82,16 +88,16 @@ public class AggregatorTest extends ContextTestSupport {
                 // START SNIPPET: ex
                 // in this route we aggregate all from direct:state based on the header id cheese
                 from("direct:start")
-                    .aggregate(header("cheese"), new UseLatestAggregationStrategy()).completionTimeout(1000L)
+                    .aggregate(header("cheese"), new UseLatestAggregationStrategy()).completionTimeout(100).completionTimeoutCheckerInterval(10)
                         .to("mock:result");
 
                 from("seda:header").setHeader("visited", constant(true))
-                    .aggregate(header("cheese"), new UseLatestAggregationStrategy()).completionTimeout(1000L)
+                    .aggregate(header("cheese"), new UseLatestAggregationStrategy()).completionTimeout(100).completionTimeoutCheckerInterval(10)
                         .to("mock:result");
 
                 // in this sample we aggregate with a completion predicate
                 from("direct:predicate")
-                    .aggregate(header("cheese"), new UseLatestAggregationStrategy()).completionTimeout(1000L)
+                    .aggregate(header("cheese"), new UseLatestAggregationStrategy()).completionTimeout(100).completionTimeoutCheckerInterval(10)
                         .completionPredicate(header("cheese").isEqualTo(123))
                         .to("mock:result");
                 // END SNIPPET: ex

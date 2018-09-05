@@ -16,15 +16,19 @@
  */
 package org.apache.camel.util;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ModelHelper;
+import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 
 /**
  *
  */
 public class DumpModelAsXmlAggregateRouteTest extends ContextTestSupport {
 
+    @Test
     public void testDumpModelAsXml() throws Exception {
         String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
@@ -42,9 +46,8 @@ public class DumpModelAsXmlAggregateRouteTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start").routeId("myRoute")
                     .to("log:input")
-                    .aggregate().header("userId")
-                        .groupExchanges().completionSize(3)
-                        .to("mock:aggregate")
+                    .aggregate(header("userId"), new GroupedExchangeAggregationStrategy()).completionSize(3)
+                    .to("mock:aggregate")
                     .end()
                     .to("mock:result");
             }

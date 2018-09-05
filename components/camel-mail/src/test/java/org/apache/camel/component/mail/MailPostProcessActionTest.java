@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+import org.junit.Before;
 
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -39,6 +40,7 @@ public class MailPostProcessActionTest extends CamelTestSupport {
     private TestPostProcessAction action;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         prepareMailbox();
         action = new TestPostProcessAction();
@@ -90,6 +92,7 @@ public class MailPostProcessActionTest extends CamelTestSupport {
         Message[] messages = new Message[1];
         messages[0] = new MimeMessage(sender.getSession());
         messages[0].setSubject("TestSubject");
+        messages[0].setHeader("Message-ID", "0");
         messages[0].setText("TestText");
 
         folder.appendMessages(messages);
@@ -99,7 +102,7 @@ public class MailPostProcessActionTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://bill@localhost?password=secret&postProcessAction=#postProcessAction").to("mock:result");
+                from("pop3://bill@localhost?password=secret&postProcessAction=#postProcessAction&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
             }
         };
     }

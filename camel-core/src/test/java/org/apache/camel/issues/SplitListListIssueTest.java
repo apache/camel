@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,10 +29,11 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class SplitListListIssueTest extends ContextTestSupport {
 
+    @Test
     public void testSplitListList() throws Exception {
-        List<List<String>> list = new ArrayList<List<String>>();
+        List<List<String>> list = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            List<String> entry = new ArrayList<String>();
+            List<String> entry = new ArrayList<>();
             entry.add("number" + i);
             entry.add("Camel");
             list.add(entry);

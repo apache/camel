@@ -21,9 +21,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 
 public abstract class HazelcastDefaultProducer extends DefaultProducer {
-
-    private final HazelcastComponentHelper helper = new HazelcastComponentHelper();
-
     public HazelcastDefaultProducer(HazelcastDefaultEndpoint endpoint) {
         super(endpoint);
     }
@@ -33,7 +30,9 @@ public abstract class HazelcastDefaultProducer extends DefaultProducer {
         return (HazelcastDefaultEndpoint)super.getEndpoint();
     }
 
-    protected int lookupOperationNumber(Exchange exchange) {
-        return helper.lookupOperationNumber(exchange, getEndpoint().getDefaultOperation());
+    protected HazelcastOperation lookupOperation(Exchange exchange) {
+
+        return HazelcastComponentHelper.lookupOperation(exchange, getEndpoint().getDefaultOperation());
+
     }
 }

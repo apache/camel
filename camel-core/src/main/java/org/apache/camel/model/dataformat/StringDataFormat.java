@@ -27,11 +27,11 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents the String (text based) {@link DataFormat}
+ * String data format is a textual based format that supports character encoding.
  *
  * @version 
  */
-@Metadata(label = "dataformat,transformation", title = "String Encoding")
+@Metadata(firstVersion = "2.12.0", label = "dataformat,transformation,core", title = "String Encoding")
 @XmlRootElement(name = "string")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StringDataFormat extends DataFormatDefinition {

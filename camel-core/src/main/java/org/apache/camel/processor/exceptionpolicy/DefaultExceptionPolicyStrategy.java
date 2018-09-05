@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * is tested using the {@link #filter(org.apache.camel.model.OnExceptionDefinition, Class, Throwable)} method.
  * By default the filter uses <tt>instanceof</tt> test.</li>
  * <li>If the exception type has <b>exactly</b> the thrown exception then its selected as its an exact match</li>
- * <li>Otherwise the type that has an exception that is the closets super of the thrown exception is selected
+ * <li>Otherwise the type that has an exception that is the closest super of the thrown exception is selected
  * (recurring up the exception hierarchy)</li>
  * </ul>
  * <p/>
@@ -61,9 +61,9 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
     public OnExceptionDefinition getExceptionPolicy(Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicies,
                                                     Exchange exchange, Throwable exception) {
 
-        Map<Integer, OnExceptionDefinition> candidates = new TreeMap<Integer, OnExceptionDefinition>();
-        Map<ExceptionPolicyKey, OnExceptionDefinition> routeScoped = new LinkedHashMap<ExceptionPolicyKey, OnExceptionDefinition>();
-        Map<ExceptionPolicyKey, OnExceptionDefinition> contextScoped = new LinkedHashMap<ExceptionPolicyKey, OnExceptionDefinition>();
+        Map<Integer, OnExceptionDefinition> candidates = new TreeMap<>();
+        Map<ExceptionPolicyKey, OnExceptionDefinition> routeScoped = new LinkedHashMap<>();
+        Map<ExceptionPolicyKey, OnExceptionDefinition> contextScoped = new LinkedHashMap<>();
 
         // split policies into route and context scoped
         initRouteAndContextScopedExceptionPolicies(exceptionPolicies, routeScoped, contextScoped);

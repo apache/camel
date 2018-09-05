@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -30,6 +32,7 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
  */
 public class AggregatorExceptionHandleTest extends ContextTestSupport {
 
+    @Test
     public void testOk() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
@@ -43,6 +46,7 @@ public class AggregatorExceptionHandleTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHandled() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:handled");
         mock.expectedBodiesReceived("Damn");
@@ -64,7 +68,7 @@ public class AggregatorExceptionHandleTest extends ContextTestSupport {
                 onException(IllegalArgumentException.class).handled(true).to("mock:handled");
 
                 from("direct:start")
-                    .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(1000L)
+                    .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(100).completionTimeoutCheckerInterval(10)
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             String body = exchange.getIn().getBody(String.class);

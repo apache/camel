@@ -19,7 +19,6 @@ package org.apache.camel.component.jt400;
 import java.beans.PropertyVetoException;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400ConnectionPool;
 import com.ibm.as400.access.ConnectionPoolException;
@@ -71,10 +70,10 @@ public class Jt400Configuration {
 
     private final AS400ConnectionPool connectionPool;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = "true", secret = true)
     private String userID;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = "true", secret = true)
     private String password;
 
     @UriPath @Metadata(required = "true")
@@ -104,7 +103,7 @@ public class Jt400Configuration {
     @UriParam(defaultValue = "EQ")
     private SearchType searchType = SearchType.EQ;
 
-    @UriParam
+    @UriParam(label = "security")
     private boolean secured;
 
     @UriParam
@@ -112,6 +111,12 @@ public class Jt400Configuration {
 
     @UriParam
     private Integer[] outputFieldsLengthArray;
+
+    @UriParam(label = "consumer", defaultValue = "30000")
+    private int readTimeout = 30000;
+
+    @UriParam(label = "procedureName")
+    private String procedureName;
 
     public Jt400Configuration(String endpointUri, AS400ConnectionPool connectionPool) throws URISyntaxException {
         ObjectHelper.notNull(endpointUri, "endpointUri", this);
@@ -299,6 +304,28 @@ public class Jt400Configuration {
      */
     public void setOutputFieldsLengthArray(Integer[] outputFieldsLengthArray) {
         this.outputFieldsLengthArray = outputFieldsLengthArray;
+    }
+
+    public int getReadTimeout() {
+        return readTimeout;
+    }
+
+    /**
+     * Timeout in millis the consumer will wait while trying to read a new message of the data queue.
+     */
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
+    }
+
+    public String getProcedureName() {
+        return procedureName;
+    }
+
+    /**
+     * Procedure name from a service program to call
+     */
+    public void setProcedureName(String procedureName) {
+        this.procedureName = procedureName;
     }
 
     public void setOutputFieldsIdx(String outputFieldsIdx) {

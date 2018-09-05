@@ -16,21 +16,10 @@
  */
 package org.apache.camel.component.optaplanner;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.lang.ObjectUtils;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.optaplanner.core.impl.score.director.ScoreDirector;
-import org.optaplanner.core.impl.solver.ProblemFactChange;
 import org.optaplanner.examples.cloudbalancing.domain.CloudBalance;
-import org.optaplanner.examples.cloudbalancing.domain.CloudComputer;
-import org.optaplanner.examples.cloudbalancing.domain.CloudProcess;
 import org.optaplanner.examples.cloudbalancing.persistence.CloudBalancingGenerator;
 
 /**

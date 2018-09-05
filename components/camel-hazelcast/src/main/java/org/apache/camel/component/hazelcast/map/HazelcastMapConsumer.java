@@ -18,11 +18,10 @@ package org.apache.camel.component.hazelcast.map;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.component.hazelcast.HazelcastDefaultConsumer;
-import org.apache.camel.component.hazelcast.listener.CamelEntryListener;
+import org.apache.camel.component.hazelcast.listener.CamelMapListener;
 
 public class HazelcastMapConsumer extends HazelcastDefaultConsumer {
 
@@ -30,7 +29,6 @@ public class HazelcastMapConsumer extends HazelcastDefaultConsumer {
         super(hazelcastInstance, endpoint, processor, cacheName);
 
         IMap<Object, Object> cache = hazelcastInstance.getMap(cacheName);
-        cache.addEntryListener(new CamelEntryListener(this, cacheName), true);
+        cache.addEntryListener(new CamelMapListener(this, cacheName), true);
     }
-
 }

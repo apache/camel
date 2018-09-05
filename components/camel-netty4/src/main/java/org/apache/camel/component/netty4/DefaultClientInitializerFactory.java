@@ -94,7 +94,6 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory  {
         addToPipeline("handler", channelPipeline, new ClientChannelHandler(producer));
 
         LOG.trace("Created ChannelPipeline: {}", channelPipeline);
-        
     }
 
     private void addToPipeline(String name, ChannelPipeline pipeline, ChannelHandler handler) {
@@ -112,7 +111,7 @@ public class DefaultClientInitializerFactory extends ClientInitializerFactory  {
 
         // create ssl context once
         if (configuration.getSslContextParameters() != null) {
-            answer = configuration.getSslContextParameters().createSSLContext();
+            answer = configuration.getSslContextParameters().createSSLContext(producer.getContext());
         } else {
             if (configuration.getKeyStoreFile() == null && configuration.getKeyStoreResource() == null) {
                 LOG.debug("keystorefile is null");

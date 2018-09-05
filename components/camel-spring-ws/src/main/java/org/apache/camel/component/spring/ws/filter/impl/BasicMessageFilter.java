@@ -36,7 +36,6 @@ import org.springframework.ws.soap.SoapMessage;
  * instance.
  */
 public class BasicMessageFilter implements MessageFilter {
-    private static final String BREADCRUMB_ID = "BreadcrumbId";
 
     @Override
     public void filterProducer(Exchange exchange, WebServiceMessage response) {
@@ -48,7 +47,8 @@ public class BasicMessageFilter implements MessageFilter {
     @Override
     public void filterConsumer(Exchange exchange, WebServiceMessage response) {
         if (exchange != null) {
-            processHeaderAndAttachments(exchange.getOut(), response);
+            Message responseMessage = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+            processHeaderAndAttachments(responseMessage, response);
         }
     }
 
@@ -94,7 +94,7 @@ public class BasicMessageFilter implements MessageFilter {
 
         Map<String, Object> headers = inOrOut.getHeaders();
 
-        HashSet<String> headerKeySet = new HashSet<String>(headers.keySet());
+        HashSet<String> headerKeySet = new HashSet<>(headers.keySet());
 
         headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_SOAP_ACTION);
         headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ENDPOINT_URI);
@@ -103,8 +103,14 @@ public class BasicMessageFilter implements MessageFilter {
         headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ADDRESSING_PRODUCER_REPLY_TO);
         headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_FAULT_ACTION);
         headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_ADDRESSING_CONSUMER_OUTPUT_ACTION);
+        // This gets repeated again in the below 'for loop' and gets added as attribute to soapenv:header. 
+        // This would have already been processed in SpringWebserviceProducer/Consumer instance.
+        headerKeySet.remove(SpringWebserviceConstants.SPRING_WS_SOAP_HEADER);
 
-        headerKeySet.remove(BREADCRUMB_ID);
+        // Replaced local constant 'BreadcrumbId' with the actual constant key in header 'breadcrumbId'
+        // from org.apache.camel.Exchange.BREADCRUMB_ID. Because of this case mismatch, this key never
+        // gets removed from header rather gets added to soapHeader all the time.
+        headerKeySet.remove(Exchange.BREADCRUMB_ID);
 
         for (String name : headerKeySet) {
             Object value = headers.get(name);
@@ -129,7 +135,7 @@ public class BasicMessageFilter implements MessageFilter {
     protected void doProcessSoapAttachments(Message inOrOut, SoapMessage response) {
         Map<String, DataHandler> attachments = inOrOut.getAttachments();
 
-        Set<String> keySet = new HashSet<String>(attachments.keySet());
+        Set<String> keySet = new HashSet<>(attachments.keySet());
         for (String key : keySet) {
             response.addAttachment(key, attachments.get(key));
         }

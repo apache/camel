@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty.http;
+import org.junit.Before;
+import org.junit.After;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -49,7 +51,6 @@ public class BaseNettyTest extends CamelTestSupport {
             // use next free port
             port = AvailablePortFinder.getNextAvailable(port + 1);
         }
-
     }
 
     @AfterClass

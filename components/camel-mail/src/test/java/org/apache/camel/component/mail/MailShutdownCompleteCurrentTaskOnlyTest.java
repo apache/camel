@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+import org.junit.Before;
 
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -34,6 +35,7 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailShutdownCompleteCurrentTaskOnlyTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();
@@ -72,6 +74,7 @@ public class MailShutdownCompleteCurrentTaskOnlyTest extends CamelTestSupport {
         for (int i = 0; i < 5; i++) {
             messages[i] = new MimeMessage(sender.getSession());
             messages[i].setText("Message " + i);
+            messages[i].setHeader("Message-ID", "" + i);
         }
         folder.appendMessages(messages);
         folder.close(true);
@@ -80,7 +83,7 @@ public class MailShutdownCompleteCurrentTaskOnlyTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://jones@localhost?password=secret").routeId("route1")
+                from("pop3://jones@localhost?password=secret&consumer.initialDelay=100&consumer.delay=100").routeId("route1")
                          // let it complete only current task so we shutdown faster
                          .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly)
                          .delay(1000).to("seda:foo");

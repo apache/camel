@@ -25,7 +25,8 @@ public class FileChangedReadLockMarkerFileFalseTest extends FileChangedReadLockT
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/changed/in?readLock=changed&readLockMarkerFile=false").to("file:target/changed/out", "mock:result");
+                from("file:target/changed/in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100&readLockMarkerFile=false")
+                    .to("file:target/changed/out", "mock:result");
             }
         };
     }

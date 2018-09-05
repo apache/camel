@@ -1,0 +1,48 @@
+[[GuaranteedDelivery-GuaranteedDelivery]]
+== Guaranteed Delivery
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/GuaranteedMessaging.html[Guaranteed
+Delivery] from the link:enterprise-integration-patterns.html[EIP
+patterns] using among others the following components:
+
+* link:file2.html[File] for using file systems as a persistent store of
+messages
+* <<jms-component,JMS>> when using persistent delivery (the default) for
+working with JMS Queues and Topics for high performance, clustering and
+load balancing
+* <<jpa-component,JPA>> for using a database as a persistence layer, or use
+any of the many other database component such as <<sql-component,SQL>>,
+<<jdbc-component,JDBC>>,
+<<mybatis-component,MyBatis>>,
+link:hibernate.html[Hibernate]
+* link:hawtdb.html[HawtDB] for a lightweight key-value persistent store
+
+image:http://www.enterpriseintegrationpatterns.com/img/GuaranteedMessagingSolution.gif[image]
+
+[[GuaranteedDelivery-Example]]
+=== Example
+
+The following example demonstrates illustrates the use
+of http://www.enterpriseintegrationpatterns.com/GuaranteedMessaging.html[Guaranteed
+Delivery] within the <<jms-component,JMS>> component. By default, a message
+is not considered successfully delivered until the recipient has
+persisted the message locally guaranteeing its receipt in the event the
+destination becomes unavailable.
+
+[source,java]
+----
+from("direct:start")
+    .to("jms:queue:foo");
+----
+
+And in XML:
+
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <to uri="jms:queue:foo"/>
+</route>
+----
+

@@ -23,12 +23,11 @@ import org.apache.camel.Service;
 import org.apache.camel.util.IOHelper;
 import org.iq80.leveldb.CompressionType;
 import org.iq80.leveldb.DB;
+import org.iq80.leveldb.DBFactory;
 import org.iq80.leveldb.Options;
 import org.iq80.leveldb.WriteOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.fusesource.leveldbjni.JniDBFactory.factory;
 
 /**
  * Manages access to a shared <a href="https://github.com/fusesource/leveldbjni/">LevelDB</a> file.
@@ -172,10 +171,30 @@ public class LevelDBFile implements Service {
         options.createIfMissing(true);
         try {
             getFile().getParentFile().mkdirs();
+            DBFactory factory = getFactory();
             db = factory.open(getFile(), options);
         } catch (IOException ioe) {
             throw new RuntimeException("Error opening LevelDB with file " + getFile(), ioe);
         }
+    }
+
+    private DBFactory getFactory() {
+        String[] classNames = new String[] {
+            "org.fusesource.leveldbjni.JniDBFactory",
+            "org.iq80.leveldb.impl.Iq80DBFactory"
+        };
+        for (String cn : classNames) {
+            try {
+                Class<?> clz = getClass().getClassLoader().loadClass(cn);
+                DBFactory factory = (DBFactory) clz.newInstance();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Using {} implementation of org.iq80.leveldb.DBFactory", factory.getClass().getName());
+                }
+                return factory;
+            } catch (Throwable ignored) {
+            }
+        }
+        throw new IllegalStateException("Can't find implementation of org.iq80.leveldb.DBFactory");
     }
 
     public void stop() {

@@ -1,0 +1,47 @@
+[
+        {
+            // first operation is shift
+            "operation": "shift",
+            "spec": {
+                "rating": {
+                    "primary": {
+                        "value": "Rating",
+                        "max": "RatingRange"
+                    },
+                    "*": {
+                        "value": "SecondaryRatings.&1.Value",
+                        "max": "SecondaryRatings.&1.Range",
+                        "$": "SecondaryRatings.&.Id"
+                    }
+                }
+            }
+        },
+        {
+            // second operation is to default some values
+            "operation": "default",
+            "spec": {
+                "~z": "zz",
+                "~a": "aa",
+                "~id": "id",
+                "zz": "zz",
+                "~deleteme": "deleteme"
+            }
+        },
+        {
+            // third operation is to remove something
+            "operation": "remove",
+            "spec": {
+                "~deleteme": ""
+            }
+        },
+        {
+          "operation": "modify-overwrite-beta",
+          "spec": {
+            "b": "^contextB"
+          }
+        },
+        {
+            // last operation is to sort the JSON
+            "operation": "sort"
+        }
+    ]

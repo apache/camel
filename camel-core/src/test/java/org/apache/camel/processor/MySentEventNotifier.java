@@ -23,27 +23,30 @@ import java.util.List;
 import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
 
-/**
- * @version 
- */
 public class MySentEventNotifier extends EventNotifierSupport {
 
-    private final List<ExchangeSentEvent> events = new ArrayList<ExchangeSentEvent>();
+    private final List<EventObject> events = new ArrayList<>();
 
-    public List<ExchangeSentEvent> getEvents() {
+    public List<EventObject> getEvents() {
         return events;
     }
 
     public void notify(EventObject event) throws Exception {
         if (event instanceof ExchangeSentEvent) {
-            ExchangeSentEvent sent = (ExchangeSentEvent) event;
-            events.add(sent);
+            events.add(event);
         }
     }
 
     public boolean isEnabled(EventObject event) {
-        // we only want the sent events
-        return event instanceof ExchangeSentEvent;
+        return true;
+    }
+
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    protected void doStop() throws Exception {
+        // noop
     }
 
 }

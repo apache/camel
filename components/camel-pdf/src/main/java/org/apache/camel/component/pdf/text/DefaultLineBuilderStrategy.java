@@ -48,8 +48,8 @@ public class DefaultLineBuilderStrategy implements LineBuilderStrategy {
      */
     @Override
     public Collection<String> buildLines(Collection<String> splittedText) throws IOException {
-        LinkedList<String> wordsList = new LinkedList<String>(splittedText);
-        Collection<String> lines = new ArrayList<String>();
+        LinkedList<String> wordsList = new LinkedList<>(splittedText);
+        Collection<String> lines = new ArrayList<>();
         LineBuilder currentLine = new LineBuilder();
         float allowedLineWidth = getAllowedLineWidth();
         while (!wordsList.isEmpty()) {
@@ -127,13 +127,12 @@ public class DefaultLineBuilderStrategy implements LineBuilderStrategy {
         private StringBuilder line = new StringBuilder();
         private int wordsCount;
 
-        public LineBuilder() { }
+        LineBuilder() { }
 
-        public LineBuilder(String line, int wordsCount) {
+        LineBuilder(String line, int wordsCount) {
             this.line = new StringBuilder(line);
             this.wordsCount = wordsCount;
         }
-
 
         public LineBuilder appendWord(String word) {
             line.append(word).append(" ");

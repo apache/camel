@@ -44,7 +44,7 @@ public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("pop3://jones@localhost?password=secret&delay=1000&ignoreUnsupportedCharset=true").to("mock:result");
+                from("pop3://jones@localhost?password=secret&consumer.initialDelay=100&consumer.delay=100&ignoreUnsupportedCharset=true").to("mock:result");
             }
         });
         context.start();
@@ -53,7 +53,7 @@ public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
         mock.expectedBodiesReceived("Hello World", "Bye World");
         mock.allMessages().header("Content-Type").isEqualTo("text/plain");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("To", "jones@localhost");
         headers.put("Content-Type", "text/plain");
         template.sendBodyAndHeaders("smtp://localhost?ignoreUnsupportedCharset=true", "Hello World", headers);
@@ -73,7 +73,7 @@ public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("pop3://jones@localhost?password=secret&delay=1000&ignoreUnsupportedCharset=false").to("mock:result");
+                from("pop3://jones@localhost?password=secret&consumer.initialDelay=100&consumer.delay=100&ignoreUnsupportedCharset=false").to("mock:result");
             }
         });
         context.start();
@@ -82,7 +82,7 @@ public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
         mock.expectedBodiesReceived("Hello World");
         mock.allMessages().header("Content-Type").isEqualTo("text/plain");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("To", "jones@localhost");
         headers.put("Content-Type", "text/plain");
         template.sendBodyAndHeaders("smtp://localhost?ignoreUnsupportedCharset=false", "Hello World", headers);

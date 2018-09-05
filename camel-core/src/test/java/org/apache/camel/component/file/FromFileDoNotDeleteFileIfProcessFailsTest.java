@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -32,11 +35,13 @@ public class FromFileDoNotDeleteFileIfProcessFailsTest extends ContextTestSuppor
     private String body = "Hello World this file will NOT be deleted";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/deletefile");
         super.setUp();
     }
 
+    @Test
     public void testPollFileAndShouldNotBeDeleted() throws Exception {
         template.sendBodyAndHeader("file://target/deletefile", body, Exchange.FILE_NAME, "hello.txt");
 
@@ -59,7 +64,7 @@ public class FromFileDoNotDeleteFileIfProcessFailsTest extends ContextTestSuppor
                 onException(IllegalArgumentException.class)
                     .to("mock:error");
 
-                from("file://target/deletefile?delete=true").process(new Processor() {
+                from("file://target/deletefile?initialDelay=0&delay=10&delete=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         throw new IllegalArgumentException("Forced by unittest");
                     }

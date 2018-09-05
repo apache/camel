@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -31,11 +32,13 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
@@ -49,16 +52,18 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware, CamelContextAware {
+public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, Traceable, ShutdownAware, IdAware, CamelContextAware {
     private static final Logger LOG = LoggerFactory.getLogger(WireTapProcessor.class);
     private String id;
     private CamelContext camelContext;
     private final SendDynamicProcessor dynamicProcessor;
     private final String uri;
+    private final boolean dynamicUri;
     private final Processor processor;
     private final ExchangePattern exchangePattern;
     private final ExecutorService executorService;
     private volatile boolean shutdownExecutorService;
+    private final LongAdder taskCount = new LongAdder();
 
     // expression or processor used for populating a new exchange to send
     // as opposed to traditional wiretap that sends a copy of the original exchange
@@ -68,7 +73,7 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
     private Processor onPrepare;
 
     public WireTapProcessor(SendDynamicProcessor dynamicProcessor, Processor processor, ExchangePattern exchangePattern,
-                            ExecutorService executorService, boolean shutdownExecutorService) {
+                            ExecutorService executorService, boolean shutdownExecutorService, boolean dynamicUri) {
         this.dynamicProcessor = dynamicProcessor;
         this.uri = dynamicProcessor.getUri();
         this.processor = processor;
@@ -76,6 +81,7 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
         ObjectHelper.notNull(executorService, "executorService");
         this.executorService = executorService;
         this.shutdownExecutorService = shutdownExecutorService;
+        this.dynamicUri = dynamicUri;
     }
 
     @Override
@@ -102,6 +108,22 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
 
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    @Override
+    public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
+        // not in use
+        return true;
+    }
+
+    @Override
+    public int getPendingExchangesSize() {
+        return taskCount.intValue();
+    }
+
+    @Override
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
+        // noop
     }
 
     public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
@@ -132,11 +154,14 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
         // send the exchange to the destination using an executor service
         executorService.submit(new Callable<Exchange>() {
             public Exchange call() throws Exception {
+                taskCount.increment();
                 try {
                     LOG.debug(">>>> (wiretap) {} {}", uri, wireTapExchange);
                     processor.process(wireTapExchange);
                 } catch (Throwable e) {
                     LOG.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + uri + ". This exception will be ignored.", e);
+                } finally {
+                    taskCount.decrement();
                 }
                 return wireTapExchange;
             }
@@ -204,6 +229,9 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
         Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
         // set MEP to InOnly as this wire tap is a fire and forget
         copy.setPattern(ExchangePattern.InOnly);
+        // remove STREAM_CACHE_UNIT_OF_WORK property because this wire tap will
+        // close its own created stream cache(s)
+        copy.removeProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK);
         return copy;
     }
 
@@ -229,7 +257,7 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
 
     public void addNewExchangeProcessor(Processor processor) {
         if (newExchangeProcessors == null) {
-            newExchangeProcessors = new ArrayList<Processor>();
+            newExchangeProcessors = new ArrayList<>();
         }
         newExchangeProcessors.add(processor);
     }
@@ -260,6 +288,10 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
 
     public boolean isIgnoreInvalidEndpoint() {
         return dynamicProcessor.isIgnoreInvalidEndpoint();
+    }
+
+    public boolean isDynamicUri() {
+        return dynamicUri;
     }
 
     @Override

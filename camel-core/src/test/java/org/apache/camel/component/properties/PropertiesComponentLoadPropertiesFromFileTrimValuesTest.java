@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.properties;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.FileOutputStream;
 
@@ -27,7 +30,8 @@ import org.apache.camel.ContextTestSupport;
 public class PropertiesComponentLoadPropertiesFromFileTrimValuesTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/space");
         createDirectory("target/space");
         super.setUp();
@@ -57,13 +61,13 @@ public class PropertiesComponentLoadPropertiesFromFileTrimValuesTest extends Con
         fos.close();
 
         PropertiesComponent pc = new PropertiesComponent();
-        pc.setCamelContext(context);
         pc.setLocation("file:target/space/space.properties");
         context.addComponent("properties", pc);
 
         return context;
     }
 
+    @Test
     public void testMustTrimValues() throws Exception {
         assertEquals("Leading space", context.resolvePropertyPlaceholders("{{cool.leading}}"));
         assertEquals("Trailing space", context.resolvePropertyPlaceholders("{{cool.trailing}}"));

@@ -16,10 +16,9 @@
  */
 package org.apache.camel.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import org.junit.Test;
 
+import java.util.Collection;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
@@ -33,12 +32,12 @@ import org.apache.camel.Producer;
  */
 public class DefaultCamelContextEndpointCacheLimitTest extends ContextTestSupport {
 
+    @Test
     public void testCacheEndpoints() throws Exception {
         // test that we cache at most 75 endpoints in camel context to avoid it eating to much memory
-        for (int i = 0; i < 78; i++) {
+        for (int i = 0; i < 100; i++) {
             String uri = "my:endpoint?id=" + i;
             DefaultEndpoint e = new DefaultEndpoint() {
-                // FIXME: another endpoint that works without a Component
                 public Producer createProducer() throws Exception {
                     return null;
                 }
@@ -55,17 +54,17 @@ public class DefaultCamelContextEndpointCacheLimitTest extends ContextTestSuppor
             context.addEndpoint(uri, e);
         }
 
+        // the eviction is async so force cleanup
+        context.getEndpointRegistry().cleanUp();
+
         Collection<Endpoint> col = context.getEndpoints();
-        assertEquals("Size should be 75", 75, col.size());
-        List<Endpoint> list = new ArrayList<Endpoint>(col);
-        assertEquals("my:endpoint?id=3", list.get(0).getEndpointUri());
-        assertEquals("my:endpoint?id=77", list.get(74).getEndpointUri());
+        assertTrue("Size should be at most 75 was " + col.size(), col.size() <= 75);
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getProperties().put(Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE, "75");
+        context.getGlobalOptions().put(Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE, "75");
         return context;
     }
 }

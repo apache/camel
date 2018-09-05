@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws.sqs;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -34,33 +36,42 @@ import com.amazonaws.services.sqs.model.QueueDoesNotExistException;
 import com.amazonaws.services.sqs.model.ReceiptHandleIsInvalidException;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledBatchPollingConsumer;
 import org.apache.camel.spi.Synchronization;
-import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 /**
  * A Consumer of messages from the Amazon Web Service Simple Queue Service
  * <a href="http://aws.amazon.com/sqs/">AWS SQS</a>
- * 
  */
 public class SqsConsumer extends ScheduledBatchPollingConsumer {
     
     private static final Logger LOG = LoggerFactory.getLogger(SqsConsumer.class);
     private ScheduledExecutorService scheduledExecutor;
+    private transient String sqsConsumerToString;
+    private Collection<String> attributeNames;
+    private Collection<String> messageAttributeNames;
 
     public SqsConsumer(SqsEndpoint endpoint, Processor processor) throws NoFactoryAvailableException {
         super(endpoint, processor);
+
+        if (getConfiguration().getAttributeNames() != null) {
+            String[] names = getConfiguration().getAttributeNames().split(",");
+            attributeNames = Arrays.asList(names);
+        }
+        if (getConfiguration().getMessageAttributeNames() != null) {
+            String[] names = getConfiguration().getMessageAttributeNames().split(",");
+            messageAttributeNames = Arrays.asList(names);
+        }
     }
 
     @Override
@@ -72,9 +83,14 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
         ReceiveMessageRequest request = new ReceiveMessageRequest(getQueueUrl());
         request.setMaxNumberOfMessages(getMaxMessagesPerPoll() > 0 ? getMaxMessagesPerPoll() : null);
         request.setVisibilityTimeout(getConfiguration().getVisibilityTimeout() != null ? getConfiguration().getVisibilityTimeout() : null);
-        request.setAttributeNames(getConfiguration().getAttributeNames() != null ? getConfiguration().getAttributeNames() : null);
-        request.setMessageAttributeNames(getConfiguration().getMessageAttributeNames() != null ? getConfiguration().getMessageAttributeNames() : null);
         request.setWaitTimeSeconds(getConfiguration().getWaitTimeSeconds() != null ? getConfiguration().getWaitTimeSeconds() : null);
+
+        if (attributeNames != null) {
+            request.setAttributeNames(attributeNames);
+        }
+        if (messageAttributeNames != null) {
+            request.setMessageAttributeNames(messageAttributeNames);
+        }
 
         LOG.trace("Receiving messages with request [{}]...", request);
         
@@ -104,10 +120,10 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
                 Thread.sleep(30000);
                 getEndpoint().createQueue(getClient());
             } catch (Exception e) {
-                LOG.error("failed to retry queue connection.", e);
+                LOG.warn("failed to retry queue connection.", e);
             }
         } catch (Exception e) {
-            LOG.error("Could not connect to queue in amazon.", e);
+            LOG.warn("Could not connect to queue in amazon.", e);
         }
     }
     
@@ -116,7 +132,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
             LOG.trace("Received {} messages in this poll", messages.size());
         }
         
-        Queue<Exchange> answer = new LinkedList<Exchange>();
+        Queue<Exchange> answer = new LinkedList<>();
         for (Message message : messages) {
             Exchange exchange = getEndpoint().createExchange(message);
             answer.add(exchange);
@@ -141,20 +157,17 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
 
             // schedule task to extend visibility if enabled
             Integer visibilityTimeout = getConfiguration().getVisibilityTimeout();
-            if (this.scheduledExecutor != null && visibilityTimeout != null && (visibilityTimeout / 2) > 0) {
-                int delay = visibilityTimeout / 2;
-                int period = visibilityTimeout;
-                int repeatSeconds = new Double(visibilityTimeout.doubleValue() * 1.5).intValue();
+            if (this.scheduledExecutor != null && visibilityTimeout != null && (visibilityTimeout.intValue() / 2) > 0) {
+                int delay = visibilityTimeout.intValue() / 2;
+                int period = visibilityTimeout.intValue();
+                int repeatSeconds = Double.valueOf(visibilityTimeout.doubleValue() * 1.5).intValue();
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Scheduled TimeoutExtender task to start after {} delay, and run with {}/{} period/repeat (seconds), to extend exchangeId: {}",
                             new Object[]{delay, period, repeatSeconds, exchange.getExchangeId()});
                 }
-
                 final ScheduledFuture<?> scheduledFuture = this.scheduledExecutor.scheduleAtFixedRate(
                         new TimeoutExtender(exchange, repeatSeconds), delay, period, TimeUnit.SECONDS);
-
-                // as the AWS client is not thread-safe we cannot handover the task
-                exchange.addOnCompletion(new SynchronizationAdapter() {
+                exchange.addOnCompletion(new Synchronization() {
                     @Override
                     public void onComplete(Exchange exchange) {
                         cancelExtender(exchange);
@@ -163,11 +176,6 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
                     @Override
                     public void onFailure(Exchange exchange) {
                         cancelExtender(exchange);
-                    }
-
-                    @Override
-                    public boolean allowHandover() {
-                        return false;
                     }
 
                     private void cancelExtender(Exchange exchange) {
@@ -179,21 +187,13 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
             }
 
             // add on completion to handle after work when the exchange is done
-            // as the AWS client is not thread-safe we cannot handover the task
-            exchange.addOnCompletion(new SynchronizationAdapter() {
-                @Override
+            exchange.addOnCompletion(new Synchronization() {
                 public void onComplete(Exchange exchange) {
                     processCommit(exchange);
                 }
 
-                @Override
                 public void onFailure(Exchange exchange) {
                     processRollback(exchange);
-                }
-
-                @Override
-                public boolean allowHandover() {
-                    return false;
                 }
 
                 @Override
@@ -221,6 +221,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
      */
     protected void processCommit(Exchange exchange) {
         try {
+
             if (shouldDelete(exchange)) {
                 String receiptHandle = exchange.getIn().getHeader(SqsConstants.RECEIPT_HANDLE, String.class);
                 DeleteMessageRequest deleteRequest = new DeleteMessageRequest(getQueueUrl(), receiptHandle);
@@ -237,7 +238,12 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
     }
 
     private boolean shouldDelete(Exchange exchange) {
-        return getConfiguration().isDeleteAfterRead() && (getConfiguration().isDeleteIfFiltered() || passedThroughFilter(exchange));
+        boolean shouldDeleteByFilter = exchange.getProperty(Exchange.FILTER_MATCHED) != null
+                && getConfiguration().isDeleteIfFiltered()
+                && passedThroughFilter(exchange);
+
+        return getConfiguration().isDeleteAfterRead()
+                || shouldDeleteByFilter;
     }
 
     private boolean passedThroughFilter(Exchange exchange) {
@@ -275,24 +281,30 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     public String toString() {
-        return "SqsConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (sqsConsumerToString == null) {
+            sqsConsumerToString = "SqsConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return sqsConsumerToString;
     }
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
+        // start scheduler first
         if (getConfiguration().isExtendMessageVisibility() && scheduledExecutor == null) {
             this.scheduledExecutor = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "SqsTimeoutExtender");
         }
+
+        super.doStart();
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        super.doShutdown();
         if (scheduledExecutor != null) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(scheduledExecutor);
             scheduledExecutor = null;
         }
+
+        super.doShutdown();
     }
 
     private class TimeoutExtender implements Runnable {
@@ -300,7 +312,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
         private final Exchange exchange;
         private final int repeatSeconds;
 
-        public TimeoutExtender(Exchange exchange, int repeatSeconds) {
+        TimeoutExtender(Exchange exchange, int repeatSeconds) {
             this.exchange = exchange;
             this.repeatSeconds = repeatSeconds;
         }

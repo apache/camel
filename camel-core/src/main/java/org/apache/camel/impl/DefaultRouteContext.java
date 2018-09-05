@@ -33,11 +33,16 @@ import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
+import org.apache.camel.processor.ContractAdvice;
 import org.apache.camel.processor.Pipeline;
+import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.RouteController;
+import org.apache.camel.spi.RouteError;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -48,25 +53,29 @@ import org.apache.camel.util.ObjectHelper;
  * @version 
  */
 public class DefaultRouteContext implements RouteContext {
-    private final Map<ProcessorDefinition<?>, AtomicInteger> nodeIndex = new HashMap<ProcessorDefinition<?>, AtomicInteger>();
+    private final Map<ProcessorDefinition<?>, AtomicInteger> nodeIndex = new HashMap<>();
     private final RouteDefinition route;
     private FromDefinition from;
     private final Collection<Route> routes;
     private Endpoint endpoint;
-    private final List<Processor> eventDrivenProcessors = new ArrayList<Processor>();
+    private final List<Processor> eventDrivenProcessors = new ArrayList<>();
     private CamelContext camelContext;
-    private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
+    private List<InterceptStrategy> interceptStrategies = new ArrayList<>();
     private InterceptStrategy managedInterceptStrategy;
     private boolean routeAdded;
     private Boolean trace;
     private Boolean messageHistory;
+    private Boolean logMask;
+    private Boolean logExhaustedMessageBody;
     private Boolean streamCache;
     private Boolean handleFault;
     private Long delay;
     private Boolean autoStartup = Boolean.TRUE;
-    private List<RoutePolicy> routePolicyList = new ArrayList<RoutePolicy>();
+    private List<RoutePolicy> routePolicyList = new ArrayList<>();
     private ShutdownRoute shutdownRoute;
     private ShutdownRunningTask shutdownRunningTask;
+    private RouteError routeError;
+    private RouteController routeController;
 
     public DefaultRouteContext(CamelContext camelContext, RouteDefinition route, FromDefinition from, Collection<Route> routes) {
         this.camelContext = camelContext;
@@ -80,7 +89,7 @@ public class DefaultRouteContext implements RouteContext {
      */
     public DefaultRouteContext(CamelContext camelContext) {
         this.camelContext = camelContext;
-        this.routes = new ArrayList<Route>();
+        this.routes = new ArrayList<>();
         this.route = new RouteDefinition("temporary");
     }
 
@@ -190,6 +199,31 @@ public class DefaultRouteContext implements RouteContext {
             // wrap in route lifecycle
             internal.addAdvice(new CamelInternalProcessor.RouteLifecycleAdvice());
 
+            // wrap in REST binding
+            if (route.getRestBindingDefinition() != null) {
+                try {
+                    internal.addAdvice(route.getRestBindingDefinition().createRestBindingAdvice(this));
+                } catch (Exception e) {
+                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                }
+            }
+
+            // wrap in contract
+            if (route.getInputType() != null || route.getOutputType() != null) {
+                Contract contract = new Contract();
+                if (route.getInputType() != null) {
+                    contract.setInputType(route.getInputType().getUrn());
+                    contract.setValidateInput(route.getInputType().isValidate());
+                }
+                if (route.getOutputType() != null) {
+                    contract.setOutputType(route.getOutputType().getUrn());
+                    contract.setValidateOutput(route.getOutputType().isValidate());
+                }
+                internal.addAdvice(new ContractAdvice(contract));
+                // make sure to enable data type as its in use when using input/output types on routes
+                camelContext.setUseDataType(true);
+            }
+
             // and create the route that wraps the UoW
             Route edcr = new EventDrivenConsumerRoute(this, getEndpoint(), internal);
             edcr.getProperties().put(Route.ID_PROPERTY, routeId);
@@ -203,6 +237,34 @@ public class DefaultRouteContext implements RouteContext {
                 rest = "true";
             }
             edcr.getProperties().put(Route.REST_PROPERTY, rest);
+
+            List<PropertyDefinition> properties = route.getRouteProperties();
+            if (properties != null) {
+                final String[] reservedProperties = new String[] {
+                    Route.ID_PROPERTY,
+                    Route.PARENT_PROPERTY,
+                    Route.GROUP_PROPERTY,
+                    Route.REST_PROPERTY,
+                    Route.DESCRIPTION_PROPERTY
+                };
+
+                for (PropertyDefinition prop : properties) {
+                    try {
+                        final String key = CamelContextHelper.parseText(camelContext, prop.getKey());
+                        final String val = CamelContextHelper.parseText(camelContext, prop.getValue());
+
+                        for (String property : reservedProperties) {
+                            if (property.equalsIgnoreCase(key)) {
+                                throw new IllegalArgumentException("Cannot set route property " + property + " as it is a reserved property");
+                            }
+                        }
+
+                        edcr.getProperties().put(key, val);
+                    } catch (Exception e) {
+                        throw ObjectHelper.wrapRuntimeCamelException(e);
+                    }
+                }
+            }
 
             // after the route is created then set the route on the policy processor so we get hold of it
             CamelInternalProcessor.RoutePolicyAdvice task = internal.getAdvice(CamelInternalProcessor.RoutePolicyAdvice.class);
@@ -283,6 +345,32 @@ public class DefaultRouteContext implements RouteContext {
         }
     }
 
+    public void setLogMask(Boolean logMask) {
+        this.logMask = logMask;
+    }
+
+    public Boolean isLogMask() {
+        if (logMask != null) {
+            return logMask;
+        } else {
+            // fallback to the option from camel context
+            return getCamelContext().isLogMask();
+        }
+    }
+
+    public void setLogExhaustedMessageBody(Boolean logExhaustedMessageBody) {
+        this.logExhaustedMessageBody = logExhaustedMessageBody;
+    }
+
+    public Boolean isLogExhaustedMessageBody() {
+        if (logExhaustedMessageBody != null) {
+            return logExhaustedMessageBody;
+        } else {
+            // fallback to the option from camel context
+            return getCamelContext().isLogExhaustedMessageBody();
+        }
+    }
+
     public void setStreamCaching(Boolean cache) {
         this.streamCache = cache;
     }
@@ -339,10 +427,12 @@ public class DefaultRouteContext implements RouteContext {
     }
 
     public void setAllowUseOriginalMessage(Boolean allowUseOriginalMessage) {
-        throw new IllegalArgumentException("This option can only be configured on CamelContext");
+        // can only be configured on CamelContext
+        getCamelContext().setAllowUseOriginalMessage(allowUseOriginalMessage);
     }
 
     public Boolean isAllowUseOriginalMessage() {
+        // can only be configured on CamelContext
         return getCamelContext().isAllowUseOriginalMessage();
     }
 
@@ -383,5 +473,25 @@ public class DefaultRouteContext implements RouteContext {
 
     public List<RoutePolicy> getRoutePolicyList() {
         return routePolicyList;
+    }
+
+    @Override
+    public RouteError getLastError() {
+        return routeError;
+    }
+
+    @Override
+    public void setLastError(RouteError routeError) {
+        this.routeError = routeError;
+    }
+
+    @Override
+    public RouteController getRouteController() {
+        return routeController;
+    }
+
+    @Override
+    public void setRouteController(RouteController routeController) {
+        this.routeController = routeController;
     }
 }

@@ -22,10 +22,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dropbox.integration.DropboxTestSupport;
+import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
-
 
 public class DropboxProducerGetFolderTest extends DropboxTestSupport {
 
@@ -40,9 +40,39 @@ public class DropboxProducerGetFolderTest extends DropboxTestSupport {
             }
         });
 
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+        assertMockEndpointsSatisfied();
+
+        List<Exchange> exchanges = mock.getReceivedExchanges();
+        Exchange exchange = exchanges.get(0);
+        Object header =  exchange.getIn().getHeader(DropboxResultHeader.DOWNLOADED_FILES.name());
+        Object body = exchange.getIn().getBody();
+        assertNotNull(header);
+        assertNotNull(body);
+    }
+
+    @Test
+    public void testCamelDropboxWithOptionInHeader() throws Exception {
+        template.send("direct:start2", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader("test", "test");
+            }
+        });
+
+
+        template.send("direct:start3", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader("test", "test");
+                exchange.getIn().setHeader(DropboxConstants.HEADER_REMOTE_PATH, "/XXX");
+            }
+        });
+
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);       
+        mock.expectedMinimumMessageCount(2);
         assertMockEndpointsSatisfied();
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
@@ -52,7 +82,33 @@ public class DropboxProducerGetFolderTest extends DropboxTestSupport {
         assertNotNull(header);
         assertNotNull(body);
 
-        System.out.println(header.toString());
+        exchange = exchanges.get(1);
+        header =  exchange.getIn().getHeader(DropboxResultHeader.DOWNLOADED_FILES.name());
+        body = exchange.getIn().getBody();
+        assertNotNull(header);
+        assertNotNull(body);
+    }
+
+
+    @Test
+    public void testCamelDropboxHeaderHasPriorityOnParameter() throws Exception {
+        template.send("direct:start4", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader("test", "test");
+            }
+        });
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+        assertMockEndpointsSatisfied();
+
+        List<Exchange> exchanges = mock.getReceivedExchanges();
+        Exchange exchange = exchanges.get(0);
+        Object header =  exchange.getIn().getHeader(DropboxResultHeader.DOWNLOADED_FILES.name());
+        Object body = exchange.getIn().getBody();
+        assertNotNull(header);
+        assertNotNull(body);
     }
 
     @Override
@@ -60,8 +116,23 @@ public class DropboxProducerGetFolderTest extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("dropbox://get?" + getAuthParams() + "&remotePath=/XXX")
+                        .to("dropbox://get?accessToken={{accessToken}}&remotePath=/XXX")
                         .to("mock:result");
+
+                from("direct:start2")
+                    .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant("/XXX"))
+                    .to("dropbox://get?accessToken={{accessToken}}")
+                    .to("mock:result");
+
+                from("direct:start3")
+                    .to("dropbox://get?accessToken={{accessToken}}")
+                    .to("mock:result");
+
+                from("direct:start4")
+                    .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant("/XXX"))
+                    .to("dropbox://get?accessToken={{accessToken}}&remotePath=/aWrongPath")
+                    .to("mock:result");
+
             }
         };
     }

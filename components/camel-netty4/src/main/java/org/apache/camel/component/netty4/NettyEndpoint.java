@@ -26,6 +26,7 @@ import javax.security.cert.X509Certificate;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.ssl.SslHandler;
 
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -37,11 +38,17 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
-@UriEndpoint(scheme = "netty4", title = "Netty4", syntax = "netty4:protocol:host:port", consumerClass = NettyConsumer.class, label = "networking,tcp,udp")
-public class NettyEndpoint extends DefaultEndpoint {
+/**
+ * Socket level networking using TCP or UDP with the Netty 4.x library.
+ */
+@UriEndpoint(firstVersion = "2.14.0", scheme = "netty4", title = "Netty4", syntax = "netty4:protocol:host:port", consumerClass = NettyConsumer.class, label = "networking,tcp,udp")
+public class NettyEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     @UriParam
     private NettyConfiguration configuration;
-    
+    @UriParam(label = "advanced", javaType = "org.apache.camel.component.netty4.NettyServerBootstrapConfiguration",
+            description = "To use a custom configured NettyServerBootstrapConfiguration for configuring this endpoint.")
+    private Object bootstrapConfiguration; // to include in component docs as NettyServerBootstrapConfiguration is a @UriParams class
+
     public NettyEndpoint(String endpointUri, NettyComponent component, NettyConfiguration configuration) {
         super(endpointUri, component);
         this.configuration = configuration;

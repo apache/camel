@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -30,6 +32,7 @@ import org.apache.camel.processor.aggregate.AbstractListAggregationStrategy;
 public class CustomListAggregationStrategyCompletionFromBatchConsumerTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testCustomAggregationStrategy() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
@@ -55,7 +58,7 @@ public class CustomListAggregationStrategyCompletionFromBatchConsumerTest extend
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/batch?sortBy=file:name").routeId("foo").noAutoStartup()
+                from("file:target/batch?initialDelay=0&delay=10&sortBy=file:name").routeId("foo").noAutoStartup()
                     .aggregate(new MyListOfNumbersStrategy()).constant(true)
                     .completionFromBatchConsumer()
                     .to("mock:result");

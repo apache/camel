@@ -20,7 +20,6 @@ import org.w3c.dom.Element;
 
 import org.apache.camel.component.spring.security.SpringSecurityAccessPolicy;
 import org.apache.camel.component.spring.security.SpringSecurityAuthorizationPolicy;
-import org.apache.camel.spring.handler.BeanDefinitionParser;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 

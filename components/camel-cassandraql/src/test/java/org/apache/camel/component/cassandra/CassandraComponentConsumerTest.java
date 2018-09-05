@@ -24,32 +24,23 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.cassandraunit.CassandraCQLUnit;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class CassandraComponentConsumerTest extends CamelTestSupport {
+public class CassandraComponentConsumerTest extends BaseCassandraTest {
 
     private static final String CQL = "select login, first_name, last_name from camel_user";
 
     @Rule
     public CassandraCQLUnit cassandra = CassandraUnitUtils.cassandraCQLUnit();
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        CassandraUnitUtils.startEmbeddedCassandra();
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        CassandraUnitUtils.cleanEmbeddedCassandra();
-    }
-
     @Test
     public void testConsumeAll() throws Exception {
+        if (!canTest()) {
+            return;
+        }
+
         MockEndpoint mock = getMockEndpoint("mock:resultAll");
         mock.expectedMinimumMessageCount(1);
         mock.whenAnyExchangeReceived(new Processor() {
@@ -65,6 +56,10 @@ public class CassandraComponentConsumerTest extends CamelTestSupport {
 
     @Test
     public void testConsumeUnprepared() throws Exception {
+        if (!canTest()) {
+            return;
+        }
+
         MockEndpoint mock = getMockEndpoint("mock:resultUnprepared");
         mock.expectedMinimumMessageCount(1);
         mock.whenAnyExchangeReceived(new Processor() {
@@ -80,6 +75,10 @@ public class CassandraComponentConsumerTest extends CamelTestSupport {
 
     @Test
     public void testConsumeOne() throws Exception {
+        if (!canTest()) {
+            return;
+        }
+
         MockEndpoint mock = getMockEndpoint("mock:resultOne");
         mock.expectedMinimumMessageCount(1);
         mock.whenAnyExchangeReceived(new Processor() {

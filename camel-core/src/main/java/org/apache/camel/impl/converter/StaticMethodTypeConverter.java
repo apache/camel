@@ -40,7 +40,7 @@ public class StaticMethodTypeConverter extends TypeConverterSupport {
 
     public StaticMethodTypeConverter(Method method, boolean allowNull) {
         this.method = method;
-        this.useExchange = method.getParameterTypes().length == 2;
+        this.useExchange = method.getParameterCount() == 2;
         this.allowNull = allowNull;
     }
 

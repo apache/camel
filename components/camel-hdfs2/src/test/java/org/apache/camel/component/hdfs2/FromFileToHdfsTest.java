@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hdfs2;
+import org.junit.After;
 
 import java.io.File;
 
@@ -45,6 +46,7 @@ public class FromFileToHdfsTest extends HdfsTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         if (!canTest()) {
             return;
@@ -104,7 +106,7 @@ public class FromFileToHdfsTest extends HdfsTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/inbox?delete=true")
-                    .to("hdfs2:///" + TEMP_DIR.toUri() + "/output.txt?fileSystemType=LOCAL");
+                    .to("hdfs2:localhost/" + TEMP_DIR.toUri() + "/output.txt?fileSystemType=LOCAL");
             }
         };
     }

@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty4.http;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Suspendable;
 import org.apache.camel.component.netty4.NettyConfiguration;
 import org.apache.camel.component.netty4.NettyConsumer;
 import org.apache.camel.util.ObjectHelper;
@@ -24,7 +25,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * HTTP based {@link NettyConsumer}
  */
-public class NettyHttpConsumer extends NettyConsumer {
+public class NettyHttpConsumer extends NettyConsumer implements Suspendable {
 
     public NettyHttpConsumer(NettyHttpEndpoint nettyEndpoint, Processor processor, NettyConfiguration configuration) {
         super(nettyEndpoint, processor, configuration);
@@ -58,8 +59,8 @@ public class NettyHttpConsumer extends NettyConsumer {
         if (getConfiguration().isSend503whenSuspended()) {
             // noop as the server handler will send back 503 when suspended
         } else {
-            // will unbind the acceptor
-            super.doSuspend();
+            // will stop the acceptor
+            doStop();
         }
     }
 
@@ -68,8 +69,8 @@ public class NettyHttpConsumer extends NettyConsumer {
         if (getConfiguration().isSend503whenSuspended()) {
             // noop
         } else {
-            // will resume the acceptor
-            super.doResume();
+            // will start the acceptor
+            doStart();
         }
     }
 }

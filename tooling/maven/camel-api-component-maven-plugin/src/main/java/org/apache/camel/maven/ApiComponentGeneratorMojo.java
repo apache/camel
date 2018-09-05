@@ -133,7 +133,7 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
             clearSharedProjectState();
         }
     }
-
+    
     private void configureMethodGenerator(AbstractApiMethodGeneratorMojo mojo, ApiProxy apiProxy) {
 
         // set AbstractGeneratorMojo properties
@@ -146,6 +146,7 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
         // set AbstractSourceGeneratorMojo properties
         mojo.generatedSrcDir = generatedSrcDir;
         mojo.generatedTestDir = generatedTestDir;
+        mojo.addCompileSourceRoots = addCompileSourceRoots;
 
         // set AbstractAPIMethodBaseMojo properties
         mojo.substitutions = apiProxy.getSubstitutions().length != 0

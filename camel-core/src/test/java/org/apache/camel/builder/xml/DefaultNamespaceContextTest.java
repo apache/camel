@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder.xml;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -27,6 +29,7 @@ import org.apache.camel.ContextTestSupport;
  */
 public class DefaultNamespaceContextTest extends ContextTestSupport {
 
+    @Test
     public void testDefaultNamespaceContextEmpty() throws Exception {
         XPathBuilder builder = XPathBuilder.xpath("/foo");
         builder.start();
@@ -43,6 +46,7 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
         assertEquals(false, it.hasNext());
     }
 
+    @Test
     public void testDefaultNamespaceContextPre() throws Exception {
         XPathBuilder builder = XPathBuilder.xpath("/foo").namespace("pre", "http://acme/cheese");
         builder.start();
@@ -60,6 +64,7 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
         assertEquals("pre", it.next());
     }
 
+    @Test
     public void testDefaultNamespaceContextDualNamespaces() throws Exception {
         XPathBuilder builder = XPathBuilder.xpath("/foo").namespace("pre", "http://acme/cheese").namespace("bar", "http://acme/bar");
         builder.start();
@@ -85,6 +90,7 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
         assertEquals("bar", it2.next());
     }
 
+    @Test
     public void testDefaultNamespaceContextParent() throws Exception {
         XPathBuilder builder = XPathBuilder.xpath("/foo");
         builder.start();
@@ -109,6 +115,7 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
         assertEquals(Namespaces.SYSTEM_PROPERTIES_NAMESPACE, uri4);
     }
 
+    @Test
     public void testDefaultNamespaceContextCtr() throws Exception {
         DefaultNamespaceContext context = new DefaultNamespaceContext();
         
@@ -117,8 +124,9 @@ public class DefaultNamespaceContextTest extends ContextTestSupport {
         assertEquals(null, uri);
     }
 
+    @Test
     public void testDefaultNamespaceContextAnotherCtr() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("foo", "http://acme/cheese");
         DefaultNamespaceContext context = new DefaultNamespaceContext(null, map);
 

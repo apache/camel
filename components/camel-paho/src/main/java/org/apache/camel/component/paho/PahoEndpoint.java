@@ -18,10 +18,9 @@ package org.apache.camel.component.paho;
 
 import java.util.Set;
 
-import static java.lang.System.nanoTime;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -29,41 +28,47 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.paho.PahoPersistence.MEMORY;
-
-@UriEndpoint(scheme = "paho", title = "Paho", consumerClass = PahoConsumer.class, label = "messaging", syntax = "paho:topic")
+/**
+ * Component for communicating with MQTT M2M message brokers using Eclipse Paho MQTT Client.
+ */
+@UriEndpoint(firstVersion = "2.16.0", scheme = "paho", title = "Paho", consumerClass = PahoConsumer.class, label = "messaging,iot", syntax = "paho:topic")
 public class PahoEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(PahoEndpoint.class);
 
-    // Constants
-
-    private static final String DEFAULT_BROKER_URL = "tcp://localhost:1883";
-
-    private static final int DEFAULT_QOS = 2;
-
-    private static final String DEFAULT_QOS_STRING = DEFAULT_QOS + "";
-
     // Configuration members
-
-    @UriPath @Metadata(required = "true")
+    @UriPath
+    @Metadata(required = "true")
     private String topic;
     @UriParam
-    private String clientId = "camel-" + nanoTime();
-    @UriParam(defaultValue = DEFAULT_BROKER_URL)
-    private String brokerUrl = DEFAULT_BROKER_URL;
-    @UriParam(defaultValue = DEFAULT_QOS_STRING)
-    private int qos = DEFAULT_QOS;
+    private String clientId = "camel-" + System.nanoTime();
+    @UriParam(defaultValue = PahoConstants.DEFAULT_BROKER_URL)
+    private String brokerUrl = PahoConstants.DEFAULT_BROKER_URL;
+    @UriParam(defaultValue = "2")
+    private int qos = PahoConstants.DEFAULT_QOS;
+    @UriParam
+    private boolean retained;
     @UriParam(defaultValue = "MEMORY")
-    private PahoPersistence persistence = MEMORY;
+    private PahoPersistence persistence = PahoPersistence.MEMORY;
+    @UriParam(description = "Base directory used by file persistence. Will by default use current directory.")
+    private String filePersistenceDirectory;
+    @UriParam(defaultValue = "true")
+    private boolean autoReconnect = true; 
+    @UriParam @Metadata(secret = true)
+    private String userName; 
+    @UriParam @Metadata(secret = true)
+    private String password; 
+    
 
     // Collaboration members
     @UriParam
@@ -73,11 +78,9 @@ public class PahoEndpoint extends DefaultEndpoint {
 
     private transient MqttClient client;
 
-    public PahoEndpoint(String uri, Component component) {
+    public PahoEndpoint(String uri, String topic, Component component) {
         super(uri, component);
-        if (topic == null) {
-            topic = uri.substring(7);
-        }
+        this.topic = topic;
     }
 
     @Override
@@ -112,13 +115,20 @@ public class PahoEndpoint extends DefaultEndpoint {
 
     @Override
     public PahoComponent getComponent() {
-        return (PahoComponent) super.getComponent();
+        return (PahoComponent)super.getComponent();
     }
 
     // Resolvers
-
     protected MqttClientPersistence resolvePersistence() {
-        return persistence == MEMORY ? new MemoryPersistence() : new MqttDefaultFilePersistence();
+        if (persistence ==  PahoPersistence.MEMORY) {
+            return new MemoryPersistence();
+        } else {
+            if (filePersistenceDirectory != null) {
+                return new MqttDefaultFilePersistence(filePersistenceDirectory);
+            } else {
+                return new MqttDefaultFilePersistence();
+            }
+        }
     }
 
     protected MqttConnectOptions resolveMqttConnectOptions() {
@@ -131,10 +141,28 @@ public class PahoEndpoint extends DefaultEndpoint {
             return connectOptions.iterator().next();
         } else if (connectOptions.size() > 1) {
             LOG.warn("Found {} instances of the MqttConnectOptions in the registry. None of these will be used by the endpoint. "
-                            + "Please use 'connectOptions' endpoint option to select one.",
-                    connectOptions.size());
+                     + "Please use 'connectOptions' endpoint option to select one.", connectOptions.size());
         }
-        return new MqttConnectOptions();
+        
+        MqttConnectOptions options = new MqttConnectOptions();
+        options.setAutomaticReconnect(autoReconnect);
+        
+        if (ObjectHelper.isNotEmpty(userName) && ObjectHelper.isNotEmpty(password)) {
+            options.setUserName(userName);
+            options.setPassword(password.toCharArray());
+        }
+        return options;
+    }
+
+    public Exchange createExchange(MqttMessage mqttMessage, String topic) {
+        Exchange exchange = createExchange();
+
+        PahoMessage paho = new PahoMessage(exchange.getContext(), mqttMessage);
+        paho.setBody(mqttMessage.getPayload());
+        paho.setHeader(PahoConstants.MQTT_TOPIC, topic);
+
+        exchange.setIn(paho);
+        return exchange;
     }
 
     // Configuration getters & setters
@@ -183,6 +211,19 @@ public class PahoEndpoint extends DefaultEndpoint {
         this.qos = qos;
     }
 
+    public boolean isRetained() {
+        return retained;
+    }
+
+    /**
+     * Retain option
+     * 
+     * @param retained true/false
+     */
+    public void setRetained(boolean retained) {
+        this.retained = retained;
+    }
+
     // Auto-configuration getters & setters
 
     public PahoPersistence getPersistence() {
@@ -194,6 +235,17 @@ public class PahoEndpoint extends DefaultEndpoint {
      */
     public void setPersistence(PahoPersistence persistence) {
         this.persistence = persistence;
+    }
+
+    public String getFilePersistenceDirectory() {
+        return filePersistenceDirectory;
+    }
+
+    /**
+     * Base directory used by the file persistence provider.
+     */
+    public void setFilePersistenceDirectory(String filePersistenceDirectory) {
+        this.filePersistenceDirectory = filePersistenceDirectory;
     }
 
     public MqttClient getClient() {
@@ -217,4 +269,41 @@ public class PahoEndpoint extends DefaultEndpoint {
     public void setConnectOptions(MqttConnectOptions connOpts) {
         this.connectOptions = connOpts;
     }
+
+    public synchronized boolean isAutoReconnect() {
+        return autoReconnect;
+    }
+    
+    /**
+     * Client will automatically attempt to reconnect to the server if the connection is lost 
+     * @param autoReconnect
+     */
+    public synchronized void setAutoReconnect(boolean autoReconnect) {
+        this.autoReconnect = autoReconnect;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
+     * Username to be used for authentication against the MQTT broker
+     * @param userName
+     */
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Password to be used for authentication against the MQTT broker
+     * @param password
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
 }

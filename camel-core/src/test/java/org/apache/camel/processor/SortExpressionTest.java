@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.Comparator;
 import java.util.List;
 
@@ -26,6 +28,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public class SortExpressionTest extends ContextTestSupport {
 
+    @Test
     public void testSortBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -40,6 +43,7 @@ public class SortExpressionTest extends ContextTestSupport {
         assertEquals("William", list.get(2));
     }
 
+    @Test
     public void testSortReverse() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

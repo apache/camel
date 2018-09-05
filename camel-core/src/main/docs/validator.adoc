@@ -1,0 +1,186 @@
+[[Validator-Validator]]
+== Validator
+
+*Available as of Camel 2.19*
+
+Validator performs declarative validation of the message according to the declared
+`Input Type` and/or `Output Type` on a route definition which declares the expected
+message type. Note that the validation is performed only if `validate` attribute on the
+ type declaration is true.
+If `validate` attribute is true on a `Input Type` and/or `Output Type` declaration,
+camel internal processor looks for a corresponding Validator from the registry and apply.
+
+
+
+[[Validator-DataTypeFormat]]
+=== Data type format
+
+[source]
+----
+scheme:name
+----
+
+where *scheme* is the type of data model like `java`, `xml` or `json`, and *name* is the individual
+data type name.
+
+[[Validator-SupportedValidators]]
+=== Supported Validators
+
+|===
+| Validator | Description
+
+| Predicate Validator | Validate with using Expression or Predicate
+
+| Endpoint Validator | Validate by forwarding to the Endpoint to be used with validation component such as Validation Component or Bean Validation Component.
+
+| Custom Validator | Validate with using custom validator class. Validator must be a subclass of `org.apache.camel.spi.Validator`
+|===
+
+
+
+[[Validator-CommonOptions]]
+=== Common Options
+All validators have following common options to specify which data type is supported by the validator.
+`type` must be specified.
+|===
+| Name | Description
+
+| type | <<Validator-DataTypeFormat,Data type>> to validate.
+|===
+
+
+
+[[Validator-Predicate]]
+=== Predicate Validator Options
+
+|===
+| Name | Description
+
+| expression | Expression or Predicate to be used for validation
+|===
+
+Here is an example to specify a validation predicate:
+
+Java DSL:
+[source,java]
+----
+validator()
+    .type("csv:CSVOrder")
+    .withExpression(bodyAs(String.class).contains("{name:XOrder}"));
+----
+
+XML DSL:
+[source,xml]
+----
+<predicateValidator Type="csv:CSVOrder">
+    <simple>${body} contains '{name:XOrder}'</simple>
+</predicateValidator>
+----
+
+
+[[Validator-Endpoint]]
+=== Endpoint Validator Options
+
+|===
+| Name | Description
+
+| ref | Reference to the Endpoint ID
+
+| uri | Endpoint URI
+|===
+
+Here is an example to specify endpoint URI in Java DSL:
+[source,java]
+----
+validator()
+    .type("xml")
+    .withUri("validator:xsd/schema.xsd");
+----
+
+And here is an example to specify endpoint ref in XML DSL:
+[source,xml]
+----
+<endpointValidator uri="validator:xsd/schema.xsd" type="xml"/>
+----
+
+Note that the Endpoint Validator just forwards the message to the specified endpoint. In above example,
+camel forwards the message to the `validator:` endpoint, which actually is a
+link:validator-component.adoc[Validation Component]. You can also use any other validation component like
+Bean Validation Component.
+
+[[Validator-Custom]]
+=== Custom Validator Options
+
+Note that Validator must be a subclass of `org.apache.camel.spi.Validator`
+|===
+| Name | Description
+
+| ref | Reference to the custom Validator bean ID
+
+| className | Fully qualified class name of the custom Validator class
+|===
+
+Here is an example to specify custom Validator class:
+Java DSL:
+[source,java]
+----
+validator()
+    .type("json")
+    .withJava(com.example.MyCustomValidator.class);
+----
+
+XML DSL:
+[source,xml]
+----
+<customTransformer className="com.example.MyCustomValidator" type="json"/>
+----
+
+
+
+[[Validator-Examples]]
+=== Examples
+
+For example to declare the Endpoint Validator which uses
+validator component to validate `xml:ABCOrder`, we can do as follows:
+
+Java DSL:
+[source,java]
+----
+validator()
+    .type("xml:ABCOrder")
+    .withUri("validator:xsd/schema.xsd");
+----
+
+XML DSL:
+[source,xml]
+----
+<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <validators>
+        <endpointValidator uri="validator:xsd/schema.xsd" type="xml:ABCOrder"/>
+    </validators>
+</camelContext>
+----
+
+If you have following route definition, above validator will be applied when `direct:abc` endpoint
+receives the message. Note that `inputTypeWithValidate` is used instead of `inputType` in Java DSL,
+and the `validate` attribute on the inputType declaration is set to `true` in XML DSL:
+
+Java DSL:
+[source,java]
+----
+from("direct:abc")
+    .inputTypeWithValidate("xml:ABCOrder")
+    .log("${body}");
+----
+
+XML DSL:
+[source,xml]
+----
+<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:abc"/>
+        <inputType urn="xml:ABCOrder" validate="true"/>
+        <log message="${body}"/>
+    </route>
+</camelContext>
+----

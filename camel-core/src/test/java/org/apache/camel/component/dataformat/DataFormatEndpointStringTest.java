@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.dataformat;
 
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
@@ -25,6 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 
 public class DataFormatEndpointStringTest extends ContextTestSupport {
 
+    @Test
     public void testUnmarshalUTF8() throws Exception {
         // NOTE: Here we can use a MockEndpoint as we unmarshal the inputstream to String
 

@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class TestSupport extends Assert {
 
-    protected static final String LS = System.getProperty("line.separator");
+    protected static final String LS = System.lineSeparator();
     private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class);
     protected Logger log = LoggerFactory.getLogger(getClass());
 
@@ -69,11 +69,21 @@ public abstract class TestSupport extends Assert {
 
     /**
      * Returns a value builder for the given property
+     * 
+     * @deprecated use {@link #exchangeProperty(String)}
      */
+    @Deprecated
     public static ValueBuilder property(String name) {
         return Builder.exchangeProperty(name);
-    }    
-    
+    }
+
+    /**
+     * Returns a value builder for the given exchange property
+     */
+    public static ValueBuilder exchangeProperty(String name) {
+        return Builder.exchangeProperty(name);
+    }
+
     /**
      * Returns a predicate and value builder for the inbound body on an exchange
      */
@@ -92,7 +102,10 @@ public abstract class TestSupport extends Assert {
     /**
      * Returns a predicate and value builder for the outbound body on an
      * exchange
+     *
+     * @deprecated use {@link #body()}
      */
+    @Deprecated
     public static ValueBuilder outBody() {
         return Builder.outBody();
     }
@@ -100,7 +113,10 @@ public abstract class TestSupport extends Assert {
     /**
      * Returns a predicate and value builder for the outbound message body as a
      * specific type
+     *
+     * @deprecated use {@link #bodyAs(Class)}
      */
+    @Deprecated
     public static <T> ValueBuilder outBodyAs(Class<T> type) {
         return Builder.outBodyAs(type);
     }
@@ -116,7 +132,10 @@ public abstract class TestSupport extends Assert {
     /**
      * Returns a predicate and value builder for the fault message body as a
      * specific type
+     *
+     * @deprecated use {@link #bodyAs(Class)}
      */
+    @Deprecated
     public static <T> ValueBuilder faultBodyAs(Class<T> type) {
         return Builder.faultBodyAs(type);
     }
@@ -505,7 +524,7 @@ public abstract class TestSupport extends Assert {
      */
     public static boolean isPlatform(String platform) {
         String osName = System.getProperty("os.name").toLowerCase(Locale.US);
-        return osName.indexOf(platform.toLowerCase(Locale.US)) > -1;
+        return osName.contains(platform.toLowerCase(Locale.US));
     }
 
     /**
@@ -518,39 +537,42 @@ public abstract class TestSupport extends Assert {
      */
     public static boolean isJavaVendor(String vendor) {
         String javaVendor = System.getProperty("java.vendor").toLowerCase(Locale.US);
-        return javaVendor.indexOf(vendor.toLowerCase(Locale.US)) > -1;
+        return javaVendor.contains(vendor.toLowerCase(Locale.US));
     }
 
     /**
      * Is this Java 1.5
      *
      * @return <tt>true</tt> if its Java 1.5, <tt>false</tt> if its not (for example Java 1.6 or better)
-     * @deprecated will be removed in the near future as Camel now requires JDK1.6+
+     * @deprecated will be removed in the future as Camel requires JDK1.8+
      */
     @Deprecated
     public static boolean isJava15() {
-        String javaVersion = System.getProperty("java.version").toLowerCase(Locale.US);
-        return javaVersion.startsWith("1.5");
+        return getJavaMajorVersion() == 5;
     }
 
     /**
      * Is this Java 1.6
      *
      * @return <tt>true</tt> if its Java 1.6, <tt>false</tt> if its not (for example Java 1.7 or better)
+     * @deprecated will be removed in the future as Camel requires JDK1.8+
      */
+    @Deprecated
     public static boolean isJava16() {
-        String javaVersion = System.getProperty("java.version").toLowerCase(Locale.US);
-        return javaVersion.startsWith("1.6");
+        return getJavaMajorVersion() == 6;
+
     }
     
     /**
      * Is this Java 1.7
      *
      * @return <tt>true</tt> if its Java 1.7, <tt>false</tt> if its not (for example Java 1.6 or older)
+     * @deprecated will be removed in the future as Camel requires JDK1.8+
      */
+    @Deprecated
     public static boolean isJava17() {
-        String javaVersion = System.getProperty("java.version").toLowerCase(Locale.US);
-        return javaVersion.startsWith("1.7");
+        return getJavaMajorVersion() == 7;
+
     }
 
     /**
@@ -559,8 +581,34 @@ public abstract class TestSupport extends Assert {
      * @return <tt>true</tt> if its Java 1.8, <tt>false</tt> if its not (for example Java 1.7 or older)
      */
     public static boolean isJava18() {
-        String javaVersion = System.getProperty("java.version").toLowerCase(Locale.US);
-        return javaVersion.startsWith("1.8");
+        return getJavaMajorVersion() == 8;
+
+    }
+
+    /**
+     * Is this Java 1.9
+     *
+     * @return <tt>true</tt> if its Java 1.9, <tt>false</tt> if its not (for example Java 1.8 or older)
+     */
+    public static boolean isJava19() {
+        return getJavaMajorVersion() == 9;
+
+    }
+
+    /**
+     * Returns the current major Java version e.g 8.
+     * <p/>
+     * Uses <tt>java.specification.version</tt> from the system properties to determine the major version.
+
+     * @return the current major Java version.
+     */
+    public static int getJavaMajorVersion() {
+        String javaSpecVersion = System.getProperty("java.specification.version");
+        if (javaSpecVersion.contains(".")) { //before jdk 9
+            return Integer.parseInt(javaSpecVersion.split("\\.")[1]);
+        } else {
+            return Integer.parseInt(javaSpecVersion);
+        }
     }
 
     /**

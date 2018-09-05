@@ -34,7 +34,7 @@ import org.apache.camel.support.ServiceSupport;
  * @version 
  */
 public class MemoryAggregationRepository extends ServiceSupport implements OptimisticLockingAggregationRepository {
-    private final ConcurrentMap<String, Exchange> cache = new ConcurrentHashMap<String, Exchange>();
+    private final ConcurrentMap<String, Exchange> cache = new ConcurrentHashMap<>();
     private final boolean optimisticLocking;
 
     public MemoryAggregationRepository() {

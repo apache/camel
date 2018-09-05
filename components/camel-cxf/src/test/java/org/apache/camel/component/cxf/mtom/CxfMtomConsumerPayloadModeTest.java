@@ -71,9 +71,9 @@ public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextT
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
                 assertEquals("Get a wrong Content-Type header", "application/xop+xml", exchange.getIn().getHeader("Content-Type"));
-                List<Source> elements = new ArrayList<Source>();
+                List<Source> elements = new ArrayList<>();
                 elements.add(new DOMSource(StaxUtils.read(new StringReader(getRequestMessage())).getDocumentElement()));
-                CxfPayload<SoapHeader> body = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),
+                CxfPayload<SoapHeader> body = new CxfPayload<>(new ArrayList<SoapHeader>(),
                     elements, null);
                 exchange.getIn().setBody(body);
                 exchange.getIn().addAttachment(MtomTestHelper.REQ_PHOTO_CID, 
@@ -95,7 +95,7 @@ public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextT
             // verify request
             assertEquals(1, in.getBody().size());
             
-            Map<String, String> ns = new HashMap<String, String>();
+            Map<String, String> ns = new HashMap<>();
             ns.put("ns", MtomTestHelper.SERVICE_TYPES_NS);
             ns.put("xop", MtomTestHelper.XOP_NS);
 
@@ -120,9 +120,9 @@ public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextT
             MtomTestHelper.assertEquals(MtomTestHelper.requestJpeg, IOUtils.readBytesFromStream(dr.getInputStream()));
 
             // create response
-            List<Source> elements = new ArrayList<Source>();
+            List<Source> elements = new ArrayList<>();
             elements.add(new DOMSource(StaxUtils.read(new StringReader(MtomTestHelper.RESP_MESSAGE)).getDocumentElement()));
-            CxfPayload<SoapHeader> sbody = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),
+            CxfPayload<SoapHeader> sbody = new CxfPayload<>(new ArrayList<SoapHeader>(),
                 elements, null);
             exchange.getOut().setBody(sbody);
             exchange.getOut().addAttachment(MtomTestHelper.RESP_PHOTO_CID, 

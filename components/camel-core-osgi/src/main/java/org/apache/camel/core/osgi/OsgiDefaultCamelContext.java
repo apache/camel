@@ -35,10 +35,11 @@ public class OsgiDefaultCamelContext extends DefaultCamelContext {
     private final Registry registry;
 
     public OsgiDefaultCamelContext(BundleContext bundleContext) {
-        this(bundleContext, null);
+        this(bundleContext, new OsgiServiceRegistry(bundleContext));
     }
 
     public OsgiDefaultCamelContext(BundleContext bundleContext, Registry registry) {
+        super(registry);
         this.bundleContext = bundleContext;
         this.registry = registry;
         OsgiCamelContextHelper.osgiUpdate(this, bundleContext);
@@ -49,11 +50,6 @@ public class OsgiDefaultCamelContext extends DefaultCamelContext {
     @Override
     public Map<String, Properties> findComponents() throws LoadPropertiesException, IOException {
         return BundleContextUtils.findComponents(bundleContext, this);
-    }
-
-    @Override
-    public String getComponentDocumentation(String componentName) throws IOException {
-        return BundleContextUtils.getComponentDocumentation(bundleContext, this, componentName);
     }
 
     @Override
@@ -73,7 +69,7 @@ public class OsgiDefaultCamelContext extends DefaultCamelContext {
             ctx = bundleContext;
         }
         FactoryFinder finder = new OsgiFactoryFinderResolver(bundleContext).resolveDefaultFactoryFinder(getClassResolver());
-        return new OsgiTypeConverter(ctx, getInjector(), finder);
+        return new OsgiTypeConverter(ctx, this, getInjector(), finder);
     }
 
 }

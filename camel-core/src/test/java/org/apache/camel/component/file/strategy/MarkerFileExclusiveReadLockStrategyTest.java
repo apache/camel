@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.strategy;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,12 +41,14 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
     private AtomicInteger numberOfFilesProcessed = new AtomicInteger(0);
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/marker/");
         createDirectory("target/marker/in");
         super.setUp();
     }
 
+    @Test
     public void testMultithreadedLocking() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
@@ -99,7 +104,7 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/marker/in?readLock=markerFile")
+                from("file:target/marker/in?readLock=markerFile&initialDelay=0&delay=10")
                         .onCompletion()
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {

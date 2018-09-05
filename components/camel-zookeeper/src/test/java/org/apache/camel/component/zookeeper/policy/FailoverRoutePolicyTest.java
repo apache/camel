@@ -25,7 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.zookeeper.ZooKeeperTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +63,7 @@ public class FailoverRoutePolicyTest extends ZooKeeperTestSupport {
         private MockEndpoint mock;
         private String routename;
 
-        public ZookeeperPolicyEnforcedContext(String name) throws Exception {
+        ZookeeperPolicyEnforcedContext(String name) throws Exception {
             controlledContext = new DefaultCamelContext();
             routename = name;
             template = controlledContext.createProducerTemplate();
@@ -88,9 +87,9 @@ public class FailoverRoutePolicyTest extends ZooKeeperTestSupport {
         }
 
         public void shutdown() throws Exception {
-            LogFactory.getLog(getClass()).debug("stopping");
+            LoggerFactory.getLogger(getClass()).debug("stopping");
             controlledContext.stop();
-            LogFactory.getLog(getClass()).debug("stopped");
+            LoggerFactory.getLogger(getClass()).debug("stopped");
         }
     }
 

@@ -15,11 +15,15 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.strategy;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.slf4j.Logger;
@@ -33,16 +37,19 @@ public class FileChangedReadLockTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(FileChangedReadLockTest.class);
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/changed/");
         createDirectory("target/changed/in");
         super.setUp();
     }
 
+    @Test
     public void testChangedReadLock() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedFileExists("target/changed/out/slowfile.dat");
+        mock.expectedHeaderReceived(Exchange.FILE_LENGTH, expectedFileLength());
 
         writeSlowFile();
 
@@ -63,7 +70,7 @@ public class FileChangedReadLockTest extends ContextTestSupport {
         for (int i = 0; i < 20; i++) {
             fos.write(("Line " + i + LS).getBytes());
             LOG.debug("Writing line " + i);
-            Thread.sleep(200);
+            Thread.sleep(50);
         }
 
         fos.flush();
@@ -71,12 +78,21 @@ public class FileChangedReadLockTest extends ContextTestSupport {
         LOG.debug("Writing slow file DONE...");
     }
 
+    long expectedFileLength() {
+        long length = 0;
+        for (int i = 0; i < 20; i++) {
+            length += ("Line " + i + LS).getBytes().length;
+        }
+        return length;
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/changed/in?readLock=changed").to("file:target/changed/out", "mock:result");
+                from("file:target/changed/in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100")
+                    .to("file:target/changed/out", "mock:result");
             }
         };
     }

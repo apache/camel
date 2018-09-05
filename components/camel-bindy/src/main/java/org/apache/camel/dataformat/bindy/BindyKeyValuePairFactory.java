@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.dataformat.bindy.annotation.BindyConverter;
 import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.annotation.Message;
@@ -47,14 +49,14 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
     private static final Logger LOG = LoggerFactory.getLogger(BindyKeyValuePairFactory.class);
 
-    private Map<Integer, KeyValuePairField> keyValuePairFields = new LinkedHashMap<Integer, KeyValuePairField>();
-    private Map<Integer, Field> annotatedFields = new LinkedHashMap<Integer, Field>();
-    private Map<String, Integer> sections = new HashMap<String, Integer>();
+    private Map<Integer, KeyValuePairField> keyValuePairFields = new LinkedHashMap<>();
+    private Map<Integer, Field> annotatedFields = new LinkedHashMap<>();
+    private Map<String, Integer> sections = new HashMap<>();
     private String keyValuePairSeparator;
     private String pairSeparator;
     private boolean messageOrdered;
 
-    
+
     public BindyKeyValuePairFactory(Class<?> type) throws Exception {
         super(type);
 
@@ -67,7 +69,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
      * bind the data This process will scan for classes according to the package
      * name provided, check the annotated classes and fields. Next, we retrieve
      * the parameters required like : Pair Separator & key value pair separator
-     * 
+     *
      * @throws Exception
      */
     public void initKeyValuePairModel() throws Exception {
@@ -80,11 +82,12 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
     }
 
+    @Override
     public void initAnnotatedFields() {
 
         for (Class<?> cl : models) {
 
-            List<Field> linkFields = new ArrayList<Field>();
+            List<Field> linkFields = new ArrayList<>();
 
             for (Field field : cl.getDeclaredFields()) {
                 KeyValuePairField keyValuePairField = field.getAnnotation(KeyValuePairField.class);
@@ -114,17 +117,17 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
     }
 
     @Override
-    public void bind(List<String> data, Map<String, Object> model, int line) throws Exception {
+    public void bind(CamelContext camelContext, List<String> data, Map<String, Object> model, int line) throws Exception {
 
         // Map to hold the model @OneToMany classes while binding
-        Map<String, List<Object>> lists = new HashMap<String, List<Object>>();
+        Map<String, List<Object>> lists = new HashMap<>();
 
-        bind(data, model, line, lists);
+        bind(camelContext, data, model, line, lists);
     }
 
-    public void bind(List<String> data, Map<String, Object> model, int line, Map<String, List<Object>> lists) throws Exception {
+    public void bind(CamelContext camelContext, List<String> data, Map<String, Object> model, int line, Map<String, List<Object>> lists) throws Exception {
 
-        Map<Integer, List<String>> results = new HashMap<Integer, List<String>>();
+        Map<Integer, List<String>> results = new HashMap<>();
 
         LOG.debug("Key value pairs data : {}", data);
 
@@ -152,7 +155,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
                 // Add value to the Map using key value as key
                 if (!results.containsKey(key)) {
-                    List<String> list = new LinkedList<String>();
+                    List<String> list = new LinkedList<>();
                     list.add(value);
                     results.put(key, list);
                 } else {
@@ -230,7 +233,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
                         if (l != null) {
 
-                            // Test if object exist
+                            // BigIntegerFormatFactory if object exist
                             if (!l.isEmpty()) {
                                 obj = l.get(0);
                             } else {
@@ -277,7 +280,11 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                             if (value != null) {
 
                                 // Create format object to format the field
-                                Format<?> format = FormatFactory.getFormat(field.getType(), getLocale(), keyValuePairField);
+                                FormattingOptions formattingOptions = ConverterUtils.convert(keyValuePairField,
+                                        field.getType(),
+                                        field.getAnnotation(BindyConverter.class),
+                                        getLocale());
+                                Format<?> format = formatFactory.getFormat(formattingOptions);
 
                                 // format the value of the key received
                                 result = formatField(format, value, key, line);
@@ -303,7 +310,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                                 // Relation OneToMany
                                 for (int i = 0; i < values.size(); i++) {
 
-                                    // Test if object exist
+                                    // BigIntegerFormatFactory if object exist
                                     if ((!l.isEmpty()) && (l.size() > i)) {
                                         obj = l.get(i);
                                     } else {
@@ -313,7 +320,11 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                                     value = values.get(i);
 
                                     // Create format object to format the field
-                                    Format<?> format = FormatFactory.getFormat(field.getType(), getLocale(), keyValuePairField);
+                                    FormattingOptions formattingOptions = ConverterUtils.convert(keyValuePairField,
+                                            field.getType(),
+                                            field.getAnnotation(BindyConverter.class),
+                                            getLocale());
+                                    Format<?> format = formatFactory.getFormat(formattingOptions);
 
                                     // format the value of the key received
                                     Object result = formatField(format, value, key, line);
@@ -380,7 +391,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                     }
 
                     if (!lists.containsKey(cl.getName())) {
-                        lists.put(cl.getName(), new ArrayList<Object>());
+                        lists.put(cl.getName(), new ArrayList<>());
                     }
 
                     generateModelFromKeyValueMap(cl, null, results, line, lists);
@@ -399,19 +410,20 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
     }
 
     /**
-     * 
+     *
      */
-    public String unbind(Map<String, Object> model) throws Exception {
+    @Override
+    public String unbind(CamelContext camelContext, Map<String, Object> model) throws Exception {
 
         StringBuilder builder = new StringBuilder();
 
-        Map<Integer, KeyValuePairField> keyValuePairFieldsSorted = new TreeMap<Integer, KeyValuePairField>(keyValuePairFields);
+        Map<Integer, KeyValuePairField> keyValuePairFieldsSorted = new TreeMap<>(keyValuePairFields);
         Iterator<Integer> it = keyValuePairFieldsSorted.keySet().iterator();
 
         // Map containing the OUT position of the field
         // The key is double and is created using the position of the field and
         // location of the class in the message (using section)
-        Map<Integer, String> positions = new TreeMap<Integer, String>();
+        Map<Integer, String> positions = new TreeMap<>();
 
         // Check if separator exists
         ObjectHelper.notNull(this.pairSeparator, "The pair separator has not been instantiated or property not defined in the @Message annotation");
@@ -436,12 +448,12 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                 LOG.debug("Tag: {}, Field type: {}, class: {}", new Object[]{keyValuePairField.tag(), field.getType(), field.getDeclaringClass().getName()});
             }
 
-            // Retrieve the format, pattern and precision associated to the type
-            Class<?> type = field.getType();
-
             // Create format
-            @SuppressWarnings("unchecked")
-            Format<Object> format = (Format<Object>)FormatFactory.getFormat(type, getLocale(), keyValuePairField);
+            FormattingOptions formattingOptions = ConverterUtils.convert(keyValuePairField,
+                    field.getType(),
+                    field.getAnnotation(BindyConverter.class),
+                    getLocale());
+            Format<Object> format = (Format<Object>) formatFactory.getFormat(formattingOptions);
 
             // Get object to be formatted
             Object obj = model.get(field.getDeclaringClass().getName());
@@ -456,9 +468,9 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                     // and the position of the field
                     Integer key1 = sections.get(obj.getClass().getName());
                     Integer key2 = keyValuePairField.position();
-                    
+
                     LOG.debug("Key of the section: {}, and the field: {}", key1, key2);
-                 
+
                     Integer keyGenerated = generateKey(key1, key2);
 
                     if (LOG.isDebugEnabled()) {
@@ -575,7 +587,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
     /**
      * Flag indicating if the message must be ordered
-     * 
+     *
      * @return boolean
      */
     public boolean isMessageOrdered() {
@@ -615,7 +627,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                 }
 
                 if (section != null) {
-                    // Test if section number is not null
+                    // BigIntegerFormatFactory if section number is not null
                     ObjectHelper.notNull(section.number(), "No number has been defined for the section");
 
                     // Get section number and add it to the sections

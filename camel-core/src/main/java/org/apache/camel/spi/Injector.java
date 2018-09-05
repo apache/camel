@@ -44,4 +44,11 @@ public interface Injector {
      */
     <T> T newInstance(Class<T> type, Object instance);
 
+    /**
+     * Whether the injector supports creating new instances using auto-wiring.
+     * If this is possible then bean instances is attempt first to be created this way
+     * and if not, then the bean can only be created if there is a public no-arg constructor.
+     */
+    boolean supportsAutoWiring();
+
 }

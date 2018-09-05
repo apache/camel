@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.netty4;
 
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
@@ -37,7 +35,6 @@ public class MultipleCodecsSpringTest extends CamelSpringTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:multiple-codec");
         mock.expectedBodiesReceived(poem);
         sendBody("direct:multiple-codec", poem);
-        mock.await(1, TimeUnit.SECONDS);
         mock.assertIsSatisfied();
     }
 }

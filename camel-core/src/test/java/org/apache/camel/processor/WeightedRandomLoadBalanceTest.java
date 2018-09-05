@@ -15,8 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -26,7 +30,8 @@ public class WeightedRandomLoadBalanceTest extends ContextTestSupport {
     protected MockEndpoint z;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         x = getMockEndpoint("mock:x");
@@ -39,6 +44,7 @@ public class WeightedRandomLoadBalanceTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testRandom() throws Exception {
         x.expectedMessageCount(4);
         y.expectedMessageCount(2);
@@ -61,6 +67,7 @@ public class WeightedRandomLoadBalanceTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRandom2() throws Exception {
         x.expectedMessageCount(2);
         y.expectedMessageCount(1);
@@ -82,6 +89,7 @@ public class WeightedRandomLoadBalanceTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRandomBulk() throws Exception {
         x.expectedMessageCount(10);
         y.expectedMessageCount(15);
@@ -104,6 +112,7 @@ public class WeightedRandomLoadBalanceTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testUnmatchedRatiosToProcessors() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -117,8 +126,9 @@ public class WeightedRandomLoadBalanceTest extends ContextTestSupport {
             });
             context.start();
             fail("Should have thrown exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Loadbalacing with 3 should match number of distributions 2", e.getMessage());
+        } catch (FailedToCreateRouteException e) {
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertEquals("Loadbalacing with 3 should match number of distributions 2", iae.getMessage());
         }
     }
     

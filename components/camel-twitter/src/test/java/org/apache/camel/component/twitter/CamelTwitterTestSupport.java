@@ -19,9 +19,12 @@ package org.apache.camel.component.twitter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.ObjectHelper;
 
 public class CamelTwitterTestSupport extends CamelTestSupport {
 
@@ -31,32 +34,64 @@ public class CamelTwitterTestSupport extends CamelTestSupport {
     protected String accessTokenSecret;
 
     public CamelTwitterTestSupport() {
-        URL url = getClass().getResource("/test-options.properties");
-
-        InputStream inStream;
-        try {
-            inStream = url.openStream();
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new IllegalAccessError("test-options.properties could not be found");
-        }
-
         Properties properties = new Properties();
-        try {
-            properties.load(inStream);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new IllegalAccessError("test-options.properties could not be found");
+
+        // Load from env
+        addProperty(properties, "consumer.key", "CAMEL_TWITTER_CONSUMER_KEY");
+        addProperty(properties, "consumer.secret", "CAMEL_TWITTER_CONSUMER_SECRET");
+        addProperty(properties, "access.token", "CAMEL_TWITTER_ACCESS_TOKEN");
+        addProperty(properties, "access.token.secret", "CAMEL_TWITTER_ACCESS_TOKE_SECRET");
+
+        // if any of the properties is not set, load test-options.properties
+        if (!properties.containsKey("consumer.key")
+            || !properties.containsKey("consumer.secret")
+            || !properties.containsKey("access.token")
+            || !properties.containsKey("access.token.secret")) {
+
+            URL url = getClass().getResource("/test-options.properties");
+
+            try (InputStream inStream = url.openStream()) {
+                properties.load(inStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new IllegalAccessError("test-options.properties could not be found");
+            }
         }
 
-        consumerKey = properties.get("consumer.key").toString();
-        consumerSecret = properties.get("consumer.secret").toString();
-        accessToken = properties.get("access.token").toString();
-        accessTokenSecret = properties.get("access.token.secret").toString();
+        consumerKey = properties.getProperty("consumer.key");
+        consumerSecret = properties.getProperty("consumer.secret");
+        accessToken = properties.getProperty("access.token");
+        accessTokenSecret = properties.getProperty("access.token.secret");
+
+        ObjectHelper.notNull(consumerKey, "consumer.key");
+        ObjectHelper.notNull(consumerSecret, "consumer.secret");
+        ObjectHelper.notNull(accessToken, "access.token");
+        ObjectHelper.notNull(accessTokenSecret, "access.token.secret");
     }
 
     protected String getUriTokens() {
-        return "consumerKey=" + consumerKey + "&consumerSecret=" + consumerSecret + "&accessToken="
-                + accessToken + "&accessTokenSecret=" + accessTokenSecret;
+        return "consumerKey=" + consumerKey
+            + "&consumerSecret=" + consumerSecret
+            + "&accessToken=" + accessToken
+            + "&accessTokenSecret=" + accessTokenSecret;
+    }
+
+    protected Map<String, Object> getParameters() {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("consumerKey", this.consumerKey);
+        parameters.put("consumerSecret", this.consumerSecret);
+        parameters.put("accessToken", this.accessToken);
+        parameters.put("accessTokenSecret", this.accessTokenSecret);
+
+        return parameters;
+    }
+
+    protected void addProperty(Properties properties, String name, String envName) {
+        if (!properties.containsKey(name)) {
+            String value = System.getenv(envName);
+            if (ObjectHelper.isNotEmpty(value)) {
+                properties.setProperty(name, value);
+            }
+        }
     }
 }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Iterator;
@@ -44,6 +46,7 @@ public class SplitterUsingBeanReturningCloseableIteratorTest extends ContextTest
         }
     }
 
+    @Test
     public void testCloseableIterator() throws Exception {
         try {
             template.sendBody("direct:start", "Hello,World");

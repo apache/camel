@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.spring-integration.enabled",
+      "description": "Enable spring-integration component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

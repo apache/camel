@@ -30,25 +30,24 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * Endpoint for the bean component.
- *
- * @version 
+ * The <a href="http://camel.apache.org/bean.html">bean component</a> is for invoking Java beans from Camel.
  */
-@UriEndpoint(scheme = "bean", title = "Bean", syntax = "bean:beanName", producerOnly = true, label = "core,java")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "bean", title = "Bean", syntax = "bean:beanName", producerOnly = true, label = "core,java")
 public class BeanEndpoint extends DefaultEndpoint {
     private transient BeanHolder beanHolder;
     private transient BeanProcessor processor;
     @UriPath(description = "Sets the name of the bean to invoke") @Metadata(required = "true")
     private String beanName;
-    @UriParam(description = "If enabled, Camel will cache the result of the first Registry look-up. Cache can be enabled if the bean in the Registry is defined as a singleton scope.")
-    private boolean cache;
-    @UriParam(description = "How to treat the parameters which are passed from the message body."
-            + "true means the message body should be an array of parameters. Note: This option is used internally by Camel, and is not intended for end users to use.")
-    @Deprecated
-    private boolean multiParameterArray;
     @UriParam(description = "Sets the name of the method to invoke on the bean")
     private String method;
-    @UriParam(description = "Used for configuring additional properties on the bean")
+    @UriParam(label = "advanced", description = "If enabled, Camel will cache the result of the first Registry look-up."
+            + " Cache can be enabled if the bean in the Registry is defined as a singleton scope.")
+    private Boolean cache;
+    @UriParam(label = "advanced", description = "How to treat the parameters which are passed from the message body."
+            + "true means the message body should be an array of parameters.")
+    @Deprecated @Metadata(deprecationNode = "This option is used internally by Camel, and is not intended for end users to use.")
+    private boolean multiParameterArray;
+    @UriParam(prefix = "bean.", label = "advanced", description = "Used for configuring additional properties on the bean", multiValue = true)
     private Map<String, Object> parameters;
 
     public BeanEndpoint() {
@@ -93,7 +92,7 @@ public class BeanEndpoint extends DefaultEndpoint {
             BeanHolder holder = getBeanHolder();
             if (holder == null) {
                 RegistryBean registryBean = new RegistryBean(getCamelContext(), beanName);
-                if (cache) {
+                if (isCache()) {
                     holder = registryBean.createCacheHolder();
                 } else {
                     holder = registryBean;
@@ -104,6 +103,7 @@ public class BeanEndpoint extends DefaultEndpoint {
                 processor.setMethod(method);
             }
             processor.setMultiParameterArray(isMultiParameterArray());
+            processor.setCache(cache);
             if (parameters != null) {
                 setProperties(processor, parameters);
             }
@@ -148,6 +148,10 @@ public class BeanEndpoint extends DefaultEndpoint {
     }
 
     public boolean isCache() {
+        return cache != null ? cache : false;
+    }
+
+    public Boolean getCache() {
         return cache;
     }
 
@@ -155,7 +159,7 @@ public class BeanEndpoint extends DefaultEndpoint {
      * If enabled, Camel will cache the result of the first Registry look-up.
      * Cache can be enabled if the bean in the Registry is defined as a singleton scope.
      */
-    public void setCache(boolean cache) {
+    public void setCache(Boolean cache) {
         this.cache = cache;
     }
 

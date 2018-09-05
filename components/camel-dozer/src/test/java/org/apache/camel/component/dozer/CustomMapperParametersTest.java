@@ -33,14 +33,14 @@ public class CustomMapperParametersTest {
     @Test
     public void shouldExecuteCustomFunctionWithArguments() throws Exception {
         customMapper.setParameter(MapperWithMultiParmMethod.class.getName() + ",test,java.lang.Integer=12,java.lang.Integer=20");
-        Object result = customMapper.mapCustom("JeremiahWasABullfrog");
+        Object result = customMapper.mapCustom("JeremiahWasABullfrog", String.class);
         Assert.assertEquals("Bullfrog", result);
     }
 
     @Test
     public void shouldExecuteCustomFunctionWithVariableArguments() throws Exception {
         customMapper.setParameter(MapperWithMultiParmMethod.class.getName() + ",add,java.lang.Integer=12,java.lang.Integer=20");
-        Object result = customMapper.mapCustom("JeremiahWasABullfrog");
+        Object result = customMapper.mapCustom("JeremiahWasABullfrog", String.class);
         Assert.assertEquals(32L, result);
     }
 }

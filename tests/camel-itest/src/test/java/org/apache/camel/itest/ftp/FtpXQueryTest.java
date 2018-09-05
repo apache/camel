@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.itest.ftp;
+import org.junit.Before;
+import org.junit.After;
 
 import java.io.File;
 
@@ -86,6 +88,7 @@ public class FtpXQueryTest extends CamelTestSupport {
         ftpServer.start();
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         ftpServer.stop();

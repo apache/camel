@@ -16,11 +16,13 @@
  */
 package org.apache.camel.core.xml.util.jsse;
 
+import javax.net.ssl.TrustManager;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.jsse.TrustManagersParameters;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -32,6 +34,9 @@ public abstract class AbstractTrustManagersParametersFactoryBean extends Abstrac
     @XmlAttribute
     protected String algorithm;
     
+    @XmlAttribute
+    protected String trustManager;
+
     @XmlTransient
     private TrustManagersParameters instance;
     
@@ -50,14 +55,21 @@ public abstract class AbstractTrustManagersParametersFactoryBean extends Abstrac
     public void setAlgorithm(String value) {
         this.algorithm = value;
     }
-    
+
+    public String getTrustManager() {
+        return trustManager;
+    }
+
+    public void setTrustManager(String trustManager) {
+        this.trustManager = trustManager;
+    }
+
     @Override
     public TrustManagersParameters getObject() throws Exception {
-        if (this.isSingleton()) {
+        if (isSingleton()) {
             if (instance == null) { 
                 instance = createInstance();   
             }
-            
             return instance;
         } else {
             return createInstance();
@@ -79,6 +91,11 @@ public abstract class AbstractTrustManagersParametersFactoryBean extends Abstrac
         }
         newInstance.setProvider(provider);
         newInstance.setCamelContext(getCamelContext());
+
+        if (trustManager != null) {
+            TrustManager tm = CamelContextHelper.mandatoryLookup(getCamelContext(), trustManager, TrustManager.class);
+            newInstance.setTrustManager(tm);
+        }
         
         return newInstance;
     }

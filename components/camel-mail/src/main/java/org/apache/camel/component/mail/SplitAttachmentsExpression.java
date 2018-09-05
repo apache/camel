@@ -21,8 +21,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.activation.DataHandler;
 
+import org.apache.camel.Attachment;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
@@ -76,9 +76,9 @@ public class SplitAttachmentsExpression extends ExpressionAdapter {
         }
 
         try {
-            List<Message> answer = new ArrayList<Message>();
+            List<Message> answer = new ArrayList<>();
             Message inMessage = exchange.getIn();
-            for (Map.Entry<String, DataHandler> entry : inMessage.getAttachments().entrySet()) {
+            for (Map.Entry<String, Attachment> entry : inMessage.getAttachmentObjects().entrySet()) {
                 Message attachmentMessage;
                 if (extractAttachments) {
                     attachmentMessage = extractAttachment(inMessage, entry.getKey());
@@ -97,9 +97,9 @@ public class SplitAttachmentsExpression extends ExpressionAdapter {
         }
     }
 
-    private Message splitAttachment(Message inMessage, String attachmentName, DataHandler attachmentHandler) {
+    private Message splitAttachment(Message inMessage, String attachmentName, Attachment attachmentHandler) {
         final Message copy = inMessage.copy();
-        Map<String, DataHandler> attachments = copy.getAttachments();
+        Map<String, Attachment> attachments = copy.getAttachmentObjects();
         attachments.clear();
         attachments.put(attachmentName, attachmentHandler);
         copy.setHeader(HEADER_NAME, attachmentName);
@@ -107,7 +107,7 @@ public class SplitAttachmentsExpression extends ExpressionAdapter {
     }
 
     private Message extractAttachment(Message inMessage, String attachmentName) throws Exception {
-        final Message outMessage = new DefaultMessage();
+        final Message outMessage = new DefaultMessage(inMessage.getExchange().getContext());
         outMessage.setHeader(HEADER_NAME, attachmentName);
         Object attachment = inMessage.getAttachment(attachmentName).getContent();
         if (attachment instanceof InputStream) {

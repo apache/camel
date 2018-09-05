@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
@@ -38,6 +40,7 @@ public class ManagedWireTapTest extends ManagementTestSupport {
         return context;
     }
 
+    @Test
     public void testManageWireTap() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -75,6 +78,9 @@ public class ManagedWireTapTest extends ManagementTestSupport {
         String uri = (String) mbeanServer.getAttribute(on, "Uri");
         assertEquals("direct:${header.whereto}", uri);
 
+        Boolean dynamicUri = (Boolean) mbeanServer.getAttribute(on, "DynamicUri");
+        assertTrue(dynamicUri);
+
         TabularData data = (TabularData) mbeanServer.invoke(on, "extendedInformation", null, null);
         assertNotNull(data);
         assertEquals(2, data.size());
@@ -85,7 +91,7 @@ public class ManagedWireTapTest extends ManagementTestSupport {
 
         data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{true}, new String[]{"boolean"});
         assertNotNull(data);
-        assertEquals(11, data.size());
+        assertEquals(13, data.size());
 
         String json = (String) mbeanServer.invoke(on, "informationJson", null, null);
         assertNotNull(json);

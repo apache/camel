@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -73,6 +75,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testSimpleRoute() throws Exception {
         List<Route> routes = buildSimpleRoute();
 
@@ -104,6 +107,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testSimpleRouteWithHeaderPredicate() throws Exception {
         List<Route> routes = buildSimpleRouteWithHeaderPredicate();
 
@@ -143,6 +147,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testSimpleRouteWithChoice() throws Exception {
         List<Route> routes = buildSimpleRouteWithChoice();
 
@@ -190,6 +195,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testCustomProcessor() throws Exception {
         List<Route> routes = buildCustomProcessor();
 
@@ -215,6 +221,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testCustomProcessorWithFilter() throws Exception {
         List<Route> routes = buildCustomProcessorWithFilter();
 
@@ -241,6 +248,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testWireTap() throws Exception {
         List<Route> routes = buildWireTap();
 
@@ -255,7 +263,7 @@ public class RouteBuilderTest extends TestSupport {
             Channel channel = unwrapChannel(consumer.getProcessor());
 
             MulticastProcessor multicastProcessor = assertIsInstanceOf(MulticastProcessor.class, channel.getNextProcessor());
-            List<Processor> endpoints = new ArrayList<Processor>(multicastProcessor.getProcessors());
+            List<Processor> endpoints = new ArrayList<>(multicastProcessor.getProcessors());
             assertEquals("Should have 2 endpoints", 2, endpoints.size());
 
             assertSendToProcessor(unwrapChannel(endpoints.get(0)).getNextProcessor(), "direct://tap");
@@ -282,6 +290,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testRouteWithInterceptor() throws Exception {
 
         List<Route> routes = buildRouteWithInterceptor();
@@ -299,12 +308,13 @@ public class RouteBuilderTest extends TestSupport {
             assertEquals(3, line.getProcessors().size());
             // last should be our seda
 
-            List<Processor> processors = new ArrayList<Processor>(line.getProcessors());
+            List<Processor> processors = new ArrayList<>(line.getProcessors());
             Processor sendTo = assertIsInstanceOf(SendProcessor.class, unwrapChannel(processors.get(2)).getNextProcessor());
             assertSendTo(sendTo, "direct://d");
         }
     }
 
+    @Test
     public void testComplexExpressions() throws Exception {
         // START SNIPPET: e7
         RouteBuilder builder = new RouteBuilder() {
@@ -356,6 +366,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testRouteDynamicReceipentList() throws Exception {
 
         List<Route> routes = buildDynamicRecipientList();
@@ -399,6 +410,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testSplitter() throws Exception {
 
         List<Route> routes = buildSplitter();
@@ -432,6 +444,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testIdempotentConsumer() throws Exception {
 
         List<Route> routes = buildIdempotentConsumer();
@@ -471,6 +484,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testThreads() throws Exception {
 
         List<Route> routes = buildThreads();
@@ -547,6 +561,7 @@ public class RouteBuilderTest extends TestSupport {
         }
     }
 
+    @Test
     public void testCorrectNumberOfRoutes() throws Exception {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() throws Exception {

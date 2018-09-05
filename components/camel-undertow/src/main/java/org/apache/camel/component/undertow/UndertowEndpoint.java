@@ -17,52 +17,92 @@
 package org.apache.camel.component.undertow;
 
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.Locale;
+import java.util.Map;
 import javax.net.ssl.SSLContext;
 
 import io.undertow.server.HttpServerExchange;
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.cloud.DiscoverableService;
+import org.apache.camel.cloud.ServiceDefinition;
+import org.apache.camel.component.undertow.UndertowConstants.EventType;
+import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
+import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xnio.Option;
+import org.xnio.OptionMap;
+import org.xnio.Options;
 
 /**
- * Represents an Undertow endpoint.
+ * The undertow component provides HTTP and WebSocket based endpoints for consuming and producing HTTP/WebSocket requests.
  */
-@UriEndpoint(scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI",
-    consumerClass = UndertowConsumer.class, label = "http")
-public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
+@UriEndpoint(firstVersion = "2.16.0", scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI",
+        consumerClass = UndertowConsumer.class, label = "http,websocket", lenientProperties = true)
+public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, DiscoverableService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
     private UndertowComponent component;
     private SSLContext sslContext;
+    private OptionMap optionMap;
+    private HttpHandlerRegistrationInfo registrationInfo;
+    private CamelWebSocketHandler webSocketHttpHandler;
+    private boolean isWebSocket;
 
-    @UriPath
+    @UriPath @Metadata(required = "true")
     private URI httpURI;
-    @UriParam
+    @UriParam(label = "advanced")
     private UndertowHttpBinding undertowHttpBinding;
-    @UriParam
-    private HeaderFilterStrategy headerFilterStrategy;
-    @UriParam
+    @UriParam(label = "advanced")
+    private HeaderFilterStrategy headerFilterStrategy = new UndertowHeaderFilterStrategy();
+    @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "consumer")
     private String httpMethodRestrict;
-    @UriParam(label = "consumer", defaultValue = "true")
-    private Boolean matchOnUriPrefix = true;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private Boolean matchOnUriPrefix = Boolean.FALSE;
+    @UriParam(label = "producer", defaultValue = "true")
+    private Boolean throwExceptionOnFailure = Boolean.TRUE;
+    @UriParam(label = "producer", defaultValue = "false")
+    private Boolean transferException = Boolean.FALSE;
+    @UriParam(label = "producer", defaultValue = "true")
+    private Boolean keepAlive = Boolean.TRUE;
+    @UriParam(label = "producer", defaultValue = "true")
+    private Boolean tcpNoDelay = Boolean.TRUE;
+    @UriParam(label = "producer", defaultValue = "true")
+    private Boolean reuseAddresses = Boolean.TRUE;
+    @UriParam(label = "producer", prefix = "option.", multiValue = true)
+    private Map<String, Object> options;
+    @UriParam(label = "consumer")
+    private boolean optionsEnabled;
     @UriParam(label = "producer")
-    private Boolean throwExceptionOnFailure;
-    @UriParam
-    private Boolean transferException;
+    private CookieHandler cookieHandler;
+    @UriParam(label = "producer,websocket")
+    private Boolean sendToAll;
+    @UriParam(label = "producer,websocket", defaultValue = "30000")
+    private Integer sendTimeout = 30000;
+    @UriParam(label = "consumer,websocket", defaultValue = "false")
+    private boolean useStreaming;
+    @UriParam(label = "consumer,websocket", defaultValue = "false")
+    private boolean fireWebSocketChannelEvents;
 
-    public UndertowEndpoint(String uri, UndertowComponent component) throws URISyntaxException {
+    public UndertowEndpoint(String uri, UndertowComponent component) {
         super(uri, component);
         this.component = component;
     }
@@ -74,7 +114,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
 
     @Override
     public Producer createProducer() throws Exception {
-        return new UndertowProducer(this);
+        return new UndertowProducer(this, optionMap);
     }
 
     @Override
@@ -84,7 +124,6 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
 
     @Override
     public PollingConsumer createPollingConsumer() throws Exception {
-        //throw exception as polling consumer is not supported
         throw new UnsupportedOperationException("This component does not support polling consumer");
     }
 
@@ -99,8 +138,20 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
         return true;
     }
 
+    // Service Registration
+    //-------------------------------------------------------------------------
+
+    @Override
+    public Map<String, String> getServiceProperties() {
+        return CollectionHelper.immutableMapOf(
+            ServiceDefinition.SERVICE_META_PORT, Integer.toString(httpURI.getPort()),
+            ServiceDefinition.SERVICE_META_PATH, httpURI.getPath(),
+            ServiceDefinition.SERVICE_META_PROTOCOL, httpURI.getScheme()
+        );
+    }
+
     public Exchange createExchange(HttpServerExchange httpExchange) throws Exception {
-        Exchange exchange = createExchange();
+        Exchange exchange = createExchange(ExchangePattern.InOut);
 
         Message in = getUndertowHttpBinding().toCamelMessage(httpExchange, exchange);
 
@@ -123,7 +174,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
      * The url of the HTTP endpoint to use.
      */
     public void setHttpURI(URI httpURI) {
-        this.httpURI = httpURI;
+        this.httpURI = UndertowHelper.makeHttpURI(httpURI);
     }
 
     public String getHttpMethodRestrict() {
@@ -157,7 +208,6 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
      */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
-        undertowHttpBinding.setHeaderFilterStrategy(headerFilterStrategy);
     }
 
     public SSLContextParameters getSslContextParameters() {
@@ -176,8 +226,8 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
     }
 
     /**
-     * If the option is true, HttpProducer will ignore the Exchange.HTTP_URI header, and use the endpoint's URI for request.
-     * You may also set the option throwExceptionOnFailure to be false to let the producer send all the fault response back.
+     * Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server.
+     * This allows you to get all responses regardless of the HTTP status code.
      */
     public void setThrowExceptionOnFailure(Boolean throwExceptionOnFailure) {
         this.throwExceptionOnFailure = throwExceptionOnFailure;
@@ -188,14 +238,24 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
     }
 
     /**
-     * Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server.
-     * This allows you to get all responses regardless of the HTTP status code.
+     * If enabled and an Exchange failed processing on the consumer side and if the caused Exception 
+     * was send back serialized in the response as a application/x-java-serialized-object content type. 
+     * On the producer side the exception will be deserialized and thrown as is instead of the HttpOperationFailedException. The caused exception is required to be serialized. 
+     * This is by default turned off. If you enable this 
+     * then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
+     * 
      */
     public void setTransferException(Boolean transferException) {
         this.transferException = transferException;
     }
 
     public UndertowHttpBinding getUndertowHttpBinding() {
+        if (undertowHttpBinding == null) {
+            // create a new binding and use the options from this endpoint
+            undertowHttpBinding = new DefaultUndertowHttpBinding();
+            undertowHttpBinding.setHeaderFilterStrategy(getHeaderFilterStrategy());
+            undertowHttpBinding.setTransferException(getTransferException());
+        }
         return undertowHttpBinding;
     }
 
@@ -206,12 +266,203 @@ public class UndertowEndpoint extends DefaultEndpoint implements HeaderFilterStr
         this.undertowHttpBinding = undertowHttpBinding;
     }
 
+    public Boolean getKeepAlive() {
+        return keepAlive;
+    }
+
+    /**
+     * Setting to ensure socket is not closed due to inactivity
+     */
+    public void setKeepAlive(Boolean keepAlive) {
+        this.keepAlive = keepAlive;
+    }
+
+    public Boolean getTcpNoDelay() {
+        return tcpNoDelay;
+    }
+
+    /**
+     * Setting to improve TCP protocol performance
+     */
+    public void setTcpNoDelay(Boolean tcpNoDelay) {
+        this.tcpNoDelay = tcpNoDelay;
+    }
+
+    public Boolean getReuseAddresses() {
+        return reuseAddresses;
+    }
+
+    /**
+     * Setting to facilitate socket multiplexing
+     */
+    public void setReuseAddresses(Boolean reuseAddresses) {
+        this.reuseAddresses = reuseAddresses;
+    }
+
+    public Map<String, Object> getOptions() {
+        return options;
+    }
+
+    /**
+     * Sets additional channel options. The options that can be used are defined in {@link org.xnio.Options}.
+     * To configure from endpoint uri, then prefix each option with <tt>option.</tt>, such as <tt>option.close-abort=true&option.send-buffer=8192</tt>
+     */
+    public void setOptions(Map<String, Object> options) {
+        this.options = options;
+    }
+
+    public boolean isOptionsEnabled() {
+        return optionsEnabled;
+    }
+
+    /**
+     * Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off.
+     */
+    public void setOptionsEnabled(boolean optionsEnabled) {
+        this.optionsEnabled = optionsEnabled;
+    }
+
+    public CookieHandler getCookieHandler() {
+        return cookieHandler;
+    }
+
+    /**
+     * Configure a cookie handler to maintain a HTTP session
+     */
+    public void setCookieHandler(CookieHandler cookieHandler) {
+        this.cookieHandler = cookieHandler;
+    }
+
+    public Boolean getSendToAll() {
+        return sendToAll;
+    }
+
+    /**
+     * To send to all websocket subscribers. Can be used to configure on endpoint level, instead of having to use the
+     * {@code UndertowConstants.SEND_TO_ALL} header on the message.
+     */
+    public void setSendToAll(Boolean sendToAll) {
+        this.sendToAll = sendToAll;
+    }
+
+    public Integer getSendTimeout() {
+        return sendTimeout;
+    }
+
+    /**
+     * Timeout in milliseconds when sending to a websocket channel.
+     * The default timeout is 30000 (30 seconds).
+     */
+    public void setSendTimeout(Integer sendTimeout) {
+        this.sendTimeout = sendTimeout;
+    }
+
+    public boolean isUseStreaming() {
+        return useStreaming;
+    }
+
+    /**
+     * if {@code true}, text and binary messages coming through a WebSocket will be wrapped as java.io.Reader and
+     * java.io.InputStream respectively before they are passed to an {@link Exchange}; otherwise they will be passed as
+     * String and byte[] respectively.
+     */
+    public void setUseStreaming(boolean useStreaming) {
+        this.useStreaming = useStreaming;
+    }
+
+    public boolean isFireWebSocketChannelEvents() {
+        return fireWebSocketChannelEvents;
+    }
+
+    /**
+     * if {@code true}, the consumer will post notifications to the route when a new WebSocket peer connects,
+     * disconnects, etc. See {@code UndertowConstants.EVENT_TYPE} and {@link EventType}.
+     */
+    public void setFireWebSocketChannelEvents(boolean fireWebSocketChannelEvents) {
+        this.fireWebSocketChannelEvents = fireWebSocketChannelEvents;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
 
+        final String scheme = httpURI.getScheme();
+        this.isWebSocket = UndertowConstants.WS_PROTOCOL.equalsIgnoreCase(scheme) || UndertowConstants.WSS_PROTOCOL.equalsIgnoreCase(scheme);
+
         if (sslContextParameters != null) {
-            sslContext = sslContextParameters.createSSLContext();
+            sslContext = sslContextParameters.createSSLContext(getCamelContext());
+        }
+
+        // create options map
+        if (options != null && !options.isEmpty()) {
+
+            // favor to use the classloader that loaded the user application
+            ClassLoader cl = getComponent().getCamelContext().getApplicationContextClassLoader();
+            if (cl == null) {
+                cl = Options.class.getClassLoader();
+            }
+
+            OptionMap.Builder builder = OptionMap.builder();
+            for (Map.Entry<String, Object> entry : options.entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue();
+                if (key != null && value != null) {
+                    // upper case and dash as underscore
+                    key = key.toUpperCase(Locale.ENGLISH).replace('-', '_');
+                    // must be field name
+                    key = Options.class.getName() + "." + key;
+                    Option option = Option.fromString(key, cl);
+                    value = option.parseValue(value.toString(), cl);
+                    LOG.trace("Parsed option {}={}", option.getName(), value);
+                    builder.set(option, value);
+                }
+            }
+            optionMap = builder.getMap();
+        } else {
+            // use an empty map
+            optionMap = OptionMap.EMPTY;
+        }
+
+        // and then configure these default options if they have not been explicit configured
+        if (keepAlive != null && !optionMap.contains(Options.KEEP_ALIVE)) {
+            // rebuild map
+            OptionMap.Builder builder = OptionMap.builder();
+            builder.addAll(optionMap).set(Options.KEEP_ALIVE, keepAlive);
+            optionMap = builder.getMap();
+        }
+        if (tcpNoDelay != null && !optionMap.contains(Options.TCP_NODELAY)) {
+            // rebuild map
+            OptionMap.Builder builder = OptionMap.builder();
+            builder.addAll(optionMap).set(Options.TCP_NODELAY, tcpNoDelay);
+            optionMap = builder.getMap();
+        }
+        if (reuseAddresses != null && !optionMap.contains(Options.REUSE_ADDRESSES)) {
+            // rebuild map
+            OptionMap.Builder builder = OptionMap.builder();
+            builder.addAll(optionMap).set(Options.REUSE_ADDRESSES, reuseAddresses);
+            optionMap = builder.getMap();
         }
     }
+
+    /**
+     * @return {@code true} if {@link #getHttpURI()}'s scheme is {@code ws} or {@code wss}
+     */
+    public boolean isWebSocket() {
+        return isWebSocket;
+    }
+
+    public HttpHandlerRegistrationInfo getHttpHandlerRegistrationInfo() {
+        if (registrationInfo == null) {
+            registrationInfo = new HttpHandlerRegistrationInfo(getHttpURI(), getHttpMethodRestrict(), getMatchOnUriPrefix());
+        }
+        return registrationInfo;
+    }
+
+    public CamelWebSocketHandler getWebSocketHttpHandler() {
+        if (webSocketHttpHandler == null) {
+            webSocketHttpHandler = new CamelWebSocketHandler();
+        }
+        return webSocketHttpHandler;
+    }
+
 }

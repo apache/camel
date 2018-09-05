@@ -17,21 +17,24 @@
 package org.apache.camel.component.metrics.routepolicy;
 
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * A {@link org.apache.camel.spi.RoutePolicy} which gathers statistics and reports them using {@link com.codahale.metrics.MetricRegistry}.
  * <p/>
  * The metrics is reported in JMX by default, but this can be configured.
  */
-public class MetricsRoutePolicy extends RoutePolicySupport {
+public class MetricsRoutePolicy extends RoutePolicySupport implements NonManagedService {
 
     private MetricRegistry metricsRegistry;
     private MetricsRegistryService registryService;
@@ -42,21 +45,24 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
     private MetricsStatistics statistics;
     private Route route;
+    private String namePattern = "##name##.##routeId##.##type##";
 
     private static final class MetricsStatistics {
-        private Timer responses;
+        private final String routeId;
+        private final Timer responses;
 
-        private MetricsStatistics(Timer responses) {
+        private MetricsStatistics(Route route, Timer responses) {
+            this.routeId = route.getId();
             this.responses = responses;
         }
 
         public void onExchangeBegin(Exchange exchange) {
             Timer.Context context = responses.time();
-            exchange.setProperty("MetricsRoutePolicy", context);
+            exchange.setProperty("MetricsRoutePolicy-" + routeId, context);
         }
 
         public void onExchangeDone(Exchange exchange) {
-            Timer.Context context = exchange.getProperty("MetricsRoutePolicy", Timer.Context.class);
+            Timer.Context context = (Timer.Context) exchange.removeProperty("MetricsRoutePolicy-" + routeId);
             if (context != null) {
                 context.stop();
             }
@@ -111,6 +117,20 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
         this.durationUnit = durationUnit;
     }
 
+    public String getNamePattern() {
+        return namePattern;
+    }
+
+    /**
+     * The name pattern to use.
+     * <p/>
+     * Uses dot as separators, but you can change that.
+     * The values <tt>##name##</tt>, <tt>##routeId##</tt>, and <tt>##type##</tt> will be replaced with actual value.
+     */
+    public void setNamePattern(String namePattern) {
+        this.namePattern = namePattern;
+    }
+
     @Override
     public void onInit(Route route) {
         super.onInit(route);
@@ -132,18 +152,29 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
 
+        // ensure registry service is started
+        try {
+            ServiceHelper.startService(registryService);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+
         // create statistics holder
         // for know we record only all the timings of a complete exchange (responses)
         // we have in-flight / total statistics already from camel-core
         Timer responses = registryService.getMetricsRegistry().timer(createName("responses"));
-        statistics = new MetricsStatistics(responses);
+        statistics = new MetricsStatistics(route, responses);
     }
 
     private String createName(String type) {
         CamelContext context = route.getRouteContext().getCamelContext();
         String name = context.getManagementName() != null ? context.getManagementName() : context.getName();
-        // use colon to separate context from route, and dot for the type name
-        return name + ":" + route.getId() + "." + type;
+
+        String answer = namePattern;
+        answer = answer.replaceFirst("##name##", name);
+        answer = answer.replaceFirst("##routeId##", Matcher.quoteReplacement(route.getId()));
+        answer = answer.replaceFirst("##type##", type);
+        return answer;
     }
 
     @Override

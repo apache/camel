@@ -51,7 +51,7 @@ public class CxfPayload<T> {
     }
     public CxfPayload(List<T> headers, List<Element> body) {
         this.headers = headers;
-        this.body = new ArrayList<Source>(body.size());
+        this.body = new ArrayList<>(body.size());
         for (Element el : body) {
             this.body.add(new DOMSource(el));
         }

@@ -25,6 +25,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.jsmpp.extra.SessionState;
+import org.jsmpp.session.Session;
 import org.jsmpp.session.SessionStateListener;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,7 +71,7 @@ public class SmppComponentTest {
     public void createEndpointStringStringMapShouldReturnASmppEndpoint() throws Exception {
         CamelContext context = new DefaultCamelContext();
         component = new SmppComponent(context);
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> parameters = new HashMap<>();
         parameters.put("password", "secret");
         Endpoint endpoint = component.createEndpoint("smpp://smppclient@localhost:2775", "?password=secret", parameters);
         SmppEndpoint smppEndpoint = (SmppEndpoint) endpoint;
@@ -90,7 +91,7 @@ public class SmppComponentTest {
     public void createEndpointStringStringMapShouldReturnASmppsEndpoint() throws Exception {
         CamelContext context = new DefaultCamelContext();
         component = new SmppComponent(context);
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> parameters = new HashMap<>();
         parameters.put("password", "secret");
         Endpoint endpoint = component.createEndpoint("smpps://smppclient@localhost:2775", "?password=secret", parameters);
         SmppEndpoint smppEndpoint = (SmppEndpoint) endpoint;
@@ -108,7 +109,7 @@ public class SmppComponentTest {
     
     @Test
     public void createEndpointStringStringMapWithoutACamelContextShouldReturnASmppEndpoint() throws Exception {
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> parameters = new HashMap<>();
         parameters.put("password", "secret");
         Endpoint endpoint = component.createEndpoint("smpp://smppclient@localhost:2775", "?password=secret", parameters);
         SmppEndpoint smppEndpoint = (SmppEndpoint) endpoint;
@@ -126,7 +127,7 @@ public class SmppComponentTest {
 
     @Test
     public void allowEmptySystemTypeAndServiceTypeOption() throws Exception {
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> parameters = new HashMap<>();
         parameters.put("systemType", null);
         parameters.put("serviceType", null);
         Endpoint endpoint = component.createEndpoint("smpp://smppclient@localhost:2775", "?systemType=&serviceType=", parameters);
@@ -180,7 +181,8 @@ public class SmppComponentTest {
     public void createEndpointWithSessionStateListener() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
         registry.put("sessionStateListener", new SessionStateListener() {
-            public void onStateChange(SessionState arg0, SessionState arg1, Object arg2) {
+            @Override
+            public void onStateChange(SessionState arg0, SessionState arg1, Session arg2) {
             }
         });
         context.setRegistry(registry);

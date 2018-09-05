@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.restlet;
+import org.junit.Before;
 
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
@@ -33,7 +34,7 @@ public class SpringRestRestletPojoInOutTest extends CamelSpringTestSupport {
     @BeforeClass
     public static void initializePortNum() {
         portNum = AvailablePortFinder.getNextAvailable();
-        System.getProperties().setProperty("test.port", "" + portNum);
+        System.setProperty("test.port", "" + portNum);
     }
 
     @Override

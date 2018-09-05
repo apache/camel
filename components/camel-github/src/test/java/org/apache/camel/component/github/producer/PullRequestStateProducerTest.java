@@ -26,13 +26,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.github.GitHubComponent;
 import org.apache.camel.component.github.GitHubComponentTestBase;
+import org.apache.camel.component.github.GitHubConstants;
 import org.eclipse.egit.github.core.CommitStatus;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PullRequestStateProducerTest extends GitHubComponentTestBase {
-    protected static final Logger LOG = LoggerFactory.getLogger(PullRequestStateProducerTest.class);
     private String commitsha;
 
     @Override
@@ -44,13 +42,12 @@ public class PullRequestStateProducerTest extends GitHubComponentTestBase {
                 context.addComponent("github", new GitHubComponent());
                 from("direct:validPullRequest")
                         .process(new MockPullRequestStateProducerProcessor())
-                        .to("github://pullRequestState?state=success&" + GITHUB_CREDENTIALS_STRING);
+                        .to("github://pullRequestState?state=success&username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo");
             } // end of configure
 
 
         };
     }
-
 
     @Test
     public void testPullRequestStateProducer() throws Exception {
@@ -86,7 +83,7 @@ public class PullRequestStateProducerTest extends GitHubComponentTestBase {
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             Map<String, Object> headers = in.getHeaders();
-            headers.put("GitHubPullRequestHeadCommitSHA", commitsha);
+            headers.put(GitHubConstants.GITHUB_PULLREQUEST_HEAD_COMMIT_SHA, commitsha);
         }
     }
 

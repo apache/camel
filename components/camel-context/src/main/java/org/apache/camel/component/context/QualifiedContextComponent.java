@@ -22,7 +22,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +41,7 @@ public class QualifiedContextComponent extends UriEndpointComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String splitURI[] = ObjectHelper.splitOnCharacter(remaining, ":", 2);
+        String splitURI[] = StringHelper.splitOnCharacter(remaining, ":", 2);
         if (splitURI[1] != null) {
             String contextId = splitURI[0];
             String localEndpoint = splitURI[1];

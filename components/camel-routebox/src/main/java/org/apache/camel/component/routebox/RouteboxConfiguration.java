@@ -39,12 +39,8 @@ import org.slf4j.LoggerFactory;
 public class RouteboxConfiguration {
     private static final Logger LOG = LoggerFactory.getLogger(RouteboxConfiguration.class);
 
-    private CamelContext innerContext;
-    private List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
-    private Registry innerRegistry;
     private URI uri;
     private String authority;
-    private ProducerTemplate innerProducerTemplate;
 
     @UriPath @Metadata(required = "true")
     private String routeboxName;
@@ -66,6 +62,14 @@ public class RouteboxConfiguration {
     private int queueSize;
     @UriParam(label = "producer", defaultValue = "true")
     private boolean sendToConsumer = true;
+    @UriParam(label = "advanced")
+    private CamelContext innerContext;
+    @UriParam(label = "advanced")
+    private Registry innerRegistry;
+    @UriParam(label = "advanced")
+    private ProducerTemplate innerProducerTemplate;
+    @UriParam(label = "advanced", javaType = "java.lang.String")
+    private List<RouteBuilder> routeBuilders = new ArrayList<>();
 
     public RouteboxConfiguration() {
     }
@@ -172,10 +176,19 @@ public class RouteboxConfiguration {
         return innerContext;
     }
 
+    /**
+     * A string representing a key in the Camel Registry matching an object value of the type org.apache.camel.CamelContext.
+     * If a CamelContext is not provided by the user a CamelContext is automatically created for deployment of inner routes.
+     */
     public void setInnerContext(CamelContext innerContext) {
         this.innerContext = innerContext;
     }
 
+    /**
+     * A string representing a key in the Camel Registry matching an object value of the type List<org.apache.camel.builder.RouteBuilder>.
+     * If the user does not supply an innerContext pre-primed with inner routes, the routeBuilders option must be provided as a non-empty
+     * list of RouteBuilders containing inner routes
+     */
     public void setRouteBuilders(List<RouteBuilder> routeBuilders) {
         this.routeBuilders = routeBuilders;
     }

@@ -17,17 +17,12 @@
 package org.apache.camel.test.blueprint;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.main.MainSupport;
 import org.osgi.framework.BundleContext;
-import org.osgi.service.blueprint.container.BlueprintEvent;
 
 /**
  * A command line tool for booting up a CamelContext using an OSGi Blueprint XML file
@@ -42,6 +37,9 @@ public class Main extends MainSupport {
     private boolean includeSelfAsBundle;
     private String configAdminPid;
     private String configAdminFileName;
+
+    // ClassLoader used to scan for bundles in CamelBlueprintHelper.createBundleContext()
+    private ClassLoader loader;
 
     public Main() {
 
@@ -77,7 +75,6 @@ public class Main extends MainSupport {
 
     public static void main(String... args) throws Exception {
         Main main = new Main();
-        main.enableHangupSupport();
         main.run(args);
     }
 
@@ -99,11 +96,13 @@ public class Main extends MainSupport {
                 throw new IllegalArgumentException("Descriptors must be provided, with the name of the blueprint XML file");
             }
             LOG.debug("Starting Blueprint XML file: " + descriptors);
-            bundleContext = createBundleContext(bundleName);
-            Set<Long> eventHistory = new HashSet<>();
-            CamelBlueprintHelper.waitForBlueprintContainer(eventHistory, bundleContext, bundleName, BlueprintEvent.CREATED, null);
-            CamelBlueprintHelper.setPersistentFileForConfigAdmin(bundleContext, configAdminPid, configAdminFileName, new Properties(),
-                                                                 bundleName, eventHistory, true);
+            if (configAdminPid != null && configAdminFileName != null) {
+                // pid/file is used to set INITIAL content of ConfigAdmin to be used when blueprint container is started
+                bundleContext = createBundleContext(bundleName, new String[] {configAdminFileName, configAdminPid});
+            } else {
+                bundleContext = createBundleContext(bundleName);
+            }
+
             camelContext = CamelBlueprintHelper.getOsgiService(bundleContext, CamelContext.class);
             if (camelContext == null) {
                 throw new IllegalArgumentException("Cannot find CamelContext in blueprint XML file: " + descriptors);
@@ -137,13 +136,19 @@ public class Main extends MainSupport {
         return createBundleContext(getClass().getSimpleName());
     }
 
-    protected BundleContext createBundleContext(String name) throws Exception {
-        return CamelBlueprintHelper.createBundleContext(name, descriptors, isIncludeSelfAsBundle());
+    protected BundleContext createBundleContext(String name, String[]... configAdminPidFiles) throws Exception {
+        return createBundleContext(name, loader, configAdminPidFiles);
+    }
+
+    protected BundleContext createBundleContext(String name, ClassLoader loader, String[]... configAdminPidFiles) throws Exception {
+        return CamelBlueprintHelper.createBundleContext(name, descriptors, isIncludeSelfAsBundle(),
+                CamelBlueprintHelper.BUNDLE_FILTER, CamelBlueprintHelper.BUNDLE_VERSION, null,
+                loader, configAdminPidFiles);
     }
 
     @Override
     protected Map<String, CamelContext> getCamelContextMap() {
-        Map<String, CamelContext> map = new HashMap<String, CamelContext>(1);
+        Map<String, CamelContext> map = new HashMap<>(1);
         if (camelContext != null) {
             map.put(camelContext.getName(), camelContext);
         }
@@ -189,4 +194,9 @@ public class Main extends MainSupport {
     public void setConfigAdminFileName(String fileName) {
         this.configAdminFileName = fileName;
     }
+
+    public void setLoader(ClassLoader loader) {
+        this.loader = loader;
+    }
+
 }

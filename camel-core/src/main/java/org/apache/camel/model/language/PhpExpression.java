@@ -23,13 +23,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * For PHP expressions and predicates
+ * To use PHP scripts in Camel expressions or predicates.
  *
  * @version 
  */
-@Metadata(label = "language", title = "PHP")
+@Metadata(firstVersion = "1.0.0", label = "language,script", title = "PHP")
 @XmlRootElement(name = "php")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class PhpExpression extends ExpressionDefinition {
 
     public PhpExpression() {

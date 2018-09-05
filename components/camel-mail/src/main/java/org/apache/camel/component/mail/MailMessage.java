@@ -16,11 +16,12 @@
  */
 package org.apache.camel.component.mail;
 
+import java.io.IOException;
 import java.util.Map;
-import javax.activation.DataHandler;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 
+import org.apache.camel.Attachment;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.ExchangeHelper;
@@ -93,7 +94,9 @@ public class MailMessage extends DefaultMessage {
 
     @Override
     public MailMessage newInstance() {
-        return new MailMessage(null, this.mapMailMessage);
+        MailMessage answer = new MailMessage(null, this.mapMailMessage);
+        answer.setCamelContext(getCamelContext());
+        return answer;
     }
 
     @Override
@@ -113,14 +116,14 @@ public class MailMessage extends DefaultMessage {
                 if (binding != null) {
                     map.putAll(binding.extractHeadersFromMail(mailMessage, getExchange()));
                 }
-            } catch (MessagingException e) {
+            } catch (MessagingException | IOException e) {
                 throw new RuntimeCamelException("Error accessing headers due to: " + e.getMessage(), e);
             }
         }
     }
 
     @Override
-    protected void populateInitialAttachments(Map<String, DataHandler> map) {
+    protected void populateInitialAttachments(Map<String, Attachment> map) {
         if (mailMessage != null) {
             try {
                 MailBinding binding = ExchangeHelper.getBinding(getExchange(), MailBinding.class);
@@ -148,6 +151,10 @@ public class MailMessage extends DefaultMessage {
             this.originalMailMessage = mailMessage.originalMailMessage;
             this.mailMessage = mailMessage.mailMessage;
             this.mapMailMessage = mailMessage.mapMailMessage;
+        }
+        // cover over exchange if none has been assigned
+        if (getExchange() == null) {
+            setExchange(that.getExchange());
         }
     }
 

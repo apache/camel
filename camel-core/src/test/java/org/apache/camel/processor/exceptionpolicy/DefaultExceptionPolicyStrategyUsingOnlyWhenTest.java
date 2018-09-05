@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.exceptionpolicy;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -38,6 +40,7 @@ public class DefaultExceptionPolicyStrategyUsingOnlyWhenTest extends ContextTest
         }
     }
 
+    @Test
     public void testNoWhen() throws Exception {
         MockEndpoint mock = getMockEndpoint(ERROR_QUEUE);
         mock.expectedMessageCount(1);
@@ -48,6 +51,7 @@ public class DefaultExceptionPolicyStrategyUsingOnlyWhenTest extends ContextTest
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testWithWhen() throws Exception {
         MockEndpoint mock = getMockEndpoint(ERROR_USER_QUEUE);
         mock.expectedMessageCount(1);
@@ -69,7 +73,7 @@ public class DefaultExceptionPolicyStrategyUsingOnlyWhenTest extends ContextTest
                 errorHandler(deadLetterChannel(ERROR_QUEUE).maximumRedeliveries(0).redeliveryDelay(100));
 
                 onException(MyUserException.class).onWhen(header("user").isNotNull())
-                    .maximumRedeliveries(1).backOffMultiplier(2).redeliveryDelay(0)
+                    .maximumRedeliveries(1).redeliveryDelay(0)
                     .to(ERROR_USER_QUEUE);
 
                 from("direct:a").process(new Processor() {

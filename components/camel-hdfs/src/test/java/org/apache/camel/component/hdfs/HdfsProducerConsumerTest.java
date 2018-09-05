@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hdfs;
+import org.junit.After;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -55,13 +56,13 @@ public class HdfsProducerConsumerTest extends HdfsTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("hdfs:///" + file.toUri() + "?fileSystemType=LOCAL&splitStrategy=BYTES:5,IDLE:1000");
-                from("hdfs:///" + file.toUri() + "?initialDelay=2000&fileSystemType=LOCAL&chunkSize=5").to("mock:result");
+                from("direct:start").to("hdfs:localhost/" + file.toUri() + "?fileSystemType=LOCAL&splitStrategy=BYTES:5,IDLE:1000");
+                from("hdfs:localhost/" + file.toUri() + "?initialDelay=2000&fileSystemType=LOCAL&chunkSize=5").to("mock:result");
             }
         });
         context.start();
 
-        List<String> expectedResults = new ArrayList<String>();
+        List<String> expectedResults = new ArrayList<>();
         for (int i = 0; i < 10; ++i) {
             template.sendBody("direct:start", "CIAO" + i);
             expectedResults.add("CIAO" + i);
@@ -78,6 +79,7 @@ public class HdfsProducerConsumerTest extends HdfsTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         if (!canTest()) {
             return;

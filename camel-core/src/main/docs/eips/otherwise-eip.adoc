@@ -1,0 +1,61 @@
+[[otherwise-eip]]
+== Otherwise EIP
+
+The Otherwise EIP is related to http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content
+Based Router] from the link:enterprise-integration-patterns.html[EIP
+patterns]
+
+image:http://www.enterpriseintegrationpatterns.com/img/ContentBasedRouter.gif[image]
+
+=== Options
+
+// eip options: START
+The Otherwise EIP has no options.
+// eip options: END
+
+=== Examples
+
+The following example shows how to route a request from an input
+*direct:a* endpoint to either *direct:b*, *direct:c* or *direct:d* depending on
+the evaluation of various link:predicate.html[Predicate] expressions
+
+[source,java]
+----
+RouteBuilder builder = new RouteBuilder() {
+    public void configure() {
+        from("direct:a")
+            .choice()
+                .when(simple("${header.foo} == 'bar'"))
+                    .to("direct:b")
+                .when(simple("${header.foo} == 'cheese'"))
+                    .to("direct:c")
+                .otherwise()
+                    .to("direct:d");
+    }
+};
+----
+
+
+And the same example using XML:
+
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:a"/>
+        <choice>
+            <when>
+                <simple>${header.foo} == 'bar'</simple>
+                <to uri="direct:b"/>
+            </when>
+            <when>
+                <simple>${header.foo} == 'cheese'</simple>
+                <to uri="direct:c"/>
+            </when>
+            <otherwise>
+                <to uri="direct:d"/>
+            </otherwise>
+        </choice>
+    </route>
+</camelContext>
+----

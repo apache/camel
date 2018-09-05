@@ -52,7 +52,7 @@ public class JolokiaRemoteTest {
         controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
-        Map<String, Object> data = controller.getCamelContextInformation("myCamel");
+        Map<String, Object> data = controller.getCamelContextInformation("camel-1");
         System.out.println(data);
     }
 
@@ -61,7 +61,7 @@ public class JolokiaRemoteTest {
         controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
-        String data = controller.getCamelContextStatsAsXml("myCamel", true, false);
+        String data = controller.getCamelContextStatsAsXml("camel-1", true, false);
         System.out.println(data);
     }
 
@@ -70,14 +70,14 @@ public class JolokiaRemoteTest {
         controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
-        controller.suspendContext("myCamel");
-        Map<String, Object> data = controller.getCamelContextInformation("myCamel");
+        controller.suspendContext("camel-1");
+        Map<String, Object> data = controller.getCamelContextInformation("camel-1");
         System.out.println(data);
 
         Thread.sleep(500);
 
-        controller.resumeContext("myCamel");
-        data = controller.getCamelContextInformation("myCamel");
+        controller.resumeContext("camel-1");
+        data = controller.getCamelContextInformation("camel-1");
         System.out.println(data);
     }
 
@@ -95,7 +95,7 @@ public class JolokiaRemoteTest {
         controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
-        List<Map<String, String>> data = controller.getRoutes("myCamel");
+        List<Map<String, String>> data = controller.getRoutes("camel-1");
         System.out.println(data);
     }
 
@@ -113,7 +113,7 @@ public class JolokiaRemoteTest {
         controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
-        controller.resetRouteStats("myCamel");
+        controller.resetRouteStats("camel-1");
     }
 
     @Test
@@ -121,14 +121,14 @@ public class JolokiaRemoteTest {
         controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
-        controller.suspendRoute("myCamel", "route2");
-        List<Map<String, String>> data = controller.getRoutes("myCamel", "route2");
+        controller.suspendRoute("camel-1", "route1");
+        List<Map<String, String>> data = controller.getRoutes("camel-1", "route1");
         System.out.println(data);
 
         Thread.sleep(500);
 
-        controller.resumeRoute("myCamel", "route2");
-        data = controller.getRoutes("myCamel", "route2");
+        controller.resumeRoute("camel-1", "route1");
+        data = controller.getRoutes("camel-1", "route1");
         System.out.println(data);
     }
 
@@ -137,7 +137,7 @@ public class JolokiaRemoteTest {
         controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
-        String data = controller.getRouteModelAsXml("myCamel", "route2");
+        String data = controller.getRouteModelAsXml("camel-1", "route1");
         System.out.println(data);
     }
 
@@ -146,7 +146,7 @@ public class JolokiaRemoteTest {
         controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
-        String data = controller.getRouteStatsAsXml("myCamel", "route2", true, true);
+        String data = controller.getRouteStatsAsXml("camel-1", "route1", true, true);
         System.out.println(data);
     }
 
@@ -155,7 +155,16 @@ public class JolokiaRemoteTest {
         controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
-        String data = controller.getRestModelAsXml("myCamel");
+        String data = controller.getRestModelAsXml("camel-1");
+        System.out.println(data);
+    }
+
+    @Test
+    public void testRestsApiDoc() throws Exception {
+        controller = new DefaultJolokiaCamelController();
+        controller.connect(url, null, null);
+
+        String data = controller.getRestApiDocAsJson("camel-1");
         System.out.println(data);
     }
 
@@ -164,7 +173,7 @@ public class JolokiaRemoteTest {
         controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
-        List<Map<String, String>> data = controller.getEndpoints("myCamel");
+        List<Map<String, String>> data = controller.getEndpoints("camel-1");
         System.out.println(data);
     }
 
@@ -173,7 +182,7 @@ public class JolokiaRemoteTest {
         controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
-        List<Map<String, String>> data = controller.getRestServices("myCamel");
+        List<Map<String, String>> data = controller.getRestServices("camel-1");
         System.out.println(data);
     }
 
@@ -182,7 +191,7 @@ public class JolokiaRemoteTest {
         controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
-        String data = controller.explainEndpointAsJSon("myCamel", "log:foo", true);
+        String data = controller.explainEndpointAsJSon("camel-1", "log:foo", true);
         System.out.println(data);
     }
 
@@ -191,7 +200,7 @@ public class JolokiaRemoteTest {
         controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
-        String data = controller.explainEipAsJSon("myCamel", "transform", true);
+        String data = controller.explainEipAsJSon("camel-1", "transform", true);
         System.out.println(data);
     }
 
@@ -200,7 +209,7 @@ public class JolokiaRemoteTest {
         controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
-        List<Map<String, String>> data = controller.listComponents("myCamel");
+        List<Map<String, String>> data = controller.listComponents("camel-1");
         System.out.println(data);
     }
 
@@ -209,7 +218,7 @@ public class JolokiaRemoteTest {
         controller = new DefaultJolokiaCamelController();
         controller.connect(url, null, null);
 
-        List<Map<String, Object>> data = controller.browseInflightExchanges("myCamel", 500, false);
+        List<Map<String, Object>> data = controller.browseInflightExchanges("camel-1", "route1", 500, false);
         System.out.println(data);
     }
 

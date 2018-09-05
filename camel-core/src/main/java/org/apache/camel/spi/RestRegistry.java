@@ -117,7 +117,7 @@ public interface RestRegistry extends Service {
      * @param inType      optional detail input binding to a FQN class name
      * @param outType     optional detail output binding to a FQN class name
      * @param routeId     the id of the route this rest service will be using
-     * @param description optional description about the the service
+     * @param description optional description about the service
      */
     void addRestService(Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate, String method, String consumes, String produces,
                         String inType, String outType, String routeId, String description);
@@ -142,5 +142,12 @@ public interface RestRegistry extends Service {
      * @return number of rest services in the registry.
      */
     int size();
+
+    /**
+     * Outputs the Rest services API documentation in JSon (requires camel-swagger-java on classpath)
+     *
+     * @return  the API docs in JSon, or <tt>null</tt> if camel-swagger-java is not on classpath
+     */
+    String apiDocAsJson();
 
 }

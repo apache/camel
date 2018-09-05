@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregate.tarfile;
+import org.junit.Before;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,8 +32,13 @@ public class TarAggregationStrategyTest extends CamelTestSupport {
 
     private static final int EXPECTED_NO_FILES = 3;
 
+    private TarAggregationStrategy tar = new TarAggregationStrategy();
+
     @Override
+    @Before
     public void setUp() throws Exception {
+        tar.setParentDir("target/temp");
+        deleteDirectory("target/temp");
         deleteDirectory("target/out");
         super.setUp();
     }
@@ -73,7 +79,7 @@ public class TarAggregationStrategyTest extends CamelTestSupport {
                 // Untar file and Split it according to FileEntry
                 from("file:src/test/resources/org/apache/camel/aggregate/tarfile/data?consumer.delay=1000&noop=true")
                     .setHeader("foo", constant("bar"))
-                    .aggregate(new TarAggregationStrategy())
+                    .aggregate(tar)
                         .constant(true)
                         .completionFromBatchConsumer()
                         .eagerCheckCompletion()

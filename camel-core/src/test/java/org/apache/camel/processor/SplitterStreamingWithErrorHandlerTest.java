@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.Iterator;
 
 import org.apache.camel.ContextTestSupport;
@@ -26,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class SplitterStreamingWithErrorHandlerTest extends ContextTestSupport {
 
+    @Test
     public void testSplitterStreamingWithError() throws Exception {
         getMockEndpoint("mock:b").expectedMessageCount(0);
         getMockEndpoint("mock:error").expectedMessageCount(1);

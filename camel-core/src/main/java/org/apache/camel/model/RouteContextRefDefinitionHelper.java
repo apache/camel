@@ -68,7 +68,7 @@ public final class RouteContextRefDefinitionHelper {
         // must clone the route definitions as they can be reused with multiple CamelContexts
         // and they would need their own instances of the definitions to not have side effects among
         // the CamelContext - for example property placeholder resolutions etc.
-        List<RouteDefinition> clones = new ArrayList<RouteDefinition>(answer.size());
+        List<RouteDefinition> clones = new ArrayList<>(answer.size());
         try {
             JAXBContext jaxb = getOrCreateJAXBContext(camelContext);
             for (RouteDefinition def : answer) {
@@ -100,7 +100,7 @@ public final class RouteContextRefDefinitionHelper {
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         Object clone = unmarshaller.unmarshal(bis);
 
-        if (clone != null && clone instanceof RouteDefinition) {
+        if (clone instanceof RouteDefinition) {
             RouteDefinition def2 = (RouteDefinition) clone;
 
             // need to clone the namespaces also as they are not JAXB marshalled (as they are transient)
@@ -120,7 +120,7 @@ public final class RouteContextRefDefinitionHelper {
                 }
 
                 if (name != null && name2 != null && name.getNamespaces() != null && !name.getNamespaces().isEmpty()) {
-                    Map<String, String> map = new HashMap<String, String>();
+                    Map<String, String> map = new HashMap<>();
                     map.putAll(name.getNamespaces());
                     name2.setNamespaces(map);
                 }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
@@ -30,12 +32,14 @@ public class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testValid() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
                     .onException(Exception.class)
+                        .redeliveryDelay(10)
                         .maximumRedeliveries(2)
                         .backOffMultiplier(1.5)
                         .handled(true)
@@ -50,12 +54,14 @@ public class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
         context.start();
     }
 
+    @Test
     public void testInValid() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
                     .onException(Exception.class)
+                        .redeliveryDelay(10)
                         .maximumRedeliveries(2)
                         .backOffMultiplier(1.5)
                         .handled(true)

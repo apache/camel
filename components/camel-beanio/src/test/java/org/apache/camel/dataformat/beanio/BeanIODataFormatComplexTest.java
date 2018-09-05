@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.beanio;
+import org.junit.Before;
+import org.junit.After;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -177,7 +179,7 @@ public class BeanIODataFormatComplexTest extends CamelTestSupport {
 
     private List<Object> createTestData(boolean skipB1header) throws ParseException {
         String source = "camel-beanio";
-        List<Object> body = new ArrayList<Object>();
+        List<Object> body = new ArrayList<>();
 
         Date date = new SimpleDateFormat("ddMMyy").parse("030808");
         Header hFirst = new Header("A1", date, "PRICE");

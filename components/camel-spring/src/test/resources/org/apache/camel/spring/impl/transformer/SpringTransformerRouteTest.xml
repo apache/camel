@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+    ">
+
+    <bean id="myTypeConverters" class="org.apache.camel.impl.transformer.TransformerRouteTest$MyTypeConverters"/>
+    <bean id="myJsonDataFormatDef" class="org.apache.camel.impl.transformer.TransformerRouteTest$MyJsonDataFormatDefinition"/>
+    <bean id="myXmlProcessor" class="org.apache.camel.spring.impl.transformer.SpringTransformerRouteTest$MyXmlProcessor"/>
+    <bean id="otherToXOrder" class="org.apache.camel.impl.transformer.TransformerRouteTest$OtherToXOrderTransformer"/>
+    <bean id="xOrderResponseToOther" class="org.apache.camel.impl.transformer.TransformerRouteTest$XOrderResponseToOtherTransformer"/>
+    
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+    
+        <endpoint id="myXmlEndpoint" uri="direct:endpointXmlTransformer"/>
+        
+        <transformers>
+            <dataFormatTransformer scheme="json">
+                <custom ref="myJsonDataFormatDef"/>
+            </dataFormatTransformer>
+            <endpointTransformer ref="myXmlEndpoint" fromType="xml:XmlXOrder" toType="java:org.apache.camel.impl.transformer.TransformerRouteTest$XOrder"/>
+            <endpointTransformer ref="myXmlEndpoint" fromType="java:org.apache.camel.impl.transformer.TransformerRouteTest$XOrderResponse" toType="xml:XmlXOrderResponse"/>
+            <customTransformer ref="otherToXOrder" fromType="other:OtherXOrder" toType="java:org.apache.camel.impl.transformer.TransformerRouteTest$XOrder"/>
+            <customTransformer ref="xOrderResponseToOther" fromType="java:org.apache.camel.impl.transformer.TransformerRouteTest$XOrderResponse" toType="other:OtherXOrderResponse"/>
+        </transformers>
+        
+        <route>
+            <from uri="direct:abc"/>
+            <inputType urn="java:org.apache.camel.impl.transformer.TransformerRouteTest$AOrder"/>
+            <outputType urn="java:org.apache.camel.impl.transformer.TransformerRouteTest$AOrderResponse"/>
+            <when>
+                <simple>${body} not is 'org.apache.camel.impl.transformer.TransformerRouteTest\\$AOrder'</simple>
+                <throwException exceptionType="java.lang.Exception" message="expected AOrder object but was '${body}'"/>
+            </when>
+            <inOut uri="direct:xyz"/>
+            <to uri="mock:abcresult"/>
+        </route>
+
+        <route>
+            <from uri="direct:xyz"/>
+            <inputType urn="java:org.apache.camel.impl.transformer.TransformerRouteTest$XOrder"/>
+            <outputType urn="java:org.apache.camel.impl.transformer.TransformerRouteTest$XOrderResponse"/>
+            <when>
+                <simple>${body} not is 'org.apache.camel.impl.transformer.TransformerRouteTest\\$XOrder'</simple>
+                <throwException exceptionType="java.lang.Exception" message="expected XOrder object but was '${body}'"/>
+            </when>
+            <setBody><constant>response</constant></setBody>
+            <to uri="mock:xyzresult"/>
+        </route>
+        
+        <route>
+            <from uri="direct:dataFormat"/>
+            <inputType urn="json:JsonXOrder"/>
+            <outputType urn="json:JsonXOrderResponse"/>
+            <inOut uri="direct:xyz"/>
+        </route>
+        
+        <route>
+            <from uri="direct:endpoint"/>
+            <inputType urn="xml:XmlXOrder"/>
+            <outputType urn="xml:XmlXOrderResponse"/>
+            <inOut uri="direct:xyz"/>
+        </route>
+        
+        <route>
+            <from uri="direct:endpointXmlTransformer"/>
+            <process ref="myXmlProcessor"/>
+        </route>
+        
+        <route>
+            <from uri="direct:custom"/>
+            <inputType urn="other:OtherXOrder"/>
+            <outputType urn="other:OtherXOrderResponse"/>
+            <inOut uri="direct:xyz"/>
+        </route>
+        
+    </camelContext>
+  
+</beans>

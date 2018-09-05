@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.jaxb.enabled",
+      "description": "Enable jaxb dataformat",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

@@ -17,6 +17,7 @@
 package org.apache.camel.component.metrics;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import com.codahale.metrics.MetricRegistry;
@@ -24,8 +25,9 @@ import com.codahale.metrics.Slf4jReporter;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +42,7 @@ public class MetricsComponent extends UriEndpointComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(MetricsComponent.class);
 
+    @Metadata(label = "advanced")
     private MetricRegistry metricRegistry;
 
     public MetricsComponent() {
@@ -62,12 +65,12 @@ public class MetricsComponent extends UriEndpointComponent {
     }
 
     String getMetricsName(String remaining) {
-        String name = ObjectHelper.after(remaining, ":");
+        String name = StringHelper.after(remaining, ":");
         return name == null ? remaining : name;
     }
 
     MetricsType getMetricsType(String remaining) {
-        String name = ObjectHelper.before(remaining, ":");
+        String name = StringHelper.before(remaining, ":");
         MetricsType type;
         if (name == null) {
             type = DEFAULT_METRICS_TYPE;
@@ -92,7 +95,16 @@ public class MetricsComponent extends UriEndpointComponent {
     }
 
     MetricRegistry getMetricRegistryFromCamelRegistry(Registry camelRegistry, String registryName) {
-        return camelRegistry.lookupByNameAndType(registryName, MetricRegistry.class);
+        MetricRegistry registry = camelRegistry.lookupByNameAndType(registryName, MetricRegistry.class);
+        if (registry != null) {
+            return registry;
+        } else {
+            Set<MetricRegistry> registries = camelRegistry.findByType(MetricRegistry.class);
+            if (registries.size() == 1) {
+                return registries.iterator().next();
+            }
+        }
+        return null;
     }
 
     MetricRegistry createMetricRegistry() {
@@ -101,6 +113,7 @@ public class MetricsComponent extends UriEndpointComponent {
                 .outputTo(LOG)
                 .convertRatesTo(TimeUnit.SECONDS)
                 .convertDurationsTo(TimeUnit.MILLISECONDS)
+                .withLoggingLevel(Slf4jReporter.LoggingLevel.DEBUG)
                 .build();
         reporter.start(DEFAULT_REPORTING_INTERVAL_SECONDS, TimeUnit.SECONDS);
         return registry;

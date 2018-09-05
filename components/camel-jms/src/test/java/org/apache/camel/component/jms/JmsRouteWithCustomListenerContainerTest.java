@@ -56,7 +56,7 @@ public class JmsRouteWithCustomListenerContainerTest extends CamelTestSupport {
         assertEquals(ExchangePattern.InOut, inbox.getReceivedExchanges().get(0).getPattern());
         assertEquals(ExchangePattern.InOnly, order.getReceivedExchanges().get(0).getPattern());
         
-        JmsEndpoint jmsEndpoint = getMandatoryEndpoint("activemq:queue:inbox?messageListenerContainerFactoryRef=myListenerContainerFactory", JmsEndpoint.class);        
+        JmsEndpoint jmsEndpoint = getMandatoryEndpoint("activemq:queue:inbox?messageListenerContainerFactory=#myListenerContainerFactory", JmsEndpoint.class);
         assertIsInstanceOf(MyListenerContainerFactory.class, jmsEndpoint.getMessageListenerContainerFactory());
         assertEquals(ConsumerType.Custom, jmsEndpoint.getConfiguration().getConsumerType());        
         assertIsInstanceOf(MyListenerContainer.class, jmsEndpoint.createMessageListenerContainer());
@@ -84,7 +84,7 @@ public class JmsRouteWithCustomListenerContainerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("activemq:queue:inbox?messageListenerContainerFactoryRef=myListenerContainerFactory")
+                from("activemq:queue:inbox?messageListenerContainerFactory=#myListenerContainerFactory")
                     .to("mock:inbox")
                     .inOnly("activemq:topic:order")
                     .bean("orderService", "handleOrder");

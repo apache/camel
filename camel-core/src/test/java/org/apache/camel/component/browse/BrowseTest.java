@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.browse;
 
+import org.junit.Test;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -35,6 +37,7 @@ public class BrowseTest extends ContextTestSupport {
     protected Object body1 = "one";
     protected Object body2 = "two";
 
+    @Test
     public void testListEndpoints() throws Exception {
         template.sendBody("browse:foo", body1);
         template.sendBody("browse:foo", body2);
@@ -44,7 +47,7 @@ public class BrowseTest extends ContextTestSupport {
 
         for (Endpoint endpoint : list) {
             List<Exchange> exchanges = ((BrowseEndpoint) endpoint).getExchanges();
-            LOG.debug(">>>> " + endpoint + " has: " + exchanges);
+            LOG.debug(">>>> {} has: {}", endpoint, exchanges);
 
             assertEquals("Exchanges received on " + endpoint, 2, exchanges.size());
             assertInMessageBodyEquals(exchanges.get(0), body1);

@@ -31,6 +31,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -48,10 +49,12 @@ public class XmlJsonDataFormatTest extends AbstractJsonTestSupport {
 
         MockEndpoint mockJSON = getMockEndpoint("mock:json");
         mockJSON.expectedMessageCount(1);
+        mockJSON.expectedHeaderReceived(Exchange.CONTENT_TYPE, "application/json");
         mockJSON.message(0).body().isInstanceOf(byte[].class);
 
         MockEndpoint mockXML = getMockEndpoint("mock:xml");
         mockXML.expectedMessageCount(1);
+        mockXML.expectedHeaderReceived(Exchange.CONTENT_TYPE, "application/xml");
         mockXML.message(0).body().isInstanceOf(String.class);
 
         Object json = template.requestBody("direct:marshal", in);
@@ -204,6 +207,16 @@ public class XmlJsonDataFormatTest extends AbstractJsonTestSupport {
         assertTrue("Expected a JSON array with string elements: 1, 2, 3, 4", array.containsAll(Arrays.asList("1", "2", "3", "4")));
         mockJSON.assertIsSatisfied();
     }
+    
+    @Test
+    public void testEmptyBodyToJson() throws Exception {
+        MockEndpoint mockJSON = getMockEndpoint("mock:null2xml");
+        mockJSON.expectedMessageCount(1);
+        mockJSON.message(0).body().isNull();
+
+        template.requestBody("direct:unmarshalNull2Xml", "");
+        mockJSON.assertIsSatisfied();
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -216,13 +229,16 @@ public class XmlJsonDataFormatTest extends AbstractJsonTestSupport {
                 from("direct:marshal").marshal(format).to("mock:json");
                 // from JSON to XML
                 from("direct:unmarshal").unmarshal(format).to("mock:xml");
+                
+                // test null body to xml
+                from("direct:unmarshalNull2Xml").unmarshal(format).to("mock:null2xml");
 
                 // from XML to JSON - inline dataformat
                 from("direct:marshalInline").marshal().xmljson().to("mock:jsonInline");
                 // from JSON to XML - inline dataformat
                 from("direct:unmarshalInline").unmarshal().xmljson().to("mock:xmlInline");
                 
-                Map<String, String> xmlJsonOptions = new HashMap<String, String>();
+                Map<String, String> xmlJsonOptions = new HashMap<>();
                 xmlJsonOptions.put(org.apache.camel.model.dataformat.XmlJsonDataFormat.ENCODING, "UTF-8");
                 xmlJsonOptions.put(org.apache.camel.model.dataformat.XmlJsonDataFormat.FORCE_TOP_LEVEL_OBJECT, "true");
                 xmlJsonOptions.put(org.apache.camel.model.dataformat.XmlJsonDataFormat.TRIM_SPACES, "true");
@@ -236,7 +252,7 @@ public class XmlJsonDataFormatTest extends AbstractJsonTestSupport {
                 // from JSON to XML - inline dataformat w/ options
                 from("direct:unmarshalInlineOptions").unmarshal().xmljson(xmlJsonOptions).to("mock:xmlInlineOptions");
 
-                Map<String, String> xmlJsonOptionsArrays = new HashMap<String, String>();
+                Map<String, String> xmlJsonOptionsArrays = new HashMap<>();
                 xmlJsonOptionsArrays.put(org.apache.camel.model.dataformat.XmlJsonDataFormat.ELEMENT_NAME, "el");
                 xmlJsonOptionsArrays.put(org.apache.camel.model.dataformat.XmlJsonDataFormat.ARRAY_NAME, "ar");
 

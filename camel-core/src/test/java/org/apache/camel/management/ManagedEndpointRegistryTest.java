@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -30,6 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ManagedEndpointRegistryTest extends ManagementTestSupport {
 
+    @Test
     public void testManageEndpointRegistry() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -48,7 +51,7 @@ public class ManagedEndpointRegistryTest extends ManagementTestSupport {
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=services,*"), null);
-        List<ObjectName> list = new ArrayList<ObjectName>(set);
+        List<ObjectName> list = new ArrayList<>(set);
         ObjectName on = null;
         for (ObjectName name : list) {
             if (name.getCanonicalName().contains("DefaultEndpointRegistry")) {

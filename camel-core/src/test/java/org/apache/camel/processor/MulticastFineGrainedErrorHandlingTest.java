@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,11 +26,12 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class MulticastFineGrainedErrorHandlingTest extends ContextTestSupport {
 
+    @Test
     public void testMulticastOk() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).maximumRedeliveries(2);
+                onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
                 from("direct:start")
                     .to("mock:a")
@@ -48,11 +51,12 @@ public class MulticastFineGrainedErrorHandlingTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMulticastError() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).maximumRedeliveries(2);
+                onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
                 from("direct:start")
                     .to("mock:a")

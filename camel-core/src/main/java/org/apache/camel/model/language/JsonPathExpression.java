@@ -29,11 +29,11 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * For JSonPath expressions and predicates
+ * To use JsonPath in Camel expressions or predicates.
  *
  * @version 
  */
-@Metadata(label = "language", title = "JSonPath")
+@Metadata(firstVersion = "2.13.0", label = "language,json", title = "JsonPath")
 @XmlRootElement(name = "jsonpath")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JsonPathExpression extends ExpressionDefinition {
@@ -44,6 +44,14 @@ public class JsonPathExpression extends ExpressionDefinition {
     private Class<?> resultType;
     @XmlAttribute @Metadata(defaultValue = "false")
     private Boolean suppressExceptions;
+    @XmlAttribute @Metadata(defaultValue = "true")
+    private Boolean allowSimple;
+    @XmlAttribute @Metadata(defaultValue = "true")
+    private Boolean allowEasyPredicate;
+    @XmlAttribute @Metadata(defaultValue = "false")
+    private Boolean writeAsString;
+    @XmlAttribute
+    private String headerName;
 
     public JsonPathExpression() {
     }
@@ -78,11 +86,55 @@ public class JsonPathExpression extends ExpressionDefinition {
         return suppressExceptions;
     }
 
+    public Boolean getAllowSimple() {
+        return allowSimple;
+    }
+
+    /**
+     * Whether to allow in inlined simple exceptions in the JsonPath expression
+     */
+    public void setAllowSimple(Boolean allowSimple) {
+        this.allowSimple = allowSimple;
+    }
+
+    public Boolean getAllowEasyPredicate() {
+        return allowEasyPredicate;
+    }
+
+    /**
+     * Whether to allow using the easy predicate parser to pre-parse predicates.
+     */
+    public void setAllowEasyPredicate(Boolean allowEasyPredicate) {
+        this.allowEasyPredicate = allowEasyPredicate;
+    }
+
     /**
      * Whether to suppress exceptions such as PathNotFoundException.
      */
     public void setSuppressExceptions(Boolean suppressExceptions) {
         this.suppressExceptions = suppressExceptions;
+    }
+
+    public Boolean getWriteAsString() {
+        return writeAsString;
+    }
+
+    /**
+     * Whether to write the output of each row/element as a JSON String value instead of a Map/POJO value.
+     */
+    public void setWriteAsString(Boolean writeAsString) {
+        this.writeAsString = writeAsString;
+    }
+
+    public String getHeaderName() {
+        return headerName;
+    }
+
+    /**
+     * Name of header to use as input, instead of the message body
+     */
+    public void setHeaderName(String headerName) {
+        this.headerName = headerName;
     }
 
     public String getLanguage() {
@@ -109,6 +161,18 @@ public class JsonPathExpression extends ExpressionDefinition {
         if (suppressExceptions != null) {
             setProperty(expression, "suppressExceptions", suppressExceptions);
         }
+        if (allowSimple != null) {
+            setProperty(expression, "allowSimple", allowSimple);
+        }
+        if (allowEasyPredicate != null) {
+            setProperty(expression, "allowEasyPredicate", allowEasyPredicate);
+        }
+        if (writeAsString != null) {
+            setProperty(expression, "writeAsString", writeAsString);
+        }
+        if (headerName != null) {
+            setProperty(expression, "headerName", headerName);
+        }
         super.configureExpression(camelContext, expression);
     }
 
@@ -119,6 +183,18 @@ public class JsonPathExpression extends ExpressionDefinition {
         }
         if (suppressExceptions != null) {
             setProperty(predicate, "suppressExceptions", suppressExceptions);
+        }
+        if (allowSimple != null) {
+            setProperty(predicate, "allowSimple", allowSimple);
+        }
+        if (allowEasyPredicate != null) {
+            setProperty(predicate, "allowEasyPredicate", allowEasyPredicate);
+        }
+        if (writeAsString != null) {
+            setProperty(predicate, "writeAsString", writeAsString);
+        }
+        if (headerName != null) {
+            setProperty(predicate, "headerName", headerName);
         }
         super.configurePredicate(camelContext, predicate);
     }

@@ -30,7 +30,7 @@ public class ResequenceBatchIgnoreInvalidExchangesTest extends ResequenceStreamI
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    .resequence(header("seqno")).batch().timeout(1000)
+                    .resequence(header("seqno")).batch().timeout(250)
                         // ignore invalid exchanges (they are discarded)
                         .ignoreInvalidExchanges()
                     .to("mock:result");

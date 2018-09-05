@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.disruptor.vm;
 
+import org.junit.Test;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -28,8 +30,9 @@ import org.apache.camel.component.vm.AbstractVmTestSupport;
 public class DisruptorVmShouldNotUseSameThreadTest extends AbstractVmTestSupport {
 
     private static long id;
-    private final ThreadLocal<String> local = new ThreadLocal<String>();
+    private final ThreadLocal<String> local = new ThreadLocal<>();
 
+    @Test
     public void testNotUseSameThread() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

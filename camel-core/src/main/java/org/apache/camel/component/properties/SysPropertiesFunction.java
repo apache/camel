@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.properties;
 
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * A {@link PropertiesFunction} that lookup the property value from
@@ -35,8 +35,8 @@ public class SysPropertiesFunction implements PropertiesFunction {
         String defaultValue = null;
 
         if (remainder.contains(":")) {
-            key = ObjectHelper.before(remainder, ":");
-            defaultValue = ObjectHelper.after(remainder, ":");
+            key = StringHelper.before(remainder, ":");
+            defaultValue = StringHelper.after(remainder, ":");
         }
 
         String value = System.getProperty(key);

@@ -569,13 +569,13 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         String referenceId = properties == null ? null : properties.getContentReferenceId();
         // Create Reference with URI="#<objectId>" for enveloping signature, URI="" for enveloped signature, and URI = <value from configuration> for detached signature and the transforms
         Reference ref = createReference(input.getSignatureFactory(), input.getContentReferenceUri(),
-                getContentReferenceType(input.getMessage()), input.getSignatureType(), referenceId);
+                getContentReferenceType(input.getMessage()), input.getSignatureType(), referenceId, input.getMessage());
         Reference keyInfoRef = createKeyInfoReference(input.getSignatureFactory(), keyInfoId, input.getContentDigestAlgorithm());
 
         int propsRefsSize = properties == null || properties.getReferences() == null || properties.getReferences().isEmpty() ? 0
                 : properties.getReferences().size();
         int size = keyInfoRef == null ? propsRefsSize + 1 : propsRefsSize + 2;
-        List<Reference> referenceList = new ArrayList<Reference>(size);
+        List<Reference> referenceList = new ArrayList<>(size);
         referenceList.add(ref);
         if (keyInfoRef != null) {
             referenceList.add(keyInfoRef);
@@ -604,7 +604,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         if (properties == null || properties.getObjects() == null || properties.getObjects().isEmpty()) {
             return Collections.singletonList(obj);
         }
-        List<XMLObject> result = new ArrayList<XMLObject>(properties.getObjects().size() + 1);
+        List<XMLObject> result = new ArrayList<>(properties.getObjects().size() + 1);
         result.add(obj);
         result.addAll(properties.getObjects());
         return result;
@@ -646,10 +646,10 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         }
     }
 
-    protected Reference createReference(XMLSignatureFactory fac, String uri, String type, SignatureType sigType, String id)
+    protected Reference createReference(XMLSignatureFactory fac, String uri, String type, SignatureType sigType, String id, Message message)
         throws InvalidAlgorithmParameterException, XmlSignatureException {
         try {
-            List<Transform> transforms = getTransforms(fac, sigType);
+            List<Transform> transforms = getTransforms(fac, sigType, message);
             Reference ref = fac.newReference(uri, fac.newDigestMethod(getDigestAlgorithmUri(), null), transforms, type, id);
             return ref;
         } catch (NoSuchAlgorithmException e) {
@@ -701,7 +701,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
             // should not happen, has already been checked earlier
             throw new IllegalStateException("List of XPATHs to ID attributes is empty in detached signature case");
         }
-        List<ComparableNode> result = new ArrayList<ComparableNode>(xpathsToIdAttributes.size());
+        List<ComparableNode> result = new ArrayList<>(xpathsToIdAttributes.size());
         for (XPathFilterParameterSpec xp : xpathsToIdAttributes) {
             XPathExpression exp;
             try {
@@ -766,32 +766,46 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         return fac.newXMLObject(Collections.singletonList(new DOMStructure(node)), id, null, null);
     }
 
-    private List<Transform> getTransforms(XMLSignatureFactory fac, SignatureType sigType) throws NoSuchAlgorithmException,
+    private List<Transform> getTransforms(XMLSignatureFactory fac, SignatureType sigType, Message message) throws NoSuchAlgorithmException,
             InvalidAlgorithmParameterException {
-        List<AlgorithmMethod> configuredTrafos = getConfiguration().getTransformMethods();
-        if (SignatureType.enveloped == sigType) {
-            // add enveloped transform if necessary
-            if (configuredTrafos.size() > 0) {
-                if (!containsEnvelopedTransform(configuredTrafos)) {
-                    configuredTrafos = new ArrayList<AlgorithmMethod>(configuredTrafos.size() + 1);
+        String transformMethodsHeaderValue = message.getHeader(XmlSignatureConstants.HEADER_TRANSFORM_METHODS, String.class);
+        if (transformMethodsHeaderValue == null) {
+            List<AlgorithmMethod> configuredTrafos = getConfiguration().getTransformMethods();
+            if (SignatureType.enveloped == sigType) {
+                // add enveloped transform if necessary
+                if (configuredTrafos.size() > 0) {
+                    if (!containsEnvelopedTransform(configuredTrafos)) {
+                        configuredTrafos = new ArrayList<>(configuredTrafos.size() + 1);
+                        configuredTrafos.add(XmlSignatureHelper.getEnvelopedTransform());
+                        configuredTrafos.addAll(getConfiguration().getTransformMethods());
+                    }
+                } else {
+                    // add enveloped and C14N trafo
+                    configuredTrafos = new ArrayList<>(2);
                     configuredTrafos.add(XmlSignatureHelper.getEnvelopedTransform());
-                    configuredTrafos.addAll(getConfiguration().getTransformMethods());
+                    configuredTrafos.add(XmlSignatureHelper.getCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE));
                 }
-            } else {
-                // add enveloped and C14N trafo
-                configuredTrafos = new ArrayList<AlgorithmMethod>(2);
-                configuredTrafos.add(XmlSignatureHelper.getEnvelopedTransform());
-                configuredTrafos.add(XmlSignatureHelper.getCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE));
             }
-        }
 
-        List<Transform> transforms = new ArrayList<Transform>(configuredTrafos.size());
-        for (AlgorithmMethod trafo : configuredTrafos) {
-            Transform transform = fac.newTransform(trafo.getAlgorithm(), (TransformParameterSpec) trafo.getParameterSpec());
-            transforms.add(transform);
-            LOG.debug("Transform method: {}", trafo.getAlgorithm());
+            List<Transform> transforms = new ArrayList<>(configuredTrafos.size());
+            for (AlgorithmMethod trafo : configuredTrafos) {
+                Transform transform = fac.newTransform(trafo.getAlgorithm(), (TransformParameterSpec) trafo.getParameterSpec());
+                transforms.add(transform);
+                LOG.debug("Transform method: {}", trafo.getAlgorithm());
+            }
+            return transforms;
+        } else {
+            LOG.debug("Header {} with value '{}' found", XmlSignatureConstants.HEADER_TRANSFORM_METHODS, transformMethodsHeaderValue);
+            String[] transformAlgorithms = transformMethodsHeaderValue.split(",");
+            List<Transform> transforms = new ArrayList<>(transformAlgorithms.length);
+            for (String transformAlgorithm : transformAlgorithms) {
+                transformAlgorithm = transformAlgorithm.trim();
+                Transform transform = fac.newTransform(transformAlgorithm, (TransformParameterSpec) null);
+                transforms.add(transform);
+                LOG.debug("Transform method: {}", transformAlgorithm);
+            }
+            return transforms;
         }
-        return transforms;
     }
 
     private boolean containsEnvelopedTransform(List<AlgorithmMethod> configuredTrafos) {
@@ -846,7 +860,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         }
 
         LOG.debug("Creating reference to key info element with Id: {}", keyInfoId);
-        List<Transform> transforms = new ArrayList<Transform>(1);
+        List<Transform> transforms = new ArrayList<>(1);
         Transform transform = fac.newTransform(CanonicalizationMethod.INCLUSIVE, (TransformParameterSpec) null);
         transforms.add(transform);
         return fac.newReference("#" + keyInfoId, fac.newDigestMethod(digestAlgorithm, null), transforms, null, null);
@@ -1043,7 +1057,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         }
 
         static List<String> getReferenceUris(List<ComparableNode> input) {
-            List<String> result = new ArrayList<String>(input.size());
+            List<String> result = new ArrayList<>(input.size());
             for (ComparableNode cn : input) {
                 result.add(cn.getReferenceUri());
             }

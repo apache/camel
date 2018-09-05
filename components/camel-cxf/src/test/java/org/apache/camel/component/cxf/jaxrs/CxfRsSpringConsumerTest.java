@@ -88,7 +88,7 @@ public class CxfRsSpringConsumerTest extends CamelSpringTestSupport {
     
     private void doTestMappingException(String address) throws Exception {
         HttpGet get = new HttpGet(address);
-        get.addHeader("Accept" , "application/json");
+        get.addHeader("Accept", "application/json");
         CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {

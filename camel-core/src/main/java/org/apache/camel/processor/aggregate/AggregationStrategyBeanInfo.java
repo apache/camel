@@ -73,8 +73,8 @@ public class AggregationStrategyBeanInfo {
             }
         }
 
-        List<ParameterInfo> oldParameters = new ArrayList<ParameterInfo>();
-        List<ParameterInfo> newParameters = new ArrayList<ParameterInfo>();
+        List<ParameterInfo> oldParameters = new ArrayList<>();
+        List<ParameterInfo> newParameters = new ArrayList<>();
 
         for (int i = 0; i < size / 2; i++) {
             Class<?> oldType = parameterTypes[i];
@@ -90,7 +90,7 @@ public class AggregationStrategyBeanInfo {
                 oldParameters.add(info);
             } else if (oldParameters.size() == 2) {
                 // the 3rd parameter is the properties
-                Expression oldProperties = ExpressionBuilder.propertiesExpression();
+                Expression oldProperties = ExpressionBuilder.exchangePropertiesExpression();
                 ParameterInfo info = new ParameterInfo(i, oldType, null, oldProperties);
                 oldParameters.add(info);
             }
@@ -110,7 +110,7 @@ public class AggregationStrategyBeanInfo {
                 newParameters.add(info);
             } else if (newParameters.size() == 2) {
                 // the 3rd parameter is the properties
-                Expression newProperties = ExpressionBuilder.propertiesExpression();
+                Expression newProperties = ExpressionBuilder.exchangePropertiesExpression();
                 ParameterInfo info = new ParameterInfo(i, newType, null, newProperties);
                 newParameters.add(info);
             }

@@ -1,0 +1,55 @@
+[[gzip-dataformat]]
+== GZip DataFormat
+
+*Available as of Camel version 2.0*
+
+The GZip Data Format is a message compression and
+de-compression format. It uses the same deflate algorithm that is used
+in <<zip-dataformat,Zip DataFormat>>, although some additional
+headers are provided. This format is produced by popular `gzip`/`gunzip`
+tool. Messages marshalled using GZip compression can be unmarshalled
+using GZip decompression just prior to being consumed at the endpoint.
+The compression capability is quite useful when you deal with large XML
+and Text based payloads or when you read messages previously comressed
+using `gzip` tool.
+
+=== Options
+
+// dataformat options: START
+The GZip dataformat supports 1 options, which are listed below.
+
+
+
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+|===
+// dataformat options: END
+
+=== Marshal
+
+In this example we marshal a regular text/XML payload to a compressed
+payload employing gzip compression format and send it an ActiveMQ queue
+called MY_QUEUE.
+
+[source,java]
+----
+from("direct:start").marshal().gzip().to("activemq:queue:MY_QUEUE");
+----
+
+=== Unmarshal
+
+In this example we unmarshal a gzipped payload from an ActiveMQ queue
+called MY_QUEUE to its original format, and forward it for processing to
+the `UnGZippedMessageProcessor`.
+
+[source,java]
+----
+from("activemq:queue:MY_QUEUE").unmarshal().gzip().process(new UnGZippedMessageProcessor()); 
+----
+
+=== Dependencies
+
+This data format is provided in *camel-core* so no additional
+dependencies is needed.

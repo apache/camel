@@ -16,20 +16,22 @@
  */
 package org.apache.camel.model.rest;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.StringHelper;
 
 /**
  * To specify the rest operation response messages using Swagger.
  * <p/>
  * This maps to the Swagger Response Message Object.
- * see com.wordnik.swagger.model.ResponseMessage
- * and https://github.com/swagger-api/swagger-spec/blob/master/versions/1.2.md#525-response-message-object.
  */
 @Metadata(label = "rest")
 @XmlRootElement(name = "responseMessage")
@@ -39,8 +41,9 @@ public class RestOperationResponseMsgDefinition {
     @XmlTransient
     private VerbDefinition verb;
 
-    @XmlAttribute(required = true)
-    private int code;
+    @XmlAttribute
+    @Metadata(defaultValue = "200")
+    private String code;
 
     @XmlAttribute(required = true)
     private String message;
@@ -49,21 +52,27 @@ public class RestOperationResponseMsgDefinition {
     @Metadata(defaultValue = "")
     private String responseModel;
 
+    @XmlElement(name = "header")
+    private List<RestOperationResponseHeaderDefinition> headers;
+
+    @XmlElement(name = "examples")
+    private List<RestPropertyDefinition> examples;
+
     public RestOperationResponseMsgDefinition(VerbDefinition verb) {
+        this();
         this.verb = verb;
     }
 
     public RestOperationResponseMsgDefinition() {
+        this.code = "200";
+        this.message = "success";
     }
 
-    public int getCode() {
-        return code != 0 ? code : 200;
+    public String getCode() {
+        return code;
     }
 
-    /**
-     * Sets the Swagger Operation's ResponseMessage code
-     */
-    public void setCode(int code) {
+    public void setCode(String code) {
         this.code = code;
     }
 
@@ -71,34 +80,56 @@ public class RestOperationResponseMsgDefinition {
         return responseModel != null ? responseModel : "";
     }
 
-    /**
-     * Sets the Swagger Operation's ResponseMessage responseModel
-     */
     public void setResponseModel(String responseModel) {
         this.responseModel = responseModel;
     }
 
     public String getMessage() {
-        return message != null ? message : "success";
+        return message;
     }
 
-    /**
-     * Sets the Swagger Operation's ResponseMessage message
-     */
     public void setMessage(String message) {
         this.message = message;
     }
 
+    public List<RestOperationResponseHeaderDefinition> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(List<RestOperationResponseHeaderDefinition> headers) {
+        this.headers = headers;
+    }
+
+    public List<RestPropertyDefinition> getExamples() {
+        return examples;
+    }
+
     /**
-     * The return code
+     * Examples of response messages
+     */
+    public void setExamples(List<RestPropertyDefinition> examples) {
+        this.examples = examples;
+    }
+
+    /**
+     * The response code such as a HTTP status code
      */
     public RestOperationResponseMsgDefinition code(int code) {
+        setCode("" + code);
+        return this;
+    }
+
+    /**
+     * The response code such as a HTTP status code. Can use <tt>general</tt>, or other words
+     * to indicate general error responses that do not map to a specific HTTP status code
+     */
+    public RestOperationResponseMsgDefinition code(String code) {
         setCode(code);
         return this;
     }
 
     /**
-     * The return message
+     * The response message (description)
      */
     public RestOperationResponseMsgDefinition message(String msg) {
         setMessage(msg);
@@ -114,9 +145,36 @@ public class RestOperationResponseMsgDefinition {
     }
 
     /**
+     * Adds an example
+     */
+    public RestOperationResponseMsgDefinition example(String key, String example) {
+        if (examples == null) {
+            examples = new ArrayList<>();
+        }
+        examples.add(new RestPropertyDefinition(key, example));
+        return this;
+    }
+
+    /**
+     * Adds a response header
+     */
+    public RestOperationResponseHeaderDefinition header(String name) {
+        if (headers == null) {
+            headers = new ArrayList<>();
+        }
+        RestOperationResponseHeaderDefinition header = new RestOperationResponseHeaderDefinition(this);
+        header.setName(name);
+        headers.add(header);
+        return header;
+    }
+
+    /**
      * Ends the configuration of this response message
      */
     public RestDefinition endResponseMessage() {
+        // code and message is mandatory
+        StringHelper.notEmpty(code, "code");
+        StringHelper.notEmpty(message, "message");
         verb.getResponseMsgs().add(this);
         return verb.getRest();
     }

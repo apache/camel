@@ -16,16 +16,18 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.util.Map;
 import javax.naming.Context;
 
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeProperties;
 import org.apache.camel.Headers;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.Properties;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.jndi.JndiContext;
 
@@ -35,6 +37,7 @@ import org.apache.camel.util.jndi.JndiContext;
 public class BeanWithPropertiesAndHeadersAndBodyInjectionTest extends ContextTestSupport {
     protected MyBean myBean = new MyBean();
 
+    @Test
     public void testSendMessage() throws Exception {
         Exchange out = template.send("direct:in", new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -88,7 +91,7 @@ public class BeanWithPropertiesAndHeadersAndBodyInjectionTest extends ContextTes
             return "MyBean[foo: " + foo + " bar: " + bar + " body: " + body + "]";
         }
 
-        public void myMethod(@Properties Map<?, ?> foo, @Headers Map<?, ?> bar, @Body String body) {
+        public void myMethod(@ExchangeProperties Map<?, ?> foo, @Headers Map<?, ?> bar, @Body String body) {
             this.foo = foo;
             this.bar = bar;
             this.body = body;

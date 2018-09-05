@@ -81,8 +81,8 @@ public class StaxConverter {
 
         LOG.debug("StaxConverter pool size: {}", i);
 
-        INPUT_FACTORY_POOL = new LinkedBlockingQueue<XMLInputFactory>(i);
-        OUTPUT_FACTORY_POOL = new LinkedBlockingQueue<XMLOutputFactory>(i);
+        INPUT_FACTORY_POOL = new LinkedBlockingQueue<>(i);
+        OUTPUT_FACTORY_POOL = new LinkedBlockingQueue<>(i);
     }
     
     private XMLInputFactory inputFactory;
@@ -281,6 +281,27 @@ public class StaxConverter {
             return factory.createXMLEventReader(in);
         } finally {
             returnXMLInputFactory(factory);
+        }
+    }
+
+    @Converter
+    public InputStream createInputStream(XMLStreamReader reader, Exchange exchange) {
+        XMLOutputFactory factory = getOutputFactory();
+        try {
+            String charsetName = IOHelper.getCharsetName(exchange, false);
+            return new XMLStreamReaderInputStream(reader, charsetName, factory);
+        } finally {
+            returnXMLOutputFactory(factory);
+        }
+    }
+
+    @Converter
+    public Reader createReader(XMLStreamReader reader, Exchange exchange) {
+        XMLOutputFactory factory = getOutputFactory();
+        try {
+            return new XMLStreamReaderReader(reader, factory);
+        } finally {
+            returnXMLOutputFactory(factory);
         }
     }
 

@@ -20,15 +20,13 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.impl.DefaultConsumer;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.paho.PahoConstants.HEADER_ORIGINAL_MESSAGE;
 
 public class PahoConsumer extends DefaultConsumer {
 
@@ -42,30 +40,41 @@ public class PahoConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         String topic = getEndpoint().getTopic();
-        getEndpoint().getClient().subscribe(topic);
-        getEndpoint().getClient().setCallback(new MqttCallback() {
+        getEndpoint().getClient().subscribe(topic, getEndpoint().getQos());
+        getEndpoint().getClient().setCallback(new MqttCallbackExtended() {
+
+            @Override
+            public void connectComplete(boolean reconnect, String serverURI) {
+                if (reconnect) {
+                    try {
+                        getEndpoint().getClient().subscribe(topic, getEndpoint().getQos());
+                    } catch (MqttException e) {
+                        LOG.error("MQTT resubscribe failed " + e.getMessage(), e);
+                    }
+                }
+            }
+
             @Override
             public void connectionLost(Throwable cause) {
-                LOG.debug("MQTT broker connection lost:", cause);
+                LOG.debug("MQTT broker connection lost due " + cause.getMessage(), cause);
             }
 
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
-                Exchange exchange = ExchangeBuilder.anExchange(getEndpoint().getCamelContext()).
-                        withBody(message.getPayload()).
-                        withHeader(HEADER_ORIGINAL_MESSAGE, message).
-                        build();
+                LOG.debug("Message arrived on topic: {} -> {}", topic, message);
+                Exchange exchange = getEndpoint().createExchange(message, topic);
+
                 getAsyncProcessor().process(exchange, new AsyncCallback() {
                     @Override
                     public void done(boolean doneSync) {
-
+                        // noop
                     }
                 });
             }
 
             @Override
             public void deliveryComplete(IMqttDeliveryToken token) {
-                LOG.debug("Delivery complete. Token: {}.", token);
+                LOG.debug("Delivery complete. Token: {}", token);
             }
         });
     }
@@ -73,6 +82,7 @@ public class PahoConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+
         if (getEndpoint().getClient().isConnected()) {
             String topic = getEndpoint().getTopic();
             getEndpoint().getClient().unsubscribe(topic);

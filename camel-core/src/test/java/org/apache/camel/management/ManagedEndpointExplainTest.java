@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
@@ -27,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ManagedEndpointExplainTest extends ManagementTestSupport {
 
+    @Test
     public void testManageEndpointExplain() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -48,9 +51,8 @@ public class ManagedEndpointExplainTest extends ManagementTestSupport {
         TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
         assertEquals(4, data.size());
 
-        // there should be 9 in total
         data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{true}, new String[]{"boolean"});
-        assertEquals(9, data.size());
+        assertEquals(27, data.size());
     }
 
     @Override

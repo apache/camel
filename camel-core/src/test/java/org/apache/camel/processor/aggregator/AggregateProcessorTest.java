@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregator;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -46,11 +49,13 @@ public class AggregateProcessorTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         executorService = Executors.newSingleThreadExecutor();
     }
 
+    @Test
     public void testAggregateProcessorCompletionPredicate() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+B+END");
@@ -92,6 +97,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         ap.stop();
     }
 
+    @Test
     public void testAggregateProcessorCompletionPredicateEager() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+B+END");
@@ -133,10 +139,12 @@ public class AggregateProcessorTest extends ContextTestSupport {
         ap.stop();
     }
 
+    @Test
     public void testAggregateProcessorCompletionAggregatedSize() throws Exception {
         doTestAggregateProcessorCompletionAggregatedSize(false);
     }
 
+    @Test
     public void testAggregateProcessorCompletionAggregatedSizeEager() throws Exception {
         doTestAggregateProcessorCompletionAggregatedSize(true);
     }
@@ -181,10 +189,12 @@ public class AggregateProcessorTest extends ContextTestSupport {
         ap.stop();
     }
 
+    @Test
     public void testAggregateProcessorCompletionTimeout() throws Exception {
         doTestAggregateProcessorCompletionTimeout(false);
     }
 
+    @Test
     public void testAggregateProcessorCompletionTimeoutEager() throws Exception {
         doTestAggregateProcessorCompletionTimeout(true);
     }
@@ -199,8 +209,9 @@ public class AggregateProcessorTest extends ContextTestSupport {
         AggregationStrategy as = new BodyInAggregatingStrategy();
 
         AggregateProcessor ap = new AggregateProcessor(context, done, corr, as, executorService, true);
-        ap.setCompletionTimeout(3000);
+        ap.setCompletionTimeout(100);
         ap.setEagerCheckCompletion(eager);
+        ap.setCompletionTimeoutCheckerInterval(10);
         ap.start();
 
         Exchange e1 = new DefaultExchange(context);
@@ -220,14 +231,12 @@ public class AggregateProcessorTest extends ContextTestSupport {
         e4.getIn().setHeader("id", 123);
 
         ap.process(e1);
-
-        Thread.sleep(250);
+        Thread.sleep(5);
         ap.process(e2);
-
-        Thread.sleep(500);
+        Thread.sleep(10);
         ap.process(e3);
 
-        Thread.sleep(5000);
+        Thread.sleep(150);
         ap.process(e4);
 
         assertMockEndpointsSatisfied();
@@ -235,6 +244,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         ap.stop();
     }
 
+    @Test
     public void testAggregateCompletionInterval() throws Exception {
         // camel context must be started
         context.start();
@@ -248,7 +258,8 @@ public class AggregateProcessorTest extends ContextTestSupport {
         AggregationStrategy as = new BodyInAggregatingStrategy();
 
         AggregateProcessor ap = new AggregateProcessor(context, done, corr, as, executorService, true);
-        ap.setCompletionInterval(3000);
+        ap.setCompletionInterval(100);
+        ap.setCompletionTimeoutCheckerInterval(10);
         ap.start();
 
         Exchange e1 = new DefaultExchange(context);
@@ -271,7 +282,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         ap.process(e2);
         ap.process(e3);
 
-        Thread.sleep(5000);
+        Thread.sleep(250);
         ap.process(e4);
 
         assertMockEndpointsSatisfied();
@@ -279,6 +290,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         ap.stop();
     }
     
+    @Test
     public void testAggregateIgnoreInvalidCorrelationKey() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+C+END");
@@ -319,6 +331,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         ap.stop();
     }
 
+    @Test
     public void testAggregateBadCorrelationKey() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+C+END");
@@ -364,6 +377,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         ap.stop();
     }
 
+    @Test
     public void testAggregateCloseCorrelationKeyOnCompletion() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+B+END");
@@ -409,6 +423,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         ap.stop();
     }
 
+    @Test
     public void testAggregateUseBatchSizeFromConsumer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+B", "C+D+E");
@@ -470,10 +485,12 @@ public class AggregateProcessorTest extends ContextTestSupport {
         ap.stop();
     }
 
+    @Test
     public void testAggregateLogFailedExchange() throws Exception {
         doTestAggregateLogFailedExchange(null);
     }
 
+    @Test
     public void testAggregateHandleFailedExchange() throws Exception {
         final AtomicBoolean tested = new AtomicBoolean();
 
@@ -554,6 +571,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         ap.stop();
     }
 
+    @Test
     public void testAggregateForceCompletion() throws Exception {
         // camel context must be started
         context.start();

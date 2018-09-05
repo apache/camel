@@ -44,6 +44,14 @@ public final class CamelJmsTestHelper {
         return pooled;
     }
 
+    public static PooledConnectionFactory createPooledPersistentConnectionFactory() {
+        ConnectionFactory cf = createPersistentConnectionFactory();
+        PooledConnectionFactory pooled = new PooledConnectionFactory();
+        pooled.setConnectionFactory(cf);
+        pooled.setMaxConnections(8);
+        return pooled;
+    }
+
     public static ConnectionFactory createConnectionFactory() {
         return createConnectionFactory(null, null);
     }
@@ -68,6 +76,7 @@ public final class CamelJmsTestHelper {
         if (maximumRedeliveries != null) {
             connectionFactory.getRedeliveryPolicy().setMaximumRedeliveries(maximumRedeliveries);
         }
+        connectionFactory.setTrustAllPackages(true);
         return connectionFactory;
     }
 
@@ -95,6 +104,7 @@ public final class CamelJmsTestHelper {
         connectionFactory.setOptimizeAcknowledge(true);
         connectionFactory.setOptimizedMessageDispatch(true);
         connectionFactory.setAlwaysSessionAsync(false);
+        connectionFactory.setTrustAllPackages(true);
         return connectionFactory;
     }
 }

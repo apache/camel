@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.itest.greeter;
+import org.junit.Before;
+import org.junit.After;
 
 import java.util.List;
 
@@ -29,6 +31,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +42,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+@Ignore("TODO: ActiveMQ 5.14.1 or better, due AMQ-6402")
 @ContextConfiguration
 public class CamelGreeterTest extends AbstractJUnit4SpringContextTests {
     private static final Logger LOG = LoggerFactory.getLogger(CamelGreeterTest.class);

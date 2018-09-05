@@ -18,9 +18,6 @@ package org.apache.camel.component.aws.ses;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
-
-import javax.mail.Message;
 
 import com.amazonaws.services.simpleemail.model.SendEmailRequest;
 import com.amazonaws.services.simpleemail.model.SendRawEmailRequest;

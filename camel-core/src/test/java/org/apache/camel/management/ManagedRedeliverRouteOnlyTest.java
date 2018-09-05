@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -29,6 +31,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ManagedRedeliverRouteOnlyTest extends ManagementTestSupport {
 
+    @Test
     public void testRedeliver() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -64,6 +67,7 @@ public class ManagedRedeliverRouteOnlyTest extends ManagementTestSupport {
                 context.getManagementStrategy().getManagementAgent().setStatisticsLevel(ManagementStatisticsLevel.RoutesOnly);
 
                 onException(Exception.class).handled(true)
+                    .redeliveryDelay(0)
                     .maximumRedeliveries(4).logStackTrace(false)
                     .setBody().constant("Error");
 

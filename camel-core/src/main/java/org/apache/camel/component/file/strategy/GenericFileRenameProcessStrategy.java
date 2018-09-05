@@ -17,9 +17,11 @@
 package org.apache.camel.component.file.strategy;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperations;
+import org.apache.camel.util.ExchangeHelper;
 
 public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrategySupport<T> {
     private GenericFileRenamer<T> beginRenamer;
@@ -41,9 +43,18 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
         if (beginRenamer != null) {
             GenericFile<T> newName = beginRenamer.renameFile(exchange, file);
             GenericFile<T> to = renameFile(operations, file, newName);
-            if (to != null) {
-                to.bindToExchange(exchange);
+            FileEndpoint fe = null;
+            if (endpoint instanceof FileEndpoint) {
+                fe = (FileEndpoint)endpoint;
+                if (to != null) {
+                    to.bindToExchange(exchange, fe.isProbeContentType());
+                }
+            } else {
+                if (to != null) {
+                    to.bindToExchange(exchange);
+                }
             }
+            
         }
 
         return true;
@@ -52,12 +63,18 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
     @Override
     public void rollback(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
         try {
-            operations.releaseRetreivedFileResources(exchange);
+            operations.releaseRetrievedFileResources(exchange);
 
             if (failureRenamer != null) {
                 // create a copy and bind the file to the exchange to be used by the renamer to evaluate the file name
-                Exchange copy = exchange.copy();
-                file.bindToExchange(copy);
+                Exchange copy = ExchangeHelper.createCopy(exchange, true);
+                FileEndpoint fe = null;
+                if (endpoint instanceof FileEndpoint) {
+                    fe = (FileEndpoint)endpoint;
+                    file.bindToExchange(copy, fe.isProbeContentType());
+                } else {
+                    file.bindToExchange(copy);
+                }
                 // must preserve message id
                 copy.getIn().setMessageId(exchange.getIn().getMessageId());
                 copy.setExchangeId(exchange.getExchangeId());
@@ -78,8 +95,14 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
         try {
             if (commitRenamer != null) {
                 // create a copy and bind the file to the exchange to be used by the renamer to evaluate the file name
-                Exchange copy = exchange.copy();
-                file.bindToExchange(copy);
+                Exchange copy = ExchangeHelper.createCopy(exchange, true);
+                FileEndpoint fe = null;
+                if (endpoint instanceof FileEndpoint) {
+                    fe = (FileEndpoint)endpoint;
+                    file.bindToExchange(copy, fe.isProbeContentType());
+                }  else {
+                    file.bindToExchange(copy);
+                }
                 // must preserve message id
                 copy.getIn().setMessageId(exchange.getIn().getMessageId());
                 copy.setExchangeId(exchange.getExchangeId());

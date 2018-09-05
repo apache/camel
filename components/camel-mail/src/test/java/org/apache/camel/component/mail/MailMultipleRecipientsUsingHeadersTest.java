@@ -35,7 +35,7 @@ public class MailMultipleRecipientsUsingHeadersTest extends CamelTestSupport {
         Mailbox.clearAll();
 
         // START SNIPPET: e1
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
 
         map.put("To", new String[] {"davsclaus@apache.org", "janstey@apache.org"});
         map.put("From", "jstrachan@apache.org");

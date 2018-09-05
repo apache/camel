@@ -94,6 +94,8 @@ public class ActiveMQOriginalDestinationTest extends CamelTestSupport {
      */
     private class OriginalDestinationPropagateStrategy implements MessageCreatedStrategy {
 
+        // TODO: This is supported out of the box from ActiveMQ 5.14 onwards, and hence remove OriginalDestinationPropagateStrategy
+
         @Override
         public void onMessageCreated(Message message, Session session, Exchange exchange, Throwable cause) {
             if (exchange.getIn() instanceof JmsMessage) {

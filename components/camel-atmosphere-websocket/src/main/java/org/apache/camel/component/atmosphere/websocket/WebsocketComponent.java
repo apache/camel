@@ -23,6 +23,9 @@ import java.util.Map;
 import org.apache.camel.component.servlet.ServletComponent;
 import org.apache.camel.component.servlet.ServletEndpoint;
 
+/**
+ * To exchange data with external Websocket clients using Atmosphere
+ */
 public class WebsocketComponent extends ServletComponent {
     private Map<String, WebSocketStore> stores;
     
@@ -31,7 +34,7 @@ public class WebsocketComponent extends ServletComponent {
         super(WebsocketEndpoint.class);
         setServletName("CamelWsServlet");
         
-        this.stores = new HashMap<String, WebSocketStore>();
+        this.stores = new HashMap<>();
     }
     
     @Override

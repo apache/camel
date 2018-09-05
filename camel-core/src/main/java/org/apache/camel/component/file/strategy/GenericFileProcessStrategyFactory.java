@@ -41,44 +41,44 @@ public final class GenericFileProcessStrategyFactory {
         boolean isMove = moveExpression != null || preMoveExpression != null || moveFailedExpression != null;
 
         if (isDelete) {
-            GenericFileDeleteProcessStrategy<T> strategy = new GenericFileDeleteProcessStrategy<T>();
+            GenericFileDeleteProcessStrategy<T> strategy = new GenericFileDeleteProcessStrategy<>();
             strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<T>) getExclusiveReadLockStrategy(params));
             if (preMoveExpression != null) {
-                GenericFileExpressionRenamer<T> renamer = new GenericFileExpressionRenamer<T>();
+                GenericFileExpressionRenamer<T> renamer = new GenericFileExpressionRenamer<>();
                 renamer.setExpression(preMoveExpression);
                 strategy.setBeginRenamer(renamer);
             }
             if (moveFailedExpression != null) {
-                GenericFileExpressionRenamer<T> renamer = new GenericFileExpressionRenamer<T>();
+                GenericFileExpressionRenamer<T> renamer = new GenericFileExpressionRenamer<>();
                 renamer.setExpression(moveFailedExpression);
                 strategy.setFailureRenamer(renamer);
             }
             return strategy;
         } else if (isMove || isNoop) {
-            GenericFileRenameProcessStrategy<T> strategy = new GenericFileRenameProcessStrategy<T>();
+            GenericFileRenameProcessStrategy<T> strategy = new GenericFileRenameProcessStrategy<>();
             strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<T>) getExclusiveReadLockStrategy(params));
             if (!isNoop && moveExpression != null) {
                 // move on commit is only possible if not noop
-                GenericFileExpressionRenamer<T> renamer = new GenericFileExpressionRenamer<T>();
+                GenericFileExpressionRenamer<T> renamer = new GenericFileExpressionRenamer<>();
                 renamer.setExpression(moveExpression);
                 strategy.setCommitRenamer(renamer);
             }
             // both move and noop supports pre move
             if (moveFailedExpression != null) {
-                GenericFileExpressionRenamer<T> renamer = new GenericFileExpressionRenamer<T>();
+                GenericFileExpressionRenamer<T> renamer = new GenericFileExpressionRenamer<>();
                 renamer.setExpression(moveFailedExpression);
                 strategy.setFailureRenamer(renamer);
             }
             // both move and noop supports pre move
             if (preMoveExpression != null) {
-                GenericFileExpressionRenamer<T> renamer = new GenericFileExpressionRenamer<T>();
+                GenericFileExpressionRenamer<T> renamer = new GenericFileExpressionRenamer<>();
                 renamer.setExpression(preMoveExpression);
                 strategy.setBeginRenamer(renamer);
             }
             return strategy;
         } else {
             // default strategy will do nothing
-            GenericFileNoOpProcessStrategy<T> strategy = new GenericFileNoOpProcessStrategy<T>();
+            GenericFileNoOpProcessStrategy<T> strategy = new GenericFileNoOpProcessStrategy<>();
             strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<T>) getExclusiveReadLockStrategy(params));
             return strategy;
         }
@@ -97,7 +97,7 @@ public final class GenericFileProcessStrategyFactory {
             if ("none".equals(readLock) || "false".equals(readLock)) {
                 return null;
             } else if ("rename".equals(readLock)) {
-                GenericFileRenameExclusiveReadLockStrategy<T> readLockStrategy = new GenericFileRenameExclusiveReadLockStrategy<T>();
+                GenericFileRenameExclusiveReadLockStrategy<T> readLockStrategy = new GenericFileRenameExclusiveReadLockStrategy<>();
                 Long timeout = (Long) params.get("readLockTimeout");
                 if (timeout != null) {
                     readLockStrategy.setTimeout(timeout);

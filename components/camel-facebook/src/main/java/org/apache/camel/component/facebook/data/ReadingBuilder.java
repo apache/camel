@@ -40,7 +40,7 @@ public final class ReadingBuilder {
         final LinkedHashMap<String, String> source = (LinkedHashMap<String, String>) field.get(reading);
         // create another reading, and add all fields from source
         Reading copy = new Reading();
-        final LinkedHashMap<String, String> copyMap = new LinkedHashMap<String, String>();
+        final LinkedHashMap<String, String> copyMap = new LinkedHashMap<>();
         copyMap.putAll(source);
         if (skipSinceUtil) {
             copyMap.remove("since");
@@ -112,4 +112,17 @@ public final class ReadingBuilder {
         }
     }
 
+    public static Reading merge(Reading reading, Reading readingUpdate) throws NoSuchFieldException, IllegalAccessException {
+        Reading mergedReading = new Reading();
+
+        Field field = Reading.class.getDeclaredField("parameterMap");
+        field.setAccessible(true);
+        final LinkedHashMap<String, Object> readingParameters = (LinkedHashMap<String, Object>) field.get(reading);
+        readingParameters.putAll((LinkedHashMap<String, Object>) field.get(readingUpdate));
+        field.setAccessible(false);
+
+        setProperties(mergedReading, readingParameters);
+
+        return mergedReading;
+    }
 }

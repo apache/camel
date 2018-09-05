@@ -25,8 +25,11 @@ import org.apache.camel.util.IOHelper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseTestingUtility;
 import org.apache.hadoop.hbase.TableExistsException;
-import org.apache.hadoop.hbase.client.HTable;
+import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.client.Connection;
+import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.client.Table;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -37,7 +40,7 @@ import org.slf4j.LoggerFactory;
 public abstract class CamelHBaseTestSupport extends CamelTestSupport {
 
     //The hbase testing utility has special requirements on the umask.
-    //We hold this value to check if the the minicluster has properly started and tests can be run.
+    //We hold this value to check if the minicluster has properly started and tests can be run.
     protected static Boolean systemReady = true;
 
     protected static HBaseTestingUtility hbaseUtil = new HBaseTestingUtility();
@@ -49,7 +52,6 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
 
     protected String[] key = {"1", "2", "3"};
     protected final String[] family = {"info", "birthdate", "address"};
-    //comlumn[family][column]
     protected final String[][] column = {
         {"id", "firstName", "lastName"},
         {"day", "month", "year"},
@@ -73,7 +75,7 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
         try {
             hbaseUtil.startMiniCluster(numServers);
         } catch (Exception e) {
-            LOG.error("couldn't start HBase cluster.", e);
+            LOG.warn("couldn't start HBase cluster. Test is not started, but passed!", e);
             systemReady = false;
         }
     }
@@ -117,10 +119,12 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
 
     protected void putMultipleRows() throws IOException {
         Configuration configuration = hbaseUtil.getHBaseAdmin().getConfiguration();
-        HTable table = new HTable(configuration, PERSON_TABLE.getBytes());
+        Connection connection = ConnectionFactory.createConnection(configuration);
+        Table table = connection.getTable(TableName.valueOf(PERSON_TABLE.getBytes()));
+
         for (int r = 0; r < key.length; r++) {
             Put put = new Put(key[r].getBytes());
-            put.add(family[0].getBytes(), column[0][0].getBytes(), body[r][0][0].getBytes());
+            put.addColumn(family[0].getBytes(), column[0][0].getBytes(), body[r][0][0].getBytes());
             table.put(put);
         }
 

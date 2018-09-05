@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
@@ -46,6 +48,7 @@ public class RoutePoliciesTest extends ContextTestSupport {
 
     }
 
+    @Test
     public void testCustomPolicies() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

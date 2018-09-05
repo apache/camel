@@ -22,14 +22,12 @@ import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.Map;
 
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Document;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
@@ -38,18 +36,16 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.converter.stream.StreamSourceCache;
 import org.apache.cxf.staxutils.StaxSource;
+import org.apache.cxf.staxutils.StaxUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
     private static final Logger LOG = LoggerFactory.getLogger(CachedCxfPayload.class);
-    private final XmlConverter xml;
 
     public CachedCxfPayload(CxfPayload<T> orig, Exchange exchange, XmlConverter xml) {
-        super(orig.getHeaders(), new ArrayList<Source>(orig.getBodySources()), orig.getNsMap());
+        super(orig.getHeaders(), new ArrayList<>(orig.getBodySources()), orig.getNsMap());
         ListIterator<Source> li = getBodySources().listIterator();
-        this.xml = xml;
         while (li.hasNext()) {
             Source source = li.next();
             XMLStreamReader reader = null;
@@ -67,31 +63,40 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
             if (reader != null) {
                 Map<String, String> nsmap = getNsMap();
                 if (nsmap != null && !(reader instanceof DelegatingXMLStreamReader)) {
-                    source = new StAXSource(new DelegatingXMLStreamReader(reader, nsmap));
+                    reader = new DelegatingXMLStreamReader(reader, nsmap);
                 }
                 CachedOutputStream cos = new CachedOutputStream(exchange);
-                StreamResult sr = new StreamResult(cos);
                 try {
-                    xml.toResult(source, sr);
+                    StaxUtils.copy(reader, cos);
                     li.set(new StreamSourceCache(cos.newStreamCache()));
-                } catch (TransformerException e) {
-                    LOG.error("Transformation failed ", e);
-                } catch (IOException e) {
-                    LOG.error("Cannot Create StreamSourceCache ", e);
+                    // this worked so continue
+                    continue;
+                } catch (Exception e) {
+                    // fallback to trying to read the reader using another way
+                    StreamResult sr = new StreamResult(cos);
+                    try {
+                        xml.toResult(source, sr);
+                        li.set(new StreamSourceCache(cos.newStreamCache()));
+                        // this worked so continue
+                        continue;
+                    } catch (Exception e2) {
+                        // ignore did not work so we will fallback to DOM mode
+                        // this can happens in some rare cases such as reported by CAMEL-11681
+                        LOG.debug("Error during parsing XMLStreamReader from StaxSource/StAXSource. Will fallback to using DOM mode. This exception is ignored", e2);
+                    }
                 }
-            } else if (!(source instanceof DOMSource)) {
-                Document document = exchange.getContext().getTypeConverter().convertTo(Document.class, exchange, source);
-                if (document != null) {
-                    li.set(new DOMSource(document));
-                }
+            }
+            // fallback to using DOM
+            DOMSource document = exchange.getContext().getTypeConverter().tryConvertTo(DOMSource.class, exchange, source);
+            if (document != null) {
+                li.set(document);
             }
         }
     }
 
     private CachedCxfPayload(CachedCxfPayload<T> orig, Exchange exchange) throws IOException {
-        super(orig.getHeaders(), new ArrayList<Source>(orig.getBodySources()), orig.getNsMap());
+        super(orig.getHeaders(), new ArrayList<>(orig.getBodySources()), orig.getNsMap());
         ListIterator<Source> li = getBodySources().listIterator();
-        this.xml = orig.xml;
         while (li.hasNext()) {
             Source source = li.next();
             if (source instanceof StreamCache) {
@@ -119,10 +124,9 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
         if (body instanceof StreamCache) {
             ((StreamCache) body).writeTo(os);
         } else {
-            StreamResult sr = new StreamResult(os);
             try {
-                xml.toResult(body, sr);
-            } catch (TransformerException e) {
+                StaxUtils.copy(body, os);
+            } catch (XMLStreamException e) {
                 throw new IOException("Transformation failed", e);
             }
         }
@@ -146,6 +150,6 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
 
     @Override
     public StreamCache copy(Exchange exchange) throws IOException {
-        return new CachedCxfPayload<T>(this, exchange);
+        return new CachedCxfPayload<>(this, exchange);
     }
 }

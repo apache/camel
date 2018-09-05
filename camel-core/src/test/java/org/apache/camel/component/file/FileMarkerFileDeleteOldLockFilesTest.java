@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -27,18 +30,21 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileMarkerFileDeleteOldLockFilesTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("target/oldlock");
-        template.sendBodyAndHeader("file:target/oldlock", "locked", Exchange.FILE_NAME, "hello.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
-        template.sendBodyAndHeader("file:target/oldlock", "Bye World", Exchange.FILE_NAME, "bye.txt");
     }
 
+    @Test
     public void testDeleteOldLockOnStartup() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Bye World");
         mock.message(0).header(Exchange.FILE_NAME).isEqualTo("bye.txt");
+
+        template.sendBodyAndHeader("file:target/oldlock", "locked", Exchange.FILE_NAME, "hello.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
+        template.sendBodyAndHeader("file:target/oldlock", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         // start the route
         context.startRoute("foo");
@@ -51,7 +57,7 @@ public class FileMarkerFileDeleteOldLockFilesTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/oldlock").routeId("foo").noAutoStartup()
+                from("file:target/oldlock?initialDelay=0&delay=10").routeId("foo").noAutoStartup()
                         .convertBodyTo(String.class).to("mock:result");
             }
         };

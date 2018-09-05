@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.salesforce.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
@@ -46,6 +47,12 @@ public class RestResources extends AbstractDTOBase {
     private String actions;
     private String tabs;
     private String wave;
+    @JsonProperty("async-queries")
+    @XStreamAlias("async-queries")
+    private String asyncQueries;
+    @JsonProperty("exchange-connect")
+    @XStreamAlias("exchange-connect")
+    private String exchangeConnect;
 
     public String getSobjects() {
         return sobjects;
@@ -221,5 +228,21 @@ public class RestResources extends AbstractDTOBase {
 
     public void setWave(String wave) {
         this.wave = wave;
+    }
+
+    public String getAsyncQueries() {
+        return asyncQueries;
+    }
+
+    public void setAsyncQueries(String asyncQueries) {
+        this.asyncQueries = asyncQueries;
+    }
+
+    public String getExchangeConnect() {
+        return exchangeConnect;
+    }
+
+    public void setExchangeConnect(String exchangeConnect) {
+        this.exchangeConnect = exchangeConnect;
     }
 }

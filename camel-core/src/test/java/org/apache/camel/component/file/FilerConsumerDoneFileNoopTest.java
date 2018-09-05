@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -28,18 +31,19 @@ import org.apache.camel.builder.RouteBuilder;
 public class FilerConsumerDoneFileNoopTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/done");
         super.setUp();
     }
 
+    @Test
     public void testDoneFile() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
+        // wait a bit and it should not pickup the written file as there are no done file
+        getMockEndpoint("mock:result").setResultMinimumWaitTime(50);
 
         template.sendBodyAndHeader("file:target/done", "Hello World", Exchange.FILE_NAME, "hello.txt");
-
-        // wait a bit and it should not pickup the written file as there are no done file
-        Thread.sleep(250);
 
         assertMockEndpointsSatisfied();
         resetMocks();
@@ -67,7 +71,7 @@ public class FilerConsumerDoneFileNoopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/done?doneFileName=done&noop=true").to("mock:result");
+                from("file:target/done?initialDelay=0&delay=10&doneFileName=done&noop=true").to("mock:result");
             }
         };
     }

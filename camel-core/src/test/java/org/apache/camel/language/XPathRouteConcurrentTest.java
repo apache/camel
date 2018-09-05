@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class XPathRouteConcurrentTest extends ContextTestSupport {
 
+    @Test
     public void testXPathNotConcurrent() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:other").expectedMessageCount(0);
@@ -33,6 +36,7 @@ public class XPathRouteConcurrentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testXPathTwoMessages() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:other").expectedMessageCount(1);
@@ -43,23 +47,26 @@ public class XPathRouteConcurrentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testXPathTwoMessagesNotSameTime() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:other").expectedMessageCount(1);
 
         template.sendBody("seda:foo", "<person><name>Claus</name></person>");
 
-        Thread.sleep(100);
+        Thread.sleep(10);
 
         template.sendBody("seda:foo", "<person><name>James</name></person>");
 
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNoConcurrent() throws Exception {
         doSendMessages(1);
     }
 
+    @Test
     public void testConcurrent() throws Exception {
         doSendMessages(10);
     }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class CBRConcurrencyIssueTest extends ContextTestSupport {
 
+    @Test
     public void testCBRConcurrencyIssue() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:other").expectedBodiesReceived("Bye World");
@@ -34,6 +37,7 @@ public class CBRConcurrencyIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testCBRConcurrencyManyMessagesIssue() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(50);
         getMockEndpoint("mock:other").expectedMessageCount(150);

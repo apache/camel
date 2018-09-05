@@ -96,6 +96,8 @@ public class BinaryExpression extends BaseSimpleNode {
             return createExpression(leftExp, rightExp, PredicateBuilder.contains(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.NOT_CONTAINS) {
             return createExpression(leftExp, rightExp, PredicateBuilder.not(PredicateBuilder.contains(leftExp, rightExp)));
+        } else if (operator == BinaryOperatorType.CONTAINS_IGNORECASE) {
+            return createExpression(leftExp, rightExp, PredicateBuilder.containsIgnoreCase(leftExp, rightExp));
         } else if (operator == BinaryOperatorType.IS || operator == BinaryOperatorType.NOT_IS) {
             return createIsExpression(expression, leftExp, rightExp);
         } else if (operator == BinaryOperatorType.REGEX || operator == BinaryOperatorType.NOT_REGEX) {
@@ -104,6 +106,10 @@ public class BinaryExpression extends BaseSimpleNode {
             return createInExpression(leftExp, rightExp);
         } else if (operator == BinaryOperatorType.RANGE || operator == BinaryOperatorType.NOT_RANGE) {
             return createRangeExpression(expression, leftExp, rightExp);
+        } else if (operator == BinaryOperatorType.STARTS_WITH) {
+            return createExpression(leftExp, rightExp, PredicateBuilder.startsWith(leftExp, rightExp));
+        } else if (operator == BinaryOperatorType.ENDS_WITH) {
+            return createExpression(leftExp, rightExp, PredicateBuilder.endsWith(leftExp, rightExp));
         }
 
         throw new SimpleParserException("Unknown binary operator " + operator, token.getIndex());
@@ -167,7 +173,7 @@ public class BinaryExpression extends BaseSimpleNode {
                 // from the right hand side expression.
                 // each element on the right hand side must be separated by comma (default for create iterator)
                 Iterator<Object> it = ObjectHelper.createIterator(rightExp.evaluate(exchange, Object.class));
-                List<Object> values = new ArrayList<Object>();
+                List<Object> values = new ArrayList<>();
                 while (it.hasNext()) {
                     values.add(it.next());
                 }

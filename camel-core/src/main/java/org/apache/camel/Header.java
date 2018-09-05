@@ -32,5 +32,9 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ElementType.PARAMETER })
 public @interface Header {
+
+    /**
+     * Name of header
+     */
     String value();
 }

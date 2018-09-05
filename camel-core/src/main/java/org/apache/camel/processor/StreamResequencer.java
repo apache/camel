@@ -69,7 +69,6 @@ import org.slf4j.LoggerFactory;
  */
 public class StreamResequencer extends ServiceSupport implements SequenceSender<Exchange>, AsyncProcessor, Navigate<Processor>, Traceable, IdAware {
 
-    private static final long DELIVERY_ATTEMPT_INTERVAL = 1000L;
     private static final Logger LOG = LoggerFactory.getLogger(StreamResequencer.class);
 
     private String id;
@@ -81,7 +80,8 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
     private Delivery delivery;
     private int capacity;
     private boolean ignoreInvalidExchanges;
-    
+    private long deliveryAttemptInterval = 1000L;
+
     /**
      * Creates a new {@link StreamResequencer} instance.
      * 
@@ -91,7 +91,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
     public StreamResequencer(CamelContext camelContext, Processor processor, SequenceElementComparator<Exchange> comparator, Expression expression) {
         ObjectHelper.notNull(camelContext, "CamelContext");
         this.camelContext = camelContext;
-        this.engine = new ResequencerEngine<Exchange>(comparator);
+        this.engine = new ResequencerEngine<>(comparator);
         this.engine.setSequenceSender(this);
         this.processor = processor;
         this.expression = expression;
@@ -147,6 +147,10 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
 
     public void setTimeout(long timeout) {
         engine.setTimeout(timeout);
+    }
+
+    public void setDeliveryAttemptInterval(long deliveryAttemptInterval) {
+        this.deliveryAttemptInterval = deliveryAttemptInterval;
     }
 
     public boolean isIgnoreInvalidExchanges() {
@@ -252,7 +256,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
         if (!hasNext()) {
             return null;
         }
-        List<Processor> answer = new ArrayList<Processor>(1);
+        List<Processor> answer = new ArrayList<>(1);
         answer.add(processor);
         return answer;
     }
@@ -262,7 +266,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
         private Lock deliveryRequestLock = new ReentrantLock();
         private Condition deliveryRequestCondition = deliveryRequestLock.newCondition();
         
-        public Delivery() {
+        Delivery() {
             super(camelContext.getExecutorServiceManager().resolveThreadName("Resequencer Delivery"));
         }
         
@@ -272,7 +276,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
                 try {
                     deliveryRequestLock.lock();
                     try {
-                        deliveryRequestCondition.await(DELIVERY_ATTEMPT_INTERVAL, TimeUnit.MILLISECONDS);
+                        deliveryRequestCondition.await(deliveryAttemptInterval, TimeUnit.MILLISECONDS);
                     } finally {
                         deliveryRequestLock.unlock();
                     }

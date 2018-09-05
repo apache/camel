@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -28,13 +30,14 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
  */
 public class AggregateCompletionIntervalTest extends ContextTestSupport {
 
+    @Test
     public void testAggregateInterval() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         // by default the use latest aggregation strategy is used so we get message 9
         result.expectedBodiesReceived("Message 9");
 
-        // ensure messages are send after the 1s
-        Thread.sleep(2000);
+        // ensure messages are send after a little bit
+        Thread.sleep(100);
         
         for (int i = 0; i < 10; i++) {
             template.sendBodyAndHeader("seda:start", "Message " + i, "id", "1");
@@ -51,8 +54,8 @@ public class AggregateCompletionIntervalTest extends ContextTestSupport {
                 // START SNIPPET: e1
                 from("seda:start")
                     .aggregate(header("id"), new UseLatestAggregationStrategy())
-                        // trigger completion every 5th second
-                        .completionInterval(5000)
+                        // trigger completion every 2nd second
+                        .completionInterval(2000)
                     .to("mock:result");
                 // END SNIPPET: e1
             }

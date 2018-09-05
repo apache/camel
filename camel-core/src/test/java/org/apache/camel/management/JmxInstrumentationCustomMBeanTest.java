@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -46,6 +48,7 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
         return context;
     }
 
+    @Test
     public void testCustomEndpoint() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -71,6 +74,7 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
         }
     }
 
+    @Test
     public void testManagedEndpoint() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -86,6 +90,7 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
         assertEquals(2, s.size());
     }
 
+    @Test
     public void testCounters() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -101,6 +106,7 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
         verifyCounter(mbsc, new ObjectName(domainName + ":type=routes,*"));
     }
 
+    @Test
     public void testMBeansRegistered() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

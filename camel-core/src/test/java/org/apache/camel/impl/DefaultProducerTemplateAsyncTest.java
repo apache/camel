@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -39,6 +41,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
     private static final AtomicInteger ORDER = new AtomicInteger(0);
 
+    @Test
     public void testRequestAsync() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("Hello");
@@ -54,11 +57,12 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
         long delta = System.currentTimeMillis() - start;
         assertEquals("Hello World", result.getIn().getBody());
-        assertTrue("Should take longer than: " + delta, delta > 250);
+        assertTrue("Should take longer than: " + delta, delta > 50);
 
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendAsyncProcessor() throws Exception {
         Future<Exchange> future = template.asyncSend("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -75,9 +79,10 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
         long delta = System.currentTimeMillis() - start;
         assertEquals("Hello World", result.getIn().getBody());
-        assertTrue("Should take longer than: " + delta, delta > 250);
+        assertTrue("Should take longer than: " + delta, delta > 50);
     }
 
+    @Test
     public void testRequestAsyncBody() throws Exception {
         Future<Object> future = template.asyncRequestBody("direct:start", "Hello");
         long start = System.currentTimeMillis();
@@ -91,9 +96,10 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
         long delta = System.currentTimeMillis() - start;
         assertEquals("Hello World", result);
-        assertTrue("Should take longer than: " + delta, delta > 250);
+        assertTrue("Should take longer than: " + delta, delta > 50);
     }
 
+    @Test
     public void testRequestAsyncBodyType() throws Exception {
         Future<String> future = template.asyncRequestBody("direct:start", "Hello", String.class);
         long start = System.currentTimeMillis();
@@ -107,9 +113,10 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
         long delta = System.currentTimeMillis() - start;
         assertEquals("Hello World", result);
-        assertTrue("Should take longer than: " + delta, delta > 250);
+        assertTrue("Should take longer than: " + delta, delta > 50);
     }
 
+    @Test
     public void testRequestAsyncBodyAndHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -129,9 +136,10 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
         long delta = System.currentTimeMillis() - start;
         assertEquals("Hello World", result);
-        assertTrue("Should take longer than: " + delta, delta > 250);
+        assertTrue("Should take longer than: " + delta, delta > 50);
     }
 
+    @Test
     public void testRequestAsyncBodyAndHeaderType() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -151,16 +159,17 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
         long delta = System.currentTimeMillis() - start;
         assertEquals("Hello World", result);
-        assertTrue("Should take longer than: " + delta, delta > 250);
+        assertTrue("Should take longer than: " + delta, delta > 50);
     }
 
+    @Test
     public void testRequestAsyncBodyAndHeaders() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
         mock.expectedHeaderReceived("foo", 123);
         mock.expectedHeaderReceived("bar", "cheese");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("foo", 123);
         headers.put("bar", "cheese");
         Future<Object> future = template.asyncRequestBodyAndHeaders("direct:start", "Hello", headers);
@@ -177,16 +186,17 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
         long delta = System.currentTimeMillis() - start;
         assertEquals("Hello World", result);
-        assertTrue("Should take longer than: " + delta, delta > 250);
+        assertTrue("Should take longer than: " + delta, delta > 50);
     }
 
+    @Test
     public void testRequestAsyncBodyAndHeadersType() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
         mock.expectedHeaderReceived("foo", 123);
         mock.expectedHeaderReceived("bar", "cheese");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("foo", 123);
         headers.put("bar", "cheese");
         Future<String> future = template.asyncRequestBodyAndHeaders("direct:start", "Hello", headers, String.class);
@@ -203,9 +213,10 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
         long delta = System.currentTimeMillis() - start;
         assertEquals("Hello World", result);
-        assertTrue("Should take longer than: " + delta, delta > 250);
+        assertTrue("Should take longer than: " + delta, delta > 50);
     }
 
+    @Test
     public void testRequestAsyncErrorWhenProcessing() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("Hello");
@@ -225,9 +236,10 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         }
 
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Should take longer than: " + delta, delta > 250);
+        assertTrue("Should take longer than: " + delta, delta > 50);
     }
 
+    @Test
     public void testRequestAsyncBodyErrorWhenProcessing() throws Exception {
         Future<Object> future = template.asyncRequestBody("direct:error", "Hello");
         long start = System.currentTimeMillis();
@@ -244,9 +256,10 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         }
 
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Should take longer than: " + delta, delta > 250);
+        assertTrue("Should take longer than: " + delta, delta > 50);
     }
 
+    @Test
     public void testAsyncCallbackExchangeInOnly() throws Exception {
         ORDER.set(0);
 
@@ -274,6 +287,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertEquals(7, ORDER.get());
     }
 
+    @Test
     public void testAsyncCallbackExchangeInOut() throws Exception {
         ORDER.set(0);
 
@@ -299,6 +313,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertEquals(7, ORDER.get());
     }
 
+    @Test
     public void testAsyncCallbackExchangeInOnlyGetResult() throws Exception {
         ORDER.set(0);
 
@@ -324,6 +339,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertNotNull(reply);
     }
 
+    @Test
     public void testAsyncCallbackExchangeInOutGetResult() throws Exception {
         ORDER.set(0);
 
@@ -348,6 +364,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertEquals("HelloHello", reply.getOut().getBody());
     }
 
+    @Test
     public void testAsyncCallbackBodyInOnly() throws Exception {
         ORDER.set(0);
 
@@ -372,6 +389,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertEquals(7, ORDER.get());
     }
 
+    @Test
     public void testAsyncCallbackBodyInOut() throws Exception {
         ORDER.set(0);
 
@@ -393,6 +411,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertEquals(7, ORDER.get());
     }
 
+    @Test
     public void testAsyncCallbackBodyInOnlyGetResult() throws Exception {
         ORDER.set(0);
 
@@ -416,6 +435,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertEquals(null, reply);
     }
 
+    @Test
     public void testAsyncCallbackBodyInOutGetResult() throws Exception {
         ORDER.set(0);
 
@@ -435,6 +455,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertEquals("HelloHello", reply);
     }
 
+    @Test
     public void testAsyncCallbackInOnlyProcessor() throws Exception {
         ORDER.set(0);
 
@@ -463,6 +484,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertEquals(7, ORDER.get());
     }
 
+    @Test
     public void testAsyncCallbackInOutProcessor() throws Exception {
         ORDER.set(0);
 
@@ -489,6 +511,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertEquals(7, ORDER.get());
     }
 
+    @Test
     public void testAsyncCallbackThreadsInOutProcessor() throws Exception {
         ORDER.set(0);
 
@@ -515,6 +538,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertEquals(7, ORDER.get());
     }
 
+    @Test
     public void testAsyncCallbackExchangeInOnlyWithFailure() throws Exception {
         ORDER.set(0);
 
@@ -539,6 +563,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertEquals(7, ORDER.get());
     }
 
+    @Test
     public void testAsyncCallbackExchangeInOutWithFailure() throws Exception {
         ORDER.set(0);
 
@@ -570,11 +595,11 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .delay(400)
+                        .delay(200).asyncDelayed()
                         .transform(body().append(" World")).to("mock:result");
 
                 from("direct:error")
-                        .delay(400)
+                        .delay(200).asyncDelayed()
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 throw new IllegalArgumentException("Damn forced by unit test");

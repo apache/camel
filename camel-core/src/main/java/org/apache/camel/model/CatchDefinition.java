@@ -31,6 +31,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.processor.CatchProcessor;
+import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
@@ -45,13 +46,13 @@ import org.apache.camel.util.ExpressionToPredicateAdapter;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     @XmlElement(name = "exception")
-    private List<String> exceptions = new ArrayList<String>();
-    @XmlElement(name = "onWhen")
+    private List<String> exceptions = new ArrayList<>();
+    @XmlElement(name = "onWhen") @AsPredicate
     private WhenDefinition onWhen;
-    @XmlElement(name = "handled")
+    @XmlElement(name = "handled") @AsPredicate
     private ExpressionSubElementDefinition handled;
     @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
     @XmlTransient
     private List<Class<? extends Throwable>> exceptionClasses;
     @XmlTransient
@@ -65,13 +66,18 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     }
 
     public CatchDefinition(Class<? extends Throwable> exceptionType) {
-        exceptionClasses = new ArrayList<Class<? extends Throwable>>();
+        exceptionClasses = new ArrayList<>();
         exceptionClasses.add(exceptionType);
     }
 
     @Override
     public String toString() {
         return "DoCatch[ " + getExceptionClasses() + " -> " + getOutputs() + "]";
+    }
+
+    @Override
+    public String getShortName() {
+        return "doCatch";
     }
 
     @Override
@@ -154,7 +160,7 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
      */
     public CatchDefinition exception(Class<? extends Throwable>... exceptions) {
         if (exceptionClasses == null) {
-            exceptionClasses = new ArrayList<Class<? extends Throwable>>();
+            exceptionClasses = new ArrayList<>();
         }
         if (exceptions != null) {
             for (Class<? extends Throwable> exception : exceptions) {
@@ -173,7 +179,7 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
      * @param predicate  predicate that determines true or false
      * @return the builder
      */
-    public CatchDefinition onWhen(Predicate predicate) {
+    public CatchDefinition onWhen(@AsPredicate Predicate predicate) {
         setOnWhen(new WhenDefinition(predicate));
         return this;
     }
@@ -201,7 +207,7 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
      * from a {@link Processor} or use the {@link ProcessorDefinition#throwException(Exception)}
      */
     @Deprecated
-    public CatchDefinition handled(Predicate handled) {
+    public CatchDefinition handled(@AsPredicate Predicate handled) {
         setHandledPolicy(handled);
         return this;
     }
@@ -215,7 +221,7 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
      * from a {@link Processor} or use the {@link ProcessorDefinition#throwException(Exception)}
      */
     @Deprecated
-    public CatchDefinition handled(Expression handled) {
+    public CatchDefinition handled(@AsPredicate Expression handled) {
         setHandledPolicy(ExpressionToPredicateAdapter.toPredicate(handled));
         return this;
     }
@@ -268,7 +274,7 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
         // must use the class resolver from CamelContext to load classes to ensure it can
         // be loaded in all kind of environments such as JEE servers and OSGi etc.
         List<String> list = getExceptions();
-        List<Class<? extends Throwable>> answer = new ArrayList<Class<? extends Throwable>>(list.size());
+        List<Class<? extends Throwable>> answer = new ArrayList<>(list.size());
         for (String name : list) {
             Class<Throwable> type = context.getClassResolver().resolveMandatoryClass(name, Throwable.class);
             answer.add(type);

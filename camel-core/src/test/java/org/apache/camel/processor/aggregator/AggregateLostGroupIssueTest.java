@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -32,6 +34,7 @@ public class AggregateLostGroupIssueTest extends ContextTestSupport {
 
     private int messageIndex;
 
+    @Test
     public void testAggregateLostGroupIssue() throws Exception {
         messageIndex = 0;
 
@@ -48,7 +51,7 @@ public class AggregateLostGroupIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer://foo?period=100&delay=1000").startupOrder(2)
+                from("timer://foo?period=10&delay=0").startupOrder(2)
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 exchange.getOut().setBody(messageIndex++);
@@ -68,7 +71,7 @@ public class AggregateLostGroupIssueTest extends ContextTestSupport {
                         oldExchange.getIn().setBody(oldBody + "," + newBody);
                         return oldExchange;
                     }
-                }).completionSize(10).completionTimeout(2000L)
+                }).completionSize(10).completionTimeout(200).completionTimeoutCheckerInterval(10)
                         .to("log:aggregated")
                         .to("mock:result");
             }

@@ -38,6 +38,7 @@ public class JmsComponentTest extends CamelTestSupport {
         assertEquals("Bye World", reply);
 
         assertEquals(true, endpoint.isAcceptMessagesWhileStopping());
+        assertEquals(true, endpoint.isAllowReplyManagerQuickStop());
         assertEquals(true, endpoint.isAlwaysCopyMessage());
         assertEquals(1, endpoint.getAcknowledgementMode());
         assertEquals(true, endpoint.isAutoStartup());
@@ -47,7 +48,7 @@ public class JmsComponentTest extends CamelTestSupport {
         assertEquals(true, endpoint.isDeliveryPersistent());
         assertEquals(true, endpoint.isExplicitQosEnabled());
         assertEquals(20, endpoint.getIdleTaskExecutionLimit());
-        assertEquals(21, endpoint.getIdleConsumerLimit());        
+        assertEquals(21, endpoint.getIdleConsumerLimit());
         assertEquals(5, endpoint.getMaxConcurrentConsumers());
         assertEquals(90, endpoint.getMaxMessagesPerTask());
         assertEquals(3, endpoint.getPriority());
@@ -65,6 +66,7 @@ public class JmsComponentTest extends CamelTestSupport {
         JmsComponent comp = jmsComponentAutoAcknowledge(connectionFactory);
 
         comp.setAcceptMessagesWhileStopping(true);
+        comp.setAllowReplyManagerQuickStop(true);
         comp.setAlwaysCopyMessage(true);
         comp.setAcknowledgementMode(1);
         comp.setAutoStartup(true);

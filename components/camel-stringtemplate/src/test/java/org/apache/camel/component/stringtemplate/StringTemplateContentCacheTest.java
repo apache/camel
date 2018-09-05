@@ -105,7 +105,7 @@ public class StringTemplateContentCacheTest extends CamelTestSupport {
         // clear the cache using jmx
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
         Set<ObjectName> objNameSet = mbeanServer.queryNames(new ObjectName("org.apache.camel:type=endpoints,name=\"string-template:*contentCache=true*\",*"), null);
-        ObjectName managedObjName = new ArrayList<ObjectName>(objNameSet).get(0);        
+        ObjectName managedObjName = new ArrayList<>(objNameSet).get(0);        
         mbeanServer.invoke(managedObjName, "clearContentCache", null, null);
            
         mock.reset();

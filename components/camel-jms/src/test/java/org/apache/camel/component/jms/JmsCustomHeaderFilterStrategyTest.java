@@ -43,7 +43,7 @@ public class JmsCustomHeaderFilterStrategyTest extends CamelTestSupport {
         mock.message(0).header("foo").isEqualTo("bar");
         mock.message(0).header("skipme").isNull();
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("foo", "bar");
         headers.put("skipme", 123);
 

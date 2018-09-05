@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.io.NotSerializableException;
 import java.io.Serializable;
 
@@ -31,6 +33,7 @@ import static org.apache.camel.util.ObjectHelper.equal;
  */
 public class DataFormatTest extends ContextTestSupport {
 
+    @Test
     public void testMarshalThenUnmarshalBean() throws Exception {
         MyBean bean = new MyBean();
         bean.name = "James";
@@ -44,6 +47,7 @@ public class DataFormatTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testMarshalNonSerializableBean() throws Exception {
         MyNonSerializableBean bean = new MyNonSerializableBean("James");
         try {

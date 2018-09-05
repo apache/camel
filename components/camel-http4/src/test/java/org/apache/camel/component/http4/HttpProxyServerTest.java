@@ -24,9 +24,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.http4.handler.BasicValidationHandler;
 import org.apache.camel.component.http4.handler.HeaderValidationHandler;
-import org.apache.camel.component.http4.handler.ProxyAuthenticationValidationHandler;
 import org.apache.camel.util.URISupport;
 import org.apache.commons.codec.BinaryDecoder;
 import org.apache.commons.codec.DecoderException;
@@ -42,8 +40,6 @@ import org.apache.http.ProtocolException;
 import org.apache.http.auth.AUTH;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.apache.http.localserver.RequestBasicAuth;
-import org.apache.http.localserver.ResponseBasicUnauthorized;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpProcessor;
 import org.apache.http.protocol.ImmutableHttpProcessor;
@@ -57,13 +53,13 @@ import org.junit.Test;
  * @version 
  */
 public class HttpProxyServerTest extends BaseHttpTest {
-    
+
     private HttpServer proxy;
-    
+
     @Before
     @Override
     public void setUp() throws Exception {
-        Map<String, String> expectedHeaders = new HashMap<String, String>();
+        Map<String, String> expectedHeaders = new HashMap<>();
         expectedHeaders.put("Proxy-Connection", "Keep-Alive");
         proxy = ServerBootstrap.bootstrap().
                 setHttpProcessor(getBasicHttpProcessor()).
@@ -86,32 +82,30 @@ public class HttpProxyServerTest extends BaseHttpTest {
             proxy.stop();
         }
     }
-    
+
     @Override
     protected HttpProcessor getBasicHttpProcessor() {
-        List<HttpRequestInterceptor> requestInterceptors = new ArrayList<HttpRequestInterceptor>();
+        List<HttpRequestInterceptor> requestInterceptors = new ArrayList<>();
         requestInterceptors.add(new RequestProxyBasicAuth());
-        List<HttpResponseInterceptor> responseInterceptors = new ArrayList<HttpResponseInterceptor>();
+        List<HttpResponseInterceptor> responseInterceptors = new ArrayList<>();
         responseInterceptors.add(new ResponseContent());
         responseInterceptors.add(new ResponseProxyBasicUnauthorized());
         ImmutableHttpProcessor httpproc = new ImmutableHttpProcessor(requestInterceptors, responseInterceptors);
         return httpproc;
     }
 
-    
     @Test
     public void testDifferentHttpProxyConfigured() throws Exception {
-        HttpEndpoint http1 = context.getEndpoint("http4://www.google.com?proxyAuthHost=myproxy&proxyAuthPort=1234", HttpEndpoint.class);
-        HttpEndpoint http2 = context.getEndpoint("http4://www.google.com?test=parameter&proxyAuthHost=myotherproxy&proxyAuthPort=2345", HttpEndpoint.class);
+        HttpEndpoint http1 = context.getEndpoint("http4://www.google.com?proxyAuthHost=www.myproxy.com&proxyAuthPort=1234", HttpEndpoint.class);
+        HttpEndpoint http2 = context.getEndpoint("http4://www.google.com?test=parameter&proxyAuthHost=www.otherproxy.com&proxyAuthPort=2345", HttpEndpoint.class);
         // HttpClientBuilder doesn't support get the configuration here
         
         //As the endpointUri is recreated, so the parameter could be in different place, so we use the URISupport.normalizeUri
-        assertEquals("Get a wrong endpoint uri of http1", "http4://www.google.com?proxyAuthHost=myproxy&proxyAuthPort=1234", URISupport.normalizeUri(http1.getEndpointUri()));
-        assertEquals("Get a wrong endpoint uri of http2", "http4://www.google.com?proxyAuthHost=myotherproxy&proxyAuthPort=2345&test=parameter", URISupport.normalizeUri(http2.getEndpointUri()));
+        assertEquals("Get a wrong endpoint uri of http1", "http4://www.google.com?proxyAuthHost=www.myproxy.com&proxyAuthPort=1234", URISupport.normalizeUri(http1.getEndpointUri()));
+        assertEquals("Get a wrong endpoint uri of http2", "http4://www.google.com?proxyAuthHost=www.otherproxy.com&proxyAuthPort=2345&test=parameter", URISupport.normalizeUri(http2.getEndpointUri()));
 
         assertEquals("Should get the same EndpointKey", http1.getEndpointKey(), http2.getEndpointKey());
     }
-    
 
     @Test
     public void httpGetWithProxyAndWithoutUser() throws Exception {
@@ -128,14 +122,14 @@ public class HttpProxyServerTest extends BaseHttpTest {
         return proxy.getInetAddress().getHostName();
     }
 
-    private int getProxyPort() {
-        return proxy.getLocalPort();
+    private String getProxyPort() {
+        return "" + proxy.getLocalPort();
     }
-    
-    class RequestProxyBasicAuth implements HttpRequestInterceptor {
+
+    private static class RequestProxyBasicAuth implements HttpRequestInterceptor {
         public void process(final HttpRequest request, final HttpContext context) throws HttpException, IOException {
             String auth = null;
-            
+
             String requestLine = request.getRequestLine().toString();
             // assert we set a write GET URI
             if (requestLine.contains("http4://localhost")) {
@@ -170,7 +164,7 @@ public class HttpProxyServerTest extends BaseHttpTest {
         }
     }
 
-    class ResponseProxyBasicUnauthorized implements HttpResponseInterceptor {
+    private static class ResponseProxyBasicUnauthorized implements HttpResponseInterceptor {
         public void process(final HttpResponse response, final HttpContext context) throws HttpException, IOException {
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED) {
                 response.addHeader(AUTH.PROXY_AUTH, "Basic realm=\"test realm\"");

@@ -16,15 +16,20 @@
  */
 package org.apache.camel.component.hipchat;
 
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 
 @UriParams
 public class HipchatConfiguration {
-    @UriPath(defaultValue = HipchatConstants.DEFAULT_PROTOCOL)
-    private String protocol = HipchatConstants.DEFAULT_PROTOCOL;
-    @UriPath(defaultValue = HipchatConstants.DEFAULT_HOST)
+    @UriPath
+    @Metadata(required = "true")
+    private String protocol;
+    @UriPath
+    @Metadata(required = "true")
     private String host = HipchatConstants.DEFAULT_HOST;
     @UriPath(defaultValue = "" + HipchatConstants.DEFAULT_PORT)
     private Integer port = HipchatConstants.DEFAULT_PORT;
@@ -32,13 +37,15 @@ public class HipchatConfiguration {
     private String authToken;
     @UriParam
     private String consumeUsers;
+    @UriParam(description = "The CloseableHttpClient reference from registry to be used during API HTTP requests.", defaultValue = "CloseableHttpClient default from HttpClient library")
+    private CloseableHttpClient httpClient = HttpClients.createDefault();
 
     public String getHost() {
         return host;
     }
 
     /**
-     * The host for the hipchat server. Is by default api.hipchat.com
+     * The host for the hipchat server, such as api.hipchat.com
      */
     public void setHost(String host) {
         this.host = host;
@@ -60,7 +67,7 @@ public class HipchatConfiguration {
     }
 
     /**
-     * The protocol for the hipchat server. Is by default http.
+     * The protocol for the hipchat server, such as http.
      */
     public void setProtocol(String protocol) {
         this.protocol = protocol;
@@ -100,5 +107,13 @@ public class HipchatConfiguration {
 
     public String withAuthToken(String urlPath) {
         return urlPath + HipchatApiConstants.AUTH_TOKEN_PREFIX + getAuthToken();
+    }
+
+    public CloseableHttpClient getHttpClient() {
+        return httpClient;
+    }
+
+    public void setHttpClient(CloseableHttpClient httpClient) {
+        this.httpClient = httpClient;
     }
 }

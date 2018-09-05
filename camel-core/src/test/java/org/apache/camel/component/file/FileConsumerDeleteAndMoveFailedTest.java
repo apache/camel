@@ -30,7 +30,7 @@ public class FileConsumerDeleteAndMoveFailedTest extends FileConsumerDeleteAndFa
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/failed?delete=true&moveFailed=error")
+                from("file://target/failed?delete=true&moveFailed=error&initialDelay=0&delay=10")
                     .setBody(simple("${body} IS processed!"))
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {

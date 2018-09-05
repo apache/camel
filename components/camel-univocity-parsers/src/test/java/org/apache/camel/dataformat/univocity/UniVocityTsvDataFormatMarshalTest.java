@@ -121,7 +121,7 @@ public final class UniVocityTsvDataFormatMarshalTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        final Map<String, DataFormat> tests = new HashMap<String, DataFormat>();
+        final Map<String, DataFormat> tests = new HashMap<>();
 
         // Default writing of TSV
         tests.put("default", new UniVocityTsvDataFormat());

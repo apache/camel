@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.component.smpp;
+import org.junit.Before;
+import org.junit.After;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import org.jsmpp.bean.Alphabet;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -47,8 +48,8 @@ public class SmppUtilsTest {
 
     @Test
     public void formatTime() {
-        assertEquals("-300101000000000-", SmppUtils.formatTime(new Date(0L)));
-        assertEquals("-300101024640000-", SmppUtils.formatTime(new Date(10000000L)));
+        assertEquals("-300101000000000+", SmppUtils.formatTime(new Date(0L)));
+        assertEquals("-300101024640000+", SmppUtils.formatTime(new Date(10000000L)));
     }
     
     @Test
@@ -63,25 +64,5 @@ public class SmppUtilsTest {
         assertEquals(10, calendar.get(Calendar.HOUR));
         assertEquals(10, calendar.get(Calendar.MINUTE));
         assertEquals(0, calendar.get(Calendar.SECOND));
-    }
-    
-    @Test
-    public void parseAlphabetFromDataCoding() {
-        assertEquals(Alphabet.ALPHA_DEFAULT, SmppUtils.parseAlphabetFromDataCoding((byte) 0x00));
-        assertEquals(Alphabet.ALPHA_DEFAULT, SmppUtils.parseAlphabetFromDataCoding((byte) 0x01));
-        assertEquals(Alphabet.ALPHA_DEFAULT, SmppUtils.parseAlphabetFromDataCoding((byte) 0x03));
-
-        assertEquals(Alphabet.ALPHA_8_BIT, SmppUtils.parseAlphabetFromDataCoding((byte) 0x02));
-        assertEquals(Alphabet.ALPHA_8_BIT, SmppUtils.parseAlphabetFromDataCoding((byte) 0x04));
-        assertEquals(Alphabet.ALPHA_8_BIT, SmppUtils.parseAlphabetFromDataCoding((byte) 0x05));
-        assertEquals(Alphabet.ALPHA_8_BIT, SmppUtils.parseAlphabetFromDataCoding((byte) 0x07));
-
-        assertEquals(Alphabet.ALPHA_UCS2, SmppUtils.parseAlphabetFromDataCoding((byte) 0x08));
-        assertEquals(Alphabet.ALPHA_UCS2, SmppUtils.parseAlphabetFromDataCoding((byte) 0x09));
-        assertEquals(Alphabet.ALPHA_UCS2, SmppUtils.parseAlphabetFromDataCoding((byte) 0x0b));
-
-        assertEquals(Alphabet.ALPHA_RESERVED, SmppUtils.parseAlphabetFromDataCoding((byte) 0x0c));
-        assertEquals(Alphabet.ALPHA_RESERVED, SmppUtils.parseAlphabetFromDataCoding((byte) 0x0d));
-        assertEquals(Alphabet.ALPHA_RESERVED, SmppUtils.parseAlphabetFromDataCoding((byte) 0xff));
     }
 }

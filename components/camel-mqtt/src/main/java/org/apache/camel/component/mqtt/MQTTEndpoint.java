@@ -21,6 +21,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -58,17 +59,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * MQTT endpoint
+ * Component for communicating with MQTT M2M message brokers using FuseSource MQTT Client.
  */
-@UriEndpoint(scheme = "mqtt", title = "MQTT", syntax = "mqtt:name", consumerClass = MQTTConsumer.class, label = "messaging")
-public class MQTTEndpoint extends DefaultEndpoint {
+@UriEndpoint(firstVersion = "2.10.0", scheme = "mqtt", title = "MQTT", syntax = "mqtt:name", consumerClass = MQTTConsumer.class, label = "messaging,iot")
+public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(MQTTEndpoint.class);
 
     private static final int PUBLISH_MAX_RECONNECT_ATTEMPTS = 3;
 
     private CallbackConnection connection;
     private volatile boolean connected;
-    private final List<MQTTConsumer> consumers = new CopyOnWriteArrayList<MQTTConsumer>();
+    private final List<MQTTConsumer> consumers = new CopyOnWriteArrayList<>();
 
     @UriPath @Metadata(required = "true")
     private String name;
@@ -230,6 +231,12 @@ public class MQTTEndpoint extends DefaultEndpoint {
     }
 
     protected void createConnection() {
+        if (connection != null) {
+            // In connect(), in the connection.connect() callback, onFailure() doesn't seem to ever be called, so forcing the disconnect here.
+            // Without this, the fusesource MQTT client seems to be holding the old connection object, and connection contention can ensue.
+            connection.disconnect(null);
+        }
+
         connection = configuration.callbackConnection();
 
         connection.listener(new Listener() {
@@ -277,31 +284,33 @@ public class MQTTEndpoint extends DefaultEndpoint {
         });
     }
 
+    @Override
     protected void doStop() throws Exception {
         super.doStop();
 
-        if (connection != null) {
-            final Promise<Void> promise = new Promise<Void>();
+        if (connection != null && connected) {
+            final Promise<Void> promise = new Promise<>();
             connection.getDispatchQueue().execute(new Task() {
                 @Override
                 public void run() {
                     connection.disconnect(new Callback<Void>() {
                         public void onSuccess(Void value) {
+                            connected = false;
                             promise.onSuccess(value);
                         }
-
                         public void onFailure(Throwable value) {
                             promise.onFailure(value);
                         }
                     });
                 }
             });
+
             promise.await(configuration.getDisconnectWaitInSeconds(), TimeUnit.SECONDS);
         }
     }
 
     void connect() throws Exception {
-        final Promise<Object> promise = new Promise<Object>();
+        final Promise<Object> promise = new Promise<>();
         connection.connect(new Callback<Void>() {
             public void onSuccess(Void value) {
                 LOG.debug("Connected to {}", configuration.getHost());
@@ -328,7 +337,7 @@ public class MQTTEndpoint extends DefaultEndpoint {
 
             }
 
-            public void onFailure(Throwable value) {
+            public void onFailure(Throwable value) {  // this doesn't appear to ever be called
                 LOG.warn("Failed to connect to " + configuration.getHost() + " due " + value.getMessage());
                 promise.onFailure(value);
                 connection.disconnect(null);

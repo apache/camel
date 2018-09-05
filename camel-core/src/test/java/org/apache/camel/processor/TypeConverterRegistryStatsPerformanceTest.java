@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -34,6 +36,7 @@ public class TypeConverterRegistryStatsPerformanceTest extends ContextTestSuppor
         return context;
     }
 
+    @Test
     public void testTransform() throws Exception {
         long noop = context.getTypeConverterRegistry().getStatistics().getNoopCounter();
         long attempt = context.getTypeConverterRegistry().getStatistics().getAttemptCounter();

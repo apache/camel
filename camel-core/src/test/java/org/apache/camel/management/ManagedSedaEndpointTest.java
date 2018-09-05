@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -26,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ManagedSedaEndpointTest extends ManagementTestSupport {
 
+    @Test
     public void testSedaEndpoint() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -67,6 +70,11 @@ public class ManagedSedaEndpointTest extends ManagementTestSupport {
         assertEquals(1, size2.longValue());
 
         String out = (String) mbeanServer.invoke(name, "browseExchange", new Object[]{0}, new String[]{"java.lang.Integer"});
+        assertNotNull(out);
+        // message body is not dumped when browsing exchange
+        assertFalse(out.contains("Hi World"));
+
+        out = (String) mbeanServer.invoke(name, "browseMessageBody", new Object[]{0}, new String[]{"java.lang.Integer"});
         assertNotNull(out);
         assertTrue(out.contains("Hi World"));
 

@@ -40,14 +40,14 @@ import org.apache.camel.util.ObjectHelper;
  * If you do not specify a list any exception will cause fail over to occur.
  * This balancer uses the same strategy for matching exceptions as the Exception Clause does for the onException.
  */
-@Metadata(label = "configuration,loadbalance")
+@Metadata(label = "eip,routing,loadbalance")
 @XmlRootElement(name = "failover")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
     @XmlTransient
-    private List<Class<?>> exceptionTypes = new ArrayList<Class<?>>();
+    private List<Class<?>> exceptionTypes = new ArrayList<>();
     @XmlElement(name = "exception")
-    private List<String> exceptions = new ArrayList<String>();
+    private List<String> exceptions = new ArrayList<>();
     @XmlAttribute
     private Boolean roundRobin;
     @XmlAttribute
@@ -62,7 +62,7 @@ public class FailoverLoadBalancerDefinition extends LoadBalancerDefinition {
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
         FailOverLoadBalancer answer;
 
-        List<Class<?>> classes = new ArrayList<Class<?>>();
+        List<Class<?>> classes = new ArrayList<>();
         if (!exceptionTypes.isEmpty()) {
             classes.addAll(exceptionTypes);
         } else if (!exceptions.isEmpty()) {

@@ -32,6 +32,8 @@ public interface DdbConstants {
     // String EXACT_COUNT = "CamelAwsDdbExactCount";
     // Removed from DynamoDB v1 to v2
     // String HASH_KEY_VALUE = "CamelAwsDdbHashKeyValue";
+    // Added INDEX_NAME for querying secondary indexes
+    String INDEX_NAME = "CamelAwsDdbIndexName";
     String ITEM = "CamelAwsDdbItem";
     String ITEMS = "CamelAwsDdbItems";
     String ITEM_COUNT = "CamelAwsDdbTableItemCount";

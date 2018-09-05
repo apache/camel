@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.lang.reflect.Method;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,10 +31,11 @@ import org.apache.camel.impl.DefaultMessage;
  */
 public class BeanInfoOverloadedTest extends ContextTestSupport {
 
+    @Test
     public void testBeanInfoOverloaded() throws Exception {
         BeanInfo beanInfo = new BeanInfo(context, Bean.class);
 
-        Message message = new DefaultMessage();
+        Message message = new DefaultMessage(context);
         message.setBody(new RequestB());
         Exchange exchange = new DefaultExchange(context);
         exchange.setIn(message);

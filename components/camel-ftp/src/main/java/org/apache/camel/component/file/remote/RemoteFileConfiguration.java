@@ -46,37 +46,37 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     private int port;
     @UriPath(name = "directoryName")
     private String directoryName;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String username;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String password;
     @UriParam
     private boolean binary;
     @UriParam
     private boolean passiveMode;
-    @UriParam(defaultValue = "10000")
+    @UriParam(defaultValue = "10000", label = "advanced")
     private int connectTimeout = 10000;
-    @UriParam(defaultValue = "30000")
+    @UriParam(defaultValue = "30000", label = "advanced")
     private int timeout = 30000;
-    @UriParam(defaultValue = "300000")
+    @UriParam(defaultValue = "300000", label = "advanced")
     private int soTimeout = 300000;
-    @UriParam(defaultValue = "32768")
+    @UriParam(defaultValue = "32768", label = "consumer,advanced")
     private int receiveBufferSize = 32 * 1024;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean throwExceptionOnConnectFailed;
-    @UriParam
+    @UriParam(label = "advanced")
     private String siteCommand;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", label = "advanced")
     private boolean stepwise = true;
     @UriParam(defaultValue = "UNIX")
     private PathSeparator separator = PathSeparator.UNIX;
-    @UriParam
+    @UriParam(label = "consumer")
     private boolean streamDownload;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", label = "consumer,advanced")
     private boolean useList = true;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private boolean ignoreFileNotFoundOrPermissionError;
-    @UriParam(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean sendNoop = true;
 
     public RemoteFileConfiguration() {
@@ -295,9 +295,7 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     /**
      * Sets optional site command(s) to be executed after successful login.
      * <p/>
-     * Multiple site commands can be separated using a new line character (\n).
-     *
-     * @param siteCommand the site command(s).
+     * Multiple site commands can be separated using a new line character.
      */
     public void setSiteCommand(String siteCommand) {
         this.siteCommand = siteCommand;
@@ -358,6 +356,9 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
      * Default is <tt>true</tt>. In some use cases you may want to download
      * a specific file and are not allowed to use the LIST command, and therefore
      * you can set this option to <tt>false</tt>.
+     * Notice when using this option, then the specific file to download does <b>not</b>
+     * include meta-data information such as file size, timestamp, permissions etc, because
+     * those information is only possible to retrieve when LIST command is in use.
      */
     public void setUseList(boolean useList) {
         this.useList = useList;
@@ -368,9 +369,9 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     }
 
     /**
-     * Whether to ignore when trying to download a file which does not exist or due to permission error.
+     * Whether to ignore when (trying to list files in directories or when downloading a file), which does not exist or due to permission error.
      * <p/>
-     * By default when a file does not exists or insufficient permission, then an exception is thrown.
+     * By default when a directory or file does not exists or insufficient permission, then an exception is thrown.
      * Setting this option to <tt>true</tt> allows to ignore that instead.
      */
     public void setIgnoreFileNotFoundOrPermissionError(boolean ignoreFileNotFoundOrPermissionError) {

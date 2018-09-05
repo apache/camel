@@ -24,20 +24,9 @@ import org.apache.camel.component.github.services.MockRepositoryService;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
 
 public abstract class GitHubComponentTestBase extends CamelTestSupport {
-    public static final String USERNAME = "someguy";
-    public static final String PASSWORD = "apassword";
-    public static final String REPO_OWNER = "anotherguy";
-    public static final String REPO_NAME = "somerepo";
-    public static final String GITHUB_CREDENTIALS_STRING = "username=" + USERNAME + "&password=" + PASSWORD + "&repoOwner=" + REPO_OWNER + "&repoName=" + REPO_NAME;
-
-    @Rule
-    public TestName testName = new TestName();
 
     protected MockCommitService commitService;
     protected MockRepositoryService repositoryService;
@@ -51,24 +40,18 @@ public abstract class GitHubComponentTestBase extends CamelTestSupport {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
         commitService = new MockCommitService();
-        registry.bind("githubCommitService", commitService);
+        registry.bind(GitHubConstants.GITHUB_COMMIT_SERVICE, commitService);
 
         repositoryService = new MockRepositoryService();
-        registry.bind("githubRepositoryService", repositoryService);
+        registry.bind(GitHubConstants.GITHUB_REPOSITORY_SERVICE, repositoryService);
 
         pullRequestService = new MockPullRequestService();
-        registry.bind("githubPullRequestService", pullRequestService);
+        registry.bind(GitHubConstants.GITHUB_PULL_REQUEST_SERVICE, pullRequestService);
 
         issueService = new MockIssueService(pullRequestService);
-        registry.bind("githbIssueService", issueService);
+        registry.bind(GitHubConstants.GITHUB_ISSUE_SERVICE, issueService);
 
         return registry;
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        log.debug("Starting test " + testName.getMethodName());
     }
 
     @Test

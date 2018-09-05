@@ -104,7 +104,7 @@ public class FileComponent extends GenericFileComponent<File> implements Endpoin
             prefix = "";
         }
         File[] list = file.listFiles();
-        List<String> answer = new ArrayList<String>();
+        List<String> answer = new ArrayList<>();
         for (File aFile : list) {
             String name = aFile.getName();
             if (pattern.length() == 0 || name.contains(pattern)) {

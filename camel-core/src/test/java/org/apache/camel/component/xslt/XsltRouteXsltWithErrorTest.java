@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xslt;
 
+import org.junit.Test;
+
 import javax.xml.transform.TransformerConfigurationException;
 
 import org.apache.camel.ContextTestSupport;
@@ -30,6 +32,7 @@ public class XsltRouteXsltWithErrorTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testXsltWithError() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

@@ -16,34 +16,29 @@
  */
 package org.apache.camel.builder.xml;
 
+import org.junit.Test;
+
 import java.net.URL;
 import javax.xml.transform.ErrorListener;
-import javax.xml.transform.TransformerException;
 
-import junit.framework.TestCase;
-import org.easymock.EasyMock;
+import org.junit.Assert;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
-public class XsltTestErrorListenerTest extends TestCase {
+public class XsltTestErrorListenerTest extends Assert {
 
     private XsltBuilder xsltBuilder = new XsltBuilder();
-    private ErrorListener errorListener = createMock(ErrorListener.class);
+    private ErrorListener errorListener = mock(ErrorListener.class);
 
+    @Test
     public void testErrorListener() throws Exception {
         // Xalan transformer cannot work as expected, so we just skip the test
-        if (xsltBuilder.isXalanTransformer(xsltBuilder.getConverter().getTransformerFactory().newTransformer())) {
+        if (xsltBuilder.getConverter().getTransformerFactory().getClass().getName().startsWith("org.apache.xalan")) {
             return;
         }
-        errorListener.error(EasyMock.<TransformerException>anyObject());
-        expectLastCall().atLeastOnce();
-
-        errorListener.fatalError(EasyMock.<TransformerException>anyObject());
-        expectLastCall().once();
-        replay(errorListener);
 
         URL styleSheet = getClass().getResource("example-with-errors.xsl");
         try {
@@ -53,6 +48,7 @@ public class XsltTestErrorListenerTest extends TestCase {
         } catch (Exception ex) {
             // expected
         }
-        verify(errorListener);
+        verify(errorListener, atLeastOnce()).error(any());
+        verify(errorListener).fatalError(any());
     }
 }

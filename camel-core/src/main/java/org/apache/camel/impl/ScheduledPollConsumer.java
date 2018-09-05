@@ -27,7 +27,7 @@ import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.PollingConsumerPollingStrategy;
 import org.apache.camel.Processor;
-import org.apache.camel.SuspendableService;
+import org.apache.camel.Suspendable;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.apache.camel.util.IntrospectionSupport;
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A useful base class for any consumer which is polling based
  */
-public abstract class ScheduledPollConsumer extends DefaultConsumer implements Runnable, SuspendableService, PollingConsumerPollingStrategy {
+public abstract class ScheduledPollConsumer extends DefaultConsumer implements Runnable, Suspendable, PollingConsumerPollingStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(ScheduledPollConsumer.class);
 
     private ScheduledPollConsumerScheduler scheduler;
@@ -422,12 +422,12 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         scheduler.scheduleTask(this);
 
         // configure scheduler with options from this consumer
-        Map<String, Object> properties = new HashMap<String, Object>();
+        Map<String, Object> properties = new HashMap<>();
         IntrospectionSupport.getProperties(this, properties, null);
         IntrospectionSupport.setProperties(getEndpoint().getCamelContext().getTypeConverter(), scheduler, properties);
         if (schedulerProperties != null && !schedulerProperties.isEmpty()) {
             // need to use a copy in case the consumer is restarted so we keep the properties
-            Map<String, Object> copy = new HashMap<String, Object>(schedulerProperties);
+            Map<String, Object> copy = new HashMap<>(schedulerProperties);
             IntrospectionSupport.setProperties(getEndpoint().getCamelContext().getTypeConverter(), scheduler, copy);
             if (copy.size() > 0) {
                 throw new FailedToCreateConsumerException(getEndpoint(), "There are " + copy.size()

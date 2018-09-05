@@ -24,13 +24,13 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import com.lmax.disruptor.InsufficientCapacityException;
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.ServiceStatus;
 import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
@@ -43,18 +43,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An implementation of the <a href="https://github.com/sirchia/camel-disruptor">Disruptor component</a>
- * for asynchronous SEDA exchanges on an
- * <a href="https://github.com/LMAX-Exchange/disruptor">LMAX Disruptor</a> within a CamelContext
+ * The disruptor component provides asynchronous SEDA behavior using LMAX Disruptor.
+ *
+ * This component works much as the standard SEDA Component, but utilizes a Disruptor
+ * instead of a BlockingQueue utilized by the standard SEDA.
  */
 @ManagedResource(description = "Managed Disruptor Endpoint")
-@UriEndpoint(scheme = "disruptor,disruptor-vm", title = "Disruptor,Disruptor VM", syntax = "disruptor:name", consumerClass = DisruptorConsumer.class, label = "endpoint")
-public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
+@UriEndpoint(firstVersion = "2.12.0", scheme = "disruptor,disruptor-vm", title = "Disruptor,Disruptor VM", syntax = "disruptor:name", consumerClass = DisruptorConsumer.class, label = "endpoint")
+public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint, MultipleConsumersSupport {
     public static final String DISRUPTOR_IGNORE_EXCHANGE = "disruptor.ignoreExchange";
     private static final Logger LOGGER = LoggerFactory.getLogger(DisruptorEndpoint.class);
 
-    private final Set<DisruptorProducer> producers = new CopyOnWriteArraySet<DisruptorProducer>();
-    private final Set<DisruptorConsumer> consumers = new CopyOnWriteArraySet<DisruptorConsumer>();
+    private final Set<DisruptorProducer> producers = new CopyOnWriteArraySet<>();
+    private final Set<DisruptorConsumer> consumers = new CopyOnWriteArraySet<>();
     private final DisruptorReference disruptorReference;
 
     @UriPath(description = "Name of queue") @Metadata(required = "true")
@@ -67,6 +68,8 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
     @UriParam(label = "producer", defaultValue = "30000")
     private long timeout = 30000;
+    @UriParam(defaultValue = "" + DisruptorComponent.DEFAULT_BUFFER_SIZE)
+    private int size;
     @UriParam(label = "producer")
     private boolean blockWhenFull;
     @UriParam(label = "consumer", defaultValue = "Blocking")
@@ -138,6 +141,22 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
      */
     public void setTimeout(final long timeout) {
         this.timeout = timeout;
+    }
+
+    @ManagedAttribute(description = "The maximum capacity of the Disruptors ringbuffer")
+    public int getSize() {
+        return size;
+    }
+
+    /**
+     * The maximum capacity of the Disruptors ringbuffer
+     * Will be effectively increased to the nearest power of two.
+     * Notice: Mind if you use this option, then its the first endpoint being created with the queue name,
+     * that determines the size. To make sure all endpoints use same size, then configure the size option
+     * on all of them, or the first endpoint being created.
+     */
+    public void setSize(int size) {
+        this.size = size;
     }
 
     @Override
@@ -296,8 +315,7 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
     }
 
     Map<DisruptorConsumer, Collection<LifecycleAwareExchangeEventHandler>> createConsumerEventHandlers() {
-        Map<DisruptorConsumer, Collection<LifecycleAwareExchangeEventHandler>> result =
-                new HashMap<DisruptorConsumer, Collection<LifecycleAwareExchangeEventHandler>>();
+        Map<DisruptorConsumer, Collection<LifecycleAwareExchangeEventHandler>> result = new HashMap<>();
 
         for (final DisruptorConsumer consumer : consumers) {
             result.put(consumer, consumer.createEventHandlers(concurrentConsumers));

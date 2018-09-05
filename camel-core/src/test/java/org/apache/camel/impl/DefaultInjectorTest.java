@@ -16,7 +16,9 @@
  */
 package org.apache.camel.impl;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -24,8 +26,9 @@ import org.apache.camel.ProducerTemplate;
 /**
  *
  */
-public class DefaultInjectorTest extends TestCase {
+public class DefaultInjectorTest extends Assert {
 
+    @Test
     public void testDefaultInjector() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();

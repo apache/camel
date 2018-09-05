@@ -1,0 +1,48 @@
+[[string-dataformat]]
+== String Encoding DataFormat
+
+*Available as of Camel version 2.12*
+
+The String Data Format is a textual based format
+that supports encoding.
+
+=== Options
+
+// dataformat options: START
+The String Encoding dataformat supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| charset |  | String | Sets an encoding to use. Will by default use the JVM platform default charset.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+|===
+// dataformat options: END
+
+=== Marshal
+
+In this example we marshal the file content to String object in UTF-8
+encoding.
+
+[source,java]
+----
+from("file://data.csv").marshal().string("UTF-8").to("jms://myqueue");
+----
+
+=== Unmarshal
+
+In this example we unmarshal the payload from the JMS queue to a String
+object using UTF-8 encoding, before its processed by the newOrder
+processor.
+
+[source,java]
+----
+from("jms://queue/order").unmarshal().string("UTF-8").processRef("newOrder");
+----
+
+=== Dependencies
+
+This data format is provided in *camel-core* so no additional
+dependencies is needed.

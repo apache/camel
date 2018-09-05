@@ -32,7 +32,7 @@ public class CacheConfigurationFileTest extends CamelTestSupport {
     public void testConfigurationFile() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put(CacheConstants.CACHE_KEY, "myKey");
         map.put(CacheConstants.CACHE_OPERATION, "ADD");
         template.sendBodyAndHeaders("direct:start", "Hello World", map);

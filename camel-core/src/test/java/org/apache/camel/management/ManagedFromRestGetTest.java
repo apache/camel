@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Arrays;
 
 import javax.management.MBeanServer;
@@ -26,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.RestParamType;
 
 public class ManagedFromRestGetTest extends ManagementTestSupport {
@@ -37,6 +40,7 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
         return new DefaultCamelContext(registry);
     }
 
+    @Test
     public void testFromRestModel() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -55,16 +59,16 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
         assertTrue(xml.contains("<rest path=\"/say/hello\">"));
         assertTrue(xml.contains("<rest path=\"/say/bye\">"));
         assertTrue(xml.contains("</rest>"));
-        assertTrue(xml.contains("<get>"));
+        assertTrue(xml.contains("<get"));
         assertTrue(xml.contains("application/json"));
-        assertTrue(xml.contains("<post>"));
+        assertTrue(xml.contains("<post"));
         assertTrue(xml.contains("application/json"));
         assertTrue(xml.contains("</rests>"));
 
-        assertTrue(xml.contains("<param name=\"header_letter\" type=\"query\" description=\"header param description2\""
-                + " defaultValue=\"b\" required=\"false\" allowMultiple=\"true\" dataType=\"string\" access=\"acc2\">"));
-        assertTrue(xml.contains("<param name=\"header_count\" type=\"header\" description=\"header param description1\" "
-                + "defaultValue=\"1\" required=\"true\" allowMultiple=\"false\" dataType=\"integer\" access=\"acc1\">"));
+        assertTrue(xml.contains("<param collectionFormat=\"multi\" dataType=\"string\" defaultValue=\"b\" "
+                + "description=\"header param description2\" name=\"header_letter\" required=\"false\" type=\"query\">"));
+        assertTrue(xml.contains("<param dataType=\"integer\" defaultValue=\"1\" "
+                + "description=\"header param description1\" name=\"header_count\" required=\"true\" type=\"header\">"));
         assertTrue(xml.contains("<value>1</value>"));
         assertTrue(xml.contains("<value>a</value>"));
 
@@ -74,6 +78,10 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
         log.info(xml2);
         // and we should have rest in the routes that indicate its from a rest dsl
         assertTrue(xml2.contains("rest=\"true\""));
+
+        assertTrue(xml2.contains(" <to id=\"to1\" uri=\"direct:hello\"/>"));
+        assertTrue(xml2.contains("<to id=\"to2\" uri=\"direct:bye\"/>"));
+        assertTrue(xml2.contains("<to id=\"to3\" uri=\"mock:update\"/>"));
 
         // there should be 3 + 2 routes
         assertEquals(3 + 2, context.getRouteDefinitions().size());
@@ -91,10 +99,10 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
                 rest("/say/bye")
                     .get().consumes("application/json")
                         .param().type(RestParamType.header).description("header param description1").dataType("integer").allowableValues(Arrays.asList("1", "2", "3", "4"))
-                            .defaultValue("1").allowMultiple(false).name("header_count").required(true).access("acc1")
+                            .defaultValue("1").name("header_count").required(true)
                         .endParam().
                         param().type(RestParamType.query).description("header param description2").dataType("string").allowableValues(Arrays.asList("a", "b", "c", "d"))
-                            .defaultValue("b").allowMultiple(true).name("header_letter").required(false).access("acc2")
+                            .defaultValue("b").collectionFormat(CollectionFormat.multi).name("header_letter").required(false)
                         .endParam()
                         .responseMessage().code(300).message("test msg").responseModel(Integer.class).endResponseMessage()
                         .to("direct:bye")

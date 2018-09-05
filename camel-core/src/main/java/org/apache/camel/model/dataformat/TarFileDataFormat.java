@@ -27,14 +27,18 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Represents the TAR file XML {@link org.apache.camel.spi.DataFormat}.
+ * The Tar File data format is a message compression and de-compression format of tar files.
  */
-@Metadata(label = "dataformat,transformation", title = "Tar File")
+@Metadata(firstVersion = "2.16.0", label = "dataformat,transformation,file", title = "Tar File")
 @XmlRootElement(name = "tarfile")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TarFileDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private Boolean usingIterator;
+    @XmlAttribute
+    private Boolean allowEmptyDirectory;
+    @XmlAttribute
+    private Boolean preservePathElements;
 
     public TarFileDataFormat() {
         super("tarfile");
@@ -45,10 +49,21 @@ public class TarFileDataFormat extends DataFormatDefinition {
         if (usingIterator != null) {
             setProperty(camelContext, dataFormat, "usingIterator", usingIterator);
         }
+        if (preservePathElements != null) {
+            setProperty(camelContext, dataFormat, "preservePathElements", preservePathElements);
+        }
     }
 
     public Boolean getUsingIterator() {
         return usingIterator;
+    }
+    
+    public Boolean getAllowEmptyDirectory() {
+        return allowEmptyDirectory;
+    }
+
+    public Boolean getPreservePathElements() {
+        return preservePathElements;
     }
 
     /**
@@ -57,5 +72,21 @@ public class TarFileDataFormat extends DataFormatDefinition {
      */
     public void setUsingIterator(Boolean usingIterator) {
         this.usingIterator = usingIterator;
+    }
+    
+    /**
+     * If the tar file has more then one entry, setting this option to true, allows to get the iterator
+     * even if the directory is empty
+     */
+    public void setAllowEmptyDirectory(Boolean allowEmptyDirectory) {
+        this.allowEmptyDirectory = allowEmptyDirectory;
+    }
+
+    /**
+     * If the file name contains path elements, setting this option to true, allows the path to be maintained
+     * in the tar file.
+     */
+    public void setPreservePathElements(Boolean preservePathElements) {
+        this.preservePathElements = preservePathElements;
     }
 }

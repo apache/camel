@@ -35,12 +35,12 @@ import org.slf4j.LoggerFactory;
 public class MockPullRequestService extends PullRequestService {
     protected static final Logger LOG = LoggerFactory.getLogger(MockPullRequestService.class);
 
-    private Map<Long, PullRequest> pullRequests = new HashMap<Long, PullRequest>();
-    private List<CommitComment> emptyComments = new ArrayList<CommitComment>();
+    private Map<Long, PullRequest> pullRequests = new HashMap<>();
+    private List<CommitComment> emptyComments = new ArrayList<>();
     private AtomicInteger pullRequestNumber = new AtomicInteger(101);
     private AtomicInteger commentId = new AtomicInteger(500);
-    private Map<Long, List<CommitComment>> allComments = new HashMap<Long, List<CommitComment>>();
-    private Map<Integer, List<CommitFile>> files = new HashMap<Integer, List<CommitFile>>();
+    private Map<Long, List<CommitComment>> allComments = new HashMap<>();
+    private Map<Integer, List<CommitFile>> files = new HashMap<>();
 
     public List<CommitComment> getComments(IRepositoryIdProvider repository, int pullRequestId) {
         Long id = new Long(pullRequestId);
@@ -75,7 +75,7 @@ public class MockPullRequestService extends PullRequestService {
         if (allComments.containsKey(pullRequestId)) {
             comments = allComments.get(pullRequestId);
         } else {
-            comments = new ArrayList<CommitComment>();
+            comments = new ArrayList<>();
         }
         comments.add(commitComment);
         allComments.put(pullRequestId, comments);
@@ -113,7 +113,7 @@ public class MockPullRequestService extends PullRequestService {
 
     @Override
     public synchronized List<PullRequest> getPullRequests(IRepositoryIdProvider repository, String state) {
-        List<PullRequest> result = new ArrayList<PullRequest>();
+        List<PullRequest> result = new ArrayList<>();
 
         for (Long id : pullRequests.keySet()) {
             PullRequest pr = pullRequests.get(id);

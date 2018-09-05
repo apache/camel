@@ -92,11 +92,18 @@ code and source code.
 
 The following provides more details on the included cryptographic
 software:
-   * camel-ftp can be configured for secure file transfers
-   * camel-mail can be configured for secure email communications
-   * camel-cxf can be configured for secure web service communications
-   * camel-jetty can be configured to use https
-   * camel-http can be configured to use https
-   * camel-gae can be configured for secure communications
-   * camel-xmlsecurity can be configured for secure communications
-
+  * camel-ahc can be configured to use https
+  * camel-crypto can be used for secure communications
+  * camel-crypto-cms can be used for secure communications
+  * camel-cxf can be configured for secure communications
+  * camel-ftp can be configured for secure communications
+  * camel-http can be configured to use https
+  * camel-http4 can be configured to use https
+  * camel-jasypt can be used for secure communications
+  * camel-jetty can be configured to use https
+  * camel-mail can be configured for secure communications
+  * camel-nagios can be configured for secure communications
+  * camel-netty-http can be configured to use https
+  * camel-netty4-http can be configured to use https
+  * camel-undertow can be configured to use https
+  * camel-xmlsecurity can be configured for secure communications

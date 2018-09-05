@@ -74,9 +74,9 @@ public class JndiContext implements Context, Serializable {
     }
 
     public JndiContext(Hashtable<String, Object> environment, Map<String, Object> bindings) {
-        this.environment = environment == null ? new Hashtable<String, Object>() : new Hashtable<String, Object>(environment);
+        this.environment = environment == null ? new Hashtable<>() : new Hashtable<>(environment);
         this.bindings = bindings;
-        treeBindings = new HashMap<String, Object>();
+        treeBindings = new HashMap<>();
     }
 
     public JndiContext(Hashtable<String, Object> environment, Map<String, Object> bindings, String nameInNamespace) {
@@ -87,7 +87,7 @@ public class JndiContext implements Context, Serializable {
     protected JndiContext(JndiContext clone, Hashtable<String, Object> env) {
         this.bindings = clone.bindings;
         this.treeBindings = clone.treeBindings;
-        this.environment = new Hashtable<String, Object>(env);
+        this.environment = new Hashtable<>(env);
     }
 
     protected JndiContext(JndiContext clone, Hashtable<String, Object> env, String nameInNamespace) {
@@ -101,7 +101,7 @@ public class JndiContext implements Context, Serializable {
      * properties set on the injected bean
      */
     public static Map<String, Object> createBindingsMapFromEnvironment(Hashtable<String, Object> env) throws Exception {
-        Map<String, Object> answer = new HashMap<String, Object>(env);
+        Map<String, Object> answer = new HashMap<>(env);
 
         for (Map.Entry<String, Object> entry : env.entrySet()) {
             String key = entry.getKey();
@@ -147,7 +147,7 @@ public class JndiContext implements Context, Serializable {
         assert name != null && name.length() > 0;
         assert !frozen;
 
-        Map<String, Object> newBindings = new HashMap<String, Object>();
+        Map<String, Object> newBindings = new HashMap<>();
         int pos = name.indexOf('/');
         if (pos == -1) {
             if (treeBindings.put(name, value) != null) {

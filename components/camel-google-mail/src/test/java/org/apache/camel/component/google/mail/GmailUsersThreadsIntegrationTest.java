@@ -25,7 +25,6 @@ import java.util.Properties;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMessage.RecipientType;
 
 import com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64;
 import com.google.api.services.gmail.model.Message;
@@ -59,7 +58,7 @@ public class GmailUsersThreadsIntegrationTest extends AbstractGoogleMailTestSupp
             createMessageWithEmail.setThreadId(previousThreadId);
         }
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleMail.userId", CURRENT_USERID);
         // parameter type is com.google.api.services.gmail.model.Message
@@ -82,7 +81,7 @@ public class GmailUsersThreadsIntegrationTest extends AbstractGoogleMailTestSupp
         Message m1 = createThreadedTestEmail(null);
         Message m2 = createThreadedTestEmail(m1.getThreadId());
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("CamelGoogleMail.q", "subject:\"Hello from camel-google-mail\"");
 
         // using String message body for single parameter "userId"
@@ -92,7 +91,7 @@ public class GmailUsersThreadsIntegrationTest extends AbstractGoogleMailTestSupp
         assertTrue(result.getThreads().size() > 0);
         LOG.debug("list: " + result);
 
-        headers = new HashMap<String, Object>();
+        headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleMail.userId", CURRENT_USERID);
         // parameter type is String

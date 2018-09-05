@@ -52,7 +52,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
         private final Exchange exchange;
         private final AsyncCallback callback;
 
-        public ProcessCall(Exchange exchange, AsyncCallback callback) {
+        ProcessCall(Exchange exchange, AsyncCallback callback) {
             this.exchange = exchange;
             this.callback = callback;
         }

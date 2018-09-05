@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.CompositeRegistry;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
@@ -42,8 +43,9 @@ public class Main extends MainSupport {
     public static void main(String... args) throws Exception {
         Main main = new Main();
         instance = main;
-        main.enableHangupSupport();
         main.run(args);
+
+        System.exit(main.getExitCode());
     }
 
     /**
@@ -114,7 +116,17 @@ public class Main extends MainSupport {
             throw new IllegalStateException("Error creating CamelContext");
         }
     }
-    
+
+    /**
+     * A list of locations to load properties. You can use comma to separate multiple locations.
+     * This option will override any default locations and only use the locations from this option.
+     */
+    public void setPropertyPlaceholderLocations(String location) {
+        PropertiesComponent pc = new PropertiesComponent();
+        pc.setLocation(location);
+        bind("properties", pc);
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -123,7 +135,14 @@ public class Main extends MainSupport {
         super.doStart();
         postProcessContext();
         if (getCamelContexts().size() > 0) {
-            getCamelContexts().get(0).start();
+            try {
+                getCamelContexts().get(0).start();
+                // if we were veto started then mark as completed
+            } finally {
+                if (getCamelContexts().get(0).isVetoStarted()) {
+                    completed();
+                }
+            }
         }
     }
 
@@ -143,7 +162,7 @@ public class Main extends MainSupport {
     }
 
     protected Map<String, CamelContext> getCamelContextMap() {
-        Map<String, CamelContext> answer = new HashMap<String, CamelContext>();
+        Map<String, CamelContext> answer = new HashMap<>();
 
         CamelContext camelContext = createContext();
         if (registry.size() > 0) {

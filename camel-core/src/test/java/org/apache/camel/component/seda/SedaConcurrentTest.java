@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -34,12 +36,13 @@ import org.apache.camel.impl.DefaultProducerTemplate;
  */
 public class SedaConcurrentTest extends ContextTestSupport {
 
+    @Test
     public void testSedaConcurrentInOnly() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(20);
 
-        // should at least take 3 sec 
-        mock.setResultMinimumWaitTime(3000);
+        // should at least take 0.5 sec
+        mock.setResultMinimumWaitTime(500);
 
         for (int i = 0; i < 20; i++) {
             template.sendBody("seda:foo", "Message " + i);
@@ -48,12 +51,13 @@ public class SedaConcurrentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSedaConcurrentInOnlyWithAsync() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(20);
 
-        // should at least take 3 sec
-        mock.setResultMinimumWaitTime(3000);
+        // should at least take 0.5 sec
+        mock.setResultMinimumWaitTime(500);
 
         for (int i = 0; i < 20; i++) {
             template.asyncSendBody("seda:foo", "Message " + i);
@@ -62,16 +66,17 @@ public class SedaConcurrentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSedaConcurrentInOut() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(20);
         mock.allMessages().body().startsWith("Bye");
 
-        // should at least take 3 sec
-        mock.setResultMinimumWaitTime(3000);
+        // should at least take 0.5 sec
+        mock.setResultMinimumWaitTime(500);
 
         ExecutorService executors = Executors.newFixedThreadPool(10);
-        List<Object> replies = new ArrayList<Object>(20);
+        List<Object> replies = new ArrayList<>(20);
         for (int i = 0; i < 20; i++) {
             final int num = i;
             Object out = executors.submit(new Callable<Object>() {
@@ -88,13 +93,14 @@ public class SedaConcurrentTest extends ContextTestSupport {
         executors.shutdownNow();
     }
 
+    @Test
     public void testSedaConcurrentInOutWithAsync() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(20);
         mock.allMessages().body().startsWith("Bye");
 
-        // should at least take 3 sec
-        mock.setResultMinimumWaitTime(3000);
+        // should at least take 0.5 sec
+        mock.setResultMinimumWaitTime(500);
 
         // use our own template that has a higher thread pool than default camel that uses 5
         ExecutorService executor = Executors.newFixedThreadPool(10);
@@ -102,7 +108,7 @@ public class SedaConcurrentTest extends ContextTestSupport {
         // must start the template
         pt.start();
 
-        List<Future<Object>> replies = new ArrayList<Future<Object>>(20);
+        List<Future<Object>> replies = new ArrayList<>(20);
         for (int i = 0; i < 20; i++) {
             Future<Object> out = pt.asyncRequestBody("seda:bar", "Message " + i);
             replies.add(out);
@@ -125,10 +131,10 @@ public class SedaConcurrentTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:foo?concurrentConsumers=10")
-                    .to("mock:before").delay(2000).to("mock:result");
+                    .to("mock:before").delay(500).to("mock:result");
 
                 from("seda:bar?concurrentConsumers=10")
-                    .to("mock:before").delay(2000).transform(body().prepend("Bye ")).to("mock:result");
+                    .to("mock:before").delay(500).transform(body().prepend("Bye ")).to("mock:result");
             }
         };
     }

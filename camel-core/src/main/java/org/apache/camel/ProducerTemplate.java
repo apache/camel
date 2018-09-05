@@ -17,6 +17,7 @@
 package org.apache.camel;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -56,7 +57,8 @@ import org.apache.camel.spi.Synchronization;
  * <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">FAQ entry</a>
  * before using.
  *
- * @version 
+ * @see FluentProducerTemplate
+ * @see ConsumerTemplate
  */
 public interface ProducerTemplate extends Service {
 
@@ -90,6 +92,22 @@ public interface ProducerTemplate extends Service {
      * @return the size of current cached resources
      */
     int getCurrentCacheSize();
+
+    /**
+     * Reports if async* methods will dispath processing from the calling thread (false) or through executor (true).
+     * In both cases asynchronous engine will be used, so this non-threaded can be useful for high-speed
+     * non-blocking processing.
+     * @return if async* methods will dipatch processing with the executor
+     */
+    boolean isThreadedAsyncMode();
+
+    /**
+     * Reports if async* methods will dispath processing from the calling thread (false) or through executor (true).
+     * In both cases asynchronous engine will be used, so this non-threaded can be useful for high-speed
+     * non-blocking processing.
+     * @param useExecutor if async* methods will dipatch processing with the executor
+     */
+    void setThreadedAsyncMode(boolean useExecutor);
     
     /**
      * Get the default endpoint to use if none is specified
@@ -131,6 +149,11 @@ public interface ProducerTemplate extends Service {
      * @return <tt>true</tt> if enabled, <tt>false</tt> otherwise
      */
     boolean isEventNotifierEnabled();
+
+    /**
+     * Cleanup the cache (purging stale entries)
+     */
+    void cleanUp();
 
     // Synchronous methods
     // -----------------------------------------------------------------------
@@ -303,6 +326,24 @@ public interface ProducerTemplate extends Service {
      * @return the returned exchange
      */
     Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor);
+
+
+    /**
+     * Sends an exchange to an endpoint using a supplied processor
+     * <br/><br/>
+     * <p/><b>Notice:</b> that if the processing of the exchange failed with an Exception
+     * it is <b>not</b> thrown from this method, but you can access it from the returned exchange using
+     * {@link org.apache.camel.Exchange#getException()}.
+     *
+     * @param endpoint  the endpoint to send the exchange to
+     * @param pattern   the message {@link ExchangePattern} such as
+     *                  {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
+     * @param processor the transformer used to populate the new exchange
+     * @param resultProcessor a processor to process the exchange when the send is complete.
+     * {@link Processor} to populate the exchange
+     * @return the returned exchange
+     */
+    Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor, Processor resultProcessor);
 
     /**
      * Send the body to an endpoint
@@ -871,7 +912,7 @@ public interface ProducerTemplate extends Service {
      * @param exchange    the exchange to send
      * @return a handle to be used to get the response in the future
      */
-    Future<Exchange> asyncSend(String endpointUri, Exchange exchange);
+    CompletableFuture<Exchange> asyncSend(String endpointUri, Exchange exchange);
 
     /**
      * Sends an asynchronous exchange to the given endpoint.
@@ -880,7 +921,7 @@ public interface ProducerTemplate extends Service {
      * @param processor   the transformer used to populate the new exchange
      * @return a handle to be used to get the response in the future
      */
-    Future<Exchange> asyncSend(String endpointUri, Processor processor);
+    CompletableFuture<Exchange> asyncSend(String endpointUri, Processor processor);
 
     /**
      * Sends an asynchronous body to the given endpoint.
@@ -890,7 +931,7 @@ public interface ProducerTemplate extends Service {
      * @param body        the body to send
      * @return a handle to be used to get the response in the future
      */
-    Future<Object> asyncSendBody(String endpointUri, Object body);
+    CompletableFuture<Object> asyncSendBody(String endpointUri, Object body);
 
     /**
      * Sends an asynchronous body to the given endpoint.
@@ -900,7 +941,7 @@ public interface ProducerTemplate extends Service {
      * @param body        the body to send
      * @return a handle to be used to get the response in the future
      */
-    Future<Object> asyncRequestBody(String endpointUri, Object body);
+    CompletableFuture<Object> asyncRequestBody(String endpointUri, Object body);
 
     /**
      * Sends an asynchronous body to the given endpoint.
@@ -912,7 +953,7 @@ public interface ProducerTemplate extends Service {
      * @param headerValue the header value
      * @return a handle to be used to get the response in the future
      */
-    Future<Object> asyncRequestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue);
+    CompletableFuture<Object> asyncRequestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue);
 
     /**
      * Sends an asynchronous body to the given endpoint.
@@ -923,7 +964,7 @@ public interface ProducerTemplate extends Service {
      * @param headers     headers
      * @return a handle to be used to get the response in the future
      */
-    Future<Object> asyncRequestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers);
+    CompletableFuture<Object> asyncRequestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers);
 
     /**
      * Sends an asynchronous body to the given endpoint.
@@ -934,7 +975,7 @@ public interface ProducerTemplate extends Service {
      * @param type        the expected response type
      * @return a handle to be used to get the response in the future
      */
-    <T> Future<T> asyncRequestBody(String endpointUri, Object body, Class<T> type);
+    <T> CompletableFuture<T> asyncRequestBody(String endpointUri, Object body, Class<T> type);
 
     /**
      * Sends an asynchronous body to the given endpoint.
@@ -947,7 +988,7 @@ public interface ProducerTemplate extends Service {
      * @param type        the expected response type
      * @return a handle to be used to get the response in the future
      */
-    <T> Future<T> asyncRequestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue, Class<T> type);
+    <T> CompletableFuture<T> asyncRequestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue, Class<T> type);
 
     /**
      * Sends an asynchronous body to the given endpoint.
@@ -959,7 +1000,7 @@ public interface ProducerTemplate extends Service {
      * @param type        the expected response type
      * @return a handle to be used to get the response in the future
      */
-    <T> Future<T> asyncRequestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers, Class<T> type);
+    <T> CompletableFuture<T> asyncRequestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers, Class<T> type);
 
     /**
      * Sends an asynchronous exchange to the given endpoint.
@@ -968,7 +1009,7 @@ public interface ProducerTemplate extends Service {
      * @param exchange    the exchange to send
      * @return a handle to be used to get the response in the future
      */
-    Future<Exchange> asyncSend(Endpoint endpoint, Exchange exchange);
+    CompletableFuture<Exchange> asyncSend(Endpoint endpoint, Exchange exchange);
 
     /**
      * Sends an asynchronous exchange to the given endpoint.
@@ -977,7 +1018,7 @@ public interface ProducerTemplate extends Service {
      * @param processor   the transformer used to populate the new exchange
      * @return a handle to be used to get the response in the future
      */
-    Future<Exchange> asyncSend(Endpoint endpoint, Processor processor);
+    CompletableFuture<Exchange> asyncSend(Endpoint endpoint, Processor processor);
 
     /**
      * Sends an asynchronous body to the given endpoint.
@@ -987,7 +1028,7 @@ public interface ProducerTemplate extends Service {
      * @param body        the body to send
      * @return a handle to be used to get the response in the future
      */
-    Future<Object> asyncSendBody(Endpoint endpoint, Object body);
+    CompletableFuture<Object> asyncSendBody(Endpoint endpoint, Object body);
 
     /**
      * Sends an asynchronous body to the given endpoint.
@@ -997,7 +1038,7 @@ public interface ProducerTemplate extends Service {
      * @param body        the body to send
      * @return a handle to be used to get the response in the future
      */
-    Future<Object> asyncRequestBody(Endpoint endpoint, Object body);
+    CompletableFuture<Object> asyncRequestBody(Endpoint endpoint, Object body);
 
     /**
      * Sends an asynchronous body to the given endpoint.
@@ -1009,7 +1050,7 @@ public interface ProducerTemplate extends Service {
      * @param headerValue the header value
      * @return a handle to be used to get the response in the future
      */
-    Future<Object> asyncRequestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue);
+    CompletableFuture<Object> asyncRequestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue);
 
     /**
      * Sends an asynchronous body to the given endpoint.
@@ -1020,7 +1061,7 @@ public interface ProducerTemplate extends Service {
      * @param headers     headers
      * @return a handle to be used to get the response in the future
      */
-    Future<Object> asyncRequestBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers);
+    CompletableFuture<Object> asyncRequestBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers);
 
     /**
      * Sends an asynchronous body to the given endpoint.
@@ -1031,7 +1072,7 @@ public interface ProducerTemplate extends Service {
      * @param type        the expected response type
      * @return a handle to be used to get the response in the future
      */
-    <T> Future<T> asyncRequestBody(Endpoint endpoint, Object body, Class<T> type);
+    <T> CompletableFuture<T> asyncRequestBody(Endpoint endpoint, Object body, Class<T> type);
 
     /**
      * Sends an asynchronous body to the given endpoint.
@@ -1044,7 +1085,7 @@ public interface ProducerTemplate extends Service {
      * @param type        the expected response type
      * @return a handle to be used to get the response in the future
      */
-    <T> Future<T> asyncRequestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue, Class<T> type);
+    <T> CompletableFuture<T> asyncRequestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue, Class<T> type);
 
     /**
      * Sends an asynchronous body to the given endpoint.
@@ -1056,7 +1097,7 @@ public interface ProducerTemplate extends Service {
      * @param type        the expected response type
      * @return a handle to be used to get the response in the future
      */
-    <T> Future<T> asyncRequestBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers, Class<T> type);
+    <T> CompletableFuture<T> asyncRequestBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers, Class<T> type);
 
     /**
      * Gets the response body from the future handle, will wait until the response is ready.
@@ -1069,7 +1110,7 @@ public interface ProducerTemplate extends Service {
      * @return the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    <T> T extractFutureBody(Future<Object> future, Class<T> type) throws CamelExecutionException;
+    <T> T extractFutureBody(Future<?> future, Class<T> type) throws CamelExecutionException;
 
     /**
      * Gets the response body from the future handle, will wait at most the given time for the response to be ready.
@@ -1085,7 +1126,7 @@ public interface ProducerTemplate extends Service {
      * @throws java.util.concurrent.TimeoutException if the wait timed out
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    <T> T extractFutureBody(Future<Object> future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException, CamelExecutionException;
+    <T> T extractFutureBody(Future<?> future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException, CamelExecutionException;
 
     // Asynchronous methods with callback
     // -----------------------------------------------------------------------
@@ -1098,7 +1139,7 @@ public interface ProducerTemplate extends Service {
      * @param onCompletion  callback invoked when exchange has been completed
      * @return a handle to be used to get the response in the future
      */
-    Future<Exchange> asyncCallback(String endpointUri, Exchange exchange, Synchronization onCompletion);
+    CompletableFuture<Exchange> asyncCallback(String endpointUri, Exchange exchange, Synchronization onCompletion);
 
     /**
      * Sends an asynchronous exchange to the given endpoint.
@@ -1108,7 +1149,7 @@ public interface ProducerTemplate extends Service {
      * @param onCompletion  callback invoked when exchange has been completed
      * @return a handle to be used to get the response in the future
      */
-    Future<Exchange> asyncCallback(Endpoint endpoint, Exchange exchange, Synchronization onCompletion);
+    CompletableFuture<Exchange> asyncCallback(Endpoint endpoint, Exchange exchange, Synchronization onCompletion);
 
     /**
      * Sends an asynchronous exchange to the given endpoint using a supplied processor.
@@ -1119,7 +1160,7 @@ public interface ProducerTemplate extends Service {
      * @param onCompletion  callback invoked when exchange has been completed
      * @return a handle to be used to get the response in the future
      */
-    Future<Exchange> asyncCallback(String endpointUri, Processor processor, Synchronization onCompletion);
+    CompletableFuture<Exchange> asyncCallback(String endpointUri, Processor processor, Synchronization onCompletion);
 
     /**
      * Sends an asynchronous exchange to the given endpoint using a supplied processor.
@@ -1130,7 +1171,7 @@ public interface ProducerTemplate extends Service {
      * @param onCompletion  callback invoked when exchange has been completed
      * @return a handle to be used to get the response in the future
      */
-    Future<Exchange> asyncCallback(Endpoint endpoint, Processor processor, Synchronization onCompletion);
+    CompletableFuture<Exchange> asyncCallback(Endpoint endpoint, Processor processor, Synchronization onCompletion);
 
     /**
      * Sends an asynchronous body to the given endpoint.
@@ -1141,7 +1182,7 @@ public interface ProducerTemplate extends Service {
      * @param onCompletion  callback invoked when exchange has been completed
      * @return a handle to be used to get the response in the future
      */
-    Future<Object> asyncCallbackSendBody(String endpointUri, Object body, Synchronization onCompletion);
+    CompletableFuture<Object> asyncCallbackSendBody(String endpointUri, Object body, Synchronization onCompletion);
 
     /**
      * Sends an asynchronous body to the given endpoint.
@@ -1152,7 +1193,7 @@ public interface ProducerTemplate extends Service {
      * @param onCompletion  callback invoked when exchange has been completed
      * @return a handle to be used to get the response in the future
      */
-    Future<Object> asyncCallbackSendBody(Endpoint endpoint, Object body, Synchronization onCompletion);
+    CompletableFuture<Object> asyncCallbackSendBody(Endpoint endpoint, Object body, Synchronization onCompletion);
 
     /**
      * Sends an asynchronous body to the given endpoint.
@@ -1163,7 +1204,7 @@ public interface ProducerTemplate extends Service {
      * @param onCompletion  callback invoked when exchange has been completed
      * @return a handle to be used to get the response in the future
      */
-    Future<Object> asyncCallbackRequestBody(String endpointUri, Object body, Synchronization onCompletion);
+    CompletableFuture<Object> asyncCallbackRequestBody(String endpointUri, Object body, Synchronization onCompletion);
 
     /**
      * Sends an asynchronous body to the given endpoint.
@@ -1174,6 +1215,6 @@ public interface ProducerTemplate extends Service {
      * @param onCompletion  callback invoked when exchange has been completed
      * @return a handle to be used to get the response in the future
      */
-    Future<Object> asyncCallbackRequestBody(Endpoint endpoint, Object body, Synchronization onCompletion);
+    CompletableFuture<Object> asyncCallbackRequestBody(Endpoint endpoint, Object body, Synchronization onCompletion);
 
 }

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.issues;
+import org.junit.Before;
+
+import org.junit.Test;
 
 
 import org.apache.camel.ContextTestSupport;
@@ -55,6 +58,7 @@ public class NeilSplitterTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testCustomExpression() throws Exception {
 
         resultEndpoint.expectedBodiesReceived("Ginger", "Mr Boots");
@@ -73,6 +77,7 @@ public class NeilSplitterTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testXPathExpression() throws Exception {
 
         resultEndpoint.expectedBodiesReceived(
@@ -91,7 +96,8 @@ public class NeilSplitterTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         resultEndpoint = getMockEndpoint("mock:result");

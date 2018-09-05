@@ -16,44 +16,27 @@
  */
 package org.apache.camel.component.dropbox.dto;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.component.dropbox.util.DropboxResultCode;
-import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 
 
-public class DropboxFileUploadResult extends DropboxResult {
+public class DropboxFileUploadResult {
 
-    /**
-     * Object payload contained in Exchange
-     * In case of a single file Exchange Header is populated with the name of the remote path uploaded
-     * In case of a multiple files Exchange Header is populated with the name of the remote paths uploaded
-     * In case of a single file Exchange Body is populated with the result code of the upload operation for the remote path.
-     * In case of multiple files Exchange Body is populated with a map containing as key the remote path uploaded
-     * and as value the result code of the upload operation
-     * @param exchange
-     */
-    @Override
-    public void populateExchange(Exchange exchange) {
-        Map<String, DropboxResultCode> map = (Map<String, DropboxResultCode>)resultEntries;
-        if (map.size() == 1) {
-            //set info in exchange
-            String pathExtracted = null;
-            DropboxResultCode codeExtracted = null;
-            for (Map.Entry<String, DropboxResultCode> entry : map.entrySet()) {
-                pathExtracted = entry.getKey();
-                codeExtracted = entry.getValue();
-            }
-            exchange.getIn().setHeader(DropboxResultHeader.UPLOADED_FILE.name(), pathExtracted);
-            exchange.getIn().setBody(codeExtracted.name());
-        } else {
-            StringBuffer pathsExtracted = new StringBuffer();
-            for (Map.Entry<String, DropboxResultCode> entry : map.entrySet()) {
-                pathsExtracted.append(entry.getKey() + "\n");
-            }
-            exchange.getIn().setHeader(DropboxResultHeader.UPLOADED_FILES.name(), pathsExtracted.toString());
-            exchange.getIn().setBody(map);
-        }
+
+    private final Map<String, DropboxResultCode> results;
+
+    public DropboxFileUploadResult(Map<String, DropboxResultCode> results) {
+        this.results = new HashMap<>(results);
+    }
+
+    public DropboxFileUploadResult(String path, DropboxResultCode resultCode) {
+        this.results = Collections.singletonMap(path, resultCode);
+    }
+
+    public Map<String, DropboxResultCode> getResults() {
+        return Collections.unmodifiableMap(results);
     }
 }

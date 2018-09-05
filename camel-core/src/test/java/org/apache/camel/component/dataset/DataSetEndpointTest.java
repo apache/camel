@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.dataset;
 
+import org.junit.Test;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.ContextTestSupport;
@@ -33,12 +35,14 @@ public class DataSetEndpointTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testDataSetEndpoint() throws Exception {
         @SuppressWarnings("deprecation")
         final DataSetEndpoint endpoint = new DataSetEndpoint();
         endpoint.setCamelContext(context);
         endpoint.setEndpointUriIfNotSpecified("dataset://foo");
         endpoint.setDataSet(new SimpleDataSet(2));
+        endpoint.setInitialDelay(0);
 
         assertEquals(0, endpoint.getPreloadSize());
         assertEquals(0, endpoint.getConsumeDelay());
@@ -56,6 +60,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
         endpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testDataSetEndpointCtr() throws Exception {
         final DataSetEndpoint endpoint = new DataSetEndpoint("dataset://foo", context.getComponent("dataset"), new SimpleDataSet(2));
 
@@ -63,8 +68,8 @@ public class DataSetEndpointTest extends ContextTestSupport {
         assertEquals(2, endpoint.getConsumeDelay());
         endpoint.setProduceDelay(5);
         assertEquals(5, endpoint.getProduceDelay());
-        endpoint.setInitialDelay(50);
-        assertEquals(50, endpoint.getInitialDelay());
+        endpoint.setInitialDelay(1);
+        assertEquals(1, endpoint.getInitialDelay());
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -78,8 +83,10 @@ public class DataSetEndpointTest extends ContextTestSupport {
         endpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testDataSetReporter() throws Exception {
         final DataSetEndpoint endpoint = new DataSetEndpoint("dataset://foo", context.getComponent("dataset"), new SimpleDataSet(10));
+        endpoint.setInitialDelay(0);
 
         final AtomicBoolean reported = new AtomicBoolean(false);
         endpoint.setReporter(new Processor() {
@@ -101,6 +108,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
         assertTrue(reported.get());
     }
 
+    @Test
     public void testSimpleDataSet() throws Exception {
         SimpleDataSet ds = new SimpleDataSet();
         ds.setSize(2);
@@ -108,6 +116,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
         assertEquals("Hi", ds.getDefaultBody());
     }
 
+    @Test
     public void testDataSetSupport() throws Exception {
         MyDataSet ds = new MyDataSet();
         ds.setSize(4);
@@ -121,6 +130,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
         assertNotNull(ds.getOutputTransformer());
 
         final DataSetEndpoint endpoint = new DataSetEndpoint("dataset://foo", context.getComponent("dataset"), ds);
+        endpoint.setInitialDelay(0);
         endpoint.allMessages().body().startsWith("Hi ");
 
         context.addRoutes(new RouteBuilder() {

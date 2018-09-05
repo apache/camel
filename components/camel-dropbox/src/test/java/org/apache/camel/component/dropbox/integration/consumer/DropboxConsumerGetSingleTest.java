@@ -25,7 +25,6 @@ import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-
 public class DropboxConsumerGetSingleTest extends DropboxTestSupport {
 
     public DropboxConsumerGetSingleTest() throws Exception { }
@@ -49,7 +48,7 @@ public class DropboxConsumerGetSingleTest extends DropboxTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("dropbox://get?" + getAuthParams() + "&remotePath=XXX")
+                from("dropbox://get?accessToken={{accessToken}}&remotePath=XXX")
                         .to("file:XXX")
                         .to("mock:result");
             }

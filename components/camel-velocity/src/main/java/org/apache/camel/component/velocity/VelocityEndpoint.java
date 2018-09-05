@@ -38,9 +38,14 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.runtime.RuntimeConstants;
-import org.apache.velocity.runtime.log.CommonsLogLogChute;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@UriEndpoint(scheme = "velocity", title = "Velocity", syntax = "velocity:resourceUri", producerOnly = true, label = "transformation")
+
+/**
+ * Transforms the message using a Velocity template.
+ */
+@UriEndpoint(firstVersion = "1.2.0", scheme = "velocity", title = "Velocity", syntax = "velocity:resourceUri", producerOnly = true, label = "transformation")
 public class VelocityEndpoint extends ResourceEndpoint {
 
     private VelocityEngine velocityEngine;
@@ -87,12 +92,14 @@ public class VelocityEndpoint extends ResourceEndpoint {
             properties.setProperty(RuntimeConstants.RESOURCE_LOADER, "file, class");
             properties.setProperty("class.resource.loader.description", "Camel Velocity Classpath Resource Loader");
             properties.setProperty("class.resource.loader.class", CamelVelocityClasspathResourceLoader.class.getName());
-            properties.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, CommonsLogLogChute.class.getName());
-            properties.setProperty(CommonsLogLogChute.LOGCHUTE_COMMONS_LOG_NAME, VelocityEndpoint.class.getName());
+            final Logger velocityLogger = LoggerFactory.getLogger("org.apache.camel.maven.Velocity");
+            properties.setProperty(RuntimeConstants.RUNTIME_LOG_NAME, velocityLogger.getName());
+            
+          
 
             // load the velocity properties from property file which may overrides the default ones
             if (ObjectHelper.isNotEmpty(getPropertiesFile())) {
-                InputStream reader = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), getPropertiesFile());
+                InputStream reader = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), getPropertiesFile());
                 try {
                     properties.load(reader);
                     log.info("Loaded the velocity configuration file " + getPropertiesFile());

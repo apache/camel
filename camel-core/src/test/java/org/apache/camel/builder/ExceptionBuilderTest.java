@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder;
 
+import org.junit.Test;
+
 import java.io.IOException;
 import java.net.ConnectException;
 import java.security.GeneralSecurityException;
@@ -40,6 +42,7 @@ public class ExceptionBuilderTest extends ContextTestSupport {
     private static final String BUSINESS_ERROR_QUEUE = "mock:badBusiness";
     private static final String SECURITY_ERROR_QUEUE = "mock:securityError";
 
+    @Test
     public void testNPE() throws Exception {
         MockEndpoint result = getMockEndpoint(RESULT_QUEUE);
         result.expectedMessageCount(0);
@@ -58,6 +61,7 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(result, mock);
     }
 
+    @Test
     public void testIOException() throws Exception {
         MockEndpoint result = getMockEndpoint(RESULT_QUEUE);
         result.expectedMessageCount(0);
@@ -76,6 +80,7 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(result, mock);
     }
 
+    @Test
     public void testException() throws Exception {
         MockEndpoint result = getMockEndpoint(RESULT_QUEUE);
         result.expectedMessageCount(0);
@@ -94,6 +99,7 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(result, mock);
     }
 
+    @Test
     public void testMyBusinessException() throws Exception {
         MockEndpoint result = getMockEndpoint(RESULT_QUEUE);
         result.expectedMessageCount(0);
@@ -112,6 +118,7 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(result, mock);
     }
 
+    @Test
     public void testSecurityConfiguredWithTwoExceptions() throws Exception {
         // test that we also handles a configuration with 2 or more exceptions
         MockEndpoint result = getMockEndpoint(RESULT_QUEUE);
@@ -131,6 +138,7 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(result, mock);
     }
 
+    @Test
     public void testSecurityConfiguredWithExceptionList() throws Exception {
         // test that we also handles a configuration with a list of exceptions
         MockEndpoint result = getMockEndpoint(RESULT_QUEUE);
@@ -171,7 +179,7 @@ public class ExceptionBuilderTest extends ContextTestSupport {
                     .to(ERROR_QUEUE);
 
                 onException(IOException.class)
-                    .redeliveryDelay(100L)
+                    .redeliveryDelay(10)
                     .maximumRedeliveries(3)
                     .maximumRedeliveryDelay(30 * 1000L)
                     .backOffMultiplier(1.0)
@@ -180,13 +188,13 @@ public class ExceptionBuilderTest extends ContextTestSupport {
                     .to(ERROR_QUEUE);
 
                 onException(Exception.class)
-                    .redeliveryDelay(100L)
+                    .redeliveryDelay(0)
                     .maximumRedeliveries(2)
                     .setHeader(MESSAGE_INFO, constant("Damm just exception"))
                     .to(ERROR_QUEUE);
 
                 onException(MyBaseBusinessException.class)
-                    .redeliveryDelay(100L)
+                    .redeliveryDelay(0)
                     .maximumRedeliveries(3)
                     .setHeader(MESSAGE_INFO, constant("Damm my business is not going to well"))
                     .to(BUSINESS_ERROR_QUEUE);

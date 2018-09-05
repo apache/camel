@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "definitions": {}, 
+  "id": "myother-schema",
+  "properties": {
+    "id": {
+      "default": 1, 
+      "description": "An explanation about the purpose of this instance.", 
+      "id": "/properties/id", 
+      "title": "The id schema", 
+      "type": "integer"
+    }, 
+    "name": {
+      "default": "A green door", 
+      "description": "An explanation about the purpose of this instance. Must have even number of characters", 
+      "id": "/properties/name", 
+      "title": "The name schema", 
+      "type": "string",
+      "format": "evenlength"
+    }, 
+    "price": {
+      "default": 12.5, 
+      "description": "An explanation about the purpose of this instance.", 
+      "id": "/properties/price", 
+      "title": "The price schema", 
+      "type": "number"
+    }
+  }, 
+  "required": [
+    "name", 
+    "id", 
+    "price"
+  ], 
+  "type": "object"
+}

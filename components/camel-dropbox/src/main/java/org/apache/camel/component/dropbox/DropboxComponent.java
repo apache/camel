@@ -18,21 +18,27 @@ package org.apache.camel.component.dropbox;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.dropbox.util.DropboxOperation;
 import org.apache.camel.component.dropbox.util.DropboxPropertyManager;
 import org.apache.camel.component.dropbox.util.DropboxUploadMode;
 import org.apache.camel.component.dropbox.validator.DropboxConfigurationValidator;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DropboxComponent extends UriEndpointComponent {
+public class DropboxComponent extends DefaultComponent {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxComponent.class);
-
+    
     public DropboxComponent() {
-        super(DropboxEndpoint.class);
+        this(null);
+    }
+
+    public DropboxComponent(CamelContext context) {
+        super(context);
+        registerExtension(new DropboxComponentVerifierExtension());        
     }
 
     /**
@@ -50,7 +56,10 @@ public class DropboxComponent extends UriEndpointComponent {
         // set options from component
         configuration.setAccessToken((String)parameters.get("accessToken"));
         configuration.setLocalPath((String)parameters.get("localPath"));
-        configuration.setRemotePath((String)parameters.get("remotePath"));
+        configuration.setRemotePath(
+                parameters.get("remotePath") != null
+                    ? ((String) parameters.get("remotePath")).replaceAll("\\s", "+")
+                    : null);
         configuration.setNewRemotePath((String)parameters.get("newRemotePath"));
         configuration.setQuery((String)parameters.get("query"));
         configuration.setOperation(DropboxOperation.valueOf(remaining));
@@ -62,14 +71,14 @@ public class DropboxComponent extends UriEndpointComponent {
             configuration.setUploadMode(DropboxUploadMode.valueOf((String)parameters.get("uploadMode")));
         }
 
+
         //pass validation test
-        DropboxConfigurationValidator.validate(configuration);
+        DropboxConfigurationValidator.validateCommonProperties(configuration);
 
         // and then override from parameters
         setProperties(configuration, parameters);
 
-        Endpoint endpoint = new DropboxEndpoint(uri, this, configuration);
-        return endpoint;
+        return new DropboxEndpoint(uri, this, configuration);
     }
 
 }

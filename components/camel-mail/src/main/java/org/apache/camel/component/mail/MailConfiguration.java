@@ -30,6 +30,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 
 /**
@@ -40,9 +41,9 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 @UriParams
 public class MailConfiguration implements Cloneable {
 
-    private Session session;
+    private ClassLoader applicationClassLoader;
     private Properties javaMailProperties;
-    private Properties additionalJavaMailProperties;
+    private Map<Message.RecipientType, String> recipients = new HashMap<>();
 
     // protocol is implied by component name so it should not be in UriPath
     private String protocol;
@@ -50,19 +51,27 @@ public class MailConfiguration implements Cloneable {
     private String host;
     @UriPath
     private int port = -1;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String username;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String password;
     @UriParam @Metadata(label = "producer")
     private String subject;
-    @UriParam @Metadata(label = "producer")
+    @UriParam @Metadata(label = "producer,advanced")
     private JavaMailSender javaMailSender;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "advanced")
+    private Session session;
+    @UriParam(defaultValue = "true", label = "consumer,advanced")
     private boolean mapMailMessage = true;
-    @UriParam(defaultValue = MailConstants.MAIL_DEFAULT_FROM) @Metadata(label = "producer")
+    @UriParam(defaultValue = MailConstants.MAIL_DEFAULT_FROM, label = "producer")
     private String from = MailConstants.MAIL_DEFAULT_FROM;
-    @UriParam(defaultValue = MailConstants.MAIL_DEFAULT_FOLDER) @Metadata(label = "consumer")
+    @UriParam(label = "producer")
+    private String to;
+    @UriParam(label = "producer")
+    private String cc;
+    @UriParam(label = "producer")
+    private String bcc;
+    @UriParam(defaultValue = MailConstants.MAIL_DEFAULT_FOLDER, label = "consumer,advanced")
     private String folderName = MailConstants.MAIL_DEFAULT_FOLDER;
     @UriParam @Metadata(label = "consumer")
     private boolean delete;
@@ -70,26 +79,25 @@ public class MailConfiguration implements Cloneable {
     private String copyTo;
     @UriParam(defaultValue = "true") @Metadata(label = "consumer")
     private boolean unseen = true;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean ignoreUriScheme;
-    private Map<Message.RecipientType, String> recipients = new HashMap<Message.RecipientType, String>();
     @UriParam @Metadata(label = "producer")
     private String replyTo;
-    @UriParam(defaultValue = "-1") @Metadata(label = "consumer")
+    @UriParam(defaultValue = "-1") @Metadata(label = "consumer,advanced")
     private int fetchSize = -1;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean debugMode;
-    @UriParam(defaultValue = "" + MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT)
+    @UriParam(defaultValue = "" + MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT, label = "advanced")
     private int connectionTimeout = MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT;
-    @UriParam
+    @UriParam(label = "security")
     private boolean dummyTrustManager;
-    @UriParam(defaultValue = "text/plain")
+    @UriParam(defaultValue = "text/plain", label = "advanced")
     private String contentType = "text/plain";
-    @UriParam(defaultValue = MailConstants.MAIL_ALTERNATIVE_BODY)
+    @UriParam(defaultValue = MailConstants.MAIL_ALTERNATIVE_BODY, label = "advanced")
     private String alternativeBodyHeader = MailConstants.MAIL_ALTERNATIVE_BODY;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean useInlineAttachments;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean ignoreUnsupportedCharset;
     @UriParam @Metadata(label = "consumer")
     private boolean disconnect;
@@ -101,13 +109,18 @@ public class MailConfiguration implements Cloneable {
     private boolean skipFailedMessage;
     @UriParam @Metadata(label = "consumer")
     private boolean handleFailedMessage;
-    @UriParam
+    @UriParam(defaultValue = "false") @Metadata(label = "consumer")
+    private boolean mimeDecodeHeaders;
+    @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
-    private ClassLoader applicationClassLoader;
+    @UriParam(label = "advanced", prefix = "mail.", multiValue = true)
+    private Properties additionalJavaMailProperties;
+    @UriParam(label = "advanced")
+    private AttachmentsContentTransferEncodingResolver attachmentsContentTransferEncodingResolver;
 
     public MailConfiguration() {
     }
-    
+
     public MailConfiguration(CamelContext context) {
         this.applicationClassLoader = context.getApplicationContextClassLoader();
     }
@@ -119,7 +132,7 @@ public class MailConfiguration implements Cloneable {
         try {
             MailConfiguration copy = (MailConfiguration) clone();
             // must set a new recipients map as clone just reuse the same reference
-            copy.recipients = new HashMap<Message.RecipientType, String>();
+            copy.recipients = new HashMap<>();
             copy.recipients.putAll(this.recipients);
             return copy;
         } catch (CloneNotSupportedException e) {
@@ -142,13 +155,19 @@ public class MailConfiguration implements Cloneable {
 
         String userInfo = uri.getUserInfo();
         if (userInfo != null) {
-            setUsername(userInfo);
+            String[] parts = uri.getUserInfo().split(":");
+            if (parts.length == 2) {
+                setUsername(parts[0]);
+                setPassword(parts[1]);
+            } else {
+                setUsername(userInfo);
+            }
         }
 
         int port = uri.getPort();
         if (port > 0) {
             setPort(port);
-        } else if (port <= 0 && this.port <= 0) {
+        } else if (this.port <= 0) {
             // resolve default port if no port number was provided, and not already configured with a port number
             setPort(MailUtils.getDefaultPortForProtocol(uri.getScheme()));
         }
@@ -228,24 +247,35 @@ public class MailConfiguration implements Cloneable {
         }
 
         if (sslContextParameters != null && isSecureProtocol()) {
-            SSLContext sslContext;
-            try {
-                sslContext = sslContextParameters.createSSLContext();
-            } catch (Exception e) {
-                throw new RuntimeCamelException("Error initializing SSLContext.", e);
-            }
-            properties.put("mail." + protocol + ".socketFactory", sslContext.getSocketFactory());
+            properties.put("mail." + protocol + ".socketFactory", createSSLContext().getSocketFactory());
             properties.put("mail." + protocol + ".socketFactory.fallback", "false");
             properties.put("mail." + protocol + ".socketFactory.port", "" + port);
+        }
+        if (sslContextParameters != null && isStartTlsEnabled()) {
+            properties.put("mail." + protocol + ".ssl.socketFactory", createSSLContext().getSocketFactory());
+            properties.put("mail." + protocol + ".ssl.socketFactory.port", "" + port);
         }
         if (dummyTrustManager && isSecureProtocol()) {
             // set the custom SSL properties
-            properties.put("mail." + protocol + ".socketFactory.class", "org.apache.camel.component.mail.security.DummySSLSocketFactory");
+            properties.put("mail." + protocol + ".socketFactory.class", "org.apache.camel.component.mail.DummySSLSocketFactory");
             properties.put("mail." + protocol + ".socketFactory.fallback", "false");
             properties.put("mail." + protocol + ".socketFactory.port", "" + port);
         }
+        if (dummyTrustManager && isStartTlsEnabled()) {
+            // set the custom SSL properties
+            properties.put("mail." + protocol + ".ssl.socketFactory.class", "org.apache.camel.component.mail.DummySSLSocketFactory");
+            properties.put("mail." + protocol + ".ssl.socketFactory.port", "" + port);
+        }
 
         return properties;
+    }
+
+    private SSLContext createSSLContext() {
+        try {
+            return sslContextParameters.createSSLContext();
+        } catch (Exception e) {
+            throw new RuntimeCamelException("Error initializing SSLContext.", e);
+        }
     }
 
     /**
@@ -254,6 +284,15 @@ public class MailConfiguration implements Cloneable {
     public boolean isSecureProtocol() {
         return this.protocol.equalsIgnoreCase("smtps") || this.protocol.equalsIgnoreCase("pop3s")
                || this.protocol.equalsIgnoreCase("imaps");
+    }
+
+    public boolean isStartTlsEnabled() {
+        if (additionalJavaMailProperties != null) {
+            return ObjectHelper.equal(additionalJavaMailProperties.getProperty("mail." + protocol + ".starttls.enable"), "true", true)
+                   || ObjectHelper.equal(additionalJavaMailProperties.getProperty("mail." + protocol + ".starttls.required"), "true", true);
+        }
+
+        return false;
     }
 
     public String getMailStoreLogInformation() {
@@ -366,6 +405,11 @@ public class MailConfiguration implements Cloneable {
         return session;
     }
 
+    /**
+     * Specifies the mail session that camel should use for all mail interactions. Useful in scenarios where
+     * mail sessions are created and managed by some other resource, such as a JavaEE container.
+     * If this is not specified, Camel automatically creates the mail session for you.
+     */
     public void setSession(Session session) {
         this.session = session;
     }
@@ -463,24 +507,39 @@ public class MailConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the <tt>To</tt> email address. Separate multiple email addresses with comma.
+     * Sets the To email address. Separate multiple email addresses with comma.
      */
     public void setTo(String address) {
+        this.to = address;
         recipients.put(Message.RecipientType.TO, address);
     }
 
-    /**
-     * Sets the <tt>CC</tt> email address. Separate multiple email addresses with comma.
-     */
-    public void setCC(String address) {
-        recipients.put(Message.RecipientType.CC, address);
+    public String getTo() {
+        return to;
     }
 
     /**
-     * Sets the <tt>BCC</tt> email address. Separate multiple email addresses with comma.
+     * Sets the CC email address. Separate multiple email addresses with comma.
      */
-    public void setBCC(String address) {
+    public void setCc(String address) {
+        this.cc = address;
+        recipients.put(Message.RecipientType.CC, address);
+    }
+
+    public String getCc() {
+        return cc;
+    }
+
+    /**
+     * Sets the BCC email address. Separate multiple email addresses with comma.
+     */
+    public void setBcc(String address) {
+        this.bcc = address;
         recipients.put(Message.RecipientType.BCC, address);
+    }
+
+    public String getBcc() {
+        return bcc;
     }
 
     public Map<Message.RecipientType, String> getRecipients() {
@@ -679,5 +738,27 @@ public class MailConfiguration implements Cloneable {
      */
     public void setHandleFailedMessage(boolean handleFailedMessage) {
         this.handleFailedMessage = handleFailedMessage;
+    }
+
+    public AttachmentsContentTransferEncodingResolver getAttachmentsContentTransferEncodingResolver() {
+        return attachmentsContentTransferEncodingResolver;
+    }
+
+    /**
+     * To use a custom AttachmentsContentTransferEncodingResolver to resolve what content-type-encoding to use for attachments.
+     */
+    public void setAttachmentsContentTransferEncodingResolver(AttachmentsContentTransferEncodingResolver attachmentsContentTransferEncodingResolver) {
+        this.attachmentsContentTransferEncodingResolver = attachmentsContentTransferEncodingResolver;
+    }
+
+    /**
+     * This option enables transparent MIME decoding and unfolding for mail headers.
+     */
+    public void setMimeDecodeHeaders(boolean mimeDecodeHeaders) {
+        this.mimeDecodeHeaders = mimeDecodeHeaders;
+    }
+
+    public boolean isMimeDecodeHeaders() {
+        return mimeDecodeHeaders;
     }
 }

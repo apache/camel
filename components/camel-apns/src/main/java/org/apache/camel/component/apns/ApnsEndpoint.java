@@ -29,10 +29,13 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(scheme = "apns", title = "APNS", syntax = "apns:name", consumerClass = ApnsConsumer.class, label = "eventbus,mobile")
+/**
+ * For sending notifications to Apple iOS devices.
+ */
+@UriEndpoint(firstVersion = "2.8.0", scheme = "apns", title = "APNS", syntax = "apns:name", consumerClass = ApnsConsumer.class, label = "eventbus,mobile")
 public class ApnsEndpoint extends ScheduledPollEndpoint {
 
-    private final CopyOnWriteArraySet<DefaultConsumer> consumers = new CopyOnWriteArraySet<DefaultConsumer>();
+    private final CopyOnWriteArraySet<DefaultConsumer> consumers = new CopyOnWriteArraySet<>();
 
     @UriPath(description = "Name of the endpoint")
     private String name;

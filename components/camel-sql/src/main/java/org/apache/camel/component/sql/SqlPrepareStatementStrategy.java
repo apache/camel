@@ -32,9 +32,10 @@ public interface SqlPrepareStatementStrategy {
      *
      * @param query                 the query which may contain named query parameters
      * @param allowNamedParameters  whether named parameters is allowed
+     * @param exchange              the current exchange
      * @return the query to actually use, which must be accepted by the JDBC driver.
      */
-    String prepareQuery(String query, boolean allowNamedParameters) throws SQLException;
+    String prepareQuery(String query, boolean allowNamedParameters, Exchange exchange) throws SQLException;
 
     /**
      * Creates the iterator to use when setting query parameters on the prepared statement.

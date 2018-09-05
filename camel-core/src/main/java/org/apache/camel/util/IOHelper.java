@@ -50,6 +50,11 @@ public final class IOHelper {
     private static final Logger LOG = LoggerFactory.getLogger(IOHelper.class);
     private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
 
+    // allows to turn on backwards compatible to turn off regarding the first read byte with value zero (0b0) as EOL.
+    // See more at CAMEL-11672
+    private static final boolean ZERO_BYTE_EOL_ENABLED =
+        "true".equalsIgnoreCase(System.getProperty("camel.zeroByteEOLEnabled", "true"));
+
     private IOHelper() {
         // Utility Class
     }
@@ -192,16 +197,27 @@ public final class IOHelper {
                     new Object[]{input, output, bufferSize, flushOnEachWrite});
         }
 
+        int total = 0;
         final byte[] buffer = new byte[bufferSize];
         int n = input.read(buffer);
-        int total = 0;
-        while (-1 != n) {
-            output.write(buffer, 0, n);
-            if (flushOnEachWrite) {
-                output.flush();
+
+        boolean hasData;
+        if (ZERO_BYTE_EOL_ENABLED) {
+            // workaround issue on some application servers which can return 0 (instead of -1)
+            // as first byte to indicate end of stream (CAMEL-11672)
+            hasData = n > 0;
+        } else {
+            hasData = n > -1;
+        }
+        if (hasData) {
+            while (-1 != n) {
+                output.write(buffer, 0, n);
+                if (flushOnEachWrite) {
+                    output.flush();
+                }
+                total += n;
+                n = input.read(buffer);
             }
-            total += n;
-            n = input.read(buffer);
         }
         if (!flushOnEachWrite) {
             // flush at end, if we didn't do it during the writing
@@ -287,7 +303,7 @@ public final class IOHelper {
      * An associated FileOutputStream can optionally be forced to disk.
      *
      * @param writer the writer to close
-     * @param os an underlying FileOutputStream that will to be forced to disk according to the the force parameter
+     * @param os an underlying FileOutputStream that will to be forced to disk according to the force parameter
      * @param name the name of the resource
      * @param log the log to use when reporting warnings, will use this class's own {@link Logger} if <tt>log == null</tt>
      * @param force forces the FileOutputStream to disk
@@ -398,6 +414,29 @@ public final class IOHelper {
     public static void close(Closeable... closeables) {
         for (Closeable closeable : closeables) {
             close(closeable);
+        }
+    }
+
+    public static void closeIterator(Object it) throws IOException {
+        if (it instanceof java.util.Scanner) {
+            // special for Scanner which implement the Closeable since JDK7
+            java.util.Scanner scanner = (java.util.Scanner) it;
+            scanner.close();
+            IOException ioException = scanner.ioException();
+            if (ioException != null) {
+                throw ioException;
+            }
+        } else if (it instanceof Scanner) {
+            // special for Scanner which implement the Closeable since JDK7
+            Scanner scanner = (Scanner) it;
+            scanner.close();
+            IOException ioException = scanner.ioException();
+            if (ioException != null) {
+                throw ioException;
+            }
+
+        } else if (it instanceof Closeable) {
+            IOHelper.closeWithException((Closeable) it);
         }
     }
 

@@ -17,10 +17,9 @@
 package org.apache.camel.component.twitter;
 
 import org.apache.camel.component.twitter.data.EndpointType;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
@@ -31,52 +30,50 @@ import twitter4j.conf.ConfigurationBuilder;
 @UriParams
 public class TwitterConfiguration {
 
-    @UriPath(description = "What kind of type to use") @Metadata(required = "true")
-    private EndpointType type = EndpointType.DIRECT;
-    @UriParam
-    private String consumerKey;
-    @UriParam
-    private String consumerSecret;
-    @UriParam
+    @UriParam(label = "consumer", defaultValue = "polling", enums = "polling,direct,event")
+    private EndpointType type = EndpointType.POLLING;
+    @UriParam(label = "security", secret = true)
     private String accessToken;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessTokenSecret;
-    @UriParam(label = "consumer", defaultValue = "60")
-    private int delay = 60;
-    @UriParam
-    private String user;
-    @UriParam
-    private String keywords;
-    @UriParam(label = "consumer")
-    private String locations;
-    @UriParam(label = "consumer")
+    @UriParam(label = "security", secret = true)
+    private String consumerKey;
+    @UriParam(label = "security", secret = true)
+    private String consumerSecret;
+    @UriParam(label = "consumer,filter")
     private String userIds;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "consumer,filter", defaultValue = "true")
     private boolean filterOld = true;
-    @UriParam(label = "consumer", defaultValue = "1")
+    @UriParam(label = "consumer,filter", defaultValue = "1")
     private long sinceId  = 1;
-    @UriParam
+    @UriParam(label = "consumer,filter")
     private String lang;
-    @UriParam
+    @UriParam(label = "consumer,filter")
     private Integer count;
-    @UriParam(defaultValue = "1")
+    @UriParam(label = "consumer,filter", defaultValue = "1")
     private Integer numberOfPages = 1;
-    @UriParam
+    @UriParam(label = "consumer,sort", defaultValue = "true")
+    private boolean sortById = true;
+    @UriParam(label = "proxy")
     private String httpProxyHost;
-    @UriParam
+    @UriParam(label = "proxy")
     private String httpProxyUser;
-    @UriParam
+    @UriParam(label = "proxy")
     private String httpProxyPassword;
-    @UriParam
+    @UriParam(label = "proxy")
     private Integer httpProxyPort;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
+    private String locations;
+    @UriParam(label = "consumer,advanced")
     private Double latitude;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
     private Double longitude;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer,advanced")
     private Double radius;
-    @UriParam(label = "consumer", defaultValue = "km", enums = "mi,km")
+    @UriParam(label = "consumer,advanced", defaultValue = "km", enums = "km,mi")
     private String distanceMetric;
+    @UriParam(label = "consumer,advanced", defaultValue = "true")
+    private boolean extendedMode = true;
 
     /**
      * Singleton, on demand instances of Twitter4J's Twitter & TwitterStream.
@@ -86,6 +83,8 @@ public class TwitterConfiguration {
      * if we only need twitterStream.
      */
     private Twitter twitter;
+
+    @UriParam(label = "consumer,advanced")
     private TwitterStream twitterStream;
 
     /**
@@ -93,7 +92,7 @@ public class TwitterConfiguration {
      */
     public void checkComplete() {
         if (twitter == null && twitterStream == null
-                && (consumerKey.isEmpty() || consumerSecret.isEmpty() || accessToken.isEmpty() || accessTokenSecret.isEmpty())) {
+                && (ObjectHelper.isEmpty(consumerKey) || ObjectHelper.isEmpty(consumerSecret) || ObjectHelper.isEmpty(accessToken) ||  ObjectHelper.isEmpty(accessTokenSecret))) {
             throw new IllegalArgumentException("twitter or twitterStream or all of consumerKey, consumerSecret, accessToken, and accessTokenSecret must be set!");
         }
     }
@@ -110,14 +109,15 @@ public class TwitterConfiguration {
         confBuilder.setOAuthConsumerSecret(consumerSecret);
         confBuilder.setOAuthAccessToken(accessToken);
         confBuilder.setOAuthAccessTokenSecret(accessTokenSecret);
+        confBuilder.setTweetModeExtended(isExtendedMode());
         if (getHttpProxyHost() != null) {
             confBuilder.setHttpProxyHost(getHttpProxyHost());
         }
         if (getHttpProxyUser() != null) {
-            confBuilder.setHttpProxyHost(getHttpProxyUser());
+            confBuilder.setHttpProxyUser(getHttpProxyUser());
         }
         if (getHttpProxyPassword() != null) {
-            confBuilder.setHttpProxyHost(getHttpProxyPassword());
+            confBuilder.setHttpProxyPassword(getHttpProxyPassword());
         }
         if (httpProxyPort != null) {
             confBuilder.setHttpProxyPort(httpProxyPort);
@@ -125,7 +125,6 @@ public class TwitterConfiguration {
         
         return confBuilder.build();
     }
-
 
     public Twitter getTwitter() {
         if (twitter == null) {
@@ -142,6 +141,9 @@ public class TwitterConfiguration {
         return twitterStream;
     }
 
+    /**
+     * To use a custom instance of TwitterStream
+     */
     public void setTwitterStream(TwitterStream twitterStream) {
         this.twitterStream = twitterStream;
     }
@@ -150,7 +152,6 @@ public class TwitterConfiguration {
         if (twitterStream == null) {
             twitterStream = new TwitterStreamFactory(getConfiguration()).getInstance();
         }
-
         return twitterStream;
     }
 
@@ -198,43 +199,13 @@ public class TwitterConfiguration {
         this.accessTokenSecret = accessTokenSecret;
     }
     
-    public String getUser() {
-        return user;
-    }
-
-    /**
-     * Username, used for user timeline consumption, direct message production, etc.
-     */
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public String getKeywords() {
-        return keywords;
-    }
-
-    /**
-     * Can be used for search and streaming/filter. Multiple values can be separated with comma.
-     */
-    public void setKeywords(String keywords) {
-        this.keywords = keywords;
-    }
-
-    public int getDelay() {
-        return delay;
-    }
-
-    /**
-     * Delay in seconds between polling from twitter.
-     */
-    public void setDelay(int delay) {
-        this.delay = delay;
-    }
-
     public EndpointType getType() {
         return type;
     }
 
+    /**
+     * Endpoint type to use. Only streaming supports event type.
+     */
     public void setType(EndpointType type) {
         this.type = type;
     }
@@ -317,6 +288,17 @@ public class TwitterConfiguration {
         this.numberOfPages = numberOfPages;
     }
 
+    public boolean isSortById() {
+        return sortById;
+    }
+
+    /**
+     * Sorts by id, so the oldest are first, and newest last.
+     */
+    public void setSortById(boolean sortById) {
+        this.sortById = sortById;
+    }
+
     /**
      * The http proxy host which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead.
      */
@@ -353,11 +335,11 @@ public class TwitterConfiguration {
     /**
      * The http proxy port which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead.
      */
-    public void setHttpProxyPort(int httpProxyPort) {
+    public void setHttpProxyPort(Integer httpProxyPort) {
         this.httpProxyPort = httpProxyPort;
     }
 
-    public int getHttpProxyPort() {
+    public Integer getHttpProxyPort() {
         return httpProxyPort;
     }
 
@@ -413,6 +395,17 @@ public class TwitterConfiguration {
      */
     public void setDistanceMetric(String distanceMetric) {
         this.distanceMetric = distanceMetric;
+    }
+    
+    /**
+     * Used for enabling full text from twitter (eg receive tweets that contains more than 140 characters).
+     */
+    public void setExtendedMode(Boolean extendedMode) {
+        this.extendedMode = extendedMode;
+    }
+
+    public boolean isExtendedMode() {
+        return extendedMode;
     }
 
 }

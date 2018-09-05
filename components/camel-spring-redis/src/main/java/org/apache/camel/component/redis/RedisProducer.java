@@ -16,36 +16,23 @@
  */
 package org.apache.camel.component.redis;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.URISupport;
+import java.util.Map;
 
-/**
- * The Redis producer.
- */
-public class RedisProducer extends DefaultProducer {
-    private final RedisClient redisClient;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
+import org.apache.camel.impl.HeaderSelectorProducer;
 
-    public RedisProducer(RedisEndpoint endpoint, RedisConfiguration configuration) {
-        super(endpoint);
-        redisClient = new RedisClient(configuration.getRedisTemplate());
+final class RedisProducer extends HeaderSelectorProducer {
+
+    RedisProducer(Endpoint endpoint,
+                         String header,
+                         String defaultHeaderValue,
+                         RedisProcessorsCreator redisProcessorsCreator) {
+        super(endpoint, header, defaultHeaderValue);
+
+        for (Map.Entry<Command, Processor> entry : redisProcessorsCreator.getRedisProcessors().entrySet()) {
+            bind(entry.getKey().name(), entry.getValue());
+        }
     }
 
-    public void process(final Exchange exchange) throws Exception {
-        new CommandDispatcher(getConfiguration(), exchange).execute(redisClient);
-    }
-
-    protected RedisConfiguration getConfiguration() {
-        return getEndpoint().getConfiguration();
-    }
-
-    @Override
-    public RedisEndpoint getEndpoint() {
-        return (RedisEndpoint)super.getEndpoint();
-    }
-
-    @Override
-    public String toString() {
-        return "RedisProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
-    }
 }

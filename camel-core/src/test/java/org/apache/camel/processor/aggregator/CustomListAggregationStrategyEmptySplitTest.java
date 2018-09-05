@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +34,7 @@ public class CustomListAggregationStrategyEmptySplitTest extends
         ContextTestSupport {
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testCustomAggregationStrategy() throws Exception {
         getMockEndpoint("mock:line").expectedBodiesReceived();
 
@@ -39,7 +42,7 @@ public class CustomListAggregationStrategyEmptySplitTest extends
         result.expectedMessageCount(1);
         result.message(0).body().isInstanceOf(List.class);
 
-        List<String> body = new ArrayList<String>();
+        List<String> body = new ArrayList<>();
 
         template.sendBody("direct:start", body);
 

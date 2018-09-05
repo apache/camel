@@ -18,30 +18,32 @@ package org.apache.camel.component.aws.ec2;
 
 import com.amazonaws.services.ec2.AmazonEC2Client;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class EC2Configuration {
+public class EC2Configuration implements Cloneable {
 
     @UriPath(description = "Logical name") @Metadata(required = "true")
     private String label;
-    @UriParam
+    @UriParam(label = "producer")
     private AmazonEC2Client amazonEc2Client;
-    @UriParam
+    @UriParam(label = "producer", secret = true)
     private String accessKey;
-    @UriParam
+    @UriParam(label = "producer", secret = true)
     private String secretKey;
-    @UriParam
-    private String amazonEc2Endpoint;
-    @UriParam @Metadata(required = "true")
+    @UriParam(label = "producer")
+    @Metadata(required = "true")
     private EC2Operations operation;
-    @UriParam
+    @UriParam(label = "producer")
     private String proxyHost;
-    @UriParam
+    @UriParam(label = "producer")
     private Integer proxyPort;
+    @UriParam
+    private String region;
     
     public AmazonEC2Client getAmazonEc2Client() {
         return amazonEc2Client;
@@ -75,48 +77,62 @@ public class EC2Configuration {
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
-    
-    public String getAmazonEc2Endpoint() {
-        return amazonEc2Endpoint;
-    }
-
-    /**
-     * The region with which the AWS-EC2 client wants to work with.
-     */
-    public void setAmazonEc2Endpoint(String amazonEc2Endpoint) {
-        this.amazonEc2Endpoint = amazonEc2Endpoint;
-    }
 
     public EC2Operations getOperation() {
         return operation;
     }
 
     /**
-     * The operation to perform
+     * The operation to perform. It can be createAndRunInstances, startInstances, stopInstances, terminateInstances, 
+     * describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances,  
+     * createTags or deleteTags
      */
     public void setOperation(EC2Operations operation) {
         this.operation = operation;
     } 
     
-    /**
-     * To define a proxy host when instantiating the SQS client
-     */
     public String getProxyHost() {
         return proxyHost;
     }
 
+    /**
+     * To define a proxy host when instantiating the EC2 client
+     */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
     }
 
-    /**
-     * To define a proxy port when instantiating the SQS client
-     */
     public Integer getProxyPort() {
         return proxyPort;
     }
 
+    /**
+     * To define a proxy port when instantiating the EC2 client
+     */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
+    }
+    
+    public String getRegion() {
+        return region;
+    }
+
+    /**
+     * The region in which EC2 client needs to work
+     */
+    public void setRegion(String region) {
+        this.region = region;
+    }
+    
+    // *************************************************
+    //
+    // *************************************************
+
+    public EC2Configuration copy() {
+        try {
+            return (EC2Configuration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }

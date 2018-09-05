@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27,6 +29,7 @@ import org.apache.camel.util.StopWatch;
  */
 public class FailoverLoadBalancerBreakoutDuringShutdownTest extends ContextTestSupport {
 
+    @Test
     public void testFailover() throws Exception {
 
         getMockEndpoint("mock:before").expectedMessageCount(1);
@@ -44,7 +47,7 @@ public class FailoverLoadBalancerBreakoutDuringShutdownTest extends ContextTestS
         context.stop();
 
         // should take less than 5 seconds
-        assertTrue("Should take less than 5 seconds, was " + watch.taken(), watch.stop() < 5000);
+        assertTrue("Should take less than 5 seconds, was " + watch.taken(), watch.taken() < 5000);
     }
 
     @Override

@@ -20,24 +20,23 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import javax.enterprise.util.AnnotationLiteral;
 import javax.enterprise.util.Nonbinding;
 import javax.inject.Qualifier;
 
 /**
- * An injection annotation to define the <a href="http://camel.apache.org/uris.html">Camel URI</a> used
- * to reference the underlying <a href="http://camel.apache.org/endpoint.html">Camel Endpoint</a>.
+ * A CDI qualifier to define the <a href="http://camel.apache.org/uris.html">Camel URI</a> associated to
+ * the annotated resource. This annotation can be used to annotate an {@code @Inject} injection point for
+ * values of type {@link org.apache.camel.Endpoint} or {@link org.apache.camel.ProducerTemplate}. For example:
+ * <pre><code>
+ * {@literal @}Inject
+ * {@literal @}Uri("mock:foo")
+ * Endpoint endpoint;
  *
- * This annotation can be used to annotate an @Inject injection point for values of type
- * {@link org.apache.camel.Endpoint} or {@link org.apache.camel.ProducerTemplate} with a String URI.
- *
- * For example:
- * <code>
- *     public class Foo {
- *         @Inject @Uri("mock:foo") Endpoint endpoint;
- *
- *         @Inject @Uri("seda:bar") ProducerTemplate producer;
- *     }
- * </code>
+ * {@literal @}Inject
+ * {@literal @}Uri("seda:bar")
+ * ProducerTemplate producer;
+ * </code></pre>
  */
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
@@ -45,14 +44,46 @@ import javax.inject.Qualifier;
 public @interface Uri {
 
     /**
-     * Returns the <a href="http://camel.apache.org/uris.html">Camel URI</a> of the endpoint
+     * Returns the <a href="http://camel.apache.org/uris.html">Camel URI</a> of the resource.
      */
-    @Nonbinding
-    String value();
+    @Nonbinding String value();
 
     /**
-     * Returns the name of the CamelContext to use to resolve the endpoint for this URI
+     * Returns the name of the {@code CamelContext} to use to resolve the Camel resource for this URI.
+     *
+     * @deprecated Use the {@link ContextName} qualifier to specify the name of the {@code CamelContext} instead:
+     * <pre><code>
+     * {@literal @}Inject
+     * {@literal @}ContextName("foo")
+     * {@literal @}Uri("seda:bar")
+     * Endpoint endpoint;
+     * </code></pre>
      */
-    @Nonbinding
-    String context() default "";
+    @Deprecated
+    @Nonbinding String context() default "";
+
+    final class Literal extends AnnotationLiteral<Uri> implements Uri {
+
+        private static final long serialVersionUID = 1L;
+
+        private final String uri;
+
+        private Literal(String uri) {
+            this.uri = uri;
+        }
+
+        public static Literal of(String uri) {
+            return new Literal(uri);
+        }
+
+        @Override
+        public String value() {
+            return uri;
+        }
+
+        @Override
+        public String context() {
+            return "";
+        }
+    }
 }

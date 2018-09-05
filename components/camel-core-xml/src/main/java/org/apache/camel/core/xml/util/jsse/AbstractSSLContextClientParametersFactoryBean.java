@@ -18,6 +18,7 @@ package org.apache.camel.core.xml.util.jsse;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.util.jsse.SSLContextClientParameters;
@@ -25,16 +26,26 @@ import org.apache.camel.util.jsse.SSLContextClientParameters;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlTransient
 public abstract class AbstractSSLContextClientParametersFactoryBean extends AbstractBaseSSLContextParametersFactoryBean<SSLContextClientParameters> {
-    
+
+    @XmlElement(name = "sniHostNames")
+    private SNIHostNamesDefinition sniHostNamesDefinition;
+
     @Override
     protected SSLContextClientParameters createInstance() {
         SSLContextClientParameters newInstance = new SSLContextClientParameters();
         newInstance.setCamelContext(getCamelContext());
+        if (sniHostNamesDefinition != null) {
+            newInstance.addAllSniHostNames(sniHostNamesDefinition.getSniHostName());
+        }
         return newInstance;
     }
 
     @Override
     public Class<SSLContextClientParameters> getObjectType() {
         return SSLContextClientParameters.class;
+    }
+
+    public SNIHostNamesDefinition getSniHostNamesDefinition() {
+        return sniHostNamesDefinition;
     }
 }

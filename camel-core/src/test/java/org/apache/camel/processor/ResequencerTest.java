@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+import org.junit.After;
+
+import org.junit.Test;
 
 import java.util.List;
 
@@ -34,6 +38,7 @@ public class ResequencerTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
 
+    @Test
     public void testSendMessagesInWrongOrderButReceiveThemInCorrectOrder() throws Exception {
         resultEndpoint.expectedBodiesReceived("Guillaume", "Hiram", "James", "Rob");
         sendBodies("direct:start", "Rob", "Hiram", "Guillaume", "James");
@@ -41,13 +46,15 @@ public class ResequencerTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         resultEndpoint = getMockEndpoint("mock:result");
     }
 
     @Override 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
     }
     
@@ -61,17 +68,19 @@ public class ResequencerTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: example
                 from("direct:start")
-                    .resequence().body()
+                    .resequence().body().timeout(50)
                     .to("mock:result");
                 // END SNIPPET: example
             }
         };
     }
 
+    @Test
     public void testBatchResequencerTypeWithJmx() throws Exception {
         testBatchResequencerTypeWithoutJmx();
     }
 
+    @Test
     public void testBatchResequencerTypeWithoutJmx() throws Exception {
         List<Route> list = getRouteList(createRouteBuilder());
         assertEquals("Number of routes created: " + list, 1, list.size());

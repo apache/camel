@@ -45,7 +45,7 @@ public abstract class SpringScheduledRoutePolicyTest extends TestSupport {
         MockEndpoint mock = context.getEndpoint("mock:success", MockEndpoint.class);
         mock.expectedMinimumMessageCount(1);
         
-        context.stopRoute("testRoute", 0, TimeUnit.MILLISECONDS);
+        context.stopRoute("testRoute", 1000, TimeUnit.MILLISECONDS);
         
         Thread.sleep(4000);
         assertTrue(context.getRouteStatus("testRoute") == ServiceStatus.Started);

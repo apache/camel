@@ -30,11 +30,11 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Bindy data format
+ * The Bindy data format is used for working with flat payloads (such as CSV, delimited, fixed length formats, or FIX messages).
  *
  * @version 
  */
-@Metadata(label = "dataformat,transformation", title = "Bindy")
+@Metadata(firstVersion = "2.0.0", label = "dataformat,transformation,csv", title = "Bindy")
 @XmlRootElement(name = "bindy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BindyDataFormat extends DataFormatDefinition {
@@ -44,6 +44,8 @@ public class BindyDataFormat extends DataFormatDefinition {
     private String classType;
     @XmlAttribute
     private String locale;
+    @XmlAttribute @Metadata(defaultValue = "true")
+    private Boolean unwrapSingleInstance;
     @XmlTransient
     private Class<?> clazz;
 
@@ -93,6 +95,17 @@ public class BindyDataFormat extends DataFormatDefinition {
         this.locale = locale;
     }
 
+    public Boolean getUnwrapSingleInstance() {
+        return unwrapSingleInstance;
+    }
+
+    /**
+     * When unmarshalling should a single instance be unwrapped and returned instead of wrapped in a <tt>java.util.List</tt>.
+     */
+    public void setUnwrapSingleInstance(Boolean unwrapSingleInstance) {
+        this.unwrapSingleInstance = unwrapSingleInstance;
+    }
+
     protected DataFormat createDataFormat(RouteContext routeContext) {
         if (classType == null && clazz == null) {
             throw new IllegalArgumentException("Either packages or classType must be specified");
@@ -120,6 +133,9 @@ public class BindyDataFormat extends DataFormatDefinition {
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         setProperty(camelContext, dataFormat, "locale", locale);
         setProperty(camelContext, dataFormat, "classType", clazz);
+        if (unwrapSingleInstance != null) {
+            setProperty(camelContext, dataFormat, "unwrapSingleInstance", unwrapSingleInstance);
+        }
     }
 
 }

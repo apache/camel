@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -44,13 +45,17 @@ import org.apache.camel.builder.AdviceWithTask;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultRouteContext;
+import org.apache.camel.model.rest.RestBindingDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.interceptor.HandleFault;
+import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
+import org.apache.camel.spi.Transformer;
+import org.apache.camel.spi.Validator;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -61,17 +66,18 @@ import org.apache.camel.util.ObjectHelper;
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "route")
-@XmlType(propOrder = {"inputs", "outputs"})
+@XmlType(propOrder = {"inputs", "inputType", "outputType", "outputs", "routeProperties"})
 @XmlAccessorType(XmlAccessType.PROPERTY)
 // must use XmlAccessType.PROPERTY as there is some custom logic needed to be executed in the setter methods
 public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     private final AtomicBoolean prepared = new AtomicBoolean(false);
-    private List<FromDefinition> inputs = new ArrayList<FromDefinition>();
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+    private List<FromDefinition> inputs = new ArrayList<>();
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
     private String group;
     private String streamCache;
     private String trace;
     private String messageHistory;
+    private String logMask;
     private String handleFault;
     private String delayer;
     private String autoStartup;
@@ -87,11 +93,15 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     private boolean contextScopedErrorHandler = true;
     private Boolean rest;
     private RestDefinition restDefinition;
+    private RestBindingDefinition restBindingDefinition;
+    private InputTypeDefinition inputType;
+    private OutputTypeDefinition outputType;
+    private List<PropertyDefinition> routeProperties;
 
     public RouteDefinition() {
     }
 
-    public RouteDefinition(String uri) {
+    public RouteDefinition(@AsEndpointUri String uri) {
         from(uri);
     }
 
@@ -102,7 +112,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     /**
      * This route is created from the REST DSL.
      */
-    public void fromRest(String uri) {
+    public void fromRest(@AsEndpointUri String uri) {
         from(uri);
         rest = true;
     }
@@ -149,6 +159,11 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         }
     }
 
+    @Override
+    public String getShortName() {
+        return "route";
+    }
+
     /**
      * Returns the status of the route if it has been registered with a {@link CamelContext}
      */
@@ -182,7 +197,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     }
 
     public List<RouteContext> addRoutes(ModelCamelContext camelContext, Collection<Route> routes) throws Exception {
-        List<RouteContext> answer = new ArrayList<RouteContext>();
+        List<RouteContext> answer = new ArrayList<>();
 
         @SuppressWarnings("deprecation")
         ErrorHandlerFactory handler = camelContext.getErrorHandlerBuilder();
@@ -211,7 +226,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return CamelContextHelper.getMandatoryEndpoint(camelContext, uri);
     }
 
-    @Deprecated
     public RouteDefinition adviceWith(CamelContext camelContext, RouteBuilder builder) throws Exception {
         return adviceWith((ModelCamelContext)camelContext, builder);
     }
@@ -271,6 +285,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
             throw new IllegalArgumentException("You can not advice with error handlers. Remove the error handlers from the route builder.");
         }
 
+        String beforeAsXml = ModelHelper.dumpModelAsXml(camelContext, this);
+
         // stop and remove this existing route
         camelContext.removeRouteDefinition(this);
 
@@ -289,7 +305,10 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         camelContext.getRouteDefinitions().add(0, merged);
 
         // log the merged route at info level to make it easier to end users to spot any mistakes they may have made
-        log.info("AdviceWith route after: " + merged);
+        log.info("AdviceWith route after: {}", merged);
+
+        String afterAsXml = ModelHelper.dumpModelAsXml(camelContext, merged);
+        log.info("Adviced route before/after as XML:\n{}\n{}", beforeAsXml, afterAsXml);
 
         // If the camel context is started then we start the route
         if (camelContext instanceof StatefulService) {
@@ -310,7 +329,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @param uri the from uri
      * @return the builder
      */
-    public RouteDefinition from(String uri) {
+    public RouteDefinition from(@AsEndpointUri String uri) {
         getInputs().add(new FromDefinition(uri));
         return this;
     }
@@ -332,7 +351,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @param uris the from uris
      * @return the builder
      */
-    public RouteDefinition from(String... uris) {
+    public RouteDefinition from(@AsEndpointUri String... uris) {
         for (String uri : uris) {
             getInputs().add(new FromDefinition(uri));
         }
@@ -360,6 +379,17 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      */
     public RouteDefinition group(String name) {
         setGroup(name);
+        return this;
+    }
+
+    /**
+     * Set the route group for this route
+     *
+     * @param group the route group
+     * @return the builder
+     */
+    public RouteDefinition routeGroup(String group) {
+        setGroup(group);
         return this;
     }
 
@@ -467,6 +497,27 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      */
     public RouteDefinition messageHistory(String messageHistory) {
         setMessageHistory(messageHistory);
+        return this;
+    }
+
+    /**
+     * Enable security mask for Logging on this route.
+     *
+     * @return the builder
+     */
+    public RouteDefinition logMask() {
+        setLogMask("true");
+        return this;
+    }
+
+    /**
+     * Sets whether security mask for logging is enabled on this route.
+     *
+     * @param logMask whether to enable security mask for Logging (true or false), the value can be a property placeholder
+     * @return the builder
+     */
+    public RouteDefinition logMask(String logMask) {
+        setLogMask(logMask);
         return this;
     }
 
@@ -588,7 +639,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      */
     public RouteDefinition routePolicy(RoutePolicy... policies) {
         if (routePolicies == null) {
-            routePolicies = new ArrayList<RoutePolicy>();
+            routePolicies = new ArrayList<>();
         }
         for (RoutePolicy policy : policies) {
             routePolicies.add(policy);
@@ -627,6 +678,168 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      */
     public RouteDefinition shutdownRunningTask(ShutdownRunningTask shutdownRunningTask) {
         setShutdownRunningTask(shutdownRunningTask);
+        return this;
+    }
+
+    /**
+     * Declare the expected data type of the input message. If the actual message type is different
+     * at runtime, camel look for a required {@link Transformer} and apply if exists.
+     * The type name consists of two parts, 'scheme' and 'name' connected with ':'. For Java type 'name'
+     * is a fully qualified class name. For example {@code java:java.lang.String}, {@code json:ABCOrder}.
+     *
+     * @see org.apache.camel.spi.Transformer
+     *
+     * @param urn input type URN
+     * @return the builder
+     */
+    public RouteDefinition inputType(String urn) {
+        inputType = new InputTypeDefinition();
+        inputType.setUrn(urn);
+        inputType.setValidate(false);
+        return this;
+    }
+
+    /**
+     * Declare the expected data type of the input message with content validation enabled.
+     * If the actual message type is different at runtime, camel look for a required
+     * {@link Transformer} and apply if exists, and then applies {@link Validator} as well.
+     * The type name consists of two parts, 'scheme' and 'name' connected with ':'. For Java type 'name'
+     * is a fully qualified class name. For example {@code java:java.lang.String}, {@code json:ABCOrder}.
+     *
+     * @see org.apache.camel.spi.Transformer
+     * @see org.apache.camel.spi.Validator
+     *
+     * @param urn input type URN
+     * @return the builder
+     */
+    public RouteDefinition inputTypeWithValidate(String urn) {
+        inputType = new InputTypeDefinition();
+        inputType.setUrn(urn);
+        inputType.setValidate(true);
+        return this;
+    }
+
+    /**
+     * Declare the expected data type of the input message by Java class.
+     * If the actual message type is different at runtime, camel look for a required
+     * {@link Transformer} and apply if exists.
+     *
+     * @see org.apache.camel.spi.Transformer
+     *
+     * @param clazz Class object of the input type
+     * @return the builder
+     */
+    public RouteDefinition inputType(Class clazz) {
+        inputType = new InputTypeDefinition();
+        inputType.setJavaClass(clazz);
+        inputType.setValidate(false);
+        return this;
+    }
+
+    /**
+     * Declare the expected data type of the input message by Java class with content validation enabled.
+     * If the actual message type is different at runtime, camel look for a required
+     * {@link Transformer} and apply if exists, and then applies {@link Validator} as well.
+     *
+     * @see org.apache.camel.spi.Transformer
+     * @see org.apache.camel.spi.Validator
+     *
+     * @param clazz Class object of the input type
+     * @return the builder
+     */
+    public RouteDefinition inputTypeWithValidate(Class clazz) {
+        inputType = new InputTypeDefinition();
+        inputType.setJavaClass(clazz);
+        inputType.setValidate(true);
+        return this;
+    }
+
+    /**
+     * Declare the expected data type of the output message. If the actual message type is different
+     * at runtime, camel look for a required {@link Transformer} and apply if exists.
+     * The type name consists of two parts, 'scheme' and 'name' connected with ':'. For Java type 'name'
+     * is a fully qualified class name. For example {@code java:java.lang.String}, {@code json:ABCOrder}.
+     *
+     * @see org.apache.camel.spi.Transformer
+     *
+     * @param urn output type URN
+     * @return the builder
+     */
+    public RouteDefinition outputType(String urn) {
+        outputType = new OutputTypeDefinition();
+        outputType.setUrn(urn);
+        outputType.setValidate(false);
+        return this;
+    }
+
+    /**
+     * Declare the expected data type of the output message with content validation enabled.
+     * If the actual message type is different at runtime, Camel look for a required
+     * {@link Transformer} and apply if exists, and then applies {@link Validator} as well.
+     * The type name consists of two parts, 'scheme' and 'name' connected with ':'. For Java type 'name'
+     * is a fully qualified class name. For example {@code java:java.lang.String}, {@code json:ABCOrder}.
+     * 
+     * @see org.apache.camel.spi.Transformer
+     * @see org.apache.camel.spi.Validator
+     *
+     * @param urn output type URN
+     * @return the builder
+     */
+    public RouteDefinition outputTypeWithValidate(String urn) {
+        outputType = new OutputTypeDefinition();
+        outputType.setUrn(urn);
+        outputType.setValidate(true);
+        return this;
+    }
+
+    /**
+     * Declare the expected data type of the output message by Java class.
+     * If the actual message type is different at runtime, camel look for a required
+     * {@link Transformer} and apply if exists.
+     *
+     * @see org.apache.camel.spi.Transformer
+     *
+     * @param clazz Class object of the output type
+     * @return the builder
+     */
+    public RouteDefinition outputType(Class clazz) {
+        outputType = new OutputTypeDefinition();
+        outputType.setJavaClass(clazz);
+        outputType.setValidate(false);
+        return this;
+    }
+
+    /**
+     * Declare the expected data type of the ouput message by Java class with content validation enabled.
+     * If the actual message type is different at runtime, camel look for a required
+     * {@link Transformer} and apply if exists, and then applies {@link Validator} as well.
+     * 
+     * @see org.apache.camel.spi.Transformer
+     * @see org.apache.camel.spi.Validator
+     * @param clazz Class object of the output type
+     * @return the builder
+     */
+    public RouteDefinition outputTypeWithValidate(Class clazz) {
+        outputType = new OutputTypeDefinition();
+        outputType.setJavaClass(clazz);
+        outputType.setValidate(true);
+        return this;
+    }
+
+    /**
+     * Adds a custom property on the route.
+     */
+    public RouteDefinition routeProperty(String key, String value) {
+        if (routeProperties == null) {
+            routeProperties = new ArrayList<>();
+        }
+
+        PropertyDefinition prop = new PropertyDefinition();
+        prop.setKey(key);
+        prop.setValue(value);
+
+        routeProperties.add(prop);
+
         return this;
     }
 
@@ -731,6 +944,21 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     @XmlAttribute @Metadata(defaultValue = "true")
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
+    }
+
+    /**
+     * Whether security mask for Logging is enabled on this route.
+     */
+    public String getLogMask() {
+        return logMask;
+    }
+
+    /**
+     * Whether security mask for Logging is enabled on this route.
+     */
+    @XmlAttribute
+    public void setLogMask(String logMask) {
+        this.logMask = logMask;
     }
 
     /**
@@ -920,6 +1148,15 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         this.restDefinition = restDefinition;
     }
 
+    public RestBindingDefinition getRestBindingDefinition() {
+        return restBindingDefinition;
+    }
+
+    @XmlTransient
+    public void setRestBindingDefinition(RestBindingDefinition restBindingDefinition) {
+        this.restBindingDefinition = restBindingDefinition;
+    }
+
     @SuppressWarnings("deprecation")
     public boolean isContextScopedErrorHandler(CamelContext context) {
         if (!contextScopedErrorHandler) {
@@ -934,6 +1171,37 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         }
 
         return true;
+    }
+
+    @XmlElementRef(required = false)
+    public void setInputType(InputTypeDefinition inputType) {
+        this.inputType = inputType;
+    }
+
+    public InputTypeDefinition getInputType() {
+        return this.inputType;
+    }
+
+    @XmlElementRef(required = false)
+    public void setOutputType(OutputTypeDefinition outputType) {
+        this.outputType = outputType;
+    }
+
+    public OutputTypeDefinition getOutputType() {
+        return this.outputType;
+    }
+
+    public List<PropertyDefinition> getRouteProperties() {
+        return routeProperties;
+    }
+
+    /**
+     * To set metadata as properties on the route.
+     */
+    @XmlElement(name = "routeProperty")
+    @Metadata(label = "advanced")
+    public void setRouteProperties(List<PropertyDefinition> routeProperties) {
+        this.routeProperties = routeProperties;
     }
 
     // Implementation methods
@@ -960,6 +1228,17 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
                 routeContext.setMessageHistory(isMessageHistory);
                 if (isMessageHistory) {
                     log.debug("Message history is enabled on route: {}", getId());
+                }
+            }
+        }
+
+        // configure Log EIP mask
+        if (logMask != null) {
+            Boolean isLogMask = CamelContextHelper.parseBoolean(camelContext, getLogMask());
+            if (isLogMask != null) {
+                routeContext.setLogMask(isLogMask);
+                if (isLogMask) {
+                    log.debug("Security mask for Logging is enabled on route: {}", getId());
                 }
             }
         }
@@ -1063,7 +1342,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
             throw new FailedToCreateRouteException(route.getId(), route.toString(), at, cause);
         }
 
-        List<ProcessorDefinition<?>> list = new ArrayList<ProcessorDefinition<?>>(outputs);
+        List<ProcessorDefinition<?>> list = new ArrayList<>(outputs);
         for (ProcessorDefinition<?> output : list) {
             try {
                 output.addRoutes(routeContext, routes);
@@ -1076,4 +1355,18 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         routeContext.commit();
         return routeContext;
     }
+
+
+    // ****************************
+    // Static helpers
+    // ****************************
+
+    public static RouteDefinition fromUri(String uri) {
+        return new RouteDefinition().from(uri);
+    }
+
+    public static RouteDefinition fromEndpoint(Endpoint endpoint) {
+        return new RouteDefinition().from(endpoint);
+    }
+
 }

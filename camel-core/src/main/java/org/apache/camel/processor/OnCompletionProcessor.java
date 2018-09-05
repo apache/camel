@@ -137,12 +137,14 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
     protected static void doProcess(Processor processor, Exchange exchange) {
         // must remember some properties which we cannot use during onCompletion processing
         // as otherwise we may cause issues
+        // but keep the caused exception stored as a property (Exchange.EXCEPTION_CAUGHT) on the exchange
         Object stop = exchange.removeProperty(Exchange.ROUTE_STOP);
         Object failureHandled = exchange.removeProperty(Exchange.FAILURE_HANDLED);
-        Object caught = exchange.removeProperty(Exchange.EXCEPTION_CAUGHT);
         Object errorhandlerHandled = exchange.removeProperty(Exchange.ERRORHANDLER_HANDLED);
         Object rollbackOnly = exchange.removeProperty(Exchange.ROLLBACK_ONLY);
         Object rollbackOnlyLast = exchange.removeProperty(Exchange.ROLLBACK_ONLY_LAST);
+        // and we should not be regarded as exhausted as we are in a onCompletion block
+        Object exhausted = exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
 
         Exception cause = exchange.getException();
         exchange.setException(null);
@@ -159,9 +161,6 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
             if (failureHandled != null) {
                 exchange.setProperty(Exchange.FAILURE_HANDLED, failureHandled);
             }
-            if (caught != null) {
-                exchange.setProperty(Exchange.EXCEPTION_CAUGHT, caught);
-            }
             if (errorhandlerHandled != null) {
                 exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, errorhandlerHandled);
             }
@@ -169,7 +168,10 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
                 exchange.setProperty(Exchange.ROLLBACK_ONLY, rollbackOnly);
             }
             if (rollbackOnlyLast != null) {
-                exchange.setProperty(Exchange.ROLLBACK_ONLY, rollbackOnlyLast);
+                exchange.setProperty(Exchange.ROLLBACK_ONLY_LAST, rollbackOnlyLast);
+            }
+            if (exhausted != null) {
+                exchange.setProperty(Exchange.REDELIVERY_EXHAUSTED, exhausted);
             }
             if (cause != null) {
                 exchange.setException(cause);
@@ -206,7 +208,7 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
         if (useOriginalBody) {
             LOG.trace("Using the original IN message instead of current");
 
-            Message original = exchange.getUnitOfWork().getOriginalInMessage();
+            Message original = ExchangeHelper.getOriginalInMessage(exchange);
             answer.setIn(original);
         }
 

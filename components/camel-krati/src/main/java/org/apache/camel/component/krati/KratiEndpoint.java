@@ -38,12 +38,12 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * Represents a Krati endpoint.
+ * The krati allows the use krati datastores and datasets inside Camel.
  */
-@UriEndpoint(scheme = "krati", title = "Krati", syntax = "krati:path", consumerClass = KratiConsumer.class, label = "database,nosql")
+@UriEndpoint(firstVersion = "2.9.0", scheme = "krati", title = "Krati", syntax = "krati:path", consumerClass = KratiConsumer.class, label = "database,nosql")
 public class KratiEndpoint extends ScheduledPollEndpoint {
 
-    protected static Map<String, KratiDataStoreRegistration> dataStoreRegistry = new HashMap<String, KratiDataStoreRegistration>();
+    protected static Map<String, KratiDataStoreRegistration> dataStoreRegistry = new HashMap<>();
 
     @UriPath @Metadata(required = "true")
     protected String path;

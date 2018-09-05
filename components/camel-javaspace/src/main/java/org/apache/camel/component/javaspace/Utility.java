@@ -49,7 +49,7 @@ public final class Utility {
         }
         out.close();
         in.close();
-        System.getProperties().put("java.security.policy", outfile.getAbsolutePath());
+        System.setProperty("java.security.policy", outfile.getAbsolutePath());
     }
 
 }

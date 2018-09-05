@@ -22,9 +22,9 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -41,12 +41,14 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
     private final Statement statement;
     private final ResultSet resultSet;
     private final Column[] columns;
+    private final boolean useGetBytes;
     private final AtomicBoolean closed = new AtomicBoolean();
 
-    public ResultSetIterator(Connection conn, ResultSet resultSet, boolean isJDBC4) throws SQLException {
+    public ResultSetIterator(Connection conn, ResultSet resultSet, boolean isJDBC4, boolean useGetBytes) throws SQLException {
         this.resultSet = resultSet;
         this.statement = this.resultSet.getStatement();
         this.connection = conn;
+        this.useGetBytes = useGetBytes;
 
         ResultSetMetaData metaData = resultSet.getMetaData();
         columns = new Column[metaData.getColumnCount()];
@@ -76,9 +78,13 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
         }
 
         try {
-            Map<String, Object> row = new LinkedHashMap<String, Object>();
+            Map<String, Object> row = new LinkedHashMap<>();
             for (Column column : columns) {
-                row.put(column.getName(), column.getValue(resultSet));
+                if (useGetBytes && column instanceof BlobColumn) {
+                    row.put(column.getName(), ((BlobColumn) column).getBytes(resultSet));
+                } else {
+                    row.put(column.getName(), column.getValue(resultSet));
+                }
             }
             loadNext();
             return row;
@@ -95,7 +101,7 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
 
     public Set<String> getColumnNames() {
         // New copy each time in order to ensure immutability
-        Set<String> columnNames = new HashSet<String>(columns.length);
+        Set<String> columnNames = new LinkedHashSet<>(columns.length);
         for (Column column : columns) {
             columnNames.add(column.getName());
         }
@@ -202,6 +208,10 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
         @Override
         public Object getValue(ResultSet resultSet) throws SQLException {
             return resultSet.getString(columnNumber);
+        }
+
+        public Object getBytes(ResultSet resultSet) throws SQLException {
+            return resultSet.getBytes(columnNumber);
         }
     }
 }

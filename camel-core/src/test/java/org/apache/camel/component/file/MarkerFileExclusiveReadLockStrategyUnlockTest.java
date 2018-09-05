@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.FileOutputStream;
 import java.util.concurrent.TimeUnit;
@@ -26,11 +29,13 @@ import org.apache.camel.builder.RouteBuilder;
 public class MarkerFileExclusiveReadLockStrategyUnlockTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         setupDirectory();
         super.setUp();
     }
 
+    @Test
     public void testUnlocking() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
         writeFiles();
@@ -47,8 +52,8 @@ public class MarkerFileExclusiveReadLockStrategyUnlockTest extends ContextTestSu
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/marker-unlock/input-a?fileName=file1.dat&readLock=markerFile")
-                        .pollEnrich("file:target/marker-unlock/input-b?fileName=file2.dat&readLock=markerFile")
+                from("file:target/marker-unlock/input-a?fileName=file1.dat&readLock=markerFile&initialDelay=0&delay=10")
+                        .pollEnrich("file:target/marker-unlock/input-b?fileName=file2.dat&readLock=markerFile&initialDelay=0&delay=10")
                         .to("mock:result");
             }
         };

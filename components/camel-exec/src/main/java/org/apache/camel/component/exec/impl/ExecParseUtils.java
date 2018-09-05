@@ -22,7 +22,7 @@ import java.util.StringTokenizer;
 
 /**
  * Utility class for parsing, used by the Camel Exec component.<br>
- * Note: the class should be dropped, when the the commons-exec library
+ * Note: the class should be dropped, when the commons-exec library
  * implements similar functionality.
  */
 public final class ExecParseUtils {
@@ -52,10 +52,10 @@ public final class ExecParseUtils {
      */
     public static List<String> splitToWhiteSpaceSeparatedTokens(String input) {
         if (input == null) {
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
         StringTokenizer tokenizer = new StringTokenizer(input.trim(), QUOTE_CHAR + WHITESPACE, true);
-        List<String> tokens = new ArrayList<String>();
+        List<String> tokens = new ArrayList<>();
 
         StringBuilder quotedText = new StringBuilder();
 

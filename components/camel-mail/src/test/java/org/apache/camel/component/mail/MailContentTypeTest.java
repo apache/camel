@@ -61,7 +61,7 @@ public class MailContentTypeTest extends CamelTestSupport {
     public void testSendMultipartMail() throws Exception {
         Mailbox.clearAll();
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(MailConstants.MAIL_ALTERNATIVE_BODY, "Hello World");
         sendBody("direct:c", "<html><body><h1>Hello</h1>World</body></html>", headers);
 

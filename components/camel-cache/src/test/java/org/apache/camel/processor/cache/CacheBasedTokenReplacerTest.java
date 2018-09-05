@@ -50,7 +50,7 @@ public class CacheBasedTokenReplacerTest extends BaseCacheTest {
 
         resultEndpoint.expectedMessageCount(1);
 
-        List<String> keys = new ArrayList<String>();
+        List<String> keys = new ArrayList<>();
         keys.add("novel");
         keys.add("author");
         keys.add("number");

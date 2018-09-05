@@ -35,6 +35,8 @@ import org.springframework.osgi.mock.MockBundleContext;
 import org.springframework.osgi.mock.MockServiceReference;
 
 public class CamelMockBundleContext extends MockBundleContext {
+    
+    public static final String SERVICE_PID_PREFIX = "test.";
 
     public CamelMockBundleContext(Bundle bundle) {
         super(bundle);
@@ -42,9 +44,13 @@ public class CamelMockBundleContext extends MockBundleContext {
 
     public Object getService(@SuppressWarnings("rawtypes") ServiceReference reference) {
         String[] classNames = (String[]) reference.getProperty(Constants.OBJECTCLASS);        
-        if (classNames[0].equals("org.apache.camel.core.osgi.test.MyService")) {
+        String classNames0 = classNames != null ? classNames[0] : null;
+        String pid = (String)reference.getProperty(Constants.SERVICE_PID);
+        if (classNames0 != null && classNames0.equals("org.apache.camel.core.osgi.test.MyService")) {
             return new MyService();
-        } else if (classNames[0].equals(ComponentResolver.class.getName())) {
+        } else if (pid != null && pid.equals(SERVICE_PID_PREFIX + "org.apache.camel.core.osgi.test.MyService")) {
+            return new MyService();
+        } else if (classNames0 != null && classNames0.equals(ComponentResolver.class.getName())) {
             return new ComponentResolver() {
                 public Component resolveComponent(String name, CamelContext context) throws Exception {
                     if (name.equals("file_test")) {
@@ -53,7 +59,7 @@ public class CamelMockBundleContext extends MockBundleContext {
                     return null;
                 }
             };
-        } else if (classNames[0].equals(LanguageResolver.class.getName())) {
+        } else if (classNames0 != null && classNames0.equals(LanguageResolver.class.getName())) {
             return new LanguageResolver() {
                 public Language resolveLanguage(String name, CamelContext context) {
                     if (name.equals("simple")) {
@@ -66,6 +72,36 @@ public class CamelMockBundleContext extends MockBundleContext {
             return null;
         }    
     }
+
+    public ServiceReference getServiceReference(String clazz) {
+        // lookup Java class if clazz contains dot (.) symbol
+        if (clazz.contains(".")) {
+            try {
+                Class.forName(clazz);
+                return super.getServiceReference(clazz);
+            } catch (ClassNotFoundException ex) {
+                return null; // class not found so no service reference is returned
+            }
+        } else {
+            return super.getServiceReference(clazz);
+        }
+    }
+    
+    private static void addServicePID(ServiceReference[] srs, String filter) {
+        for (ServiceReference sr : srs) {
+            if (sr instanceof MockServiceReference) {
+                Dictionary properties = new Hashtable();
+                String pid = filter.replace("(" + Constants.SERVICE_PID + "=", "").replace(")", "");
+                properties.put(Constants.SERVICE_PID, pid);
+                for (String key : sr.getPropertyKeys()) {
+                    if (properties.get(key) == null) {
+                        properties.put(key, sr.getProperty(key));
+                    }
+                }
+                ((MockServiceReference)sr).setProperties(properties);
+            }
+        }
+    }
     
     @SuppressWarnings("rawtypes")
     public ServiceReference[] getServiceReferences(String clazz, String filter) throws InvalidSyntaxException {
@@ -73,7 +109,13 @@ public class CamelMockBundleContext extends MockBundleContext {
         if (filter != null && filter.indexOf("name=test") > 0) {
             return null;
         } else {
-            return super.getServiceReferences(clazz, filter);
+            ServiceReference[] srs = super.getServiceReferences(clazz, filter);
+            
+            // set service.pid property by filter
+            if (filter != null && filter.indexOf(Constants.SERVICE_PID + "=") > 0) {
+                addServicePID(srs, filter);
+            }
+            return srs;
         }
     }
    

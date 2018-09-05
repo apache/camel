@@ -98,14 +98,25 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.validation.SchemaValidationException;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit4.TestSupport;
+
 import org.junit.Before;
 import org.junit.Test;
 
 public class XmlSignatureTest extends CamelTestSupport {
 
-    protected static String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-            + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
+    protected static String payload;
+    private static boolean includeNewLine = true;
     private KeyPair keyPair;
+    
+    static {
+        if (TestSupport.getJavaMajorVersion() >= 9) {
+            includeNewLine = false;
+        }
+        payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            + (includeNewLine ? "\n" : "")
+            + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
+    }
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -143,7 +154,7 @@ public class XmlSignatureTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: enveloping XML signature
                 onException(XmlSignatureException.class).handled(true).to("mock:exception");
-                from("direct:enveloping").to(getSignerEndpointURIEnveloping()).to("mock:signed").to(getVerifierEncpointURIEnveloping())
+                from("direct:enveloping").to(getSignerEndpointURIEnveloping()).to("mock:signed").to(getVerifierEndpointURIEnveloping())
                         .to("mock:result");
                 // END SNIPPET: enveloping XML signature
             }
@@ -152,8 +163,8 @@ public class XmlSignatureTest extends CamelTestSupport {
                 // START SNIPPET: enveloping XML signature with plain text
                 // message body
                 onException(XmlSignatureException.class).handled(true).to("mock:exception");
-                from("direct:plaintext").to("xmlsecurity:sign://plaintext?keyAccessor=#accessor&plainText=true&plainTextEncoding=UTF-8")
-                        .to("xmlsecurity:verify://plaintext?keySelector=#selector").to("mock:result");
+                from("direct:plaintext").to("xmlsecurity:sign:plaintext?keyAccessor=#accessor&plainText=true&plainTextEncoding=UTF-8")
+                        .to("xmlsecurity:verify:plaintext?keySelector=#selector").to("mock:result");
                 // END SNIPPET: enveloping XML signature with plain text message
                 // body
             }
@@ -170,31 +181,31 @@ public class XmlSignatureTest extends CamelTestSupport {
                 // START SNIPPET: canonicalization
                 // we can set the configuration properties explicitly on the
                 // endpoint instances.
-                context.getEndpoint("xmlsecurity:sign://canonicalization?canonicalizationMethod=#canonicalizationMethod1",
+                context.getEndpoint("xmlsecurity:sign:canonicalization?canonicalizationMethod=#canonicalizationMethod1",
                         XmlSignerEndpoint.class).setKeyAccessor(getKeyAccessor(keyPair.getPrivate()));
-                context.getEndpoint("xmlsecurity:sign://canonicalization?canonicalizationMethod=#canonicalizationMethod1",
+                context.getEndpoint("xmlsecurity:sign:canonicalization?canonicalizationMethod=#canonicalizationMethod1",
                         XmlSignerEndpoint.class).setSignatureAlgorithm("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
-                context.getEndpoint("xmlsecurity:verify://canonicalization", XmlVerifierEndpoint.class).setKeySelector(
+                context.getEndpoint("xmlsecurity:verify:canonicalization", XmlVerifierEndpoint.class).setKeySelector(
                         KeySelector.singletonKeySelector(keyPair.getPublic()));
-                from("direct:canonicalization").to("xmlsecurity:sign://canonicalization?canonicalizationMethod=#canonicalizationMethod1",
-                        "xmlsecurity:verify://canonicalization", "mock:result");
+                from("direct:canonicalization").to("xmlsecurity:sign:canonicalization?canonicalizationMethod=#canonicalizationMethod1",
+                        "xmlsecurity:verify:canonicalization", "mock:result");
                 // END SNIPPET: canonicalization
             }
         }, new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: signature and digest algorithm
                 from("direct:signaturedigestalgorithm")
-                        .to("xmlsecurity:sign://signaturedigestalgorithm?keyAccessor=#accessor"
+                        .to("xmlsecurity:sign:signaturedigestalgorithm?keyAccessor=#accessor"
                                 + "&signatureAlgorithm=http://www.w3.org/2001/04/xmldsig-more#rsa-sha512&digestAlgorithm=http://www.w3.org/2001/04/xmlenc#sha512",
-                                "xmlsecurity:verify://signaturedigestalgorithm?keySelector=#selector").to("mock:result");
+                                "xmlsecurity:verify:signaturedigestalgorithm?keySelector=#selector").to("mock:result");
                 // END SNIPPET: signature and digest algorithm
             }
         }, new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: transforms XPath2
                 from("direct:transformsXPath2").to(
-                        "xmlsecurity:sign://transformsXPath2?keyAccessor=#accessor&transformMethods=#transformsXPath2",
-                        "xmlsecurity:verify://transformsXPath2?keySelector=#selector").to("mock:result");
+                        "xmlsecurity:sign:transformsXPath2?keyAccessor=#accessor&transformMethods=#transformsXPath2",
+                        "xmlsecurity:verify:transformsXPath2?keySelector=#selector").to("mock:result");
                 // END SNIPPET: transform XPath
             }
         }, new RouteBuilder() {
@@ -202,8 +213,8 @@ public class XmlSignatureTest extends CamelTestSupport {
                 // START SNIPPET: transforms XSLT,XPath
                 onException(XmlSignatureException.class).handled(false).to("mock:exception");
                 from("direct:transformsXsltXPath").to(
-                        "xmlsecurity:sign://transformsXsltXPath?keyAccessor=#accessor&transformMethods=#transformsXsltXPath",
-                        "xmlsecurity:verify://transformsXsltXPath?keySelector=#selector").to("mock:result");
+                        "xmlsecurity:sign:transformsXsltXPath?keyAccessor=#accessor&transformMethods=#transformsXsltXPath",
+                        "xmlsecurity:verify:transformsXsltXPath?keySelector=#selector").to("mock:result");
                 // END SNIPPET: transforms XSLT,XPath
             }
         }, new RouteBuilder() {
@@ -211,8 +222,8 @@ public class XmlSignatureTest extends CamelTestSupport {
                 // START SNIPPET: transforms XSLT,XPath - secure Validation
                 // disabled
                 from("direct:transformsXsltXPathSecureValDisabled")
-                        .to("xmlsecurity:sign://transformsXsltXPathSecureValDisabled?keyAccessor=#accessor&transformMethods=#transformsXsltXPath",
-                                "xmlsecurity:verify://transformsXsltXPathSecureValDisabled?keySelector=#selector&secureValidation=false")
+                        .to("xmlsecurity:sign:transformsXsltXPathSecureValDisabled?keyAccessor=#accessor&transformMethods=#transformsXsltXPath",
+                                "xmlsecurity:verify:transformsXsltXPathSecureValDisabled?keySelector=#selector&secureValidation=false")
                         .to("mock:result");
                 // END SNIPPET: transforms XSLT,XPath - secure Validation
                 // disabled
@@ -222,7 +233,7 @@ public class XmlSignatureTest extends CamelTestSupport {
                 // START SNIPPET: cryptocontextprops
                 onException(XmlSignatureException.class).handled(false).to("mock:exception");
                 from("direct:cryptocontextprops")
-                        .to("xmlsecurity:verify://cryptocontextprops?keySelector=#selectorKeyValue&cryptoContextProperties=#cryptoContextProperties")
+                        .to("xmlsecurity:verify:cryptocontextprops?keySelector=#selectorKeyValue&cryptoContextProperties=#cryptoContextProperties")
                         .to("mock:result");
                 // END SNIPPET: cryptocontextprops
             }
@@ -230,8 +241,8 @@ public class XmlSignatureTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: URI dereferencer
                 from("direct:uridereferencer")
-                        .to("xmlsecurity:sign://uriderferencer?keyAccessor=#accessor&uriDereferencer=#uriDereferencer")
-                        .to("xmlsecurity:verify://uridereferencer?keySelector=#selector&uriDereferencer=#uriDereferencer")
+                        .to("xmlsecurity:sign:uriderferencer?keyAccessor=#accessor&uriDereferencer=#uriDereferencer")
+                        .to("xmlsecurity:verify:uridereferencer?keySelector=#selector&uriDereferencer=#uriDereferencer")
                         .to("mock:result");
                 // END SNIPPET: URI dereferencer
             }
@@ -239,8 +250,8 @@ public class XmlSignatureTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: keyAccessorKeySelectorDefault
                 from("direct:keyAccessorKeySelectorDefault")
-                        .to("xmlsecurity:sign://keyAccessorKeySelectorDefault?keyAccessor=#keyAccessorDefault&addKeyInfoReference=true")
-                        .to("xmlsecurity:verify://keyAccessorKeySelectorDefault?keySelector=#keySelectorDefault").to("mock:result");
+                        .to("xmlsecurity:sign:keyAccessorKeySelectorDefault?keyAccessor=#keyAccessorDefault&addKeyInfoReference=true")
+                        .to("xmlsecurity:verify:keyAccessorKeySelectorDefault?keySelector=#keySelectorDefault").to("mock:result");
                 // END SNIPPET: keyAccessorKeySelectorDefault
             }
         }, new RouteBuilder() {
@@ -248,7 +259,7 @@ public class XmlSignatureTest extends CamelTestSupport {
                 // START SNIPPET: xmlSignatureChecker
                 onException(XmlSignatureInvalidException.class).handled(false).to("mock:exception");
                 from("direct:xmlSignatureChecker")
-                        .to("xmlsecurity:verify://xmlSignatureChecker?keySelector=#selectorKeyValue&xmlSignatureChecker=#envelopingSignatureChecker")
+                        .to("xmlsecurity:verify:xmlSignatureChecker?keySelector=#selectorKeyValue&xmlSignatureChecker=#envelopingSignatureChecker")
                         .to("mock:result");
                 // END SNIPPET: xmlSignatureChecker
             }
@@ -256,8 +267,8 @@ public class XmlSignatureTest extends CamelTestSupport {
             public void configure() throws Exception { //
                 // START SNIPPET: properties
                 from("direct:props")
-                        .to("xmlsecurity:sign://properties?keyAccessor=#accessor&properties=#signatureProperties")
-                        .to("xmlsecurity:verify://properties?keySelector=#selector&xmlSignature2Message=#xmlSignature2MessageWithTimestampProperty")
+                        .to("xmlsecurity:sign:properties?keyAccessor=#accessor&properties=#signatureProperties")
+                        .to("xmlsecurity:verify:properties?keySelector=#selector&xmlSignature2Message=#xmlSignature2MessageWithTimestampProperty")
                         .to("mock:result");
                 // END SNIPPET: properties
             }
@@ -266,7 +277,7 @@ public class XmlSignatureTest extends CamelTestSupport {
                 // START SNIPPET: verify output node search element name
                 onException(XmlSignatureException.class).handled(true).to("mock:exception");
                 from("direct:outputnodesearchelementname").to(
-                        "xmlsecurity:verify://outputnodesearchelementname?keySelector=#selectorKeyValue"
+                        "xmlsecurity:verify:outputnodesearchelementname?keySelector=#selectorKeyValue"
                                 + "&outputNodeSearchType=ElementName&outputNodeSearch={http://test/test}root&removeSignatureElements=true")
                         .to("mock:result");
                 // END SNIPPET: verify output node search element name
@@ -276,7 +287,7 @@ public class XmlSignatureTest extends CamelTestSupport {
                 // START SNIPPET: verify output node search xpath
                 onException(XmlSignatureException.class).handled(true).to("mock:exception");
                 from("direct:outputnodesearchxpath")
-                        .to("xmlsecurity:verify://outputnodesearchxpath?keySelector=#selectorKeyValue&outputNodeSearchType=XPath&outputNodeSearch=#nodesearchxpath&removeSignatureElements=true")
+                        .to("xmlsecurity:verify:outputnodesearchxpath?keySelector=#selectorKeyValue&outputNodeSearchType=XPath&outputNodeSearch=#nodesearchxpath&removeSignatureElements=true")
                         .to("mock:result");
                 // END SNIPPET: verify output node search xpath
             }
@@ -284,7 +295,7 @@ public class XmlSignatureTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: validationFailedHandler
                 from("direct:validationFailedHandler")
-                        .to("xmlsecurity:verify://validationFailedHandler?keySelector=#selectorKeyValue&validationFailedHandler=validationFailedHandlerIgnoreManifestFailures")
+                        .to("xmlsecurity:verify:validationFailedHandler?keySelector=#selectorKeyValue&validationFailedHandler=validationFailedHandlerIgnoreManifestFailures")
                         .to("mock:result");
                 // END SNIPPET: validationFailedHandler
             }
@@ -292,8 +303,8 @@ public class XmlSignatureTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: further parameters
                 from("direct:furtherparams")
-                        .to("xmlsecurity:sign://furtherparams?keyAccessor=#accessor&prefixForXmlSignatureNamespace=digsig&disallowDoctypeDecl=false")
-                        .to("xmlsecurity:verify://bfurtherparams?keySelector=#selector&disallowDoctypeDecl=false").to("mock:result");
+                        .to("xmlsecurity:sign:furtherparams?keyAccessor=#accessor&prefixForXmlSignatureNamespace=digsig&disallowDoctypeDecl=false")
+                        .to("xmlsecurity:verify:bfurtherparams?keySelector=#selector&disallowDoctypeDecl=false").to("mock:result");
                 // END SNIPPET: further parameters
             }
         }, new RouteBuilder() {
@@ -301,7 +312,7 @@ public class XmlSignatureTest extends CamelTestSupport {
                 // START SNIPPET: signer invalid keyexception
                 onException(XmlSignatureInvalidKeyException.class).handled(true).to("mock:exception");
                 from("direct:signexceptioninvalidkey").to(
-                        "xmlsecurity:sign://signexceptioninvalidkey?signatureAlgorithm=http://www.w3.org/2001/04/xmldsig-more#rsa-sha512")
+                        "xmlsecurity:sign:signexceptioninvalidkey?signatureAlgorithm=http://www.w3.org/2001/04/xmldsig-more#rsa-sha512")
                         .to("mock:result");
                 // END SNIPPET: signer invalid keyexception
             }
@@ -310,7 +321,7 @@ public class XmlSignatureTest extends CamelTestSupport {
                 // START SNIPPET: signer exceptions
                 onException(XmlSignatureException.class).handled(true).to("mock:exception");
                 from("direct:signexceptions")
-                        .to("xmlsecurity:sign://signexceptions?keyAccessor=#accessor&signatureAlgorithm=http://www.w3.org/2001/04/xmldsig-more#rsa-sha512")
+                        .to("xmlsecurity:sign:signexceptions?keyAccessor=#accessor&signatureAlgorithm=http://www.w3.org/2001/04/xmldsig-more#rsa-sha512")
                         .to("mock:result");
                 // END SNIPPET: signer exceptions
             }
@@ -318,25 +329,25 @@ public class XmlSignatureTest extends CamelTestSupport {
             public void configure() throws Exception {
                 onException(XmlSignatureException.class).handled(true).to("mock:exception");
                 from("direct:noSuchAlgorithmException")
-                        .to("xmlsecurity:sign://noSuchAlgorithmException?keyAccessor=#accessor&signatureAlgorithm=wrongalgorithm&digestAlgorithm=http://www.w3.org/2001/04/xmlenc#sha512")
+                        .to("xmlsecurity:sign:noSuchAlgorithmException?keyAccessor=#accessor&signatureAlgorithm=wrongalgorithm&digestAlgorithm=http://www.w3.org/2001/04/xmlenc#sha512")
                         .to("mock:result");
             }
         }, new RouteBuilder() {
             public void configure() throws Exception {
                 onException(XmlSignatureException.class).handled(false).to("mock:exception");
-                from("direct:verifyexceptions").to("xmlsecurity:verify://verifyexceptions?keySelector=#selector").to("mock:result");
+                from("direct:verifyexceptions").to("xmlsecurity:verify:verifyexceptions?keySelector=#selector").to("mock:result");
             }
         }, new RouteBuilder() {
             public void configure() throws Exception {
                 onException(XmlSignatureException.class).handled(false).to("mock:exception");
-                from("direct:verifyInvalidKeyException").to("xmlsecurity:verify://verifyInvalidKeyException?keySelector=#selector").to(
+                from("direct:verifyInvalidKeyException").to("xmlsecurity:verify:verifyInvalidKeyException?keySelector=#selector").to(
                         "mock:result");
             }
         }, new RouteBuilder() {
             public void configure() throws Exception {
                 onException(XmlSignatureException.class).handled(false).to("mock:exception");
                 from("direct:invalidhash").to(
-                        "xmlsecurity:verify://invalidhash?keySelector=#selectorKeyValue&baseUri=#baseUri&secureValidation=false").to(
+                        "xmlsecurity:verify:invalidhash?keySelector=#selectorKeyValue&baseUri=#baseUri&secureValidation=false").to(
                         "mock:result");
             }
         }, createDetachedRoute(), createRouteForEnvelopedWithParentXpath() };
@@ -348,10 +359,10 @@ public class XmlSignatureTest extends CamelTestSupport {
                 // START SNIPPET: detached XML signature
                 onException(Exception.class).handled(false).to("mock:exception");
                 from("direct:detached")
-                        .to("xmlsecurity:sign://detached?keyAccessor=#keyAccessorDefault&xpathsToIdAttributes=#xpathsToIdAttributes&"//
+                        .to("xmlsecurity:sign:detached?keyAccessor=#keyAccessorDefault&xpathsToIdAttributes=#xpathsToIdAttributes&"//
                                 + "schemaResourceUri=org/apache/camel/component/xmlsecurity/Test.xsd&signatureId=&clearHeaders=false")
                         .to("mock:result")
-                        .to("xmlsecurity:verify://detached?keySelector=#keySelectorDefault&schemaResourceUri=org/apache/camel/component/xmlsecurity/Test.xsd")
+                        .to("xmlsecurity:verify:detached?keySelector=#keySelectorDefault&schemaResourceUri=org/apache/camel/component/xmlsecurity/Test.xsd")
                         .to("mock:verified");
                 // END SNIPPET: detached XML signature
             }
@@ -363,7 +374,7 @@ public class XmlSignatureTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: enveloped XML signature with parent XPath
                 onException(XmlSignatureException.class).handled(false).to("mock:exception");
-                from("direct:envelopedParentXpath").to("xmlsecurity:sign://enveloped?keyAccessor=#accessor&parentXpath=#parentXpathBean")
+                from("direct:envelopedParentXpath").to("xmlsecurity:sign:enveloped?keyAccessor=#accessor&parentXpath=#parentXpathBean")
                         .to("mock:signed").to(getVerifierEndpointURIEnveloped()).to("mock:result");
                 // END SNIPPET: enveloped XML signature with parent XPath
             }
@@ -374,6 +385,14 @@ public class XmlSignatureTest extends CamelTestSupport {
     public void testEnvelopingSignature() throws Exception {
         setupMock();
         sendBody("direct:enveloping", payload);
+        assertMockEndpointsSatisfied();
+    }
+    
+    @Test
+    public void testEnvelopedSignatureWithTransformHeader() throws Exception {
+        setupMock(payload);
+        sendBody("direct:enveloped", payload, Collections.<String, Object>singletonMap(XmlSignatureConstants.HEADER_TRANSFORM_METHODS, 
+                "http://www.w3.org/2000/09/xmldsig#enveloped-signature,http://www.w3.org/TR/2001/REC-xml-c14n-20010315"));
         assertMockEndpointsSatisfied();
     }
 
@@ -389,7 +408,7 @@ public class XmlSignatureTest extends CamelTestSupport {
     public void testEnvelopingSignatureWithPlainTextSetByHeaders() throws Exception {
         String text = "plain test text";
         setupMock(text);
-        Map<String, Object> headers = new TreeMap<String, Object>();
+        Map<String, Object> headers = new TreeMap<>();
         headers.put(XmlSignatureConstants.HEADER_MESSAGE_IS_PLAIN_TEXT, Boolean.TRUE);
         headers.put(XmlSignatureConstants.HEADER_PLAIN_TEXT_ENCODING, "UTF-8");
         sendBody("direct:enveloping", text, headers);
@@ -400,7 +419,7 @@ public class XmlSignatureTest extends CamelTestSupport {
     public void testExceptionSignatureForPlainTextWithWrongEncoding() throws Exception {
         String text = "plain test text";
         MockEndpoint mock = setupExceptionMock();
-        Map<String, Object> headers = new TreeMap<String, Object>();
+        Map<String, Object> headers = new TreeMap<>();
         headers.put(XmlSignatureConstants.HEADER_MESSAGE_IS_PLAIN_TEXT, Boolean.TRUE);
         headers.put(XmlSignatureConstants.HEADER_PLAIN_TEXT_ENCODING, "wrongEncoding");
         sendBody("direct:enveloping", text, headers);
@@ -432,7 +451,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         // payload root element renamed to a -> parent name in route definition
         // does not fit
         String payload = "plain text Message";
-        Map<String, Object> headers = new HashMap<String, Object>(1);
+        Map<String, Object> headers = new HashMap<>(1);
         headers.put(XmlSignatureConstants.HEADER_MESSAGE_IS_PLAIN_TEXT, Boolean.TRUE);
         MockEndpoint mock = setupExceptionMock();
         sendBody("direct:enveloped", payload, headers);
@@ -448,7 +467,7 @@ public class XmlSignatureTest extends CamelTestSupport {
     public void testOmitXmlDeclarationViaHeader() throws Exception {
         String payloadOut = "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
         setupMock(payloadOut);
-        Map<String, Object> headers = new TreeMap<String, Object>();
+        Map<String, Object> headers = new TreeMap<>();
         headers.put(XmlSignatureConstants.HEADER_OMIT_XML_DECLARATION, Boolean.TRUE);
         InputStream payload = XmlSignatureTest.class
                 .getResourceAsStream("/org/apache/camel/component/xmlsecurity/ExampleEnvelopedXmlSig.xml");
@@ -482,7 +501,8 @@ public class XmlSignatureTest extends CamelTestSupport {
     @Test
     public void testSetTransformMethodXpath2InRouteDefinition() throws Exception {
         // example from http://www.w3.org/TR/2002/REC-xmldsig-filter2-20021108/
-        String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + (includeNewLine ? "\n" : "")
                 + "<Document xmlns=\"http://test/test\">                             "
                 + "<ToBeSigned>                                                     "
                 + "   <!-- comment -->                                              "
@@ -545,7 +565,7 @@ public class XmlSignatureTest extends CamelTestSupport {
 
     @Test
     public void testVerifyExceptionOutputNodeSearchElementNameInvalidFormat1() throws Exception {
-        XmlVerifierEndpoint endpoint = context.getEndpoint("xmlsecurity:verify://outputnodesearchelementname?keySelector=#selectorKeyValue"
+        XmlVerifierEndpoint endpoint = context.getEndpoint("xmlsecurity:verify:outputnodesearchelementname?keySelector=#selectorKeyValue"
                 + "&outputNodeSearchType=ElementName&outputNodeSearch={http://test/test}root&removeSignatureElements=true",
                 XmlVerifierEndpoint.class);
         endpoint.setOutputNodeSearch("{wrongformat"); // closing '}' missing
@@ -561,7 +581,7 @@ public class XmlSignatureTest extends CamelTestSupport {
     @Test
     public void testVerifyExceptionOutputNodeSearchElementNameInvalidFormat2() throws Exception {
         context.getEndpoint(
-                "xmlsecurity:verify://outputnodesearchelementname?keySelector=#selectorKeyValue"
+                "xmlsecurity:verify:outputnodesearchelementname?keySelector=#selectorKeyValue"
                         + "&outputNodeSearchType=ElementName&outputNodeSearch={http://test/test}root&removeSignatureElements=true",
                 XmlVerifierEndpoint.class).setOutputNodeSearch("{wrongformat}");
         // local name missing
@@ -634,7 +654,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         // wrong key type
         setUpKeys("DSA", 512);
         context.getEndpoint(
-                "xmlsecurity:sign://signexceptioninvalidkey?signatureAlgorithm=http://www.w3.org/2001/04/xmldsig-more#rsa-sha512",
+                "xmlsecurity:sign:signexceptioninvalidkey?signatureAlgorithm=http://www.w3.org/2001/04/xmldsig-more#rsa-sha512",
                 XmlSignerEndpoint.class).setKeyAccessor(getKeyAccessor(keyPair.getPrivate()));
         sendBody("direct:signexceptioninvalidkey", payload);
         assertMockEndpointsSatisfied();
@@ -712,7 +732,7 @@ public class XmlSignatureTest extends CamelTestSupport {
     public void testVerifySignatureInvalidValueException() throws Exception {
         MockEndpoint mock = setupExceptionMock();
         setUpKeys("DSA", 512);
-        context.getEndpoint("xmlsecurity:verify://verifyexceptions?keySelector=#selector", XmlVerifierEndpoint.class).setKeySelector(
+        context.getEndpoint("xmlsecurity:verify:verifyexceptions?keySelector=#selector", XmlVerifierEndpoint.class).setKeySelector(
                 KeySelector.singletonKeySelector(keyPair.getPublic()));
         // payload needs DSA key
         InputStream payload = XmlSignatureTest.class
@@ -781,8 +801,9 @@ public class XmlSignatureTest extends CamelTestSupport {
         endpoint.setParentNamespace("http://test");
         endpoint.setXpathsToIdAttributes(null);
 
-        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + //
-                "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><b>bValue</b></a></ns:root>";
+        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + (includeNewLine ? "\n" : "")
+                + "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><b>bValue</b></a></ns:root>";
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         sendBody("direct:detached", detachedPayload,
@@ -795,6 +816,12 @@ public class XmlSignatureTest extends CamelTestSupport {
     @Test
     public void testDetachedSignature() throws Exception {
         testDetachedSignatureInternal();
+    }
+    
+    @Test
+    public void testDetachedSignatureWitTransformHeader() throws Exception {
+        testDetachedSignatureInternal(Collections.singletonMap(XmlSignatureConstants.HEADER_TRANSFORM_METHODS, 
+                (Object)"http://www.w3.org/2000/09/xmldsig#enveloped-signature,http://www.w3.org/TR/2001/REC-xml-c14n-20010315"));
     }
 
     @Test
@@ -830,15 +857,22 @@ public class XmlSignatureTest extends CamelTestSupport {
 
     private Element testDetachedSignatureInternal() throws InterruptedException, XPathExpressionException, SAXException, IOException,
             ParserConfigurationException {
-        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + //
-                "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><b>bValue</b></a></ns:root>";
+        return testDetachedSignatureInternal(Collections.<String, Object>emptyMap());
+    }
+    
+    private Element testDetachedSignatureInternal(Map<String, Object> headers) throws InterruptedException, XPathExpressionException, SAXException, IOException,
+         ParserConfigurationException {
+
+        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" 
+                + (includeNewLine ? "\n" : "")
+                + "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><b>bValue</b></a></ns:root>";
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         MockEndpoint mockVerified = getMockEndpoint("mock:verified");
         mockVerified.expectedBodiesReceived(detachedPayload);
-        sendBody("direct:detached", detachedPayload);
+        sendBody("direct:detached", detachedPayload, headers);
         assertMockEndpointsSatisfied();
-        Map<String, String> namespaceMap = new TreeMap<String, String>();
+        Map<String, String> namespaceMap = new TreeMap<>();
         namespaceMap.put("ns", "http://test");
         namespaceMap.put("ds", XMLSignature.XMLNS);
         Object obj = checkXpath(mock, "ns:root/ds:Signature", namespaceMap);
@@ -869,27 +903,28 @@ public class XmlSignatureTest extends CamelTestSupport {
 
     void testDetached2Xpaths(String xpath1exp, String xpath2exp) throws InterruptedException, XPathExpressionException, SAXException,
             IOException, ParserConfigurationException {
-        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + //
-                "<ns:root xmlns:ns=\"http://test\"><test ID=\"myID\"><b>bValue</b><ts:B xmlns:ts=\"http://testB\"><C ID=\"cID\"><D>dvalue</D></C></ts:B></test></ns:root>";
+        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + (includeNewLine ? "\n" : "")
+                + "<ns:root xmlns:ns=\"http://test\"><test ID=\"myID\"><b>bValue</b><ts:B xmlns:ts=\"http://testB\"><C ID=\"cID\"><D>dvalue</D></C></ts:B></test></ns:root>";
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         MockEndpoint mockVerified = getMockEndpoint("mock:verified");
         mockVerified.expectedBodiesReceived(detachedPayload);
-        Map<String, Object> headers = new TreeMap<String, Object>();
+        Map<String, Object> headers = new TreeMap<>();
         headers.put(XmlSignatureConstants.HEADER_SCHEMA_RESOURCE_URI, "org/apache/camel/component/xmlsecurity/TestComplex.xsd");
-        Map<String, String> namespaceMap = new TreeMap<String, String>();
+        Map<String, String> namespaceMap = new TreeMap<>();
         namespaceMap.put("ns", "http://test");
         namespaceMap.put("ns1", "http://testB");
         XPathFilterParameterSpec xpath1 = XmlSignatureHelper.getXpathFilter(xpath1exp, namespaceMap);
         XPathFilterParameterSpec xpath2 = XmlSignatureHelper.getXpathFilter(xpath2exp, namespaceMap);
 
-        List<XPathFilterParameterSpec> xpaths = new ArrayList<XPathFilterParameterSpec>();
+        List<XPathFilterParameterSpec> xpaths = new ArrayList<>();
         xpaths.add(xpath1);
         xpaths.add(xpath2);
         headers.put(XmlSignatureConstants.HEADER_XPATHS_TO_ID_ATTRIBUTES, xpaths);
         sendBody("direct:detached", detachedPayload, headers);
         assertMockEndpointsSatisfied();
-        Map<String, String> namespaceMap2 = new TreeMap<String, String>();
+        Map<String, String> namespaceMap2 = new TreeMap<>();
         namespaceMap2.put("ns", "http://test");
         namespaceMap2.put("ds", XMLSignature.XMLNS);
         namespaceMap2.put("nsB", "http://testB");
@@ -919,8 +954,9 @@ public class XmlSignatureTest extends CamelTestSupport {
 
     @Test
     public void testExceptionSchemaValidation() throws Exception {
-        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + //
-                "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><error>bValue</error></a></ns:root>";
+        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + (includeNewLine ? "\n" : "")
+                + "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><error>bValue</error></a></ns:root>";
         MockEndpoint mock = setupExceptionMock();
         mock.expectedMessageCount(1);
         sendBody("direct:detached", detachedPayload);
@@ -930,8 +966,9 @@ public class XmlSignatureTest extends CamelTestSupport {
 
     @Test
     public void testEceptionDetachedNoXmlSchema() throws Exception {
-        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + //
-                "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><b>bValue</b></a></ns:root>";
+        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + (includeNewLine ? "\n" : "")
+                + "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><b>bValue</b></a></ns:root>";
         XmlSignerEndpoint endpoint = getDetachedSignerEndpoint();
         endpoint.setSchemaResourceUri(null);
         MockEndpoint mock = setupExceptionMock();
@@ -953,8 +990,9 @@ public class XmlSignatureTest extends CamelTestSupport {
     @Test
     public void testExceptionDetachedXPathNoIdAttribute() throws Exception {
         String value = "not id";
-        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + //
-                "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\" stringAttr=\"" + value + "\"><b>bValue</b></a></ns:root>";
+        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + (includeNewLine ? "\n" : "")
+                + "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\" stringAttr=\"" + value + "\"><b>bValue</b></a></ns:root>";
         String xPath = "a/@stringAttr";
 
         MockEndpoint mock = testXpath(xPath, detachedPayload);
@@ -986,8 +1024,9 @@ public class XmlSignatureTest extends CamelTestSupport {
     }
 
     private MockEndpoint testXpath(String xPath) throws InterruptedException {
-        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + //
-                "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><b>bValue</b></a></ns:root>";
+        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + (includeNewLine ? "\n" : "")
+                + "<ns:root xmlns:ns=\"http://test\"><a ID=\"myID\"><b>bValue</b></a></ns:root>";
         return testXpath(xPath, detachedPayload);
     }
 
@@ -1003,8 +1042,9 @@ public class XmlSignatureTest extends CamelTestSupport {
 
     @Test
     public void testExceptionDetachedNoParent() throws Exception {
-        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + //
-                "<ns:root ID=\"rootId\" xmlns:ns=\"http://test\"><a ID=\"myID\"><b>bValue</b></a></ns:root>";
+        String detachedPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + (includeNewLine ? "\n" : "")
+                + "<ns:root ID=\"rootId\" xmlns:ns=\"http://test\"><a ID=\"myID\"><b>bValue</b></a></ns:root>";
         String xPath = "//@ID";
         String localName = "root";
         String namespaceURI = "http://test";
@@ -1020,30 +1060,30 @@ public class XmlSignatureTest extends CamelTestSupport {
     public void testOutputXmlEncodingEnveloping() throws Exception {
 
         String inputEncoding = "UTF-8";
-        String signerEncoding = "UTF-16LE";
+        String signerEncoding = "UTF-16";
         String outputEncoding = "ISO-8859-1"; // latin 1
 
         String signerEndpointUri = getSignerEndpointURIEnveloping();
-        String verifierEndpointUri = getVerifierEncpointURIEnveloping();
+        String verifierEndpointUri = getVerifierEndpointURIEnveloping();
 
         String directStart = "direct:enveloping";
 
         checkOutputEncoding(inputEncoding, signerEncoding, outputEncoding, signerEndpointUri, verifierEndpointUri, directStart);
     }
 
-    String getVerifierEncpointURIEnveloping() {
-        return "xmlsecurity:verify://enveloping?keySelector=#selector";
+    String getVerifierEndpointURIEnveloping() {
+        return "xmlsecurity:verify:enveloping?keySelector=#selector";
     }
 
     String getSignerEndpointURIEnveloping() {
-        return "xmlsecurity:sign://enveloping?keyAccessor=#accessor&schemaResourceUri=";
+        return "xmlsecurity:sign:enveloping?keyAccessor=#accessor&schemaResourceUri=";
     }
 
     @Test
     public void testOutputXmlEncodingEnveloped() throws Exception {
 
         String inputEncoding = "UTF-8";
-        String signerEncoding = "UTF-16LE";
+        String signerEncoding = "UTF-16";
         String outputEncoding = "ISO-8859-1"; // latin 1
 
         String signerEndpointUri = getSignerEndpointURIEnveloped();
@@ -1055,15 +1095,16 @@ public class XmlSignatureTest extends CamelTestSupport {
     }
 
     String getVerifierEndpointURIEnveloped() {
-        return "xmlsecurity:verify://enveloped?keySelector=#selector";
+        return "xmlsecurity:verify:enveloped?keySelector=#selector";
     }
 
     String getSignerEndpointURIEnveloped() {
-        return "xmlsecurity:sign://enveloped?keyAccessor=#accessor&parentLocalName=root&parentNamespace=http://test/test";
+        return "xmlsecurity:sign:enveloped?keyAccessor=#accessor&parentLocalName=root&parentNamespace=http://test/test";
     }
 
     private byte[] getPayloadForEncoding(String encoding) {
-        String s = "<?xml version=\"1.0\" encoding=\"" + encoding + "\"?>\n"
+        String s = "<?xml version=\"1.0\" encoding=\"" + encoding + "\"?>"
+                + (includeNewLine ? "\n" : "")
                 + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
         return s.getBytes(Charset.forName(encoding));
     }
@@ -1142,7 +1183,7 @@ public class XmlSignatureTest extends CamelTestSupport {
     }
 
     XmlSignerEndpoint getSignatureEncpointForSignException() {
-        XmlSignerEndpoint endpoint = (XmlSignerEndpoint) context().getEndpoint("xmlsecurity:sign://signexceptions?keyAccessor=#accessor" + //
+        XmlSignerEndpoint endpoint = (XmlSignerEndpoint) context().getEndpoint("xmlsecurity:sign:signexceptions?keyAccessor=#accessor" + //
                 "&signatureAlgorithm=http://www.w3.org/2001/04/xmldsig-more#rsa-sha512");
         return endpoint;
     }
@@ -1153,8 +1194,9 @@ public class XmlSignatureTest extends CamelTestSupport {
         XmlSignerEndpoint endpoint = getSignatureEncpointForSignException();
         MockEndpoint mock = setupExceptionMock();
         try {
-            String myPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + //
-                    "<ns:root ID=\"rootId\" xmlns:ns=\"http://test\"></ns:root>";
+            String myPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                    + (includeNewLine ? "\n" : "")
+                    + "<ns:root ID=\"rootId\" xmlns:ns=\"http://test\"></ns:root>";
             endpoint.setParentXpath(XmlSignatureHelper.getXpathFilter("/pre:root/@ID", Collections.singletonMap("pre", "http://test"))); // xpath with no element result
             sendBody("direct:signexceptions", myPayload);
             assertMockEndpointsSatisfied();
@@ -1167,7 +1209,8 @@ public class XmlSignatureTest extends CamelTestSupport {
 
     @Test
     public void testEnvelopedSignatureWithParentXpath() throws Exception {
-        String myPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        String myPayload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + (includeNewLine ? "\n" : "")
                 + "<ns:root xmlns:ns=\"http://test\"><a>a1</a><a/><test>Test Message</test></ns:root>";
         setupMock(myPayload);
         sendBody("direct:envelopedParentXpath", myPayload);
@@ -1176,7 +1219,7 @@ public class XmlSignatureTest extends CamelTestSupport {
 
     XmlSignerEndpoint getDetachedSignerEndpoint() {
         XmlSignerEndpoint endpoint = (XmlSignerEndpoint) context().getEndpoint(
-                "xmlsecurity:sign://detached?keyAccessor=#keyAccessorDefault&xpathsToIdAttributes=#xpathsToIdAttributes&"//
+                "xmlsecurity:sign:detached?keyAccessor=#keyAccessorDefault&xpathsToIdAttributes=#xpathsToIdAttributes&"//
                         + "schemaResourceUri=org/apache/camel/component/xmlsecurity/Test.xsd&signatureId=&clearHeaders=false");
         return endpoint;
     }
@@ -1382,28 +1425,28 @@ public class XmlSignatureTest extends CamelTestSupport {
     }
 
     private AlgorithmMethod getCanonicalizationMethod() {
-        List<String> inclusivePrefixes = new ArrayList<String>(1);
+        List<String> inclusivePrefixes = new ArrayList<>(1);
         inclusivePrefixes.add("ds");
         return XmlSignatureHelper.getCanonicalizationMethod(CanonicalizationMethod.EXCLUSIVE, inclusivePrefixes);
     }
 
     private List<AlgorithmMethod> getTransformsXPath2() {
 
-        List<XPathAndFilter> list = new ArrayList<XPathAndFilter>(3);
+        List<XPathAndFilter> list = new ArrayList<>(3);
         XPathAndFilter xpath1 = new XPathAndFilter("//n0:ToBeSigned", XPathType.Filter.INTERSECT.toString());
         list.add(xpath1);
         XPathAndFilter xpath2 = new XPathAndFilter("//n0:NotToBeSigned", XPathType.Filter.SUBTRACT.toString());
         list.add(xpath2);
         XPathAndFilter xpath3 = new XPathAndFilter("//n0:ReallyToBeSigned", XPathType.Filter.UNION.toString());
         list.add(xpath3);
-        List<AlgorithmMethod> result = new ArrayList<AlgorithmMethod>(2);
+        List<AlgorithmMethod> result = new ArrayList<>(2);
         result.add(XmlSignatureHelper.getCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE));
         result.add(XmlSignatureHelper.getXPath2Transform(list, getNamespaceMap()));
         return result;
     }
 
     private Map<String, String> getNamespaceMap() {
-        Map<String, String> result = new HashMap<String, String>(1);
+        Map<String, String> result = new HashMap<>(1);
         result.put("n0", "http://test/test");
         return result;
     }
@@ -1411,13 +1454,13 @@ public class XmlSignatureTest extends CamelTestSupport {
     private List<AlgorithmMethod> getTransformsXsltXpath() {
         try {
             AlgorithmMethod transformXslt = XmlSignatureHelper.getXslTransform("/org/apache/camel/component/xmlsecurity/xslt_test.xsl");
-            Map<String, String> namespaceMap = new HashMap<String, String>(1);
+            Map<String, String> namespaceMap = new HashMap<>(1);
             namespaceMap.put("n0", "https://org.apache/camel/xmlsecurity/test");
             AlgorithmMethod transformXpath = XmlSignatureHelper.getXPathTransform("//n0:XMLSecurity/n0:Content", namespaceMap);
             // I removed base 64 transform because the JDK implementation does
             // not correctly support this transformation
             // AlgorithmMethod transformBase64 = helper.getBase64Transform();
-            List<AlgorithmMethod> result = new ArrayList<AlgorithmMethod>(3);
+            List<AlgorithmMethod> result = new ArrayList<>(3);
             result.add(XmlSignatureHelper.getCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE));
             result.add(transformXslt);
             result.add(transformXpath);

@@ -20,8 +20,10 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.cxf.message.Message;
@@ -31,12 +33,15 @@ import org.slf4j.LoggerFactory;
 /**
  * Defines the <a href="http://camel.apache.org/cxf.html">CXF Component</a>
  */
-public class CxfComponent extends HeaderFilterStrategyComponent {
+public class CxfComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfComponent.class);
 
+    @Metadata(label = "advanced")
     private Boolean allowStreaming;
-    
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
+
     public CxfComponent() {
         super(CxfEndpoint.class);
     }
@@ -57,6 +62,19 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
         return allowStreaming;
     }
 
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
     /**
      * Create a {@link CxfEndpoint} which, can be a Spring bean endpoint having
      * URI format cxf:bean:<i>beanId</i> or transport address endpoint having URI format
@@ -74,7 +92,7 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
                 parameters.put("defaultBus", value);
             }
         }
-        
+
         if (allowStreaming != null && !parameters.containsKey("allowStreaming")) {
             parameters.put("allowStreaming", Boolean.toString(allowStreaming));
         }
@@ -86,8 +104,8 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
                 beanId = beanId.substring(2);
             }
 
-            result = CamelContextHelper.mandatoryLookup(getCamelContext(), beanId, CxfEndpoint.class);
-            // need to check the CamelContext value 
+            result = createCxfSpringEndpoint(beanId);
+            // need to check the CamelContext value
             if (getCamelContext().equals(result.getCamelContext())) {
                 result.setCamelContext(getCamelContext());
             }
@@ -95,8 +113,9 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
 
         } else {
             // endpoint URI does not specify a bean
-            result = new CxfEndpoint(remaining, this);
+            result = createCxfEndpoint(remaining);
         }
+
         if (result.getCamelContext() == null) {
             result.setCamelContext(getCamelContext());
         }
@@ -113,7 +132,20 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
             result.setMtomEnabled(Boolean.valueOf((String) result.getProperties().get(Message.MTOM_ENABLED)));
         }
 
+        // use global ssl config if set
+        if (result.getSslContextParameters() == null) {
+            result.setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
+
         return result;
+    }
+
+    protected CxfEndpoint createCxfSpringEndpoint(String beanId) throws Exception {
+        return CamelContextHelper.mandatoryLookup(getCamelContext(), beanId, CxfEndpoint.class);
+    }
+
+    protected CxfEndpoint createCxfEndpoint(String remaining) {
+        return new CxfEndpoint(remaining, this);
     }
 
     @Override
@@ -121,4 +153,5 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
         CxfEndpoint cxfEndpoint = (CxfEndpoint) endpoint;
         cxfEndpoint.updateEndpointUri(uri);
     }
+
 }

@@ -16,12 +16,16 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.component.properties.PropertiesResolver;
 
 public class PropertiesAvailableEverywhereTest extends ContextTestSupport {
@@ -36,7 +40,7 @@ public class PropertiesAvailableEverywhereTest extends ContextTestSupport {
         pc.setLocations(new String[0]);
         pc.setPropertiesResolver(new PropertiesResolver() {
             @Override
-            public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, String... uri) {
+            public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, List<PropertiesLocation> locations) {
                 return properties;
             }
         });
@@ -44,6 +48,7 @@ public class PropertiesAvailableEverywhereTest extends ContextTestSupport {
         return camelContext;
     }
 
+    @Test
     public void testPropertiesInPredicates() throws Exception {
         getMockEndpoint("mock:header-ok").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:choice-ok").expectedBodiesReceived("Hello Camel");

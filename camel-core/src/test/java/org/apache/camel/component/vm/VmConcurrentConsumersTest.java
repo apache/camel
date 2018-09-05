@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.vm;
 
+import org.junit.Test;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -24,6 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class VmConcurrentConsumersTest extends AbstractVmTestSupport {
     
+    @Test
     public void testSendToSeda() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

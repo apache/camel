@@ -37,6 +37,15 @@ public class ApiComponentGeneratorMojoTest extends AbstractGeneratorMojoTest {
         // delete target files to begin
         collectionFile.delete();
 
+        final ApiComponentGeneratorMojo mojo = createGeneratorMojo();
+
+        mojo.execute();
+
+        // check target file was generated
+        assertExists(collectionFile);
+    }
+
+    protected ApiComponentGeneratorMojo createGeneratorMojo() {
         final ApiComponentGeneratorMojo mojo = new ApiComponentGeneratorMojo();
         configureSourceGeneratorMojo(mojo);
 
@@ -54,7 +63,7 @@ public class ApiComponentGeneratorMojoTest extends AbstractGeneratorMojoTest {
         mojo.apis[0].setExcludeConfigTypes("int");
         mojo.apis[0].setNullableOptions(new String[] {"namesList"});
 
-        List<ApiMethodAlias> aliases = new ArrayList<ApiMethodAlias>();
+        List<ApiMethodAlias> aliases = new ArrayList<>();
         aliases.add(new ApiMethodAlias("get(.+)", "$1"));
         aliases.add(new ApiMethodAlias("set(.+)", "$1"));
         mojo.apis[1] = new ApiProxy();
@@ -72,10 +81,8 @@ public class ApiComponentGeneratorMojoTest extends AbstractGeneratorMojoTest {
         fromJavadoc.setExcludePackages(JavadocApiMethodGeneratorMojo.DEFAULT_EXCLUDE_PACKAGES);
         fromJavadoc.setExcludeMethods("clone|Current|internal|icache");
         mojo.apis[1].setFromJavadoc(fromJavadoc);
-
-        mojo.execute();
-
-        // check target file was generated
-        assertExists(collectionFile);
+        return mojo;
     }
+    
+
 }

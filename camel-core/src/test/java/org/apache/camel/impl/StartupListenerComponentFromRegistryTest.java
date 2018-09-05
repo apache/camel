@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.StartupListener;
@@ -38,7 +40,12 @@ public class StartupListenerComponentFromRegistryTest extends ContextTestSupport
         return jndi;
     }
 
+    @Test
     public void testStartupListenerComponent() throws Exception {
+        // and now the routes are started
+        assertTrue(context.getRouteStatus("foo").isStarted());
+        assertTrue(context.getRouteStatus("bar").isStarted());
+
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBody("direct:foo", "Hello World");
@@ -55,9 +62,9 @@ public class StartupListenerComponentFromRegistryTest extends ContextTestSupport
         public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
             invoked++;
 
-            // the routes should have been started
-            assertTrue(context.getRouteStatus("foo").isStarted());
-            assertTrue(context.getRouteStatus("bar").isStarted());
+            // the routes should not have been started as they start afterwards
+            assertTrue(context.getRouteStatus("foo").isStopped());
+            assertTrue(context.getRouteStatus("bar").isStopped());
         }
 
         public int getInvoked() {

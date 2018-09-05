@@ -1,0 +1,44 @@
+[[Camel2.17.3Release-Camel2.17.3Release]]
+== Camel 2.17.3 Release
+
+### New and Noteworthy
+
+Welcome to the 2.17.3 release which is mainly a maintenance release with
+40 issues resolved.
+
+For further details, see
+https://issues.apache.org/jira/secure/ReleaseNote.jspa?version=12335702&projectId=12311211[the
+list of JIRA issues].
+
+### Known Issues
+
+* See <<Camel2.17.0Release,Camel 2.17.0 Release>>
+
+
+### Important changes to consider when upgrading
+
+* See <<Camel2.17.0Release,Camel 2.17.0 Release>>
+
+### Getting the Binaries using Maven 2
+
+To use this release in your maven project, the proper dependency
+configuration that you should use in your
+http://maven.apache.org/guides/introduction/introduction-to-the-pom.html[Maven
+POM] is:
+
+[source,java]
+-------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-core</artifactId>
+  <version>2.17.3</version>
+</dependency>
+-------------------------------------
+
+### Changelog
+
+For a more detailed view of new features and bug fixes, see the:
+
+https://issues.apache.org/jira/secure/ReleaseNote.jspa?version=12335702&projectId=12311211[Release
+notes for 2.17.3]
+

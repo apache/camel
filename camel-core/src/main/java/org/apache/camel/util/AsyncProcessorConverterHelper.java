@@ -45,7 +45,7 @@ public final class AsyncProcessorConverterHelper {
      * It is important that this implements {@link DelegateProcessor}
      */
     private static final class ProcessorToAsyncProcessorBridge implements DelegateProcessor, AsyncProcessor, Navigate<Processor>, Service {
-        protected Processor processor;
+        protected final Processor processor;
 
         private ProcessorToAsyncProcessorBridge(Processor processor) {
             this.processor = processor;
@@ -104,7 +104,7 @@ public final class AsyncProcessorConverterHelper {
             if (!hasNext()) {
                 return null;
             }
-            List<Processor> answer = new ArrayList<Processor>(1);
+            List<Processor> answer = new ArrayList<>(1);
             answer.add(processor);
             return answer;
         }
@@ -112,6 +112,32 @@ public final class AsyncProcessorConverterHelper {
         @Override
         public Processor getProcessor() {
             return processor;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            if (processor == null) {
+                return false;
+            }
+
+            ProcessorToAsyncProcessorBridge that = (ProcessorToAsyncProcessorBridge) o;
+            return processor.equals(that.processor);
+        }
+
+        @Override
+        public int hashCode() {
+            if (processor != null) {
+                return processor.hashCode();
+            } else {
+                return 0;
+            }
         }
     }
 

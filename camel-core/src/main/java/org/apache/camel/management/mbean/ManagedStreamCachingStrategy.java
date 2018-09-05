@@ -19,7 +19,6 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedStreamCachingStrategyMBean;
-import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 
 @ManagedResource(description = "Managed StreamCachingStrategy")
@@ -32,10 +31,6 @@ public class ManagedStreamCachingStrategy extends ManagedService implements Mana
         super(camelContext, streamCachingStrategy);
         this.camelContext = camelContext;
         this.streamCachingStrategy = streamCachingStrategy;
-    }
-
-    public void init(ManagementStrategy strategy) {
-        // do nothing
     }
 
     public CamelContext getCamelContext() {

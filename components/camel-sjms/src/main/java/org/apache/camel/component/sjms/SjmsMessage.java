@@ -88,6 +88,11 @@ public class SjmsMessage extends DefaultMessage {
             setMessageId(that.getMessageId());
         }
 
+        // cover over exchange if none has been assigned
+        if (getExchange() == null) {
+            setExchange(that.getExchange());
+        }
+
         // copy body and fault flag
         setBody(that.getBody());
         setFault(that.isFault());
@@ -99,7 +104,7 @@ public class SjmsMessage extends DefaultMessage {
 
         getAttachments().clear();
         if (that.hasAttachments()) {
-            getAttachments().putAll(that.getAttachments());
+            getAttachmentObjects().putAll(that.getAttachmentObjects());
         }
     }
 
@@ -204,7 +209,9 @@ public class SjmsMessage extends DefaultMessage {
 
     @Override
     public SjmsMessage newInstance() {
-        return new SjmsMessage(null, null, binding);
+        SjmsMessage answer = new SjmsMessage(null, null, binding);
+        answer.setCamelContext(getCamelContext());
+        return answer;
     }
 
     /**
@@ -248,7 +255,12 @@ public class SjmsMessage extends DefaultMessage {
             return super.createMessageId();
         }
         try {
-            String id = getDestinationAsString(jmsMessage.getJMSDestination()) + jmsMessage.getJMSMessageID();
+            String id = getDestinationAsString(jmsMessage.getJMSDestination());
+            if (id != null) {
+                id += jmsMessage.getJMSMessageID();
+            } else {
+                id = jmsMessage.getJMSMessageID();
+            }
             return getSanitizedString(id);
         } catch (JMSException e) {
             throw new RuntimeExchangeException("Unable to retrieve JMSMessageID from JMS Message", getExchange(), e);
@@ -265,12 +277,12 @@ public class SjmsMessage extends DefaultMessage {
     }
 
     private String getDestinationAsString(Destination destination) throws JMSException {
-        String result;
+        String result = null;
         if (destination == null) {
             result = "null destination!" + File.separator;
         } else if (destination instanceof Topic) {
             result = "topic" + File.separator + ((Topic) destination).getTopicName() + File.separator;
-        } else {
+        } else if (destination instanceof Queue) {
             result = "queue" + File.separator + ((Queue) destination).getQueueName() + File.separator;
         }
         return result;

@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.http4;
 
+import java.io.Closeable;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
+import javax.net.ssl.HostnameVerifier;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.PollingConsumer;
@@ -25,14 +28,18 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.apache.camel.http.common.HttpHelper;
+import org.apache.camel.http.common.cookie.CookieHandler;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.http.HttpHost;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.protocol.HttpContext;
@@ -40,29 +47,67 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents a <a href="http://camel.apache.org/http.html">HTTP endpoint</a>
- *
- * @version 
+ * For calling out to external HTTP servers using Apache HTTP Client 4.x.
  */
-@UriEndpoint(scheme = "http4,http4s", title = "HTTP4,HTTP4S", syntax = "http4:httpUri", producerOnly = true, label = "http")
+@UriEndpoint(firstVersion = "2.3.0", scheme = "http4,https4", title = "HTTP4,HTTPS4", syntax = "http4:httpUri",
+    producerOnly = true, label = "http", lenientProperties = true)
 public class HttpEndpoint extends HttpCommonEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
 
-    // Note: all options must be documented with description in annotations so extended components can access the documentation
-
+    @UriParam(label = "advanced", description = "To use a custom HttpContext instance")
     private HttpContext httpContext;
+    @UriParam(label = "advanced", description = "Register a custom configuration strategy for new HttpClient instances"
+        + " created by producers or consumers such as to configure authentication mechanisms etc.")
     private HttpClientConfigurer httpClientConfigurer;
+    @UriParam(label = "advanced", prefix = "httpClient.", multiValue = true, description = "To configure the HttpClient using the key/values from the Map.")
+    private Map<String, Object> httpClientOptions;
+    @UriParam(label = "advanced", description = "To use a custom HttpClientConnectionManager to manage connections")
     private HttpClientConnectionManager clientConnectionManager;
+    @UriParam(label = "advanced", description = "Provide access to the http client request parameters used on new RequestConfig instances used by producers or consumers of this endpoint.")
     private HttpClientBuilder clientBuilder;
-    private  HttpClient httpClient;
+    @UriParam(label = "advanced", description = "Sets a custom HttpClient to be used by the producer")
+    private HttpClient httpClient;
+    @UriParam(label = "advanced", defaultValue = "false", description = "To use System Properties as fallback for configuration")
+    private boolean useSystemProperties;
 
-    @UriParam(label = "producer")
+    // timeout
+    @Metadata(label = "timeout", defaultValue = "-1", description = "The timeout in milliseconds used when requesting a connection"
+        + " from the connection manager. A timeout value of zero is interpreted as an infinite timeout."
+        + " A timeout value of zero is interpreted as an infinite timeout."
+        + " A negative value is interpreted as undefined (system default).")
+    private int connectionRequestTimeout = -1;
+    @Metadata(label = "timeout", defaultValue = "-1", description = "Determines the timeout in milliseconds until a connection is established."
+        + " A timeout value of zero is interpreted as an infinite timeout."
+        + " A timeout value of zero is interpreted as an infinite timeout."
+        + " A negative value is interpreted as undefined (system default).")
+    private int connectTimeout = -1;
+    @Metadata(label = "timeout", defaultValue = "-1", description = "Defines the socket timeout in milliseconds,"
+        + " which is the timeout for waiting for data  or, put differently,"
+        + " a maximum period inactivity between two consecutive data packets)."
+        + " A timeout value of zero is interpreted as an infinite timeout."
+        + " A negative value is interpreted as undefined (system default).")
+    private int socketTimeout = -1;
+    @UriParam(label = "producer", description = "To use a custom CookieStore."
+        + " By default the BasicCookieStore is used which is an in-memory only cookie store."
+        + " Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy)."
+        + " If a cookieHandler is set then the cookie store is also forced to be a noop cookie store as cookie handling is then performed by the cookieHandler.")
     private CookieStore cookieStore = new BasicCookieStore();
-    @UriParam(label = "producer")
-    private boolean authenticationPreemptive;
-    @UriParam(label = "producer", defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true", description = "Whether to clear expired cookies before sending the HTTP request."
+        + " This ensures the cookies store does not keep growing by adding new cookies which is newer removed when they are expired.")
     private boolean clearExpiredCookies = true;
+    @UriParam(label = "producer", description = "If this option is true, camel-http4 sends preemptive basic authentication to the server.")
+    private boolean authenticationPreemptive;
+    @UriParam(label = "producer", description = "Whether the HTTP DELETE should include the message body or not."
+        + " By default HTTP DELETE do not include any HTTP message. However in some rare cases users may need to be able to include the message body.")
+    private boolean deleteWithBody;
+
+    @UriParam(label = "advanced", defaultValue = "200", description = "The maximum number of connections.")
+    private int maxTotalConnections;
+    @UriParam(label = "advanced", defaultValue = "20", description = "The maximum number of connections per route.")
+    private int connectionsPerRoute;
+    @UriParam(label = "security", description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier")
+    private HostnameVerifier x509HostnameVerifier;
 
     public HttpEndpoint() {
     }
@@ -74,7 +119,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpClientConnectionManager clientConnectionManager) throws URISyntaxException {
         this(endPointURI, component, httpURI, HttpClientBuilder.create(), clientConnectionManager, null);
     }
-    
+
     public HttpEndpoint(String endPointURI, HttpComponent component, HttpClientBuilder clientBuilder,
                         HttpClientConnectionManager clientConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
         this(endPointURI, component, null, clientBuilder, clientConnectionManager, clientConfigurer);
@@ -103,9 +148,6 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         return answer;
     }
 
-    /**
-     * Gets the HttpClient to be used by {@link org.apache.camel.component.http4.HttpProducer}
-     */
     public synchronized HttpClient getHttpClient() {
         if (httpClient == null) {
             httpClient = createHttpClient();
@@ -113,6 +155,9 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         return httpClient;
     }
 
+    /**
+     * Sets a custom HttpClient to be used by the producer
+     */
     public void setHttpClient(HttpClient httpClient) {
         this.httpClient = httpClient;
     }
@@ -130,21 +175,28 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         clientBuilder.setDefaultCookieStore(cookieStore);
         // setup the httpConnectionManager
         clientBuilder.setConnectionManager(clientConnectionManager);
-
-        // configure http proxy from camelContext
-        if (ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyHost")) && ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyPort"))) {
-            String host = getCamelContext().getProperty("http.proxyHost");
-            int port = Integer.parseInt(getCamelContext().getProperty("http.proxyPort"));
-            String scheme = getCamelContext().getProperty("http.proxyScheme");
-            // fallback and use either http or https depending on secure
-            if (scheme == null) {
-                scheme = HttpHelper.isSecureConnection(getEndpointUri()) ? "https" : "http";
-            }
-            LOG.debug("CamelContext properties http.proxyHost, http.proxyPort, and http.proxyScheme detected. Using http proxy host: {} port: {} scheme: {}", new Object[]{host, port, scheme});
-            HttpHost proxy = new HttpHost(host, port, scheme);
-            clientBuilder.setProxy(proxy);
+        if (getComponent() != null && getComponent().getClientConnectionManager() == getClientConnectionManager()) {
+            clientBuilder.setConnectionManagerShared(true);
         }
-        
+
+        if (!useSystemProperties) {
+            // configure http proxy from camelContext
+            if (ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyHost")) && ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyPort"))) {
+                String host = getCamelContext().getProperty("http.proxyHost");
+                int port = Integer.parseInt(getCamelContext().getProperty("http.proxyPort"));
+                String scheme = getCamelContext().getProperty("http.proxyScheme");
+                // fallback and use either http or https depending on secure
+                if (scheme == null) {
+                    scheme = HttpHelper.isSecureConnection(getEndpointUri()) ? "https" : "http";
+                }
+                LOG.debug("CamelContext properties http.proxyHost, http.proxyPort, and http.proxyScheme detected. Using http proxy host: {} port: {} scheme: {}", new Object[]{host, port, scheme});
+                HttpHost proxy = new HttpHost(host, port, scheme);
+                clientBuilder.setProxy(proxy);
+            }
+        } else {
+            clientBuilder.useSystemProperties();
+        }
+
         if (isAuthenticationPreemptive()) {
             // setup the PreemptiveAuthInterceptor here
             clientBuilder.addInterceptorFirst(new PreemptiveAuthInterceptor());
@@ -175,15 +227,14 @@ public class HttpEndpoint extends HttpCommonEndpoint {
             // need to shutdown the ConnectionManager
             clientConnectionManager.shutdown();
         }
+        if (httpClient instanceof Closeable) {
+            IOHelper.close((Closeable)httpClient);
+        }
     }
 
     // Properties
     //-------------------------------------------------------------------------
 
-    /**
-     * Provide access to the http client request parameters used on new {@link RequestConfig} instances
-     * used by producers or consumers of this endpoint.
-     */
     public HttpClientBuilder getClientBuilder() {
         return clientBuilder;
     }
@@ -199,10 +250,6 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     public HttpClientConfigurer getHttpClientConfigurer() {
         return httpClientConfigurer;
     }
-    
-    public HttpContext getHttpContext() {
-        return httpContext;
-    }
 
     /**
      * Register a custom configuration strategy for new {@link HttpClient} instances
@@ -212,6 +259,13 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         this.httpClientConfigurer = httpClientConfigurer;
     }
 
+    public HttpContext getHttpContext() {
+        return httpContext;
+    }
+
+    /**
+     * To use a custom HttpContext instance
+     */
     public void setHttpContext(HttpContext httpContext) {
         this.httpContext = httpContext;
     }
@@ -239,18 +293,40 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         this.clearExpiredCookies = clearExpiredCookies;
     }
 
+    public boolean isDeleteWithBody() {
+        return deleteWithBody;
+    }
+
+    /**
+     * Whether the HTTP DELETE should include the message body or not.
+     * <p/>
+     * By default HTTP DELETE do not include any HTTP message. However in some rare cases users may need to be able to include the
+     * message body.
+     */
+    public void setDeleteWithBody(boolean deleteWithBody) {
+        this.deleteWithBody = deleteWithBody;
+    }
+
     public CookieStore getCookieStore() {
         return cookieStore;
     }
 
     /**
-     * To use a custom org.apache.http.client.CookieStore.
-     * By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store.
+     * To use a custom CookieStore.
+     * By default the BasicCookieStore is used which is an in-memory only cookie store.
      * Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie
      * shouldn't be stored as we are just bridging (eg acting as a proxy).
+     * If a cookieHandler is set then the cookie store is also forced to be a noop cookie store as cookie handling is
+     * then performed by the cookieHandler.
      */
     public void setCookieStore(CookieStore cookieStore) {
         this.cookieStore = cookieStore;
+    }
+
+    public void setCookieHandler(CookieHandler cookieHandler) {
+        super.setCookieHandler(cookieHandler);
+        // if we set an explicit cookie handler
+        this.cookieStore = new NoopCookieStore();
     }
 
     public boolean isAuthenticationPreemptive() {
@@ -262,6 +338,121 @@ public class HttpEndpoint extends HttpCommonEndpoint {
      */
     public void setAuthenticationPreemptive(boolean authenticationPreemptive) {
         this.authenticationPreemptive = authenticationPreemptive;
+    }
+
+    public Map<String, Object> getHttpClientOptions() {
+        return httpClientOptions;
+    }
+
+    /**
+     * To configure the HttpClient using the key/values from the Map.
+     */
+    public void setHttpClientOptions(Map<String, Object> httpClientOptions) {
+        this.httpClientOptions = httpClientOptions;
+    }
+
+    public boolean isUseSystemProperties() {
+        return useSystemProperties;
+    }
+
+    /**
+     * To use System Properties as fallback for configuration
+     */
+    public void setUseSystemProperties(boolean useSystemProperties) {
+        this.useSystemProperties = useSystemProperties;
+    }
+
+    public int getMaxTotalConnections() {
+        return maxTotalConnections;
+    }
+
+    /**
+     * The maximum number of connections.
+     */
+    public void setMaxTotalConnections(int maxTotalConnections) {
+        this.maxTotalConnections = maxTotalConnections;
+    }
+
+    public int getConnectionsPerRoute() {
+        return connectionsPerRoute;
+    }
+
+    /**
+     * The maximum number of connections per route.
+     */
+    public void setConnectionsPerRoute(int connectionsPerRoute) {
+        this.connectionsPerRoute = connectionsPerRoute;
+    }
+
+    public HostnameVerifier getX509HostnameVerifier() {
+        return x509HostnameVerifier;
+    }
+
+    /**
+     * To use a custom X509HostnameVerifier such as {@link DefaultHostnameVerifier}
+     * or {@link org.apache.http.conn.ssl.NoopHostnameVerifier}.
+     */
+    public void setX509HostnameVerifier(HostnameVerifier x509HostnameVerifier) {
+        this.x509HostnameVerifier = x509HostnameVerifier;
+    }
+
+    public int getConnectionRequestTimeout() {
+        return connectionRequestTimeout;
+    }
+
+    /**
+     * The timeout in milliseconds used when requesting a connection
+     * from the connection manager. A timeout value of zero is interpreted
+     * as an infinite timeout.
+     * <p>
+     * A timeout value of zero is interpreted as an infinite timeout.
+     * A negative value is interpreted as undefined (system default).
+     * </p>
+     * <p>
+     * Default: {@code -1}
+     * </p>
+     */
+    public void setConnectionRequestTimeout(int connectionRequestTimeout) {
+        this.connectionRequestTimeout = connectionRequestTimeout;
+    }
+
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    /**
+     * Determines the timeout in milliseconds until a connection is established.
+     * A timeout value of zero is interpreted as an infinite timeout.
+     * <p>
+     * A timeout value of zero is interpreted as an infinite timeout.
+     * A negative value is interpreted as undefined (system default).
+     * </p>
+     * <p>
+     * Default: {@code -1}
+     * </p>
+     */
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    public int getSocketTimeout() {
+        return socketTimeout;
+    }
+
+    /**
+     * Defines the socket timeout ({@code SO_TIMEOUT}) in milliseconds,
+     * which is the timeout for waiting for data  or, put differently,
+     * a maximum period inactivity between two consecutive data packets).
+     * <p>
+     * A timeout value of zero is interpreted as an infinite timeout.
+     * A negative value is interpreted as undefined (system default).
+     * </p>
+     * <p>
+     * Default: {@code -1}
+     * </p>
+     */
+    public void setSocketTimeout(int socketTimeout) {
+        this.socketTimeout = socketTimeout;
     }
 
 }

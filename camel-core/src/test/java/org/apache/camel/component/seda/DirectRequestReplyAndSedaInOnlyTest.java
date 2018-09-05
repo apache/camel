@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class DirectRequestReplyAndSedaInOnlyTest extends ContextTestSupport {
 
+    @Test
     public void testInOut() throws Exception {
         getMockEndpoint("mock:log").expectedBodiesReceived("Logging: Bye World");
 
@@ -44,7 +47,7 @@ public class DirectRequestReplyAndSedaInOnlyTest extends ContextTestSupport {
                 // In EIP patterns the WireTap pattern is what this would be
                 from("direct:start").transform(constant("Bye World")).inOnly("seda:log");
 
-                from("seda:log").delay(1000).transform(body().prepend("Logging: ")).to("log:log", "mock:log");
+                from("seda:log").transform(body().prepend("Logging: ")).to("log:log", "mock:log");
             }
         };
     }

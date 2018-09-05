@@ -16,6 +16,8 @@
  */
 
 package org.apache.camel.component.cxf;
+import org.junit.Before;
+import org.junit.After;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Endpoint;
@@ -111,7 +113,7 @@ public class CxfPayloadProviderRouterTest extends AbstractCXFGreeterRouterTest {
     static class VerifyInboundInterceptor extends AbstractPhaseInterceptor<Message> {
         private boolean called;
         
-        public VerifyInboundInterceptor() {
+        VerifyInboundInterceptor() {
             super(Phase.USER_PROTOCOL);
         }
 

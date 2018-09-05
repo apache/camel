@@ -38,7 +38,7 @@ public class MessageSelectorCreator implements CorrelationListener {
         // create local set of correlation ids, as its easier to keep track
         // using the listener so we can flag the dirty flag upon changes
         // must support concurrent access
-        this.correlationIds = new ConcurrentSkipListSet<String>();
+        this.correlationIds = new ConcurrentSkipListSet<>();
     }
 
     public synchronized String get() {

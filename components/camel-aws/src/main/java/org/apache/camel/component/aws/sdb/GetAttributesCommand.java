@@ -25,6 +25,8 @@ import com.amazonaws.services.simpledb.model.GetAttributesResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 
+import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageForResponse;
+
 public class GetAttributesCommand extends AbstractSdbCommand {
     
     public GetAttributesCommand(AmazonSimpleDB sdbClient, SdbConfiguration configuration, Exchange exchange) {

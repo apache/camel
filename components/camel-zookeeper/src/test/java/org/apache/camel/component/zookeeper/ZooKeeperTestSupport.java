@@ -225,7 +225,7 @@ public class ZooKeeperTestSupport extends CamelTestSupport {
 
     // Wait methods are taken directly from the Zookeeper tests. A tests jar
     // would be nice! Another good reason the keeper folks should move to maven.
-    private static boolean waitForServerUp(String hp, long timeout) {
+    public static boolean waitForServerUp(String hp, long timeout) {
         long start = System.currentTimeMillis();
         while (true) {
             try {
@@ -305,7 +305,7 @@ public class ZooKeeperTestSupport extends CamelTestSupport {
     }
 
     public static void deleteDir(File f) {
-        LinkedList<File> deleteStack = new LinkedList<File>();
+        LinkedList<File> deleteStack = new LinkedList<>();
         deleteStack.addLast(f);
         deleteDir(deleteStack);
     }

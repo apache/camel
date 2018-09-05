@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+import org.junit.Before;
 
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -31,6 +32,7 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailSearchTermUriConfigTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();
@@ -62,31 +64,37 @@ public class MailSearchTermUriConfigTest extends CamelTestSupport {
         messages[0] = new MimeMessage(sender.getSession());
         messages[0].setSubject("Apache Camel rocks");
         messages[0].setText("I like riding the Camel");
+        messages[0].setHeader("Message-ID", "0");
         messages[0].setFrom(new InternetAddress("someone@somewhere.com"));
 
         messages[1] = new MimeMessage(sender.getSession());
         messages[1].setSubject("Order");
         messages[1].setText("Ordering Camel in Action");
+        messages[1].setHeader("Message-ID", "1");
         messages[1].setFrom(new InternetAddress("dude@somewhere.com"));
 
         messages[2] = new MimeMessage(sender.getSession());
         messages[2].setSubject("Order");
         messages[2].setText("Ordering ActiveMQ in Action");
+        messages[2].setHeader("Message-ID", "2");
         messages[2].setFrom(new InternetAddress("dude@somewhere.com"));
 
         messages[3] = new MimeMessage(sender.getSession());
         messages[3].setSubject("Buy pharmacy");
         messages[3].setText("This is spam");
+        messages[3].setHeader("Message-ID", "3");
         messages[3].setFrom(new InternetAddress("spam@me.com"));
 
         messages[4] = new MimeMessage(sender.getSession());
         messages[4].setSubject("Beers tonight?");
         messages[4].setText("We meet at 7pm the usual place");
+        messages[4].setHeader("Message-ID", "4");
         messages[4].setFrom(new InternetAddress("barney@simpsons.com"));
 
         messages[5] = new MimeMessage(sender.getSession());
         messages[5].setSubject("Spambot attack");
         messages[5].setText("I am attaching you");
+        messages[5].setHeader("Message-ID", "5");
         messages[5].setFrom(new InternetAddress("spambot@me.com"));
 
         folder.appendMessages(messages);
@@ -96,7 +104,7 @@ public class MailSearchTermUriConfigTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://bill@localhost?password=secret&searchTerm.subjectOrBody=Camel").to("mock:result");
+                from("pop3://bill@localhost?password=secret&searchTerm.subjectOrBody=Camel&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
             }
         };
     }

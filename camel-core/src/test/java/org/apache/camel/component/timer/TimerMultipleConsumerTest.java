@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.timer;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class TimerMultipleConsumerTest extends ContextTestSupport {
     
+    @Test
     public void testMultipleConsumers() throws Exception {
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(1);
         getMockEndpoint("mock:bar").expectedMinimumMessageCount(1);
@@ -36,9 +39,9 @@ public class TimerMultipleConsumerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer:mytimer").to("mock:foo");
+                from("timer:mytimer?period=0&delay=10").to("mock:foo");
 
-                from("timer:mytimer").to("mock:bar");
+                from("timer:mytimer?period=0&delay=10").to("mock:bar");
             }
         };
     }

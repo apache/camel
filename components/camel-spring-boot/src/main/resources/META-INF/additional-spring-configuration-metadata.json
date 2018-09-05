@@ -1,0 +1,28 @@
+{
+  "properties": [
+    {
+      "name": "management.endpoint.camelroutes.read-only",
+      "type": "java.lang.Boolean",
+      "description": "Whether Camel Routes actuator is in read-only mode. If not in read-only mode then operations to start/stop routes would be enabled.",
+      "defaultValue": true
+    },
+    {
+      "name": "management.endpoint.camelroutes.enabled",
+      "type": "java.lang.Boolean",
+      "description": "To turn on or off information about Camel Routes via actuator endpoint.",
+      "defaultValue": true
+    },
+    {
+      "name": "management.endpoint.camelroutecontroller.enabled",
+      "type": "java.lang.Boolean",
+      "description": "To turn on or off information about Camel Route Controller via actuator endpoint.",
+      "defaultValue": true
+    },
+    {
+      "name": "management.info.camel.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable Camel info.",
+      "defaultValue": true
+    }
+  ]
+}

@@ -40,6 +40,7 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
@@ -81,7 +82,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
     public Message toCamelMessage(HttpRequest request, Exchange exchange, NettyHttpConfiguration configuration) throws Exception {
         LOG.trace("toCamelMessage: {}", request);
 
-        NettyHttpMessage answer = new NettyHttpMessage(request, null);
+        NettyHttpMessage answer = new NettyHttpMessage(exchange.getContext(), request, null);
         answer.setExchange(exchange);
         if (configuration.isMapHeaders()) {
             populateCamelHeaders(request, answer.getHeaders(), exchange, configuration);
@@ -108,7 +109,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         // strip query parameters from the uri
         String s = request.getUri();
         if (s.contains("?")) {
-            s = ObjectHelper.before(s, "?");
+            s = StringHelper.before(s, "?");
         }
 
         // we want the full path for the url, as the client may provide the url in the HTTP headers as absolute or relative, eg
@@ -132,15 +133,16 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         headers.put(Exchange.HTTP_RAW_QUERY, uri.getRawQuery());
 
         // strip the starting endpoint path so the path is relative to the endpoint uri
-        String path = uri.getPath();
-        if (path != null) {
+        String path = uri.getRawPath();
+        if (configuration.getPath() != null) {
             // need to match by lower case as we want to ignore case on context-path
-            path = path.toLowerCase(Locale.US);
+            String matchPath = path.toLowerCase(Locale.US);
             String match = configuration.getPath() != null ? configuration.getPath().toLowerCase(Locale.US) : null;
-            if (match != null && path.startsWith(match)) {
+            if (match != null && matchPath.startsWith(match)) {
                 path = path.substring(configuration.getPath().length());
             }
         }
+        // keep the path uri using the case the request provided (do not convert to lower case)
         headers.put(Exchange.HTTP_PATH, path);
 
         if (LOG.isTraceEnabled()) {
@@ -178,7 +180,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
         // add uri parameters as headers to the Camel message
         if (request.getUri().contains("?")) {
-            String query = ObjectHelper.after(request.getUri(), "?");
+            String query = StringHelper.after(request.getUri(), "?");
             Map<String, Object> uriParameters = URISupport.parseQuery(query, false, true);
 
             for (Map.Entry<String, Object> entry : uriParameters.entrySet()) {
@@ -251,7 +253,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
     public Message toCamelMessage(HttpResponse response, Exchange exchange, NettyHttpConfiguration configuration) throws Exception {
         LOG.trace("toCamelMessage: {}", response);
 
-        NettyHttpMessage answer = new NettyHttpMessage(null, response);
+        NettyHttpMessage answer = new NettyHttpMessage(exchange.getContext(), null, response);
         answer.setExchange(exchange);
         if (configuration.isMapHeaders()) {
             populateCamelHeaders(response, answer.getHeaders(), exchange, configuration);
@@ -528,8 +530,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         // must include HOST header as required by HTTP 1.1
         // use URI as its faster than URL (no DNS lookup)
         URI u = new URI(uri);
-        String hostHeader = u.getHost() 
-                + (configuration.isUseRelativePath() ? ":" + u.getPort() : "");
+        String hostHeader = u.getHost() + (u.getPort() == 80 ? "" : ":" + u.getPort());
         request.headers().set(HttpHeaders.Names.HOST, hostHeader);
         LOG.trace("Host: {}", hostHeader);
 

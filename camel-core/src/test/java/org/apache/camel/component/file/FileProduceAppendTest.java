@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -26,6 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileProduceAppendTest extends ContextTestSupport {
 
+    @Test
     public void testAppendText() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -37,7 +41,8 @@ public class FileProduceAppendTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/test-file-append");
         super.setUp();
         template.sendBodyAndHeader("file://target/test-file-append", "Hello", Exchange.FILE_NAME, "hello.txt");

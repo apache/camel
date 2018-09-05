@@ -16,7 +16,9 @@
  */
 package org.apache.camel.dataformat.csv;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +48,7 @@ final class CsvRecordConverters {
 
         @Override
         public List<String> convertRecord(CSVRecord record) {
-            List<String> answer = new ArrayList<String>(record.size());
+            List<String> answer = new ArrayList<>(record.size());
             for (int i = 0; i < record.size(); i++) {
                 answer.add(record.get(i));
             }
@@ -69,6 +71,43 @@ final class CsvRecordConverters {
         @Override
         public Map<String, String> convertRecord(CSVRecord record) {
             return record.toMap();
+        }
+    }
+
+    /**
+     * Returns a converter that transforms the CSV record into an ordered map.
+     *
+     * @return converter that transforms the CSV record into an ordered map
+     */
+    public static CsvRecordConverter<Map<String, String>> orderedMapConverter() {
+        return OrderedMapCsvRecordConverter.SINGLETON;
+    }
+
+    private static class OrderedMapCsvRecordConverter implements CsvRecordConverter<Map<String, String>> {
+        private static final OrderedMapCsvRecordConverter SINGLETON = new OrderedMapCsvRecordConverter();
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public Map<String, String> convertRecord(CSVRecord record) {
+            Map<String, String> answer = new LinkedHashMap<>();
+
+            // use reflection because CSVRecord does not return maps ordered
+            try {
+                Field field = record.getClass().getDeclaredField("mapping");
+                field.setAccessible(true);
+                Map<String, Integer> mapping = (Map<String, Integer>) field.get(record);
+                if (mapping != null) {
+                    for (Object o : mapping.entrySet()) {
+                        Map.Entry<String, Integer> entry = (Map.Entry) o;
+                        int col = entry.getValue();
+                        answer.put(entry.getKey(), record.get(col));
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                // ignore
+            }
+            return answer;
         }
     }
 }

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.ConsumerTemplate;
@@ -31,12 +34,14 @@ import org.apache.camel.util.FileUtil;
 public class FileConsumePollEnrichFileUsingProcessorTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/enrich");
         deleteDirectory("target/enrichdata");
         super.setUp();
     }
 
+    @Test
     public void testPollEnrich() throws Exception {
         getMockEndpoint("mock:start").expectedBodiesReceived("Start");
 
@@ -59,7 +64,7 @@ public class FileConsumePollEnrichFileUsingProcessorTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/enrich?move=.done")
+                from("file://target/enrich?initialDelay=0&delay=10&move=.done")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             String name = exchange.getIn().getHeader(Exchange.FILE_NAME_ONLY, String.class);
@@ -70,7 +75,7 @@ public class FileConsumePollEnrichFileUsingProcessorTest extends ContextTestSupp
                             ConsumerTemplate con = exchange.getContext().createConsumerTemplate();
                             try {
                                 // try to get the data file
-                                data = con.receive("file://target/enrichdata?move=.done&fileName=" + name, 5000);
+                                data = con.receive("file://target/enrichdata?initialDelay=0&delay=10&move=.done&fileName=" + name, 5000);
                             } finally {
                                 // stop the consumer as it does not need to poll for files anymore
                                 con.stop();

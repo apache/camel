@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
 import org.apache.camel.processor.AOPProcessor;
+import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
@@ -95,6 +96,11 @@ public class AOPDefinition extends OutputDefinition<AOPDefinition> {
     }
 
     @Override
+    public String getShortName() {
+        return "aop";
+    }
+
+    @Override
     public String getLabel() {
         return "aop";
     }
@@ -108,7 +114,7 @@ public class AOPDefinition extends OutputDefinition<AOPDefinition> {
 
         // use a pipeline to assemble the before and target processor
         // and the after if not afterFinally
-        Collection<ProcessorDefinition<?>> pipe = new ArrayList<ProcessorDefinition<?>>();
+        Collection<ProcessorDefinition<?>> pipe = new ArrayList<>();
 
         Processor finallyProcessor = null;
 
@@ -136,7 +142,7 @@ public class AOPDefinition extends OutputDefinition<AOPDefinition> {
      * @param afterUri  the uri of the after endpoint
      * @return the builder
      */
-    public AOPDefinition around(String beforeUri, String afterUri) {
+    public AOPDefinition around(@AsEndpointUri String beforeUri, @AsEndpointUri String afterUri) {
         this.beforeUri = beforeUri;
         this.afterUri = afterUri;
         this.afterFinallyUri = null;
@@ -150,7 +156,7 @@ public class AOPDefinition extends OutputDefinition<AOPDefinition> {
      * @param afterUri  the uri of the after endpoint
      * @return the builder
      */
-    public AOPDefinition aroundFinally(String beforeUri, String afterUri) {
+    public AOPDefinition aroundFinally(@AsEndpointUri String beforeUri, @AsEndpointUri String afterUri) {
         this.beforeUri = beforeUri;
         this.afterUri = null;
         this.afterFinallyUri = afterUri;
@@ -163,7 +169,7 @@ public class AOPDefinition extends OutputDefinition<AOPDefinition> {
      * @param beforeUri the uri of the before endpoint
      * @return the builder
      */
-    public AOPDefinition before(String beforeUri) {
+    public AOPDefinition before(@AsEndpointUri String beforeUri) {
         this.beforeUri = beforeUri;
         this.afterUri = null;
         this.afterFinallyUri = null;
@@ -176,7 +182,7 @@ public class AOPDefinition extends OutputDefinition<AOPDefinition> {
      * @param afterUri  the uri of the after endpoint
      * @return the builder
      */
-    public AOPDefinition after(String afterUri) {
+    public AOPDefinition after(@AsEndpointUri String afterUri) {
         this.beforeUri = null;
         this.afterUri = afterUri;
         this.afterFinallyUri = null;
@@ -189,7 +195,7 @@ public class AOPDefinition extends OutputDefinition<AOPDefinition> {
      * @param afterUri  the uri of the after endpoint
      * @return the builder
      */
-    public AOPDefinition afterFinally(String afterUri) {
+    public AOPDefinition afterFinally(@AsEndpointUri String afterUri) {
         this.beforeUri = null;
         this.afterUri = null;
         this.afterFinallyUri = afterUri;

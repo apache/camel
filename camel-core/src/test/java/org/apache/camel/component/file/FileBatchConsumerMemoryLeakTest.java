@@ -15,23 +15,29 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Ignore;
 
 /**
  * Unit test to test CAMEL-1652
  *
  * @version 
  */
+@Ignore("Manual test")
 public class FileBatchConsumerMemoryLeakTest extends ContextTestSupport {
 
     private String fileUrl = "file://target/filesorter/";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/filesorter");
         super.setUp();
     }
@@ -41,6 +47,7 @@ public class FileBatchConsumerMemoryLeakTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testDummy() {
         // need a single test method to not fail because of no test methods
     }
@@ -56,7 +63,8 @@ public class FileBatchConsumerMemoryLeakTest extends ContextTestSupport {
      * The test is not really a good integration test as it simply waits and does not fail
      * or succeed fast
      */
-    public void xxxtestMemoryLeak() throws Exception {
+    @Test
+    public void testMemoryLeak() throws Exception {
         // run this manually and browse the memory usage, eg in IDEA there is a Statistics tab
 
         deleteDirectory("target/filesorter/archiv");

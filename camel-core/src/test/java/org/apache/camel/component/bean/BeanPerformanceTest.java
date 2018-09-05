@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.ContextTestSupport;
@@ -36,6 +38,7 @@ public class BeanPerformanceTest extends ContextTestSupport {
         INVOKED.incrementAndGet();
     }
 
+    @Test
     public void testBeanPerformance() throws Exception {
         StopWatch watch = new StopWatch();
 
@@ -43,7 +46,7 @@ public class BeanPerformanceTest extends ContextTestSupport {
         for (int i = 0; i < times; i++) {
             template.sendBody("direct:start", "Hello World");
         }
-        log.info("Took {} to invoke the bean {} times", TimeUtils.printDuration(watch.stop()), times);
+        log.info("Took {} to invoke the bean {} times", TimeUtils.printDuration(watch.taken()), times);
 
         assertEquals(times, INVOKED.get());
     }

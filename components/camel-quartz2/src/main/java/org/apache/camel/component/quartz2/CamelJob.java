@@ -17,7 +17,6 @@
 package org.apache.camel.component.quartz2;
 
 import java.util.Collection;
-import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
@@ -25,7 +24,6 @@ import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
-import org.apache.camel.util.EndpointHelper;
 import org.quartz.Job;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;

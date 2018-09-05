@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+import org.junit.Before;
 
 import javax.mail.Flags;
 import javax.mail.Folder;
@@ -37,6 +38,7 @@ public class MailDoNotDeleteIfProcessFailsTest extends CamelTestSupport {
     private static int counter;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();
@@ -68,9 +70,11 @@ public class MailDoNotDeleteIfProcessFailsTest extends CamelTestSupport {
         Message[] msg = new Message[2];
         msg[0] = new MimeMessage(sender.getSession());
         msg[0].setText("Message 1");
+        msg[0].setHeader("Message-ID", "0");
         msg[0].setFlag(Flags.Flag.SEEN, false);
         msg[1] = new MimeMessage(sender.getSession());
         msg[1].setText("Message 2");
+        msg[0].setHeader("Message-ID", "1");
         msg[1].setFlag(Flags.Flag.SEEN, true);
         folder.appendMessages(msg);
         folder.close(true);
@@ -82,7 +86,7 @@ public class MailDoNotDeleteIfProcessFailsTest extends CamelTestSupport {
                 // no redelivery for unit test as we want it to be polled next time
                 onException(IllegalArgumentException.class).to("mock:error");
 
-                from("imap://localhost?username=claus&password=secret&unseen=true&delay=250")
+                from("imap://localhost?username=claus&password=secret&unseen=true&consumer.initialDelay=100&consumer.delay=100")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 counter++;

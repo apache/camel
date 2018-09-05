@@ -87,7 +87,7 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
         // cipher suites and protocols, this method needs to address that.
         // As is, we do NOT pass the configurers along for those two settings.
         
-        List<Configurer<SSLEngine>> sslEngineConfigurers = new LinkedList<Configurer<SSLEngine>>();
+        List<Configurer<SSLEngine>> sslEngineConfigurers = new LinkedList<>();
         
         if (this.getClientAuthentication() != null) { 
             
@@ -174,7 +174,7 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("SSLContextServerParameters [clientAuthentication=");
+        builder.append("SSLContextServerParameters[clientAuthentication=");
         builder.append(clientAuthentication);
         builder.append(", getCipherSuites()=");
         builder.append(getCipherSuites());
@@ -186,8 +186,6 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
         builder.append(getSecureSocketProtocolsFilter());
         builder.append(", getSessionTimeout()=");
         builder.append(getSessionTimeout());
-        builder.append(", getContext()=");
-        builder.append(getCamelContext());
         builder.append("]");
         return builder.toString();
     }

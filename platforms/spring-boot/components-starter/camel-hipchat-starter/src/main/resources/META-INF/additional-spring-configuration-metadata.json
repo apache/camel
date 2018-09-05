@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.hipchat.enabled",
+      "description": "Enable hipchat component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

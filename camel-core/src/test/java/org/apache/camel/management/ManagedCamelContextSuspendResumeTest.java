@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -27,6 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class ManagedCamelContextSuspendResumeTest extends ManagementTestSupport {
 
+    @Test
     public void testManagedCamelContext() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -43,6 +46,9 @@ public class ManagedCamelContextSuspendResumeTest extends ManagementTestSupport 
 
         String uptime = (String) mbeanServer.getAttribute(on, "Uptime");
         assertNotNull(uptime);
+
+        long uptimeMillis = (Long) mbeanServer.getAttribute(on, "UptimeMillis");
+        assertTrue(uptimeMillis > 0);
 
         String status = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Started", status);
@@ -75,7 +81,7 @@ public class ManagedCamelContextSuspendResumeTest extends ManagementTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:foo").transform(constant("Bye World"));
+                from("direct:foo").delay(10).transform(constant("Bye World"));
             }
         };
     }

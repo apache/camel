@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -29,7 +31,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class ManagedProducerRouteAddRemoveRegisterAlwaysTest extends ManagementTestSupport {
 
-    private int services = 11;
+    private int services = 10;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -38,6 +40,7 @@ public class ManagedProducerRouteAddRemoveRegisterAlwaysTest extends ManagementT
         return context;
     }
 
+    @Test
     public void testRouteAddRemoteRouteWithRecipientList() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);

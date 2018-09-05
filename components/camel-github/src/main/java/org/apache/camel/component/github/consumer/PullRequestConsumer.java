@@ -21,6 +21,7 @@ import java.util.Stack;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.github.GitHubConstants;
 import org.apache.camel.component.github.GitHubEndpoint;
 import org.apache.camel.spi.Registry;
 import org.eclipse.egit.github.core.PullRequest;
@@ -39,7 +40,7 @@ public class PullRequestConsumer extends AbstractGitHubConsumer {
         super(endpoint, processor);
 
         Registry registry = endpoint.getCamelContext().getRegistry();
-        Object service = registry.lookupByName("githubPullRequestService");
+        Object service = registry.lookupByName(GitHubConstants.GITHUB_PULL_REQUEST_SERVICE);
         if (service != null) {
             LOG.debug("Using PullRequestService found in registry " + service.getClass().getCanonicalName());
             pullRequestService = (PullRequestService) service;
@@ -60,7 +61,7 @@ public class PullRequestConsumer extends AbstractGitHubConsumer {
     protected int poll() throws Exception {
         List<PullRequest> openPullRequests = pullRequestService.getPullRequests(getRepository(), "open");
         // In the end, we want PRs oldest to newest.
-        Stack<PullRequest> newPullRequests = new Stack<PullRequest>();
+        Stack<PullRequest> newPullRequests = new Stack<>();
         for (PullRequest pullRequest : openPullRequests) {
             if (pullRequest.getNumber() > lastOpenPullRequest) {
                 newPullRequests.push(pullRequest);
@@ -80,9 +81,9 @@ public class PullRequestConsumer extends AbstractGitHubConsumer {
             e.getIn().setBody(newPullRequest);
 
             // Required by the producers.  Set it here for convenience.
-            e.getIn().setHeader("GitHubPullRequest", newPullRequest.getNumber());
+            e.getIn().setHeader(GitHubConstants.GITHUB_PULLREQUEST, newPullRequest.getNumber());
             if (newPullRequest.getHead() != null) {
-                e.getIn().setHeader("GitHubPullRequestHeadCommitSHA", newPullRequest.getHead().getSha());
+                e.getIn().setHeader(GitHubConstants.GITHUB_PULLREQUEST_HEAD_COMMIT_SHA, newPullRequest.getHead().getSha());
             }
 
             getProcessor().process(e);

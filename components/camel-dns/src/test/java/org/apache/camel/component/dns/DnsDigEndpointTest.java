@@ -52,11 +52,12 @@ public class DnsDigEndpointTest extends CamelTestSupport {
     protected ProducerTemplate template;
 
     protected RouteBuilder createRouteBuilder() throws Exception {
-        RouteBuilder routeBuilder = super.createRouteBuilder();
-
-        routeBuilder.from("direct:start").to("dns:dig").to("mock:result");
-
-        return routeBuilder;
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("dns:dig").to("mock:result");
+            }
+        };
     }
 
     @Test
@@ -68,7 +69,7 @@ public class DnsDigEndpointTest extends CamelTestSupport {
                 return RESPONSE_MONKEY.equals(str);
             }
         });
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("dns.name", "monkey.wp.dg.cx");
         headers.put("dns.type", "TXT");
         template.sendBodyAndHeaders(null, headers);

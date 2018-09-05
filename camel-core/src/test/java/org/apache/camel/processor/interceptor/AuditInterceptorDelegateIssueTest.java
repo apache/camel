@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.interceptor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -33,11 +36,13 @@ public class AuditInterceptorDelegateIssueTest extends ContextTestSupport {
     private MyIntercepStrategy strategy;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         strategy = new MyIntercepStrategy();
         super.setUp();
     }
 
+    @Test
     public void testOk() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:handled").expectedMessageCount(0);
@@ -51,6 +56,7 @@ public class AuditInterceptorDelegateIssueTest extends ContextTestSupport {
         assertEquals(true, strategy.isInvoked());
     }
 
+    @Test
     public void testILE() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:handled").expectedMessageCount(1);

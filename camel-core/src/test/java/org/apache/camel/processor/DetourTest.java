@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -26,28 +28,30 @@ public class DetourTest extends ContextTestSupport {
     private static final String BODY = "<order custId=\"123\"/>";
     private ControlBean controlBean;
 
+    @Test
     public void testDetourSet() throws Exception {
         controlBean.setDetour(true);
         
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(1);
-        resultEndpoint.message(0).body().equals(BODY);
+        resultEndpoint.message(0).body().isEqualTo(BODY);
 
         MockEndpoint detourEndpoint = getMockEndpoint("mock:detour");
         detourEndpoint.expectedMessageCount(1);
-        detourEndpoint.message(0).body().equals(BODY);
+        detourEndpoint.message(0).body().isEqualTo(BODY);
         
         template.sendBody("direct:start", BODY);
                 
         assertMockEndpointsSatisfied();        
     }
 
+    @Test
     public void testDetourNotSet() throws Exception {      
         controlBean.setDetour(false);
         
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(1);
-        resultEndpoint.message(0).body().equals(BODY);
+        resultEndpoint.message(0).body().isEqualTo(BODY);
 
         MockEndpoint detourEndpoint = getMockEndpoint("mock:detour");
         detourEndpoint.expectedMessageCount(0);

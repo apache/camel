@@ -16,12 +16,15 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 
 /**
  * Unit test for aggregate grouped exchanges completed by size
@@ -29,6 +32,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class AggregateGroupedExchangeSizePredicateTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testGroupedSize() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
 
@@ -64,7 +68,7 @@ public class AggregateGroupedExchangeSizePredicateTest extends ContextTestSuppor
             public void configure() throws Exception {
                 from("direct:start")
                     // must use eagerCheckCompletion so we can check the groupSize header on the incoming exchange 
-                    .aggregate(constant(true)).groupExchanges().eagerCheckCompletion().completionSize(header("groupSize"))
+                    .aggregate(new GroupedExchangeAggregationStrategy()).constant(true).eagerCheckCompletion().completionSize(header("groupSize"))
                         .to("mock:result")
                     .end();
             }

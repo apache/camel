@@ -20,5 +20,7 @@ package org.apache.camel.tools.apt;
  * Represents a function with 1 argument
  */
 interface Func1<T1, R> {
+
     R call(T1 t1);
+
 }

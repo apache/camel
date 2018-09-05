@@ -18,9 +18,12 @@ package org.apache.camel.component.aws.sdb;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.simpledb.AmazonSimpleDB;
-import com.amazonaws.services.simpledb.AmazonSimpleDBClient;
+import com.amazonaws.services.simpledb.AmazonSimpleDBClientBuilder;
 import com.amazonaws.services.simpledb.model.CreateDomainRequest;
 import com.amazonaws.services.simpledb.model.DomainMetadataRequest;
 import com.amazonaws.services.simpledb.model.NoSuchDomainException;
@@ -39,9 +42,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Defines the <a href="http://camel.apache.org/aws.html">AWS SDB Endpoint</a>.  
+ * The aws-sdb component is for storing and retrieving data from/to Amazon's SDB service.
  */
-@UriEndpoint(scheme = "aws-sdb", title = "AWS SimpleDB", syntax = "aws-sdb:domainName", producerOnly = true, label = "cloud,database,nosql")
+@UriEndpoint(firstVersion = "2.9.0", scheme = "aws-sdb", title = "AWS SimpleDB", syntax = "aws-sdb:domainName", producerOnly = true, label = "cloud,database,nosql")
 public class SdbEndpoint extends ScheduledPollEndpoint {
     
     private static final Logger LOG = LoggerFactory.getLogger(S3Endpoint.class);
@@ -78,9 +81,6 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
         super.doStart();
         
         sdbClient = configuration.getAmazonSDBClient() != null ? configuration.getAmazonSDBClient() : createSdbClient();
-        if (ObjectHelper.isNotEmpty(configuration.getAmazonSdbEndpoint())) {
-            sdbClient.setEndpoint(configuration.getAmazonSdbEndpoint());
-        }
         
         String domainName = getConfiguration().getDomainName();
         LOG.trace("Querying whether domain [{}] already exists...", domainName);
@@ -107,15 +107,34 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
 
     AmazonSimpleDB createSdbClient() {
         AmazonSimpleDB client = null;
-        AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+        AmazonSimpleDBClientBuilder clientBuilder = null;
+        ClientConfiguration clientConfiguration = null;
+        boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
-            ClientConfiguration clientConfiguration = new ClientConfiguration();
+            clientConfiguration = new ClientConfiguration();
             clientConfiguration.setProxyHost(configuration.getProxyHost());
             clientConfiguration.setProxyPort(configuration.getProxyPort());
-            client = new AmazonSimpleDBClient(credentials, clientConfiguration);
-        } else {
-            client = new AmazonSimpleDBClient(credentials);
+            isClientConfigFound = true;
         }
+        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
+            AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+            AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
+            if (isClientConfigFound) {
+                clientBuilder = AmazonSimpleDBClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
+            } else {
+                clientBuilder = AmazonSimpleDBClientBuilder.standard().withCredentials(credentialsProvider);
+            }
+        } else {
+            if (isClientConfigFound) {
+                clientBuilder = AmazonSimpleDBClientBuilder.standard();
+            } else {
+                clientBuilder = AmazonSimpleDBClientBuilder.standard().withClientConfiguration(clientConfiguration);
+            }
+        }
+        if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
+            clientBuilder = clientBuilder.withRegion(Regions.valueOf(configuration.getRegion()));
+        }
+        client = clientBuilder.build();
         return client;
     }
 }

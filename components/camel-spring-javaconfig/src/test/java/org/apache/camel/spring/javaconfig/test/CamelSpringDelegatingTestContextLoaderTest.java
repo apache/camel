@@ -36,6 +36,7 @@ import org.springframework.test.context.ContextConfiguration;
  * 
  */
 //START SNIPPET: example
+// tag::example[]
 @RunWith(CamelSpringJUnit4ClassRunner.class)
 @ContextConfiguration(
         classes = {CamelSpringDelegatingTestContextLoaderTest.TestConfig.class},
@@ -82,5 +83,6 @@ public class CamelSpringDelegatingTestContextLoaderTest {
         errorEndpoint.assertIsSatisfied();
     }
 }
+// end::example[]
 //END SNIPPET: example
 

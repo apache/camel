@@ -40,7 +40,7 @@ public class DefaultScheduledPollConsumerScheduler extends org.apache.camel.supp
     private Consumer consumer;
     private ScheduledExecutorService scheduledExecutorService;
     private boolean shutdownExecutor;
-    private volatile List<ScheduledFuture<?>> futures = new ArrayList<ScheduledFuture<?>>();
+    private volatile List<ScheduledFuture<?>> futures = new ArrayList<>();
     private Runnable task;
     private int concurrentTasks = 1;
 
@@ -180,7 +180,7 @@ public class DefaultScheduledPollConsumerScheduler extends org.apache.camel.supp
     @Override
     protected void doStop() throws Exception {
         if (isSchedulerStarted()) {
-            LOG.debug("This consumer is stopping, so cancelling scheduled task: " + futures);
+            LOG.debug("This consumer is stopping, so cancelling scheduled task: {}", futures);
             for (ScheduledFuture<?> future : futures) {
                 future.cancel(true);
             }

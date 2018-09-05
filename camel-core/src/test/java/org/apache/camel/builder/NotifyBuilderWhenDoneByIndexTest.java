@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder;
 
+import org.junit.Test;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
@@ -27,6 +29,7 @@ import org.apache.camel.Processor;
  */
 public class NotifyBuilderWhenDoneByIndexTest extends ContextTestSupport {
 
+    @Test
     public void testDoneByIndex() throws Exception {
         final AtomicInteger counter = new AtomicInteger();
         getMockEndpoint("mock:split").whenAnyExchangeReceived(new Processor() {

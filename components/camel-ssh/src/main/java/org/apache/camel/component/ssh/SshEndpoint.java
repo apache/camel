@@ -16,35 +16,24 @@
  */
 package org.apache.camel.component.ssh;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.security.KeyPair;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.sshd.ClientChannel;
-import org.apache.sshd.ClientSession;
-import org.apache.sshd.SshClient;
-import org.apache.sshd.client.future.AuthFuture;
-import org.apache.sshd.client.future.ConnectFuture;
-import org.apache.sshd.client.future.OpenFuture;
-import org.apache.sshd.common.KeyPairProvider;
+import org.apache.sshd.common.keyprovider.KeyPairProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents an SSH endpoint.
+ * The ssh component enables access to SSH servers such that you can send an SSH
+ * command, and process the response.
  */
-@UriEndpoint(scheme = "ssh", title = "SSH", syntax = "ssh:host:port", consumerClass = SshConsumer.class, label = "file")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "ssh", title = "SSH", syntax = "ssh:host:port", alternativeSyntax = "ssh:username:password@host:port", consumerClass = SshConsumer.class, label = "file")
 public class SshEndpoint extends ScheduledPollEndpoint {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    private SshClient client;
     @UriParam
     private SshConfiguration sshConfiguration;
 
@@ -75,109 +64,7 @@ public class SshEndpoint extends ScheduledPollEndpoint {
     @Override
     public boolean isSingleton() {
         // SshClient is not thread-safe to be shared
-        return false;
-    }
-
-    public SshResult sendExecCommand(String command) throws Exception {
-        SshResult result = null;
-
-        if (getConfiguration() == null) {
-            throw new IllegalStateException("Configuration must be set");
-        }
-
-        ConnectFuture connectFuture = client.connect(null, getHost(), getPort());
-
-        // Wait getTimeout milliseconds for connect operation to complete
-        connectFuture.await(getTimeout());
-
-        if (!connectFuture.isDone() || !connectFuture.isConnected()) {
-            final String msg = "Failed to connect to " + getHost() + ":" + getPort() + " within timeout " + getTimeout() + "ms";
-            log.debug(msg);
-            throw new RuntimeCamelException(msg);
-        }
-
-        log.debug("Connected to {}:{}", getHost(), getPort());
-
-        ClientChannel channel = null;
-        ClientSession session = null;
-        
-        try {
-            AuthFuture authResult;
-            session = connectFuture.getSession();
-    
-            KeyPairProvider keyPairProvider;
-            final String certResource = getCertResource();
-            if (certResource != null) {
-                log.debug("Attempting to authenticate using ResourceKey '{}'...", certResource);
-                keyPairProvider = new ResourceHelperKeyPairProvider(new String[]{certResource}, getCamelContext().getClassResolver());
-            } else {
-                keyPairProvider = getKeyPairProvider();
-            }
-    
-            if (keyPairProvider != null) {
-                log.debug("Attempting to authenticate username '{}' using Key...", getUsername());
-                KeyPair pair = keyPairProvider.loadKey(getKeyType());
-                authResult = session.authPublicKey(getUsername(), pair);
-            } else {
-                log.debug("Attempting to authenticate username '{}' using Password...", getUsername());
-                authResult = session.authPassword(getUsername(), getPassword());
-            }
-    
-            authResult.await(getTimeout());
-    
-            if (!authResult.isDone() || authResult.isFailure()) {
-                log.debug("Failed to authenticate");
-                throw new RuntimeCamelException("Failed to authenticate username " + getUsername());
-            }
-        
-            channel = session.createChannel(ClientChannel.CHANNEL_EXEC, command);
-
-            ByteArrayInputStream in = new ByteArrayInputStream(new byte[]{0});
-            channel.setIn(in);
-    
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            channel.setOut(out);
-    
-            ByteArrayOutputStream err = new ByteArrayOutputStream();
-            channel.setErr(err);
-            OpenFuture openFuture = channel.open();
-            openFuture.await(getTimeout());
-            if (openFuture.isOpened()) {
-                channel.waitFor(ClientChannel.CLOSED, 0);
-                result = new SshResult(command, channel.getExitStatus(),
-                        new ByteArrayInputStream(out.toByteArray()),
-                        new ByteArrayInputStream(err.toByteArray()));
-    
-            }
-            return result;
-        } finally {
-            if (channel != null) {
-                channel.close(true);
-            }
-            // need to make sure the session is closed 
-            if (session != null) {
-                session.close(false);
-            }
-        }
-        
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-
-        client = SshClient.setUpDefaultClient();
-        client.start();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        if (client != null) {
-            client.stop();
-            client = null;
-        }
-
-        super.doStop();
+        return true;
     }
 
     public SshConfiguration getConfiguration() {
@@ -275,4 +162,45 @@ public class SshEndpoint extends ScheduledPollEndpoint {
     public void setCertResource(String certResource) {
         getConfiguration().setCertResource(certResource);
     }
+
+    public String getKnownHostsResource() {
+        return getConfiguration().getKnownHostsResource();
+    }
+
+    public void setKnownHostsResource(String knownHostsResource) {
+        getConfiguration().setKnownHostsResource(knownHostsResource);
+    }
+
+    public boolean isFailOnUnknownHost() {
+        return getConfiguration().isFailOnUnknownHost();
+    }
+
+    public void setFailOnUnknownHost(boolean failOnUnknownHost) {
+        getConfiguration().setFailOnUnknownHost(failOnUnknownHost);
+    }
+    
+    public String getChannelType() {
+        return getConfiguration().getChannelType();
+    }
+
+    public void setChannelType(String channelType) {
+        getConfiguration().setChannelType(channelType);
+    }
+    
+    public String getShellPrompt() {
+        return getConfiguration().getShellPrompt();
+    }
+
+    public void setShellPrompt(String shellPrompt) {
+        getConfiguration().setShellPrompt(shellPrompt);
+    }
+    
+    public long getSleepForShellPrompt() {
+        return getConfiguration().getSleepForShellPrompt();
+    }
+
+    public void setSleepForShellPrompt(long sleepForShellPrompt) {
+        getConfiguration().setSleepForShellPrompt(sleepForShellPrompt);
+    }
+
 }

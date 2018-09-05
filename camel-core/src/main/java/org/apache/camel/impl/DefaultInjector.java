@@ -67,4 +67,9 @@ public class DefaultInjector implements Injector  {
         }
         return answer;
     }
+
+    @Override
+    public boolean supportsAutoWiring() {
+        return delegate.supportsAutoWiring();
+    }
 }

@@ -30,13 +30,12 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.fusesource.hawtbuf.Buffer;
 import org.iq80.leveldb.DBIterator;
 import org.iq80.leveldb.WriteBatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.fusesource.leveldbjni.JniDBFactory.asString;
 
 /**
  * An instance of {@link org.apache.camel.spi.AggregationRepository} which is backed by a {@link LevelDBFile}.
@@ -54,6 +53,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
     private boolean useRecovery = true;
     private int maximumRedeliveries;
     private String deadLetterUri;
+    private boolean allowSerializedHeaders;
 
     /**
      * Creates an aggregation repository
@@ -67,7 +67,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
      * @param repositoryName the repository name
      */
     public LevelDBAggregationRepository(String repositoryName) {
-        ObjectHelper.notEmpty(repositoryName, "repositoryName");
+        StringHelper.notEmpty(repositoryName, "repositoryName");
         this.repositoryName = repositoryName;
     }
 
@@ -79,8 +79,8 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
      * @param persistentFileName the persistent store filename
      */
     public LevelDBAggregationRepository(String repositoryName, String persistentFileName) {
-        ObjectHelper.notEmpty(repositoryName, "repositoryName");
-        ObjectHelper.notEmpty(persistentFileName, "persistentFileName");
+        StringHelper.notEmpty(repositoryName, "repositoryName");
+        StringHelper.notEmpty(persistentFileName, "persistentFileName");
         this.repositoryName = repositoryName;
         this.persistentFileName = persistentFileName;
     }
@@ -92,7 +92,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
      * @param levelDBFile    the leveldb file to use as persistent store
      */
     public LevelDBAggregationRepository(String repositoryName, LevelDBFile levelDBFile) {
-        ObjectHelper.notEmpty(repositoryName, "repositoryName");
+        StringHelper.notEmpty(repositoryName, "repositoryName");
         ObjectHelper.notNull(levelDBFile, "levelDBFile");
         this.levelDBFile = levelDBFile;
         this.repositoryName = repositoryName;
@@ -102,7 +102,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         LOG.debug("Adding key [{}] -> {}", key, exchange);
         try {
             byte[] lDbKey = keyBuilder(repositoryName, key);
-            final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange);
+            final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange, allowSerializedHeaders);
 
             byte[] rc = null;
             if (isReturnOldExchange()) {
@@ -153,7 +153,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         try {
             byte[] lDbKey = keyBuilder(repositoryName, key);
             final String exchangeId = exchange.getExchangeId();
-            final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange);
+            final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange, allowSerializedHeaders);
 
             // remove the exchange
             byte[] rc = levelDBFile.getDb().get(lDbKey);
@@ -173,8 +173,6 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
                 } finally {
                     batch.close();
                 }
-            } else {
-                LOG.warn("Unable to remove key {} from repository {}: Not Found", key, repositoryName);
             }
 
         } catch (IOException e) {
@@ -192,13 +190,11 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         if (rc != null) {
             levelDBFile.getDb().delete(confirmedLDBKey);
             LOG.trace("Removed confirm index {} -> {}", exchangeId, new Buffer(rc));
-        } else {
-            LOG.warn("Unable to confirm exchangeId [{}]", exchangeId + " from repository " + repositoryName + ": Not Found");
         }
     }
 
     public Set<String> getKeys() {
-        final Set<String> keys = new LinkedHashSet<String>();
+        final Set<String> keys = new LinkedHashSet<>();
 
         // interval task could potentially be running while we are shutting down so check for that
         if (!isRunAllowed()) {
@@ -207,7 +203,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
 
         DBIterator it = levelDBFile.getDb().iterator();
 
-        String keyBuffer = null;
+        String keyBuffer;
         try {
             String prefix = repositoryName + '\0';
             for (it.seek(keyBuilder(repositoryName, "")); it.hasNext(); it.next()) {
@@ -222,10 +218,8 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
 
                 String key = keyBuffer.substring(prefix.length());
 
-                if (key != null) {
-                    LOG.trace("getKey [{}]", key);
-                    keys.add(key);
-                }
+                LOG.trace("getKey [{}]", key);
+                keys.add(key);
             }
         } finally {
             // Make sure you close the iterator to avoid resource leaks.
@@ -236,7 +230,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
     }
 
     public Set<String> scan(CamelContext camelContext) {
-        final Set<String> answer = new LinkedHashSet<String>();
+        final Set<String> answer = new LinkedHashSet<>();
 
         if (!isRunAllowed()) {
             return null;
@@ -244,7 +238,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
 
         DBIterator it = levelDBFile.getDb().iterator();
 
-        String keyBuffer = null;
+        String keyBuffer;
         try {
             String prefix = getRepositoryNameCompleted() + '\0';
 
@@ -256,11 +250,8 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
                 }
                 String exchangeId = keyBuffer.substring(prefix.length());
 
-                if (exchangeId != null) {
-                    LOG.trace("Scan exchangeId [{}]", exchangeId);
-                    answer.add(exchangeId);
-                }
-
+                LOG.trace("Scan exchangeId [{}]", exchangeId);
+                answer.add(exchangeId);
             }
         } finally {
             // Make sure you close the iterator to avoid resource leaks.
@@ -398,6 +389,13 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         this.persistentFileName = persistentFileName;
     }
 
+    public boolean isAllowSerializedHeaders() {
+        return allowSerializedHeaders;
+    }
+
+    public void setAllowSerializedHeaders(boolean allowSerializedHeaders) {
+        this.allowSerializedHeaders = allowSerializedHeaders;
+    }
 
     @Override
     protected void doStart() throws Exception {
@@ -439,6 +437,18 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
             return (repo + '\0' + key).getBytes("UTF-8");
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static String asString(byte[] value) {
+        if (value == null) {
+            return null;
+        } else {
+            try {
+                return new String(value, "UTF-8");
+            } catch (UnsupportedEncodingException var2) {
+                throw new RuntimeException(var2);
+            }
         }
     }
 

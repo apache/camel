@@ -62,9 +62,8 @@ public class SetBodyProcessor extends ServiceSupport implements AsyncProcessor, 
             boolean copyNeeded = !(old.getClass().equals(DefaultMessage.class));
 
             if (copyNeeded) {
-                Message msg = new DefaultMessage();
-                msg.copyFrom(old);
-                msg.setBody(newBody);
+                Message msg = new DefaultMessage(exchange.getContext());
+                msg.copyFromWithNewBody(old, newBody);
 
                 // replace message on exchange
                 ExchangeHelper.replaceMessage(exchange, msg, false);

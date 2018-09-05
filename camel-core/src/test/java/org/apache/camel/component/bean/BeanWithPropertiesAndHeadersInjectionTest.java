@@ -16,16 +16,18 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.util.Map;
 
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeProperties;
 import org.apache.camel.Headers;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.Properties;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BeanRouteTest;
 import org.apache.camel.util.jndi.JndiContext;
@@ -39,6 +41,7 @@ public class BeanWithPropertiesAndHeadersInjectionTest extends ContextTestSuppor
     private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
     protected MyBean myBean = new MyBean();
 
+    @Test
     public void testSendMessage() throws Exception {
         template.send("direct:in", new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -87,7 +90,7 @@ public class BeanWithPropertiesAndHeadersInjectionTest extends ContextTestSuppor
             return "MyBean[foo: " + foo + " bar: " + bar + "]";
         }
 
-        public void myMethod(@Properties Map<?, ?> foo, @Headers Map<?, ?> bar) {
+        public void myMethod(@ExchangeProperties Map<?, ?> foo, @Headers Map<?, ?> bar) {
             this.foo = foo;
             this.bar = bar;
             LOG.info("myMethod() method called on " + this);

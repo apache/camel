@@ -44,7 +44,7 @@ public class FromFtpClientSoTimeout3Test extends CamelTestSupport {
         FtpEndpoint<FTPFile> ftpEndpoint = context.getEndpoint(getFtpUrl(), FtpEndpoint.class);
 
         // set "ftp://admin@localhost:21/timeout/?ftpClient.soTimeout=10"
-        Map<String, Object> ftpClientParameters = new HashMap<String, Object>();
+        Map<String, Object> ftpClientParameters = new HashMap<>();
         ftpClientParameters.put("soTimeout", "10");
         ftpEndpoint.setFtpClientParameters(ftpClientParameters);
 

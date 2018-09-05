@@ -83,7 +83,7 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
     public void testCommit() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start")
+                from("direct:start").routeId("commit")
                     .transacted("required")
                     .to(sqlEndpoint)
                     .process(new Processor() {
@@ -122,7 +122,7 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
     public void testRollbackAfterExceptionInSecondStatement() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start")
+                from("direct:start").routeId("rollback")
                     .transacted("required")
                     .to(sqlEndpoint)
                     .process(new Processor() {
@@ -152,7 +152,7 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
     public void testRollbackAfterAnException() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start")
+                from("direct:start").routeId("rollback2")
                     .transacted("required")
                     .to(sqlEndpoint)
                     .process(new Processor() {

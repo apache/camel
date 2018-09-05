@@ -36,8 +36,8 @@ import org.apache.camel.maven.ResourceUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -49,8 +49,12 @@ public class EIPDocumentationMojoTest {
     @Before
     public void setUp() throws Exception {
         eipDocumentationEnricherMojo.camelCoreDir = ResourceUtils.getResourceAsFile("integration/camel-core-integration");
+        eipDocumentationEnricherMojo.camelCoreXmlDir = ResourceUtils.getResourceAsFile("integration/camel-core-integration");
+        eipDocumentationEnricherMojo.camelSpringDir = ResourceUtils.getResourceAsFile("integration/camel-core-integration");
         eipDocumentationEnricherMojo.inputCamelSchemaFile = ResourceUtils.getResourceAsFile("integration/camel-spring.xsd");
         eipDocumentationEnricherMojo.pathToModelDir = "trgt/classes/org/apache/camel/model";
+        eipDocumentationEnricherMojo.pathToCoreXmlModelDir = "trgt/classes/org/apache/camel/model";
+        eipDocumentationEnricherMojo.pathToSpringModelDir = "trgt/classes/org/apache/camel/model";
         xPath.setNamespaceContext(new CamelSpringNamespace());
         tempFile = File.createTempFile("outputXml", ".xml");
         tempFile.deleteOnExit();

@@ -28,7 +28,6 @@ import org.ops4j.pax.logging.spi.PaxLoggingEvent;
 import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 
 /**
  * Paxlogging consumer.
@@ -55,19 +54,10 @@ public class PaxLoggingConsumer extends DefaultConsumer implements PaxAppender {
     public void doAppend(final PaxLoggingEvent paxLoggingEvent) {
         // in order to "force" the copy of properties (especially the MDC ones) in the local thread
         paxLoggingEvent.getProperties();
-        executor.execute(new Runnable() {
-            public void run() {
-                sendExchange(paxLoggingEvent);
-            }
-        });
+        sendExchange(paxLoggingEvent);
     }
 
-    protected void sendExchange(PaxLoggingEvent paxLoggingEvent) {
-        MDC.put(PaxLoggingConsumer.class.getName(), endpoint.getAppender());
-        if (paxLoggingEvent.getProperties().containsKey(PaxLoggingConsumer.class.getName())) {
-            return;
-        }
-
+    protected void sendExchange(final PaxLoggingEvent paxLoggingEvent) {
         Exchange exchange = endpoint.createExchange();
         // TODO: populate exchange headers
         exchange.getIn().setBody(paxLoggingEvent);
@@ -93,7 +83,7 @@ public class PaxLoggingConsumer extends DefaultConsumer implements PaxAppender {
         // start the executor before the registration
         executor = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "PaxLoggingEventTask");
 
-        Dictionary<String, String> props = new Hashtable<String, String>();
+        Dictionary<String, String> props = new Hashtable<>();
         props.put("org.ops4j.pax.logging.appender.name", endpoint.getAppender());
         registration = endpoint.getComponent().getBundleContext().registerService(PaxAppender.class.getName(), this, props);
     }

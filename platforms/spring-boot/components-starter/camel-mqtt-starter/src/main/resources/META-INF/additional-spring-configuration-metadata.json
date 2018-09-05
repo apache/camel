@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.mqtt.enabled",
+      "description": "Enable mqtt component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

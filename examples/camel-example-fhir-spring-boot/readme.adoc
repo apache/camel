@@ -1,0 +1,78 @@
+== FHIR Example - Spring Boot
+
+=== Introduction
+
+This is an example application of the `camel-fhir` component. We'll be using `camel-spring-boot` as well for an easy setup.
+
+The Camel route is located in the `MyCamelRouter` class.
+
+This example will read HL7V2 patients from a directory and convert them to FHIR dtsu3 patients and upload them to a configured FHIR server. 
+
+The example assumes you have a running FHIR server at your disposal.
+You may use [hapi-fhir-jpa-server-example](https://github.com/jamesagnew/hapi-fhir/tree/master/hapi-fhir-jpaserver-example)
+
+By default, the example uses `http://localhost:8080/baseDstu3` as the FHIR server URL, DSTU3 as the FHIR version and `target/work/fhir/input`
+as the directory to look for HL7V2 patients.
+However, you can edit the `application.properties` file to override the defaults and provide your own configuration.
+
+There is an example of a test in the `MyCamelApplicationTest` class, which mocks out the FHIR server, thus can be run without the FHIR server.
+
+=== Build
+
+You can build this example using:
+
+```sh
+$ mvn package
+```
+
+=== Run
+
+You can run this example using:
+
+```sh
+$ mvn spring-boot:run
+```
+
+When the Camel application runs, you should see a folder created under `target/work/fhir/input`. Copy the file `hl7v2.patient`
+located in the `src/main/data` folder into it. You should see the following output:
+```
+2018-07-24 11:52:51.615  INFO 30666 --- [work/fhir/input] fhir-example: Converting hl7v2.patient
+2018-07-24 11:52:52.700  INFO 30666 --- [work/fhir/input] fhir-example: Inserting Patient: {"resourceType":"Patient","id":"100005056","name":[{"family":"Freeman","given":["Vincent"]}]}
+2018-07-24 11:52:56.995  INFO 30666 --- [ #2 - CamelFhir] fhir-example: Patient created successfully: ca.uhn.fhir.rest.api.MethodOutcome@270f03f1
+```
+
+The Camel application can be stopped pressing <kbd>ctrl</kbd>+<kbd>c</kbd> in the shell.
+
+=== To get health check
+
+To show a summary of spring boot health check
+
+----
+curl -XGET -s http://localhost:8080/actuator/health
+----
+
+=== To get info about the routes
+
+To show a summary of all the routes
+
+----
+curl -XGET -s http://localhost:8080/actuator/camelroutes
+----
+
+To show detailed information for a specific route
+
+----
+curl -XGET -s http://localhost:8080/actuator/camelroutes/{id}/detail
+----
+
+
+=== Forum, Help, etc
+
+If you hit an problems please let us know on the Camel Forums
+<http://camel.apache.org/discussion-forums.html>
+
+Please help us make Apache Camel better - we appreciate any feedback you may have. Enjoy!
+
+The Camel riders!
+
+

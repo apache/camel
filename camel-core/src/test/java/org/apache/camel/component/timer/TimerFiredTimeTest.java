@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.timer;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,6 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class TimerFiredTimeTest extends ContextTestSupport {
 
+    @Test
     public void testFired() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
@@ -43,7 +46,7 @@ public class TimerFiredTimeTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("timer://hello").to("mock:result");
+                from("timer://hello?period=10&delay=10").to("mock:result");
             }
         };
     }

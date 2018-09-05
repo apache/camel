@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!-- START SNIPPET: e1 -->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+           xsi:schemaLocation="
+             http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd
+             http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+
+  <!-- blueprint property placeholders, that will use etc/stuff.cfg as the properties file -->
+  <cm:property-placeholder persistent-id="stuff" update-strategy="reload" >
+    <cm:default-properties>
+      <cm:property name="greeting" value="Hello" />
+      <cm:property name="echo" value="Hey" />
+      <cm:property name="destination" value="mock:original" />
+    </cm:default-properties>
+  </cm:property-placeholder>
+
+  <!-- blueprint property placeholders, that will use etc/otherstuff.cfg as the properties file -->
+  <cm:property-placeholder persistent-id="otherstuff" update-strategy="reload" placeholder-prefix="[" placeholder-suffix="]">
+    <cm:default-properties>
+      <cm:property name="salutation" value="Salut" />
+      <cm:property name="resonner" value="Hep" />
+      <cm:property name="arrive" value="mock:otherOriginal" />
+    </cm:default-properties>
+  </cm:property-placeholder>
+
+  <!-- a bean that uses a blueprint property placeholder -->
+  <bean id="myCoolBean" class="org.apache.camel.test.blueprint.MyCoolBean">
+    <property name="say" value="${greeting}"/>
+    <property name="echo" value="${echo}"/>
+  </bean>
+
+  <!-- a bean that uses a different blueprint property placeholder -->
+  <bean id="myOtherCoolBean" class="org.apache.camel.test.blueprint.MyCoolBean">
+    <property name="say" value="[salutation]"/>
+    <property name="echo" value="[resonner]"/>
+  </bean>
+
+
+  <camelContext xmlns="http://camel.apache.org/schema/blueprint">
+
+    <route>
+      <from uri="direct:start"/>
+      <bean ref="myCoolBean" method="saySomething"/>
+      <to uri="{{destination}}"/>
+      <bean ref="myCoolBean" method="echoSomething"/>
+      <to uri="{{destination}}"/>
+    </route>
+
+    <route>
+      <from uri="direct:otherStart"/>
+      <bean ref="myOtherCoolBean" method="saySomething"/>
+      <to uri="{{arrive}}"/>
+      <bean ref="myOtherCoolBean" method="echoSomething"/>
+      <to uri="{{arrive}}"/>
+    </route>
+
+  </camelContext>
+
+</blueprint>
+<!-- END SNIPPET: e1 -->

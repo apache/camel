@@ -20,10 +20,12 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Ignore;
 
 /**
  * @version 
  */
+@Ignore("Manual test")
 public class FileAsyncStressFileDropper extends ContextTestSupport {
 
     private static int counter;
@@ -33,7 +35,7 @@ public class FileAsyncStressFileDropper extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         // do not test on windows
         if (isPlatform("windows")) {
             return;

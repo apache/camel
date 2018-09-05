@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.issues;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,11 +37,13 @@ public class SplitPropertiesFileIssueTest extends ContextTestSupport {
     private String body = "foo=1" + LS + "bar=2" + LS + "bar=3" + LS + "foo=4";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/file/splitprop");
         super.setUp();
     }
 
+    @Test
     public void testSplitPropertiesFileAndRoute() throws Exception {
         MockEndpoint foo = getMockEndpoint("mock:foo");
         foo.expectedBodiesReceived("[foo=1, foo=4]");
@@ -59,7 +64,7 @@ public class SplitPropertiesFileIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/file/splitprop?move=done")
+                from("file://target/file/splitprop?initialDelay=0&delay=10&move=done")
                     .convertBodyTo(String.class)
                     .split(new MyCustomExpression())
                     .recipientList(header("myCustomDestination"));
@@ -78,15 +83,15 @@ public class SplitPropertiesFileIssueTest extends ContextTestSupport {
             // now we use our own expressions to split the file as we like it
             // what we return is just the list of the two Camel Message objects
             // which contains the splitted data (our way)
-            List<Message> answer = new ArrayList<Message>();
+            List<Message> answer = new ArrayList<>();
             answer.add(msg1);
             answer.add(msg2);
 
             // split the original body into two data lists
             // can be done a bit prettier than this code
             // but its just for show and tell how to use Expressions
-            List<String> data1 = new ArrayList<String>();
-            List<String> data2 = new ArrayList<String>();
+            List<String> data1 = new ArrayList<>();
+            List<String> data2 = new ArrayList<>();
 
             String body = exchange.getIn().getBody(String.class);
             String[] lines = body.split(LS);

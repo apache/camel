@@ -16,16 +16,21 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.util.SedaConstants;
 
 /**
  *
  */
 public class SameSedaQueueSizeAndNoSizeTest extends ContextTestSupport {
-
+    
+    
+    @Test
     public void testSameQueue() throws Exception {
         for (int i = 0; i < 100; i++) {
             template.sendBody("seda:foo", "" + i);
@@ -42,6 +47,7 @@ public class SameSedaQueueSizeAndNoSizeTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testSameQueueDifferentSize() throws Exception {
         try {
             template.sendBody("seda:foo?size=200", "Should fail");
@@ -52,13 +58,14 @@ public class SameSedaQueueSizeAndNoSizeTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testSameQueueDifferentSizeBar() throws Exception {
         try {
             template.sendBody("seda:bar?size=200", "Should fail");
             fail("Should fail");
         } catch (ResolveEndpointFailedException e) {
             IllegalArgumentException ise = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Cannot use existing queue seda://bar as the existing queue size " + Integer.MAX_VALUE + " does not match given queue size 200", ise.getMessage());
+            assertEquals("Cannot use existing queue seda://bar as the existing queue size " + SedaConstants.QUEUE_SIZE + " does not match given queue size 200", ise.getMessage());
         }
     }
 

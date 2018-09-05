@@ -53,16 +53,8 @@ public class ComponentDiscoveryTest {
 
         Set<Map.Entry<String, Properties>> entries = map.entrySet();
         for (Map.Entry<String, Properties> entry : entries) {
-            LOG.info("Found component " + entry.getKey() + " with properties: " + entry.getValue());
+            LOG.info("Found component {} with properties: {}", entry.getKey(), entry.getValue());
         }
-    }
-
-    @Test
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("bean");
-        assertNotNull("Should have found some auto-generated HTML", html);
-        LOG.info("HTML: " + html);
     }
 
 }

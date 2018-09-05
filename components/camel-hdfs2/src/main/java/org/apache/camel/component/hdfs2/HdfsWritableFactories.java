@@ -35,77 +35,8 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
-import org.apache.hadoop.io.WritableComparable;
 
 public class HdfsWritableFactories {
-
-    public enum WritableType {
-        NULL {
-            @Override
-            public Class<NullWritable> getWritableClass() {
-                return NullWritable.class;
-            }
-        },
-
-        BOOLEAN {
-            @Override
-            public Class<BooleanWritable> getWritableClass() {
-                return BooleanWritable.class;
-            }
-        },
-
-        BYTE {
-            @Override
-            public Class<ByteWritable> getWritableClass() {
-                return ByteWritable.class;
-            }
-        },
-
-        INT {
-            @Override
-            public Class<IntWritable> getWritableClass() {
-                return IntWritable.class;
-            }
-        },
-
-        FLOAT {
-            @Override
-            public Class<FloatWritable> getWritableClass() {
-                return FloatWritable.class;
-            }
-        },
-
-        LONG {
-            @Override
-            public Class<LongWritable> getWritableClass() {
-                return LongWritable.class;
-            }
-        },
-
-        DOUBLE {
-            @Override
-            public Class<DoubleWritable> getWritableClass() {
-                return DoubleWritable.class;
-            }
-        },
-
-        TEXT {
-            @Override
-            public Class<Text> getWritableClass() {
-                return Text.class;
-            }
-        },
-
-        BYTES {
-            @Override
-            public Class<BytesWritable> getWritableClass() {
-                return BytesWritable.class;
-            }
-        };
-
-        @SuppressWarnings("rawtypes")
-        public abstract Class<? extends WritableComparable> getWritableClass();
-    }
 
     interface HdfsWritableFactory {
 

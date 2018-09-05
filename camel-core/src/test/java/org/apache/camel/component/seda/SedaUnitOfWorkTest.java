@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -37,6 +39,7 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
     private volatile String sync;
     private volatile String lastOne;
 
+    @Test
     public void testSedaUOW() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
 
@@ -53,6 +56,7 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
         assertEquals("Should have propagated the header inside the Synchronization.onComplete() callback", "bar", foo);
     }
 
+    @Test
     public void testSedaUOWWithException() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
 

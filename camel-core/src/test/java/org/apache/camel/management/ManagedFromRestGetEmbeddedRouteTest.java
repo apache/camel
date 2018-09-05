@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -34,6 +36,7 @@ public class ManagedFromRestGetEmbeddedRouteTest extends ManagementTestSupport {
         return new DefaultCamelContext(registry);
     }
 
+    @Test
     public void testFromRestModel() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -52,10 +55,10 @@ public class ManagedFromRestGetEmbeddedRouteTest extends ManagementTestSupport {
         assertTrue(xml.contains("<rest path=\"/say/hello\">"));
         assertTrue(xml.contains("<rest path=\"/say/bye\">"));
         assertTrue(xml.contains("</rest>"));
-        assertTrue(xml.contains("<get>"));
+        assertTrue(xml.contains("<get"));
         assertTrue(xml.contains("<route"));
         assertTrue(xml.contains("<transform"));
-        assertTrue(xml.contains("<post>"));
+        assertTrue(xml.contains("<post"));
         assertTrue(xml.contains("application/json"));
         assertTrue(xml.contains("</rests>"));
 

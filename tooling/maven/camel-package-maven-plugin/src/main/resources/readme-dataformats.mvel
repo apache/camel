@@ -1,0 +1,12 @@
+@if{!dataformats.isEmpty()}
+
+Number of Data Formats: @{dataformats.size} in @{numberOfArtifacts} JAR artifacts (@{numberOfDeprecated} deprecated)
+
+[width="100%",cols="4,1,5",options="header"]
+|===
+| Data Format | Available From | Description
+@foreach{row : dataformats}
+| link:@{row.docLink}/${row.name}-dataformat.adoc[@{row.title}] (@{row.artifactId}) | @{row.firstVersionShort} | @if{row.deprecated == "true"}*deprecated* @end{}@{row.description}
+@end{}|===
+
+@end{}

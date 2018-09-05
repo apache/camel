@@ -25,7 +25,8 @@ public class FileChangedReadLockLoggingLevelTest extends FileChangedReadLockTest
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/changed/in?readLock=changed&readLockLoggingLevel=DEBUG").to("file:target/changed/out", "mock:result");
+                from("file:target/changed/in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100&readLockLoggingLevel=DEBUG")
+                    .to("file:target/changed/out", "mock:result");
             }
         };
     }

@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.commands.AbstractLocalCamelController;
+import org.apache.karaf.shell.api.action.lifecycle.Reference;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
@@ -37,6 +38,7 @@ public class CamelControllerImpl extends AbstractLocalCamelController {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelControllerImpl.class);
 
+    @Reference
     private BundleContext bundleContext;
 
     public void setBundleContext(BundleContext bundleContext) {
@@ -45,7 +47,7 @@ public class CamelControllerImpl extends AbstractLocalCamelController {
 
     @Override
     public List<CamelContext> getLocalCamelContexts() {
-        List<CamelContext> camelContexts = new ArrayList<CamelContext>();
+        List<CamelContext> camelContexts = new ArrayList<>();
         try {
             ServiceReference<?>[] references = bundleContext.getServiceReferences(CamelContext.class.getName(), null);
             if (references != null) {
@@ -75,11 +77,11 @@ public class CamelControllerImpl extends AbstractLocalCamelController {
 
     @Override
     public List<Map<String, String>> getCamelContexts() throws Exception {
-        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> answer = new ArrayList<>();
 
         List<CamelContext> camelContexts = getLocalCamelContexts();
         for (CamelContext camelContext : camelContexts) {
-            Map<String, String> row = new LinkedHashMap<String, String>();
+            Map<String, String> row = new LinkedHashMap<>();
             row.put("name", camelContext.getName());
             row.put("state", camelContext.getStatus().name());
             row.put("uptime", camelContext.getUptime());

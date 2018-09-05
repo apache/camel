@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToStartRouteException;
@@ -34,6 +36,7 @@ public class MultipleConsumersSupportTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testNotMultipleConsumersSupport() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -53,10 +56,11 @@ public class MultipleConsumersSupportTest extends ContextTestSupport {
             context.start();
             fail("Should have thrown exception");
         } catch (FailedToStartRouteException e) {
-            assertTrue(e.getMessage().endsWith("Multiple consumers for the same endpoint is not allowed: Endpoint[my:endpoint]"));
+            assertTrue(e.getMessage().endsWith("Multiple consumers for the same endpoint is not allowed: my:endpoint"));
         }
     }
 
+    @Test
     public void testYesMultipleConsumersSupport() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

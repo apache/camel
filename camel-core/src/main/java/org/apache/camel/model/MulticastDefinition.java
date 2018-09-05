@@ -27,10 +27,12 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.CamelInternalProcessor;
+import org.apache.camel.builder.AggregationStrategyClause;
+import org.apache.camel.builder.ProcessClause;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
+import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
@@ -73,6 +75,8 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     private Boolean shareUnitOfWork;
     @XmlAttribute
     private Boolean parallelAggregate;
+    @XmlAttribute
+    private Boolean stopOnAggregateException;
 
     public MulticastDefinition() {
     }
@@ -80,6 +84,11 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     @Override
     public String toString() {
         return "Multicast[" + getOutputs() + "]";
+    }
+
+    @Override
+    public String getShortName() {
+        return "multicast";
     }
 
     @Override
@@ -93,7 +102,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
 
         // force the answer as a multicast processor even if there is only one child processor in the multicast
         if (!(answer instanceof MulticastProcessor)) {
-            List<Processor> list = new ArrayList<Processor>(1);
+            List<Processor> list = new ArrayList<>(1);
             list.add(answer);
             answer = createCompositeProcessor(routeContext, list);
         }
@@ -104,8 +113,19 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     // -------------------------------------------------------------------------
 
     /**
+     * Sets the AggregationStrategy to be used to assemble the replies from the multicasts, into a single outgoing message from the Multicast using a fluent builder.
+     */
+    public AggregationStrategyClause<MulticastDefinition> aggregationStrategy() {
+        AggregationStrategyClause<MulticastDefinition> clause = new AggregationStrategyClause<>(this);
+        setAggregationStrategy(clause);
+        return clause;
+    }
+
+    /**
      * Sets the AggregationStrategy to be used to assemble the replies from the multicasts, into a single outgoing message from the Multicast.
-     * By default Camel will use the last reply as the outgoing message. You can also use a POJO as the AggregationStrategy
+     * By default Camel will use the last reply as the outgoing message. You can also use a POJO as the AggregationStrategy.
+     * If an exception is thrown from the aggregate method in the AggregationStrategy, then by default, that exception
+     * is not handled by the error handler. The error handler can be enabled to react if enabling the shareUnitOfWork option.
      */
     public MulticastDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy);
@@ -115,6 +135,8 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     /**
      * Sets a reference to the AggregationStrategy to be used to assemble the replies from the multicasts, into a single outgoing message from the Multicast.
      * By default Camel will use the last reply as the outgoing message. You can also use a POJO as the AggregationStrategy
+     * If an exception is thrown from the aggregate method in the AggregationStrategy, then by default, that exception
+     * is not handled by the error handler. The error handler can be enabled to react if enabling the shareUnitOfWork option.
      */
     public MulticastDefinition aggregationStrategyRef(String aggregationStrategyRef) {
         setStrategyRef(aggregationStrategyRef);
@@ -179,6 +201,20 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         setParallelAggregate(true);
         return this;
     }
+    
+    /**
+     * If enabled, unwind exceptions occurring at aggregation time to the error handler when parallelProcessing is used.
+     * Currently, aggregation time exceptions do not stop the route processing when parallelProcessing is used.
+     * Enabling this option allows to work around this behavior.
+     *
+     * The default value is <code>false</code> for the sake of backward compatibility.
+     *
+     * @return the builder
+     */
+    public MulticastDefinition stopOnAggregateException() {
+        setStopOnAggregateException(true);
+        return this;
+    }
 
     /**
      * If enabled then Camel will process replies out-of-order, eg in the order they come back.
@@ -225,6 +261,15 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     public MulticastDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
+    }
+
+    /**
+     * Set the {@link Processor} to use when preparing the {@link org.apache.camel.Exchange} to be send using a fluent builder.
+     */
+    public ProcessClause<MulticastDefinition> onPrepare() {
+        ProcessClause<MulticastDefinition> clause = new ProcessClause<>(this);
+        setOnPrepare(clause);
+        return clause;
     }
 
     /**
@@ -283,17 +328,14 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     }
 
     protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) throws Exception {
-        AggregationStrategy strategy = createAggregationStrategy(routeContext);
-        if (strategy == null) {
-            // default to use latest aggregation strategy
-            strategy = new UseLatestAggregationStrategy();
-        }
+        final AggregationStrategy strategy = createAggregationStrategy(routeContext);
 
         boolean isParallelProcessing = getParallelProcessing() != null && getParallelProcessing();
         boolean isShareUnitOfWork = getShareUnitOfWork() != null && getShareUnitOfWork();
         boolean isStreaming = getStreaming() != null && getStreaming();
         boolean isStopOnException = getStopOnException() != null && getStopOnException();
         boolean isParallelAggregate = getParallelAggregate() != null && getParallelAggregate();
+        boolean isStopOnAggregateException = getStopOnAggregateException() != null && getStopOnAggregateException();
 
         boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isParallelProcessing);
         ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Multicast", this, isParallelProcessing);
@@ -307,13 +349,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         }
 
         MulticastProcessor answer = new MulticastProcessor(routeContext.getCamelContext(), list, strategy, isParallelProcessing,
-                                      threadPool, shutdownThreadPool, isStreaming, isStopOnException, timeout, onPrepare, isShareUnitOfWork, isParallelAggregate);
-        if (isShareUnitOfWork) {
-            // wrap answer in a sub unit of work, since we share the unit of work
-            CamelInternalProcessor internalProcessor = new CamelInternalProcessor(answer);
-            internalProcessor.addAdvice(new CamelInternalProcessor.SubUnitOfWorkProcessorAdvice());
-            return internalProcessor;
-        }
+                                      threadPool, shutdownThreadPool, isStreaming, isStopOnException, timeout, onPrepare, isShareUnitOfWork, isParallelAggregate, isStopOnAggregateException);
         return answer;
     }
 
@@ -335,13 +371,22 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
             }
         }
 
-        if (strategy != null && strategy instanceof CamelContextAware) {
+        if (strategy == null) {
+            // default to use latest aggregation strategy
+            strategy = new UseLatestAggregationStrategy();
+        }
+
+        if (strategy instanceof CamelContextAware) {
             ((CamelContextAware) strategy).setCamelContext(routeContext.getCamelContext());
+        }
+
+        if (shareUnitOfWork != null && shareUnitOfWork) {
+            // wrap strategy in share unit of work
+            strategy = new ShareUnitOfWorkAggregationStrategy(strategy);
         }
 
         return strategy;
     }
-
 
     public AggregationStrategy getAggregationStrategy() {
         return aggregationStrategy;
@@ -469,6 +514,14 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
 
     public void setParallelAggregate(Boolean parallelAggregate) {
         this.parallelAggregate = parallelAggregate;
+    }
+
+    public Boolean getStopOnAggregateException() {
+        return stopOnAggregateException;
+    }
+
+    public void setStopOnAggregateException(Boolean stopOnAggregateException) {
+        this.stopOnAggregateException = stopOnAggregateException;
     }
 
 }

@@ -23,9 +23,11 @@ import java.util.Set;
 
 import org.apache.camel.component.bean.BeanConverter;
 import org.apache.camel.component.file.GenericFileConverter;
+import org.apache.camel.converter.AttachmentConverter;
 import org.apache.camel.converter.CamelConverter;
 import org.apache.camel.converter.CollectionConverter;
 import org.apache.camel.converter.DateTimeConverter;
+import org.apache.camel.converter.DurationConverter;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.NIOConverter;
 import org.apache.camel.converter.ObjectConverter;
@@ -53,8 +55,8 @@ import org.slf4j.LoggerFactory;
 public class CorePackageScanClassResolver implements PackageScanClassResolver {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    private final Set<ClassLoader> classLoaders = new LinkedHashSet<ClassLoader>();
-    private final Set<Class<?>> converters = new LinkedHashSet<Class<?>>();
+    private final Set<ClassLoader> classLoaders = new LinkedHashSet<>();
+    private final Set<Class<?>> converters = new LinkedHashSet<>();
 
     public CorePackageScanClassResolver() {
         converters.add(ObjectConverter.class);
@@ -73,6 +75,9 @@ public class CorePackageScanClassResolver implements PackageScanClassResolver {
         converters.add(FutureTypeConverter.class);
         converters.add(BeanConverter.class);
         converters.add(GenericFileConverter.class);
+        converters.add(DurationConverter.class);
+        converters.add(AttachmentConverter.class);
+        converters.add(UriTypeConverter.class);
     }
 
     @Override
@@ -84,7 +89,7 @@ public class CorePackageScanClassResolver implements PackageScanClassResolver {
     @Override
     public Set<ClassLoader> getClassLoaders() {
         // return a new set to avoid any concurrency issues in other runtimes such as OSGi
-        return Collections.unmodifiableSet(new LinkedHashSet<ClassLoader>(classLoaders));
+        return Collections.unmodifiableSet(new LinkedHashSet<>(classLoaders));
     }
 
     @Override

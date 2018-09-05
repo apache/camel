@@ -16,28 +16,30 @@
  */
 package org.apache.camel.util;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 
 import org.apache.camel.Ordered;
 
 /**
  * @version 
  */
-public class OrderedComparatorTest extends TestCase {
+public class OrderedComparatorTest extends Assert {
 
-    public void testOrderedComparator() throws Exception {
-        List<Ordered> answer = new ArrayList<Ordered>();
+    @Test
+    public void testOrderedComparatorGet() throws Exception {
+        List<Ordered> answer = new ArrayList<>();
         answer.add(new MyOrder(0));
         answer.add(new MyOrder(2));
         answer.add(new MyOrder(1));
         answer.add(new MyOrder(5));
         answer.add(new MyOrder(4));
 
-        Collections.sort(answer, new OrderedComparator());
+        answer.sort(OrderedComparator.get());
 
         assertEquals(0, answer.get(0).getOrder());
         assertEquals(1, answer.get(1).getOrder());
@@ -46,15 +48,34 @@ public class OrderedComparatorTest extends TestCase {
         assertEquals(5, answer.get(4).getOrder());
     }
 
-    public void testOrderedComparatorReverse() throws Exception {
-        List<Ordered> answer = new ArrayList<Ordered>();
+    @Test
+    public void testOrderedComparator() throws Exception {
+        List<Ordered> answer = new ArrayList<>();
         answer.add(new MyOrder(0));
         answer.add(new MyOrder(2));
         answer.add(new MyOrder(1));
         answer.add(new MyOrder(5));
         answer.add(new MyOrder(4));
 
-        Collections.sort(answer, new OrderedComparator(true));
+        answer.sort(new OrderedComparator());
+
+        assertEquals(0, answer.get(0).getOrder());
+        assertEquals(1, answer.get(1).getOrder());
+        assertEquals(2, answer.get(2).getOrder());
+        assertEquals(4, answer.get(3).getOrder());
+        assertEquals(5, answer.get(4).getOrder());
+    }
+
+    @Test
+    public void testOrderedComparatorGetReverse() throws Exception {
+        List<Ordered> answer = new ArrayList<>();
+        answer.add(new MyOrder(0));
+        answer.add(new MyOrder(2));
+        answer.add(new MyOrder(1));
+        answer.add(new MyOrder(5));
+        answer.add(new MyOrder(4));
+
+        answer.sort(OrderedComparator.getReverse());
 
         assertEquals(5, answer.get(0).getOrder());
         assertEquals(4, answer.get(1).getOrder());
@@ -63,8 +84,27 @@ public class OrderedComparatorTest extends TestCase {
         assertEquals(0, answer.get(4).getOrder());
     }
 
+    @Test
+    public void testOrderedComparatorReverse() throws Exception {
+        List<Ordered> answer = new ArrayList<>();
+        answer.add(new MyOrder(0));
+        answer.add(new MyOrder(2));
+        answer.add(new MyOrder(1));
+        answer.add(new MyOrder(5));
+        answer.add(new MyOrder(4));
+
+        answer.sort(new OrderedComparator(true));
+
+        assertEquals(5, answer.get(0).getOrder());
+        assertEquals(4, answer.get(1).getOrder());
+        assertEquals(2, answer.get(2).getOrder());
+        assertEquals(1, answer.get(3).getOrder());
+        assertEquals(0, answer.get(4).getOrder());
+    }
+
+    @Test
     public void testOrderedComparatorHigh() throws Exception {
-        List<Ordered> answer = new ArrayList<Ordered>();
+        List<Ordered> answer = new ArrayList<>();
         answer.add(new MyOrder(0));
         answer.add(new MyOrder(2));
         answer.add(new MyOrder(200));
@@ -72,7 +112,7 @@ public class OrderedComparatorTest extends TestCase {
         answer.add(new MyOrder(Ordered.HIGHEST));
         answer.add(new MyOrder(4));
 
-        Collections.sort(answer, new OrderedComparator());
+        answer.sort(new OrderedComparator());
 
         assertEquals(Ordered.HIGHEST, answer.get(0).getOrder());
         assertEquals(0, answer.get(1).getOrder());
@@ -82,8 +122,9 @@ public class OrderedComparatorTest extends TestCase {
         assertEquals(200, answer.get(5).getOrder());
     }
 
+    @Test
     public void testOrderedComparatorHighReverse() throws Exception {
-        List<Ordered> answer = new ArrayList<Ordered>();
+        List<Ordered> answer = new ArrayList<>();
         answer.add(new MyOrder(0));
         answer.add(new MyOrder(2));
         answer.add(new MyOrder(200));
@@ -91,7 +132,7 @@ public class OrderedComparatorTest extends TestCase {
         answer.add(new MyOrder(Ordered.HIGHEST));
         answer.add(new MyOrder(4));
 
-        Collections.sort(answer, new OrderedComparator(true));
+        answer.sort(new OrderedComparator(true));
 
         assertEquals(200, answer.get(0).getOrder());
         assertEquals(50, answer.get(1).getOrder());
@@ -101,8 +142,9 @@ public class OrderedComparatorTest extends TestCase {
         assertEquals(Ordered.HIGHEST, answer.get(5).getOrder());
     }
 
+    @Test
     public void testOrderedComparatorLow() throws Exception {
-        List<Ordered> answer = new ArrayList<Ordered>();
+        List<Ordered> answer = new ArrayList<>();
         answer.add(new MyOrder(0));
         answer.add(new MyOrder(-2));
         answer.add(new MyOrder(200));
@@ -110,7 +152,7 @@ public class OrderedComparatorTest extends TestCase {
         answer.add(new MyOrder(Ordered.LOWEST));
         answer.add(new MyOrder(-4));
 
-        Collections.sort(answer, new OrderedComparator());
+        answer.sort(new OrderedComparator());
 
         assertEquals(-4, answer.get(0).getOrder());
         assertEquals(-2, answer.get(1).getOrder());
@@ -120,8 +162,9 @@ public class OrderedComparatorTest extends TestCase {
         assertEquals(Ordered.LOWEST, answer.get(5).getOrder());
     }
 
+    @Test
     public void testOrderedComparatorLowReverse() throws Exception {
-        List<Ordered> answer = new ArrayList<Ordered>();
+        List<Ordered> answer = new ArrayList<>();
         answer.add(new MyOrder(0));
         answer.add(new MyOrder(-2));
         answer.add(new MyOrder(200));
@@ -129,7 +172,7 @@ public class OrderedComparatorTest extends TestCase {
         answer.add(new MyOrder(Ordered.LOWEST));
         answer.add(new MyOrder(-4));
 
-        Collections.sort(answer, new OrderedComparator(true));
+        answer.sort(new OrderedComparator(true));
 
         assertEquals(Ordered.LOWEST, answer.get(0).getOrder());
         assertEquals(200, answer.get(1).getOrder());

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.interceptor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,12 +38,13 @@ import org.apache.camel.spi.Condition;
  */
 public class DebugExceptionBreakpointTest extends ContextTestSupport {
 
-    private List<String> logs = new ArrayList<String>();
+    private List<String> logs = new ArrayList<>();
     private Condition exceptionCondition;
     private Breakpoint breakpoint;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         breakpoint = new BreakpointSupport() {
@@ -59,6 +63,7 @@ public class DebugExceptionBreakpointTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testDebug() throws Exception {
         context.getDebugger().addBreakpoint(breakpoint, exceptionCondition);
 

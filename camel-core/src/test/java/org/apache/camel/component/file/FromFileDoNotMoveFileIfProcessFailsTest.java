@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -32,11 +35,13 @@ public class FromFileDoNotMoveFileIfProcessFailsTest extends ContextTestSupport 
     private String body = "Hello World this file will NOT be moved";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/movefile");
         super.setUp();
     }
 
+    @Test
     public void testPollFileAndShouldNotBeMoved() throws Exception {
         template.sendBodyAndHeader("file://target/movefile", body, Exchange.FILE_NAME, "hello.txt");
 
@@ -59,7 +64,7 @@ public class FromFileDoNotMoveFileIfProcessFailsTest extends ContextTestSupport 
                 onException(IllegalArgumentException.class)
                     .to("mock:error");
 
-                from("file://target/movefile?move=done").process(new Processor() {
+                from("file://target/movefile?initialDelay=0&delay=10&move=done").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         throw new IllegalArgumentException("Forced by unittest");
                     }

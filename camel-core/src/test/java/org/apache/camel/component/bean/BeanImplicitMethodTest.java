@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
@@ -24,6 +26,7 @@ import org.apache.camel.util.jndi.JndiContext;
 
 public class BeanImplicitMethodTest extends ContextTestSupport {
 
+    @Test
     public void testRoute() throws Exception {
 
         String stringBody = "stringBody";

@@ -18,24 +18,23 @@ package org.apache.camel.component.aws.ddb;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
 @UriParams
-public class DdbConfiguration {
+public class DdbConfiguration implements Cloneable {
 
     @UriPath @Metadata(required = "true")
     private String tableName;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String accessKey;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String secretKey;
     @UriParam
     private AmazonDynamoDB amazonDDBClient;
-    @UriParam
-    private String amazonDdbEndpoint;
     @UriParam
     private boolean consistentRead;
     @UriParam(defaultValue = "PutItem")
@@ -52,17 +51,8 @@ public class DdbConfiguration {
     private String proxyHost;
     @UriParam
     private Integer proxyPort;
-
-    /**
-     * The region with which the AWS-DDB client wants to work with.
-     */
-    public void setAmazonDdbEndpoint(String amazonDdbEndpoint) {
-        this.amazonDdbEndpoint = amazonDdbEndpoint;
-    }
-
-    public String getAmazonDdbEndpoint() {
-        return amazonDdbEndpoint;
-    }
+    @UriParam
+    private String region;
 
     public String getAccessKey() {
         return accessKey;
@@ -174,25 +164,48 @@ public class DdbConfiguration {
         this.keyAttributeType = keyAttributeType;
     }
     
-    /**
-     * To define a proxy host when instantiating the SQS client
-     */
     public String getProxyHost() {
         return proxyHost;
     }
 
+    /**
+     * To define a proxy host when instantiating the DDB client
+     */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
     }
 
-    /**
-     * To define a proxy port when instantiating the SQS client
-     */
     public Integer getProxyPort() {
         return proxyPort;
     }
 
+    /**
+     * To define a proxy port when instantiating the DDB client
+     */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    /**
+     * The region in which DDB client needs to work
+     */
+    public void setRegion(String region) {
+        this.region = region;
+    }
+    
+    // *************************************************
+    //
+    // *************************************************
+
+    public DdbConfiguration copy() {
+        try {
+            return (DdbConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }

@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+## ------------------------------------------------------------------------
+## Licensed to the Apache Software Foundation (ASF) under one or more
+## contributor license agreements.  See the NOTICE file distributed with
+## this work for additional information regarding copyright ownership.
+## The ASF licenses this file to You under the Apache License, Version 2.0
+## (the "License"); you may not use this file except in compliance with
+## the License.  You may obtain a copy of the License at
+##
+##      http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
+## ------------------------------------------------------------------------
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>${groupId}</groupId>
+    <artifactId>${artifactId}-parent</artifactId>
+    <version>${version}</version>
+  </parent>
+
+  <artifactId>${artifactId}</artifactId>
+  <packaging>jar</packaging>
+  <name>Camel ${name} Component</name>
+  <description>Camel Component for ${name}</description>
+
+  <properties>
+    <schemeName>${scheme}</schemeName>
+    <componentName>${name}</componentName>
+    <componentPackage>${package}</componentPackage>
+    <outPackage>${package}.internal</outPackage>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>${groupId}</groupId>
+      <artifactId>${artifactId}-api</artifactId>
+      <version>${version}</version>
+    </dependency>
+
+    <!-- support camel documentation -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>apt</artifactId>
+    </dependency>
+
+    <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>spi-annotations</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Component API javadoc in provided scope to read API signatures -->
+    <dependency>
+      <groupId>${groupId}</groupId>
+      <artifactId>${artifactId}-api</artifactId>
+      <version>${version}</version>
+      <classifier>javadoc</classifier>
+      <scope>provided</scope>
+    </dependency>
+    
+    <!-- logging -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- testing -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <defaultGoal>install</defaultGoal>
+
+    <plugins>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven-compiler-plugin-version}</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>${maven-resources-plugin-version}</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+
+      <!-- to generate the MANIFEST-FILE of the bundle -->
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>${maven-bundle-plugin-version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Bundle-Name>Camel Component for ${componentName}</Bundle-Name>
+            <Bundle-SymbolicName>${groupId}.${artifactId}</Bundle-SymbolicName>
+            <Export-Service>org.apache.camel.spi.ComponentResolver;component=${schemeName}</Export-Service>
+            <Export-Package>${componentPackage};version=${project.version}</Export-Package>
+            <Import-Package>
+              ${componentPackage}.api;version=${project.version},
+              ${componentPackage};version=${project.version},
+              org.apache.camel.*;version=${camelVersion}
+            </Import-Package>
+            <Private-Package>${outPackage}</Private-Package>
+            <Implementation-Title>Apache Camel</Implementation-Title>
+            <Implementation-Version>${project.version}</Implementation-Version>
+            <Karaf-Info>Camel;${project.artifactId}=${project.version}</Karaf-Info>
+            <_versionpolicy>[$(version;==;$(@)),$(version;+;$(@)))</_versionpolicy>
+            <_failok>false</_failok>
+          </instructions>
+        </configuration>
+      </plugin>
+
+      <!-- generate Component source and test source -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-api-component-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-test-component-classes</id>
+            <goals>
+              <goal>fromApis</goal>
+            </goals>
+            <configuration>
+              <apis>
+                <api>
+                  <apiName>hello-file</apiName>
+                  <proxyClass>${package}.api.${name}FileHello</proxyClass>
+                  <fromSignatureFile>signatures/file-sig-api.txt</fromSignatureFile>
+                  <!-- Use substitutions to manipulate parameter names and avoid name clashes
+                  <substitutions>
+                    <substitution>
+                      <method>^(.+)$</method>
+                      <argName>^(.+)$</argName>
+                      <argType>java.lang.String</argType>
+                      <replacement>$1Param</replacement>
+                      <replaceWithType>false</replaceWithType>
+                    </substitution>
+                  </substitutions>
+                  -->
+                  <!-- Exclude automatically generated endpoint options by name
+                  <excludeConfigNames>name-pattern<excludeConfigNames>
+                  -->
+                  <!-- Exclude automatically generated endpoint options by type
+                  <excludeConfigTypes>type-pattern<excludeConfigTypes>
+                  -->
+                  <!-- Add custom endpoint options to generated EndpointConfiguration class for this API
+                  <extraOptions>
+                    <extraOption>
+                      <type>java.util.List&lt;String&gt;</type>
+                      <name>customOption</name>
+                    </extraOption>
+                  </extraOptions>
+                  -->
+                  <!-- Use method aliases in endpoint URIs, e.g. support 'widget' as alias for getWidget or setWidget
+                  <aliases>
+                    <alias>
+                      <methodPattern>[gs]et(.+)</methodPattern>
+                      <methodAlias>$1</methodAlias>
+                    </alias>
+                  </aliases>
+                  -->
+                  <!-- for some methods, null can be a valid input
+                  <nullableOptions>
+                    <nullableOption>option-name</nullableOption>
+                  </nullableOptions>
+                  -->
+                </api>
+                <api>
+                  <apiName>hello-javadoc</apiName>
+                  <proxyClass>${package}.api.${name}JavadocHello</proxyClass>
+                  <fromJavadoc>
+                    <!-- Use exclude patterns to limit what gets exposed in component endpoint
+                    <excludePackages>package-name-patterns</excludePackages>
+                    <excludeClasses>class-name-patterns</excludeClasses>
+                    <includeMethods>method-name-patterns</includeMethods>
+                    <excludeMethods>method-name-patterns</excludeMethods>
+                    <includeStaticMethods>use 'true' to include static methods, false by default<includeStaticMethods>
+                    -->
+                  </fromJavadoc>
+                </api>
+              </apis>
+              <!-- Specify global values for all APIs here, these are overridden at API level
+              <substitutions/>
+              <excludeConfigNames/>
+              <excludeConfigTypes/>
+              <extraOptions/>
+              <fromJavadoc/>
+              <aliases/>
+              <nullableOptions/>
+              -->
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- generate components meta-data and validate component includes documentation etc -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-package-maven-plugin</artifactId>
+        <version>${camelVersion}</version>
+        <executions>
+          <execution>
+            <id>prepare</id>
+            <goals>
+              <goal>prepare-components</goal>
+            </goals>
+            <phase>generate-resources</phase>
+          </execution>
+          <execution>
+            <id>validate</id>
+            <goals>
+              <goal>validate-components</goal>
+            </goals>
+            <phase>prepare-package</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- add generated source and test source to build -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>${build-helper-maven-plugin-version}</version>
+        <executions>
+          <execution>
+            <id>add-generated-sources</id>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-sources/camel-component</source>
+              </sources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>add-generated-test-sources</id>
+            <goals>
+              <goal>add-test-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-test-sources/camel-component</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-api-component-maven-plugin</artifactId>
+          <version>${camelVersion}</version>
+          <configuration>
+            <scheme>${schemeName}</scheme>
+            <componentName>${componentName}</componentName>
+            <componentPackage>${componentPackage}</componentPackage>
+            <outPackage>${outPackage}</outPackage>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+  </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-api-component-maven-plugin</artifactId>
+        <version>${camelVersion}</version>
+        <configuration>
+          <scheme>${schemeName}</scheme>
+          <componentName>${componentName}</componentName>
+          <componentPackage>${componentPackage}</componentPackage>
+          <outPackage>${outPackage}</outPackage>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+
+</project>

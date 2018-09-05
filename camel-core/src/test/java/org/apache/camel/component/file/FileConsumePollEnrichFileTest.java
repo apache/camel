@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -24,12 +27,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileConsumePollEnrichFileTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/enrich");
         deleteDirectory("target/enrichdata");
         super.setUp();
     }
 
+    @Test
     public void testPollEnrich() throws Exception {
         getMockEndpoint("mock:start").expectedBodiesReceived("Start");
 
@@ -40,8 +45,8 @@ public class FileConsumePollEnrichFileTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("file://target/enrich", "Start", Exchange.FILE_NAME, "AAA.fin");
 
-        log.info("Sleeping for 1 sec before writing enrichdata file");
-        Thread.sleep(1000);
+        log.info("Sleeping for 1/4 sec before writing enrichdata file");
+        Thread.sleep(250);
         template.sendBodyAndHeader("file://target/enrichdata", "Big file", Exchange.FILE_NAME, "AAA.dat");
         log.info("... write done");
 
@@ -53,9 +58,9 @@ public class FileConsumePollEnrichFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/enrich?move=.done")
+                from("file://target/enrich?initialDelay=0&delay=10&move=.done")
                     .to("mock:start")
-                    .pollEnrich("file://target/enrichdata?move=.done", 10000)
+                    .pollEnrich("file://target/enrichdata?initialDelay=0&delay=10&move=.done", 1000)
                     .to("mock:result");
             }
         };

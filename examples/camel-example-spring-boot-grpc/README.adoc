@@ -1,0 +1,66 @@
+# Spring Boot Example with gRPC
+
+### Introduction
+
+This example demonstrates how you can use Camel-gRPC Starter component. The example is composed of a standalone gRPC server and a Camel Spring-boot gRPC route acting as client.
+
+### Server
+
+You can build the server under the directory hello-camel-grpc-server with:
+
+    $ mvn clean install 
+
+and then run the server with
+
+    $ mvn exec:java
+
+You should see the following output:
+
+[source,bash]
+----
+Aug 08, 2017 8:00:00 AM org.apache.camel.examples.grpc.HelloCamelServer start
+INFO: Server started. I'm listening on 50051
+----
+
+### Run the client
+
+You can build the client example under the directory hello-camel-grpc-client with:
+
+    $ mvn clean install
+
+and then run the example with
+
+    $ mvn spring-boot:run
+
+And you should see this output in the console.
+
+[source,bash]
+----
+2017-08-08 08:01:14.530  INFO 7096 --- [           main] o.a.c.e.springboot.grpc.Application      : Starting Application on ghost with PID 7096 (/home/oscerd/workspace/apache-camel/camel/examples/camel-example-spring-boot-grpc/hello-camel-grpc-client/target/classes started by oscerd in /home/oscerd/workspace/apache-camel/camel/examples/camel-example-spring-boot-grpc/hello-camel-grpc-client)
+2017-08-08 08:01:14.532  INFO 7096 --- [           main] o.a.c.e.springboot.grpc.Application      : No active profile set, falling back to default profiles: default
+2017-08-08 08:01:14.563  INFO 7096 --- [           main] s.c.a.AnnotationConfigApplicationContext : Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@540ff973: startup date [Tue Aug 08 08:01:14 CEST 2017]; root of context hierarchy
+2017-08-08 08:01:15.177  INFO 7096 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.apache.camel.spring.boot.CamelAutoConfiguration' of type [org.apache.camel.spring.boot.CamelAutoConfiguration$$EnhancerBySpringCGLIB$$78492c0f] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2017-08-08 08:01:15.447  INFO 7096 --- [           main] o.a.c.i.converter.DefaultTypeConverter   : Type converters loaded (core: 192, classpath: 1)
+2017-08-08 08:01:15.844  INFO 7096 --- [           main] o.s.j.e.a.AnnotationMBeanExporter        : Registering beans for JMX exposure on startup
+2017-08-08 08:01:15.894  INFO 7096 --- [           main] o.a.camel.spring.boot.RoutesCollector    : Loading additional Camel XML routes from: classpath:camel/*.xml
+2017-08-08 08:01:15.894  INFO 7096 --- [           main] o.a.camel.spring.boot.RoutesCollector    : Loading additional Camel XML rests from: classpath:camel-rest/*.xml
+2017-08-08 08:01:15.895  INFO 7096 --- [           main] o.a.camel.spring.boot.RoutesCollector    : Starting CamelMainRunController to ensure the main thread keeps running
+2017-08-08 08:01:15.898  INFO 7096 --- [inRunController] o.a.camel.spring.SpringCamelContext      : Apache Camel 2.20.0-SNAPSHOT (CamelContext: gRPC) is starting
+2017-08-08 08:01:15.899  INFO 7096 --- [inRunController] o.a.c.m.ManagedManagementStrategy        : JMX is enabled
+2017-08-08 08:01:15.904  INFO 7096 --- [           main] o.a.c.e.springboot.grpc.Application      : Started Application in 1.897 seconds (JVM running for 7.75)
+2017-08-08 08:01:16.074  INFO 7096 --- [inRunController] o.a.camel.spring.SpringCamelContext      : StreamCaching is not in use. If using streams then its recommended to enable stream caching. See more details at http://camel.apache.org/stream-caching.html
+2017-08-08 08:01:16.118  INFO 7096 --- [inRunController] o.a.camel.component.grpc.GrpcProducer    : Creating channel to the remote gRPC server localhost:50051
+2017-08-08 08:01:16.214  INFO 7096 --- [inRunController] o.a.camel.spring.SpringCamelContext      : Route: route1 started and consuming from: timer://foo?period=10000&repeatCount=1
+2017-08-08 08:01:16.216  INFO 7096 --- [inRunController] o.a.camel.spring.SpringCamelContext      : Total 1 routes, of which 1 are started.
+2017-08-08 08:01:16.216  INFO 7096 --- [inRunController] o.a.camel.spring.SpringCamelContext      : Apache Camel 2.20.0-SNAPSHOT (CamelContext: gRPC) started in 0.319 seconds
+2017-08-08 08:01:17.534  INFO 7096 --- [2 - timer://foo] route1                                   : Received message: "Hello Camel"
+
+----
+
+### Help
+
+If you hit any problems please let us know on the http://camel.apache.org/discussion-forums.html[Camel Forums].
+
+Please help us make Apache Camel better - we appreciate any feedback you may have. Enjoy!
+
+The Camel riders!

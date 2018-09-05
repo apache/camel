@@ -52,7 +52,7 @@ public class JpaProducerConcurrentTest extends AbstractJpaTest {
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         // we access the responses Map below only inside the main thread,
         // so no need for a thread-safe Map implementation
-        Map<Integer, Future<SendEmail>> responses = new HashMap<Integer, Future<SendEmail>>();
+        Map<Integer, Future<SendEmail>> responses = new HashMap<>();
         for (int i = 0; i < files; i++) {
             final int index = i;
             Future<SendEmail> out = executor.submit(new Callable<SendEmail>() {

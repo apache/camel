@@ -17,27 +17,42 @@
 package org.apache.camel.component.slack;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.slack.helper.SlackMessage;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
+import org.json.simple.JSONObject;
 
-@UriEndpoint(scheme = "slack", title = "Slack", syntax = "slack:channel", producerOnly = true, label = "social")
+/**
+ * The slack component allows you to send messages to Slack.
+ */
+@UriEndpoint(firstVersion = "2.16.0", scheme = "slack", title = "Slack", syntax = "slack:channel", label = "social")
 public class SlackEndpoint extends DefaultEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath
+    @Metadata(required = "true")
     private String channel;
-    @UriParam
+    @UriParam(label = "producer")
     private String webhookUrl;
-    @UriParam
+    @UriParam(label = "producer", secret = true)
     private String username;
-    @UriParam
+    @UriParam(label = "producer")
     private String iconUrl;
-    @UriParam
+    @UriParam(label = "producer")
     private String iconEmoji;
+    @UriParam(label = "consumer", secret = true)
+    private String token;
+    @UriParam(label = "consumer", defaultValue = "10")
+    private String maxResults = "10";
 
     /**
      * Constructor for SlackEndpoint
@@ -60,7 +75,11 @@ public class SlackEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("You cannot consume slack messages from this endpoint: " + getEndpointUri());
+        if (ObjectHelper.isEmpty(token)) {
+            throw new RuntimeCamelException("Missing required endpoint configuration: token must be defined for Slack consumer");
+        }
+        SlackConsumer consumer = new SlackConsumer(this, processor);
+        return consumer;
     }
 
     @Override
@@ -84,7 +103,8 @@ public class SlackEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The channel name (syntax #name) or slackuser (syntax @userName) to send a message directly to an user.
+     * The channel name (syntax #name) or slackuser (syntax @userName) to send a
+     * message directly to an user.
      */
     public void setChannel(String channel) {
         this.channel = channel;
@@ -95,7 +115,8 @@ public class SlackEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * This is the username that the bot will have when sending messages to a channel or user.
+     * This is the username that the bot will have when sending messages to a
+     * channel or user.
      */
     public void setUsername(String username) {
         this.username = username;
@@ -106,7 +127,8 @@ public class SlackEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * The avatar that the component will use when sending message to a channel or user.
+     * The avatar that the component will use when sending message to a channel
+     * or user.
      */
     public void setIconUrl(String iconUrl) {
         this.iconUrl = iconUrl;
@@ -122,5 +144,48 @@ public class SlackEndpoint extends DefaultEndpoint {
     public void setIconEmoji(String iconEmoji) {
         this.iconEmoji = iconEmoji;
     }
-}
 
+    public String getToken() {
+        return token;
+    }
+
+    /**
+     * The token to use
+     */
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getMaxResults() {
+        return maxResults;
+    }
+
+    /**
+     * The Max Result for the poll
+     */
+    public void setMaxResults(String maxResult) {
+        this.maxResults = maxResult;
+    }
+
+    public Exchange createExchange(JSONObject object) {
+        return createExchange(getExchangePattern(), object);
+    }
+
+    public Exchange createExchange(ExchangePattern pattern, JSONObject object) {
+        Exchange exchange = super.createExchange(pattern);
+        SlackMessage slackMessage = new SlackMessage();
+        String text = (String)object.get("text");
+        String username = (String)object.get("username");
+        slackMessage.setText(text);
+        slackMessage.setUsername(username);
+        if (ObjectHelper.isNotEmpty((JSONObject)object.get("icons"))) {
+            JSONObject icons = (JSONObject)object.get("icons");
+            if (ObjectHelper.isNotEmpty((String)icons.get("emoji"))) {
+                slackMessage.setIconEmoji((String)icons.get("emoji"));
+            }
+        }
+        Message message = exchange.getIn();
+        message.setBody(slackMessage);
+        return exchange;
+    }
+}

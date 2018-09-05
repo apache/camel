@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
@@ -36,6 +38,7 @@ public class EndpointMustBeStartedBeforeSendProcessorTest extends ContextTestSup
     private MyEndpoint myendpoint;
     private volatile String order = "";
 
+    @Test
     public void testEndpointMustBeStartedBeforeProducer() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -51,6 +54,7 @@ public class EndpointMustBeStartedBeforeSendProcessorTest extends ContextTestSup
         assertEquals("EndpointProducer", order);
     }
 
+    @Test
     public void testEndpointMustBeStartedBeforeConsumer() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -66,6 +70,7 @@ public class EndpointMustBeStartedBeforeSendProcessorTest extends ContextTestSup
         assertEquals("EndpointConsumer", order);
     }
 
+    @Test
     public void testEndpointMustBeStartedBeforeConsumerAndProducer() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -82,6 +87,7 @@ public class EndpointMustBeStartedBeforeSendProcessorTest extends ContextTestSup
         assertEquals("EndpointProducerConsumer", order);
     }
 
+    @Test
     public void testEndpointStartedOnceAndOnlyStoppedOnShutdown() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -147,7 +153,7 @@ public class EndpointMustBeStartedBeforeSendProcessorTest extends ContextTestSup
 
     private class MyProducer extends DefaultProducer {
 
-        public MyProducer(Endpoint endpoint) {
+        MyProducer(Endpoint endpoint) {
             super(endpoint);
         }
 
@@ -168,7 +174,7 @@ public class EndpointMustBeStartedBeforeSendProcessorTest extends ContextTestSup
 
     private class MyConsumer extends DefaultConsumer {
 
-        public MyConsumer(Endpoint endpoint, Processor processor) {
+        MyConsumer(Endpoint endpoint, Processor processor) {
             super(endpoint, processor);
         }
 

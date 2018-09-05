@@ -39,7 +39,7 @@ import org.apache.camel.util.ObjectHelper;
  * with respect to others. In addition to the weight, endpoint selection is then further refined using
  * random distribution based on weight.
  */
-@Metadata(label = "configuration,loadbalance")
+@Metadata(label = "eip,routing,loadbalance")
 @XmlRootElement(name = "weighted")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
@@ -56,7 +56,7 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
     @Override
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
         WeightedLoadBalancer loadBalancer;
-        List<Integer> distributionRatioList = new ArrayList<Integer>();
+        List<Integer> distributionRatioList = new ArrayList<>();
         
         try {
             String[] ratios = distributionRatio.split(getDistributionRatioDelimiter());

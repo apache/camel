@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xslt;
 
+import org.junit.Test;
+
 import org.w3c.dom.Document;
 
 import org.apache.camel.ContextTestSupport;
@@ -27,6 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class XsltOutputDOMTest extends ContextTestSupport {
 
+    @Test
     public void testXsltOutput() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("<goodbye>world!</goodbye>");

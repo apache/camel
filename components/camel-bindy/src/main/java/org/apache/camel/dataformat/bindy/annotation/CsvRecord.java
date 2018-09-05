@@ -54,6 +54,12 @@ public @interface CsvRecord {
     boolean skipFirstLine() default false;
 
     /**
+     * The skipField parameter will allow to skip fields of a CSV file. 
+     * If some fields are not necessary, they can be skipped.
+     */
+    boolean skipField() default false;
+
+    /**
      * Character to be used to add a carriage return after each record
      * (optional) Three values can be used : WINDOWS, UNIX or MAC.
      */
@@ -76,13 +82,29 @@ public @interface CsvRecord {
     String quote() default "\"";
 
     /**
-     * Indicate if the values must be quoted when marshaling (optional)
+     * Indicate if the values (and headers) must be quoted when marshaling (optional)
      */
     boolean quoting() default false;
+    
+    /**
+     * Indicate if the values must be escaped when quoting (optional)
+     */
+    boolean quotingEscaped() default false;
 
     /**
      * Last record spans rest of line (optional)
      */
     boolean autospanLine() default false;
+    
+    /**
+     * The allowEmptyStream parameter will allow to prcoess 
+     * the unavaiable stream for CSV file.
+     */
+    boolean allowEmptyStream() default false;
+    
+    /**
+     * The endWithLineBreak parameter flags if the CSV file should end with a line break or not (optional)
+     */
+    boolean endWithLineBreak() default true;
 
 }

@@ -36,16 +36,17 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.osgi.framework.BundleContext;
 
-public class ConcreteCamelRunner extends AbstractCamelRunner implements LifecycleStrategy {
+class ConcreteCamelRunner extends AbstractCamelRunner implements LifecycleStrategy {
 
-    protected int camelContextStarted;
-    protected int camelContextStopped;
-    protected int routeAdded;
+    int camelContextStarted;
+    int camelContextStopped;
+    int routeAdded;
 
-    public Map<String, String> getDefaultProperties() {
+    Map<String, String> getDefaultProperties() {
         // Set default properties
-        Map<String, String> defaultProps = new HashMap<String, String>();
-        defaultProps.put("camelContextId", "camel-runner-test");
+        Map<String, String> defaultProps = new HashMap<>();
+        defaultProps.put("camelContextId", "camel-runner");
+        defaultProps.put("unit.camelContextId", "camel-runner-unitTest");
         defaultProps.put("camelRouteId", "test/direct-mock");
         defaultProps.put("active", "true");
         defaultProps.put("from", "direct:start");
@@ -62,13 +63,13 @@ public class ConcreteCamelRunner extends AbstractCamelRunner implements Lifecycl
     @Override
     protected void createCamelContext(BundleContext bundleContext, Map<String, String> props) {
         super.createCamelContext(bundleContext, props);
-        context.disableJMX();
-        context.addLifecycleStrategy(this);
+        getContext().disableJMX();
+        getContext().addLifecycleStrategy(this);
     }
 
     @Override
-    public List<RoutesBuilder> getRouteBuilders() {
-        List<RoutesBuilder> routesBuilders = new ArrayList<RoutesBuilder>();
+    public List<RoutesBuilder> getRouteBuilders() throws Exception {
+        List<RoutesBuilder> routesBuilders = new ArrayList<>();
         routesBuilders.add(new TestRouteBuilder());
         routesBuilders.add(new TestRouteBuilder2());
         return routesBuilders;

@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.couchdb.enabled",
+      "description": "Enable couchdb component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

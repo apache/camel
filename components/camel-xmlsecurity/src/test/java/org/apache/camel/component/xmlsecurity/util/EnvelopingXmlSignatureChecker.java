@@ -31,7 +31,7 @@ import org.apache.camel.component.xmlsecurity.api.XmlSignatureInvalidException;
  */
 public class EnvelopingXmlSignatureChecker implements XmlSignatureChecker {
 
-    private static final Set<String> ALLOWED_TRANSFORM_ALGORITHMS = new HashSet<String>(4);
+    private static final Set<String> ALLOWED_TRANSFORM_ALGORITHMS = new HashSet<>(4);
 
     static {
         ALLOWED_TRANSFORM_ALGORITHMS.add(CanonicalizationMethod.INCLUSIVE);

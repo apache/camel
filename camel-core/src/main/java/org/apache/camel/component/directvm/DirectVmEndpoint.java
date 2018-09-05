@@ -16,31 +16,39 @@
  */
 package org.apache.camel.component.directvm;
 
+import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.direct.DirectConsumer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * The direct-vm endpoint.
+ * The direct-vm component provides direct, synchronous call to another endpoint from any CamelContext in the same JVM.
+ *
+ * This endpoint can be used to connect existing routes in the same JVM between different CamelContexts.
  */
-@UriEndpoint(scheme = "direct-vm", title = "Direct VM", syntax = "direct-vm:name", consumerClass = DirectConsumer.class, label = "core,endpoint")
-public class DirectVmEndpoint extends DefaultEndpoint {
+@UriEndpoint(firstVersion = "2.10.0", scheme = "direct-vm", title = "Direct VM", syntax = "direct-vm:name", consumerClass = DirectConsumer.class, label = "core,endpoint")
+public class DirectVmEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     @UriPath(description = "Name of direct-vm endpoint") @Metadata(required = "true")
     private String name;
 
-    @UriParam(label = "producer")
-    private boolean block;
+    @UriParam(label = "producer", defaultValue = "true")
+    private boolean block = true;
     @UriParam(label = "producer", defaultValue = "30000")
     private long timeout = 30000L;
     @UriParam(label = "producer")
     private boolean failIfNoConsumers = true;
+    @UriParam(label = "producer,advanced")
+    private HeaderFilterStrategy headerFilterStrategy;
+    @UriParam(label = "advanced", defaultValue = "true")
+    private boolean propagateProperties = true;
 
     public DirectVmEndpoint(String endpointUri, DirectVmComponent component) {
         super(endpointUri, component);
@@ -104,10 +112,34 @@ public class DirectVmEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Whether the producer should fail by throwing an exception, when sending to a DIRECT-VM endpoint with no active consumers.
+     * Whether the producer should fail by throwing an exception, when sending to a Direct-VM endpoint with no active consumers.
      */
     public void setFailIfNoConsumers(boolean failIfNoConsumers) {
         this.failIfNoConsumers = failIfNoConsumers;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy == null ? getComponent().getHeaderFilterStrategy() : headerFilterStrategy;
+    }
+
+    /**
+     * Sets a {@link HeaderFilterStrategy} that will only be applied on producer endpoints (on both directions: request and response).
+     * <p>Default value: none.</p>
+     */
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    public boolean isPropagateProperties() {
+        return propagateProperties;
+    }
+
+    /**
+     * Whether to propagate or not properties from the producer side to the consumer side, and vice versa.
+     * <p>Default value: true.</p>
+     */
+    public void setPropagateProperties(boolean propagateProperties) {
+        this.propagateProperties = propagateProperties;
     }
 
 }

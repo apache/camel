@@ -68,13 +68,13 @@ public final class ResultSetConversionStrategies {
     private static class LimitResultSetConversionStrategy implements ResultSetConversionStrategy {
         private final int rowMax;
 
-        public LimitResultSetConversionStrategy(int rowMax) {
+        LimitResultSetConversionStrategy(int rowMax) {
             this.rowMax = rowMax;
         }
 
         @Override
         public Object getBody(ResultSet resultSet) {
-            List<Row> rows = new ArrayList<Row>(rowMax);
+            List<Row> rows = new ArrayList<>(rowMax);
             int rowCount = 0;
             Iterator<Row> rowIter = resultSet.iterator();
             while (rowIter.hasNext() && rowCount < rowMax) {

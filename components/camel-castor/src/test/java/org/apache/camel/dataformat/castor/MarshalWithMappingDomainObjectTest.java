@@ -64,7 +64,7 @@ public class MarshalWithMappingDomainObjectTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
         mock.message(0).body().isInstanceOf(Student.class);
-        mock.message(0).body().equals(student);
+        mock.message(0).body().isEqualTo(student);
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -73,8 +73,9 @@ public class MarshalWithMappingDomainObjectTest extends CamelTestSupport {
 
                 CastorDataFormat myformat = new CastorDataFormat();
                 myformat.setMappingFile("map.xml");
-
                 myformat.setValidation(true);
+                myformat.setAllowClasses(Student.class);
+                
                 from("direct:marshal").marshal(myformat).to("mock:marshal");
                 from("direct:unmarshal").unmarshal(myformat).to("mock:unmarshal");
 

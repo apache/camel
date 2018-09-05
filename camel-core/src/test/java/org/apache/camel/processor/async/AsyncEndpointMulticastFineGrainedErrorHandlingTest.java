@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.async;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,13 +26,14 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class AsyncEndpointMulticastFineGrainedErrorHandlingTest extends ContextTestSupport {
 
+    @Test
     public void testAsyncEndpointOK() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                onException(Exception.class).maximumRedeliveries(2);
+                onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
                 from("direct:start")
                     .to("mock:a")
@@ -49,13 +52,14 @@ public class AsyncEndpointMulticastFineGrainedErrorHandlingTest extends ContextT
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAsyncEndpointERROR() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                onException(Exception.class).maximumRedeliveries(2);
+                onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2);
 
                 from("direct:start")
                     .to("mock:a")

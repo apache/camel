@@ -59,7 +59,7 @@ public class HdfsProducerConsumerIntegrationTest extends CamelTestSupport {
         });
         context.start();
 
-        Set<String> sent = new HashSet<String>();
+        Set<String> sent = new HashSet<>();
 
         for (int i = 0; i < 10; ++i) {
             String text = "CIAO" + i;
@@ -93,7 +93,7 @@ public class HdfsProducerConsumerIntegrationTest extends CamelTestSupport {
             os.close();
         }
 
-        final Set<String> fileNames = new HashSet<String>();
+        final Set<String> fileNames = new HashSet<>();
         final CountDownLatch latch = new CountDownLatch(ITERATIONS);
         MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.whenAnyExchangeReceived(new Processor() {

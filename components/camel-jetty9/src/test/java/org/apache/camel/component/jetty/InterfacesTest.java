@@ -44,7 +44,11 @@ public class InterfacesTest extends BaseJettyTest {
             Enumeration<InetAddress> addresses =  interfaze.getInetAddresses();
             if (addresses.hasMoreElements()) {
                 InetAddress nextAddress = addresses.nextElement();
-                if (nextAddress.isLoopbackAddress() || !nextAddress.isReachable(2000)) {
+                try {
+                    if (nextAddress.isLoopbackAddress() || !nextAddress.isReachable(2000)) {
+                        continue;
+                    }
+                } catch (Exception e) {
                     continue;
                 }
                 if (nextAddress instanceof Inet6Address) {

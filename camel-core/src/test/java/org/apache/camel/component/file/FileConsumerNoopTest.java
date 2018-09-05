@@ -15,12 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -30,24 +32,24 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileConsumerNoopTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/filenoop");
         super.setUp();
-        template.sendBodyAndHeader("file://target/filenoop", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/filenoop", "Bye World", Exchange.FILE_NAME, "bye.txt");
     }
 
+    @Test
     public void testNoop() throws Exception {
-        NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
+
+        template.sendBodyAndHeader("file://target/filenoop", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/filenoop", "Bye World", Exchange.FILE_NAME, "bye.txt");
+
         assertMockEndpointsSatisfied();
 
-        notify.matchesMockWaitTime();
-
-        File file = new File("target/filenoop");
-        assertEquals("There should be 2 files", 2, file.list().length);
+        assertTrue(new File("target/filenoop/hello.txt").exists());
+        assertTrue(new File("target/filenoop/bye.txt").exists());
     }
 
     @Override
@@ -55,7 +57,8 @@ public class FileConsumerNoopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filenoop?noop=true&initialDelay=0&delay=10").convertBodyTo(String.class).to("mock:result");
+                from("file://target/filenoop?noop=true&initialDelay=0&delay=10")
+                    .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

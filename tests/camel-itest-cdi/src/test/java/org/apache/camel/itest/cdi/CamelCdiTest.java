@@ -17,25 +17,21 @@
 package org.apache.camel.itest.cdi;
 
 import java.util.Map;
-import java.util.Set;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.cdi.ContextName;
 import org.apache.camel.cdi.Uri;
-import org.apache.camel.cdi.internal.CamelContextMap;
-import org.apache.camel.cdi.internal.CamelExtension;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.CamelContextHelper;
-import org.apache.deltaspike.core.impl.scope.conversation.ConversationBeanHolder;
-import org.apache.deltaspike.core.impl.scope.viewaccess.ViewAccessBeanHolder;
-import org.apache.deltaspike.core.impl.scope.window.WindowBeanHolder;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -46,27 +42,53 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
 public class CamelCdiTest {
+
     private static final Logger LOG = LoggerFactory.getLogger(CamelCdiTest.class);
 
+    @Any
     @Inject
-    CamelContextMap camelContextMap;
+    Instance<CamelContext> camelContexts;
+    
     @Inject
+    @ContextName("contextA")
     RoutesContextA routesA;
     @Inject
+    @ContextName("contextB")
     RoutesContextB routesB;
     @Inject
+    @ContextName("contextC")
     RoutesContextC routesC;
     @Inject
+    @ContextName("contextD")
     RoutesContextD routesD;
-
-    @Inject @Uri(value = "seda:foo", context = "contextD")
+    
+    @Inject
+    @ContextName("contextD")
+    @Uri(value = "seda:foo")
     ProducerTemplate producerD;
+
+    @Deployment
+    public static JavaArchive createDeployment() {
+        return Maven.configureResolver().workOffline()
+            .loadPomFromFile("pom.xml")
+            .resolve("org.apache.camel:camel-cdi")
+            .withoutTransitivity()
+            .asSingle(JavaArchive.class)
+            .addClasses(
+                RoutesContextA.class,
+                RoutesContextB.class,
+                RoutesContextC.class,
+                RoutesContextD.class
+            );
+    }
 
     @Test
     public void checkContextsHaveCorrectEndpointsAndRoutes() throws Exception {
-        Set<Map.Entry<String, CamelContext>> entries = camelContextMap.getCamelContextMap().entrySet();
-        for (Map.Entry<String, CamelContext> entry : entries) {
-            LOG.info("CamelContext " + entry.getKey() + " has endpoints: " + entry.getValue().getEndpointMap().keySet());
+        assertNotNull("camelContexts not injected!", camelContexts);
+
+        for (CamelContext camelContext : camelContexts) {
+            LOG.info("CamelContext " + camelContext + " has endpoints: " + camelContext.getEndpointMap().keySet());
+            camelContext.start();
         }
 
         CamelContext contextA = assertCamelContext("contextA");
@@ -85,7 +107,6 @@ public class CamelCdiTest {
         routesB.sendMessages();
         mockEndpointB.assertIsSatisfied();
 
-        // lets check the routes where we default the context from the @ContextName
         CamelContext contextC = assertCamelContext("contextC");
         assertHasEndpoints(contextC, "seda://C.a", "mock://C.b");
 
@@ -122,21 +143,8 @@ public class CamelCdiTest {
     }
 
     protected CamelContext assertCamelContext(String contextName) {
-        assertNotNull("camelContextMap not injected!", camelContextMap);
-        CamelContext answer = camelContextMap.getMandatoryCamelContext(contextName);
+        CamelContext answer = camelContexts.select(ContextName.Literal.of(contextName)).get();
         assertTrue("CamelContext '" + contextName + "' is not started", answer.getStatus().isStarted());
         return answer;
-    }
-
-    @Deployment
-    public static JavaArchive createDeployment() {
-        return ShrinkWrap.create(JavaArchive.class)
-                .addPackage(CamelExtension.class.getPackage())
-                .addPackage(RoutesContextA.class.getPackage())
-                // add a bunch of deltaspike packages so we can find those cdi beans to make arquillian happy
-                .addPackage(WindowBeanHolder.class.getPackage())
-                .addPackage(ConversationBeanHolder.class.getPackage())
-                .addPackage(ViewAccessBeanHolder.class.getPackage())
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 }

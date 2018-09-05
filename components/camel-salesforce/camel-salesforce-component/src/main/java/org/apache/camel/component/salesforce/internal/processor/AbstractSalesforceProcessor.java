@@ -24,10 +24,10 @@ import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.component.salesforce.SalesforceComponent;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
+import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
-import org.eclipse.jetty.client.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,23 +45,26 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
 
     protected final OperationName operationName;
     protected final SalesforceSession session;
-    protected final HttpClient httpClient;
+    protected final SalesforceHttpClient httpClient;
+    protected final boolean rawPayload;
 
-    public AbstractSalesforceProcessor(SalesforceEndpoint endpoint) {
+    public AbstractSalesforceProcessor(final SalesforceEndpoint endpoint) {
         this.endpoint = endpoint;
-        this.operationName = endpoint.getOperationName();
-        this.endpointConfigMap = endpoint.getConfiguration().toValueMap();
+        operationName = endpoint.getOperationName();
+        endpointConfigMap = endpoint.getConfiguration().toValueMap();
 
         final SalesforceComponent component = endpoint.getComponent();
-        this.session = component.getSession();
-        this.httpClient = endpoint.getConfiguration().getHttpClient();
+        session = component.getSession();
+        httpClient = endpoint.getConfiguration().getHttpClient();
+        rawPayload = endpoint.getConfiguration().getRawPayload();
     }
 
     @Override
     public abstract boolean process(Exchange exchange, AsyncCallback callback);
 
     /**
-     * Gets String value for a parameter from header, endpoint config, or exchange body (optional).
+     * Gets String value for a parameter from header, endpoint config, or
+     * exchange body (optional).
      *
      * @param exchange          exchange to inspect
      * @param convertInBody     converts In body to String value if true
@@ -71,7 +74,8 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
      * @throws org.apache.camel.component.salesforce.api.SalesforceException
      *          if the property can't be found or on conversion errors.
      */
-    protected final String getParameter(String propName, Exchange exchange, boolean convertInBody, boolean optional) throws SalesforceException {
+    protected final String getParameter(final String propName, final Exchange exchange, final boolean convertInBody,
+        final boolean optional) throws SalesforceException {
         return getParameter(propName, exchange, convertInBody, optional, String.class);
     }
 
@@ -87,8 +91,8 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
      * @throws org.apache.camel.component.salesforce.api.SalesforceException
      *          if the property can't be found or on conversion errors.
      */
-    protected final <T> T getParameter(String propName, Exchange exchange, boolean convertInBody, boolean optional,
-                                       Class<T> parameterClass) throws SalesforceException {
+    protected final <T> T getParameter(final String propName, final Exchange exchange, final boolean convertInBody,
+        final boolean optional, final Class<T> parameterClass) throws SalesforceException {
 
         final Message in = exchange.getIn();
         T propValue = in.getHeader(propName, parameterClass);
@@ -96,8 +100,8 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
         if (propValue == null) {
             // check if type conversion failed
             if (in.getHeader(propName) != null) {
-                throw new IllegalArgumentException("Header " + propName
-                    + " could not be converted to type " + parameterClass.getName());
+                throw new IllegalArgumentException(
+                    "Header " + propName + " could not be converted to type " + parameterClass.getName());
             }
 
             final Object value = endpointConfigMap.get(propName);
@@ -108,17 +112,17 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
 
                 try {
                     propValue = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterClass, value);
-                } catch (NoTypeConversionAvailableException e) {
+                } catch (final NoTypeConversionAvailableException e) {
                     throw new SalesforceException(e);
                 }
             }
         }
 
-        propValue = (propValue == null && convertInBody) ? in.getBody(parameterClass) : propValue;
+        propValue = propValue == null && convertInBody ? in.getBody(parameterClass) : propValue;
 
         // error if property was not set
         if (propValue == null && !optional) {
-            String msg = "Missing property " + propName
+            final String msg = "Missing property " + propName
                 + (convertInBody ? ", message body could not be converted to type " + parameterClass.getName() : "");
             throw new SalesforceException(msg, null);
         }

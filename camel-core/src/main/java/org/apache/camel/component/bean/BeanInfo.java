@@ -26,17 +26,17 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import org.apache.camel.AttachmentObjects;
 import org.apache.camel.Attachments;
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeException;
+import org.apache.camel.ExchangeProperties;
 import org.apache.camel.ExchangeProperty;
 import org.apache.camel.Expression;
 import org.apache.camel.Handler;
@@ -46,12 +46,14 @@ import org.apache.camel.Message;
 import org.apache.camel.OutHeaders;
 import org.apache.camel.Properties;
 import org.apache.camel.Property;
+import org.apache.camel.PropertyInject;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.language.LanguageAnnotation;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,19 +65,20 @@ import org.slf4j.LoggerFactory;
 public class BeanInfo {
     private static final Logger LOG = LoggerFactory.getLogger(BeanInfo.class);
     private static final String CGLIB_CLASS_SEPARATOR = "$$";
-    private static final List<Method> EXCLUDED_METHODS = new ArrayList<Method>();
+    private static final List<Method> EXCLUDED_METHODS = new ArrayList<>();
     private final CamelContext camelContext;
     private final BeanComponent component;
     private final Class<?> type;
     private final ParameterMappingStrategy strategy;
     private final MethodInfo defaultMethod;
     // shared state with details of operations introspected from the bean, created during the constructor
-    private Map<String, List<MethodInfo>> operations = new HashMap<String, List<MethodInfo>>();
-    private List<MethodInfo> operationsWithBody = new ArrayList<MethodInfo>();
-    private List<MethodInfo> operationsWithNoBody = new ArrayList<MethodInfo>();
-    private List<MethodInfo> operationsWithCustomAnnotation = new ArrayList<MethodInfo>();
-    private List<MethodInfo> operationsWithHandlerAnnotation = new ArrayList<MethodInfo>();
-    private Map<Method, MethodInfo> methodMap = new HashMap<Method, MethodInfo>();
+    private Map<String, List<MethodInfo>> operations = new HashMap<>();
+    private List<MethodInfo> operationsWithBody = new ArrayList<>();
+    private List<MethodInfo> operationsWithNoBody = new ArrayList<>();
+    private List<MethodInfo> operationsWithCustomAnnotation = new ArrayList<>();
+    private List<MethodInfo> operationsWithHandlerAnnotation = new ArrayList<>();
+    private Map<Method, MethodInfo> methodMap = new HashMap<>();
+    private boolean publicConstructors;
 
     static {
         // exclude all java.lang.Object methods as we dont want to invoke them
@@ -122,6 +125,7 @@ public class BeanInfo {
             operationsWithCustomAnnotation = beanInfo.operationsWithCustomAnnotation;
             operationsWithHandlerAnnotation = beanInfo.operationsWithHandlerAnnotation;
             methodMap = beanInfo.methodMap;
+            publicConstructors = beanInfo.publicConstructors;
             return;
         }
 
@@ -189,12 +193,10 @@ public class BeanInfo {
         
         // find the explicit method to invoke
         if (explicitMethod != null) {
-            Iterator<List<MethodInfo>> it = operations.values().iterator();
-            while (it.hasNext()) {
-                List<MethodInfo> infos = it.next();
+            for (List<MethodInfo> infos : operations.values()) {
                 for (MethodInfo info : infos) {
                     if (explicitMethod.equals(info.getMethod())) {
-                        return info.createMethodInvocation(pojo, exchange);
+                        return info.createMethodInvocation(pojo, info.hasParameters(), exchange);
                     }
                 }
             }
@@ -207,7 +209,16 @@ public class BeanInfo {
             // do not use qualifier for name
             String name = methodName;
             if (methodName.contains("(")) {
-                name = ObjectHelper.before(methodName, "(");
+                name = StringHelper.before(methodName, "(");
+                // the must be a ending parenthesis
+                if (!methodName.endsWith(")")) {
+                    throw new IllegalArgumentException("Method should end with parenthesis, was " + methodName);
+                }
+                // and there must be an even number of parenthesis in the syntax
+                // (we can use betweenOuterPair as it return null if the syntax is invalid)
+                if (StringHelper.betweenOuterPair(methodName, '(', ')') == null) {
+                    throw new IllegalArgumentException("Method should have even pair of parenthesis, was " + methodName);
+                }
             }
             boolean emptyParameters = methodName.endsWith("()");
 
@@ -228,7 +239,7 @@ public class BeanInfo {
                     // and therefore use arrayLength from ObjectHelper to return the array length field.
                     Method method = ObjectHelper.class.getMethod("arrayLength", Object[].class);
                     ParameterInfo pi = new ParameterInfo(0, Object[].class, null, ExpressionBuilder.mandatoryBodyExpression(Object[].class, true));
-                    List<ParameterInfo> lpi = new ArrayList<ParameterInfo>(1);
+                    List<ParameterInfo> lpi = new ArrayList<>(1);
                     lpi.add(pi);
                     methodInfo = new MethodInfo(exchange.getContext(), pojo.getClass(), method, lpi, lpi, false, false);
                     // Need to update the message body to be pojo for the invocation
@@ -242,7 +253,7 @@ public class BeanInfo {
                     // only one method then choose it
                     methodInfo = methods.get(0);
 
-                    // validate that if we want an explict no-arg method, then that's what we get
+                    // validate that if we want an explicit no-arg method, then that's what we get
                     if (emptyParameters && methodInfo.hasParameters()) {
                         throw new MethodNotFoundException(exchange, pojo, methodName, "(with no parameters)");
                     }
@@ -261,7 +272,7 @@ public class BeanInfo {
                         }
                     }
 
-                    if (methodInfo == null || !name.equals(methodInfo.getMethod().getName())) {
+                    if (methodInfo == null || (name != null && !name.equals(methodInfo.getMethod().getName()))) {
                         throw new AmbiguousMethodCallException(exchange, methods);
                     }
                 } else {
@@ -271,8 +282,8 @@ public class BeanInfo {
             }
         }
 
-        if (methodInfo == null) {
-            // no name or type
+        if (methodInfo == null && methodMap.size() >= 2) {
+            // only try to choose if there is at least 2 methods
             methodInfo = chooseMethod(pojo, exchange, null);
         }
         if (methodInfo == null) {
@@ -280,7 +291,7 @@ public class BeanInfo {
         }
         if (methodInfo != null) {
             LOG.trace("Chosen method to invoke: {} on bean: {}", methodInfo, pojo);
-            return methodInfo.createMethodInvocation(pojo, exchange);
+            return methodInfo.createMethodInvocation(pojo, methodInfo.hasParameters(), exchange);
         }
 
         LOG.debug("Cannot find suitable method to invoke on bean: {}", pojo);
@@ -293,81 +304,41 @@ public class BeanInfo {
      * @param clazz the class
      */
     private void introspect(Class<?> clazz) {
-        // get the target clazz as it could potentially have been enhanced by CGLIB etc.
-        clazz = getTargetClass(clazz);
-        ObjectHelper.notNull(clazz, "clazz", this);
 
-        LOG.trace("Introspecting class: {}", clazz);
+        // does the class have any public constructors?
+        publicConstructors = clazz.getConstructors().length > 0;
 
-        // favor declared methods, and then filter out duplicate interface methods
-        List<Method> methods;
-        if (Modifier.isPublic(clazz.getModifiers())) {
-            LOG.trace("Preferring class methods as class: {} is public accessible", clazz);
-            methods = new ArrayList<Method>(Arrays.asList(clazz.getDeclaredMethods()));
-        } else {
-            LOG.trace("Preferring interface methods as class: {} is not public accessible", clazz);
-            methods = getInterfaceMethods(clazz);
-            // and then we must add its declared methods as well
-            List<Method> extraMethods = Arrays.asList(clazz.getDeclaredMethods());
-            methods.addAll(extraMethods);
-        }
-
-        Set<Method> overrides = new HashSet<Method>();
-
-        // do not remove duplicates form class from the Java itself as they have some "duplicates" we need
-        boolean javaClass = clazz.getName().startsWith("java.") || clazz.getName().startsWith("javax.");
-        if (!javaClass) {
-            // it may have duplicate methods already, even from declared or from interfaces + declared
-            for (Method source : methods) {
-
-                // skip bridge methods in duplicate checks (as the bridge method is inserted by the compiler due to type erasure)
-                if (source.isBridge()) {
-                    continue;
-                }
-
-                for (Method target : methods) {
-                    // skip ourselves
-                    if (ObjectHelper.isOverridingMethod(source, target, true)) {
-                        continue;
-                    }
-                    // skip duplicates which may be assign compatible (favor keep first added method when duplicate)
-                    if (ObjectHelper.isOverridingMethod(source, target, false)) {
-                        overrides.add(target);
-                    }
-                }
-            }
-            methods.removeAll(overrides);
-            overrides.clear();
-        }
-
-        // if we are a public class, then add non duplicate interface classes also
-        if (Modifier.isPublic(clazz.getModifiers())) {
-            // add additional interface methods
-            List<Method> extraMethods = getInterfaceMethods(clazz);
-            for (Method target : extraMethods) {
-                for (Method source : methods) {
-                    if (ObjectHelper.isOverridingMethod(source, target, false)) {
-                        overrides.add(target);
-                    }
-                }
-            }
-            // remove all the overrides methods
-            extraMethods.removeAll(overrides);
-            methods.addAll(extraMethods);
-        }
+        MethodsFilter methods = new MethodsFilter(getType());
+        introspect(clazz, methods);
 
         // now introspect the methods and filter non valid methods
-        for (Method method : methods) {
+        for (Method method : methods.asReadOnlyList()) {
             boolean valid = isValidMethod(clazz, method);
             LOG.trace("Method: {} is valid: {}", method, valid);
             if (valid) {
                 introspect(clazz, method);
             }
         }
+    }
 
-        Class<?> superclass = clazz.getSuperclass();
-        if (superclass != null && !superclass.equals(Object.class)) {
-            introspect(superclass);
+    private void introspect(Class<?> clazz, MethodsFilter filteredMethods) {
+        // get the target clazz as it could potentially have been enhanced by
+        // CGLIB etc.
+        clazz = getTargetClass(clazz);
+        ObjectHelper.notNull(clazz, "clazz", this);
+
+        LOG.trace("Introspecting class: {}", clazz);
+
+        for (Method m : Arrays.asList(clazz.getDeclaredMethods())) {
+            filteredMethods.filterMethod(m);
+        }
+
+        Class<?> superClass = clazz.getSuperclass();
+        if (superClass != null && !superClass.equals(Object.class)) {
+            introspect(superClass, filteredMethods);
+        }
+        for (Class<?> superInterface : clazz.getInterfaces()) {
+            introspect(superInterface, filteredMethods);
         }
     }
 
@@ -384,10 +355,8 @@ public class BeanInfo {
 
         MethodInfo methodInfo = createMethodInfo(clazz, method);
 
-        // methods already registered should be preferred to use instead of super classes of existing methods
-        // we want to us the method from the sub class over super classes, so if we have already registered
-        // the method then use it (we are traversing upwards: sub (child) -> super (farther) )
-        MethodInfo existingMethodInfo = overridesExistingMethod(methodInfo);
+        // Foster the use of a potentially already registered most specific override
+        MethodInfo existingMethodInfo = findMostSpecificOverride(methodInfo);
         if (existingMethodInfo != null) {
             LOG.trace("This method is already overridden in a subclass, so the method from the sub class is preferred: {}", existingMethodInfo);
             return existingMethodInfo;
@@ -395,13 +364,13 @@ public class BeanInfo {
 
         LOG.trace("Adding operation: {} for method: {}", opName, methodInfo);
 
-        if (hasMethod(opName)) {
+        List<MethodInfo> existing = getOperations(opName);
+        if (existing != null) {
             // we have an overloaded method so add the method info to the same key
-            List<MethodInfo> existing = getOperations(opName);
             existing.add(methodInfo);
         } else {
             // its a new method we have not seen before so wrap it in a list and add it
-            List<MethodInfo> methods = new ArrayList<MethodInfo>();
+            List<MethodInfo> methods = new ArrayList<>();
             methods.add(methodInfo);
             operations.put(opName, methods);
         }
@@ -424,7 +393,6 @@ public class BeanInfo {
         return methodInfo;
     }
 
-
     /**
      * Returns the {@link MethodInfo} for the given method if it exists or null
      * if there is no metadata available for the given method
@@ -433,9 +401,10 @@ public class BeanInfo {
         MethodInfo answer = methodMap.get(method);
         if (answer == null) {
             // maybe the method overrides, and the method map keeps info of the source override we can use
-            for (Method source : methodMap.keySet()) {
-                if (ObjectHelper.isOverridingMethod(source, method, false)) {
-                    answer = methodMap.get(source);
+            for (Map.Entry<Method, MethodInfo> methodEntry : methodMap.entrySet()) {
+                Method source = methodEntry.getKey();
+                if (ObjectHelper.isOverridingMethod(getType(), source, method, false)) {
+                    answer = methodEntry.getValue();
                     break;
                 }
             }
@@ -458,8 +427,8 @@ public class BeanInfo {
         Class<?>[] parameterTypes = method.getParameterTypes();
         List<Annotation>[] parametersAnnotations = collectParameterAnnotations(clazz, method);
 
-        List<ParameterInfo> parameters = new ArrayList<ParameterInfo>();
-        List<ParameterInfo> bodyParameters = new ArrayList<ParameterInfo>();
+        List<ParameterInfo> parameters = new ArrayList<>();
+        List<ParameterInfo> bodyParameters = new ArrayList<>();
 
         boolean hasCustomAnnotation = false;
         boolean hasHandlerAnnotation = ObjectHelper.hasAnnotation(method.getAnnotations(), Handler.class);
@@ -507,11 +476,11 @@ public class BeanInfo {
         return new MethodInfo(camelContext, clazz, method, parameters, bodyParameters, hasCustomAnnotation, hasHandlerAnnotation);
     }
 
+    @SuppressWarnings("unchecked")
     protected List<Annotation>[] collectParameterAnnotations(Class<?> c, Method m) {
-        @SuppressWarnings("unchecked")
-        List<Annotation>[] annotations = new List[m.getParameterTypes().length];
+        List<Annotation>[] annotations = new List[m.getParameterCount()];
         for (int i = 0; i < annotations.length; i++) {
-            annotations[i] = new ArrayList<Annotation>();
+            annotations[i] = new ArrayList<>();
         }
         collectParameterAnnotations(c, m, annotations);
         return annotations;
@@ -552,79 +521,124 @@ public class BeanInfo {
 
         // must use defensive copy, to avoid altering the shared lists
         // and we want to remove unwanted operations from these local lists
-        final List<MethodInfo> localOperationsWithBody = new ArrayList<MethodInfo>(operationsWithBody);
-        final List<MethodInfo> localOperationsWithNoBody = new ArrayList<MethodInfo>(operationsWithNoBody);
-        final List<MethodInfo> localOperationsWithCustomAnnotation = new ArrayList<MethodInfo>(operationsWithCustomAnnotation);
-        final List<MethodInfo> localOperationsWithHandlerAnnotation = new ArrayList<MethodInfo>(operationsWithHandlerAnnotation);
+        List<MethodInfo> localOperationsWithBody = null;
+        if (!operationsWithBody.isEmpty()) {
+            localOperationsWithBody = new ArrayList<>(operationsWithBody);
+        }
+        List<MethodInfo> localOperationsWithNoBody = null;
+        if (!operationsWithNoBody.isEmpty()) {
+            localOperationsWithNoBody = new ArrayList<>(operationsWithNoBody);
+        }
+        List<MethodInfo> localOperationsWithCustomAnnotation = null;
+        if (!operationsWithCustomAnnotation.isEmpty()) {
+            localOperationsWithCustomAnnotation = new ArrayList<>(operationsWithCustomAnnotation);
+        }
+        List<MethodInfo> localOperationsWithHandlerAnnotation = null;
+        if (!operationsWithHandlerAnnotation.isEmpty()) {
+            localOperationsWithHandlerAnnotation = new ArrayList<>(operationsWithHandlerAnnotation);
+        }
 
         // remove all abstract methods
-        removeAllAbstractMethods(localOperationsWithBody);
-        removeAllAbstractMethods(localOperationsWithNoBody);
-        removeAllAbstractMethods(localOperationsWithCustomAnnotation);
-        removeAllAbstractMethods(localOperationsWithHandlerAnnotation);
+        if (localOperationsWithBody != null) {
+            removeAllAbstractMethods(localOperationsWithBody);
+        }
+        if (localOperationsWithNoBody != null) {
+            removeAllAbstractMethods(localOperationsWithNoBody);
+        }
+        if (localOperationsWithCustomAnnotation != null) {
+            removeAllAbstractMethods(localOperationsWithCustomAnnotation);
+        }
+        if (localOperationsWithHandlerAnnotation != null) {
+            removeAllAbstractMethods(localOperationsWithHandlerAnnotation);
+        }
 
         if (name != null) {
             // filter all lists to only include methods with this name
-            removeNonMatchingMethods(localOperationsWithHandlerAnnotation, name);
-            removeNonMatchingMethods(localOperationsWithCustomAnnotation, name);
-            removeNonMatchingMethods(localOperationsWithBody, name);
-            removeNonMatchingMethods(localOperationsWithNoBody, name);
+            if (localOperationsWithHandlerAnnotation != null) {
+                removeNonMatchingMethods(localOperationsWithHandlerAnnotation, name);
+            }
+            if (localOperationsWithCustomAnnotation != null) {
+                removeNonMatchingMethods(localOperationsWithCustomAnnotation, name);
+            }
+            if (localOperationsWithBody != null) {
+                removeNonMatchingMethods(localOperationsWithBody, name);
+            }
+            if (localOperationsWithNoBody != null) {
+                removeNonMatchingMethods(localOperationsWithNoBody, name);
+            }
         } else {
             // remove all getter/setter as we do not want to consider these methods
-            removeAllSetterOrGetterMethods(localOperationsWithHandlerAnnotation);
-            removeAllSetterOrGetterMethods(localOperationsWithCustomAnnotation);
-            removeAllSetterOrGetterMethods(localOperationsWithBody);
-            removeAllSetterOrGetterMethods(localOperationsWithNoBody);
+            if (localOperationsWithHandlerAnnotation != null) {
+                removeAllSetterOrGetterMethods(localOperationsWithHandlerAnnotation);
+            }
+            if (localOperationsWithCustomAnnotation != null) {
+                removeAllSetterOrGetterMethods(localOperationsWithCustomAnnotation);
+            }
+            if (localOperationsWithBody != null) {
+                removeAllSetterOrGetterMethods(localOperationsWithBody);
+            }
+            if (localOperationsWithNoBody != null) {
+                removeAllSetterOrGetterMethods(localOperationsWithNoBody);
+            }
         }
 
-        if (localOperationsWithHandlerAnnotation.size() > 1) {
+        if (localOperationsWithHandlerAnnotation != null && localOperationsWithHandlerAnnotation.size() > 1) {
             // if we have more than 1 @Handler then its ambiguous
             throw new AmbiguousMethodCallException(exchange, localOperationsWithHandlerAnnotation);
         }
 
-        if (localOperationsWithHandlerAnnotation.size() == 1) {
+        if (localOperationsWithHandlerAnnotation != null && localOperationsWithHandlerAnnotation.size() == 1) {
             // methods with handler should be preferred
             return localOperationsWithHandlerAnnotation.get(0);
-        } else if (localOperationsWithCustomAnnotation.size() == 1) {
+        } else if (localOperationsWithCustomAnnotation != null && localOperationsWithCustomAnnotation.size() == 1) {
             // if there is one method with an annotation then use that one
             return localOperationsWithCustomAnnotation.get(0);
         }
 
         // named method and with no parameters
         boolean noParameters = name != null && name.endsWith("()");
-        if (noParameters && localOperationsWithNoBody.size() == 1) {
+        if (noParameters && localOperationsWithNoBody != null && localOperationsWithNoBody.size() == 1) {
             // if there was a method name configured and it has no parameters, then use the method with no body (eg no parameters)
             return localOperationsWithNoBody.get(0);
-        } else if (!noParameters && localOperationsWithBody.size() == 1 && localOperationsWithCustomAnnotation.isEmpty()) {
+        } else if (!noParameters && (localOperationsWithBody != null && localOperationsWithBody.size() == 1 && localOperationsWithCustomAnnotation == null)) {
             // if there is one method with body then use that one
             return localOperationsWithBody.get(0);
         }
 
-        Collection<MethodInfo> possibleOperations = new ArrayList<MethodInfo>();
-        possibleOperations.addAll(localOperationsWithBody);
-        possibleOperations.addAll(localOperationsWithCustomAnnotation);
+        if (localOperationsWithBody != null || localOperationsWithCustomAnnotation != null) {
+            Collection<MethodInfo> possibleOperations = new ArrayList<>();
+            if (localOperationsWithBody != null) {
+                possibleOperations.addAll(localOperationsWithBody);
+            }
+            if (localOperationsWithCustomAnnotation != null) {
+                possibleOperations.addAll(localOperationsWithCustomAnnotation);
+            }
 
-        if (!possibleOperations.isEmpty()) {
-            // multiple possible operations so find the best suited if possible
-            MethodInfo answer = chooseMethodWithMatchingBody(exchange, possibleOperations, localOperationsWithCustomAnnotation);
+            if (!possibleOperations.isEmpty()) {
+                MethodInfo answer = null;
 
-            if (answer == null && name != null) {
-                // do we have hardcoded parameters values provided from the method name then fallback and try that
-                String parameters = ObjectHelper.between(name, "(", ")");
-                if (parameters != null) {
-                    // special as we have hardcoded parameters, so we need to choose method that matches those parameters the best
-                    answer = chooseMethodWithMatchingParameters(exchange, parameters, possibleOperations);
+                if (name != null) {
+                    // do we have hardcoded parameters values provided from the method name then use that for matching
+                    String parameters = StringHelper.between(name, "(", ")");
+                    if (parameters != null) {
+                        // special as we have hardcoded parameters, so we need to choose method that matches those parameters the best
+                        LOG.trace("Choosing best matching method matching parameters: {}", parameters);
+                        answer = chooseMethodWithMatchingParameters(exchange, parameters, possibleOperations);
+                    }
                 }
-            }
-            
-            if (answer == null && possibleOperations.size() > 1) {
-                answer = getSingleCovariantMethod(possibleOperations);
-            }
-            
-            if (answer == null) {
-                throw new AmbiguousMethodCallException(exchange, possibleOperations);
-            } else {
-                return answer;
+                if (answer == null) {
+                    // multiple possible operations so find the best suited if possible
+                    answer = chooseMethodWithMatchingBody(exchange, possibleOperations, localOperationsWithCustomAnnotation);
+                }
+                if (answer == null && possibleOperations.size() > 1) {
+                    answer = getSingleCovariantMethod(possibleOperations);
+                }
+
+                if (answer == null) {
+                    throw new AmbiguousMethodCallException(exchange, possibleOperations);
+                } else {
+                    return answer;
+                }
             }
         }
 
@@ -642,7 +656,7 @@ public class BeanInfo {
             count++;
         }
 
-        List<MethodInfo> operations = new ArrayList<MethodInfo>();
+        List<MethodInfo> operations = new ArrayList<>();
         for (MethodInfo info : operationList) {
             if (info.getParameters().size() == count) {
                 operations.add(info);
@@ -656,18 +670,43 @@ public class BeanInfo {
         }
 
         // okay we still got multiple operations, so need to match the best one
-        List<MethodInfo> candidates = new ArrayList<MethodInfo>();
+        List<MethodInfo> candidates = new ArrayList<>();
+        MethodInfo fallbackCandidate = null;
         for (MethodInfo info : operations) {
-            it = ObjectHelper.createIterator(parameters);
+            it = ObjectHelper.createIterator(parameters, ",", false);
             int index = 0;
             boolean matches = true;
             while (it.hasNext()) {
                 String parameter = (String) it.next();
+                if (parameter != null) {
+                    // must trim
+                    parameter = parameter.trim();
+                }
+
                 Class<?> parameterType = BeanHelper.getValidParameterType(parameter);
                 Class<?> expectedType = info.getParameters().get(index).getType();
 
                 if (parameterType != null && expectedType != null) {
-                    if (!parameterType.isAssignableFrom(expectedType)) {
+
+                    // if its a simple language then we need to evaluate the expression
+                    // so we have the result and can find out what type the parameter actually is
+                    if (StringHelper.hasStartToken(parameter, "simple")) {
+                        LOG.trace("Evaluating simple expression for parameter #{}: {} to determine the class type of the parameter", index, parameter);
+                        Object out = getCamelContext().resolveLanguage("simple").createExpression(parameter).evaluate(exchange, Object.class);
+                        if (out != null) {
+                            parameterType = out.getClass();
+                        }
+                    }
+
+                    // skip java.lang.Object type, when we have multiple possible methods we want to avoid it if possible
+                    if (Object.class.equals(expectedType)) {
+                        fallbackCandidate = info;
+                        matches = false;
+                        break;
+                    }
+
+                    boolean matchingTypes = isParameterMatchingType(parameterType, expectedType);
+                    if (!matchingTypes) {
                         matches = false;
                         break;
                     }
@@ -683,12 +722,22 @@ public class BeanInfo {
 
         if (candidates.size() > 1) {
             MethodInfo answer = getSingleCovariantMethod(candidates);
-            if (answer == null) {
-                throw new AmbiguousMethodCallException(exchange, candidates);
+            if (answer != null) {
+                return answer;
             }
-            return answer;
         }
-        return candidates.size() == 1 ? candidates.get(0) : null;
+        return candidates.size() == 1 ? candidates.get(0) : fallbackCandidate;
+    }
+
+    private boolean isParameterMatchingType(Class<?> parameterType, Class<?> expectedType) {
+        if (Number.class.equals(parameterType)) {
+            // number should match long/int/etc.
+            if (Integer.class.isAssignableFrom(expectedType) || Long.class.isAssignableFrom(expectedType)
+                    || int.class.isAssignableFrom(expectedType) || long.class.isAssignableFrom(expectedType)) {
+                return true;
+            }
+        }
+        return parameterType.isAssignableFrom(expectedType);
     }
 
     private MethodInfo getSingleCovariantMethod(Collection<MethodInfo> candidates) {
@@ -714,8 +763,8 @@ public class BeanInfo {
                 LOG.trace("Matching for method with a single parameter that matches type: {}", bodyType.getCanonicalName());
             }
 
-            List<MethodInfo> possibles = new ArrayList<MethodInfo>();
-            List<MethodInfo> possiblesWithException = new ArrayList<MethodInfo>();
+            List<MethodInfo> possibles = new ArrayList<>();
+            List<MethodInfo> possiblesWithException = null;
             for (MethodInfo methodInfo : operationList) {
                 // test for MEP pattern matching
                 boolean out = exchange.getPattern().isOutCapable();
@@ -729,6 +778,9 @@ public class BeanInfo {
                     LOG.trace("Found a possible method: {}", methodInfo);
                     if (methodInfo.hasExceptionParameter()) {
                         // methods with accepts exceptions
+                        if (possiblesWithException == null) {
+                            possiblesWithException = new ArrayList<>();
+                        }
                         possiblesWithException.add(methodInfo);
                     } else {
                         // regular methods with no exceptions
@@ -751,7 +803,7 @@ public class BeanInfo {
         throws AmbiguousMethodCallException {
 
         Exception exception = ExpressionBuilder.exchangeExceptionExpression().evaluate(exchange, Exception.class);
-        if (exception != null && possiblesWithException.size() == 1) {
+        if (exception != null && possiblesWithException != null && possiblesWithException.size() == 1) {
             LOG.trace("Exchange has exception set so we prefer method that also has exception as parameter");
             // prefer the method that accepts exception in case we have an exception also
             return possiblesWithException.get(0);
@@ -794,13 +846,13 @@ public class BeanInfo {
             }
         } else {
             // if we only have a single method with custom annotations, let's use that one
-            if (possibleWithCustomAnnotation.size() == 1) {
+            if (possibleWithCustomAnnotation != null && possibleWithCustomAnnotation.size() == 1) {
                 MethodInfo answer = possibleWithCustomAnnotation.get(0);
                 LOG.trace("There are only one method with annotations so we choose it: {}", answer);
                 return answer;
             }
             // try to choose among multiple methods with annotations
-            MethodInfo chosen = chooseMethodWithCustomAnnotations(exchange, possibles);
+            MethodInfo chosen = chooseMethodWithCustomAnnotations(possibles);
             if (chosen != null) {
                 return chosen;
             }
@@ -846,28 +898,31 @@ public class BeanInfo {
     }
 
     /**
-     * Does the given method info override an existing method registered before (from a subclass)
+     * Gets the most specific override of a given method, if any. Indeed,
+     * overrides may have already been found while inspecting sub classes. Or
+     * the given method could override an interface extra method.
      *
-     * @param methodInfo  the method to test
-     * @return the already registered method to use, null if not overriding any
+     * @param proposedMethodInfo the method for which a more specific override is
+     *            searched
+     * @return The already registered most specific override if any, otherwise
+     *         <code>null</code>
      */
-    private MethodInfo overridesExistingMethod(MethodInfo methodInfo) {
-        for (MethodInfo info : methodMap.values()) {
-            Method source = info.getMethod();
-            Method target = methodInfo.getMethod();
+    private MethodInfo findMostSpecificOverride(MethodInfo proposedMethodInfo) {
+        for (MethodInfo alreadyRegisteredMethodInfo : methodMap.values()) {
+            Method alreadyRegisteredMethod = alreadyRegisteredMethodInfo.getMethod();
+            Method proposedMethod = proposedMethodInfo.getMethod();
 
-            boolean override = ObjectHelper.isOverridingMethod(source, target);
-            if (override) {
-                // same name, same parameters, then its overrides an existing class
-                return info;
+            if (ObjectHelper.isOverridingMethod(getType(), proposedMethod, alreadyRegisteredMethod, false)) {
+                return alreadyRegisteredMethodInfo;
+            } else if (ObjectHelper.isOverridingMethod(getType(), alreadyRegisteredMethod, proposedMethod, false)) {
+                return proposedMethodInfo;
             }
         }
 
         return null;
     }
 
-    private MethodInfo chooseMethodWithCustomAnnotations(Exchange exchange, Collection<MethodInfo> possibles)
-        throws AmbiguousMethodCallException {
+    private MethodInfo chooseMethodWithCustomAnnotations(Collection<MethodInfo> possibles) {
         // if we have only one method with custom annotations let's choose that
         MethodInfo chosen = null;
         for (MethodInfo possible : possibles) {
@@ -905,7 +960,9 @@ public class BeanInfo {
 
     private Expression createParameterUnmarshalExpressionForAnnotation(Class<?> clazz, Method method, 
             Class<?> parameterType, Annotation annotation) {
-        if (annotation instanceof Attachments) {
+        if (annotation instanceof AttachmentObjects) {
+            return ExpressionBuilder.attachmentObjectsExpression();
+        } else if (annotation instanceof Attachments) {
             return ExpressionBuilder.attachmentsExpression();
         } else if (annotation instanceof Property) {
             Property propertyAnnotation = (Property)annotation;
@@ -914,7 +971,9 @@ public class BeanInfo {
             ExchangeProperty propertyAnnotation = (ExchangeProperty)annotation;
             return ExpressionBuilder.exchangePropertyExpression(propertyAnnotation.value());
         } else if (annotation instanceof Properties) {
-            return ExpressionBuilder.propertiesExpression();
+            return ExpressionBuilder.exchangePropertiesExpression();
+        } else if (annotation instanceof ExchangeProperties) {
+            return ExpressionBuilder.exchangePropertiesExpression();
         } else if (annotation instanceof Header) {
             Header headerAnnotation = (Header)annotation;
             return ExpressionBuilder.headerExpression(headerAnnotation.value());
@@ -924,6 +983,10 @@ public class BeanInfo {
             return ExpressionBuilder.outHeadersExpression();
         } else if (annotation instanceof ExchangeException) {
             return ExpressionBuilder.exchangeExceptionExpression(CastUtils.cast(parameterType, Exception.class));
+        } else if (annotation instanceof PropertyInject) {
+            PropertyInject propertyAnnotation = (PropertyInject) annotation;
+            Expression inject = ExpressionBuilder.propertiesComponentExpression(propertyAnnotation.value(), null, propertyAnnotation.defaultValue());
+            return ExpressionBuilder.convertToExpression(inject, parameterType);
         } else {
             LanguageAnnotation languageAnnotation = annotation.annotationType().getAnnotation(LanguageAnnotation.class);
             if (languageAnnotation != null) {
@@ -942,21 +1005,6 @@ public class BeanInfo {
 
         return null;
     }
-    
-    private static List<Method> getInterfaceMethods(Class<?> clazz) {
-        final List<Method> answer = new ArrayList<Method>();
-
-        while (clazz != null && !clazz.equals(Object.class)) {
-            for (Class<?> interfaceClazz : clazz.getInterfaces()) {
-                for (Method interfaceMethod : interfaceClazz.getDeclaredMethods()) {
-                    answer.add(interfaceMethod);
-                }
-            }
-            clazz = clazz.getSuperclass();
-        }
-
-        return answer;
-    }
 
     private static void removeAllSetterOrGetterMethods(List<MethodInfo> methods) {
         Iterator<MethodInfo> it = methods.iterator();
@@ -973,21 +1021,17 @@ public class BeanInfo {
     }
 
     private void removeNonMatchingMethods(List<MethodInfo> methods, String name) {
-        Iterator<MethodInfo> it = methods.iterator();
-        while (it.hasNext()) {
-            MethodInfo info = it.next();
-            if (!matchMethod(info.getMethod(), name)) {
-                // method does not match so remove it
-                it.remove();
-            }
-        }
+        // method does not match so remove it
+        methods.removeIf(info -> !matchMethod(info.getMethod(), name));
     }
 
     private void removeAllAbstractMethods(List<MethodInfo> methods) {
         Iterator<MethodInfo> it = methods.iterator();
         while (it.hasNext()) {
             MethodInfo info = it.next();
-            if (Modifier.isAbstract(info.getMethod().getModifiers())) {
+            // if the class is an interface then keep the method
+            boolean isFromInterface = Modifier.isInterface(info.getMethod().getDeclaringClass().getModifiers());
+            if (!isFromInterface && Modifier.isAbstract(info.getMethod().getModifiers())) {
                 // we cannot invoke an abstract method
                 it.remove();
             }
@@ -1006,29 +1050,33 @@ public class BeanInfo {
         // do not use qualifier for name matching
         String name = methodName;
         if (name.contains("(")) {
-            name = ObjectHelper.before(name, "(");
+            name = StringHelper.before(name, "(");
         }
 
         // must match name
-        if (!name.equals(method.getName())) {
+        if (name != null && !name.equals(method.getName())) {
             return false;
         }
 
         // is it a method with no parameters
         boolean noParameters = methodName.endsWith("()");
         if (noParameters) {
-            return method.getParameterTypes().length == 0;
+            return method.getParameterCount() == 0;
         }
 
         // match qualifier types which is used to select among overloaded methods
-        String types = ObjectHelper.between(methodName, "(", ")");
+        String types = StringHelper.between(methodName, "(", ")");
         if (ObjectHelper.isNotEmpty(types)) {
             // we must qualify based on types to match method
             String[] parameters = StringQuoteHelper.splitSafeQuote(types, ',');
+            Class<?>[] parameterTypes = null;
             Iterator<?> it = ObjectHelper.createIterator(parameters);
-            for (int i = 0; i < method.getParameterTypes().length; i++) {
+            for (int i = 0; i < method.getParameterCount(); i++) {
                 if (it.hasNext()) {
-                    Class<?> parameterType = method.getParameterTypes()[i];
+                    if (parameterTypes == null) {
+                        parameterTypes = method.getParameterTypes();
+                    }
+                    Class<?> parameterType = parameterTypes[i];
 
                     String qualifyType = (String) it.next();
                     if (ObjectHelper.isEmpty(qualifyType)) {
@@ -1118,6 +1166,13 @@ public class BeanInfo {
     }
 
     /**
+     * Returns whether the bean class has any public constructors.
+     */
+    public boolean hasPublicConstructors() {
+        return publicConstructors;
+    }
+
+    /**
      * Gets the list of methods sorted by A..Z method name.
      *
      * @return the methods.
@@ -1127,18 +1182,23 @@ public class BeanInfo {
             return Collections.emptyList();
         }
 
-        List<MethodInfo> methods = new ArrayList<MethodInfo>();
+        List<MethodInfo> methods = new ArrayList<>();
         for (Collection<MethodInfo> col : operations.values()) {
             methods.addAll(col);
         }
 
-        // sort the methods by name A..Z
-        Collections.sort(methods, new Comparator<MethodInfo>() {
-            public int compare(MethodInfo o1, MethodInfo o2) {
-                return o1.getMethod().getName().compareTo(o2.getMethod().getName());
-            }
-        });
+        if (methods.size() > 1) {
+            // sort the methods by name A..Z
+            methods.sort(Comparator.comparing(o -> o.getMethod().getName()));
+        }
         return methods;
+    }
+
+    /**
+     * Does any of the methods have a Canel @Handler annotation.
+     */
+    public boolean hasAnyMethodHandlerAnnotation() {
+        return !operationsWithHandlerAnnotation.isEmpty();
     }
 
     /**
@@ -1153,7 +1213,7 @@ public class BeanInfo {
     private List<MethodInfo> getOperations(String methodName) {
         // do not use qualifier for name
         if (methodName.contains("(")) {
-            methodName = ObjectHelper.before(methodName, "(");
+            methodName = StringHelper.before(methodName, "(");
         }
 
         List<MethodInfo> answer = operations.get(methodName);
@@ -1166,7 +1226,7 @@ public class BeanInfo {
             if (IntrospectionSupport.isGetter(method)) {
                 String shorthandMethodName = IntrospectionSupport.getGetterShorthandName(method);
                 // if the two names matches then see if we can find it using that name
-                if (methodName.equals(shorthandMethodName)) {
+                if (methodName != null && methodName.equals(shorthandMethodName)) {
                     return operations.get(method.getName());
                 }
             }

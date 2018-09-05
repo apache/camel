@@ -17,6 +17,8 @@
 package org.apache.camel.component.atmosphere.websocket;
 
 import java.io.IOException;
+import java.util.Map;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,9 +36,20 @@ import org.apache.camel.http.common.HttpConsumer;
  */
 public class CamelWebSocketServlet extends CamelHttpTransportServlet {
     private static final long serialVersionUID = 1764707448550670635L;
+    private static final String RESEND_ALL_WEBSOCKET_EVENTS_PARAM_KEY = "events";
+    private boolean enableEventsResending;
 
     @Override
-    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+
+        initParameters(config);
+
+        enrichConsumers(config);
+    }
+
+    @Override
+    protected void doService(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.trace("Service: {}", request);
 
         // Is there a consumer registered for the request.
@@ -74,5 +87,20 @@ public class CamelWebSocketServlet extends CamelHttpTransportServlet {
         log.debug("Dispatching to Websocket Consumer at {}", consumer.getPath());
         ((WebsocketConsumer)consumer).service(request, response);
     }
-    
+
+    private void initParameters(ServletConfig config) {
+        String eventsResendingParameter = config.getInitParameter(RESEND_ALL_WEBSOCKET_EVENTS_PARAM_KEY);
+        if ("true".equals(eventsResendingParameter)) {
+            log.debug("Events resending enabled");
+            enableEventsResending = true;
+        }
+    }
+
+    private void enrichConsumers(ServletConfig config) throws ServletException {
+        for (Map.Entry<String, HttpConsumer> httpConsumerEntry : getConsumers().entrySet()) {
+            WebsocketConsumer consumer = (WebsocketConsumer) httpConsumerEntry.getValue();
+            consumer.configureFramework(config);
+            consumer.configureEventsResending(enableEventsResending);
+        }
+    }
 }

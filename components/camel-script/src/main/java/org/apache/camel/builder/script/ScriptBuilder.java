@@ -108,7 +108,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
             this.scriptText = scriptText;
         }
         if (scriptEngineFactory == null) {
-            this.scriptEngine = createScriptEngine(scriptLanguage);
+            this.scriptEngine = createScriptEngine(scriptLanguage, false);
             this.scriptEngineFactory = lookupScriptEngineFactory(scriptLanguage);
         } else {
             this.scriptEngineFactory = scriptEngineFactory;
@@ -194,7 +194,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
      */
     public ScriptBuilder attribute(String name, Object value) {
         if (attributes == null) {
-            attributes = new HashMap<String, Object>();
+            attributes = new HashMap<>();
         }
         attributes.put(name, value);
         return this;
@@ -261,6 +261,13 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         return new ScriptBuilder("jruby", scriptText);
     }
 
+    /**
+     * Whether the given language is a language that is supported by a scripting engine.
+     */
+    public static boolean supportScriptLanguage(String language) {
+        return createScriptEngine(language, true) != null;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -318,19 +325,19 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         }
 
         // fallback to get engine by name
-        ScriptEngine engine = createScriptEngine(language);
+        ScriptEngine engine = createScriptEngine(language, true);
         if (engine != null) {
             return engine.getFactory();
         }
         return null;
     }
 
-    protected static ScriptEngine createScriptEngine(String language) {
+    protected static ScriptEngine createScriptEngine(String language, boolean allowNull) {
         ScriptEngine engine = tryCreateScriptEngine(language, ScriptBuilder.class.getClassLoader());
         if (engine == null) {
             engine = tryCreateScriptEngine(language, Thread.currentThread().getContextClassLoader());
         }
-        if (engine == null) {
+        if (engine == null && !allowNull) {
             throw new IllegalArgumentException("No script engine could be created for: " + language);
         }
         return engine;
@@ -489,7 +496,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         context.setAttribute("body", in.getBody(), scope);
         if (exchange.hasOut()) {
             Message out = exchange.getOut();
-            context.setAttribute("out", out , scope);
+            context.setAttribute("out", out, scope);
             context.setAttribute("response", out, scope);
         }
         // to make using properties component easier

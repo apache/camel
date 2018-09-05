@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,6 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class SedaConcurrentConsumersNPEIssueTest extends ContextTestSupport {
 
+    @Test
     public void testSendToSeda() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -39,10 +42,11 @@ public class SedaConcurrentConsumersNPEIssueTest extends ContextTestSupport {
             fail("Should have thrown exception");
         } catch (FailedToStartRouteException e) {
             assertEquals("Failed to start route first because of Multiple consumers for the same endpoint is not allowed:"
-                    + " Endpoint[seda://foo?concurrentConsumers=5]", e.getMessage());
+                    + " seda://foo?concurrentConsumers=5", e.getMessage());
         }
     }
 
+    @Test
     public void testStartThird() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -59,7 +63,7 @@ public class SedaConcurrentConsumersNPEIssueTest extends ContextTestSupport {
             fail("Should have thrown exception");
         } catch (FailedToStartRouteException e) {
             assertEquals("Failed to start route first because of Multiple consumers for the same endpoint is not allowed:"
-                    + " Endpoint[seda://foo?concurrentConsumers=5]", e.getMessage());
+                    + " seda://foo?concurrentConsumers=5", e.getMessage());
         }
     }
 

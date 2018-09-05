@@ -29,7 +29,7 @@ public class InfinispanSyncConsumerTest extends InfinispanTestSupport {
     @Test
     public void consumerReceivedPreAndPostEntryCreatedEventNotifications() throws Exception {
         mockResult.expectedMessageCount(2);
-        mockResult.setMinimumResultWaitTime(900);
+        mockResult.setResultMinimumWaitTime(900);
 
         currentCache().put(KEY_ONE, VALUE_ONE);
         mockResult.assertIsSatisfied();
@@ -40,7 +40,7 @@ public class InfinispanSyncConsumerTest extends InfinispanTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("infinispan://localhost?cacheContainer=#cacheContainer&sync=false&eventTypes=CACHE_ENTRY_CREATED")
+                from("infinispan?cacheContainer=#cacheContainer&sync=false&eventTypes=CACHE_ENTRY_CREATED")
                         .delayer(500)
                         .to("mock:result");
             }

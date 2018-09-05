@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class StartingRoutesErrorReportedTest extends ContextTestSupport {
 
+    @Test
     public void testInvalidFrom() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -40,6 +43,7 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testInvalidTo() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -56,6 +60,24 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
         }
     }
 
+    @Test
+    public void testMaskPassword() throws Exception {
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("stub:foo?password=secret&beer=yes").routeId("route2").to("direct:result?foo=bar");
+                }
+            });
+            context.start();
+            fail();
+        } catch (FailedToCreateRouteException e) {
+            assertTrue(e.getMessage().startsWith("Failed to create route route2 at: >>> To[direct:result?foo=bar] <<< in route:"
+                    + " Route(route2)[[From[stub:foo?password=xxxxxx&beer=yes]] -> [... because of"));
+        }
+    }
+
+    @Test
     public void testInvalidBean() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -74,6 +96,7 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testUnavailableDataFormatOnClasspath() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {

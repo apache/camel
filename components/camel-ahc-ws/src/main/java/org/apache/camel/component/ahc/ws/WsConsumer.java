@@ -51,6 +51,10 @@ public class WsConsumer extends DefaultConsumer {
         sendMessageInternal(message);
     }
 
+    public void sendMessage(Throwable throwable) {
+        sendMessageInternal(throwable);
+    }
+
     public void sendMessage(byte[] message) {
         sendMessageInternal(message);
     }
@@ -68,7 +72,12 @@ public class WsConsumer extends DefaultConsumer {
 
         //TODO may set some headers with some meta info (e.g., socket info, unique-id for correlation purpose, etc0 
         // set the body
-        exchange.getIn().setBody(message);
+
+        if (message instanceof Throwable) {
+            exchange.setException((Throwable) message);
+        } else {
+            exchange.getIn().setBody(message);
+        }
 
         // send exchange using the async routing engine
         getAsyncProcessor().process(exchange, new AsyncCallback() {

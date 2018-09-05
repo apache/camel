@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class AdviceWithMockEndpointsTest extends ContextTestSupport {
 
+    @Test
     public void testNoAdvised() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
@@ -34,6 +37,8 @@ public class AdviceWithMockEndpointsTest extends ContextTestSupport {
     }
 
     // START SNIPPET: e1
+    // tag::e1[]
+    @Test
     public void testAdvisedMockEndpoints() throws Exception {
         // advice the first route using the inlined AdviceWith route builder
         // which has extended capabilities than the regular route builder
@@ -64,9 +69,12 @@ public class AdviceWithMockEndpointsTest extends ContextTestSupport {
         assertNotNull(context.hasEndpoint("mock:direct:foo"));
         assertNotNull(context.hasEndpoint("mock:log:foo"));
     }
+    // end::e1[]
     // END SNIPPET: e1
 
     // START SNIPPET: e2
+    // tag::e2[]
+    @Test
     public void testAdvisedMockEndpointsWithPattern() throws Exception {
         // advice the first route using the inlined AdviceWith route builder
         // which has extended capabilities than the regular route builder
@@ -97,10 +105,12 @@ public class AdviceWithMockEndpointsTest extends ContextTestSupport {
         assertNull(context.hasEndpoint("mock:direct:start"));
         assertNull(context.hasEndpoint("mock:direct:foo"));
     }
+    // end::e2[]
     // END SNIPPET: e2
 
 
     // START SNIPPET: route
+    // tag::route[]
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -112,5 +122,6 @@ public class AdviceWithMockEndpointsTest extends ContextTestSupport {
             }
         };
     }
+    // end::route[]
     // END SNIPPET: route
 }

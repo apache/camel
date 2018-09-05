@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
@@ -97,6 +99,7 @@ public class RoutePolicyCallbackTest extends ContextTestSupport {
         return policy;
     }
 
+    @Test
     public void testCallback() throws Exception {
         policy = getAndInitMyRoutePolicy();
 

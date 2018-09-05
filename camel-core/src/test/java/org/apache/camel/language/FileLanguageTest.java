@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language;
 
+import org.junit.Test;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -49,15 +51,18 @@ public class FileLanguageTest extends LanguageTestSupport {
         return "file";
     }
 
+    @Test
     public void testConstantExpression() throws Exception {
         assertExpression("MyBigFile.txt", "MyBigFile.txt");
     }
 
+    @Test
     public void testMessageId() throws Exception {
         assertExpression("${id}", exchange.getIn().getMessageId());
         assertExpression("${id}.bak", exchange.getIn().getMessageId() + ".bak");
     }
 
+    @Test
     public void testInvalidSyntax() throws Exception {
         assertExpression("${file:onlyname}", file.getName());
         try {
@@ -68,6 +73,7 @@ public class FileLanguageTest extends LanguageTestSupport {
         }
     }
 
+    @Test
     public void testFile() throws Exception {
         assertExpression("${file:ext}", "txt");
         assertExpression("${file:name.ext}", "txt");
@@ -90,6 +96,7 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertEquals(file.lastModified(), modified.longValue());
     }
 
+    @Test
     public void testFileUsingAlternativeStartToken() throws Exception {
         assertExpression("$simple{file:ext}", "txt");
         assertExpression("$simple{file:name.ext}", "txt");
@@ -109,6 +116,7 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertEquals(file.lastModified(), modified);
     }
 
+    @Test
     public void testDate() throws Exception {
         String now = new SimpleDateFormat("yyyyMMdd").format(new Date());
         assertExpression("backup-${date:now:yyyyMMdd}", "backup-" + now);
@@ -127,6 +135,7 @@ public class FileLanguageTest extends LanguageTestSupport {
         }
     }
 
+    @Test
     public void testDateUsingAlternativeStartToken() throws Exception {
         String now = new SimpleDateFormat("yyyyMMdd").format(new Date());
         assertExpression("backup-$simple{date:now:yyyyMMdd}", "backup-" + now);
@@ -145,31 +154,36 @@ public class FileLanguageTest extends LanguageTestSupport {
         }
     }
 
+    @Test
     public void testSimpleAndFile() throws Exception {
         assertExpression("backup-${in.header.foo}-${file:name.noext}.bak", "backup-abc-test" + File.separator + "hello.bak");
         assertExpression("backup-${in.header.foo}-${file:onlyname.noext}.bak", "backup-abc-hello.bak");
     }
 
+    @Test
     public void testSimpleAndFileAndBean() throws Exception {
         assertExpression("backup-${in.header.foo}-${bean:generator}-${file:name.noext}.bak", "backup-abc-generatorbybean-test" + File.separator + "hello.bak");
         assertExpression("backup-${in.header.foo}-${bean:generator}-${file:onlyname.noext}.bak", "backup-abc-generatorbybean-hello.bak");
     }
 
+    @Test
     public void testBean() throws Exception {
         assertExpression("backup-${bean:generator}.txt", "backup-generatorbybean.txt");
         assertExpression("backup-${bean:generator.generateFilename}.txt", "backup-generatorbybean.txt");
     }
 
+    @Test
     public void testNoEscapeAllowed() throws Exception {
         exchange.getIn().setHeader(Exchange.FILE_NAME, "hello.txt");
         assertExpression("target\\newdir\\onwindows\\${file:name}", "target\\newdir\\onwindows\\hello.txt");
     }
 
+    @Test
     public void testFileNameDoubleExtension() throws Exception {
         file = new File("target/filelanguage/test/bigfile.tar.gz");
 
         String uri = "file://target/filelanguage?fileExist=Override";
-        GenericFile<File> gf = FileConsumer.asGenericFile("target/filelanguage", file, null);
+        GenericFile<File> gf = FileConsumer.asGenericFile("target/filelanguage", file, null, false);
 
         FileEndpoint endpoint = getMandatoryEndpoint(uri, FileEndpoint.class);
 
@@ -188,7 +202,7 @@ public class FileLanguageTest extends LanguageTestSupport {
 
         // get the file handle
         file = new File("target/filelanguage/test/hello.txt");
-        GenericFile<File> gf = FileConsumer.asGenericFile("target/filelanguage", file, null);
+        GenericFile<File> gf = FileConsumer.asGenericFile("target/filelanguage", file, null, false);
 
         FileEndpoint endpoint = getMandatoryEndpoint(uri, FileEndpoint.class);
 
@@ -204,6 +218,7 @@ public class FileLanguageTest extends LanguageTestSupport {
         return answer;
     }
 
+    @Test
     public void testIllegalSyntax() throws Exception {
         try {
             // it should be with colon
@@ -228,6 +243,7 @@ public class FileLanguageTest extends LanguageTestSupport {
         }
     }
 
+    @Test
     public void testConstantFilename() throws Exception {
         assertExpression("hello.txt", "hello.txt");
     }

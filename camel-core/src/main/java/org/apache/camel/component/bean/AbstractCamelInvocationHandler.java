@@ -19,6 +19,7 @@ package org.apache.camel.component.bean;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,13 +45,14 @@ import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractCamelInvocationHandler implements InvocationHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelInvocationHandler.class);
-    private static final List<Method> EXCLUDED_METHODS = new ArrayList<Method>();
+    private static final List<Method> EXCLUDED_METHODS = new ArrayList<>();
     private static ExecutorService executorService;
     protected final Endpoint endpoint;
     protected final Producer producer;
@@ -99,13 +101,29 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
         }
     }
 
-    public abstract Object doInvokeProxy(final Object proxy, final Method method, final Object[] args) throws Throwable;
+    public abstract Object doInvokeProxy(Object proxy, Method method, Object[] args) throws Throwable;
 
     @SuppressWarnings("unchecked")
     protected Object invokeProxy(final Method method, final ExchangePattern pattern, Object[] args, boolean binding) throws Throwable {
         final Exchange exchange = new DefaultExchange(endpoint, pattern);
 
-        if (binding) {
+        //Need to check if there are mutiple arguments and the parameters have no annotations for binding,
+        //then use the original bean invocation.
+        
+        boolean canUseBinding = method.getParameterCount() == 1;
+
+        if (!canUseBinding) {
+            for (Parameter parameter : method.getParameters()) {
+                if (parameter.isAnnotationPresent(Header.class)
+                        || parameter.isAnnotationPresent(Headers.class)
+                        || parameter.isAnnotationPresent(ExchangeProperty.class)
+                        || parameter.isAnnotationPresent(Body.class)) {
+                    canUseBinding = true;
+                }
+            }
+        }
+
+        if (binding && canUseBinding) {
             // in binding mode we bind the passed in arguments (args) to the created exchange
             // using the existing Camel @Body, @Header, @Headers, @ExchangeProperty annotations
             // if no annotation then its bound as the message body
@@ -168,7 +186,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
         final boolean isFuture = method.getReturnType() == Future.class;
 
         // create task to execute the proxy and gather the reply
-        FutureTask<Object> task = new FutureTask<Object>(new Callable<Object>() {
+        FutureTask<Object> task = new FutureTask<>(new Callable<Object>() {
             public Object call() throws Exception {
                 // process the exchange
                 LOG.trace("Proxied method call {} invoking producer: {}", method.getName(), producer);
@@ -250,11 +268,11 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
         // type of the return type
         // due type erasure, so we have to gather it based on a String
         // representation
-        String name = ObjectHelper.between(type.toString(), "<", ">");
+        String name = StringHelper.between(type.toString(), "<", ">");
         if (name != null) {
             if (name.contains("<")) {
                 // we only need the outer type
-                name = ObjectHelper.before(name, "<");
+                name = StringHelper.before(name, "<");
             }
             return context.getClassResolver().resolveMandatoryClass(name);
         } else {
@@ -284,7 +302,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
      * <p/>
      * It looks in the exception hierarchy from the caused exception and matches
      * this against the declared exceptions being thrown on the method.
-     * 
+     *
      * @param cause the caused exception
      * @param method the method
      * @return the exception to throw, or <tt>null</tt> if not possible to find

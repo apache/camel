@@ -81,6 +81,32 @@ public final class OgnlHelper {
     }
 
     /**
+     * Validates whether the method name is using valid java identifiers in the name
+     * Will throw {@link IllegalArgumentException} if the method name is invalid.
+     */
+    public static void validateMethodName(String method) {
+        if (ObjectHelper.isEmpty(method)) {
+            return;
+        }
+        for (int i = 0; i < method.length(); i++) {
+            char ch = method.charAt(i);
+            if (i == 0 && '.' == ch) {
+                // its a dot before a method name
+                continue;
+            }
+            if (ch == '(' || ch == '[' || ch == '.' || ch == '?') {
+                // break when method name ends and sub method or arguments begin
+                break;
+            }
+            if (i == 0 && !Character.isJavaIdentifierStart(ch)) {
+                throw new IllegalArgumentException("Method name must start with a valid java identifier at position: 0 in method: " + method);
+            } else if (!Character.isJavaIdentifierPart(ch)) {
+                throw new IllegalArgumentException("Method name must be valid java identifier at position: " + i + " in method: " + method);
+            }
+        }
+    }
+
+    /**
      * Tests whether or not the given Camel OGNL expression is using the null safe operator or not.
      *
      * @param ognlExpression the Camel OGNL expression
@@ -129,7 +155,7 @@ public final class OgnlHelper {
         }
 
         if (ognlExpression.contains("[")) {
-            return ObjectHelper.before(ognlExpression, "[");
+            return StringHelper.before(ognlExpression, "[");
         }
         return ognlExpression;
     }
@@ -154,7 +180,7 @@ public final class OgnlHelper {
                 value = null;
             }
 
-            return new KeyValueHolder<String, String>(key, value);
+            return new KeyValueHolder<>(key, value);
         }
 
         return null;
@@ -167,9 +193,10 @@ public final class OgnlHelper {
      *
      * @param ognl the ognl expression
      * @return a list of methods, will return an empty list, if ognl expression has no methods
+     * @throws IllegalArgumentException if the last method has a missing ending parenthesis
      */
     public static List<String> splitOgnl(String ognl) {
-        List<String> methods = new ArrayList<String>();
+        List<String> methods = new ArrayList<>();
 
         // return an empty list if ognl is empty
         if (ObjectHelper.isEmpty(ognl)) {
@@ -241,11 +268,6 @@ public final class OgnlHelper {
                     sb.append(ch);
                 }
 
-                // check for end of parenthesis
-                if (ch == ')') {
-                    parenthesisBracket = false;
-                }
-
                 // only advance if already begun on the new method
                 if (j > 0) {
                     j++;
@@ -256,6 +278,14 @@ public final class OgnlHelper {
         // add remainder in buffer when reached end of data
         if (sb.length() > 0) {
             methods.add(sb.toString());
+        }
+
+        String last = methods.isEmpty() ? null : methods.get(methods.size() - 1);
+        if (parenthesisBracket && last != null) {
+            // there is an unclosed parenthesis bracket on the last method, so it should end with a parenthesis
+            if (last.contains("(") && !last.endsWith(")")) {
+                throw new IllegalArgumentException("Method should end with parenthesis, was " + last);
+            }
         }
 
         return methods;

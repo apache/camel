@@ -21,14 +21,13 @@ import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
-import com.datastax.driver.core.policies.LoadBalancingPolicy;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -37,10 +36,12 @@ import org.apache.camel.utils.cassandra.CassandraLoadBalancingPolicies;
 import org.apache.camel.utils.cassandra.CassandraSessionHolder;
 
 /**
- * Cassandra 2 CQL3 endpoint
+ * The cql component aims at integrating Cassandra 2.0+ using the CQL3 API (not the Thrift API).
+ *
+ * It's based on Cassandra Java Driver provided by DataStax.
  */
-@UriEndpoint(scheme = "cql", title = "Cassandra CQL", syntax = "cql:beanRef:hosts:port/keyspace", consumerClass = CassandraConsumer.class, label = "database,nosql")
-public class CassandraEndpoint extends DefaultEndpoint {
+@UriEndpoint(firstVersion = "2.15.0", scheme = "cql", title = "Cassandra CQL", syntax = "cql:beanRef:hosts:port/keyspace", consumerClass = CassandraConsumer.class, label = "database,nosql")
+public class CassandraEndpoint extends ScheduledPollEndpoint {
 
     private volatile CassandraSessionHolder sessionHolder;
 
@@ -70,11 +71,7 @@ public class CassandraEndpoint extends DefaultEndpoint {
     private ConsistencyLevel consistencyLevel;
     @UriParam
     private String loadBalancingPolicy;
-
-    /**
-     * How many rows should be retrieved in message body
-     */
-    @UriParam
+    @UriParam(javaType = "java.lang.String")
     private ResultSetConversionStrategy resultSetConversionStrategy = ResultSetConversionStrategies.all();
 
     public CassandraEndpoint(String endpointUri, Component component) {
@@ -93,7 +90,9 @@ public class CassandraEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new CassandraConsumer(this, processor);
+        CassandraConsumer consumer = new CassandraConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public boolean isSingleton() {

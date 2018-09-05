@@ -16,12 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Properties;
+import org.apache.camel.ExchangeProperties;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -29,8 +31,9 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class DynamicRouterExchangePropertiesTest extends ContextTestSupport {
 
-    private static List<String> bodies = new ArrayList<String>();
+    private static List<String> bodies = new ArrayList<>();
 
+    @Test
     public void testDynamicRouter() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:a").expectedPropertyReceived("invoked", 1);
@@ -77,7 +80,7 @@ public class DynamicRouterExchangePropertiesTest extends ContextTestSupport {
      * @param properties the exchange properties where we can store state between invocations
      * @return endpoints to go, or <tt>null</tt> to indicate the end
      */
-    public String slip(String body, @Properties Map<String, Object> properties) {
+    public String slip(String body, @ExchangeProperties Map<String, Object> properties) {
         bodies.add(body);
 
         // get the state from the exchange properties and keep track how many times

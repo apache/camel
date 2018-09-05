@@ -25,6 +25,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.RouteAware;
 import org.apache.camel.Service;
+import org.apache.camel.Suspendable;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteContext;
@@ -97,9 +98,8 @@ public class EventDrivenConsumerRoute extends DefaultRoute {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     public List<Processor> filter(String pattern) {
-        List<Processor> match = new ArrayList<Processor>();
+        List<Processor> match = new ArrayList<>();
         doFilter(pattern, navigate(), match);
         return match;
     }
@@ -129,6 +129,6 @@ public class EventDrivenConsumerRoute extends DefaultRoute {
     }
 
     public boolean supportsSuspension() {
-        return consumer instanceof SuspendableService;
+        return consumer instanceof Suspendable && consumer instanceof SuspendableService;
     }
 }

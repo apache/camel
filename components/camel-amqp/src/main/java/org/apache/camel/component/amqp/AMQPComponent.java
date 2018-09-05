@@ -17,20 +17,20 @@
 package org.apache.camel.component.amqp;
 
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
+import java.util.Set;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.JmsConfiguration;
-import org.apache.qpid.amqp_1_0.jms.impl.ConnectionFactoryImpl;
-import org.apache.qpid.client.AMQConnectionFactory;
+import org.apache.qpid.jms.JmsConnectionFactory;
 
 /**
- * This component supports the AMQP protocol using the Client API of the Apache Qpid project.
+ * Messaging with AMQP protocol using Apache QPid Client.
  */
 public class AMQPComponent extends JmsComponent {
+
+    // Constructors
 
     public AMQPComponent() {
         super(AMQPEndpoint.class);
@@ -48,19 +48,44 @@ public class AMQPComponent extends JmsComponent {
         setConnectionFactory(connectionFactory);
     }
 
-    public static Component amqpComponent(String uri, boolean old) throws MalformedURLException, URISyntaxException {
-        if (old) {
-            return amqpComponentOld(uri);
+    // Life-cycle
+
+    @Override
+    protected void doStart() throws Exception {
+        Set<AMQPConnectionDetails> connectionDetails = getCamelContext().getRegistry().findByType(AMQPConnectionDetails.class);
+        if (connectionDetails.size() == 1) {
+            AMQPConnectionDetails details = connectionDetails.iterator().next();
+            JmsConnectionFactory connectionFactory = new JmsConnectionFactory(details.username(), details.password(), details.uri());
+            if (details.setTopicPrefix()) {
+                connectionFactory.setTopicPrefix("topic://");
+            }
+            setConnectionFactory(connectionFactory);
         }
-        return new AMQPComponent(ConnectionFactoryImpl.createFromURL(uri));
+        super.doStart();
     }
 
-    public static Component amqpComponentOld(String uri) throws URISyntaxException {
-        return new AMQPComponent(new AMQConnectionFactory(uri));
+    // Factory methods
+
+    /**
+     * Use {@code amqpComponent(String uri)} instead.
+     */
+    @Deprecated
+    public static AMQPComponent amqp10Component(String uri) throws MalformedURLException {
+        JmsConnectionFactory connectionFactory = new JmsConnectionFactory(uri);
+        connectionFactory.setTopicPrefix("topic://");
+        return new AMQPComponent(connectionFactory);
     }
 
-    public static Component amqpComponent(String uri) throws MalformedURLException {
-        return new AMQPComponent(ConnectionFactoryImpl.createFromURL(uri));
+    public static AMQPComponent amqpComponent(String uri) {
+        JmsConnectionFactory connectionFactory = new JmsConnectionFactory(uri);
+        connectionFactory.setTopicPrefix("topic://");
+        return new AMQPComponent(connectionFactory);
+    }
+
+    public static AMQPComponent amqpComponent(String uri, String username, String password) {
+        JmsConnectionFactory connectionFactory = new JmsConnectionFactory(username, password, uri);
+        connectionFactory.setTopicPrefix("topic://");
+        return new AMQPComponent(connectionFactory);
     }
 
 }

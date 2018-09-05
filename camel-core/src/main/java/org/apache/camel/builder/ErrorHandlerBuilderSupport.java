@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.ErrorHandlerSupport;
+import org.apache.camel.processor.RedeliveryErrorHandler;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
@@ -35,14 +36,14 @@ import org.apache.camel.util.ObjectHelper;
  * @version 
  */
 public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder {
-    private Map<RouteContext, List<OnExceptionDefinition>> onExceptions = new HashMap<RouteContext, List<OnExceptionDefinition>>();
+    private Map<RouteContext, List<OnExceptionDefinition>> onExceptions = new HashMap<>();
     private ExceptionPolicyStrategy exceptionPolicyStrategy;
 
     public void addErrorHandlers(RouteContext routeContext, OnExceptionDefinition exception) {
         // only add if we not already have it
         List<OnExceptionDefinition> list = onExceptions.get(routeContext);
         if (list == null) {
-            list = new ArrayList<OnExceptionDefinition>();
+            list = new ArrayList<>();
             onExceptions.put(routeContext, list);
         }
         if (!list.contains(exception)) {
@@ -52,7 +53,7 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
 
     protected void cloneBuilder(ErrorHandlerBuilderSupport other) {
         if (!onExceptions.isEmpty()) {
-            Map<RouteContext, List<OnExceptionDefinition>> copy = new HashMap<RouteContext, List<OnExceptionDefinition>>(onExceptions);
+            Map<RouteContext, List<OnExceptionDefinition>> copy = new HashMap<>(onExceptions);
             other.onExceptions = copy;
         }
         other.exceptionPolicyStrategy = exceptionPolicyStrategy;
@@ -67,6 +68,13 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
                 for (OnExceptionDefinition exception : list) {
                     handlerSupport.addExceptionPolicy(routeContext, exception);
                 }
+            }
+        }
+        if (handler instanceof RedeliveryErrorHandler) {
+            boolean original = ((RedeliveryErrorHandler) handler).isUseOriginalMessagePolicy();
+            if (original) {
+                // ensure allow original is turned on
+                routeContext.setAllowUseOriginalMessage(true);
             }
         }
     }

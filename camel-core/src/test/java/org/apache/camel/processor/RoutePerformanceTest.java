@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -38,6 +40,7 @@ public class RoutePerformanceTest extends ContextTestSupport {
     private SimpleDataSet dataSet = new SimpleDataSet(size);
     private String uri = "mock:results";
 
+    @Test
     public void testPerformance() throws Exception {
         StopWatch watch = new StopWatch();
 
@@ -48,7 +51,7 @@ public class RoutePerformanceTest extends ContextTestSupport {
         // wait 30 sec for slow servers
         MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
-        log.info("RoutePerformanceTest: Sent: " + size + " Took: " + watch.taken() + " ms");
+        log.info("RoutePerformanceTest: Sent: {} Took: {} ms", size, watch.taken());
     }
 
     @Override
@@ -60,7 +63,7 @@ public class RoutePerformanceTest extends ContextTestSupport {
 
     @Override
     protected Context createJndiContext() throws Exception {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("foo", 123);
         dataSet.setDefaultHeaders(headers);
 

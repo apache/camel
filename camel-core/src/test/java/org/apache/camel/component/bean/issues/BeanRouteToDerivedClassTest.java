@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -33,6 +35,7 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testDerivedClassCalled() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -48,6 +51,7 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
         assertEquals("Derived class should have been invoked", "Hello World", derived.getAndClearBody());
     }
     
+    @Test
     public void testDerivedClassCalledWithNoCustomProcessor() throws Exception {
         context.getTypeConverterRegistry().addTypeConverter(Processor.class, MyMessageListener.class, new MyMessageToProcessorConverter());
 
@@ -70,8 +74,13 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
         out = template.requestBody("direct:other", new MyMessage("Hello World"));
         assertEquals("Derived class should NOT have been invoked", null, derived.getAndClearBody());
         assertEquals("Bye World", out.toString());
+
+        out = template.requestBody("direct:other", new MyMessage("Hello Again"));
+        assertEquals("Derived class should NOT have been invoked", null, derived.getAndClearBody());
+        assertEquals("Bye World", out.toString());
     }
     
+    @Test
     public void testDerivedClassCalledWithCustomProcessor() throws Exception {
         context.getTypeConverterRegistry().addTypeConverter(Processor.class, MyMessageListener.class, new MyMessageToProcessorConverter());
 
@@ -94,6 +103,10 @@ public class BeanRouteToDerivedClassTest extends ContextTestSupport {
         assertEquals("Hello World", out.toString());
 
         out = template.requestBody("direct:other", new MyMessage("Hello World"));
+        assertEquals("Derived class should NOT have been invoked", null, derived.getAndClearBody());
+        assertEquals("Bye World", out.toString());
+
+        out = template.requestBody("direct:other", new MyMessage("Hello Again"));
         assertEquals("Derived class should NOT have been invoked", null, derived.getAndClearBody());
         assertEquals("Bye World", out.toString());
     }

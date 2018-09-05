@@ -93,14 +93,14 @@ public class S3ComponentNonExistingBucketTest extends CamelTestSupport {
     public void sendCustomHeaderValues() throws Exception {
         result.expectedMessageCount(1);
         final Date now = new Date();
-        final Map<String, String> s3Headers = new HashMap<String, String>();
+        final Map<String, String> s3Headers = new HashMap<>();
         s3Headers.put("x-aws-s3-header", "extra");
 
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(S3Constants.STORAGE_CLASS, "STANDARD");
                 exchange.getIn().setHeader(S3Constants.KEY, "CamelUnitTest");
-                exchange.getIn().setHeader(S3Constants.CONTENT_LENGTH, 2L);
+                exchange.getIn().setHeader(S3Constants.CONTENT_LENGTH, 26L);
                 exchange.getIn().setHeader(S3Constants.CONTENT_TYPE, "text/html");
                 exchange.getIn().setHeader(S3Constants.CACHE_CONTROL, "no-cache");
                 exchange.getIn().setHeader(S3Constants.CONTENT_DISPOSITION, "attachment;");
@@ -120,7 +120,7 @@ public class S3ComponentNonExistingBucketTest extends CamelTestSupport {
         PutObjectRequest putObjectRequest = client.putObjectRequests.get(0);
         assertEquals("STANDARD", putObjectRequest.getStorageClass());
         assertEquals("nonExistingBucket", putObjectRequest.getBucketName());
-        assertEquals(2L, putObjectRequest.getMetadata().getContentLength());
+        assertEquals(26L, putObjectRequest.getMetadata().getContentLength());
         assertEquals("text/html", putObjectRequest.getMetadata().getContentType());
         assertEquals("no-cache", putObjectRequest.getMetadata().getCacheControl());
         assertEquals("attachment;", putObjectRequest.getMetadata().getContentDisposition());

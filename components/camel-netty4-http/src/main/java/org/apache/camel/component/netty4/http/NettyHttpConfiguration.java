@@ -33,33 +33,39 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class NettyHttpConfiguration extends NettyConfiguration {
 
+    @UriPath(enums = "http,https") @Metadata(required = "true")
+    private String protocol;
     @UriPath @Metadata(required = "true")
+    private String host;
+    @UriPath(name = "port")
+    private int dummy;
+    @UriPath
     private String path;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private boolean urlDecodeHeaders;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "consumer,advanced", defaultValue = "true")
     private boolean mapHeaders = true;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private boolean compression;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean transferException;
-    @UriParam
+    @UriParam(label = "consumer")
     private boolean matchOnUriPrefix;
     @UriParam
     private boolean bridgeEndpoint;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean disableStreamCache;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean send503whenSuspended = true;
-    @UriParam(defaultValue = "" + 1024 * 1024)
+    @UriParam(label = "consumer,advanced", defaultValue = "" + 1024 * 1024)
     private int chunkedMaxContentLength = 1024 * 1024;
-    @UriParam(label = "consumer", defaultValue = "8192")
+    @UriParam(label = "consumer,advanced", defaultValue = "8192")
     private int maxHeaderSize = 8192;
-    @UriParam(label = "producer", defaultValue = "200-299")
+    @UriParam(label = "producer,advanced", defaultValue = "200-299")
     private String okStatusCodeRange = "200-299";
-    @UriParam(label = "producer", defaultValue = "false")
+    @UriParam(label = "producer,advanced")
     private boolean useRelativePath;
     
     public NettyHttpConfiguration() {
@@ -76,14 +82,56 @@ public class NettyHttpConfiguration extends NettyConfiguration {
             // clone as NettyHttpConfiguration
             NettyHttpConfiguration answer = (NettyHttpConfiguration) clone();
             // make sure the lists is copied in its own instance
-            List<ChannelHandler> encodersCopy = new ArrayList<ChannelHandler>(getEncoders());
+            List<ChannelHandler> encodersCopy = new ArrayList<>(getEncoders());
             answer.setEncoders(encodersCopy);
-            List<ChannelHandler> decodersCopy = new ArrayList<ChannelHandler>(getDecoders());
+            List<ChannelHandler> decodersCopy = new ArrayList<>(getDecoders());
             answer.setDecoders(decodersCopy);
             return answer;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    /**
+     * The protocol to use which is either http or https
+     */
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+    @Override
+    public String getHost() {
+        // override to setup better documentation for netty-http
+        return super.getHost();
+    }
+
+    /**
+     * The local hostname such as localhost, or 0.0.0.0 when being a consumer.
+     * The remote HTTP server hostname when using producer.
+     */
+    @Override
+    public void setHost(String host) {
+        // override to setup better documentation for netty-http
+        super.setHost(host);
+    }
+
+    @Override
+    public int getPort() {
+        // override to setup better documentation for netty-http
+        return super.getPort();
+    }
+
+    /**
+     * The port number. Is default 80 for http and 443 for https.
+     */
+    @Override
+    public void setPort(int port) {
+        // override to setup better documentation for netty-http
+        super.setPort(port);
     }
 
     public boolean isCompression() {
@@ -118,6 +166,9 @@ public class NettyHttpConfiguration extends NettyConfiguration {
      * in the response as a application/x-java-serialized-object content type.
      * On the producer side the exception will be deserialized and thrown as is, instead of the HttpOperationFailedException.
      * The caused exception is required to be serialized.
+     * <p/>
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
+     * data from the request to Java and that can be a potential security risk.
      */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
@@ -192,13 +243,16 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     }
 
     /**
-     * Determines whether or not the raw input stream from Netty HttpRequest#getContent() is cached or not
-     * (Camel will read the stream into a in light-weight memory based Stream caching) cache.
+     * Determines whether or not the raw input stream from Netty HttpRequest#getContent() or HttpResponset#getContent()
+     * is cached or not (Camel will read the stream into a in light-weight memory based Stream caching) cache.
      * By default Camel will cache the Netty input stream to support reading it multiple times to ensure it Camel
      * can retrieve all data from the stream. However you can set this option to true when you for example need to
      * access the raw stream, such as streaming it directly to a file or other persistent store. Mind that
      * if you enable this option, then you cannot read the Netty stream multiple times out of the box, and you would
-     * need manually to reset the reader index on the Netty raw stream.
+     * need manually to reset the reader index on the Netty raw stream. Also Netty will auto-close the Netty stream
+     * when the Netty HTTP server/HTTP client is done processing, which means that if the asynchronous routing engine is in
+     * use then any asynchronous thread that may continue routing the {@link org.apache.camel.Exchange} may not
+     * be able to read the Netty stream, because Netty has closed it.
      */
     public void setDisableStreamCache(boolean disableStreamCache) {
         this.disableStreamCache = disableStreamCache;
@@ -253,7 +307,9 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     }
 
     /**
-     * The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.
+     * The status codes which are considered a success response. The values are inclusive. Multiple ranges can be
+     * defined, separated by comma, e.g. <tt>200-204,209,301-304</tt>. Each range must be a single number or from-to with the
+     * dash included.
      * <p/>
      * The default range is <tt>200-299</tt>
      */

@@ -18,10 +18,12 @@ package org.apache.camel.component.directvm;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
- * The direct-vm producer
+ * The Direct-VM producer.
  */
 public class DirectVmProducer extends DefaultAsyncProducer {
 
@@ -33,34 +35,54 @@ public class DirectVmProducer extends DefaultAsyncProducer {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
-        // send to consumer
-        DirectVmConsumer consumer = endpoint.getComponent().getConsumer(endpoint);
-        if (consumer == null) {
-            if (endpoint.isFailIfNoConsumers()) {
-                throw new DirectVmConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
-            } else {
-                log.debug("message ignored, no consumers available on endpoint: " + endpoint);
-            }
-        } else {
-            consumer.getProcessor().process(exchange);
-        }
-    }
-
-    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // send to consumer
         DirectVmConsumer consumer = endpoint.getComponent().getConsumer(endpoint);
+        
         if (consumer == null) {
             if (endpoint.isFailIfNoConsumers()) {
                 exchange.setException(new DirectVmConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange));
             } else {
-                log.debug("message ignored, no consumers available on endpoint: " + endpoint);
+                log.debug("message ignored, no consumers available on endpoint: {}", endpoint);
             }
             callback.done(true);
             return true;
-        } else {
-            return endpoint.getConsumer().getAsyncProcessor().process(exchange, callback);
         }
+        
+        final HeaderFilterStrategy headerFilterStrategy = endpoint.getHeaderFilterStrategy();
+
+        // Only clone the Exchange if we actually need to filter out properties or headers.
+        final Exchange submitted = (!endpoint.isPropagateProperties() || headerFilterStrategy != null) ? exchange.copy(true) : exchange;
+
+        // Clear properties in the copy if we are not propagating them.
+        if (!endpoint.isPropagateProperties()) {
+            submitted.getProperties().clear();
+        }
+        
+        // Filter headers by Header Filter Strategy if there is one set.
+        if (headerFilterStrategy != null) {
+            submitted.getIn().getHeaders().entrySet().removeIf(e -> headerFilterStrategy.applyFilterToCamelHeaders(e.getKey(), e.getValue(), submitted));
+        }
+        
+        return consumer.getAsyncProcessor().process(submitted, done -> {
+            Message msg = submitted.hasOut() ? submitted.getOut() : submitted.getIn();
+
+            if (headerFilterStrategy != null) {
+                msg.getHeaders().entrySet().removeIf(e -> headerFilterStrategy.applyFilterToExternalHeaders(e.getKey(), e.getValue(), submitted));
+            }
+
+            if (exchange != submitted) {
+                // only need to copy back if they are different
+                exchange.setException(submitted.getException());
+                exchange.getOut().copyFrom(msg);
+            }
+
+            if (endpoint.isPropagateProperties()) {
+                exchange.getProperties().putAll(submitted.getProperties());
+            }
+
+            callback.done(done);
+        });
     }
+    
 }

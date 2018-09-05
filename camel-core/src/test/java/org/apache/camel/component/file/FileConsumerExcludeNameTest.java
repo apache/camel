@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,28 +28,31 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileConsumerExcludeNameTest extends ContextTestSupport {
 
+    @Test
     public void testExludePreAndPostfixes() throws Exception {
         deleteDirectory("target/exclude");
         prepareFiles();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
-        mock.expectedBodiesReceived("Reports", "Reports");
+        mock.expectedBodiesReceivedInAnyOrder("Reports1", "Reports2", "Reports3");
+        mock.expectedMessageCount(3);
         mock.assertIsSatisfied();
     }
 
     private void prepareFiles() throws Exception {
         String url = "file://target/exclude";
         template.sendBodyAndHeader(url, "Hello World", Exchange.FILE_NAME, "hello.xml");
-        template.sendBodyAndHeader(url, "Reports", Exchange.FILE_NAME, "report1.txt");
+        template.sendBodyAndHeader(url, "Reports1", Exchange.FILE_NAME, "report1.txt");
         template.sendBodyAndHeader(url, "Bye World", Exchange.FILE_NAME, "secret.txt");
-        template.sendBodyAndHeader(url, "Reports", Exchange.FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader(url, "Reports2", Exchange.FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader(url, "Reports3", Exchange.FILE_NAME, "Report3.txt");
+        template.sendBodyAndHeader(url, "Secret2", Exchange.FILE_NAME, "Secret2.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/exclude/?exclude=^secret.*|.*xml$")
+                from("file://target/exclude/?initialDelay=0&delay=10&exclude=^secret.*|.*xml$")
                     .convertBodyTo(String.class).to("mock:result");
             }
         };

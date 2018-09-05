@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -28,6 +30,7 @@ public class MulticastSubUnitOfWorkTest extends ContextTestSupport {
 
     private static int counter;
 
+    @Test
     public void testOK() throws Exception {
         counter = 0;
 
@@ -42,6 +45,7 @@ public class MulticastSubUnitOfWorkTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testError() throws Exception {
         counter = 0;
 
@@ -59,8 +63,9 @@ public class MulticastSubUnitOfWorkTest extends ContextTestSupport {
         assertEquals(4, counter); // 1 first + 3 redeliveries
     }
     
+    @Test
     public void testMulticastException() throws Exception {
-        getMockEndpoint("mock:dead").expectedBodiesReceived("Hello", "Hi", "Bye");
+        getMockEndpoint("mock:dead").expectedBodiesReceived("Hello", "Hello", "Hi", "Hi", "Bye", "Bye");
         template.sendBody("direct:e", "Hello");
         template.sendBody("direct:e", "Hi");
         template.sendBody("direct:e", "Bye");

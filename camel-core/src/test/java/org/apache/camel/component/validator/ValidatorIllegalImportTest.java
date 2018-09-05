@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.validator;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.FailedToCreateProducerException;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -51,6 +53,7 @@ public class ValidatorIllegalImportTest extends ContextTestSupport {
             + "</Next>"
             + "</BroadcastMonitor>";
 
+    @Test
     public void testOk() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -67,6 +70,7 @@ public class ValidatorIllegalImportTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testIllegalImport() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -79,8 +83,8 @@ public class ValidatorIllegalImportTest extends ContextTestSupport {
         try {
             context.start();
             fail("Should have thrown exception");
-        } catch (FailedToCreateProducerException e) {
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+        } catch (FailedToCreateRouteException e) {
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
             assertTrue(iae.getMessage().startsWith("Resource: org/apache/camel/component/validator/BroadcastMonitor.xsd refers an invalid resource without SystemId."));
         }
     }

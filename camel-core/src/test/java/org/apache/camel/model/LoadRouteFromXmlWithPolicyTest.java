@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model;
 
+import org.junit.Test;
+
 import java.io.InputStream;
 
 import org.apache.camel.ContextTestSupport;
@@ -42,6 +44,7 @@ public class LoadRouteFromXmlWithPolicyTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testLoadRouteFromXmlWitPolicy() throws Exception {
         InputStream is = getClass().getResourceAsStream("barPolicyRoute.xml");
         RoutesDefinition routes = context.loadRoutesDefinition(is);

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -31,11 +34,13 @@ public class FileSplitInSplitTest extends ContextTestSupport {
     private final String comma = ",";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/split");
         super.setUp();
     }
 
+    @Test
     public void testConcurrentAppend() throws Exception {
         // create file with many lines
         StringBuilder sb = new StringBuilder();
@@ -85,7 +90,7 @@ public class FileSplitInSplitTest extends ContextTestSupport {
                 Tracer tracer = new Tracer();
                 getContext().addInterceptStrategy(tracer);
                 
-                from("file:target/split").routeId("foo").noAutoStartup()
+                from("file:target/split?initialDelay=0&delay=10").routeId("foo").noAutoStartup()
                     .split(body().tokenize(comma))
                         .parallelProcessing()
                         .streaming()

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.language;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -28,12 +31,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class XMLTokenSplitTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/xtokenizer");
         deleteDirectory("target/xtokenizer2");
         super.setUp();
     }
 
+    @Test
     public void testXMLToken() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedMessageCount(3);
@@ -47,6 +52,7 @@ public class XMLTokenSplitTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testXMLToken2() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedMessageCount(3);
@@ -78,13 +84,13 @@ public class XMLTokenSplitTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("file:target/xtokenizer")
+                from("file:target/xtokenizer?initialDelay=0&delay=10")
                     // split the order child tags, and inherit namespaces from the orders root tag
                     .split().xtokenize("//orders/order", ns)
                         .to("mock:split");
                 // END SNIPPET: e1
 
-                from("file:target/xtokenizer2")
+                from("file:target/xtokenizer2?initialDelay=0&delay=10")
                     // split the order child tags, and inherit namespaces from the orders root tag
                     .split(body().xtokenize("//orders/order", ns))
                         .to("mock:split");

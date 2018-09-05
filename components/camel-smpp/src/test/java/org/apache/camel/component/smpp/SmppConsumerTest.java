@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.smpp;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.NumberingPlanIndicator;
@@ -28,8 +27,12 @@ import org.jsmpp.session.SessionStateListener;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.easymock.classextension.EasyMock.*;
 import static org.junit.Assert.assertSame;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppConsumer</code>
@@ -43,14 +46,13 @@ public class SmppConsumerTest {
     private SmppConfiguration configuration;
     private Processor processor;
     private SMPPSession session;
-    private CamelContext camelContext;
 
     @Before
     public void setUp() {
         configuration = new SmppConfiguration();
-        endpoint = createMock(SmppEndpoint.class);
-        processor = createMock(Processor.class);
-        session = createMock(SMPPSession.class);
+        endpoint = mock(SmppEndpoint.class);
+        processor = mock(Processor.class);
+        session = mock(SMPPSession.class);
         
         // the construction of SmppConsumer will trigger the getCamelContext call
         consumer = new SmppConsumer(
@@ -66,48 +68,33 @@ public class SmppConsumerTest {
 
     @Test
     public void doStartShouldStartANewSmppSession() throws Exception {
-        resetToNice(endpoint, session);
-        expect(endpoint.getConnectionString())
-            .andReturn("smpp://smppclient@localhost:2775")
-            .times(2);
-        session.setEnquireLinkTimer(5000); //expectation
-        session.setTransactionTimer(10000); //expectation
-        session.addSessionStateListener(isA(SessionStateListener.class));
-        session.setMessageReceiverListener(isA(MessageReceiverListener.class)); //expectation
-        expect(session.connectAndBind(
-                "localhost",
-                new Integer(2775),
-                new BindParameter(
-                        BindType.BIND_RX,
-                        "smppclient",
-                        "password",
-                        "cp",
-                        TypeOfNumber.UNKNOWN,
-                        NumberingPlanIndicator.UNKNOWN,
-                        ""))).andReturn("1");
-        expect(endpoint.getConnectionString()).andReturn("smpp://smppclient@localhost:2775");
-     
-        
-        replay(endpoint, processor, session);
-        
+        when(endpoint.getConnectionString())
+            .thenReturn("smpp://smppclient@localhost:2775");
+        BindParameter expectedBindParameter = new BindParameter(BindType.BIND_RX,
+            "smppclient",
+            "password",
+            "cp",
+            TypeOfNumber.UNKNOWN,
+            NumberingPlanIndicator.UNKNOWN,
+            "");
+        when(session.connectAndBind("localhost", new Integer(2775), expectedBindParameter))
+            .thenReturn("1");
         
         consumer.doStart();
         
-        verify(endpoint, processor, session);
+        verify(session).setEnquireLinkTimer(5000);
+        verify(session).setTransactionTimer(10000);
+        verify(session).addSessionStateListener(isA(SessionStateListener.class));
+        verify(session).setMessageReceiverListener(isA(MessageReceiverListener.class));
+        verify(session).connectAndBind("localhost", new Integer(2775), expectedBindParameter);
     }
 
     @Test
     public void doStopShouldNotCloseTheSMPPSessionIfItIsNull() throws Exception {
-        resetToNice(endpoint, session);
-        expect(endpoint.getConnectionString())
-            .andReturn("smpp://smppclient@localhost:2775")
-            .times(3);
-        
-        replay(session, endpoint);
+        when(endpoint.getConnectionString())
+            .thenReturn("smpp://smppclient@localhost:2775");
         
         consumer.doStop();
-        
-        verify(session, endpoint);
     }
     
     @Test
@@ -115,42 +102,36 @@ public class SmppConsumerTest {
         doStartShouldStartANewSmppSession();
         reset(endpoint, processor, session);
         
-        expect(endpoint.getConnectionString())
-            .andReturn("smpp://smppclient@localhost:2775")
-            .times(3);
-        session.removeSessionStateListener(isA(SessionStateListener.class));
-        session.unbindAndClose();
-        
-        replay(session, endpoint);
+        when(endpoint.getConnectionString())
+            .thenReturn("smpp://smppclient@localhost:2775");
         
         consumer.doStop();
         
-        verify(session, endpoint);
+        verify(session).removeSessionStateListener(isA(SessionStateListener.class));
+        verify(session).unbindAndClose();
     }
 
     @Test
     public void addressRangeFromConfigurationIsUsed() throws Exception {
-        resetToNice(endpoint, session);
-
         configuration.setAddressRange("(111*|222*|333*)");
-
-        expect(session.connectAndBind(
-                "localhost",
+        BindParameter expectedBindParameter = new BindParameter(
+            BindType.BIND_RX,
+            "smppclient",
+            "password",
+            "cp",
+            TypeOfNumber.UNKNOWN,
+            NumberingPlanIndicator.UNKNOWN,
+            "(111*|222*|333*)");
+        when(session.connectAndBind("localhost",
                 new Integer(2775),
-                new BindParameter(
-                        BindType.BIND_RX,
-                        "smppclient",
-                        "password",
-                        "cp",
-                        TypeOfNumber.UNKNOWN,
-                        NumberingPlanIndicator.UNKNOWN,
-                        "(111*|222*|333*)"))).andReturn("1");
-
-        replay(endpoint, processor, session);
+                expectedBindParameter))
+            .thenReturn("1");
 
         consumer.doStart();
 
-        verify(endpoint, processor, session);
+        verify(session).connectAndBind("localhost",
+                new Integer(2775),
+                expectedBindParameter);
     }
 
     @Test

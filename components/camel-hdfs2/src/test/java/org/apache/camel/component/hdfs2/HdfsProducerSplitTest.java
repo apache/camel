@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hdfs2;
+import org.junit.After;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -105,6 +106,7 @@ public class HdfsProducerSplitTest extends HdfsTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         if (!canTest()) {
             return;
@@ -123,11 +125,11 @@ public class HdfsProducerSplitTest extends HdfsTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start1").to("hdfs2:///" + BASE_FILE.toUri() + "1?fileSystemType=LOCAL&splitStrategy=MESSAGES:1");
-                from("direct:start2").to("hdfs2:///" + BASE_FILE.toUri() + "2?fileSystemType=LOCAL&splitStrategy=BYTES:5");
-                from("direct:start3").to("hdfs2:///" + BASE_FILE.toUri() + "3?fileSystemType=LOCAL&splitStrategy=IDLE:1000");
-                from("direct:start4").to("hdfs2:///" + BASE_FILE.toUri() + "4?fileSystemType=LOCAL&splitStrategy=IDLE:1000,MESSAGES:1");
-                from("direct:start5").to("hdfs2:///" + BASE_FILE.toUri() + "5?fileSystemType=LOCAL&splitStrategy=IDLE:1000,BYTES:5");
+                from("direct:start1").to("hdfs2:localhost/" + BASE_FILE.toUri() + "1?fileSystemType=LOCAL&splitStrategy=MESSAGES:1");
+                from("direct:start2").to("hdfs2:localhost/" + BASE_FILE.toUri() + "2?fileSystemType=LOCAL&splitStrategy=BYTES:5");
+                from("direct:start3").to("hdfs2:localhost/" + BASE_FILE.toUri() + "3?fileSystemType=LOCAL&splitStrategy=IDLE:1000");
+                from("direct:start4").to("hdfs2:localhost/" + BASE_FILE.toUri() + "4?fileSystemType=LOCAL&splitStrategy=IDLE:1000,MESSAGES:1");
+                from("direct:start5").to("hdfs2:localhost/" + BASE_FILE.toUri() + "5?fileSystemType=LOCAL&splitStrategy=IDLE:1000,BYTES:5");
             }
         };
     }

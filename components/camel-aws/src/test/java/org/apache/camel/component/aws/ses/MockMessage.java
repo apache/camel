@@ -25,6 +25,7 @@ import java.util.Enumeration;
 import javax.activation.DataHandler;
 import javax.mail.Address;
 import javax.mail.Flags;
+import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -133,18 +134,18 @@ public class MockMessage extends Message {
     }
 
     @Override
-    public Enumeration getAllHeaders() throws MessagingException {
+    public Enumeration<Header> getAllHeaders() throws MessagingException {
         return null;
     }
 
     @Override
-    public Enumeration getMatchingHeaders(String[] headernames)
+    public Enumeration<Header> getMatchingHeaders(String[] headernames)
         throws MessagingException {
         return null;
     }
 
     @Override
-    public Enumeration getNonMatchingHeaders(String[] headernames)
+    public Enumeration<Header> getNonMatchingHeaders(String[] headernames)
         throws MessagingException {
         return null;
     }

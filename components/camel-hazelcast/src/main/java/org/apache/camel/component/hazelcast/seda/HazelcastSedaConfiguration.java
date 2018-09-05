@@ -16,15 +16,27 @@
  */
 package org.apache.camel.component.hazelcast.seda;
 
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+
 /**
  * Hazelcast SEDA Component configuration.
  */
+@UriParams
 public class HazelcastSedaConfiguration {
 
+    // is the cache name
+    private transient String queueName;
+
+    @UriParam(label = "seda", defaultValue = "1")
     private int concurrentConsumers = 1;
+    @UriParam(label = "seda", defaultValue = "1000")
     private int pollTimeout = 1000;
-    private String queueName;
+    @UriParam(label = "seda", defaultValue = "1000")
+    private int onErrorDelay = 1000;
+    @UriParam(label = "seda")
     private boolean transferExchange;
+    @UriParam(label = "seda")
     private boolean transacted;
 
     public HazelcastSedaConfiguration() {
@@ -34,16 +46,19 @@ public class HazelcastSedaConfiguration {
         return concurrentConsumers;
     }
 
-    public void setConcurrentConsumers(final int concurrentConsumers) {
-        this.concurrentConsumers = concurrentConsumers;
-    }
-
     public String getQueueName() {
         return queueName;
     }
 
-    public void setQueueName(final String queueName) {
+    public void setQueueName(String queueName) {
         this.queueName = queueName;
+    }
+
+    /**
+     * To use concurrent consumers polling from the SEDA queue.
+     */
+    public void setConcurrentConsumers(final int concurrentConsumers) {
+        this.concurrentConsumers = concurrentConsumers;
     }
 
     /**
@@ -66,6 +81,10 @@ public class HazelcastSedaConfiguration {
         return pollTimeout;
     }
 
+    /**
+     * The timeout used when consuming from the SEDA queue. When a timeout occurs, the consumer can check whether
+     * it is allowed to continue running. Setting a lower value allows the consumer to react more quickly upon shutdown.
+     */
     public void setPollTimeout(int pollTimeout) {
         this.pollTimeout = pollTimeout;
     }
@@ -74,6 +93,23 @@ public class HazelcastSedaConfiguration {
         return transferExchange;
     }
 
+    /**
+     * Milliseconds before consumer continues polling after an error has occurred.
+     */
+    public void setOnErrorDelay(int onErrorDelay) {
+        if (onErrorDelay < 0) {
+            throw new IllegalArgumentException("Property onErrorDelay must be a positive number, was " + onErrorDelay);
+        }
+        this.onErrorDelay = onErrorDelay;
+    }
+
+    public int getOnErrorDelay() {
+        return onErrorDelay;
+    }
+
+    /**
+     * If set to true the whole Exchange will be transfered. If header or body contains not serializable objects, they will be skipped.
+     */
     public void setTransferExchange(boolean transferExchange) {
         this.transferExchange = transferExchange;
     }
@@ -82,6 +118,10 @@ public class HazelcastSedaConfiguration {
         return transacted;
     }
 
+    /**
+     * If set to true then the consumer runs in transaction mode, where the messages in the seda queue will only be removed
+     * if the transaction commits, which happens when the processing is complete.
+     */
     public void setTransacted(boolean transacted) {
         this.transacted = transacted;
     }

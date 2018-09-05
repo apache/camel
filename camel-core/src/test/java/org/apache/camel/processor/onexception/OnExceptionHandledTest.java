@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.onexception;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,6 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class OnExceptionHandledTest extends ContextTestSupport {
 
+    @Test
     public void testHandled() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:handled");
         mock.expectedBodiesReceived("Hello World");

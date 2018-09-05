@@ -23,9 +23,11 @@ import com.github.dockerjava.api.command.ExecCreateCmd;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 
 /**
  * Validates Exec Create Request headers are parsed properly
@@ -56,11 +58,11 @@ public class ExecCreateCmdHeaderTest extends BaseDockerHeaderTest<ExecCreateCmd>
 
         template.sendBodyAndHeaders("direct:in", "", headers);
 
-        Mockito.verify(dockerClient, Mockito.times(1)).execCreateCmd(Matchers.eq(containerId));
-        Mockito.verify(mockObject, Mockito.times(1)).withTty(Matchers.eq(tty));
-        Mockito.verify(mockObject, Mockito.times(1)).withAttachStderr(Matchers.eq(stdErr));
-        Mockito.verify(mockObject, Mockito.times(1)).withAttachStdout(Matchers.eq(stdOut));
-        Mockito.verify(mockObject, Mockito.times(1)).withAttachStdin(Matchers.eq(stdIn));
+        Mockito.verify(dockerClient, Mockito.times(1)).execCreateCmd(eq(containerId));
+        Mockito.verify(mockObject, Mockito.times(1)).withTty(eq(tty));
+        Mockito.verify(mockObject, Mockito.times(1)).withAttachStderr(eq(stdErr));
+        Mockito.verify(mockObject, Mockito.times(1)).withAttachStdout(eq(stdOut));
+        Mockito.verify(mockObject, Mockito.times(1)).withAttachStdin(eq(stdIn));
         Mockito.verify(mockObject, Mockito.times(1)).withCmd(new String[]{"date", "whoami"});
 
 
@@ -68,7 +70,7 @@ public class ExecCreateCmdHeaderTest extends BaseDockerHeaderTest<ExecCreateCmd>
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.execCreateCmd(Matchers.anyString())).thenReturn(mockObject);
+        Mockito.when(dockerClient.execCreateCmd(anyString())).thenReturn(mockObject);
     }
 
     @Override

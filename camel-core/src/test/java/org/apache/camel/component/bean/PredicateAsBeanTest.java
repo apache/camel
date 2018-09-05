@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
@@ -34,6 +36,7 @@ public class PredicateAsBeanTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
     protected MyPredicate myPredicate = new MyPredicate();
 
+    @Test
     public void testSendMessage() throws Exception {
         String expectedBody = "Wobble";
 

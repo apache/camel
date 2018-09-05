@@ -16,6 +16,7 @@
  */
 package org.apache.camel.rx.support;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.Consumer;
@@ -23,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.CamelInternalProcessor;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,28 +35,33 @@ import rx.functions.Func1;
 /**
  * An RX {@link Subscription} on a Camel {@link Endpoint}
  */
-public class EndpointSubscription<T> implements Subscription {
+public class EndpointSubscription<T> extends ServiceSupport implements Subscription {
 
     private static final Logger LOG = LoggerFactory.getLogger(EndpointSubscription.class);
 
+    private final ExecutorService workerPool;
     private final Endpoint endpoint;
     private final Observer<? super T> observer;
     private Consumer consumer;
     private final AtomicBoolean unsubscribed = new AtomicBoolean(false);
 
-    public EndpointSubscription(Endpoint endpoint, final Observer<? super T> observer,
+    public EndpointSubscription(ExecutorService workerPool, Endpoint endpoint, final Observer<? super T> observer,
                                 final Func1<Exchange, T> func) {
+        this.workerPool = workerPool;
         this.endpoint = endpoint;
         this.observer = observer;
 
         // lets create the consumer
-        Processor processor = new ProcessorToObserver<T>(func, observer);
+        Processor processor = new ProcessorToObserver<>(func, observer);
         // must ensure the consumer is being executed in an unit of work so synchronization callbacks etc is invoked
         CamelInternalProcessor internal = new CamelInternalProcessor(processor);
         internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(null));
         try {
+            // need to start endpoint before we create producer
+            ServiceHelper.startService(endpoint);
             this.consumer = endpoint.createConsumer(internal);
-            ServiceHelper.startService(consumer);
+            // add as service so we ensure it gets stopped when CamelContext stops
+            endpoint.getCamelContext().addService(consumer, true, true);
         } catch (Exception e) {
             observer.onError(e);
         }
@@ -69,11 +76,17 @@ public class EndpointSubscription<T> implements Subscription {
     public void unsubscribe() {
         if (unsubscribed.compareAndSet(false, true)) {
             if (consumer != null) {
-                try {
-                    ServiceHelper.stopServices(consumer);
-                } catch (Exception e) {
-                    LOG.warn("Error stopping consumer: " + consumer + " due " + e.getMessage() + ". This exception is ignored.", e);
-                }
+                // must stop the consumer from the worker pool as we should not stop ourself from a thread from ourself
+                workerPool.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            ServiceHelper.stopServices(consumer);
+                        } catch (Exception e) {
+                            LOG.warn("Error stopping consumer: " + consumer + " due " + e.getMessage() + ". This exception is ignored.", e);
+                        }
+                    }
+                });
             }
         }
     }
@@ -91,4 +104,15 @@ public class EndpointSubscription<T> implements Subscription {
         return observer;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        ServiceHelper.startService(consumer);
+        unsubscribed.set(false);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(consumer);
+        unsubscribed.set(true);
+    }
 }

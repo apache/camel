@@ -72,6 +72,11 @@ public class PollEnrichDefinition extends NoOutputExpressionNode {
     }
     
     @Override
+    public String getShortName() {
+        return "pollEnrich";
+    }
+
+    @Override
     public String getLabel() {
         return "pollEnrich[" + getExpression() + "]";
     }
@@ -121,7 +126,7 @@ public class PollEnrichDefinition extends NoOutputExpressionNode {
             }
         }
 
-        if (strategy != null && strategy instanceof CamelContextAware) {
+        if (strategy instanceof CamelContextAware) {
             ((CamelContextAware) strategy).setCamelContext(routeContext.getCamelContext());
         }
 

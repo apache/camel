@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -32,6 +34,7 @@ public class ErrorHandlerWrappedEachNodeTest extends ContextTestSupport {
     private static int kabom;
     private static int hi;
 
+    @Test
     public void testKabom() throws Exception {
         kabom = 0;
         hi = 0;

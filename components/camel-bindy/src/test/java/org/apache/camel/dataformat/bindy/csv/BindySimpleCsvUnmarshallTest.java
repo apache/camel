@@ -127,8 +127,13 @@ public class BindySimpleCsvUnmarshallTest extends AbstractJUnit4SpringContextTes
 
         assertNotNull(orders);
         // As the @DataField defines a default value for the firstName, the
-        // value might not be empty
+        // value might not be empty and equal to defaultValue property 
+        // inside @DataField annotation
         assertFalse(orders.get(0).getFirstName().isEmpty());
+        assertEquals("Joe", orders.get(0).getFirstName());
+        
+        // Check default String value set to empty ("") for the skipped clientNr field
+        assertEquals("", orders.get(0).getClientNr());
     }
     
     public static class ContextConfig extends RouteBuilder {

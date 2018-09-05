@@ -17,15 +17,12 @@
 package org.apache.camel.component.mail;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.UUID;
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.FolderNotFoundException;
-import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Store;
@@ -40,6 +37,7 @@ import org.apache.camel.impl.ScheduledBatchPollingConsumer;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +47,8 @@ import org.slf4j.LoggerFactory;
  * {@link javax.mail.Transport Transport} and dispatches them to the {@link Processor}
  */
 public class MailConsumer extends ScheduledBatchPollingConsumer {
-    public static final String POP3_UID = "CamelPop3Uid";
+    public static final String MAIL_MESSAGE_UID = "CamelMailMessageId";
+
     public static final long DEFAULT_CONSUMER_DELAY = 60 * 1000L;
     private static final Logger LOG = LoggerFactory.getLogger(MailConsumer.class);
 
@@ -116,8 +115,16 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         try {
             int count = folder.getMessageCount();
             if (count > 0) {
-                Message[] messages = retrieveMessages();
+                List<KeyValueHolder<String, Message>> messages = retrieveMessages();
 
+                // need to call setPeek on java-mail to avoid the message being flagged eagerly as SEEN on the server in case
+                // we process the message and rollback due an exception
+                if (getEndpoint().getConfiguration().isPeek()) {
+                    for (KeyValueHolder<String, Message> entry : messages) {
+                        Message message = entry.getValue();
+                        peekMessage(message);
+                    }
+                }
                 polledMessages = processBatch(CastUtils.cast(createExchanges(messages)));
 
                 final MailBoxPostProcessAction postProcessor = getEndpoint().getPostProcessAction();
@@ -169,7 +176,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
 
         // limit if needed
         if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
-            LOG.debug("Limiting to maximum messages to poll {} as there was {} messages in this poll.", maxMessagesPerPoll, total);
+            LOG.debug("Limiting to maximum messages to poll {} as there were {} messages in this poll.", maxMessagesPerPoll, total);
             total = maxMessagesPerPoll;
         }
 
@@ -186,12 +193,6 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
 
             // must use the original message in case we need to workaround a charset issue when extracting mail content
             final Message mail = exchange.getIn(MailMessage.class).getOriginalMessage();
-
-            // need to call setPeek on java-mail to avoid the message being flagged eagerly as SEEN on the server in case
-            // we process the message and rollback due an exception
-            if (getEndpoint().getConfiguration().isPeek()) {
-                peekMessage(mail);
-            }
 
             // add on completion to handle after work when the exchange is done
             exchange.addOnCompletion(new SynchronizationAdapter() {
@@ -240,7 +241,9 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
      * @return Messages from input folder according to the search and sort criteria stored in the endpoint
      * @throws MessagingException If message retrieval fails
      */
-    private Message[] retrieveMessages() throws MessagingException {
+    private List<KeyValueHolder<String, Message>> retrieveMessages() throws MessagingException {
+        List<KeyValueHolder<String, Message>> answer = new ArrayList<>();
+
         Message[] messages;
         final SortTerm[] sortTerm = getEndpoint().getSortTerm();
         final SearchTerm searchTerm = computeSearchTerm();
@@ -264,19 +267,27 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 MailSorter.sortMessages(messages, sortTerm);
             }
         }
-        return messages;
+
+        for (Message message : messages) {
+            String key = getEndpoint().getMailUidGenerator().generateUuid(getEndpoint(), message);
+            if (isValidMessage(key, message)) {
+                answer.add(new KeyValueHolder<>(key, message));
+            }
+        }
+
+        return answer;
     }
 
     private Message[] retrieveAllMessages() throws MessagingException {
         int total = folder.getMessageCount();
-        List<Message> msgs = new ArrayList<Message>();
+        List<Message> msgs = new ArrayList<>();
 
         // Note that message * numbers start at 1, not 0
         for (int i = 1; i <= total; i++) {
             try {
                 Message msg = folder.getMessage(i);
                 msgs.add(msg);
-            } catch (MessagingException e) {
+            } catch (Exception e) {
                 if (skipFailedMessage) {
                     LOG.debug("Skipping failed message at index " + i + " due " + e.getMessage(), e);
                 } else if (handleFailedMessage) {
@@ -287,6 +298,20 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             }
         }
         return msgs.toArray(new Message[msgs.size()]);
+    }
+
+    private boolean isValidMessage(String key, Message msg) {
+        boolean answer = true;
+
+        if (getEndpoint().getIdempotentRepository() != null) {
+            if (!getEndpoint().getIdempotentRepository().add(key)) {
+                log.trace("This consumer is idempotent and the mail message has been consumed before matching idempotentKey: {}. Will skip this message: {}", key, msg);
+                answer = false;
+            }
+        }
+
+        log.debug("Message: {} with key: {} is valid: {}", msg, key, answer);
+        return answer;
     }
 
     /**
@@ -301,46 +326,54 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         return null;
     }
 
-    protected Queue<Exchange> createExchanges(Message[] messages) throws MessagingException {
-        Queue<Exchange> answer = new LinkedList<Exchange>();
+    protected Queue<Exchange> createExchanges(List<KeyValueHolder<String, Message>> messages) throws MessagingException {
+        Queue<Exchange> answer = new LinkedList<>();
 
         int fetchSize = getEndpoint().getConfiguration().getFetchSize();
-        int count = fetchSize == -1 ? messages.length : Math.min(fetchSize, messages.length);
+        int count = fetchSize == -1 ? messages.size() : Math.min(fetchSize, messages.size());
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Fetching {} messages. Total {} messages.", count, messages.length);
+            LOG.debug("Fetching {} messages. Total {} messages.", count, messages.size());
         }
 
         for (int i = 0; i < count; i++) {
-            Message message = messages[i];
+            try {
+                KeyValueHolder<String, Message> holder = messages.get(i);
+                String key = holder.getKey();
+                Message message = holder.getValue();
 
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Mail #{} is of type: {} - {}", new Object[]{i, ObjectHelper.classCanonicalName(message), message});
-            }
-
-            if (!message.getFlags().contains(Flags.Flag.DELETED)) {
-                Exchange exchange = getEndpoint().createExchange(message);
-                if (getEndpoint().getConfiguration().isMapMailMessage()) {
-                    // ensure the mail message is mapped, which can be ensured by touching the body/header/attachment
-                    LOG.trace("Mapping #{} from javax.mail.Message to Camel MailMessage", i);
-                    exchange.getIn().getBody();
-                    exchange.getIn().getHeaders();
-                    exchange.getIn().getAttachments();
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Mail #{} is of type: {} - {}", new Object[]{i, ObjectHelper.classCanonicalName(message), message});
                 }
 
-                // If the protocol is POP3 we need to remember the uid on the exchange
-                // so we can find the mail message again later to be able to delete it
-                if (getEndpoint().getConfiguration().getProtocol().startsWith("pop3")) {
-                    String uid = generatePop3Uid(message);
-                    if (uid != null) {
-                        exchange.setProperty(POP3_UID, uid);
-                        LOG.trace("POP3 mail message using uid {}", uid);
+                if (!message.getFlags().contains(Flags.Flag.DELETED)) {
+                    Exchange exchange = getEndpoint().createExchange(message);
+                    if (getEndpoint().getConfiguration().isMapMailMessage()) {
+                        // ensure the mail message is mapped, which can be ensured by touching the body/header/attachment
+                        LOG.trace("Mapping #{} from javax.mail.Message to Camel MailMessage", i);
+                        exchange.getIn().getBody();
+                        exchange.getIn().getHeaders();
+                        exchange.getIn().getAttachments();
+                    }
+
+                    // If the protocol is POP3 we need to remember the uid on the exchange
+                    // so we can find the mail message again later to be able to delete it
+                    // we also need to remember the UUID for idempotent repository
+                    exchange.setProperty(MAIL_MESSAGE_UID, key);
+
+                    answer.add(exchange);
+                } else {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Skipping message as it was flagged as deleted: {}", MailUtils.dumpMessage(message));
                     }
                 }
-                answer.add(exchange);
-            } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Skipping message as it was flagged as deleted: {}", MailUtils.dumpMessage(message));
+            } catch (Exception e) {
+                if (skipFailedMessage) {
+                    LOG.debug("Skipping failed message at index " + i + " due " + e.getMessage(), e);
+                } else if (handleFailedMessage) {
+                    handleException(e);
+                } else {
+                    throw e;
                 }
             }
         }
@@ -372,16 +405,17 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 folder.open(Folder.READ_WRITE);
             }
 
+            String uid = (String) exchange.removeProperty(MAIL_MESSAGE_UID);
+
             // If the protocol is POP3, the message needs to be synced with the folder via the UID.
             // Otherwise setting the DELETE/SEEN flag won't delete the message.
-            String uid = (String) exchange.removeProperty(POP3_UID);
-            if (uid != null) {
+            if (getEndpoint().getConfiguration().getProtocol().startsWith("pop3")) {
                 int count = folder.getMessageCount();
                 Message found = null;
                 LOG.trace("Looking for POP3Message with UID {} from folder with {} mails", uid, count);
                 for (int i = 1; i <= count; ++i) {
                     Message msg = folder.getMessage(i);
-                    if (uid.equals(generatePop3Uid(msg))) {
+                    if (uid.equals(getEndpoint().getMailUidGenerator().generateUuid(getEndpoint(), msg))) {
                         LOG.debug("Found POP3Message with UID {} from folder with {} mails", uid, count);
                         found = msg;
                         break;
@@ -422,6 +456,16 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 LOG.trace("Exchange processed, so flagging message as SEEN");
                 mail.setFlag(Flags.Flag.SEEN, true);
             }
+
+            // need to confirm or remove on commit at last
+            if (getEndpoint().getIdempotentRepository() != null) {
+                if (getEndpoint().isIdempotentRepositoryRemoveOnCommit()) {
+                    getEndpoint().getIdempotentRepository().remove(uid);
+                } else {
+                    getEndpoint().getIdempotentRepository().confirm(uid);
+                }
+            }
+
         } catch (MessagingException e) {
             getExceptionHandler().handleException("Error occurred during committing mail message: " + mail, exchange, e);
         }
@@ -434,41 +478,20 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
      * @param exchange the exchange
      */
     protected void processRollback(Message mail, Exchange exchange) {
+
+        String uid = (String) exchange.removeProperty(MAIL_MESSAGE_UID);
+
+        // need to remove on rollback
+        if (getEndpoint().getIdempotentRepository() != null) {
+            getEndpoint().getIdempotentRepository().remove(uid);
+        }
+
         Exception cause = exchange.getException();
         if (cause != null) {
             LOG.warn("Exchange failed, so rolling back message status: " + exchange, cause);
         } else {
-            LOG.warn("Exchange failed, so rolling back message status: " + exchange);
+            LOG.warn("Exchange failed, so rolling back message status: {}", exchange);
         }
-    }
-
-    /**
-     * Generates an UID of the POP3Message
-     *
-     * @param message the POP3Message
-     * @return the generated uid
-     */
-    protected String generatePop3Uid(Message message) {
-        String uid = null;
-
-        // create an UID based on message headers on the POP3Message, that ought
-        // to be unique
-        StringBuilder buffer = new StringBuilder();
-        try {
-            Enumeration<?> it = message.getAllHeaders();
-            while (it.hasMoreElements()) {
-                Header header = (Header)it.nextElement();
-                buffer.append(header.getName()).append("=").append(header.getValue()).append("\n");
-            }
-            if (buffer.length() > 0) {
-                LOG.trace("Generating UID from the following:\n {}", buffer);
-                uid = UUID.nameUUIDFromBytes(buffer.toString().getBytes()).toString();
-            }
-        } catch (MessagingException e) {
-            LOG.warn("Cannot reader headers from mail message. This exception will be ignored.", e);
-        }
-
-        return uid;
     }
 
     private void ensureIsConnected() throws MessagingException {

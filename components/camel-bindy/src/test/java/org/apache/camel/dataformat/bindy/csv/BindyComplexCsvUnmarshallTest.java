@@ -16,17 +16,23 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
+import java.util.List;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration
 public class BindyComplexCsvUnmarshallTest extends AbstractJUnit4SpringContextTests {
+
+    private static final Class<?> TYPE = org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Order.class;
+
     @Produce(uri = "direct:start")
     protected ProducerTemplate template;
 
@@ -37,23 +43,39 @@ public class BindyComplexCsvUnmarshallTest extends AbstractJUnit4SpringContextTe
                             + ",,,D,,BE12345678,SELL,,,,08-01-2009\r\n" + ",,,D,ISIN,BE12345678,,,,,08-01-2009\r\n" + ",,,D,ISIN,LU123456789,,,,,\r\n"
                             + "10,A8,Pauline,M,ISIN,XD12345678,SELL,Share,2500,USD,08-01-2009\r\n" + "10,A9,Pauline,M,ISIN,XD12345678,BUY,Share,2500.45,USD,08-01-2009";
 
+    private String singleRecord = "01,,Albert,Cartier,ISIN,BE12345678,SELL,,1500,EUR,08-01-2009";
+
     @EndpointInject(uri = "mock:result")
     private MockEndpoint resultEndpoint;
 
     @Test
     public void testUnMarshallMessage() throws Exception {
-        template.sendBody(record);
         resultEndpoint.expectedMessageCount(1);
+        resultEndpoint.message(0).body().isInstanceOf(List.class);
+
+        template.sendBody(record);
+
+        resultEndpoint.assertIsSatisfied();
+
+        // there should be 13 element in the list
+        List list = resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        Assert.assertEquals(13, list.size());
+
+        resultEndpoint.reset();
+
+        // now single test
+        resultEndpoint.expectedMessageCount(1);
+        resultEndpoint.message(0).body().isInstanceOf(TYPE);
+
+        template.sendBody(singleRecord);
+
         resultEndpoint.assertIsSatisfied();
     }
 
     public static class ContextConfig extends RouteBuilder {
         public void configure() {
-            Class<?> type =
-                org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Order.class;
-
             from("direct:start")
-                .unmarshal(new BindyCsvDataFormat(type))
+                .unmarshal(new BindyCsvDataFormat(TYPE))
                 .to("mock:result");
         }
     }

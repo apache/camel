@@ -32,20 +32,28 @@ import com.thoughtworks.xstream.core.util.CompositeClassLoader;
 import com.thoughtworks.xstream.io.HierarchicalStreamDriver;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-
+import com.thoughtworks.xstream.security.AnyTypePermission;
+import com.thoughtworks.xstream.security.ExplicitTypePermission;
+import com.thoughtworks.xstream.security.TypePermission;
+import com.thoughtworks.xstream.security.WildcardTypePermission;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.jaxp.StaxConverter;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * An abstract class which implement <a href="http://camel.apache.org/data-format.html">data format</a>
  * ({@link DataFormat}) interface which leverage the XStream library for XML or JSON's marshaling and unmarshaling
  */
-public abstract class AbstractXStreamWrapper implements DataFormat {
+public abstract class AbstractXStreamWrapper extends ServiceSupport implements CamelContextAware, DataFormat, DataFormatName {
+    private static final String PERMISSIONS_PROPERTY_KEY = "org.apache.camel.xstream.permissions";
 
+    private CamelContext camelContext;
     private XStream xstream;
     private HierarchicalStreamDriver xstreamDriver;
     private StaxConverter staxConverter;
@@ -53,13 +61,25 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
     private Map<String, String> aliases;
     private Map<String, String[]> omitFields;
     private Map<String, String[]> implicitCollections;
+    private String permissions;
     private String mode;
+    private boolean contentTypeHeader = true;
 
     public AbstractXStreamWrapper() {
     }
 
     public AbstractXStreamWrapper(XStream xstream) {
         this.xstream = xstream;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     /**
@@ -172,11 +192,63 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
                 }
             }
 
+            addDefaultPermissions(xstream);
+            if (this.permissions != null) {
+                // permissions ::= pterm (',' pterm)*   # consits of one or more terms
+                // pterm       ::= aod? wterm           # each term preceded by an optional sign 
+                // aod         ::= '+' | '-'            # indicates allow or deny where allow if omitted
+                // wterm       ::= a class name with optional wildcard characters
+                addPermissions(xstream, permissions);
+            }
         } catch (Exception e) {
             throw new RuntimeException("Unable to build XStream instance", e);
         }
 
         return xstream;
+    }
+
+    private static void addPermissions(XStream xstream, String permissions) {
+        for (String pterm : permissions.split(",")) {
+            boolean aod;
+            pterm = pterm.trim();
+            if (pterm.startsWith("-")) {
+                aod = false;
+                pterm = pterm.substring(1);
+            } else {
+                aod = true;
+                if (pterm.startsWith("+")) {
+                    pterm = pterm.substring(1);
+                }
+            }
+            TypePermission typePermission = null;
+            if ("*".equals(pterm)) {
+                // accept or deny any
+                typePermission = AnyTypePermission.ANY;
+            } else if (pterm.indexOf('*') < 0) {
+                // exact type
+                typePermission = new ExplicitTypePermission(new String[]{pterm});
+            } else if (pterm.length() > 0) {
+                // wildcard type
+                typePermission = new WildcardTypePermission(new String[]{pterm});
+            }
+            if (typePermission != null) {
+                if (aod) {
+                    xstream.addPermission(typePermission);
+                } else {
+                    xstream.denyPermission(typePermission);
+                }
+            }
+        }
+    }
+
+    private static void addDefaultPermissions(XStream xstream) {
+        XStream.setupDefaultSecurity(xstream);
+
+        String value = System.getProperty(PERMISSIONS_PROPERTY_KEY);
+        if (value != null) {
+            // using custom permissions
+            addPermissions(xstream, value);
+        }
     }
 
     protected int getModeFromString(String modeString) {
@@ -250,12 +322,33 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
         this.xstreamDriver = xstreamDriver;
     }
 
+    public String getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(String permissions) {
+        this.permissions = permissions;
+    }
+
     public String getMode() {
         return mode;
     }
 
     public void setMode(String mode) {
         this.mode = mode;
+    }
+
+
+    public boolean isContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    /**
+     * If enabled then XStream will set the Content-Type header to <tt>application/json</tt> when marshalling to JSon
+     * and <tt>application/xml</tt> when marshalling to XML.
+     */
+    public void setContentTypeHeader(boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 
     public XStream getXstream() {
@@ -289,4 +382,18 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
 
     protected abstract HierarchicalStreamReader createHierarchicalStreamReader(
             Exchange exchange, InputStream stream) throws XMLStreamException;
+
+    @Override
+    protected void doStart() throws Exception {
+        ObjectHelper.notNull(camelContext, "camelContext");
+        // initialize xstream
+        if (xstream == null) {
+            xstream = createXStream(camelContext.getClassResolver(), camelContext.getApplicationContextClassLoader());
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
 }

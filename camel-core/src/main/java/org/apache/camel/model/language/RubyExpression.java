@@ -23,13 +23,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * For Ruby expressions and predicates
+ * To use Ruby scripts in Camel expressions or predicates.
  *
  * @version 
  */
-@Metadata(label = "language", title = "Ruby")
+@Metadata(firstVersion = "1.0.0", label = "language,script", title = "Ruby")
 @XmlRootElement(name = "ruby")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class RubyExpression extends ExpressionDefinition {
 
     public RubyExpression() {

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.jpa;
+import org.junit.Before;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -26,6 +27,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.SendEmail;
 import org.apache.camel.spring.SpringRouteBuilder;
+import org.apache.camel.util.ObjectHelper;
+import org.junit.Assume;
 import org.junit.Test;
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.expression.Expression;
@@ -41,7 +44,15 @@ import static org.hamcrest.CoreMatchers.equalTo;
 public class JpaRouteSharedEntityManagerTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
     private CountDownLatch latch = new CountDownLatch(1);
-    
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        // Don't run on Hibernate
+        Assume.assumeTrue(ObjectHelper.loadClass("org.hibernate.Hibernate") == null);
+        super.setUp();
+    }
+
     @Test
     public void testRouteJpaShared() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");

@@ -20,22 +20,27 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.camel.impl.JndiRegistry;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 
-import static org.mockito.Matchers.anyDouble;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class RedisSortedSetTest extends RedisTestSupport {
-    private RedisTemplate redisTemplate;
-    private ZSetOperations zSetOperations;
+
+    @Mock
+    private RedisTemplate<String, String> redisTemplate;
+    @Mock
+    private ZSetOperations<String, String> zSetOperations;
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -46,16 +51,9 @@ public class RedisSortedSetTest extends RedisTestSupport {
         return registry;
     }
 
-    @Before
-    public void setUp() throws Exception {
-        redisTemplate = mock(RedisTemplate.class);
-        zSetOperations = mock(ZSetOperations.class);
-        super.setUp();
-    }
-
     @Test
     public void shouldExecuteZADD() {
-        when(zSetOperations.add(anyString(), anyObject(), anyDouble())).thenReturn(false);
+        when(zSetOperations.add(anyString(), any(), anyDouble())).thenReturn(false);
 
         Object result = sendHeaders(
                 RedisConstants.COMMAND, "ZADD",
@@ -110,7 +108,7 @@ public class RedisSortedSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteZINTERSTORE() {
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         keys.add("key2");
         keys.add("key3");
         sendHeaders(
@@ -124,7 +122,7 @@ public class RedisSortedSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteZRANGE() {
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         keys.add("key2");
         keys.add("key3");
         when(zSetOperations.range(anyString(), anyLong(), anyLong())).thenReturn(keys);
@@ -158,7 +156,7 @@ public class RedisSortedSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteZRANGEBYSCORE() {
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         keys.add("key2");
         keys.add("key3");
         when(zSetOperations.rangeByScore(anyString(), anyDouble(), anyDouble())).thenReturn(keys);
@@ -197,7 +195,7 @@ public class RedisSortedSetTest extends RedisTestSupport {
                 RedisConstants.VALUE, "value");
 
         verify(zSetOperations).remove("key", "value");
-        assertEquals(Long.valueOf(1), result);
+        assertEquals(1L, result);
     }
 
 
@@ -226,7 +224,7 @@ public class RedisSortedSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteZREVRANGE() {
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         keys.add("key2");
         keys.add("key3");
         when(zSetOperations.reverseRange(anyString(), anyLong(), anyLong())).thenReturn(keys);
@@ -260,7 +258,7 @@ public class RedisSortedSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteZREVRANGEBYSCORE() {
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         keys.add("key2");
         keys.add("key3");
         when(zSetOperations.reverseRangeByScore(anyString(), anyDouble(), anyDouble())).thenReturn(keys);
@@ -291,7 +289,7 @@ public class RedisSortedSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteZUNIONSTORE() {
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         keys.add("key2");
         keys.add("key3");
         sendHeaders(

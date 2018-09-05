@@ -28,19 +28,20 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.solr.client.solrj.impl.CloudSolrServer;
-import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrServer;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.apache.solr.client.solrj.impl.CloudSolrClient;
+import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrClient;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 
 /**
- * Represents a Solr endpoint.
+ * The solr component allows you to interface with an Apache Lucene Solr server.
  */
-@UriEndpoint(scheme = "solr,solrs,solrCloud", title = "Solr", syntax = "solr:url", producerOnly = true, label = "monitoring,search")
+@UriEndpoint(firstVersion = "2.9.0", scheme = "solr,solrs,solrCloud", title = "Solr", syntax = "solr:url", producerOnly = true, label = "monitoring,search")
 public class SolrEndpoint extends DefaultEndpoint {
 
     private String scheme = "http://";
 
-    @UriPath(description = "Hostname and port for the solr server") @Metadata(required = "true")
+    @UriPath(description = "Hostname and port for the solr server")
+    @Metadata(required = "true")
     private String url;
     @UriParam(defaultValue = "" + SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE)
     private int streamingQueueSize = SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE;
@@ -103,16 +104,16 @@ public class SolrEndpoint extends DefaultEndpoint {
     public SolrComponent getComponent() {
         return (SolrComponent) super.getComponent();
     }
-    
-    private CloudSolrServer getCloudServer() {
-        CloudSolrServer rVal = null;
+
+    private CloudSolrClient getCloudServer() {
+        CloudSolrClient rVal = null;
         if (this.getZkHost() != null && this.getCollection() != null) {
-            rVal = new CloudSolrServer(zkHost);
+            rVal = new CloudSolrClient.Builder().withZkHost(zkHost).build();
             rVal.setDefaultCollection(this.getCollection());
         }
         return rVal;
     }
-    
+
     @Override
     public Producer createProducer() throws Exception {
         // do we have servers?
@@ -120,33 +121,21 @@ public class SolrEndpoint extends DefaultEndpoint {
         if (ref == null) {
             // no then create new servers
             ref = new SolrComponent.SolrServerReference();
-            CloudSolrServer cloudServer = getCloudServer();
+            CloudSolrClient cloudServer = getCloudServer();
             if (cloudServer == null) {
-                HttpSolrServer solrServer = new HttpSolrServer(url);
-                ConcurrentUpdateSolrServer solrStreamingServer = new ConcurrentUpdateSolrServer(url, streamingQueueSize, streamingThreadCount);
-
-                // set the properties on the solr server
-                if (maxRetries != null) {
-                    solrServer.setMaxRetries(maxRetries);
-                }
+                HttpSolrClient solrServer = new HttpSolrClient.Builder(url).build();                
+                ConcurrentUpdateSolrClient solrStreamingServer = new ConcurrentUpdateSolrClient.Builder(url).withQueueSize(streamingQueueSize).withThreadCount(streamingThreadCount).build();
+                
+                // set the properties on the solr server               
                 if (soTimeout != null) {
                     solrServer.setSoTimeout(soTimeout);
                 }
                 if (connectionTimeout != null) {
                     solrServer.setConnectionTimeout(connectionTimeout);
-                }
-                if (defaultMaxConnectionsPerHost != null) {
-                    solrServer.setDefaultMaxConnectionsPerHost(defaultMaxConnectionsPerHost);
-                }
-                if (maxTotalConnections != null) {
-                    solrServer.setMaxTotalConnections(maxTotalConnections);
-                }
+                }                
                 if (followRedirects != null) {
                     solrServer.setFollowRedirects(followRedirects);
-                }
-                if (allowCompression != null) {
-                    solrServer.setAllowCompression(allowCompression);
-                }
+                }                
                 ref.setSolrServer(solrServer);
                 ref.setUpdateSolrServer(solrStreamingServer);
             }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +30,9 @@ import org.apache.camel.spi.SynchronizationRouteAware;
 
 public class RouteAwareSynchronizationTest extends ContextTestSupport {
 
-    private static final List<String> EVENTS = new ArrayList<String>();
+    private static final List<String> EVENTS = new ArrayList<>();
 
+    @Test
     public void testRouteAwareSynchronization() throws Exception {
         EVENTS.clear();
         assertEquals(0, EVENTS.size());

@@ -17,39 +17,55 @@
 package org.apache.camel.component.test;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A <a href="http://camel.apache.org/test.html">Test Endpoint</a> is a
- * <a href="http://camel.apache.org/mock.html">Mock Endpoint</a> for testing but it will
- * pull all messages from the nested endpoint and use those as expected message body assertions.
+ * The test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.
  *
- * @version 
+ * That is, you use the test endpoint in a route and messages arriving on it will be implicitly compared to some
+ * expected messages extracted from some other location.
+ * So you can use, for example, an expected set of message bodies as files.
+ * This will then set up a properly configured Mock endpoint, which is only valid if the received messages
+ * match the number of expected messages and their message payloads are equal.
  */
-@UriEndpoint(scheme = "test", title = "Test", syntax = "test:name", producerOnly = true, label = "core,testing")
+@UriEndpoint(firstVersion = "1.3.0", scheme = "test", title = "Test", syntax = "test:name", producerOnly = true, label = "core,testing", lenientProperties = true)
 public class TestEndpoint extends MockEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(TestEndpoint.class);
-    private final Endpoint expectedMessageEndpoint;
+
+    private Endpoint expectedMessageEndpoint;
+
     @UriPath(description = "Name of endpoint to lookup in the registry to use for polling messages used for testing") @Metadata(required = "true")
     private String name;
+    @UriParam
+    private boolean anyOrder;
     @UriParam(defaultValue = "2000")
     private long timeout = 2000L;
+    @UriParam
+    private boolean split;
+    @UriParam
+    private String delimiter = "\\n|\\r";
 
-    public TestEndpoint(String endpointUri, Component component, Endpoint expectedMessageEndpoint) {
+    public TestEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
+    }
+
+    public void setExpectedMessageEndpoint(Endpoint expectedMessageEndpoint) {
         this.expectedMessageEndpoint = expectedMessageEndpoint;
     }
 
@@ -57,17 +73,34 @@ public class TestEndpoint extends MockEndpoint {
     protected void doStart() throws Exception {
         LOG.debug("Consuming expected messages from: {}", expectedMessageEndpoint);
 
-        final List<Object> expectedBodies = new ArrayList<Object>();
+        final List<Object> expectedBodies = new ArrayList<>();
         EndpointHelper.pollEndpoint(expectedMessageEndpoint, new Processor() {
             public void process(Exchange exchange) throws Exception {
+                // if file based we need to load the file into memory as the file may be deleted/moved afterwards
                 Object body = getInBody(exchange);
-                LOG.trace("Received message body {}", body);
-                expectedBodies.add(body);
+                if (body instanceof WrappedFile) {
+                    body = exchange.getIn().getBody(String.class);
+                }
+                if (split) {
+                    // use new lines in both styles
+                    Iterator it = ObjectHelper.createIterator(body, delimiter, false, true);
+                    while (it.hasNext()) {
+                        Object line = it.next();
+                        LOG.trace("Received message body {}", line);
+                        expectedBodies.add(line);
+                    }
+                } else {
+                    expectedBodies.add(body);
+                }
             }
         }, timeout);
 
-        LOG.debug("Received: {} expected message(s) from: {}", expectedBodies.size(), expectedMessageEndpoint);
-        expectedBodiesReceived(expectedBodies);
+        LOG.info("Received: {} expected message(s) from: {}", expectedBodies.size(), expectedMessageEndpoint);
+        if (anyOrder) {
+            expectedBodiesReceivedInAnyOrder(expectedBodies);
+        } else {
+            expectedBodiesReceived(expectedBodies);
+        }
     }
 
     /**
@@ -86,5 +119,43 @@ public class TestEndpoint extends MockEndpoint {
      */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
+    }
+
+    public boolean isAnyOrder() {
+        return anyOrder;
+    }
+
+    /**
+     * Whether the expected messages should arrive in the same order or can be in any order.
+     */
+    public void setAnyOrder(boolean anyOrder) {
+        this.anyOrder = anyOrder;
+    }
+
+    public boolean isSplit() {
+        return split;
+    }
+
+    /**
+     * If enabled the messages loaded from the test endpoint will be split using new line delimiters
+     * so each line is an expected message.
+     * <br/>
+     * For example to use a file endpoint to load a file where each line is an expected message.
+     */
+    public void setSplit(boolean split) {
+        this.split = split;
+    }
+
+    public String getDelimiter() {
+        return delimiter;
+    }
+
+    /**
+     * The split delimiter to use when split is enabled.
+     * By default the delimiter is new line based.
+     * The delimiter can be a regular expression.
+     */
+    public void setDelimiter(String delimiter) {
+        this.delimiter = delimiter;
     }
 }

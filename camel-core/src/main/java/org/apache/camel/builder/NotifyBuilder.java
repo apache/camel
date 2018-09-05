@@ -39,11 +39,11 @@ import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.management.event.ExchangeFailedEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
-import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,16 +64,16 @@ public class NotifyBuilder {
     private final CamelContext context;
 
     // notifier to hook into Camel to listen for events
-    private final EventNotifier eventNotifier;
+    private final EventNotifierSupport eventNotifier;
 
     // the predicates build with this builder
-    private final List<EventPredicateHolder> predicates = new ArrayList<EventPredicateHolder>();
+    private final List<EventPredicateHolder> predicates = new ArrayList<>();
 
     // latch to be used to signal predicates matches
     private CountDownLatch latch = new CountDownLatch(1);
 
     // the current state while building an event predicate where we use a stack and the operation
-    private final List<EventPredicate> stack = new ArrayList<EventPredicate>();
+    private final List<EventPredicate> stack = new ArrayList<>();
     private EventOperation operation;
     private boolean created;
     // keep state of how many wereSentTo we have added
@@ -154,6 +154,11 @@ public class NotifyBuilder {
             @Override
             public boolean onExchange(Exchange exchange) {
                 String id = EndpointHelper.getRouteIdFromEndpoint(exchange.getFromEndpoint());
+
+                if (id == null) {
+                    id = exchange.getFromRouteId();
+                }
+
                 // filter non matching exchanges
                 return EndpointHelper.matchPattern(id, routeId);
             }
@@ -187,7 +192,7 @@ public class NotifyBuilder {
                 // and just continue to route that on the consumer side, which causes the EventNotifier not to
                 // emit events when the consumer received the exchange, as its already done. For example by
                 // ProducerTemplate which creates the UoW before producing messages.
-                if (exchange.getFromEndpoint() != null && exchange.getFromEndpoint() instanceof DirectEndpoint) {
+                if (exchange.getFromEndpoint() instanceof DirectEndpoint) {
                     return true;
                 }
                 return EndpointHelper.matchPattern(exchange.getFromRouteId(), "*");
@@ -247,7 +252,7 @@ public class NotifyBuilder {
      * @return the builder
      */
     public ExpressionClauseSupport<NotifyBuilder> filter() {
-        final ExpressionClauseSupport<NotifyBuilder> clause = new ExpressionClauseSupport<NotifyBuilder>(this);
+        final ExpressionClauseSupport<NotifyBuilder> clause = new ExpressionClauseSupport<>(this);
         stack.add(new EventPredicateSupport() {
 
             @Override
@@ -290,7 +295,7 @@ public class NotifyBuilder {
     public NotifyBuilder wereSentTo(final String endpointUri) {
         // insert in start of stack but after the previous wereSentTo
         stack.add(wereSentToIndex++, new EventPredicateSupport() {
-            private ConcurrentMap<String, String> sentTo = new ConcurrentHashMap<String, String>();
+            private ConcurrentMap<String, String> sentTo = new ConcurrentHashMap<>();
 
             @Override
             public boolean isAbstract() {
@@ -1003,7 +1008,7 @@ public class NotifyBuilder {
      * @see #whenExactBodiesReceived(Object...)
      */
     public NotifyBuilder whenBodiesReceived(Object... bodies) {
-        List<Object> bodyList = new ArrayList<Object>();
+        List<Object> bodyList = new ArrayList<>();
         bodyList.addAll(Arrays.asList(bodies));
         return doWhenBodies(bodyList, true, false);
     }
@@ -1019,7 +1024,7 @@ public class NotifyBuilder {
      * @see #whenExactBodiesDone(Object...)
      */
     public NotifyBuilder whenBodiesDone(Object... bodies) {
-        List<Object> bodyList = new ArrayList<Object>();
+        List<Object> bodyList = new ArrayList<>();
         bodyList.addAll(Arrays.asList(bodies));
         return doWhenBodies(bodyList, false, false);
     }
@@ -1034,7 +1039,7 @@ public class NotifyBuilder {
      * @see #whenBodiesReceived(Object...)
      */
     public NotifyBuilder whenExactBodiesReceived(Object... bodies) {
-        List<Object> bodyList = new ArrayList<Object>();
+        List<Object> bodyList = new ArrayList<>();
         bodyList.addAll(Arrays.asList(bodies));
         return doWhenBodies(bodyList, true, true);
     }
@@ -1049,7 +1054,7 @@ public class NotifyBuilder {
      * @see #whenExactBodiesDone(Object...)
      */
     public NotifyBuilder whenExactBodiesDone(Object... bodies) {
-        List<Object> bodyList = new ArrayList<Object>();
+        List<Object> bodyList = new ArrayList<>();
         bodyList.addAll(Arrays.asList(bodies));
         return doWhenBodies(bodyList, false, true);
     }
@@ -1159,8 +1164,26 @@ public class NotifyBuilder {
      */
     public NotifyBuilder create() {
         doCreate(EventOperation.and);
+        if (eventNotifier.isStopped()) {
+            throw new IllegalStateException("A destroyed NotifyBuilder cannot be re-created.");
+        }
         created = true;
         return this;
+    }
+
+    /**
+     * De-registers this builder from its {@link CamelContext}.
+     * <p/>
+     * Once destroyed, this instance will not function again.
+     */
+    public void destroy() {
+        context.getManagementStrategy().removeEventNotifier(eventNotifier);
+        try {
+            ServiceHelper.stopService(eventNotifier);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+        created = false;
     }
 
     /**
@@ -1256,7 +1279,7 @@ public class NotifyBuilder {
             sb.append(eventPredicateHolder.toString());
         }
         // a crude way of skipping the first invisible operation
-        return ObjectHelper.after(sb.toString(), "().");
+        return StringHelper.after(sb.toString(), "().");
     }
 
     private void doCreate(EventOperation newOperation) {
@@ -1396,7 +1419,7 @@ public class NotifyBuilder {
     }
 
     private enum EventOperation {
-        and, or, not;
+        and, or, not
     }
 
     private interface EventPredicate {
@@ -1521,7 +1544,7 @@ public class NotifyBuilder {
      */
     private final class CompoundEventPredicate implements EventPredicate {
 
-        private List<EventPredicate> predicates = new ArrayList<EventPredicate>();
+        private List<EventPredicate> predicates = new ArrayList<>();
 
         private CompoundEventPredicate(List<EventPredicate> predicates) {
             this.predicates.addAll(predicates);
@@ -1590,7 +1613,7 @@ public class NotifyBuilder {
         public boolean onExchangeSent(Exchange exchange, Endpoint endpoint, long timeTaken) {
             for (EventPredicate predicate : predicates) {
                 boolean answer = predicate.onExchangeSent(exchange, endpoint, timeTaken);
-                LOG.trace("onExchangeSent() {} {} -> {}", new Object[]{endpoint, predicate, answer});
+                LOG.trace("onExchangeSent() {} {} -> {}", endpoint, predicate, answer);
                 if (!answer) {
                     // break at first false
                     return false;

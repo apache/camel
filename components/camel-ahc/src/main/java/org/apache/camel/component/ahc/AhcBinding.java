@@ -18,10 +18,11 @@ package org.apache.camel.component.ahc;
 
 import java.io.ByteArrayOutputStream;
 
-import com.ning.http.client.HttpResponseHeaders;
-import com.ning.http.client.HttpResponseStatus;
-import com.ning.http.client.Request;
+import io.netty.handler.codec.http.HttpHeaders;
+
 import org.apache.camel.Exchange;
+import org.asynchttpclient.HttpResponseStatus;
+import org.asynchttpclient.Request;
 
 /**
  * Binding from Camel to/from {@link com.ning.http.client.AsyncHttpClient}
@@ -66,7 +67,7 @@ public interface AhcBinding {
      * @param headers  the HTTP headers
      * @throws Exception is thrown if error occurred in the callback
      */
-    void onHeadersReceived(AhcEndpoint endpoint, Exchange exchange, HttpResponseHeaders headers) throws Exception;
+    void onHeadersReceived(AhcEndpoint endpoint, Exchange exchange, HttpHeaders headers) throws Exception;
 
     /**
      * Callback from the {@link com.ning.http.client.AsyncHttpClient} when complete and all the response has been received.

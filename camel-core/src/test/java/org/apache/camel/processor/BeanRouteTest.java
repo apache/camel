@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.naming.Context;
@@ -35,6 +38,7 @@ public class BeanRouteTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
     protected MyBean myBean = new MyBean();
 
+    @Test
     public void testSendingMessageWithMethodNameHeader() throws Exception {
         String expectedBody = "Wobble";
 
@@ -43,6 +47,7 @@ public class BeanRouteTest extends ContextTestSupport {
         assertEquals("bean received correct value for: " + myBean, expectedBody, myBean.body);
     }
 
+    @Test
     public void testSendingMessageWithMethodNameHeaderWithMoreVerboseCoe() throws Exception {
         final String expectedBody = "Wibble";
 
@@ -57,7 +62,8 @@ public class BeanRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         Object lookedUpBean = context.getRegistry().lookupByName("myBean");
@@ -95,7 +101,7 @@ public class BeanRouteTest extends ContextTestSupport {
 
         public void read(String body) {
             this.body = body;
-            LOG.info("read() method on " + this + " with body: " + body);
+            LOG.info("read() method on {} with body: {}", this, body);
         }
 
         public void wrongMethod(String body) {

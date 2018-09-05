@@ -29,9 +29,12 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.base64.Base64;
 import io.netty.handler.codec.http.DefaultHttpResponse;
-import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.HttpUtil;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.netty4.NettyConverter;
@@ -43,12 +46,12 @@ import org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration;
 import org.apache.camel.component.netty4.http.SecurityAuthenticator;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
-
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static io.netty.handler.codec.http.HttpResponseStatus.METHOD_NOT_ALLOWED;
-import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
 import static io.netty.handler.codec.http.HttpResponseStatus.UNAUTHORIZED;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
@@ -89,26 +92,8 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             return;
         }
 
-        // if its an OPTIONS request then return which methods is allowed
-        boolean isRestrictedToOptions = consumer.getEndpoint().getHttpMethodRestrict() != null
-                && consumer.getEndpoint().getHttpMethodRestrict().contains("OPTIONS");
-        if ("OPTIONS".equals(request.getMethod().name()) && !isRestrictedToOptions) {
-            String s;
-            if (consumer.getEndpoint().getHttpMethodRestrict() != null) {
-                s = "OPTIONS," + consumer.getEndpoint().getHttpMethodRestrict();
-            } else {
-                // allow them all
-                s = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT,PATCH";
-            }
-            HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
-            response.headers().set("Allow", s);
-            response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
-            response.headers().set(Exchange.CONTENT_LENGTH, 0);
-            ctx.writeAndFlush(response);
-            return;
-        }
         if (consumer.getEndpoint().getHttpMethodRestrict() != null
-                && !consumer.getEndpoint().getHttpMethodRestrict().contains(request.getMethod().name())) {
+                && !consumer.getEndpoint().getHttpMethodRestrict().contains(request.method().name())) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, METHOD_NOT_ALLOWED);
             response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
@@ -116,7 +101,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             ctx.channel().close();
             return;
         }
-        if ("TRACE".equals(request.getMethod().name()) && !consumer.getEndpoint().isTraceEnabled()) {
+        if ("TRACE".equals(request.method().name()) && !consumer.getEndpoint().isTraceEnabled()) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, METHOD_NOT_ALLOWED);
             response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
             response.headers().set(Exchange.CONTENT_LENGTH, 0);
@@ -125,7 +110,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             return;
         }
         // must include HOST header as required by HTTP 1.1
-        if (!request.headers().contains(HttpHeaders.Names.HOST)) {
+        if (!request.headers().contains(HttpHeaderNames.HOST.toString())) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, BAD_REQUEST);
             //response.setChunked(false);
             response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
@@ -138,15 +123,15 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         // is basic auth configured
         NettyHttpSecurityConfiguration security = consumer.getEndpoint().getSecurityConfiguration();
         if (security != null && security.isAuthenticate() && "Basic".equalsIgnoreCase(security.getConstraint())) {
-            String url = request.getUri();
+            String url = request.uri();
 
             // drop parameters from url
             if (url.contains("?")) {
-                url = ObjectHelper.before(url, "?");
+                url = StringHelper.before(url, "?");
             }
 
             // we need the relative path without the hostname and port
-            URI uri = new URI(request.getUri());
+            URI uri = new URI(request.uri());
             String target = uri.getPath();
 
             // strip the starting endpoint path so the target is relative to the endpoint uri
@@ -240,20 +225,24 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
     protected static HttpPrincipal extractBasicAuthSubject(HttpRequest request) {
         String auth = request.headers().get("Authorization");
         if (auth != null) {
-            String constraint = ObjectHelper.before(auth, " ");
+            String constraint = StringHelper.before(auth, " ");
             if (constraint != null) {
                 if ("Basic".equalsIgnoreCase(constraint.trim())) {
-                    String decoded = ObjectHelper.after(auth, " ");
+                    String decoded = StringHelper.after(auth, " ");
                     // the decoded part is base64 encoded, so we need to decode that
                     ByteBuf buf = NettyConverter.toByteBuffer(decoded.getBytes());
                     ByteBuf out = Base64.decode(buf);
-                    String userAndPw = out.toString(Charset.defaultCharset());
-                    String username = ObjectHelper.before(userAndPw, ":");
-                    String password = ObjectHelper.after(userAndPw, ":");
-                    HttpPrincipal principal = new HttpPrincipal(username, password);
-
-                    LOG.debug("Extracted Basic Auth principal from HTTP header: {}", principal);
-                    return principal;
+                    try {
+                        String userAndPw = out.toString(Charset.defaultCharset());
+                        String username = StringHelper.before(userAndPw, ":");
+                        String password = StringHelper.after(userAndPw, ":");
+                        HttpPrincipal principal = new HttpPrincipal(username, password);
+                        LOG.debug("Extracted Basic Auth principal from HTTP header: {}", principal);
+                        return principal;
+                    } finally {
+                        buf.release();
+                        out.release();
+                    }
                 }
             }
         }
@@ -285,10 +274,10 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         }
         HttpRequest request = (HttpRequest) message;
         // setup the connection property in case of the message header is removed
-        boolean keepAlive = HttpHeaders.isKeepAlive(request);
+        boolean keepAlive = HttpUtil.isKeepAlive(request);
         if (!keepAlive) {
             // Just make sure we close the connection this time.
-            exchange.setProperty(HttpHeaders.Names.CONNECTION, HttpHeaders.Values.CLOSE);
+            exchange.setProperty(HttpHeaderNames.CONNECTION.toString(), HttpHeaderValues.CLOSE.toString());
         }
     }
 
@@ -301,7 +290,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             if (cause instanceof ClosedChannelException) {
                 LOG.debug("Channel already closed. Ignoring this exception.");
             } else {
-                LOG.warn("Closing channel as an exception was thrown from Netty", cause);
+                LOG.debug("Closing channel as an exception was thrown from Netty", cause);
                 // close channel in case an exception was thrown
                 NettyHelper.close(ctx.channel());
             }

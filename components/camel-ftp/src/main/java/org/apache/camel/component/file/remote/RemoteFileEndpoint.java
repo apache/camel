@@ -19,12 +19,13 @@ package org.apache.camel.component.file.remote;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExist;
+import org.apache.camel.component.file.GenericFilePollingConsumer;
 import org.apache.camel.component.file.GenericFileProducer;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
@@ -34,15 +35,17 @@ import org.apache.camel.util.ObjectHelper;
  */
 public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
 
-    @UriParam
+    @UriParam(label = "advanced")
     private int maximumReconnectAttempts = 3;
-    @UriParam
+    @UriParam(label = "advanced")
     private long reconnectDelay = 1000;
-    @UriParam
+    @UriParam(label = "common")
     private boolean disconnect;
-    @UriParam
+    @UriParam(label = "producer,advanced")
+    private boolean disconnectOnBatchComplete;   
+    @UriParam(label = "common,advanced")
     private boolean fastExistsCheck;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private boolean download = true;
 
     public RemoteFileEndpoint() {
@@ -125,6 +128,20 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
 
         configureConsumer(consumer);
         return consumer;
+    }
+
+    @Override
+    public PollingConsumer createPollingConsumer() throws Exception {
+        if (log.isDebugEnabled()) {
+            log.debug("Creating GenericFilePollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
+                getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull(), getPollingConsumerBlockTimeout());
+        }
+        GenericFilePollingConsumer result = new GenericFilePollingConsumer(this);
+        // should not call configurePollingConsumer when its GenericFilePollingConsumer
+        result.setBlockWhenFull(isPollingConsumerBlockWhenFull());
+        result.setBlockTimeout(getPollingConsumerBlockTimeout());
+
+        return result;
     }
 
     /**
@@ -218,6 +235,18 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
      */
     public void setDisconnect(boolean disconnect) {
         this.disconnect = disconnect;
+    }
+
+    public boolean isDisconnectOnBatchComplete() {
+        return disconnectOnBatchComplete;
+    }
+
+    /**
+     * Whether or not to disconnect from remote FTP server right after a Batch upload is complete.
+     * disconnectOnBatchComplete will only disconnect the current connection to the FTP server.
+     */
+    public void setDisconnectOnBatchComplete(boolean disconnectOnBatchComplete) {
+        this.disconnectOnBatchComplete = disconnectOnBatchComplete;
     }
 
     public boolean isFastExistsCheck() {

@@ -17,7 +17,6 @@
 package org.apache.camel.maven;
 
 import java.io.InputStreamReader;
-import java.net.URL;
 import javax.swing.text.html.parser.DTD;
 
 import org.junit.Assert;
@@ -28,28 +27,30 @@ import org.junit.Test;
  */
 public class JavadocParserTest extends Assert {
 
-    private static final String JAVA6_STRING = "https://docs.oracle.com/javase/6/docs/api/java/lang/String.html";
-    private static final String JAVA7_STRING = "https://docs.oracle.com/javase/7/docs/api/java/lang/String.html";
-    private static final String JAVA8_STRING = "https://docs.oracle.com/javase/8/docs/api/java/lang/String.html";
-
     @Test
     public void testGetMethods() throws Exception {
         final DTD dtd = DTD.getDTD("html.dtd");
         final String javaDocPath = String.class.getName().replaceAll("\\.", "/") + ".html";
         final JavadocParser htmlParser = new JavadocParser(dtd, javaDocPath);
 
-        htmlParser.parse(new InputStreamReader(new URL(JAVA6_STRING).openStream(), "UTF-8"));
+        htmlParser.parse(new InputStreamReader(JavadocParserTest.class.getResourceAsStream("/Java6_String.html"), "UTF-8"));
         assertNull("Java6 getErrorMessage", htmlParser.getErrorMessage());
         assertEquals("Java6 getMethods", 65, htmlParser.getMethods().size());
         htmlParser.reset();
 
-        htmlParser.parse(new InputStreamReader(new URL(JAVA7_STRING).openStream(), "UTF-8"));
+        htmlParser.parse(new InputStreamReader(JavadocParserTest.class.getResourceAsStream("/Java7_String.html"), "UTF-8"));
         assertNull("Java7 getErrorMessage", htmlParser.getErrorMessage());
         assertEquals("Java7 getMethods", 65, htmlParser.getMethods().size());
         htmlParser.reset();
 
-        htmlParser.parse(new InputStreamReader(new URL(JAVA8_STRING).openStream(), "UTF-8"));
+        htmlParser.parse(new InputStreamReader(JavadocParserTest.class.getResourceAsStream("/Java8_String.html"), "UTF-8"));
         assertNull("Java8 getErrorMessage", htmlParser.getErrorMessage());
         assertEquals("Java8 getMethods", 67, htmlParser.getMethods().size());
+        htmlParser.reset();
+
+        htmlParser.parse(new InputStreamReader(JavadocParserTest.class.getResourceAsStream("/Java11_String.html"), "UTF-8"));
+        assertNull("Java11 getErrorMessage", htmlParser.getErrorMessage());
+        assertEquals("Java11 getMethods", 75, htmlParser.getMethods().size());
+        htmlParser.reset();
     }
 }

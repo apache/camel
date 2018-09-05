@@ -34,8 +34,8 @@ public class InterceptorToAsyncProcessorBridge extends ServiceSupport implements
 
     private final AsyncProcessor interceptor;
     private volatile AsyncProcessor target;
-    private volatile ThreadLocal<AsyncCallback> callback = new ThreadLocal<AsyncCallback>();
-    private volatile ThreadLocal<Boolean> interceptorDone = new ThreadLocal<Boolean>();
+    private volatile ThreadLocal<AsyncCallback> callback = new ThreadLocal<>();
+    private volatile ThreadLocal<Boolean> interceptorDone = new ThreadLocal<>();
 
     /**
      * Constructs the bridge

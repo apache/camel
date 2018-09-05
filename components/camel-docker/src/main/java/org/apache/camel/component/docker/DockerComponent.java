@@ -23,14 +23,19 @@ import com.github.dockerjava.api.DockerClient;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.docker.exception.DockerException;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.Metadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link DockerEndpoint}.
  */
 public class DockerComponent extends DefaultComponent {
+    private static final Logger LOG = LoggerFactory.getLogger(DockerComponent.class);
 
+    @Metadata(label = "advanced")
     private DockerConfiguration configuration = new DockerConfiguration();
-    private Map<DockerClientProfile, DockerClient> clients = new HashMap<DockerClientProfile, DockerClient>();
+    private Map<DockerClientProfile, DockerClient> clients = new HashMap<>();
 
     public DockerComponent() {
     }
@@ -55,9 +60,6 @@ public class DockerComponent extends DefaultComponent {
         }
 
         configuration.setOperation(operation);
-
-        // Validate URI Parameters
-        DockerHelper.validateParameters(operation, parameters);
 
         Endpoint endpoint = new DockerEndpoint(uri, this, configuration);
         setProperties(configuration, parameters);
@@ -87,5 +89,4 @@ public class DockerComponent extends DefaultComponent {
     public void setClient(DockerClientProfile clientProfile, DockerClient client) {
         clients.put(clientProfile, client);
     }
-
 }

@@ -118,14 +118,40 @@ public interface HttpBinding {
      * serialized in the response as a application/x-java-serialized-object content type (for example using Jetty or
      * Servlet Camel components). On the producer side the exception will be deserialized and thrown as is,
      * instead of the HttpOperationFailedException. The caused exception is required to be serialized.
+     * <p/>
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
+     * data from the request to Java and that can be a potential security risk.
      */
     boolean isTransferException();
+
+    /**
+     * Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object
+     * <p/>
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
+     * data from the request to Java and that can be a potential security risk.
+     */
+    boolean isAllowJavaSerializedObject();
 
     /**
      * Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present.
      * This can be turned on in case HTTP clients do not send streamed data.
      */
     boolean isEagerCheckContentAvailable();
+    
+    /**
+     * Whether to allow Exchange Body HTTP mapping
+     */
+    boolean isMapHttpMessageBody();
+    
+    /**
+     * Whether to allow Exchange Headers HTTP mapping
+     */
+    boolean isMapHttpMessageHeaders();
+
+    /**
+     * Whether to allow Exchange Form URL Encoded Body HTTP mapping
+     */
+    boolean isMapHttpMessageFormUrlEncodedBody();
 
     /**
      * Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present.
@@ -138,8 +164,21 @@ public interface HttpBinding {
      * serialized in the response as a application/x-java-serialized-object content type (for example using Jetty or
      * Servlet Camel components). On the producer side the exception will be deserialized and thrown as is,
      * instead of the HttpOperationFailedException. The caused exception is required to be serialized.
+     * <p/>
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
+     * data from the request to Java and that can be a potential security risk.
      */
     void setTransferException(boolean transferException);
+
+    /**
+     * Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object
+     * <p/>
+     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
+     * data from the request to Java and that can be a potential security risk.
+     *
+     * @param allowJavaSerializedObject <tt>true</tt> to allow serializing java objects
+     */
+    void setAllowJavaSerializedObject(boolean allowJavaSerializedObject);
 
     /**
      * Gets the header filter strategy
@@ -156,5 +195,40 @@ public interface HttpBinding {
      * @param headerFilterStrategy the custom strategy
      */
     void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy);
+    
+    /**
+     * Whether to allow Exchange Body HTTP mapping
+     * <p/>
+     * This is by default turned on. If you disable this then be aware that the Exchange body won't be mapped to HTTP
+     */
+    void setMapHttpMessageBody(boolean mapHttpMessageBody);
+    
+    /**
+     * Whether to allow Exchange Headers HTTP mapping
+     * <p/>
+     * This is by default turned on. If you disable this then be aware that the Exchange headers won't be mapped to HTTP
+     */
+    void setMapHttpMessageHeaders(boolean mapHttpMessageHeaders);
+
+    /**
+     * Whether to allow Exchange Form URL Encoded Body HTTP mapping
+     * <p/>
+     * This is by default turned on. If you disable this then be aware that the Exchange Form URL Encoded Body won't be mapped to HTTP
+     */
+    void setMapHttpMessageFormUrlEncodedBody(boolean mapHttpMessageFormUrlEncodedBody);
+
+    /**
+     * Whitelist of accepted filename extensions for accepting uploaded files.
+     * <p/>
+     * Multiple extensions can be separated by comma, such as txt,xml.
+     */
+    String getFileNameExtWhitelist();
+
+    /**
+     * Whitelist of accepted filename extensions for accepting uploaded files.
+     * <p/>
+     * Multiple extensions can be separated by comma, such as txt,xml.
+     */
+    void setFileNameExtWhitelist(String fileNameExtWhitelist);
 
 }

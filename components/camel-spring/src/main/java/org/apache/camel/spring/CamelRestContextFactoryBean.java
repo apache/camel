@@ -25,17 +25,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.spi.Metadata;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
+ * Configuration of REST services using rest-dsl using XML
+ *
  * @version 
  */
+@Metadata(label = "spring,configuration,rest")
 @XmlRootElement(name = "restContext")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelRestContextFactoryBean extends IdentifiedType implements FactoryBean<List<RestDefinition>> {
 
     @XmlElement(name = "rest", required = true)
-    private List<RestDefinition> rests = new ArrayList<RestDefinition>();
+    private List<RestDefinition> rests = new ArrayList<>();
 
     public List<RestDefinition> getObject() throws Exception {
         return rests;

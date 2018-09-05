@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -26,10 +28,11 @@ public class EndpointRegistryKeepRouteEndpointsRemoteRouteSharedEndpointTest ext
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getProperties().put(Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE, "20");
+        context.getGlobalOptions().put(Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE, "20");
         return context;
     }
 
+    @Test
     public void testEndpointRegistryKeepRouteEndpointsRemoveRouteSharedEndpoint() throws Exception {
         assertTrue(context.hasEndpoint("direct://start") != null);
         assertTrue(context.hasEndpoint("log://start") != null);

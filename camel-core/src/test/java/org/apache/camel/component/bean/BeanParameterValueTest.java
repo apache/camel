@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +30,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class BeanParameterValueTest extends ContextTestSupport {
 
+    @Test
     public void testBeanParameterValueBoolean() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
@@ -36,6 +39,7 @@ public class BeanParameterValueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanParameterValueBoolean2() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
@@ -44,6 +48,7 @@ public class BeanParameterValueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanParameterValueBoolean3() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
@@ -52,6 +57,7 @@ public class BeanParameterValueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanParameterValueBoolean4() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello Camel");
 
@@ -60,6 +66,7 @@ public class BeanParameterValueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanParameterValueInteger() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("WorldWorldWorld");
 
@@ -68,6 +75,7 @@ public class BeanParameterValueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanParameterValueHeaderInteger() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("WorldWorld");
 
@@ -76,6 +84,7 @@ public class BeanParameterValueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanParameterValueMap() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
@@ -84,10 +93,11 @@ public class BeanParameterValueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanParameterNoBody() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Is Hadrian 21 years old?");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("SomeTest", true);
         headers.put("SomeAge", 21);
         headers.put("SomeName", "Hadrian");

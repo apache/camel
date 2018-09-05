@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+import org.junit.After;
+
+import org.junit.Test;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,13 +37,15 @@ public class WireTapCustomPool2Test extends ContextTestSupport {
     protected MockEndpoint result;
     protected ExecutorService pool;
     
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         if (pool != null) {
             pool.shutdownNow();
         }
     }
 
+    @Test
     public void testSend() throws Exception {
         // hello must come first, as we have delay on the tapped route
         result.expectedBodiesReceived("Hello World", "Tapped");
@@ -51,7 +57,8 @@ public class WireTapCustomPool2Test extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         tap = getMockEndpoint("mock:tap");
         result = getMockEndpoint("mock:result");

@@ -124,7 +124,7 @@ public class JettySimulateFailoverRoundRobinTest extends CamelTestSupport {
 
         public MyFailoverLoadBalancer(ProducerTemplate template, String... endpoints) {
             this.template = template;
-            this.endpoints = new ArrayList<String>(Arrays.asList(endpoints));
+            this.endpoints = new ArrayList<>(Arrays.asList(endpoints));
         }
 
         public void process(Exchange exchange) throws Exception {

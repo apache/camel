@@ -23,7 +23,7 @@ public enum TokenType {
 
     whiteSpace, character,
     booleanValue, numericValue, nullValue,
-    singleQuote, doubleQuote,
+    singleQuote, doubleQuote, minusValue,
     escape,
     functionStart, functionEnd,
     binaryOperator, unaryOperator, logicalOperator,

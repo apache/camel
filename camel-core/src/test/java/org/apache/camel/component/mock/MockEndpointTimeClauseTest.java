@@ -16,11 +16,12 @@
  */
 package org.apache.camel.component.mock;
 
+import org.junit.Test;
+
 import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -33,6 +34,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class MockEndpointTimeClauseTest extends ContextTestSupport {
 
+    @Test
     public void testReceivedTimestamp() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.message(0).exchangeProperty(Exchange.CREATED_TIMESTAMP).isNotNull();
@@ -45,33 +47,36 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAssertPeriod() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.setAssertPeriod(1000);
+        mock.setAssertPeriod(10);
 
         template.sendBody("direct:a", "A");
 
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAssertPeriodNot() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.setAssertPeriod(1000);
+        mock.setAssertPeriod(10);
 
         template.sendBody("direct:a", "A");
         template.sendBody("direct:a", "B");
 
+        // we got 2 messages so the assertion is not
         mock.assertIsNotSatisfied();
     }
 
+    @Test
     public void testAssertPeriodSecondMessageArrives() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        // wait 2 sec after preliminary assertion to ensure its still correct
-        // after the 2 seconds.
-        mock.setAssertPeriod(2000);
+        // wait a bit after preliminary assertion to ensure its still correct
+        mock.setAssertPeriod(250);
 
         template.sendBody("direct:a", "A");
 
@@ -79,7 +84,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
         executor.execute(new Runnable() {
             public void run() {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(50);
                 } catch (Exception e) {
                     // ignore
                 }
@@ -99,6 +104,7 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
         executor.shutdownNow();
     }
 
+    @Test
     public void testNoAssertPeriodSecondMessageArrives() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -112,15 +118,13 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
         executor.execute(new Runnable() {
             public void run() {
                 try {
-                    Thread.sleep(2000);
+                    latch.await();
 
                     if (isStarted(template)) {
                         template.sendBody("direct:a", "B");
                     }
                 } catch (Exception e) {
                     // ignore
-                } finally {
-                    latch.countDown();
                 }
             }
         });
@@ -129,74 +133,80 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
         // the assertion was valid at the time given
         assertMockEndpointsSatisfied();
 
-        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        latch.countDown();
 
         executor.shutdownNow();
     }
 
+    @Test
     public void testArrivesBeforeNext() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
-        mock.message(0).arrives().noLaterThan(2).seconds().beforeNext();
+        mock.message(0).arrives().noLaterThan(1).seconds().beforeNext();
 
         template.sendBody("direct:a", "A");
-        Thread.sleep(500);
+        Thread.sleep(50);
         template.sendBody("direct:a", "B");
 
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testArrivesAfterPrevious() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
-        mock.message(1).arrives().noLaterThan(2).seconds().afterPrevious();
+        mock.message(1).arrives().noLaterThan(1).seconds().afterPrevious();
 
         template.sendBody("direct:a", "A");
-        Thread.sleep(500);
+        Thread.sleep(50);
         template.sendBody("direct:a", "B");
 
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testArrivesBeforeAndAfter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(3);
-        mock.message(1).arrives().noLaterThan(500).millis().afterPrevious();
-        mock.message(1).arrives().noLaterThan(1000).millis().beforeNext();
+        mock.message(1).arrives().noLaterThan(250).millis().afterPrevious();
+        mock.message(1).arrives().noLaterThan(250).millis().beforeNext();
 
         template.sendBody("direct:a", "A");
-        Thread.sleep(100);
+        Thread.sleep(50);
         template.sendBody("direct:a", "B");
-        Thread.sleep(200);
+        Thread.sleep(50);
         template.sendBody("direct:a", "C");
 
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testArrivesWithinAfterPrevious() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
-        mock.message(1).arrives().between(1, 4).seconds().afterPrevious();
+        mock.message(1).arrives().between(10, 500).millis().afterPrevious();
 
         template.sendBody("direct:a", "A");
-        Thread.sleep(1500);
+        Thread.sleep(50);
         template.sendBody("direct:a", "B");
 
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testArrivesWithinBeforeNext() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
-        mock.message(0).arrives().between(1, 4).seconds().beforeNext();
+        mock.message(0).arrives().between(10, 500).millis().beforeNext();
 
         template.sendBody("direct:a", "A");
-        Thread.sleep(1500);
+        Thread.sleep(50);
         template.sendBody("direct:a", "B");
 
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testArrivesAllMessages() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(5);
@@ -204,11 +214,11 @@ public class MockEndpointTimeClauseTest extends ContextTestSupport {
 
         template.sendBody("direct:a", "A");
         template.sendBody("direct:a", "B");
-        Thread.sleep(100);
+        Thread.sleep(50);
         template.sendBody("direct:a", "C");
-        Thread.sleep(150);
+        Thread.sleep(50);
         template.sendBody("direct:a", "D");
-        Thread.sleep(200);
+        Thread.sleep(50);
         template.sendBody("direct:a", "E");
 
         assertMockEndpointsSatisfied();

@@ -16,15 +16,19 @@
  */
 package org.apache.camel.builder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
@@ -37,6 +41,8 @@ import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +57,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     private AtomicBoolean initialized = new AtomicBoolean(false);
     private RestsDefinition restCollection = new RestsDefinition();
     private Map<String, RestConfigurationDefinition> restConfigurations;
+    private List<TransformerBuilder> transformerBuilders = new ArrayList<>();
+    private List<ValidatorBuilder> validatorBuilders = new ArrayList<>();
     private RoutesDefinition routeCollection = new RoutesDefinition();
 
     public RouteBuilder() {
@@ -92,7 +100,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      */
     public RestConfigurationDefinition restConfiguration(String component) {
         if (restConfigurations == null) {
-            restConfigurations = new HashMap<String, RestConfigurationDefinition>();
+            restConfigurations = new HashMap<>();
         }
         RestConfigurationDefinition restConfiguration = restConfigurations.get(component);
         if (restConfiguration == null) {
@@ -127,6 +135,28 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         RestDefinition answer = getRestCollection().rest(path);
         configureRest(answer);
         return answer;
+    }
+
+    /**
+     * Create a new {@code TransformerBuilder}.
+     * 
+     * @return the builder
+     */
+    public TransformerBuilder transformer() {
+        TransformerBuilder tdb = new TransformerBuilder();
+        transformerBuilders.add(tdb);
+        return tdb;
+    }
+
+    /**
+     * Create a new {@code ValidatorBuilder}.
+     * 
+     * @return the builder
+     */
+    public ValidatorBuilder validator() {
+        ValidatorBuilder vb = new ValidatorBuilder();
+        validatorBuilders.add(vb);
+        return vb;
     }
 
     /**
@@ -206,6 +236,36 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         }
         getRouteCollection().setCamelContext(getContext());
         setErrorHandlerBuilder(errorHandlerBuilder);
+    }
+
+    /**
+     * Injects a property placeholder value with the given key converted to the given type.
+     *
+     * @param key  the property key
+     * @param type the type to convert the value as
+     * @return the value, or <tt>null</tt> if value is empty
+     * @throws Exception is thrown if property with key not found or error converting to the given type.
+     */
+    public <T> T propertyInject(String key, Class<T> type) throws Exception {
+        StringHelper.notEmpty(key, "key");
+        ObjectHelper.notNull(type, "Class type");
+
+        // the properties component is mandatory
+        Component component = getContext().hasComponent("properties");
+        if (component == null) {
+            throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
+                + " in CamelContext to support property placeholders in expressions");
+        }
+        PropertiesComponent pc = getContext().getTypeConverter()
+            .mandatoryConvertTo(PropertiesComponent.class, component);
+        // enclose key with {{ }} to force parsing
+        Object value = pc.parseUri(pc.getPrefixToken() + key + pc.getSuffixToken());
+
+        if (value != null) {
+            return getContext().getTypeConverter().mandatoryConvertTo(type, value);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -326,6 +386,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
         // but populate rests before routes, as we want to turn rests into routes
         populateRests();
+        populateTransformers();
+        populateValidators();
         populateRoutes();
     }
 
@@ -436,12 +498,56 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         }
         camelContext.addRestDefinitions(getRestCollection().getRests());
 
-        // convert rests into routes so we reuse routes for runtime
+        // convert rests into routes so we they are routes for runtime
+        List<RouteDefinition> routes = new ArrayList<>();
         for (RestDefinition rest : getRestCollection().getRests()) {
-            List<RouteDefinition> routes = rest.asRouteDefinition(getContext());
-            for (RouteDefinition route : routes) {
-                getRouteCollection().route(route);
+            List<RouteDefinition> list = rest.asRouteDefinition(getContext());
+            routes.addAll(list);
+        }
+        // convert rests api-doc into routes so they are routes for runtime
+        for (RestConfiguration config : camelContext.getRestConfigurations()) {
+            if (config.getApiContextPath() != null) {
+                // avoid adding rest-api multiple times, in case multiple RouteBuilder classes is added
+                // to the CamelContext, as we only want to setup rest-api once
+                // so we check all existing routes if they have rest-api route already added
+                boolean hasRestApi = false;
+                for (RouteDefinition route : camelContext.getRouteDefinitions()) {
+                    FromDefinition from = route.getInputs().get(0);
+                    if (from.getUri() != null && from.getUri().startsWith("rest-api:")) {
+                        hasRestApi = true;
+                    }
+                }
+                if (!hasRestApi) {
+                    RouteDefinition route = RestDefinition.asRouteApiDefinition(camelContext, config);
+                    log.debug("Adding routeId: {} as rest-api route", route.getId());
+                    routes.add(route);
+                }
             }
+        }
+
+        // add the rest routes
+        for (RouteDefinition route : routes) {
+            getRouteCollection().route(route);
+        }
+    }
+
+    protected void populateTransformers() {
+        ModelCamelContext camelContext = getContext();
+        if (camelContext == null) {
+            throw new IllegalArgumentException("CamelContext has not been injected!");
+        }
+        for (TransformerBuilder tdb : transformerBuilders) {
+            tdb.configure(camelContext);
+        }
+    }
+
+    protected void populateValidators() {
+        ModelCamelContext camelContext = getContext();
+        if (camelContext == null) {
+            throw new IllegalArgumentException("CamelContext has not been injected!");
+        }
+        for (ValidatorBuilder vb : validatorBuilders) {
+            vb.configure(camelContext);
         }
     }
 

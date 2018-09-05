@@ -29,50 +29,54 @@ import org.apache.cxf.bus.extension.ExtensionManagerBus;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
-import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.mockito.Mockito.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+
 /**
  * A unit test for spring configured cxf endpoint.
- * 
- * @version 
+ *
+ * @version
  */
 public class CxfEndpointTest extends Assert {
-    private int port1 = CXFTestSupport.getPort1(); 
-    private int port2 = CXFTestSupport.getPort2(); 
+    private int port1 = CXFTestSupport.getPort1();
+    private int port2 = CXFTestSupport.getPort2();
 
     private String routerEndpointURI = "cxf://http://localhost:" + port1 + "/CxfEndpointTest/router"
-        + "?serviceClass=org.apache.camel.component.cxf.HelloService"
-        + "&dataFormat=POJO";
+            + "?serviceClass=org.apache.camel.component.cxf.HelloService"
+            + "&dataFormat=POJO";
     private String wsdlEndpointURI = "cxf://http://localhost:" + port2 + "/CxfEndpointTest/helloworld"
-        + "?wsdlURL=classpath:person.wsdl"
-        + "&serviceName={http://camel.apache.org/wsdl-first}PersonService"
-        + "&portName={http://camel.apache.org/wsdl-first}soap"
-        + "&dataFormat=PAYLOAD";
+            + "?wsdlURL=classpath:person.wsdl"
+            + "&serviceName={http://camel.apache.org/wsdl-first}PersonService"
+            + "&portName={http://camel.apache.org/wsdl-first}soap"
+            + "&dataFormat=PAYLOAD";
 
     @Test
     public void testSettingContinucationTimout() throws Exception {
         CamelContext context = new DefaultCamelContext();
         CxfEndpoint endpoint = context.getEndpoint(routerEndpointURI + "&continuationTimeout=800000",
-                                                   CxfEndpoint.class);
+                CxfEndpoint.class);
         assertEquals("Get a wrong continucationTimeout value", 800000, endpoint.getContinuationTimeout());
     }
-    
+
     @Test
     public void testSpringCxfEndpoint() throws Exception {
 
         ClassPathXmlApplicationContext ctx =
-            new ClassPathXmlApplicationContext(new String[]{"org/apache/camel/component/cxf/CxfEndpointBeans.xml"});
+                new ClassPathXmlApplicationContext(new String[]{"org/apache/camel/component/cxf/CxfEndpointBeans.xml"});
         CxfComponent cxfComponent = new CxfComponent(new SpringCamelContext(ctx));
         CxfSpringEndpoint endpoint = (CxfSpringEndpoint)cxfComponent.createEndpoint("cxf://bean:serviceEndpoint");
 
         assertEquals("Got the wrong endpoint address", endpoint.getAddress(),
-                     "http://localhost:" + port2 + "/CxfEndpointTest/helloworld");
+                "http://localhost:" + port2 + "/CxfEndpointTest/helloworld");
         assertEquals("Got the wrong endpont service class",
-            endpoint.getServiceClass().getCanonicalName(),
-            "org.apache.camel.component.cxf.HelloService");
+                endpoint.getServiceClass().getCanonicalName(),
+                "org.apache.camel.component.cxf.HelloService");
     }
 
     @Test
@@ -80,7 +84,7 @@ public class CxfEndpointTest extends Assert {
         ExtensionManagerBus bus = (ExtensionManagerBus) BusFactory.newInstance().createBus();
         bus.setId("oldCXF");
         BusFactory.setThreadDefaultBus(bus);
-        
+
         ExtensionManagerBus newBus = (ExtensionManagerBus) BusFactory.newInstance().createBus();
         newBus.setId("newCXF");
         CxfComponent cxfComponent = new CxfComponent(new DefaultCamelContext());
@@ -88,41 +92,33 @@ public class CxfEndpointTest extends Assert {
         endpoint.setBus(newBus);
         CamelCxfClientImpl client = (CamelCxfClientImpl)endpoint.createClient();
         assertEquals("CamelCxfClientImpl should has the same bus with CxfEndpoint", newBus, client.getBus());
-        
+
         endpoint = (CxfEndpoint)cxfComponent.createEndpoint(wsdlEndpointURI);
         endpoint.setBus(newBus);
         client = (CamelCxfClientImpl)endpoint.createClient();
         assertEquals("CamelCxfClientImpl should has the same bus with CxfEndpoint", newBus, client.getBus());
     }
-    
+
     @Test
     public void testCxfEndpointConfigurer() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
-        CxfEndpointConfigurer configurer = EasyMock.createMock(CxfEndpointConfigurer.class);
-        Processor processor = EasyMock.createMock(Processor.class);
+        CxfEndpointConfigurer configurer = mock(CxfEndpointConfigurer.class);
+        Processor processor = mock(Processor.class);
         registry.put("myConfigurer", configurer);
         CamelContext camelContext = new DefaultCamelContext(registry);
         CxfComponent cxfComponent = new CxfComponent(camelContext);
         CxfEndpoint endpoint = (CxfEndpoint)cxfComponent.createEndpoint(routerEndpointURI + "&cxfEndpointConfigurer=#myConfigurer");
-        
-        configurer.configure(EasyMock.isA(AbstractWSDLBasedEndpointFactory.class));
-        EasyMock.expectLastCall();
-        configurer.configureServer(EasyMock.isA(Server.class));
-        EasyMock.expectLastCall();
-        EasyMock.replay(configurer);
+
         endpoint.createConsumer(processor);
-        EasyMock.verify(configurer);
+        verify(configurer).configure(isA(AbstractWSDLBasedEndpointFactory.class));
+        verify(configurer).configureServer(isA(Server.class));
         
-        EasyMock.reset(configurer);
-        configurer.configure(EasyMock.isA(AbstractWSDLBasedEndpointFactory.class));
-        EasyMock.expectLastCall();
-        configurer.configureClient(EasyMock.isA(Client.class));
-        EasyMock.expectLastCall();
-        EasyMock.replay(configurer);
+        reset(configurer);
         Producer producer = endpoint.createProducer();
         producer.start();
-        EasyMock.verify(configurer);
         
+        verify(configurer).configure(isA(AbstractWSDLBasedEndpointFactory.class));
+        verify(configurer).configureClient(isA(Client.class));
     }
 
 }

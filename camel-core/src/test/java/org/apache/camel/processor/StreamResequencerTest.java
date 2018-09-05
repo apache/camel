@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
@@ -44,6 +46,7 @@ public class StreamResequencerTest extends ContextTestSupport {
         });
     }
 
+    @Test
     public void testSendMessagesInWrongOrderButReceiveThemInCorrectOrder() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("msg1", "msg2", "msg3", "msg4");
 
@@ -55,6 +58,7 @@ public class StreamResequencerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMultithreaded() throws Exception {
         int numMessages = 100;
 
@@ -91,16 +95,18 @@ public class StreamResequencerTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start").resequence(header("seqnum")).stream().to("mock:result");
+                from("direct:start").resequence(header("seqnum")).stream().timeout(100).deliveryAttemptInterval(10).to("mock:result");
                 // END SNIPPET: example
             }
         };
     }
 
+    @Test
     public void testStreamResequencerTypeWithJmx() throws Exception {
         doTestStreamResequencerType();
     }
 
+    @Test
     public void testStreamResequencerTypeWithoutJmx() throws Exception {
         doTestStreamResequencerType();
     }
@@ -126,7 +132,7 @@ public class StreamResequencerTest extends ContextTestSupport {
         private final int increment;
         private final Random random;
 
-        public Sender(ProducerTemplate template, int start, int end, int increment) {
+        Sender(ProducerTemplate template, int start, int end, int increment) {
             this.template = template;
             this.start = start;
             this.end = end;

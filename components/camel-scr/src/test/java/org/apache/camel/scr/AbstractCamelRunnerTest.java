@@ -38,25 +38,29 @@ public class AbstractCamelRunnerTest {
     public TestName testName = new TestName();
 
     private Logger log = LoggerFactory.getLogger(getClass());
+    private ConcreteCamelRunner integration;
 
     @Before
     public void setUp() throws Exception {
         log.info("*******************************************************************");
         log.info("Test: " + testName.getMethodName());
         log.info("*******************************************************************");
+
+        // Set property prefix for unit testing
+        System.setProperty(AbstractCamelRunner.PROPERTY_PREFIX, "unit");
+
+        // Prepare the integration
+        integration = new ConcreteCamelRunner();
     }
 
     @Test
-    public void testDeepConfigure() throws Exception {
-        ConcreteCamelRunner integration = new ConcreteCamelRunner();
-
+    public void testConfigure() throws Exception {
         integration.activate(null, integration.getDefaultProperties());
-        assertEquals("Overriding camelContextId failed (deep configure)", integration.getDefaultProperties().get("camelContextId"), integration.getContext().getName());
+        assertEquals("Configuring camelContextId with prefix failed", integration.getDefaultProperties().get("unit.camelContextId"), integration.getContext().getName());
     }
 
     @Test
     public void testActivateDeactivate() {
-        ConcreteCamelRunner integration = new ConcreteCamelRunner();
         try {
             integration.activate(null, integration.getDefaultProperties());
             Thread.sleep(AbstractCamelRunner.START_DELAY + 1000);
@@ -72,7 +76,6 @@ public class AbstractCamelRunnerTest {
 
     @Test
     public void testPrepareRunStop() {
-        ConcreteCamelRunner integration = new ConcreteCamelRunner();
         try {
             integration.prepare(null, integration.getDefaultProperties());
             integration.run();
@@ -91,7 +94,6 @@ public class AbstractCamelRunnerTest {
 
     @Test
     public void testDelayedStart() {
-        ConcreteCamelRunner integration = new ConcreteCamelRunner();
         try {
             integration.activate(null, integration.getDefaultProperties());
             Thread.sleep(2000);
@@ -111,8 +113,6 @@ public class AbstractCamelRunnerTest {
 
     @Test
     public void testDelayedStartCancel() {
-        ConcreteCamelRunner integration = new ConcreteCamelRunner();
-
         Map<String, String> properties = integration.getDefaultProperties();
         properties.put("from", "notfound:something");
         properties.put("camelroute.id", "test/notfound-mock");
@@ -126,5 +126,13 @@ public class AbstractCamelRunnerTest {
             e.printStackTrace();
             fail();
         }
+    }
+
+    @Test
+    public void testConversions() throws Exception {
+        assertEquals("test", AbstractCamelRunner.convertValue("test", String.class));
+        assertEquals(true, AbstractCamelRunner.convertValue("true", boolean.class));
+        assertEquals(100, AbstractCamelRunner.convertValue("100", int.class));
+        assertEquals(1.1, AbstractCamelRunner.convertValue("1.1", double.class));
     }
 }

@@ -31,7 +31,7 @@ import org.apache.camel.impl.UriEndpointComponent;
 
 public class RouteboxComponent extends UriEndpointComponent {
     final RouteboxConfiguration config;
-    private final Map<String, BlockingQueue<Exchange>> queues = new HashMap<String, BlockingQueue<Exchange>>();
+    private final Map<String, BlockingQueue<Exchange>> queues = new HashMap<>();
     
     public RouteboxComponent() {
         super(RouteboxEndpoint.class);
@@ -70,9 +70,9 @@ public class RouteboxComponent extends UriEndpointComponent {
         BlockingQueue<Exchange> queue;
         Integer size = config.getQueueSize();
         if (size != null && size > 0) {
-            queue = new LinkedBlockingQueue<Exchange>(size);
+            queue = new LinkedBlockingQueue<>(size);
         } else {
-            queue = new LinkedBlockingQueue<Exchange>();
+            queue = new LinkedBlockingQueue<>();
         }
 
         queues.put(uri, queue);

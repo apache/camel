@@ -27,7 +27,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Custom data format
+ * To use a custom data format implementation that does not come out of the box from Apache Camel.
  *
  * @version
  */

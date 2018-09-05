@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.influxdb.enabled",
+      "description": "Enable influxdb component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

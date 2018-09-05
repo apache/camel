@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Date;
@@ -25,11 +27,13 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 public class ConvertBodyTest extends ContextTestSupport {
     
+    @Test
     public void testConvertBodyTo() {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -44,6 +48,7 @@ public class ConvertBodyTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testConvertBodyCharset() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -60,6 +65,26 @@ public class ConvertBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testConvertBodyCharsetWithExistingCharsetName() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("direct:foo").convertBodyTo(byte[].class, "iso-8859-1").to("mock:foo");
+            }
+        });
+
+        getMockEndpoint("mock:foo").expectedMessageCount(1);
+        // do not propagate charset to avoid side effects with double conversion etc
+        getMockEndpoint("mock:foo").message(0).exchangeProperty(Exchange.CHARSET_NAME).isEqualTo("UTF-8");
+
+        Exchange srcExchange = ExchangeBuilder.anExchange(context).withProperty(Exchange.CHARSET_NAME, "UTF-8").withBody("Hello World").build();
+
+        template.send("direct:foo", srcExchange);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
     public void testConvertToInteger() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived(11);
@@ -69,6 +94,7 @@ public class ConvertBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testConvertNullBody() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
@@ -79,6 +105,7 @@ public class ConvertBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testConvertFailed() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
@@ -92,6 +119,7 @@ public class ConvertBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testConvertToBytesCharset() throws Exception {
         byte[] body = "Hello World".getBytes("iso-8859-1");
 
@@ -103,6 +131,7 @@ public class ConvertBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testConvertToStringCharset() throws Exception {
 
         String body = "Hello World";
@@ -115,6 +144,7 @@ public class ConvertBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testConvertToBytesCharsetFail() throws Exception {
         byte[] body = "Hello World".getBytes("utf-8");
 
@@ -127,6 +157,7 @@ public class ConvertBodyTest extends ContextTestSupport {
         result.assertIsNotSatisfied();
     }
 
+    @Test
     public void testConvertToStringCharsetFail() throws Exception {
 
         // does not work on AIX

@@ -20,18 +20,22 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.w3c.dom.NodeList;
 
 /**
  * A number of helper methods for working with collections
  *
- * @version 
+ * @version
  */
 public final class CollectionHelper {
 
@@ -50,18 +54,18 @@ public final class CollectionHelper {
     public static Integer size(Object value) {
         if (value != null) {
             if (value instanceof Collection) {
-                Collection<?> collection = (Collection<?>)value;
+                Collection<?> collection = (Collection<?>) value;
                 return collection.size();
             } else if (value instanceof Map) {
-                Map<?, ?> map = (Map<?, ?>)value;
+                Map<?, ?> map = (Map<?, ?>) value;
                 return map.size();
             } else if (value instanceof Object[]) {
-                Object[] array = (Object[])value;
+                Object[] array = (Object[]) value;
                 return array.length;
             } else if (value.getClass().isArray()) {
                 return Array.getLength(value);
             } else if (value instanceof NodeList) {
-                NodeList nodeList = (NodeList)value;
+                NodeList nodeList = (NodeList) value;
                 return nodeList.getLength();
             }
         }
@@ -83,9 +87,9 @@ public final class CollectionHelper {
         if (oldValue != null) {
             List<Object> list;
             if (oldValue instanceof List) {
-                list = (List<Object>)oldValue;
+                list = (List<Object>) oldValue;
             } else {
-                list = new ArrayList<Object>();
+                list = new ArrayList<>();
                 list.add(oldValue);
                 // replace old entry with list
                 map.remove(key);
@@ -98,7 +102,7 @@ public final class CollectionHelper {
     }
 
     public static <T> Set<T> createSetContaining(T... contents) {
-        Set<T> contentsAsSet = new HashSet<T>();
+        Set<T> contentsAsSet = new HashSet<>();
         contentsAsSet.addAll(Arrays.asList(contents));
         return contentsAsSet;
     }
@@ -125,5 +129,90 @@ public final class CollectionHelper {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Traverses the given map recursively and flattern the keys by combining them with the optional separator.
+     *
+     * @param map  the map
+     * @param separator optional separator to use in key name, for example a hyphen or dot.
+     * @return the map with flattern keys
+     */
+    public static Map<String, Object> flatternKeysInMap(Map<String, Object> map, String separator) {
+        Map<String, Object> answer = new LinkedHashMap<>();
+        doFlatternKeysInMap(map, "", ObjectHelper.isNotEmpty(separator) ? separator : "", answer);
+        return answer;
+    }
+
+    private static void doFlatternKeysInMap(Map<String, Object> source, String prefix, String separator, Map<String, Object> target) {
+        for (Map.Entry<String, Object> entry : source.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            String newKey = prefix.isEmpty() ? key : prefix + separator + key;
+
+            if (value instanceof Map) {
+                Map map = (Map) value;
+                doFlatternKeysInMap(map, newKey, separator, target);
+            } else {
+                target.put(newKey, value);
+            }
+        }
+    }
+
+    /**
+     * Build an unmodifiable map on top of a given map. Note tha thew given map is
+     * copied if not null.
+     *
+     * @param map a map
+     * @return an unmodifiable map.
+     */
+    public static <K, V> Map<K, V> unmodifiableMap(Map<K, V> map) {
+        return map == null
+            ? Collections.emptyMap()
+            : Collections.unmodifiableMap(new HashMap<>(map));
+    }
+
+
+    /**
+     * Build a map from varargs.
+     */
+    public static <K, V> Map<K, V> mapOf(Supplier<Map<K, V>> creator, K key, V value, Object... keyVals) {
+        Map<K, V> map = creator.get();
+        map.put(key, value);
+
+        for (int i = 0; i < keyVals.length; i += 2) {
+            map.put(
+                (K) keyVals[i],
+                (V) keyVals[i + 1]
+            );
+        }
+
+        return map;
+    }
+
+
+    /**
+     * Build an immutable map from varargs.
+     */
+    public static <K, V> Map<K, V> immutableMapOf(Supplier<Map<K, V>> creator, K key, V value, Object... keyVals) {
+        return Collections.unmodifiableMap(
+            mapOf(creator, key, value, keyVals)
+        );
+    }
+
+    /**
+     * Build a map from varargs.
+     */
+    public static <K, V> Map<K, V> mapOf(K key, V value, Object... keyVals) {
+        return mapOf(HashMap::new, key, value, keyVals);
+    }
+
+    /**
+     * Build an immutable map from varargs.
+     */
+    public static <K, V> Map<K, V> immutableMapOf(K key, V value, Object... keyVals) {
+        return Collections.unmodifiableMap(
+            mapOf(HashMap::new, key, value, keyVals)
+        );
     }
 }

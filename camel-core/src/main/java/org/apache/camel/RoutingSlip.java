@@ -44,7 +44,26 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR})
 public @interface RoutingSlip {
+
+    /**
+     * Id of {@link CamelContext} to use
+     */
     String context() default "";
+
+    /**
+     * Sets the uri delimiter to use
+     */
     String delimiter() default ",";
+
+    /**
+     * Whether to ignore the invalidate endpoint exception when try to create a producer with that endpoint
+     */
     boolean ignoreInvalidEndpoints() default false;
+
+    /**
+     * Sets the maximum size used by the {@link org.apache.camel.impl.ProducerCache} which is used
+     * to cache and reuse producers when using this routing slip, when uris are reused.
+     */
+    int cacheSize() default 0;
+
 }

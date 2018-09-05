@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.xslt;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import javax.xml.transform.TransformerFactory;
 
@@ -41,6 +44,7 @@ public class XsltReferenceParameterTest extends TestSupport {
 
     private XsltBuilder builder1;
 
+    @Before
     public void setUp() throws Exception {
         JndiRegistry registry = new JndiRegistry(new JndiContext());
         RouteBuilder builder = createRouteBuilder();
@@ -54,16 +58,18 @@ public class XsltReferenceParameterTest extends TestSupport {
 
         ProcessorEndpoint pep1 = context.getEndpoint(TEST_URI_1, ProcessorEndpoint.class);
 
-        builder1 = (XsltBuilder)pep1.getProcessor();
-
         context.addRoutes(builder);
         context.start();
+
+        builder1 = (XsltBuilder)pep1.getProcessor();
     }
 
+    @Test
     public void testConverterReference() {
         assertSame(testConverter, builder1.getConverter());
     }
 
+    @Test
     public void testTransformerFactoryReference() {
         assertSame(testTransformerFactory, builder1.getConverter().getTransformerFactory());
     }

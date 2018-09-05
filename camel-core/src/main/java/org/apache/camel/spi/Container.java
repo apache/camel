@@ -44,11 +44,11 @@ public interface Container {
     /**
      * The <code>Instance</code> class holds a <code>Container</code> singleton.
      */
-    public static final class Instance {
+    final class Instance {
 
         private static final Logger LOG = LoggerFactory.getLogger(Container.class);
         private static Container container;
-        private static final Set<CamelContext> CONTEXTS = new LinkedHashSet<CamelContext>();
+        private static final Set<CamelContext> CONTEXTS = new LinkedHashSet<>();
 
         private Instance() {
         }
@@ -82,9 +82,9 @@ public interface Container {
         }
 
         /**
-         * Called by Camel when a <code>CamelContext</code> has been created.
+         * Called by Camel when a <code>CamelContext</code> is being started.
          *
-         * @param camelContext the newly created CamelContext
+         * @param camelContext the CamelContext to manage
          */
         public static void manage(CamelContext camelContext) {
             Container cnt = container;
@@ -105,9 +105,9 @@ public interface Container {
         }
 
         /**
-         * Called by Camel when a <code>CamelContext</code> has been destroyed.
+         * Called by Camel when a <code>CamelContext</code> is being stopped.
          *
-         * @param camelContext the CamelContext which has been destroyed
+         * @param camelContext the CamelContext which is being stopped
          */
         public static void unmanage(CamelContext camelContext) {
             CONTEXTS.remove(camelContext);
@@ -115,20 +115,20 @@ public interface Container {
     }
 
     /**
-     * Called by Camel when a <code>CamelContext</code> has been created by its constructor.
+     * Called by Camel before a <code>CamelContext</code> has been started.
      * <p/>
-     * Notice this method is invoked when the {@link org.apache.camel.CamelContext} has been created by its constructor.
+     * Notice this method is invoked when the {@link org.apache.camel.CamelContext} has been started.
      * The context is <b>not</b> yet finished being configured. For example the id/name of the {@link org.apache.camel.CamelContext}
      * has not been resolved yet, and may return <tt>null</tt>.
      * <p/>
      * The intention is implementations of {@link org.apache.camel.spi.Container} is able to configure the {@link org.apache.camel.CamelContext}
-     * before its being started.
+     * before it has been fully started.
      * <p/>
-     * To receive callbacks when the {@link org.apache.camel.CamelContext} has finished being configured and is being started, then
+     * To receive callbacks when the {@link org.apache.camel.CamelContext} is fully configured and has been started, then
      * use {@link org.apache.camel.spi.EventNotifier} to listen for the {@link org.apache.camel.management.event.CamelContextStartedEvent}
      * event.
      *
-     * @param camelContext the newly created CamelContext by its constructor
+     * @param camelContext the CamelContext to manage
      */
     void manage(CamelContext camelContext);
 

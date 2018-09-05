@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.linkedin.api;
+import org.junit.Before;
 
 import org.apache.camel.component.linkedin.api.model.CompanySearch;
 import org.junit.BeforeClass;

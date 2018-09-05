@@ -38,6 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
@@ -49,6 +50,7 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.CompletionAwareAggregationStrategy;
+import org.apache.camel.processor.aggregate.DelegateAggregationStrategy;
 import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteContext;
@@ -78,7 +80,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * Implements the Multicast pattern to send a message exchange to a number of
  * endpoints, each endpoint receiving a copy of the message exchange.
  *
- * @version 
+ * @version
  * @see Pipeline
  */
 public class MulticastProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, IdAware {
@@ -137,7 +139,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      */
     static final class PreparedErrorHandler extends KeyValueHolder<RouteContext, Processor> {
 
-        public PreparedErrorHandler(RouteContext key, Processor value) {
+        PreparedErrorHandler(RouteContext key, Processor value) {
             super(key, value);
         }
 
@@ -151,12 +153,13 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     private final boolean parallelProcessing;
     private final boolean streaming;
     private final boolean parallelAggregate;
+    private final boolean stopOnAggregateException;
     private final boolean stopOnException;
     private final ExecutorService executorService;
     private final boolean shutdownExecutorService;
     private ExecutorService aggregateExecutorService;
     private final long timeout;
-    private final ConcurrentMap<PreparedErrorHandler, Processor> errorHandlers = new ConcurrentHashMap<PreparedErrorHandler, Processor>();
+    private final ConcurrentMap<PreparedErrorHandler, Processor> errorHandlers = new ConcurrentHashMap<>();
     private final boolean shareUnitOfWork;
 
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors) {
@@ -175,10 +178,17 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 streaming, stopOnException, timeout, onPrepare, shareUnitOfWork, false);
     }
 
+    public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy, boolean parallelProcessing,
+                              ExecutorService executorService, boolean shutdownExecutorService, boolean streaming, boolean stopOnException, long timeout, Processor onPrepare,
+                              boolean shareUnitOfWork, boolean parallelAggregate) {
+        this(camelContext, processors, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService, streaming, stopOnException, timeout, onPrepare,
+             shareUnitOfWork, false, false);
+    }
+    
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy,
                               boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService, boolean streaming,
                               boolean stopOnException, long timeout, Processor onPrepare, boolean shareUnitOfWork,
-                              boolean parallelAggregate) {
+                              boolean parallelAggregate, boolean stopOnAggregateException) {
         notNull(camelContext, "camelContext");
         this.camelContext = camelContext;
         this.processors = processors;
@@ -193,6 +203,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         this.onPrepare = onPrepare;
         this.shareUnitOfWork = shareUnitOfWork;
         this.parallelAggregate = parallelAggregate;
+        this.stopOnAggregateException = stopOnAggregateException;
     }
 
     @Override
@@ -266,10 +277,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         final CompletionService<Exchange> completion;
         if (streaming) {
             // execute tasks in parallel+streaming and aggregate in the order they are finished (out of order sequence)
-            completion = new ExecutorCompletionService<Exchange>(executorService);
+            completion = new ExecutorCompletionService<>(executorService);
         } else {
             // execute tasks in parallel and aggregate in the order the tasks are submitted (in order sequence)
-            completion = new SubmitOrderedCompletionService<Exchange>(executorService);
+            completion = new SubmitOrderedCompletionService<>(executorService);
         }
 
         final AtomicInteger total = new AtomicInteger(0);
@@ -290,52 +301,70 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             final AtomicBoolean aggregationTaskSubmitted = new AtomicBoolean();
 
             LOG.trace("Starting to submit parallel tasks");
-
-            while (it.hasNext()) {
-                final ProcessorExchangePair pair = it.next();
-                final Exchange subExchange = pair.getExchange();
-                updateNewExchange(subExchange, total.intValue(), pairs, it);
-
-                completion.submit(new Callable<Exchange>() {
-                    public Exchange call() throws Exception {
-                        // only start the aggregation task when the task is being executed to avoid staring
-                        // the aggregation task to early and pile up too many threads
-                        if (aggregationTaskSubmitted.compareAndSet(false, true)) {
-                            // but only submit the task once
-                            aggregateExecutorService.submit(aggregateOnTheFlyTask);
-                        }
-
-                        if (!running.get()) {
-                            // do not start processing the task if we are not running
+            
+            try {
+                while (it.hasNext()) {
+                    final ProcessorExchangePair pair = it.next();
+                    // in case the iterator returns null then continue to next
+                    if (pair == null) {
+                        continue;
+                    }
+    
+                    final Exchange subExchange = pair.getExchange();
+                    updateNewExchange(subExchange, total.intValue(), pairs, it);
+    
+                    completion.submit(new Callable<Exchange>() {
+                        public Exchange call() throws Exception {
+                            // start the aggregation task at this stage only in order not to pile up too many threads
+                            if (aggregationTaskSubmitted.compareAndSet(false, true)) {
+                                // but only submit the aggregation task once
+                                aggregateExecutorService.submit(aggregateOnTheFlyTask);
+                            }
+    
+                            if (!running.get()) {
+                                // do not start processing the task if we are not running
+                                return subExchange;
+                            }
+    
+                            try {
+                                doProcessParallel(pair);
+                            } catch (Throwable e) {
+                                subExchange.setException(e);
+                            }
+    
+                            // Decide whether to continue with the multicast or not; similar logic to the Pipeline
+                            Integer number = getExchangeIndex(subExchange);
+                            boolean continueProcessing = PipelineHelper.continueProcessing(subExchange, "Parallel processing failed for number " + number, LOG);
+                            if (stopOnException && !continueProcessing) {
+                                // signal to stop running
+                                running.set(false);
+                                // throw caused exception
+                                if (subExchange.getException() != null) {
+                                    // wrap in exception to explain where it failed
+                                    CamelExchangeException cause = new CamelExchangeException("Parallel processing failed for number " + number, subExchange, subExchange.getException());
+                                    subExchange.setException(cause);
+                                }
+                            }
+    
+                            LOG.trace("Parallel processing complete for exchange: {}", subExchange);
                             return subExchange;
                         }
-
-                        try {
-                            doProcessParallel(pair);
-                        } catch (Throwable e) {
-                            subExchange.setException(e);
-                        }
-
-                        // Decide whether to continue with the multicast or not; similar logic to the Pipeline
-                        Integer number = getExchangeIndex(subExchange);
-                        boolean continueProcessing = PipelineHelper.continueProcessing(subExchange, "Parallel processing failed for number " + number, LOG);
-                        if (stopOnException && !continueProcessing) {
-                            // signal to stop running
-                            running.set(false);
-                            // throw caused exception
-                            if (subExchange.getException() != null) {
-                                // wrap in exception to explain where it failed
-                                CamelExchangeException cause = new CamelExchangeException("Parallel processing failed for number " + number, subExchange, subExchange.getException());
-                                subExchange.setException(cause);
-                            }
-                        }
-
-                        LOG.trace("Parallel processing complete for exchange: {}", subExchange);
-                        return subExchange;
-                    }
-                });
-
-                total.incrementAndGet();
+                    });
+    
+                    total.incrementAndGet();
+                }
+            } catch (Throwable e) {
+                // The methods it.hasNext and it.next can throw RuntimeExceptions when custom iterators are implemented.
+                // We have to catch the exception here otherwise the aggregator threads would pile up.
+                if (e instanceof Exception) {
+                    executionException.set((Exception) e);
+                } else {
+                    executionException.set(ObjectHelper.wrapRuntimeCamelException(e));
+                }
+                // and because of the exception we must signal we are done so the latch can open and let the other thread continue processing
+                LOG.debug("Signaling we are done aggregating on the fly for exchangeId: {}", original.getExchangeId());
+                LOG.trace("Aggregate on the fly task done for exchangeId: {}", original.getExchangeId());
+                aggregationOnTheFlyDone.countDown();
             }
 
             // signal all tasks has been submitted
@@ -518,12 +547,24 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
         @Override
         public void run() {
-            if (parallelAggregate) {
-                doAggregateInternal(getAggregationStrategy(subExchange), result, subExchange);
-            } else {
-                doAggregate(getAggregationStrategy(subExchange), result, subExchange);
+            try {
+                if (parallelAggregate) {
+                    doAggregateInternal(getAggregationStrategy(subExchange), result, subExchange);
+                } else {
+                    doAggregate(getAggregationStrategy(subExchange), result, subExchange);
+                }
+            } catch (Throwable e) {
+                if (isStopOnAggregateException()) {
+                    throw e;
+                } else {
+                    // wrap in exception to explain where it failed
+                    CamelExchangeException cex = new CamelExchangeException("Parallel processing failed for number " + aggregated.get(), subExchange, e);
+                    subExchange.setException(cex);
+                    LOG.debug(cex.getMessage(), cex);
+                }
+            } finally {
+                aggregated.incrementAndGet();
             }
-            aggregated.incrementAndGet();
         }
     }
 
@@ -552,6 +593,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         @Override
         public void run() {
             AggregationStrategy strategy = getAggregationStrategy(null);
+            if (strategy instanceof DelegateAggregationStrategy) {
+                strategy = ((DelegateAggregationStrategy) strategy).getDelegate();
+            }
             if (strategy instanceof TimeoutAwareAggregationStrategy) {
                 // notify the strategy we timed out
                 Exchange oldExchange = result.get();
@@ -584,6 +628,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
         while (it.hasNext()) {
             ProcessorExchangePair pair = it.next();
+            // in case the iterator returns null then continue to next
+            if (pair == null) {
+                continue;
+            }
             Exchange subExchange = pair.getExchange();
             updateNewExchange(subExchange, total.get(), pairs, it);
 
@@ -624,7 +672,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             } else {
                 doAggregate(getAggregationStrategy(subExchange), result, subExchange);
             }
-            
+
             total.incrementAndGet();
         }
 
@@ -644,18 +692,23 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
         TracedRouteNodes traced = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getTracedRouteNodes() : null;
 
-        // compute time taken if sending to another endpoint
-        final StopWatch watch = producer != null ? new StopWatch() : null;
-
         try {
             // prepare tracing starting from a new block
             if (traced != null) {
                 traced.pushBlock();
             }
 
+            StopWatch sw = null;
             if (producer != null) {
-                EventHelper.notifyExchangeSending(exchange.getContext(), exchange, producer.getEndpoint());
+                boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), exchange, producer.getEndpoint());
+                if (sending) {
+                    sw = new StopWatch();
+                }
             }
+
+            // compute time taken if sending to another endpoint
+            final StopWatch watch = sw;
+
             // let the prepared process it, remember to begin the exchange pair
             AsyncProcessor async = AsyncProcessorConverterHelper.convert(processor);
             pair.begin();
@@ -665,8 +718,8 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                     pair.done();
 
                     // okay we are done, so notify the exchange was sent
-                    if (producer != null) {
-                        long timeTaken = watch.stop();
+                    if (producer != null && watch != null) {
+                        long timeTaken = watch.taken();
                         Endpoint endpoint = producer.getEndpoint();
                         // emit event that the exchange was sent to the endpoint
                         EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
@@ -788,10 +841,6 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
         // compute time taken if sending to another endpoint
         StopWatch watch = null;
-        if (producer != null) {
-            watch = new StopWatch();
-        }
-
         try {
             // prepare tracing starting from a new block
             if (traced != null) {
@@ -799,7 +848,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             }
 
             if (producer != null) {
-                EventHelper.notifyExchangeSending(exchange.getContext(), exchange, producer.getEndpoint());
+                boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), exchange, producer.getEndpoint());
+                if (sending) {
+                    watch = new StopWatch();
+                }
             }
             // let the prepared process it, remember to begin the exchange pair
             AsyncProcessor async = AsyncProcessorConverterHelper.convert(processor);
@@ -812,9 +864,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             if (traced != null) {
                 traced.popBlock();
             }
-            if (producer != null) {
-                long timeTaken = watch.stop();
+            if (producer != null && watch != null) {
                 Endpoint endpoint = producer.getEndpoint();
+                long timeTaken = watch.taken();
                 // emit event that the exchange was sent to the endpoint
                 // this is okay to do here in the finally block, as the processing is not using the async routing engine
                 //( we invoke it synchronously as parallel async routing is too hard)
@@ -841,11 +893,14 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                           AsyncCallback callback, boolean doneSync, boolean forceExhaust) {
 
         // we are done so close the pairs iterator
-        if (pairs != null && pairs instanceof Closeable) {
+        if (pairs instanceof Closeable) {
             IOHelper.close((Closeable) pairs, "pairs", LOG);
         }
 
         AggregationStrategy strategy = getAggregationStrategy(subExchange);
+        if (strategy instanceof DelegateAggregationStrategy) {
+            strategy = ((DelegateAggregationStrategy) strategy).getDelegate();
+        }
         // invoke the on completion callback
         if (strategy instanceof CompletionAwareAggregationStrategy) {
             ((CompletionAwareAggregationStrategy) strategy).onCompletion(subExchange);
@@ -868,7 +923,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         // must copy results at this point
         if (subExchange != null) {
             if (stoppedOnException) {
-                // if we stopped due an exception then only propagte the exception
+                // if we stopped due an exception then only propagate the exception
                 original.setException(subExchange.getException());
             } else {
                 // copy the current result to original so it will contain this result of this eip
@@ -936,7 +991,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     }
 
     protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) throws Exception {
-        List<ProcessorExchangePair> result = new ArrayList<ProcessorExchangePair>(processors.size());
+        List<ProcessorExchangePair> result = new ArrayList<>(processors.size());
 
         StreamCache streamCache = null;
         if (isParallelProcessing() && exchange.getIn().getBody() instanceof StreamCache) {
@@ -955,7 +1010,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                     // because streams can only be read once
                     StreamCache copiedStreamCache = streamCache.copy(copy);
                     if (copiedStreamCache != null) {
-                        copy.getIn().setBody(copiedStreamCache);  
+                        copy.getIn().setBody(copiedStreamCache);
                     }
                 }
             }
@@ -1124,6 +1179,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             String name = getClass().getSimpleName() + "-AggregateTask";
             aggregateExecutorService = createAggregateExecutorService(name);
         }
+        if (aggregationStrategy instanceof CamelContextAware) {
+            ((CamelContextAware) aggregationStrategy).setCamelContext(camelContext);
+        }
+
         ServiceHelper.startServices(aggregationStrategy, processors);
     }
 
@@ -1193,11 +1252,11 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         Map<?, ?> property = exchange.getProperty(Exchange.AGGREGATION_STRATEGY, Map.class);
         Map<Object, AggregationStrategy> map = CastUtils.cast(property);
         if (map == null) {
-            map = new ConcurrentHashMap<Object, AggregationStrategy>();
+            map = new ConcurrentHashMap<>();
         } else {
             // it is not safe to use the map directly as the exchange doesn't have the deep copy of it's properties
             // we just create a new copy if we need to change the map
-            map = new ConcurrentHashMap<Object, AggregationStrategy>(map);
+            map = new ConcurrentHashMap<>(map);
         }
         // store the strategy using this processor as the key
         // (so we can store multiple strategies on the same exchange)
@@ -1271,6 +1330,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         return parallelAggregate;
     }
 
+    public boolean isStopOnAggregateException() {
+        return stopOnAggregateException;
+    }
+
     public boolean isShareUnitOfWork() {
         return shareUnitOfWork;
     }
@@ -1279,7 +1342,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         if (!hasNext()) {
             return null;
         }
-        return new ArrayList<Processor>(processors);
+        return new ArrayList<>(processors);
     }
 
     public boolean hasNext() {

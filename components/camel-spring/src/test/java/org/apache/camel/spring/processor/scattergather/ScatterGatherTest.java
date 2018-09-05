@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.processor.scattergather;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +29,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 public class ScatterGatherTest extends ContextTestSupport {
 
+    @Test
     public void testScatterAndGather() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
@@ -35,7 +38,7 @@ public class ScatterGatherTest extends ContextTestSupport {
         // END SNIPPET: e1
 
         // START SNIPPET: e2
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("listOfVendors", "bean:vendor1, bean:vendor2, bean:vendor3");
         headers.put("quoteRequestId", "quoteRequest-1");
         template.sendBodyAndHeaders("direct:start", "<quote_request item=\"beer\"/>", headers);

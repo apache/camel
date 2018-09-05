@@ -45,7 +45,7 @@ public class DriveRepliesIntegrationTest extends AbstractGoogleDriveTestSupport 
         String fileId = testFile.getId();
         
         // 2. comment on that file
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", fileId);
         // parameter type is com.google.api.services.drive.model.Comment
@@ -66,7 +66,7 @@ public class DriveRepliesIntegrationTest extends AbstractGoogleDriveTestSupport 
         String commentId = comment2.getCommentId();
         
         // 4. add reply
-        headers = new HashMap<String, Object>();
+        headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", fileId);
         // parameter type is String
@@ -80,7 +80,7 @@ public class DriveRepliesIntegrationTest extends AbstractGoogleDriveTestSupport 
 
         // 5. list replies on comment to file
         
-        headers = new HashMap<String, Object>();
+        headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", fileId);
         // parameter type is String

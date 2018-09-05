@@ -31,60 +31,56 @@ import java.util.Properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.beanio.BeanReader;
-import org.beanio.BeanReaderErrorHandlerSupport;
+import org.beanio.BeanReaderErrorHandler;
 import org.beanio.BeanWriter;
-import org.beanio.InvalidRecordException;
 import org.beanio.StreamFactory;
-import org.beanio.UnexpectedRecordException;
-import org.beanio.UnidentifiedRecordException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.beanio.Unmarshaller;
+
+import static org.apache.camel.dataformat.beanio.BeanIOHelper.getOrCreateBeanReaderErrorHandler;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> (
  * {@link DataFormat}) for beanio data.
  */
-public class BeanIODataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
-
-    private static final String LOG_PREFIX = "BeanIO: ";
-    private static final Logger LOG = LoggerFactory.getLogger(BeanIODataFormat.class);
+public class BeanIODataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private transient CamelContext camelContext;
     private transient StreamFactory factory;
-    private String streamName;
-    private String mapping;
-    private boolean ignoreUnidentifiedRecords;
-    private boolean ignoreUnexpectedRecords;
-    private boolean ignoreInvalidRecords;
-    private Charset encoding = Charset.defaultCharset();
-    private Properties properties;
+    private BeanIOConfiguration configuration = new BeanIOConfiguration();
 
     public BeanIODataFormat() {
     }
 
     public BeanIODataFormat(String mapping, String streamName) {
-        this.mapping = mapping;
-        this.streamName = streamName;
+        setMapping(mapping);
+        setStreamName(streamName);
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "beanio";
     }
 
     @Override
     protected void doStart() throws Exception {
-        ObjectHelper.notNull(streamName, "Stream name not configured.");
+        ObjectHelper.notNull(getStreamName(), "Stream name not configured.");
         if (factory == null) {
             // Create the stream factory that will be used to read/write objects.
             factory = StreamFactory.newInstance();
 
             // Load the mapping file using the resource helper to ensure it can be loaded in OSGi and other environments
-            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), mapping);
+            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), getMapping());
             try {
-                if (properties != null) {
-                    factory.load(is, properties);
+                if (getProperties() != null) {
+                    factory.load(is, getProperties());
                 } else {
                     factory.load(is);
                 }
@@ -107,20 +103,28 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Came
         this.camelContext = camelContext;
     }
 
+    StreamFactory getFactory() {
+        return factory;
+    }
+
     public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
         List<Object> models = getModels(exchange, body);
         writeModels(stream, models);
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        return readModels(exchange, stream);
+        if (isUnmarshalSingleObject()) {
+            return readSingleModel(exchange, stream);
+        } else {
+            return readModels(exchange, stream);
+        }
     }
 
     @SuppressWarnings("unchecked")
     private List<Object> getModels(Exchange exchange, Object body) {
         List<Object> models;
         if ((models = exchange.getContext().getTypeConverter().convertTo(List.class, body)) == null) {
-            models = new ArrayList<Object>();
+            models = new ArrayList<>();
             Iterator<Object> it = ObjectHelper.createIterator(body);
             while (it.hasNext()) {
                 models.add(it.next());
@@ -130,8 +134,8 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Came
     }
 
     private void writeModels(OutputStream stream, List<Object> models) {
-        BufferedWriter streamWriter = IOHelper.buffered(new OutputStreamWriter(stream, encoding));
-        BeanWriter out = factory.createWriter(streamName, streamWriter);
+        BufferedWriter streamWriter = IOHelper.buffered(new OutputStreamWriter(stream, getEncoding()));
+        BeanWriter out = factory.createWriter(getStreamName(), streamWriter);
 
         for (Object obj : models) {
             out.write(obj);
@@ -141,15 +145,16 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Came
         out.close();
     }
 
-    private List<Object> readModels(Exchange exchange, InputStream stream) {
-        List<Object> results = new ArrayList<Object>();
-        BufferedReader streamReader = IOHelper.buffered(new InputStreamReader(stream, encoding));
+    private List<Object> readModels(Exchange exchange, InputStream stream) throws Exception {
+        List<Object> results = new ArrayList<>();
+        BufferedReader streamReader = IOHelper.buffered(new InputStreamReader(stream, getEncoding()));
 
-        BeanReader in = factory.createReader(streamName, streamReader);
+        BeanReader in = factory.createReader(getStreamName(), streamReader);
+
+        BeanReaderErrorHandler errorHandler = getOrCreateBeanReaderErrorHandler(configuration, exchange, results, null);
+        in.setErrorHandler(errorHandler);
 
         try {
-            registerErrorHandler(in);
-
             Object readObject;
             while ((readObject = in.read()) != null) {
                 if (readObject instanceof BeanIOHeader) {
@@ -164,101 +169,106 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Came
         return results;
     }
 
-    private void registerErrorHandler(BeanReader in) {
-        in.setErrorHandler(new BeanReaderErrorHandlerSupport() {
-
-            @Override
-            public void invalidRecord(InvalidRecordException ex) throws Exception {
-                String msg = LOG_PREFIX + "InvalidRecord: " + ex.getMessage() + ": " + ex.getRecordContext().getRecordText();
-                if (ignoreInvalidRecords) {
-                    LOG.debug(msg);
-                } else {
-                    LOG.warn(msg);
-                    throw ex;
-                }
-            }
-
-            @Override
-            public void unexpectedRecord(UnexpectedRecordException ex) throws Exception {
-                String msg = LOG_PREFIX + "UnexpectedRecord: " + ex.getMessage() + ": " + ex.getRecordContext().getRecordText();
-                if (ignoreUnexpectedRecords) {
-                    LOG.debug(msg);
-                } else {
-                    LOG.warn(msg);
-                    throw ex;
-                }
-            }
-
-            @Override
-            public void unidentifiedRecord(UnidentifiedRecordException ex) throws Exception {
-                String msg = LOG_PREFIX + "UnidentifiedRecord: " + ex.getMessage() + ": " + ex.getRecordContext().getRecordText();
-                if (ignoreUnidentifiedRecords) {
-                    LOG.debug(msg);
-                } else {
-                    LOG.warn(msg);
-                    throw ex;
-                }
-            }
-        });
-    }
-
-    public Charset getEncoding() {
-        return encoding;
-    }
-
-    public void setEncoding(Charset encoding) {
-        this.encoding = encoding;
-    }
-    
-    public void setEncoding(String encoding) {
-        this.encoding = Charset.forName(encoding);
-    }
-
-    public boolean isIgnoreInvalidRecords() {
-        return ignoreInvalidRecords;
-    }
-
-    public void setIgnoreInvalidRecords(boolean ignoreInvalidRecords) {
-        this.ignoreInvalidRecords = ignoreInvalidRecords;
-    }
-
-    public boolean isIgnoreUnexpectedRecords() {
-        return ignoreUnexpectedRecords;
-    }
-
-    public void setIgnoreUnexpectedRecords(boolean ignoreUnexpectedRecords) {
-        this.ignoreUnexpectedRecords = ignoreUnexpectedRecords;
-    }
-
-    public boolean isIgnoreUnidentifiedRecords() {
-        return ignoreUnidentifiedRecords;
-    }
-
-    public void setIgnoreUnidentifiedRecords(boolean ignoreUnidentifiedRecords) {
-        this.ignoreUnidentifiedRecords = ignoreUnidentifiedRecords;
+    private Object readSingleModel(Exchange exchange, InputStream stream) throws NoTypeConversionAvailableException {
+        BufferedReader streamReader = IOHelper.buffered(new InputStreamReader(stream, getEncoding()));
+        try {
+            String data = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, streamReader);
+            Unmarshaller unmarshaller = factory.createUnmarshaller(getStreamName());
+            return unmarshaller.unmarshal(data);
+        } finally {
+            IOHelper.close(stream);
+        }
     }
 
     public String getMapping() {
-        return mapping;
+        return configuration.getMapping();
     }
 
-    public void setMapping(String mapping) {
-        this.mapping = mapping;
-    }
-
-    public String getStreamName() {
-        return streamName;
-    }
-
-    public void setStreamName(String streamName) {
-        this.streamName = streamName;
-    }
-
-    public Properties getProperties() {
-        return properties;
+    public void setIgnoreUnexpectedRecords(boolean ignoreUnexpectedRecords) {
+        configuration.setIgnoreUnexpectedRecords(ignoreUnexpectedRecords);
     }
 
     public void setProperties(Properties properties) {
-        this.properties = properties;
+        configuration.setProperties(properties);
     }
+
+    public void setStreamName(String streamName) {
+        configuration.setStreamName(streamName);
+    }
+
+    public boolean isIgnoreUnidentifiedRecords() {
+        return configuration.isIgnoreUnidentifiedRecords();
+    }
+
+    public boolean isIgnoreInvalidRecords() {
+        return configuration.isIgnoreInvalidRecords();
+    }
+
+    public void setIgnoreInvalidRecords(boolean ignoreInvalidRecords) {
+        configuration.setIgnoreInvalidRecords(ignoreInvalidRecords);
+    }
+
+    public void setEncoding(String encoding) {
+        setEncoding(Charset.forName(encoding));
+    }
+
+    public void setEncoding(Charset encoding) {
+        if (encoding == null) {
+            throw new IllegalArgumentException("Charset encoding is null");
+        }
+        configuration.setEncoding(encoding);
+    }
+
+    public boolean isIgnoreUnexpectedRecords() {
+        return configuration.isIgnoreUnexpectedRecords();
+    }
+
+    public Properties getProperties() {
+        return configuration.getProperties();
+    }
+
+    public String getStreamName() {
+        return configuration.getStreamName();
+    }
+
+    public void setMapping(String mapping) {
+        configuration.setMapping(mapping);
+    }
+
+    public void setIgnoreUnidentifiedRecords(boolean ignoreUnidentifiedRecords) {
+        configuration.setIgnoreUnidentifiedRecords(ignoreUnidentifiedRecords);
+    }
+
+    public Charset getEncoding() {
+        return configuration.getEncoding();
+    }
+    
+    public BeanReaderErrorHandler getBeanReaderErrorHandler() {
+        return configuration.getBeanReaderErrorHandler();
+    }
+
+    public void setBeanReaderErrorHandler(BeanReaderErrorHandler beanReaderErrorHandler) {
+        configuration.setBeanReaderErrorHandler(beanReaderErrorHandler);
+    }
+
+    public String getBeanReaderErrorHandlerType() {
+        return configuration.getBeanReaderErrorHandlerType();
+    }
+
+    public void setBeanReaderErrorHandlerType(String beanReaderErrorHandlerType) {
+        configuration.setBeanReaderErrorHandlerType(beanReaderErrorHandlerType);
+    }
+
+    public void setBeanReaderErrorHandlerType(Class<?> beanReaderErrorHandlerType) {
+        configuration.setBeanReaderErrorHandlerType(beanReaderErrorHandlerType);
+    }
+
+    public boolean isUnmarshalSingleObject() {
+        return configuration.isUnmarshalSingleObject();
+    }
+
+    public void setUnmarshalSingleObject(boolean unmarshalSingleObject) {
+        configuration.setUnmarshalSingleObject(unmarshalSingleObject);
+    }
+
 }

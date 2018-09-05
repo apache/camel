@@ -265,6 +265,21 @@ public class ManagedTracer implements NotificationSenderAware, ManagedTracerMBea
         tracer.getDefaultTraceFormatter().setShowProperties(showProperties);
     }
 
+    public boolean getFormatterMultiline() {
+        if (tracer.getDefaultTraceFormatter() == null) {
+            return false;
+        }
+        return tracer.getDefaultTraceFormatter().isMultiline();
+    }
+
+    public void setFormatterMultiline(boolean multiline) {
+        if (tracer.getDefaultTraceFormatter() == null) {
+            return;
+        }
+        tracer.getDefaultTraceFormatter().setMultiline(multiline);
+    }
+
+    
     public boolean getFormatterShowNode() {
         if (tracer.getDefaultTraceFormatter() == null) {
             return false;

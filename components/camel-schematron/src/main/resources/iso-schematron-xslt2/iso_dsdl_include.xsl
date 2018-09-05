@@ -126,7 +126,7 @@ THE SOFTWARE.
 	* RJ New
 -->
 
-<xslt:stylesheet version="1.0"
+<xslt:stylesheet version="2.0"
 	xmlns:xslt="http://www.w3.org/1999/XSL/Transform"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:iso="http://purl.oclc.org/dsdl/schematron"

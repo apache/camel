@@ -31,7 +31,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Represents the common parts of all uniVocity {@link org.apache.camel.spi.DataFormat} parsers.
  */
-@Metadata(label = "dataformat,transformation", title = "uniVocity")
+@Metadata(label = "dataformat,transformation,csv", title = "uniVocity")
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
 
@@ -203,7 +203,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
     /**
      * The normalized line separator of the files
      * <p/>
-     * The default value is \n
+     * The default value is a new line character.
      */
     public void setNormalizedLineSeparator(String normalizedLineSeparator) {
         this.normalizedLineSeparator = normalizedLineSeparator;
@@ -314,7 +314,7 @@ public abstract class UniVocityAbstractDataFormat extends DataFormatDefinition {
         if (headers == null) {
             return null;
         }
-        List<String> names = new ArrayList<String>(headers.size());
+        List<String> names = new ArrayList<>(headers.size());
         for (UniVocityHeader header : headers) {
             if (header.getName() != null && !header.getName().isEmpty()) {
                 names.add(header.getName());

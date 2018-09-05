@@ -33,7 +33,7 @@ public class OpenShiftConsumer extends ScheduledPollConsumer {
     private static final long INITIAL_DELAY = 1 * 1000L;
     private static final long DELAY = 10 * 1000L;
 
-    private final Map<ApplicationState, ApplicationState> oldState = new HashMap<ApplicationState, ApplicationState>();
+    private final Map<ApplicationState, ApplicationState> oldState = new HashMap<>();
     private volatile boolean initialPoll;
 
     public OpenShiftConsumer(Endpoint endpoint, Processor processor) {
@@ -87,7 +87,7 @@ public class OpenShiftConsumer extends ScheduledPollConsumer {
         // - removed
         // - state changed
 
-        Map<ApplicationState, ApplicationState> newState = new HashMap<ApplicationState, ApplicationState>();
+        Map<ApplicationState, ApplicationState> newState = new HashMap<>();
 
         List<IApplication> apps = domain.getApplications();
         for (IApplication app : apps) {
@@ -97,9 +97,9 @@ public class OpenShiftConsumer extends ScheduledPollConsumer {
 
         // compute what is the delta from last time
         // so we split up into 3 groups, of added/removed/changed
-        Map<ApplicationState, ApplicationState> added = new HashMap<ApplicationState, ApplicationState>();
-        Map<ApplicationState, ApplicationState> removed = new HashMap<ApplicationState, ApplicationState>();
-        Map<ApplicationState, ApplicationState> changed = new HashMap<ApplicationState, ApplicationState>();
+        Map<ApplicationState, ApplicationState> added = new HashMap<>();
+        Map<ApplicationState, ApplicationState> removed = new HashMap<>();
+        Map<ApplicationState, ApplicationState> changed = new HashMap<>();
 
         for (ApplicationState state : newState.keySet()) {
             if (!oldState.containsKey(state)) {

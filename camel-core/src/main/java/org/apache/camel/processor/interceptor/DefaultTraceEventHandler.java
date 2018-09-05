@@ -33,6 +33,7 @@ import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class DefaultTraceEventHandler implements TraceEventHandler, Service {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultTraceEventHandler.class);
     
@@ -61,7 +62,7 @@ public class DefaultTraceEventHandler implements TraceEventHandler, Service {
 
     private synchronized Producer getTraceEventProducer(Exchange exchange) throws Exception {
         if (traceEventProducer == null) {
-            // create producer when we have access the the camel context (we dont in doStart)
+            // create producer when we have access the camel context (we dont in doStart)
             Endpoint endpoint = tracer.getDestination() != null ? tracer.getDestination() : exchange.getContext().getEndpoint(tracer.getDestinationUri());
             traceEventProducer = endpoint.createProducer();
             ServiceHelper.startService(traceEventProducer);
@@ -88,7 +89,7 @@ public class DefaultTraceEventHandler implements TraceEventHandler, Service {
             // should we use ordinary or jpa objects
             if (tracer.isUseJpa()) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Using class: " + this.jpaTraceEventMessageClassName + " for tracing event messages");
+                    LOG.trace("Using class: {} for tracing event messages", this.jpaTraceEventMessageClassName);
                 }
 
                 // load the jpa event message class
@@ -97,7 +98,7 @@ public class DefaultTraceEventHandler implements TraceEventHandler, Service {
                 Object jpa = ObjectHelper.newInstance(jpaTraceEventMessageClass);
 
                 // copy options from event to jpa
-                Map<String, Object> options = new HashMap<String, Object>();
+                Map<String, Object> options = new HashMap<>();
                 IntrospectionSupport.getProperties(msg, options, null);
                 IntrospectionSupport.setProperties(exchange.getContext().getTypeConverter(), jpa, options);
                 // and set the timestamp as its not a String type

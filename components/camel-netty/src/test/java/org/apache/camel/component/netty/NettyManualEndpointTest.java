@@ -55,7 +55,7 @@ public class NettyManualEndpointTest extends BaseNettyTest {
 
                 // need to add encoders and decoders manually
                 nettyConfig.setEncoder(ChannelHandlerFactories.newStringEncoder(CharsetUtil.UTF_8));
-                List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
+                List<ChannelHandler> decoders = new ArrayList<>();
                 decoders.add(ChannelHandlerFactories.newDelimiterBasedFrameDecoder(1000, Delimiters.lineDelimiter()));
                 decoders.add(ChannelHandlerFactories.newStringDecoder(CharsetUtil.UTF_8));
                 nettyConfig.setDecoders(decoders);

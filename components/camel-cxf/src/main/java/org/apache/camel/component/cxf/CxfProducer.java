@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Holder;
@@ -38,11 +40,13 @@ import org.apache.camel.util.ServiceHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.soap.model.SoapHeaderInfo;
 import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxws.context.WrappedMessageContext;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.service.model.BindingMessageInfo;
 import org.apache.cxf.service.model.BindingOperationInfo;
+import org.apache.cxf.transport.Conduit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,12 +83,22 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         if (client == null) {
             client = endpoint.createClient();
         }
-        // Apply the server configurer if it is possible 
-        if (endpoint.getCxfEndpointConfigurer() != null) {
-            endpoint.getCxfEndpointConfigurer().configureClient(client);
+        Conduit conduit = client.getConduit();
+        if (conduit.getClass().getName().endsWith("JMSConduit")) {
+            java.lang.reflect.Method getJmsConfig = conduit.getClass().getMethod("getJmsConfig");
+            Object jmsConfig = getJmsConfig.invoke(conduit);
+            java.lang.reflect.Method getMessageType = jmsConfig.getClass().getMethod("getMessageType");
+            boolean isTextPayload = "text".equals(getMessageType.invoke(jmsConfig));
+            if (isTextPayload && endpoint.getDataFormat().equals(DataFormat.MESSAGE)) {
+                //throw Exception as the Text JMS mesasge won't send as stream
+                throw new RuntimeException("Text JMS message coundn't be a stream");
+            }
         }
+
+
+        endpoint.getChainedCxfEndpointConfigurer().configureClient(client);
     }
-    
+
     @Override
     protected void doStop() throws Exception {
         super.doStop();
@@ -109,13 +123,12 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
             // prepare binding operation info
             BindingOperationInfo boi = prepareBindingOperation(camelExchange, cxfExchange);
             
-            Map<String, Object> invocationContext = new HashMap<String, Object>();
-            Map<String, Object> responseContext = new HashMap<String, Object>();
+            Map<String, Object> invocationContext = new HashMap<>();
+            Map<String, Object> responseContext = new HashMap<>();
             invocationContext.put(Client.RESPONSE_CONTEXT, responseContext);
             invocationContext.put(Client.REQUEST_CONTEXT, prepareRequest(camelExchange, cxfExchange));
             
-            CxfClientCallback cxfClientCallback = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, 
-                                                                        endpoint.getCxfBinding());
+            CxfClientCallback cxfClientCallback = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, endpoint);
             // send the CXF async request
             client.invoke(cxfClientCallback, boi, getParams(endpoint, camelExchange), 
                           invocationContext, cxfExchange);
@@ -147,8 +160,8 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         // prepare binding operation info
         BindingOperationInfo boi = prepareBindingOperation(camelExchange, cxfExchange);
         
-        Map<String, Object> invocationContext = new HashMap<String, Object>();
-        Map<String, Object> responseContext = new HashMap<String, Object>();
+        Map<String, Object> invocationContext = new HashMap<>();
+        Map<String, Object> responseContext = new HashMap<>();
         invocationContext.put(Client.RESPONSE_CONTEXT, responseContext);
         invocationContext.put(Client.REQUEST_CONTEXT, prepareRequest(camelExchange, cxfExchange));
         
@@ -160,6 +173,18 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         } catch (Exception exception) {
             camelExchange.setException(exception);
         } finally {
+            // add cookies to the cookie store
+            if (endpoint.getCookieHandler() != null) {
+                try {
+                    Message inMessage = cxfExchange.getInMessage();
+                    if (inMessage != null) {
+                        Map<String, List<String>> cxfHeaders = CastUtils.cast((Map<?, ?>)inMessage.get(Message.PROTOCOL_HEADERS));
+                        endpoint.getCookieHandler().storeCookies(camelExchange, endpoint.getRequestUri(camelExchange), cxfHeaders);
+                    }
+                } catch (IOException e) {
+                    LOG.error("Cannot store cookies", e);
+                }
+            }
             // bind the CXF response to Camel exchange
             if (!boi.getOperationInfo().isOneWay()) {
                 endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange,
@@ -171,8 +196,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
     protected Map<String, Object> prepareRequest(Exchange camelExchange, org.apache.cxf.message.Exchange cxfExchange) throws Exception {
         
         // create invocation context
-        WrappedMessageContext requestContext = new WrappedMessageContext(
-                new HashMap<String, Object>(), null, Scope.APPLICATION);
+        WrappedMessageContext requestContext = new WrappedMessageContext(new HashMap<String, Object>(), null, Scope.APPLICATION);
 
         camelExchange.setProperty(Message.MTOM_ENABLED, String.valueOf(endpoint.isMtomEnabled()));
         
@@ -197,7 +221,27 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         // bind the request CXF exchange
         endpoint.getCxfBinding().populateCxfRequestFromExchange(cxfExchange, camelExchange, 
                 requestContext);
-        
+
+        // add appropriate cookies from the cookie store to the protocol headers
+        if (endpoint.getCookieHandler() != null) {
+            try {
+                Map<String, List<String>> transportHeaders = CastUtils.cast((Map<?, ?>)requestContext.get(Message.PROTOCOL_HEADERS));
+                boolean added;
+                if (transportHeaders == null) {
+                    transportHeaders = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+                    added = true;
+                } else {
+                    added = false;
+                }
+                transportHeaders.putAll(endpoint.getCookieHandler().loadCookies(camelExchange, endpoint.getRequestUri(camelExchange)));
+                if (added && transportHeaders.size() > 0) {
+                    requestContext.put(Message.PROTOCOL_HEADERS, transportHeaders);
+                }
+            } catch (IOException e) {
+                LOG.warn("Cannot load cookies", e);
+            }
+        }
+
         // Remove protocol headers from scopes.  Otherwise, response headers can be
         // overwritten by request headers when SOAPHandlerInterceptor tries to create
         // a wrapped message context by the copyScoped() method.
@@ -205,7 +249,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         
         return requestContext.getWrappedMap();
     }
-    
+
     private BindingOperationInfo prepareBindingOperation(Exchange camelExchange, org.apache.cxf.message.Exchange cxfExchange) {
         // get binding operation info
         BindingOperationInfo boi = getBindingOperationInfo(camelExchange);
@@ -242,15 +286,15 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
                 boi = boi.getUnwrappedOperation();
             }
         }
-        int experctMessagePartsSize = boi.getInput().getMessageParts().size();
+        int expectMessagePartsSize = boi.getInput().getMessageParts().size();
         
-        if (parameters.length < experctMessagePartsSize) {
+        if (parameters.length < expectMessagePartsSize) {
             throw new IllegalArgumentException("Get the wrong parameter size to invoke the out service, Expect size "
-                                               + experctMessagePartsSize + ", Parameter size " + parameters.length
+                                               + expectMessagePartsSize + ", Parameter size " + parameters.length
                                                + ". Please check if the message body matches the CXFEndpoint POJO Dataformat request.");
         }
         
-        if (parameters.length > experctMessagePartsSize) {
+        if (parameters.length > expectMessagePartsSize) {
             // need to check the holder parameters        
             int holdersSize = 0;            
             for (Object parameter : parameters) {
@@ -268,9 +312,9 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
                 }
             }
           
-            if (holdersSize + experctMessagePartsSize + soapHeadersSize < parameters.length) {
+            if (holdersSize + expectMessagePartsSize + soapHeadersSize < parameters.length) {
                 throw new IllegalArgumentException("Get the wrong parameter size to invoke the out service, Expect size "
-                                                   + (experctMessagePartsSize + holdersSize + soapHeadersSize) + ", Parameter size " + parameters.length
+                                                   + (expectMessagePartsSize + holdersSize + soapHeadersSize) + ", Parameter size " + parameters.length
                                                    + ". Please check if the message body matches the CXFEndpoint POJO Dataformat request.");
             }
         }
@@ -285,6 +329,9 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         Object[] params = null;
         if (endpoint.getDataFormat() == DataFormat.POJO) {
             Object body = exchange.getIn().getBody();
+            if (body == null) {
+                return new Object[0];
+            }
             if (body instanceof Object[]) {
                 params = (Object[])body;
             } else if (body instanceof List) {

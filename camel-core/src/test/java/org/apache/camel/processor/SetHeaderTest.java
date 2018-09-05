@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,6 +31,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class SetHeaderTest extends ContextTestSupport {
     protected String matchingBody = "<person name='James' city='London'/>";
 
+    @Test
     public void testSendMatchingMessage() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(1);

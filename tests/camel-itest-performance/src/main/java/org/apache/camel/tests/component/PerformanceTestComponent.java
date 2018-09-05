@@ -60,7 +60,7 @@ public class PerformanceTestComponent extends DefaultComponent {
     private static final class PerformanceTestEndpoint extends DefaultEndpoint {
         private PerformanceTestConsumer consumer;
 
-        public PerformanceTestEndpoint(String uri, Component component) {
+        protected PerformanceTestEndpoint(String uri, Component component) {
             super(uri, component);
         }
         
@@ -91,13 +91,13 @@ public class PerformanceTestComponent extends DefaultComponent {
     }
     
     private static final class PerformanceTestConsumer extends DefaultConsumer {
-        public PerformanceTestConsumer(Endpoint endpoint, Processor processor) {
+        protected PerformanceTestConsumer(Endpoint endpoint, Processor processor) {
             super(endpoint, processor);
         }
     }
 
     private static final class PerformanceTestProducer extends DefaultProducer implements AsyncProcessor {
-        public PerformanceTestProducer(Endpoint endpoint) {
+        protected PerformanceTestProducer(Endpoint endpoint) {
             super(endpoint);
         }
 
@@ -109,7 +109,7 @@ public class PerformanceTestComponent extends DefaultComponent {
             if (endpoint != null) {
                 final DefaultConsumer consumer = (DefaultConsumer)endpoint.getConsumer();
                 ExecutorService executor = exchange.getContext().getExecutorServiceManager().newFixedThreadPool(this, "perf", threads);
-                CompletionService<Exchange> tasks = new ExecutorCompletionService<Exchange>(executor);
+                CompletionService<Exchange> tasks = new ExecutorCompletionService<>(executor);
 
                 // StopWatch watch = new StopWatch();  // if we want to clock how long it takes
                 for (int i = 0; i < count; i++) {

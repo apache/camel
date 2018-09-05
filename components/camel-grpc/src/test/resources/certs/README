@@ -1,0 +1,36 @@
+The test credentials have been generated with the following
+commands:
+
+The CA is self-signed:
+----------------------
+$ openssl genrsa -out ca.key 1024
+$ openssl req -x509 -new -key ca.key -nodes -out ca.pem -config ca-openssl.cnf -days 3650 -extensions v3_req
+
+When prompted for certificate information, everything is default.
+
+Client certificate issued by CA:
+-----------------------
+
+$ openssl genrsa -out client.key.rsa 1024
+$ openssl pkcs8 -topk8 -in client.key.rsa -out client.key -nocrypt
+$ rm client.key.rsa
+$ openssl req -new -key client.key -out client.csr
+
+When prompted for certificate information, everything is default except the
+common name which is set to localhost.
+
+$ openssl x509 -req -in client.csr -CA ca.pem -CAkey ca.key -CAcreateserial -out client.pem -outform PEM -days 5000
+
+
+Server certificate issued by CA:
+------------------------
+
+$ openssl genrsa -out server.key.rsa 1024
+$ openssl pkcs8 -topk8 -in server.key.rsa -out server.key -nocrypt
+$ rm server.key.rsa
+$ openssl req -new -key server.key -out server.csr
+
+When prompted for certificate information, everything is default except the
+common name which is set to localhost for simple testing.
+
+$ openssl x509 -req -in server.csr -CA ca.pem -CAkey ca.key -CAcreateserial -out server.pem -outform PEM -days 5000

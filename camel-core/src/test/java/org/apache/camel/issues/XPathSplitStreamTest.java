@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.issues;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.xml.sax.InputSource;
 
@@ -31,7 +34,8 @@ public class XPathSplitStreamTest extends ContextTestSupport {
     private static int size = 100;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/file/xpathsplit");
         super.setUp();
 
@@ -46,6 +50,7 @@ public class XPathSplitStreamTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/file/xpathsplit", sb.toString(), Exchange.FILE_NAME, "bigfile.xml");
     }
 
+    @Test
     public void testXPathSplitStream() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:splitted");
         mock.expectedMessageCount(size);
@@ -60,7 +65,7 @@ public class XPathSplitStreamTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("file://target/file/xpathsplit")
+                from("file://target/file/xpathsplit?initialDelay=0&delay=10")
                     // set documentType to org.xml.sax.InputSource then Camel will use SAX to split the file
                     .split(xpath("/persons/person").documentType(InputSource.class)).streaming()
                     .to("mock:splitted");

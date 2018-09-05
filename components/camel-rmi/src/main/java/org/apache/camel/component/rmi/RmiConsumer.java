@@ -108,7 +108,7 @@ public class RmiConsumer extends DefaultConsumer implements InvocationHandler {
                     break;
                 }
             }
-            if (match != null && match instanceof Throwable) {
+            if (match instanceof Throwable) {
                 // we have a match
                 throw (Throwable) match;
             } else {

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.properties;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class PropertiesComponentEIPChoiceSimpleTest extends ContextTestSupport {
 
+    @Test
     public void testChoice() throws Exception {
         getMockEndpoint("mock:camel").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:other").expectedBodiesReceived("Hello World");
@@ -55,7 +58,6 @@ public class PropertiesComponentEIPChoiceSimpleTest extends ContextTestSupport {
         CamelContext context = super.createCamelContext();
 
         PropertiesComponent pc = new PropertiesComponent();
-        pc.setCamelContext(context);
         pc.setLocations(new String[]{"classpath:org/apache/camel/component/properties/myproperties.properties"});
         context.addComponent("properties", pc);
 

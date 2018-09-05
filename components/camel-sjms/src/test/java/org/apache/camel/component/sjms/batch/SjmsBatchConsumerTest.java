@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.List;
 import javax.jms.ConnectionFactory;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -29,6 +28,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
+import org.apache.camel.component.sjms.support.MockConnectionFactory;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -48,7 +48,10 @@ public class SjmsBatchConsumerTest extends CamelTestSupport {
     public CamelContext createCamelContext() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
         registry.put("testStrategy", new ListAggregationStrategy());
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(broker.getTcpConnectorUri());
+        // the only thing special about this MockConnectionFactor is it allows us to call returnBadSessionNTimes(int)
+        // which will cause the MockSession to throw an IllegalStateException <int> times before returning a valid one.
+        // This gives us the ability to test bad sessions
+        ConnectionFactory connectionFactory = new MockConnectionFactory(broker.getTcpConnectorUri());
 
         SjmsComponent sjmsComponent = new SjmsComponent();
         sjmsComponent.setConnectionFactory(connectionFactory);
@@ -65,7 +68,7 @@ public class SjmsBatchConsumerTest extends CamelTestSupport {
     private static class TransactedSendHarness extends RouteBuilder {
         private final String queueName;
 
-        public TransactedSendHarness(String queueName) {
+        TransactedSendHarness(String queueName) {
             this.queueName = queueName;
         }
 
@@ -152,6 +155,33 @@ public class SjmsBatchConsumerTest extends CamelTestSupport {
     }
 
     @Test
+    public void testConsumptionCompletionPredicate() throws Exception {
+        final String completionPredicate = "${body} contains 'done'";
+        final int completionTimeout = -1; // predicate-based only
+
+        final String queueName = getQueueName();
+        context.addRoutes(new TransactedSendHarness(queueName));
+        context.addRoutes(new RouteBuilder() {
+            public void configure() throws Exception {
+                fromF("sjms-batch:%s?completionTimeout=%s&completionPredicate=%s&aggregationStrategy=#testStrategy&eagerCheckCompletion=true",
+                        queueName, completionTimeout, completionPredicate).routeId("batchConsumer").startupOrder(10)
+                        .log(LoggingLevel.DEBUG, "${body.size}")
+                        .to("mock:batches");
+            }
+        });
+        context.start();
+
+        MockEndpoint mockBatches = getMockEndpoint("mock:batches");
+        mockBatches.expectedMessageCount(2);
+
+        template.sendBody("direct:in", generateStrings(50));
+        template.sendBody("direct:in", "Message done");
+        template.sendBody("direct:in", generateStrings(50));
+        template.sendBody("direct:in", "Message done");
+        mockBatches.assertIsSatisfied();
+    }
+
+    @Test
     public void testConsumptionCompletionTimeout() throws Exception {
         final int completionTimeout = 2000;
         final int completionSize = -1; // timeout-based only
@@ -175,6 +205,61 @@ public class SjmsBatchConsumerTest extends CamelTestSupport {
         template.sendBody("direct:in", generateStrings(messageCount));
         mockBatches.assertIsSatisfied();
         assertFirstMessageBodyOfLength(mockBatches, messageCount);
+    }
+
+    @Test
+    public void testConsumptionCompletionInterval() throws Exception {
+        final int completionInterval = 2000;
+        final int completionSize = -1; // timeout-based only
+
+        final String queueName = getQueueName();
+        context.addRoutes(new TransactedSendHarness(queueName));
+        context.addRoutes(new RouteBuilder() {
+            public void configure() throws Exception {
+                fromF("sjms-batch:%s?completionInterval=%s&completionSize=%s&aggregationStrategy=#testStrategy",
+                        queueName, completionInterval, completionSize).routeId("batchConsumer").startupOrder(10)
+                        .to("mock:batches");
+            }
+        });
+        context.start();
+
+        int messageCount = 50;
+        assertTrue(messageCount < SjmsBatchEndpoint.DEFAULT_COMPLETION_SIZE);
+
+        MockEndpoint mockBatches = getMockEndpoint("mock:batches");
+        mockBatches.expectedMinimumMessageCount(1);  // everything ought to be batched together but the interval may trigger in between and we get 2 etc
+
+        template.sendBody("direct:in", generateStrings(messageCount));
+
+        mockBatches.assertIsSatisfied();
+    }
+
+    @Test
+    public void testConsumptionSendEmptyMessageWhenIdle() throws Exception {
+        final int completionInterval = 2000;
+        final int completionSize = -1; // timeout-based only
+
+        final String queueName = getQueueName();
+        context.addRoutes(new TransactedSendHarness(queueName));
+        context.addRoutes(new RouteBuilder() {
+            public void configure() throws Exception {
+                fromF("sjms-batch:%s?completionInterval=%s&completionSize=%s&sendEmptyMessageWhenIdle=true&aggregationStrategy=#testStrategy",
+                        queueName, completionInterval, completionSize).routeId("batchConsumer").startupOrder(10)
+                        .to("mock:batches");
+            }
+        });
+        context.start();
+
+        int messageCount = 50;
+        assertTrue(messageCount < SjmsBatchEndpoint.DEFAULT_COMPLETION_SIZE);
+
+        MockEndpoint mockBatches = getMockEndpoint("mock:batches");
+        // trigger a couple of empty messages
+        mockBatches.expectedMinimumMessageCount(3);
+
+        template.sendBody("direct:in", generateStrings(messageCount));
+
+        mockBatches.assertIsSatisfied();
     }
 
     /**
@@ -253,6 +338,51 @@ public class SjmsBatchConsumerTest extends CamelTestSupport {
 
         template.sendBody("direct:in", generateStrings(messageCount));
         mockBatches.assertIsSatisfied();
+
+    }
+
+    @Test
+    public void testConsumptionBadSession() throws Exception {
+
+        final int messageCount = 5;
+        final int consumerCount = 1;
+        SjmsBatchComponent sb = (SjmsBatchComponent)context.getComponent("sjms-batch");
+        MockConnectionFactory cf = (MockConnectionFactory)sb.getConnectionFactory();
+        cf.returnBadSessionNTimes(2);
+
+        final String queueName = getQueueName();
+        context.addRoutes(new TransactedSendHarness(queueName));
+        context.addRoutes(new RouteBuilder() {
+            public void configure() throws Exception {
+
+                int completionTimeout = 1000;
+                int completionSize = 200;
+
+                // keepAliveDelay=300 is the key... it's a 300 millis delay between attempts to create a new session.
+                fromF("sjms-batch:%s?completionTimeout=%s&completionSize=%s&consumerCount=%s&aggregationStrategy=#testStrategy&keepAliveDelay=300",
+                        queueName, completionTimeout, completionSize, consumerCount)
+                        .routeId("batchConsumer").startupOrder(10).autoStartup(false)
+                        .split(body())
+                        .to("mock:split");
+            }
+        });
+        context.start();
+
+        MockEndpoint mockBefore = getMockEndpoint("mock:before");
+        mockBefore.setExpectedMessageCount(messageCount);
+
+        MockEndpoint mockSplit = getMockEndpoint("mock:split");
+        mockSplit.setExpectedMessageCount(messageCount);
+
+        LOG.info("Sending messages");
+        template.sendBody("direct:in", generateStrings(messageCount));
+        LOG.info("Send complete");
+
+        StopWatch stopWatch = new StopWatch();
+        context.startRoute("batchConsumer");
+
+        assertMockEndpointsSatisfied();
+        stopWatch.stop();
 
     }
 

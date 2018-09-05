@@ -23,8 +23,6 @@ import java.util.Map;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.DefaultDBEncoder;
-import com.mongodb.WriteResult;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.IOConverter;
 import org.bson.BSONObject;
@@ -36,8 +34,8 @@ public class MongoDbConversionsTest extends AbstractMongoDbTest {
     public void testInsertMap() throws InterruptedException {
         assertEquals(0, testCollection.count());
         
-        Map<String, Object> m1 = new HashMap<String, Object>();
-        Map<String, String> m1Nested = new HashMap<String, String>();
+        Map<String, Object> m1 = new HashMap<>();
+        Map<String, String> m1Nested = new HashMap<>();
 
         m1Nested.put("nested1", "nestedValue1");
         m1Nested.put("nested2", "nestedValue2");
@@ -47,9 +45,8 @@ public class MongoDbConversionsTest extends AbstractMongoDbTest {
         m1.put("nestedField", m1Nested);
         m1.put("_id", "testInsertMap");
 
-        Object result = template.requestBody("direct:insertMap", m1);
-        assertTrue(result instanceof WriteResult);
-        DBObject b = testCollection.findOne("testInsertMap");
+        template.requestBody("direct:insertMap", m1);
+        BasicDBObject b = testCollection.find(new BasicDBObject("_id", "testInsertMap")).first();
         assertNotNull("No record with 'testInsertMap' _id", b);
 
     }
@@ -57,28 +54,25 @@ public class MongoDbConversionsTest extends AbstractMongoDbTest {
     @Test
     public void testInsertPojo() {
         assertEquals(0, testCollection.count());
-        Object result = template.requestBody("direct:insertPojo", new MyPojoTest());
-        assertTrue(result instanceof WriteResult);
-        DBObject b = testCollection.findOne("testInsertPojo");
+        template.requestBody("direct:insertPojo", new MyPojoTest());
+        DBObject b = testCollection.find(new BasicDBObject("_id", "testInsertPojo")).first();
         assertNotNull("No record with 'testInsertPojo' _id", b);
     }
     
     @Test
     public void testInsertJsonString() {
         assertEquals(0, testCollection.count());
-        Object result = template.requestBody("direct:insertJsonString", "{\"fruits\": [\"apple\", \"banana\", \"papaya\"], \"veggie\": \"broccoli\", \"_id\": \"testInsertJsonString\"}");
-        assertTrue(result instanceof WriteResult);
-        DBObject b = testCollection.findOne("testInsertJsonString");
+        template.requestBody("direct:insertJsonString", "{\"fruits\": [\"apple\", \"banana\", \"papaya\"], \"veggie\": \"broccoli\", \"_id\": \"testInsertJsonString\"}");
+        DBObject b = testCollection.find(new BasicDBObject("_id", "testInsertJsonString")).first();
         assertNotNull("No record with 'testInsertJsonString' _id", b);
     }
     
     @Test
     public void testInsertJsonInputStream() throws Exception {
         assertEquals(0, testCollection.count());
-        Object result = template.requestBody("direct:insertJsonString", 
+        template.requestBody("direct:insertJsonString", 
                         IOConverter.toInputStream("{\"fruits\": [\"apple\", \"banana\"], \"veggie\": \"broccoli\", \"_id\": \"testInsertJsonString\"}\n", null));
-        assertTrue(result instanceof WriteResult);
-        DBObject b = testCollection.findOne("testInsertJsonString");
+        DBObject b = testCollection.find(new BasicDBObject("_id", "testInsertJsonString")).first();
         assertNotNull("No record with 'testInsertJsonString' _id", b);
     }
     
@@ -90,9 +84,8 @@ public class MongoDbConversionsTest extends AbstractMongoDbTest {
         BSONObject bsonObject = new BasicDBObject();
         bsonObject.put("_id", "testInsertBsonString");
         
-        Object result = template.requestBody("direct:insertJsonString", new ByteArrayInputStream(encoder.encode(bsonObject)));
-        assertTrue(result instanceof WriteResult);
-        DBObject b = testCollection.findOne("testInsertBsonString");
+        template.requestBody("direct:insertJsonString", new ByteArrayInputStream(encoder.encode(bsonObject)));
+        DBObject b = testCollection.find(new BasicDBObject("_id", "testInsertBsonString")).first();
         assertNotNull("No record with 'testInsertBsonString' _id", b);
     }
     

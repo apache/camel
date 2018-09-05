@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -65,6 +68,7 @@ public class PipelineTest extends ContextTestSupport {
 
     protected MockEndpoint resultEndpoint;
 
+    @Test
     public void testSendMessageThroughAPipeline() throws Exception {
         resultEndpoint.expectedBodiesReceived(4);
 
@@ -83,6 +87,7 @@ public class PipelineTest extends ContextTestSupport {
     }
 
     
+    @Test
     public void testResultsReturned() throws Exception {
         Exchange exchange = template.request("direct:b", new Processor() {
             public void process(Exchange exchange) {
@@ -99,6 +104,7 @@ public class PipelineTest extends ContextTestSupport {
      * 
      * @throws Exception
      */
+    @Test
     public void testFaultStopsPipeline() throws Exception {
         Exchange exchange = template.request("direct:c", new Processor() {
             public void process(Exchange exchange) {
@@ -112,6 +118,7 @@ public class PipelineTest extends ContextTestSupport {
         assertEquals(2, exchange.getOut().getHeader("copy-counter"));        
     }
 
+    @Test
     public void testOnlyProperties() {
         Exchange exchange = template.request("direct:b", new Processor() {
             public void process(Exchange exchange) {
@@ -123,6 +130,7 @@ public class PipelineTest extends ContextTestSupport {
         assertEquals(3, exchange.getOut().getHeader("copy-counter"));  
     }
     
+    @Test
     public void testCopyInOutExchange() {
         Exchange exchange = template.request("direct:start", new Processor() {
             public void process(Exchange exchange) {
@@ -132,15 +140,18 @@ public class PipelineTest extends ContextTestSupport {
         });
         // there is always breadcrumb header
         assertEquals("There should have no message header", 1, exchange.getOut().getHeaders().size());
+        assertEquals("There should have no attachments", 0, exchange.getOut().getAttachmentObjects().size());
         assertEquals("There should have no attachments", 0, exchange.getOut().getAttachments().size());
         assertEquals("Get a wrong message body", "test", exchange.getOut().getBody());
         assertNull(exchange.getOut().getHeader("test"));
+        assertNull(exchange.getOut().getAttachmentObject("test1.xml"));
         assertNull(exchange.getOut().getAttachment("test1.xml"));
         
     }
     
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         resultEndpoint = getMockEndpoint("mock:result");
     }
@@ -184,6 +195,7 @@ public class PipelineTest extends ContextTestSupport {
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             exchange.getOut().copyFrom(exchange.getIn());
+                            assertNotNull("The test attachment should not be null", exchange.getOut().getAttachmentObject("test1.xml"));
                             assertNotNull("The test attachment should not be null", exchange.getOut().getAttachment("test1.xml"));
                             assertNotNull("The test header should not be null", exchange.getOut().getHeader("test"));
                             exchange.getOut().removeAttachment("test1.xml");

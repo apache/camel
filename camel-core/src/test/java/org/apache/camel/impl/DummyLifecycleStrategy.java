@@ -37,7 +37,7 @@ import org.apache.camel.support.LifecycleStrategySupport;
  */
 public class DummyLifecycleStrategy extends LifecycleStrategySupport {
 
-    private List<String> events = new ArrayList<String>();
+    private List<String> events = new ArrayList<>();
 
     public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
         events.add("onContextStart");

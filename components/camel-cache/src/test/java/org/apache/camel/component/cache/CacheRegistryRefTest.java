@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cache;
+import org.junit.Before;
 
 import java.util.Collection;
 import java.util.List;
@@ -55,6 +56,7 @@ public class CacheRegistryRefTest extends BaseCacheTest {
     private CacheLoaderRegistry loaderRegistry = new CacheLoaderRegistry();
 
     @Override
+    @Before
     public void setUp() throws Exception {
         eventListenerRegistry.addCacheEventListener(new TestCacheEventListener());
         loaderRegistry.addCacheLoader(new TestLoader());

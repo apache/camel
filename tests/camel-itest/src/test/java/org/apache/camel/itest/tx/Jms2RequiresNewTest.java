@@ -22,7 +22,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.After;
+import org.apache.camel.itest.ITestSupport;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +43,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class Jms2RequiresNewTest extends AbstractJUnit4SpringContextTests {
 
+    private static final int PORT3 = ITestSupport.getPort3();
     @Autowired
     private CamelContext camelContext;
 

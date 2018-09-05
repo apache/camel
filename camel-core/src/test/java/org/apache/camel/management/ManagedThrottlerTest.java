@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -36,6 +38,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class ManagedThrottlerTest extends ManagementTestSupport {
 
+    @Test
     public void testManageThrottler() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -76,11 +79,11 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         assertEquals(10, completed.longValue());
 
         Long timePeriod = (Long) mbeanServer.getAttribute(throttlerName, "TimePeriodMillis");
-        assertEquals(1000, timePeriod.longValue());
+        assertEquals(250, timePeriod.longValue());
 
         Long total = (Long) mbeanServer.getAttribute(routeName, "TotalProcessingTime");
 
-        assertTrue("Should take at most 2.0 sec: was " + total, total < 2000);
+        assertTrue("Should take at most 1.0 sec: was " + total, total < 1000);
 
         // change the throttler using JMX
         mbeanServer.setAttribute(throttlerName, new Attribute("MaximumRequestsPerPeriod", (long) 2));
@@ -101,9 +104,10 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         assertEquals(10, completed.longValue());
         total = (Long) mbeanServer.getAttribute(routeName, "TotalProcessingTime");
 
-        assertTrue("Should be around 5 sec now: was " + total, total > 3500);
+        assertTrue("Should be around 1 sec now: was " + total, total > 1000);
     }
 
+    @Test
     public void testThrottleVisableViaJmx() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -116,8 +120,6 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
 
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
-        // get the object name for the delayer
-        ObjectName throttlerName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"mythrottler2\"");
 
         // use route to get the total time
         ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route2\"");
@@ -135,21 +137,13 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         }
 
         assertTrue(notifier.matches(2, TimeUnit.SECONDS));
-        Integer throttledMessages = (Integer) mbeanServer.getAttribute(throttlerName, "ThrottledCount");
-
-        // we are expecting this to be > 0
-        assertTrue(throttledMessages.intValue() > 0);
-
         assertMockEndpointsSatisfied();
-
-        throttledMessages = (Integer) mbeanServer.getAttribute(throttlerName, "ThrottledCount");
-        assertEquals("Should not be any throttled messages left, found: " + throttledMessages, (Integer) 0, throttledMessages);
 
         Long completed = (Long) mbeanServer.getAttribute(routeName, "ExchangesCompleted");
         assertEquals(10, completed.longValue());
-
     }
 
+    @Test
     public void testThrottleAsyncVisableViaJmx() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -162,8 +156,6 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
 
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
-        // get the object name for the delayer
-        ObjectName throttlerName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"mythrottler3\"");
 
         // use route to get the total time
         ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route3\"");
@@ -183,21 +175,13 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         }
 
         assertTrue(notifier.matches(2, TimeUnit.SECONDS));
-        Integer throttledMessages = (Integer) mbeanServer.getAttribute(throttlerName, "ThrottledCount");
-
-        // we are expecting this to be > 0
-        assertTrue(throttledMessages.intValue() > 0);
-
         assertMockEndpointsSatisfied();
-
-        throttledMessages = (Integer) mbeanServer.getAttribute(throttlerName, "ThrottledCount");
-        assertEquals("Should not be any throttled messages left, found: " + throttledMessages, (Integer)0, throttledMessages);
 
         Long completed = (Long) mbeanServer.getAttribute(routeName, "ExchangesCompleted");
         assertEquals(10, completed.longValue());
-
     }
 
+    @Test
     public void testThrottleAsyncExceptionVisableViaJmx() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -210,8 +194,6 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
 
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
-        // get the object name for the delayer
-        ObjectName throttlerName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"mythrottler4\"");
 
         // use route to get the total time
         ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route4\"");
@@ -229,25 +211,17 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         }
 
         assertTrue(notifier.matches(2, TimeUnit.SECONDS));
-        Integer throttledMessages = (Integer) mbeanServer.getAttribute(throttlerName, "ThrottledCount");
-
-        // we are expecting this to be > 0
-        assertTrue(throttledMessages.intValue() > 0);
-
         assertMockEndpointsSatisfied();
 
         // give a sec for exception handling to finish..
         Thread.sleep(500);
 
-        throttledMessages = (Integer) mbeanServer.getAttribute(throttlerName, "ThrottledCount");
-        assertEquals("Should not be any throttled messages left, found: " + throttledMessages, (Integer)0, throttledMessages);
-
         // since all exchanges ended w/ exception, they are not completed
         Long completed = (Long) mbeanServer.getAttribute(routeName, "ExchangesCompleted");
         assertEquals(0, completed.longValue());
-
     }
 
+    @Test
     public void testRejectedExecution() throws Exception {
         // when delaying async, we can possibly fill up the execution queue
         //. which would through a RejectedExecutionException.. we need to make
@@ -260,8 +234,6 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
 
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
-        // get the object name for the delayer
-        ObjectName throttlerName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"mythrottler2\"");
 
         // use route to get the total time
         ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route2\"");
@@ -276,19 +248,14 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         MockEndpoint exceptionMock = getMockEndpoint("mock:rejectedExceptionEndpoint1");
         exceptionMock.expectedMessageCount(9);
 
-
         for (int i = 0; i < 10; i++) {
             template.sendBody("seda:throttleCountRejectExecution", "Message " + i);
         }
 
         assertMockEndpointsSatisfied();
-
-        // we shouldn't have ane leaked throttler counts
-        Integer throttledMessages = (Integer) mbeanServer.getAttribute(throttlerName, "ThrottledCount");
-        assertEquals("Should not be any throttled messages left, found: " + throttledMessages, (Integer) 0, throttledMessages);
-
     }
 
+    @Test
     public void testRejectedExecutionCallerRuns() throws Exception {
         // when delaying async, we can possibly fill up the execution queue
         //. which would through a RejectedExecutionException.. we need to make
@@ -301,8 +268,6 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
 
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
-        // get the object name for the delayer
-        ObjectName throttlerName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"mythrottler2\"");
 
         // use route to get the total time
         ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route2\"");
@@ -317,16 +282,11 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         MockEndpoint exceptionMock = getMockEndpoint("mock:rejectedExceptionEndpoint");
         exceptionMock.expectedMessageCount(0);
 
-
         for (int i = 0; i < 10; i++) {
             template.sendBody("seda:throttleCountRejectExecutionCallerRuns", "Message " + i);
         }
 
         assertMockEndpointsSatisfied();
-
-        // we shouldn't have ane leaked throttler counts
-        Integer throttledMessages = (Integer) mbeanServer.getAttribute(throttlerName, "ThrottledCount");
-        assertEquals("Should not be any throttled messages left, found: " + throttledMessages, (Integer) 0, throttledMessages);
     }
 
     @Override
@@ -343,7 +303,7 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                         .to("log:foo")
-                        .throttle(10).id("mythrottler")
+                        .throttle(10).timePeriodMillis(250).id("mythrottler")
                         .to("mock:result");
 
                 from("seda:throttleCount")
@@ -358,7 +318,6 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
                         .throttle(1).asyncDelayed().timePeriodMillis(250).id("mythrottler4")
                         .to("mock:endAsyncException")
                         .process(new Processor() {
-
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 throw new RuntimeException("Fail me");

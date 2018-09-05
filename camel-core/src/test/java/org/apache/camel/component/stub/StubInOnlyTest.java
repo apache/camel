@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.stub;
 
+import org.junit.Test;
+
 import org.apache.camel.builder.RouteBuilder;
 
 import org.apache.camel.component.vm.AbstractVmTestSupport;
 
 public class StubInOnlyTest extends AbstractVmTestSupport {
 
+    @Test
     public void testInOnly() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 

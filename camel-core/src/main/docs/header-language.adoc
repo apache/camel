@@ -1,0 +1,44 @@
+[[header-language]]
+== Header Language
+
+*Available as of Camel version 1.5*
+
+The Header Expression Language allows you to extract values of named
+headers.
+
+=== Header Options
+
+// language options: START
+The Header language supports 1 options, which are listed below.
+
+
+
+[width="100%",cols="2,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
+|===
+// language options: END
+
+=== Example usage
+
+The recipientList element of the Spring DSL can utilize a header
+expression like:
+
+In this case, the list of recipients are contained in the header
+'myHeader'.
+
+And the same example in Java DSL:
+
+And with a slightly different syntax where you use the builder to the
+fullest (i.e. avoid using parameters but using stacked operations,
+notice that header is not a parameter but a stacked method call)
+
+[source,java]
+----
+from("direct:a").recipientList().header("myHeader");
+----
+
+=== Dependencies
+
+The Header language is part of *camel-core*.

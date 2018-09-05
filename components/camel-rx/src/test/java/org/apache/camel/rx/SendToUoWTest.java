@@ -17,7 +17,6 @@
 package org.apache.camel.rx;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.junit.Assert;
@@ -36,12 +35,7 @@ public class SendToUoWTest extends RxTestSupport {
         final MockEndpoint mockEndpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
         mockEndpoint.expectedBodiesReceived((Object[]) expectedBodies);
 
-        mockEndpoint.whenAnyExchangeReceived(new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.addOnCompletion(onCompletion);
-            }
-        });
+        mockEndpoint.whenAnyExchangeReceived(exchange -> exchange.addOnCompletion(onCompletion));
 
         // lets send events on the observable to the camel endpoint
         reactiveCamel.sendTo(someObservable, "mock:results");

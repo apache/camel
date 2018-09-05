@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,12 +30,13 @@ import org.apache.camel.processor.BodyInAggregatingStrategy;
  */
 public class AggregateExpressionTimeoutTest extends ContextTestSupport {
 
+    @Test
     public void testAggregateExpressionTimeout() throws Exception {
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("id", 123);
-        headers.put("timeout", 2000);
+        headers.put("timeout", 100);
 
         template.sendBodyAndHeaders("direct:start", "A", headers);
         template.sendBodyAndHeaders("direct:start", "B", headers);
@@ -53,7 +56,7 @@ public class AggregateExpressionTimeoutTest extends ContextTestSupport {
                     // Aggregate them using the BodyInAggregatingStrategy strategy which
                     // and the timeout header contains the timeout in millis of inactivity them timeout and complete the aggregation
                     // and send it to mock:aggregated
-                    .aggregate(header("id"), new BodyInAggregatingStrategy()).completionTimeout(header("timeout"))
+                    .aggregate(header("id"), new BodyInAggregatingStrategy()).completionTimeout(header("timeout")).completionTimeoutCheckerInterval(10)
                         .to("mock:aggregated");
                 // END SNIPPET: e1
             }

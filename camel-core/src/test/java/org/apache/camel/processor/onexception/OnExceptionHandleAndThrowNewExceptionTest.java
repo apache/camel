@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.onexception;
 
+import org.junit.Test;
+
 import java.io.IOException;
 
 import org.apache.camel.CamelExecutionException;
@@ -29,6 +31,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class OnExceptionHandleAndThrowNewExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testOnExceptionHandleAndThrowNewException() throws Exception {
         try {
             template.sendBody("direct:start", "Hello World");

@@ -27,7 +27,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * To configure headers for UniVocity data formats.
  */
-@Metadata(label = "dataformat,transformation", title = "uniVocity Header")
+@Metadata(label = "dataformat,transformation,csv", title = "uniVocity Header")
 @XmlRootElement(name = "univocity-header")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UniVocityHeader {

@@ -49,6 +49,7 @@ import org.slf4j.LoggerFactory;
 public class TransactedDefinition extends OutputDefinition<TransactedDefinition> {
 
     // TODO: Align this code with PolicyDefinition
+    // TODO: Camel 3 should be NoOutputDefinition
 
     // JAXB does not support changing the ref attribute from required to optional
     // if we extend PolicyDefinition so we must make a copy of the class
@@ -73,7 +74,12 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
 
     @Override
     public String toString() {
-        return "Transacted[" + description() + "]";
+        String desc = description();
+        if (ObjectHelper.isEmpty(desc)) {
+            return "Transacted";
+        } else {
+            return "Transacted[" + desc + "]";
+        }
     }
     
     protected String description() {
@@ -87,8 +93,18 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
     }
 
     @Override
+    public String getShortName() {
+        return "transacted";
+    }
+
+    @Override
     public String getLabel() {
-        return "transacted[" + description() + "]";
+        String desc = description();
+        if (ObjectHelper.isEmpty(desc)) {
+            return "transacted";
+        } else {
+            return "transacted[" + desc + "]";
+        }
     }
 
     @Override
@@ -99,6 +115,11 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
     @Override
     public boolean isTopLevelOnly() {
         // transacted is top level as we only allow have it configured once per route
+        return true;
+    }
+
+    @Override
+    public boolean isWrappingEntireOutput() {
         return true;
     }
 

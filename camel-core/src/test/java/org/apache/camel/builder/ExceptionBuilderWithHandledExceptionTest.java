@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder;
 
+import org.junit.Test;
+
 import java.io.IOException;
 import java.net.ConnectException;
 
@@ -34,6 +36,7 @@ public class ExceptionBuilderWithHandledExceptionTest extends ContextTestSupport
     private static final String RESULT_QUEUE = "mock:result";
     private static final String ERROR_QUEUE = "mock:error";
 
+    @Test
     public void testHandledException() throws Exception {
         MockEndpoint result = getMockEndpoint(RESULT_QUEUE);
         result.expectedMessageCount(0);
@@ -45,6 +48,7 @@ public class ExceptionBuilderWithHandledExceptionTest extends ContextTestSupport
         MockEndpoint.assertIsSatisfied(result, mock);
     }
 
+    @Test
     public void testHandledExceptionWithExpression() throws Exception {
         MockEndpoint result = getMockEndpoint(RESULT_QUEUE);
         result.expectedMessageCount(0);
@@ -56,6 +60,7 @@ public class ExceptionBuilderWithHandledExceptionTest extends ContextTestSupport
         MockEndpoint.assertIsSatisfied(result, mock);
     }
 
+    @Test
     public void testUnhandledException() throws Exception {
         MockEndpoint result = getMockEndpoint(RESULT_QUEUE);
         result.expectedMessageCount(0);

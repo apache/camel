@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.vm;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
@@ -27,16 +29,18 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class VmTimeoutIssueTest extends AbstractVmTestSupport {
 
+    @Test
     public void testVmTimeoutWithAnotherVm() throws Exception {
         try {
-            template2.requestBody("vm:start1?timeout=4000", "Hello");
+            template2.requestBody("vm:start1?timeout=1000", "Hello");
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
-            assertEquals(2000, cause.getTimeout());
+            assertEquals(500, cause.getTimeout());
         }
     }
 
+    @Test
     public void testVmTimeoutWithProcessor() throws Exception {
         try {
             template2.requestBody("vm:start2?timeout=4000", "Hello");
@@ -53,7 +57,7 @@ public class VmTimeoutIssueTest extends AbstractVmTestSupport {
             @Override
             public void configure() throws Exception {
                 from("vm:end")
-                    .delay(3000).transform().constant("Bye World");
+                    .delay(1000).transform().constant("Bye World");
             }
         };
     }
@@ -65,9 +69,9 @@ public class VmTimeoutIssueTest extends AbstractVmTestSupport {
             public void configure() throws Exception {
                 errorHandler(noErrorHandler());
 
-                from("vm:start1?timeout=4000")
+                from("vm:start1?timeout=1000")
                     .to("log:AFTER_START1")
-                    .to("vm:end?timeout=2000")
+                    .to("vm:end?timeout=500")
                     .to("log:AFTER_END");
 
                 from("vm:start2?timeout=4000")

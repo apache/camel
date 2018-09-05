@@ -16,16 +16,22 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
+import static org.awaitility.Awaitility.await;
+
 public class BacklogDebuggerTest extends ManagementTestSupport {
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testBacklogDebugger() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -51,17 +57,19 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
-        mock.setSleepForEmptyTest(1000);
+        mock.setSleepForEmptyTest(100);
 
         template.sendBody("seda:start", "Hello World");
 
         assertMockEndpointsSatisfied();
 
-        // add breakpoint at bar
-        Set<String> nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
-        assertNotNull(nodes);
-        assertEquals(1, nodes.size());
-        assertEquals("bar", nodes.iterator().next());
+        // wait for breakpoint at bar
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+            Set<String> suspended = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+            assertNotNull(suspended);
+            assertEquals(1, suspended.size());
+            assertEquals("bar", suspended.iterator().next());
+        });
 
         // the message should be ours
         String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[]{"bar"}, new String[]{"java.lang.String"});
@@ -80,12 +88,13 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertMockEndpointsSatisfied();
 
         // and no suspended anymore
-        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+        Set<String> nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
         assertNotNull(nodes);
         assertEquals(0, nodes.size());
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testBacklogDebuggerUpdateBodyAndHeader() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -112,7 +121,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
-        mock.setSleepForEmptyTest(1000);
+        mock.setSleepForEmptyTest(100);
 
         template.sendBody("seda:start", "Hello World");
 
@@ -131,13 +140,13 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         // resume breakpoint
         mbeanServer.invoke(on, "resumeBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
 
-        Thread.sleep(1000);
-
-        // add breakpoint at bar
-        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
-        assertNotNull(nodes);
-        assertEquals(1, nodes.size());
-        assertEquals("bar", nodes.iterator().next());
+        // wait for breakpoint at bar
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+            Set<String> suspended = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+            assertNotNull(suspended);
+            assertEquals(1, suspended.size());
+            assertEquals("bar", suspended.iterator().next());
+        });
 
         // the message should be ours
         String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[]{"bar"}, new String[]{"java.lang.String"});
@@ -163,6 +172,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testBacklogDebuggerUpdateBodyAndHeaderType() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -189,7 +199,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
-        mock.setSleepForEmptyTest(1000);
+        mock.setSleepForEmptyTest(100);
 
         template.sendBody("seda:start", "Hello World");
 
@@ -210,13 +220,13 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         // resume breakpoint
         mbeanServer.invoke(on, "resumeBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
 
-        Thread.sleep(1000);
-
-        // add breakpoint at bar
-        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
-        assertNotNull(nodes);
-        assertEquals(1, nodes.size());
-        assertEquals("bar", nodes.iterator().next());
+        // wait for breakpoint at bar
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+            Set<String> suspended = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+            assertNotNull(suspended);
+            assertEquals(1, suspended.size());
+            assertEquals("bar", suspended.iterator().next());
+        });
 
         // the message should be ours
         String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[]{"bar"}, new String[]{"java.lang.String"});
@@ -242,6 +252,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testBacklogDebuggerRemoveBodyAndHeader() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -268,7 +279,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
-        mock.setSleepForEmptyTest(1000);
+        mock.setSleepForEmptyTest(100);
 
         template.sendBody("seda:start", "Hello World");
 
@@ -287,13 +298,13 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         // resume breakpoint
         mbeanServer.invoke(on, "resumeBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
 
-        Thread.sleep(1000);
-
-        // add breakpoint at bar
-        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
-        assertNotNull(nodes);
-        assertEquals(1, nodes.size());
-        assertEquals("bar", nodes.iterator().next());
+        // wait for breakpoint at bar
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+            Set<String> suspended = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+            assertNotNull(suspended);
+            assertEquals(1, suspended.size());
+            assertEquals("bar", suspended.iterator().next());
+        });
 
         // the message should be ours
         String xml = (String) mbeanServer.invoke(on, "dumpTracedMessagesAsXml", new Object[]{"bar"}, new String[]{"java.lang.String"});
@@ -319,6 +330,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testBacklogDebuggerSuspendOnlyOneAtBreakpoint() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -380,6 +392,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testBacklogDebuggerConditional() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -431,7 +444,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         resetMocks();
 
         mock.expectedMessageCount(0);
-        mock.setSleepForEmptyTest(1000);
+        mock.setSleepForEmptyTest(100);
 
         template.sendBody("seda:start", "Hello Camel");
 
@@ -465,6 +478,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testBacklogDebuggerStep() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -490,7 +504,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
-        mock.setSleepForEmptyTest(1000);
+        mock.setSleepForEmptyTest(100);
 
         template.sendBody("seda:start", "Hello World");
 
@@ -509,63 +523,63 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         mbeanServer.invoke(on, "stepBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
 
         // then at bar now
-        Thread.sleep(1000);
-        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
-        assertNotNull(nodes);
-        assertEquals(1, nodes.size());
-        assertEquals("bar", nodes.iterator().next());
-        stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
-        assertEquals("Should be in step mode", Boolean.TRUE, stepMode);
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+            Set<String> suspended = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+            assertNotNull(suspended);
+            assertEquals(1, suspended.size());
+            assertEquals("bar", suspended.iterator().next());
+        });
 
         // step
         mbeanServer.invoke(on, "step", null, null);
 
         // then at transform now
-        Thread.sleep(1000);
-        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
-        assertNotNull(nodes);
-        assertEquals(1, nodes.size());
-        assertEquals("transform", nodes.iterator().next());
-        stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
-        assertEquals("Should be in step mode", Boolean.TRUE, stepMode);
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+            Set<String> suspended = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+            assertNotNull(suspended);
+            assertEquals(1, suspended.size());
+            assertEquals("transform", suspended.iterator().next());
+        });
 
         // step
         mbeanServer.invoke(on, "step", null, null);
 
         // then at cheese now
-        Thread.sleep(1000);
-        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
-        assertNotNull(nodes);
-        assertEquals(1, nodes.size());
-        assertEquals("cheese", nodes.iterator().next());
-        stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
-        assertEquals("Should be in step mode", Boolean.TRUE, stepMode);
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+            Set<String> suspended = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+            assertNotNull(suspended);
+            assertEquals(1, suspended.size());
+            assertEquals("cheese", suspended.iterator().next());
+        });
 
         // step
         mbeanServer.invoke(on, "step", null, null);
 
         // then at result now
-        Thread.sleep(1000);
-        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
-        assertNotNull(nodes);
-        assertEquals(1, nodes.size());
-        assertEquals("result", nodes.iterator().next());
-        stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
-        assertEquals("Should be in step mode", Boolean.TRUE, stepMode);
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+            Set<String> suspended = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+            assertNotNull(suspended);
+            assertEquals(1, suspended.size());
+            assertEquals("result", suspended.iterator().next());
+        });
 
         // step
         mbeanServer.invoke(on, "step", null, null);
 
         // then the exchange is completed
-        Thread.sleep(1000);
-        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
-        assertNotNull(nodes);
-        assertEquals(0, nodes.size());
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+            Set<String> suspended = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+            assertNotNull(suspended);
+            assertEquals(0, suspended.size());
+        });
+
+        // should no longer be in step mode
         stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
         assertEquals("Should not be in step mode", Boolean.FALSE, stepMode);
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testBacklogDebuggerStepCurrentNode() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -591,7 +605,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
-        mock.setSleepForEmptyTest(1000);
+        mock.setSleepForEmptyTest(100);
 
         template.sendBody("seda:start", "Hello World");
 
@@ -610,58 +624,57 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         mbeanServer.invoke(on, "stepBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
 
         // then at bar now
-        Thread.sleep(1000);
-        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
-        assertNotNull(nodes);
-        assertEquals(1, nodes.size());
-        assertEquals("bar", nodes.iterator().next());
-        stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
-        assertEquals("Should be in step mode", Boolean.TRUE, stepMode);
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+            Set<String> suspended = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+            assertNotNull(suspended);
+            assertEquals(1, suspended.size());
+            assertEquals("bar", suspended.iterator().next());
+        });
 
         // step
         mbeanServer.invoke(on, "stepBreakpoint", new Object[]{"bar"}, new String[]{"java.lang.String"});
 
         // then at transform now
-        Thread.sleep(1000);
-        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
-        assertNotNull(nodes);
-        assertEquals(1, nodes.size());
-        assertEquals("transform", nodes.iterator().next());
-        stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
-        assertEquals("Should be in step mode", Boolean.TRUE, stepMode);
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+            Set<String> suspended = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+            assertNotNull(suspended);
+            assertEquals(1, suspended.size());
+            assertEquals("transform", suspended.iterator().next());
+        });
 
         // step
         mbeanServer.invoke(on, "stepBreakpoint", new Object[]{"transform"}, new String[]{"java.lang.String"});
 
         // then at cheese now
-        Thread.sleep(1000);
-        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
-        assertNotNull(nodes);
-        assertEquals(1, nodes.size());
-        assertEquals("cheese", nodes.iterator().next());
-        stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
-        assertEquals("Should be in step mode", Boolean.TRUE, stepMode);
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+            Set<String> suspended = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+            assertNotNull(suspended);
+            assertEquals(1, suspended.size());
+            assertEquals("cheese", suspended.iterator().next());
+        });
 
         // step
         mbeanServer.invoke(on, "stepBreakpoint", new Object[]{"cheese"}, new String[]{"java.lang.String"});
 
         // then at result now
-        Thread.sleep(1000);
-        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
-        assertNotNull(nodes);
-        assertEquals(1, nodes.size());
-        assertEquals("result", nodes.iterator().next());
-        stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
-        assertEquals("Should be in step mode", Boolean.TRUE, stepMode);
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+            Set<String> suspended = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+            assertNotNull(suspended);
+            assertEquals(1, suspended.size());
+            assertEquals("result", suspended.iterator().next());
+        });
 
         // step
         mbeanServer.invoke(on, "stepBreakpoint", new Object[]{"result"}, new String[]{"java.lang.String"});
 
         // then the exchange is completed
-        Thread.sleep(1000);
-        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
-        assertNotNull(nodes);
-        assertEquals(0, nodes.size());
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+            Set<String> suspended = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+            assertNotNull(suspended);
+            assertEquals(0, suspended.size());
+        });
+
+        // should no longer be in step mode
         stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
         assertEquals("Should not be in step mode", Boolean.FALSE, stepMode);
     }

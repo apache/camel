@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
  * which are annotated with {@link org.apache.camel.spi.UriEndpoint} to use the {@link UriParam} and {@link UriParams} annotations
  * to denote its parameters which can be specified via URI query parameters.
  */
+@Deprecated
 public class UriEndpointConfiguration implements EndpointConfiguration {
     private static final Logger LOG = LoggerFactory.getLogger(UriEndpointConfiguration.class);
 
@@ -142,7 +143,7 @@ public class UriEndpointConfiguration implements EndpointConfiguration {
         if (propertyMap == null) {
             propertyMap = UriEndpointComponent.createParameterConfigurationMap(getEndpointClass());
         }
-        return new TreeMap<String, ParameterConfiguration>(propertyMap);
+        return new TreeMap<>(propertyMap);
     }
 
 }

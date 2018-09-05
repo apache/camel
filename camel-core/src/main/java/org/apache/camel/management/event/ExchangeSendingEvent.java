@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management.event;
 
+import java.util.EventObject;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 
@@ -23,11 +25,15 @@ import org.apache.camel.Exchange;
  * Event for <b>before</b> sending an {@link Exchange} to an {@link Endpoint}.
  * <p/>
  * This event is emitted before attempting to send the {@link Exchange} to an {@link Endpoint}.
- * There is still some internal processing occurring before the actual sending takes places, and
- * therefore its not a 100% guarantee that the sending actually happens, as there may cause an
- * internal error before.
+ * There is still some internal processing done before the actual sending takes places, and
+ * therefore it is not 100% guaranteed that the sending actually happens, as an
+ * internal error may occur.
  * <p/>
  * The {@link ExchangeSentEvent} is an event which is emitted <b>after</b> the sending is done.
+ * <p/>
+ * These two events (sending and sent) come in a pair, and therefore you need to make sure to return
+ * <tt>true</tt> for both events in the {@link org.apache.camel.spi.EventNotifier#isEnabled(EventObject)}
+ * method to receive events for either of them.
  *
  * @see ExchangeSentEvent
  * @version 

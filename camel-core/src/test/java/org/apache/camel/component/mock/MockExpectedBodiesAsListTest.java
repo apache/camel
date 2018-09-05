@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mock;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class MockExpectedBodiesAsListTest extends ContextTestSupport {
 
+    @Test
     public void testUsingVarargs() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Hello World", "Bye World");
@@ -37,8 +40,9 @@ public class MockExpectedBodiesAsListTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testUsingListString() throws Exception {
-        List<String> data = new ArrayList<String>();
+        List<String> data = new ArrayList<>();
         data.add("Hello World");
         data.add("Bye World");
 
@@ -51,8 +55,9 @@ public class MockExpectedBodiesAsListTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testUsingList() throws Exception {
-        List<Object> data = new ArrayList<Object>();
+        List<Object> data = new ArrayList<>();
         data.add("Hello World");
         data.add(123);
 

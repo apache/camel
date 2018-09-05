@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,11 +31,12 @@ import org.apache.camel.processor.BodyInAggregatingStrategy;
  */
 public class AggregateExpressionSizeOverrideFixedTest extends ContextTestSupport {
 
+    @Test
     public void testAggregateExpressionSize() throws Exception {
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C");
         getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "size");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("id", 123);
         headers.put("mySize", 3);
 

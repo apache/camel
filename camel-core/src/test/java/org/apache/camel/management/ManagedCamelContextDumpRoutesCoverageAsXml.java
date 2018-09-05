@@ -50,6 +50,7 @@ public class ManagedCamelContextDumpRoutesCoverageAsXml extends ManagementTestSu
 
         assertTrue(xml.contains("exchangesTotal=\"3\""));
         assertTrue(xml.contains("exchangesTotal=\"2\""));
+        assertTrue(xml.contains("customId=\"true\""));
 
         // should be valid XML
         Document doc = context.getTypeConverter().convertTo(Document.class, xml);

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +32,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileProduceOverruleTest extends ContextTestSupport {
 
+    @Test
     public void testNoOverrule() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -40,6 +44,7 @@ public class FileProduceOverruleTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOnlyOverrule() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -51,6 +56,7 @@ public class FileProduceOverruleTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBoth() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -58,7 +64,7 @@ public class FileProduceOverruleTest extends ContextTestSupport {
         mock.message(0).header(Exchange.OVERRULE_FILE_NAME).isNull();
         mock.expectedFileExists("target/write/ruled.txt", "Hello World");
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put(Exchange.FILE_NAME, "hello.txt");
         // this header should overrule the endpoint configuration
         map.put(Exchange.OVERRULE_FILE_NAME, "ruled.txt");
@@ -69,7 +75,8 @@ public class FileProduceOverruleTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/write");
         super.setUp();
     }

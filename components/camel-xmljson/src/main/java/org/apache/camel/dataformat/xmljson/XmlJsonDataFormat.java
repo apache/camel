@@ -29,16 +29,19 @@ import net.sf.json.JSON;
 import net.sf.json.JSONSerializer;
 import net.sf.json.xml.XMLSerializer;
 import org.apache.camel.Exchange;
+import org.apache.camel.StreamCache;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat}) using 
  * <a href="http://json-lib.sourceforge.net/">json-lib</a> to convert between XML
  * and JSON directly.
  */
-public class XmlJsonDataFormat extends ServiceSupport implements DataFormat {
+public class XmlJsonDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private XMLSerializer serializer;
 
@@ -55,8 +58,14 @@ public class XmlJsonDataFormat extends ServiceSupport implements DataFormat {
     private Boolean removeNamespacePrefixes;
     private List<String> expandableProperties;
     private TypeHintsEnum typeHints;
+    private boolean contentTypeHeader = true;
 
     public XmlJsonDataFormat() {
+    }
+
+    @Override
+    public String getDataFormatName() {
+        return "xmljson";
     }
 
     @Override
@@ -167,6 +176,13 @@ public class XmlJsonDataFormat extends ServiceSupport implements DataFormat {
         json.write(osw);
         osw.flush();
 
+        if (contentTypeHeader) {
+            if (exchange.hasOut()) {
+                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/json");
+            } else {
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
+            }
+        }
     }
 
     /**
@@ -176,16 +192,40 @@ public class XmlJsonDataFormat extends ServiceSupport implements DataFormat {
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         Object inBody = exchange.getIn().getBody();
         JSON toConvert;
+        
+        if (inBody == null) {
+            return null;
+        }
+        
+        if (inBody instanceof StreamCache) {
+            long length = ((StreamCache) inBody).length();
+            if (length <= 0) {
+                return inBody;
+            }
+        }
         // if the incoming object is already a JSON object, process as-is,
         // otherwise parse it as a String
         if (inBody instanceof JSON) {
             toConvert = (JSON) inBody;
         } else {
             String jsonString = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, inBody);
+            if (ObjectHelper.isEmpty(jsonString)) {
+                return null;
+            }
             toConvert = JSONSerializer.toJSON(jsonString);
         }
 
-        return convertToXMLUsingEncoding(toConvert);
+        Object answer = convertToXMLUsingEncoding(toConvert);
+
+        if (contentTypeHeader) {
+            if (exchange.hasOut()) {
+                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            } else {
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            }
+        }
+
+        return answer;
     }
 
     private String convertToXMLUsingEncoding(JSON json) {
@@ -328,6 +368,19 @@ public class XmlJsonDataFormat extends ServiceSupport implements DataFormat {
         return arrayName;
     }
 
+
+    public boolean isContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    /**
+     * If enabled then XmlJson will set the Content-Type header to <tt>application/json</tt> when marshalling,
+     * and <tt>application/xml</tt> when unmarshalling.
+     */
+    public void setContentTypeHeader(boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
+    }
+
     /**
      * See {@link XMLSerializer#setExpandableProperties(String[])}
      */
@@ -370,13 +423,13 @@ public class XmlJsonDataFormat extends ServiceSupport implements DataFormat {
 
         public NamespacesPerElementMapping(String element, String prefix, String uri) {
             this.element = element;
-            this.namespaces = new HashMap<String, String>();
+            this.namespaces = new HashMap<>();
             this.namespaces.put(prefix, uri);
         }
 
         public NamespacesPerElementMapping(String element, String pipeSeparatedMappings) {
             this.element = element;
-            this.namespaces = new HashMap<String, String>();
+            this.namespaces = new HashMap<>();
             String[] origTokens = pipeSeparatedMappings.split("\\|");
             // drop the first token
             String[] tokens = Arrays.copyOfRange(origTokens, 1, origTokens.length);

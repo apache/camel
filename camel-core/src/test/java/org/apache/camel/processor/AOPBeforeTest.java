@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -25,6 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class AOPBeforeTest extends ContextTestSupport {
 
+    @Test
     public void testAOPBefore() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello World");
         MockEndpoint mock = getMockEndpoint("mock:result");

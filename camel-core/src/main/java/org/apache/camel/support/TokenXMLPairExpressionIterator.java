@@ -20,11 +20,14 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.Scanner;
+import org.apache.camel.util.StringHelper;
 
 /**
  * {@link org.apache.camel.Expression} to walk a {@link org.apache.camel.Message} XML body
@@ -51,22 +54,35 @@ public class TokenXMLPairExpressionIterator extends TokenPairExpressionIterator 
         super(startToken, endToken, true);
         // namespace token is optional
         this.inheritNamespaceToken = inheritNamespaceToken;
-
-        // must be XML tokens
-        if (!startToken.startsWith("<") || !startToken.endsWith(">")) {
-            throw new IllegalArgumentException("Start token must be a valid XML token, was: " + startToken);
-        }
-        if (!endToken.startsWith("<") || !endToken.endsWith(">")) {
-            throw new IllegalArgumentException("End token must be a valid XML token, was: " + endToken);
-        }
-        if (inheritNamespaceToken != null && (!inheritNamespaceToken.startsWith("<") || !inheritNamespaceToken.endsWith(">"))) {
-            throw new IllegalArgumentException("Namespace token must be a valid XML token, was: " + inheritNamespaceToken);
-        }
     }
 
     @Override
-    protected Iterator<?> createIterator(InputStream in, String charset) {
-        XMLTokenPairIterator iterator = new XMLTokenPairIterator(startToken, endToken, inheritNamespaceToken, in, charset);
+    protected Iterator<?> createIterator(Exchange exchange, InputStream in, String charset) {
+        String start = startToken;
+        if (SimpleLanguage.hasSimpleFunction(start)) {
+            start = SimpleLanguage.expression(start).evaluate(exchange, String.class);
+        }
+        String end = endToken;
+        if (SimpleLanguage.hasSimpleFunction(end)) {
+            end = SimpleLanguage.expression(end).evaluate(exchange, String.class);
+        }
+        String inherit = inheritNamespaceToken;
+        if (inherit != null && SimpleLanguage.hasSimpleFunction(inherit)) {
+            inherit = SimpleLanguage.expression(inherit).evaluate(exchange, String.class);
+        }
+
+        // must be XML tokens
+        if (!start.startsWith("<") || !start.endsWith(">")) {
+            throw new IllegalArgumentException("Start token must be a valid XML token, was: " + start);
+        }
+        if (!end.startsWith("<") || !end.endsWith(">")) {
+            throw new IllegalArgumentException("End token must be a valid XML token, was: " + end);
+        }
+        if (inherit != null && (!inherit.startsWith("<") || !inherit.endsWith(">"))) {
+            throw new IllegalArgumentException("Namespace token must be a valid XML token, was: " + inherit);
+        }
+
+        XMLTokenPairIterator iterator = new XMLTokenPairIterator(start, end, inherit, in, charset);
         iterator.init();
         return iterator;
     }
@@ -107,7 +123,7 @@ public class TokenXMLPairExpressionIterator extends TokenPairExpressionIterator 
         @Override
         void init() {
             // use scan end token as delimiter which supports attributes/namespaces
-            this.scanner = new Scanner(in, charset).useDelimiter(scanEndToken);
+            this.scanner = new Scanner(in, charset, scanEndToken);
             // this iterator will do look ahead as we may have data
             // after the last end token, which the scanner would find
             // so we need to be one step ahead of the scanner
@@ -137,7 +153,7 @@ public class TokenXMLPairExpressionIterator extends TokenPairExpressionIterator 
             }
 
             // make sure the end tag matches the begin tag if the tag has a namespace prefix
-            String tag = ObjectHelper.before(next, ">");
+            String tag = StringHelper.before(next, ">");
             StringBuilder endTagSb = new StringBuilder("</");
             int firstSpaceIndex = tag.indexOf(" ");
             if (firstSpaceIndex > 0) {
@@ -151,7 +167,7 @@ public class TokenXMLPairExpressionIterator extends TokenPairExpressionIterator 
             if (inheritNamespaceToken != null && rootTokenNamespaces != null) {
                 // append root namespaces to local start token
                 // grab the text
-                String text = ObjectHelper.after(next, ">");
+                String text = StringHelper.after(next, ">");
                 // build result with inherited namespaces
                 next = sb.append(tag).append(rootTokenNamespaces).append(">").append(text).append(endTagSb.toString()).toString();
             } else {
@@ -176,7 +192,7 @@ public class TokenXMLPairExpressionIterator extends TokenPairExpressionIterator 
             }
 
             // find namespaces (there can be attributes mixed, so we should only grab the namespaces)
-            Map<String, String> namespaces = new LinkedHashMap<String, String>();
+            Map<String, String> namespaces = new LinkedHashMap<>();
             Matcher matcher = NAMESPACE_PATTERN.matcher(text);
             while (matcher.find()) {
                 String prefix = matcher.group(1);

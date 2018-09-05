@@ -16,31 +16,28 @@
  */
 package org.apache.camel.spring.issues;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
+
 import org.apache.camel.CamelException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.Main;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
-public class MisspelledRouteRefTest extends TestCase {
+import static org.apache.camel.TestSupport.assertIsInstanceOf;
 
-    private static final Logger LOG = LoggerFactory.getLogger(MisspelledRouteRefTest.class);
+public class MisspelledRouteRefTest extends Assert {
 
-    public void testApplicationContextFailed() {
+    @Test
+    public void testApplicationContextFailed() throws Exception {
         try {
-            Main main = new Main();
+            Main main = new Main(); 
             main.setApplicationContextUri("org/apache/camel/spring/issues/MisspelledRouteRefTest.xml");
             main.start();
             fail("Should have thrown an exception");
-        } catch (Exception e) {
-            //expected but want to see what it looks like...
-            LOG.debug("Exception message : " + e.getMessage());
-
-            CamelException cause = (CamelException) e.getCause();
-            assertEquals("Cannot find any routes with this RouteBuilder reference: RouteBuilderRef[xxxroute]", cause.getMessage());
+        } catch (RuntimeCamelException e) {
+            CamelException ce = assertIsInstanceOf(CamelException.class, e.getCause());
+            assertEquals("Cannot find any routes with this RouteBuilder reference: RouteBuilderRef[xxxroute]", ce.getMessage());
         }
     }
 }

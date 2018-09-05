@@ -34,7 +34,7 @@ public class AhcProduceGetHeadersTest extends BaseAhcTest {
         getMockEndpoint("mock:result").expectedHeaderReceived(Exchange.HTTP_RESPONSE_TEXT, "OK");
         getMockEndpoint("mock:result").expectedHeaderReceived(Exchange.CONTENT_LENGTH, 9);
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("foo", 123);
         headers.put("bar", "cool");
 

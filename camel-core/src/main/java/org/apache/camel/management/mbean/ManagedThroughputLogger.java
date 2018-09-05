@@ -40,7 +40,7 @@ public class ManagedThroughputLogger extends ManagedProcessor implements Managed
     }
 
     @Override
-    public synchronized void reset() {
+    public void reset() {
         super.reset();
         logger.reset();
     }

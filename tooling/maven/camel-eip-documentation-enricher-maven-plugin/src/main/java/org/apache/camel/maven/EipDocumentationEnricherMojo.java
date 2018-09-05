@@ -20,8 +20,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.xml.transform.Transformer;
@@ -35,6 +35,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import org.apache.camel.util.FileUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -47,7 +48,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 /**
  * Injects EIP documentation to camel schema.
  */
-@Mojo(name = "eip-documentation-enricher", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresProject = true,
+@Mojo(name = "eip-documentation-enricher", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
         defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
 public class EipDocumentationEnricherMojo extends AbstractMojo {
 
@@ -66,8 +67,20 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     /**
      * Path to camel core project root directory.
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../..//camel-core")
+    @Parameter(defaultValue = "${project.build.directory}/../../../camel-core")
     public File camelCoreDir;
+
+    /**
+     * Path to camel core xml project root directory.
+     */
+    @Parameter(defaultValue = "${project.build.directory}/../../../components/camel-core-xml")
+    public File camelCoreXmlDir;
+
+    /**
+     * Path to camel spring project root directory.
+     */
+    @Parameter(defaultValue = "${project.build.directory}/../../../components/camel-spring")
+    public File camelSpringDir;
 
     /**
      * Sub path from camel core directory to model directory with generated json files for components.
@@ -75,44 +88,85 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     @Parameter(defaultValue = "target/classes/org/apache/camel/model")
     public String pathToModelDir;
 
+    /**
+     * Sub path from camel core xml directory to model directory with generated json files for components.
+     */
+    @Parameter(defaultValue = "target/classes/org/apache/camel/core/xml")
+    public String pathToCoreXmlModelDir;
+
+    /**
+     * Sub path from camel spring directory to model directory with generated json files for components.
+     */
+    @Parameter(defaultValue = "target/classes/org/apache/camel/spring")
+    public String pathToSpringModelDir;
+
+    /**
+     * Optional file pattern to delete files after the documentation enrichment is complete.
+     */
+    @Parameter
+    public String deleteFilesAfterRun;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (pathToModelDir == null) {
             throw new MojoExecutionException("pathToModelDir parameter must not be null");
         }
+
+        // skip if input file does not exists
+        if (inputCamelSchemaFile == null || !inputCamelSchemaFile.exists()) {
+            getLog().info("Input Camel schema file: " + inputCamelSchemaFile + " does not exist. Skip EIP document enrichment");
+            return;
+        }
+
         validateExists(inputCamelSchemaFile, "inputCamelSchemaFile");
         validateIsFile(inputCamelSchemaFile, "inputCamelSchemaFile");
         validateExists(camelCoreDir, "camelCoreDir");
+        validateExists(camelCoreXmlDir, "camelCoreXmlDir");
+        validateExists(camelSpringDir, "camelSpringDir");
         validateIsDirectory(camelCoreDir, "camelCoreDir");
+        validateIsDirectory(camelCoreXmlDir, "camelCoreXmlDir");
+        validateIsDirectory(camelSpringDir, "camelSpringDir");
         try {
             runPlugin();
         } catch (Exception e) {
             throw new MojoExecutionException("Error during plugin execution", e);
         }
+        if (deleteFilesAfterRun != null) {
+            deleteFilesAfterDone(deleteFilesAfterRun);
+        }
     }
 
     private void runPlugin() throws Exception {
-        File rootDir = new File(camelCoreDir, pathToModelDir);
         Document document = XmlHelper.buildNamespaceAwareDocument(inputCamelSchemaFile);
         XPath xPath = XmlHelper.buildXPath(new CamelSpringNamespace());
         DomFinder domFinder = new DomFinder(document, xPath);
         DocumentationEnricher documentationEnricher = new DocumentationEnricher(document);
+
+        // include schema files from camel-core, camel-corem-xml and from camel-spring
+        File rootDir = new File(camelCoreDir, pathToModelDir);
         Map<String, File> jsonFiles = PackageHelper.findJsonFiles(rootDir);
+        File rootDir2 = new File(camelCoreXmlDir, pathToCoreXmlModelDir);
+        Map<String, File> jsonFiles2 = PackageHelper.findJsonFiles(rootDir2);
+        File rootDir3 = new File(camelSpringDir, pathToSpringModelDir);
+        Map<String, File> jsonFiles3 = PackageHelper.findJsonFiles(rootDir3);
+        // merge the json files together
+        jsonFiles.putAll(jsonFiles2);
+        jsonFiles.putAll(jsonFiles3);
 
         NodeList elementsAndTypes = domFinder.findElementsAndTypes();
         documentationEnricher.enrichTopLevelElementsDocumentation(elementsAndTypes, jsonFiles);
         Map<String, String> typeToNameMap = buildTypeToNameMap(elementsAndTypes);
-        Set<String> injectedTypes = new HashSet<String>();
+        Set<String> injectedTypes = new LinkedHashSet<>();
+
+        getLog().info("Found " + typeToNameMap.size() + " models to use when enriching the XSD schema");
 
         for (Map.Entry<String, String> entry : typeToNameMap.entrySet()) {
             String elementType = entry.getKey();
             String elementName = entry.getValue();
             if (jsonFileExistsForElement(jsonFiles, elementName)) {
-                injectAttributesDocumentation(domFinder,
-                        documentationEnricher,
-                        jsonFiles.get(elementName),
-                        elementType,
-                        injectedTypes);
+                getLog().debug("Enriching " + elementName);
+                File file = jsonFiles.get(elementName);
+                injectAttributesDocumentation(domFinder, documentationEnricher, file, elementType, injectedTypes);
             }
         }
 
@@ -122,6 +176,14 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     private boolean jsonFileExistsForElement(Map<String, File> jsonFiles,
                                              String elementName) {
         return jsonFiles.containsKey(elementName);
+    }
+
+    private void deleteFilesAfterDone(String deleteFiles) {
+        String[] names = deleteFiles.split(",");
+        for (String name : names) {
+            File file = new File(name);
+            FileUtil.deleteFile(file);
+        }
     }
 
     /**
@@ -139,7 +201,7 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
         injectedTypes.add(type);
         NodeList attributeElements = domFinder.findAttributesElements(type);
         if (attributeElements.getLength() > 0) {
-            documentationEnricher.enrichTypeAttributesDocumentation(attributeElements, jsonFile);
+            documentationEnricher.enrichTypeAttributesDocumentation(getLog(), attributeElements, jsonFile);
         }
 
         String baseType = domFinder.findBaseType(type);
@@ -150,7 +212,7 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     }
 
     private Map<String, String> buildTypeToNameMap(NodeList elementsAndTypes) {
-        Map<String, String> typeToNameMap = new HashMap<String, String>();
+        Map<String, String> typeToNameMap = new LinkedHashMap<>();
         for (int i = 0; i < elementsAndTypes.getLength(); i++) {
             Element item = (Element) elementsAndTypes.item(i);
             String name = item.getAttribute(Constants.NAME_ATTRIBUTE_NAME);
@@ -169,7 +231,6 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     private String truncateTypeNamespace(String baseType) {
         return baseType.replaceAll("tns:", "");
     }
-
 
     private void saveToFile(Document document, File outputFile, Transformer transformer) throws FileNotFoundException, TransformerException {
         StreamResult result = new StreamResult(new FileOutputStream(outputFile));

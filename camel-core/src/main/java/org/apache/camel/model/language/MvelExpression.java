@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * For MVEL expressions and predicates
+ * To use MVEL scripts in Camel expressions or predicates.
  *
  * @version 
  */
-@Metadata(label = "language", title = "MVEL")
+@Metadata(firstVersion = "2.0.0", label = "language,java", title = "MVEL")
 @XmlRootElement(name = "mvel")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MvelExpression extends ExpressionDefinition {

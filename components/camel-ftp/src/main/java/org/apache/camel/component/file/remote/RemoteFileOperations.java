@@ -49,6 +49,13 @@ public interface RemoteFileOperations<T> extends GenericFileOperations<T> {
     void disconnect() throws GenericFileOperationFailedException;
 
     /**
+     * Forces a hard disconnect from the remote server and cause the client to be re-created on next poll.
+     *
+     * @throws GenericFileOperationFailedException can be thrown
+     */
+    void forceDisconnect() throws GenericFileOperationFailedException;
+
+    /**
      * Sends a noop command to the remote server
      *
      * @return <tt>true</tt> if the noop was a success, <tt>false</tt> otherwise

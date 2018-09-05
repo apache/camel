@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -76,7 +78,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
 
             if (withSleepTime) {
                 // simulate some processing in order to get easier concurrency effects
-                Thread.sleep(900);
+                Thread.sleep(50);
             }
             Object body = exchange.getIn().getBody();
             if (body instanceof InputStream) {
@@ -98,7 +100,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
                     IOHelper.copy(ss.getInputStream(), output);
                     exchange.getOut().setBody(output.toByteArray());
                 } else if (ss.getReader() != null) {
-                    Reader reader = (Reader) ss.getReader();
+                    Reader reader = ss.getReader();
                     StringBuilder sb = new StringBuilder();
                     for (int i = reader.read(); i > -1; i = reader.read()) {
                         sb.append((char) i);
@@ -121,6 +123,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
      * 
      * @throws Exception
      */
+    @Test
     public void testByteArrayInputStreamCache() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resulta");
         mock.expectedBodiesReceived("<start></start>");
@@ -140,6 +143,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
      * 
      * @throws Exception
      */
+    @Test
     public void testFileInputStreamCache() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resulta");
         mock.expectedBodiesReceived("James,Guillaume,Hiram,Rob,Roman");
@@ -161,6 +165,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
      * 
      * @throws Exception
      */
+    @Test
     public void testInputStreamCache() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resulta");
         mock.expectedBodiesReceived("A");
@@ -184,6 +189,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
      * 
      * @throws Exception
      */
+    @Test
     public void testReaderCache() throws Exception {
         String abcScharpS = "ABC\u00DF"; // sharp-s
 
@@ -198,6 +204,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testStreamSourceCacheWithInputStream() throws Exception {
         String input = "<A>a</A>";
 
@@ -212,6 +219,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testStreamSourceCacheWithReader() throws Exception {
         String input = "ABC\u00DF"; // sharp-s
 
@@ -227,6 +235,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSourceCache() throws Exception {
         String input = "<A>a</A>";
 

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.issues;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -27,15 +30,17 @@ import org.apache.camel.PollingConsumer;
 public class FilePollingConsumerIssueTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/fpc");
         super.setUp();
     }
 
+    @Test
     public void testFilePollingConsumer() throws Exception {
         template.sendBodyAndHeader("file://target/fpc", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        Endpoint endpoint = context.getEndpoint("file://target/fpc?fileName=hello.txt");
+        Endpoint endpoint = context.getEndpoint("file://target/fpc?initialDelay=0&delay=10&fileName=hello.txt");
         PollingConsumer consumer = endpoint.createPollingConsumer();
         consumer.start();
         Exchange exchange = consumer.receive(5000);

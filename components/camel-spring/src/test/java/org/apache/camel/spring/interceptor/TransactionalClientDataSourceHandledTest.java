@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.interceptor;
 
+import org.junit.Test;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringRouteBuilder;
@@ -25,6 +27,7 @@ import org.apache.camel.spring.SpringRouteBuilder;
  */
 public class TransactionalClientDataSourceHandledTest extends TransactionalClientDataSourceWithOnExceptionTest {
 
+    @Test
     public void testTransactionRollback() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:error");
         mock.expectedMessageCount(1);

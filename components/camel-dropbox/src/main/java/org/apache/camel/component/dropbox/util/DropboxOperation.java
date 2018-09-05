@@ -25,7 +25,7 @@ public enum DropboxOperation {
 
     private final String text;
 
-    private DropboxOperation(final String text) {
+    DropboxOperation(final String text) {
         this.text = text;
     }
 

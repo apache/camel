@@ -17,14 +17,21 @@
 package org.apache.camel.karaf.commands;
 
 import org.apache.camel.commands.RestRegistryListCommand;
-import org.apache.felix.gogo.commands.Argument;
-import org.apache.felix.gogo.commands.Command;
-import org.apache.felix.gogo.commands.Option;
+import org.apache.camel.karaf.commands.completers.CamelContextCompleter;
+import org.apache.camel.karaf.commands.internal.CamelControllerImpl;
+import org.apache.karaf.shell.api.action.Action;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Completion;
+import org.apache.karaf.shell.api.action.Option;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 @Command(scope = "camel", name = "rest-registry-list", description = "Lists all Camel REST services enlisted in the Rest Registry from a CamelContext")
-public class RestRegistryList extends CamelCommandSupport {
+@Service
+public class RestRegistryList extends CamelControllerImpl implements Action {
 
     @Argument(index = 0, name = "name", description = "The Camel context name where to look for the REST services", required = true, multiValued = false)
+    @Completion(CamelContextCompleter.class)
     String name;
 
     @Option(name = "--decode", aliases = "-d", description = "Whether to decode the endpoint uri so its human readable",
@@ -35,9 +42,9 @@ public class RestRegistryList extends CamelCommandSupport {
             required = false, multiValued = false, valueToShowInHelp = "false")
     Boolean verbose = false;
 
-    protected Object doExecute() throws Exception {
+    public Object execute() throws Exception {
         RestRegistryListCommand command = new RestRegistryListCommand(name, decode, verbose);
-        return command.execute(camelController, System.out, System.err);
+        return command.execute(this, System.out, System.err);
     }
 
 }

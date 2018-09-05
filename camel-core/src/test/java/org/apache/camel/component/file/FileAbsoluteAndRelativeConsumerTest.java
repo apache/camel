@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -31,7 +34,8 @@ public class FileAbsoluteAndRelativeConsumerTest extends ContextTestSupport {
     private String base;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/filerelative");
         deleteDirectory("target/fileabsolute");
         // use current dir as base as aboslute path
@@ -39,6 +43,7 @@ public class FileAbsoluteAndRelativeConsumerTest extends ContextTestSupport {
         super.setUp();
     }
 
+    @Test
     public void testRelative() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:relative");
         mock.expectedMessageCount(1);
@@ -51,6 +56,7 @@ public class FileAbsoluteAndRelativeConsumerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAbsolute() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:absolute");
         mock.expectedMessageCount(1);
@@ -68,9 +74,9 @@ public class FileAbsoluteAndRelativeConsumerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filerelative?recursive=true").convertBodyTo(String.class).to("mock:relative");
+                from("file://target/filerelative?initialDelay=0&delay=10&recursive=true").convertBodyTo(String.class).to("mock:relative");
 
-                from("file://" + base + "?recursive=true").convertBodyTo(String.class).to("mock:absolute");
+                from("file://" + base + "?initialDelay=0&delay=10&recursive=true").convertBodyTo(String.class).to("mock:absolute");
             }
         };
     }

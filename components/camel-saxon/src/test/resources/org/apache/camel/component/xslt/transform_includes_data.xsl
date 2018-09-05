@@ -15,7 +15,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<xsl:stylesheet xmlns:date="http://exslt.org/dates-and-times" version="1.1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet xmlns:date="http://exslt.org/dates-and-times" version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <date:months>
         <date:month length="31" abbr="Jan">January</date:month>
         <date:month length="28" abbr="Feb">February</date:month>

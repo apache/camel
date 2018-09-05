@@ -26,11 +26,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -43,6 +46,7 @@ import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.http.common.HttpProtocolHeaderFilterStrategy;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.GZIPHelper;
 import org.apache.camel.util.IOHelper;
@@ -64,6 +68,7 @@ import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -105,8 +110,6 @@ public class HttpProducer extends DefaultProducer {
             if (queryString != null) {
                 skipRequestHeaders = URISupport.parseQuery(queryString, false, true);
             }
-            // Need to remove the Host key as it should be not used
-            exchange.getIn().getHeaders().remove("host");
         }
         HttpRequestBase httpRequest = createMethod(exchange);
         Message in = exchange.getIn();
@@ -128,7 +131,7 @@ public class HttpProducer extends DefaultProducer {
                 final Iterator<?> it = ObjectHelper.createIterator(headerValue, null, true);
 
                 // the value to add as request header
-                final List<String> values = new ArrayList<String>();
+                final List<String> values = new ArrayList<>();
 
                 // if its a multi value then check each value if we can add it and for multi values they
                 // should be combined into a single value
@@ -155,6 +158,31 @@ public class HttpProducer extends DefaultProducer {
             }
         }
 
+        if (getEndpoint().getCookieHandler() != null) {
+            Map<String, List<String>> cookieHeaders = getEndpoint().getCookieHandler().loadCookies(exchange, httpRequest.getURI());
+            for (Map.Entry<String, List<String>> entry : cookieHeaders.entrySet()) {
+                String key = entry.getKey();
+                if (entry.getValue().size() > 0) {
+                    // join multi-values separated by semi-colon
+                    httpRequest.addHeader(key, entry.getValue().stream().collect(Collectors.joining(";")));
+                }
+            }
+        }
+
+        //In reverse proxy applications it can be desirable for the downstream service to see the original Host header
+        //if this option is set, and the exchange Host header is not null, we will set it's current value on the httpRequest
+        if (getEndpoint().isPreserveHostHeader()) {
+            String hostHeader = exchange.getIn().getHeader("Host", String.class);
+            if (hostHeader != null) {
+                //HttpClient 4 will check to see if the Host header is present, and use it if it is, see org.apache.http.protocol.RequestTargetHost in httpcore
+                httpRequest.setHeader("Host", hostHeader);
+            }
+        }
+        
+        if (getEndpoint().isConnectionClose()) {
+            httpRequest.addHeader("Connection", HTTP.CONN_CLOSE);
+        }
+
         // lets store the result in the output message.
         HttpResponse httpResponse = null;
         try {
@@ -179,11 +207,25 @@ public class HttpProducer extends DefaultProducer {
                 }
             }
         } finally {
-            if (httpResponse != null) {
+            final HttpResponse response = httpResponse;
+            if (httpResponse != null && getEndpoint().isDisableStreamCache()) {
+                // close the stream at the end of the exchange to ensure it gets eventually closed later
+                exchange.addOnCompletion(new SynchronizationAdapter() {
+                    @Override
+                    public void onDone(Exchange exchange) {
+                        try {
+                            EntityUtils.consume(response.getEntity());
+                        } catch (Throwable e) {
+                            // ignore
+                        }
+                    }
+                });
+            } else if (httpResponse != null) {
+                // close the stream now
                 try {
-                    EntityUtils.consume(httpResponse.getEntity());
-                } catch (IOException e) {
-                    // nothing we could do
+                    EntityUtils.consume(response.getEntity());
+                } catch (Throwable e) {
+                    // ignore
                 }
             }
         }
@@ -208,9 +250,11 @@ public class HttpProducer extends DefaultProducer {
 
         // propagate HTTP response headers
         Header[] headers = httpResponse.getAllHeaders();
+        Map<String, List<String>> m = new HashMap<>();
         for (Header header : headers) {
             String name = header.getName();
             String value = header.getValue();
+            m.computeIfAbsent(name, k -> new ArrayList<>()).add(value);
             if (name.toLowerCase().equals("content-type")) {
                 name = Exchange.CONTENT_TYPE;
                 exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(value));
@@ -221,7 +265,10 @@ public class HttpProducer extends DefaultProducer {
                 HttpHelper.appendHeader(answer.getHeaders(), name, extracted);
             }
         }
-
+        // handle cookies
+        if (getEndpoint().getCookieHandler() != null) {
+            getEndpoint().getCookieHandler().storeCookies(exchange, httpRequest.getURI(), m);
+        }
         // endpoint might be configured to copy headers from in to out
         // to avoid overriding existing headers with old values just
         // filter the http protocol headers
@@ -236,9 +283,17 @@ public class HttpProducer extends DefaultProducer {
         String uri = httpRequest.getURI().toString();
         String statusText = httpResponse.getStatusLine() != null ? httpResponse.getStatusLine().getReasonPhrase() : null;
         Map<String, String> headers = extractResponseHeaders(httpResponse.getAllHeaders());
+        // handle cookies
+        if (getEndpoint().getCookieHandler() != null) {
+            Map<String, List<String>> m = new HashMap<>();
+            for (Entry<String, String> e : headers.entrySet()) {
+                m.put(e.getKey(), Collections.singletonList(e.getValue()));
+            }
+            getEndpoint().getCookieHandler().storeCookies(exchange, httpRequest.getURI(), m);
+        }
 
         Object responseBody = extractResponseBody(httpRequest, httpResponse, exchange, getEndpoint().isIgnoreResponseBody());
-        if (transferException && responseBody != null && responseBody instanceof Exception) {
+        if (transferException && responseBody instanceof Exception) {
             // if the response was a serialized exception then use that
             return (Exception) responseBody;
         }
@@ -289,7 +344,7 @@ public class HttpProducer extends DefaultProducer {
             return null;
         }
 
-        Map<String, String> answer = new HashMap<String, String>();
+        Map<String, String> answer = new HashMap<>();
         for (Header header : responseHeaders) {
             answer.put(header.getName(), header.getValue());
         }
@@ -299,12 +354,8 @@ public class HttpProducer extends DefaultProducer {
 
     /**
      * Extracts the response from the method as a InputStream.
-     *
-     * @param httpRequest the method that was executed
-     * @return the response either as a stream, or as a deserialized java object
-     * @throws IOException can be thrown
      */
-    protected static Object extractResponseBody(HttpRequestBase httpRequest, HttpResponse httpResponse, Exchange exchange, boolean ignoreResponseBody) throws IOException, ClassNotFoundException {
+    protected Object extractResponseBody(HttpRequestBase httpRequest, HttpResponse httpResponse, Exchange exchange, boolean ignoreResponseBody) throws IOException, ClassNotFoundException {
         HttpEntity entity = httpResponse.getEntity();
         if (entity == null) {
             return null;
@@ -323,7 +374,7 @@ public class HttpProducer extends DefaultProducer {
         }
         // Honor the character encoding
         String contentType = null;
-        header = httpRequest.getFirstHeader("content-type");
+        header = httpResponse.getFirstHeader("content-type");
         if (header != null) {
             contentType = header.getValue();
             // find the charset and set it to the Exchange
@@ -331,13 +382,25 @@ public class HttpProducer extends DefaultProducer {
         }
         // if content type is a serialized java object then de-serialize it back to a Java object
         if (contentType != null && contentType.equals(HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT)) {
-            return HttpHelper.deserializeJavaObjectFromStream(is, exchange.getContext());
-        } else {
-            InputStream response = null;
-            if (!ignoreResponseBody) {
-                response = doExtractResponseBodyAsStream(is, exchange);
+            // only deserialize java if allowed
+            if (getEndpoint().getComponent().isAllowJavaSerializedObject() || getEndpoint().isTransferException()) {
+                return HttpHelper.deserializeJavaObjectFromStream(is, exchange.getContext());
+            } else {
+                // empty response
+                return null;
             }
-            return response;
+        } else {
+            if (!getEndpoint().isDisableStreamCache()) {
+                // wrap the response in a stream cache so its re-readable
+                InputStream response = null;
+                if (!ignoreResponseBody) {
+                    response = doExtractResponseBodyAsStream(is, exchange);
+                }
+                return response;
+            } else {
+                // use the response stream as-is
+                return is;
+            }
         }
     }
 
@@ -392,6 +455,11 @@ public class HttpProducer extends DefaultProducer {
         HttpMethods methodToUse = HttpMethodHelper.createMethod(exchange, getEndpoint(), requestEntity != null);
         HttpRequestBase method = methodToUse.createMethod(url);
 
+        // special for HTTP DELETE if the message body should be included
+        if (getEndpoint().isDeleteWithBody() && "DELETE".equals(method.getMethod())) {
+            method = new HttpDeleteWithBodyMethod(url, requestEntity);
+        }
+
         LOG.trace("Using URL: {} with method: {}", url, method);
 
         if (methodToUse.isEntityEnclosing()) {
@@ -436,7 +504,7 @@ public class HttpProducer extends DefaultProducer {
                     //it removes "boundary" from Content-Type; I have to use contentType.create method.
                     if (contentTypeString != null) {
                         // using ContentType.parser for charset
-                        if (contentTypeString.indexOf("charset") > 0) {
+                        if (contentTypeString.indexOf("charset") > 0 || contentTypeString.indexOf(";") > 0) {
                             contentType = ContentType.parse(contentTypeString);
                         } else {
                             contentType = ContentType.create(contentTypeString);
@@ -444,6 +512,9 @@ public class HttpProducer extends DefaultProducer {
                     }
 
                     if (contentTypeString != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentTypeString)) {
+                        if (!getEndpoint().getComponent().isAllowJavaSerializedObject()) {
+                            throw new CamelExchangeException("Content-type " + org.apache.camel.http.common.HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT + " is not allowed", exchange);
+                        }
                         // serialized java object
                         Serializable obj = in.getMandatoryBody(Serializable.class);
                         // write object to output stream

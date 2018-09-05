@@ -20,7 +20,11 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.commons.api.BasicCacheContainer;
+import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
+import org.infinispan.test.TestingUtil;
+import org.infinispan.util.ControlledTimeService;
+import org.infinispan.util.TimeService;
 import org.junit.Before;
 
 public class InfinispanTestSupport extends CamelTestSupport {
@@ -30,11 +34,12 @@ public class InfinispanTestSupport extends CamelTestSupport {
     protected static final String VALUE_TWO = "valueTwo";
 
     protected BasicCacheContainer basicCacheContainer;
+    protected ControlledTimeService ts;
 
     @Override
     @Before
     public void setUp() throws Exception {
-        basicCacheContainer = new DefaultCacheManager();
+        basicCacheContainer = new DefaultCacheManager(new ConfigurationBuilder().build());
         basicCacheContainer.start();
         super.setUp();
     }
@@ -54,5 +59,14 @@ public class InfinispanTestSupport extends CamelTestSupport {
 
     protected BasicCache<Object, Object> currentCache() {
         return basicCacheContainer.getCache();
+    }
+
+    protected BasicCache<Object, Object> namedCache(String name) {
+        return basicCacheContainer.getCache(name);
+    }
+
+    protected void injectTimeService() {
+        ts = new ControlledTimeService(0);
+        TestingUtil.replaceComponent((DefaultCacheManager) basicCacheContainer, TimeService.class, ts, true);
     }
 }

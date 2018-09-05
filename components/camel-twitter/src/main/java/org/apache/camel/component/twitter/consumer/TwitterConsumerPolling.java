@@ -16,63 +16,62 @@
  */
 package org.apache.camel.component.twitter.consumer;
 
-import java.io.Serializable;
-import java.util.Iterator;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.twitter.TwitterEndpoint;
-import org.apache.camel.component.twitter.consumer.streaming.StreamingConsumer;
+import org.apache.camel.component.twitter.TwitterEndpointPolling;
+import org.apache.camel.component.twitter.streaming.AbstractStreamingConsumerHandler;
 import org.apache.camel.impl.ScheduledPollConsumer;
 
 /**
  * Provides a scheduled polling consumer
  */
+@Deprecated
 public class TwitterConsumerPolling extends ScheduledPollConsumer {
 
-    private Twitter4JConsumer twitter4jConsumer;
+    public static final long DEFAULT_CONSUMER_DELAY = 30 * 1000L;
+    private final AbstractTwitterConsumerHandler twitter4jConsumer;
 
-    public TwitterConsumerPolling(TwitterEndpoint endpoint, Processor processor,
-                                  Twitter4JConsumer twitter4jConsumer) {
+    public TwitterConsumerPolling(TwitterEndpoint endpoint, Processor processor, AbstractTwitterConsumerHandler twitter4jConsumer) {
         super(endpoint, processor);
-
+        setDelay(DEFAULT_CONSUMER_DELAY);
         this.twitter4jConsumer = twitter4jConsumer;
+    }
 
-        int delay = endpoint.getProperties().getDelay();
-        setInitialDelay(1);
-        setDelay(delay);
-        setTimeUnit(TimeUnit.SECONDS);
+    @Override
+    public TwitterEndpointPolling getEndpoint() {
+        return (TwitterEndpointPolling) super.getEndpoint();
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (twitter4jConsumer instanceof StreamingConsumer) {
-            ((StreamingConsumer) twitter4jConsumer).doStart();
+        if (twitter4jConsumer instanceof AbstractStreamingConsumerHandler) {
+            ((AbstractStreamingConsumerHandler) twitter4jConsumer).start();
         }
     }
 
     @Override
     protected void doStop() throws Exception {
+        if (twitter4jConsumer instanceof AbstractStreamingConsumerHandler) {
+            ((AbstractStreamingConsumerHandler) twitter4jConsumer).stop();
+        }
+
         super.doStop();
-        if (twitter4jConsumer instanceof StreamingConsumer) {
-            ((StreamingConsumer) twitter4jConsumer).doStop();
-        }
     }
 
+    @Override
     protected int poll() throws Exception {
-        Iterator<? extends Serializable> i = twitter4jConsumer.pollConsume().iterator();
+        List<Exchange> exchanges = twitter4jConsumer.pollConsume();
 
-        int total = 0;
-        while (i.hasNext()) {
-            Exchange e = getEndpoint().createExchange();
-            e.getIn().setBody(i.next());
-            getProcessor().process(e);
-
-            total++;
+        int index = 0;
+        for (; index < exchanges.size(); index++) {
+            getProcessor().process(exchanges.get(index));
         }
 
-        return total;
+        return index;
     }
+
 }

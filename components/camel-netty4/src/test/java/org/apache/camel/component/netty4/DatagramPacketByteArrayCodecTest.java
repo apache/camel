@@ -36,7 +36,7 @@ public class DatagramPacketByteArrayCodecTest {
         buf.writeBytes(VALUE.getBytes());
         ByteBuf input = buf.duplicate();
         AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop =
-                new DefaultAddressedEnvelope<Object, InetSocketAddress>(input, new InetSocketAddress(8888));
+                new DefaultAddressedEnvelope<>(input, new InetSocketAddress(8888));
         EmbeddedChannel channel = new EmbeddedChannel(ChannelHandlerFactories.newByteArrayDecoder("udp").newChannelHandler());
         Assert.assertTrue(channel.writeInbound(addressedEnvelop));
         Assert.assertTrue(channel.finish());
@@ -52,7 +52,7 @@ public class DatagramPacketByteArrayCodecTest {
         ByteBuf buf = Unpooled.buffer();
         buf.writeBytes(VALUE.getBytes());
         AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop =
-                new DefaultAddressedEnvelope<Object, InetSocketAddress>(VALUE.getBytes(), new InetSocketAddress(8888));
+                new DefaultAddressedEnvelope<>(VALUE.getBytes(), new InetSocketAddress(8888));
         EmbeddedChannel channel = new EmbeddedChannel(ChannelHandlerFactories.newByteArrayEncoder("udp").newChannelHandler());
         Assert.assertTrue(channel.writeOutbound(addressedEnvelop));
         Assert.assertTrue(channel.finish());

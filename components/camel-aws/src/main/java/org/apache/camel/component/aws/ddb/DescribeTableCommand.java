@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 
 public class DescribeTableCommand extends AbstractDdbCommand {
+
     public DescribeTableCommand(AmazonDynamoDB ddbClient, DdbConfiguration configuration,
                                 Exchange exchange) {
         super(ddbClient, configuration, exchange);

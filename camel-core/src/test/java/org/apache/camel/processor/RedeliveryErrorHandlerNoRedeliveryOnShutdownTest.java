@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,6 +28,7 @@ import org.apache.camel.util.StopWatch;
  */
 public class RedeliveryErrorHandlerNoRedeliveryOnShutdownTest extends ContextTestSupport {
 
+    @Test
     public void testRedeliveryErrorHandlerNoRedeliveryOnShutdown() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
 
@@ -36,7 +39,7 @@ public class RedeliveryErrorHandlerNoRedeliveryOnShutdownTest extends ContextTes
         // should not take long to stop the route
         StopWatch watch = new StopWatch();
         context.stopRoute("foo");
-        watch.stop();
+        watch.taken();
 
         assertTrue("Should stop route faster, was " + watch.taken(), watch.taken() < 4000);
     }

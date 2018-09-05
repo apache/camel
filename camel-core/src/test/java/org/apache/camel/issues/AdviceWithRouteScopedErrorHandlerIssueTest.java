@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class AdviceWithRouteScopedErrorHandlerIssueTest extends ContextTestSupport {
 
+    @Test
     public void testAdviceWith() throws Exception {
         context.getRouteDefinition("route-a").adviceWith(context, new AdviceWithRouteBuilder() {
             @Override

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.mongodb;
 
-public class CamelMongoDbException extends Exception {
+public class CamelMongoDbException extends RuntimeException {
 
     private static final long serialVersionUID = 7834484945432331909L;
 

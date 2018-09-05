@@ -1,0 +1,130 @@
+[[HealthCheck-HealthCheck]]
+== HealthCheck
+
+*Available as of Camel 2.20*
+
+[WARNING]
+====
+*Experimental feature*
+====
+
+Camel 2.20 provides an *experimental* support to probe the state of a Camel integration via a pluggable Health Check strategy based on the following concepts:
+
+- *HealthCheck:* represent an health check and defines its basic contract;
+- *HealthCheckResponse:* represent an health check invocation response;
+- *HealthCheckConfiguration:* a basic configuration object that holds some basic settings like the minimum delay between calls, the number of time a service may be reported as unhealthy before marking the check as failed; beside those simple options, the check implementation is responsible to implement further limitations when needed;
+- *HealthCheckRegistry:* a registry for health checks;
+- *HealthCheckRepository:* a simple interface to define health check providers and by default there is one that grabs all the checks available in the registry so you can add your own check i.e. istantiating your bean in spring/spring-boot; components can provide theirs own repository;
+- *HealthCheckService:* a simple service that runs in the background and invokes the checks according to a schedule;
+
+=== Examples:
+
+- *Spring Boot*:
++
+[source,properties]
+----
+# Enable route checks
+camel.health.check.routes.enabled = true
+
+# Configure default thresholds
+camel.health.check.routes.thresholds.exchanges-failed = 10
+
+# Configure a different exchanges-failed  threshold for the route bar
+camel.health.check.routes.threshold[bar].exchanges-failed = 20
+
+# Configure different thresholds for the route slow without inherit global
+# thresholds
+camel.health.check.routes.threshold[slow].inherit = false
+camel.health.check.routes.threshold[slow].last-processing-time.threshold = 1s
+camel.health.check.routes.threshold[slow].last-processing-time.failures = 5
+----
+
+- *Spring XML DSL*:
++
+[source,xml]
+----
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://camel.apache.org/schema/spring
+         http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+  <!--
+      This repository will automatically be added to Camel's health check
+      repository list.
+  -->
+  <bean id="hc-repo-routes" class="org.apache.camel.impl.health.RoutesHealthCheckRepository">
+    <property name="evaluators">
+      <list>
+        <!--
+            Set the checks that will be applied to every route if no per route
+            configuration is defined, see below.
+        -->
+        <bean class="org.apache.camel.impl.health.RoutePerformanceCounterEvaluators.ExchangesFailed">
+          <constructor-arg value="10"/>
+        </bean>
+        <bean class="org.apache.camel.impl.health.RoutePerformanceCounterEvaluators.LastProcessingTime">
+          <constructor-arg value="1000"/>
+          <constructor-arg value="1"/>
+        </bean>
+      </list>
+    </property>
+    <property name="routesEvaluators">
+      <map>
+        <!--
+            Set the checks to be associated with the route named route-1, note that
+            default checks are not inherit so there will be only one check for this
+            route.
+        -->
+        <entry key="route-1">
+          <list>
+            <bean class="org.apache.camel.impl.health.RoutePerformanceCounterEvaluators.ExchangesInflight">
+              <constructor-arg value="10"/>
+            </bean>
+          </list>
+        </entry>
+      </map>
+    </property>
+  </bean>
+
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+      ...
+  </camelContext>
+
+</beans>
+----
+
+=== Writing a custom check:
+
+As of version 2.20.0, there are a limited number of health checks provided by Camel out of the box so you may need to write your own check which you can do by implementing the _HealthCheck_ interface or by extending _AbstractHealthCheck_ which provides some usueful methods:
+
+[source,java]
+----
+public final class MyHealthCheck extends AbstractHealthCheck {
+    public ContextHealthCheck() {
+        super("camel", "my-check");
+
+        // make this check enabled by default
+        getConfiguration().setEnabled(true);
+    }
+
+    @Override
+    protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
+        // Default value
+        builder.unknown();
+
+        // Add some details to the check result
+        builder.detail("my.detail", camelContext.getName());
+
+        if (unhealtyCondition) {
+            builder.down();
+        } else {
+            builder.up();
+        }
+    }
+}
+----
+
+You can now make _MyHealthCheck_ available to camel by adding an instance to the application context (Spring, Blueprint) or directly to the registry.

@@ -86,11 +86,11 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     private static final Logger LOG = LoggerFactory.getLogger(Activator.class);
 
     private BundleTracker tracker;
-    private final Map<Long, List<BaseService>> resolvers = new ConcurrentHashMap<Long, List<BaseService>>();
+    private final Map<Long, List<BaseService>> resolvers = new ConcurrentHashMap<>();
     private long bundleId;
     
     // Map from package name to the capability we export for this package
-    private final Map<String, BundleCapability> packageCapabilities = new HashMap<String, BundleCapability>();
+    private final Map<String, BundleCapability> packageCapabilities = new HashMap<>();
 
     public void start(BundleContext context) throws Exception {
         LOG.info("Camel activator starting");
@@ -124,7 +124,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     public Object addingBundle(Bundle bundle, BundleEvent event) {
         LOG.debug("Bundle started: {}", bundle.getSymbolicName());
         if (extenderCapabilityWired(bundle)) {
-            List<BaseService> r = new ArrayList<BaseService>();
+            List<BaseService> r = new ArrayList<>();
             registerComponents(bundle, r);
             registerLanguages(bundle, r);
             registerDataFormats(bundle, r);
@@ -173,7 +173,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
     protected void registerComponents(Bundle bundle, List<BaseService> resolvers) {
         if (canSee(bundle, Component.class)) {
-            Map<String, String> components = new HashMap<String, String>();
+            Map<String, String> components = new HashMap<>();
             for (Enumeration<?> e = bundle.getEntryPaths(META_INF_COMPONENT); e != null && e.hasMoreElements();) {
                 String path = (String) e.nextElement();
                 LOG.debug("Found entry: {} in bundle {}", path, bundle.getSymbolicName());
@@ -188,7 +188,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
     protected void registerLanguages(Bundle bundle, List<BaseService> resolvers) {
         if (canSee(bundle, Language.class)) {
-            Map<String, String> languages = new HashMap<String, String>();
+            Map<String, String> languages = new HashMap<>();
             for (Enumeration<?> e = bundle.getEntryPaths(META_INF_LANGUAGE); e != null && e.hasMoreElements();) {
                 String path = (String) e.nextElement();
                 LOG.debug("Found entry: {} in bundle {}", path, bundle.getSymbolicName());
@@ -209,7 +209,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
     protected void registerDataFormats(Bundle bundle, List<BaseService> resolvers) {
         if (canSee(bundle, DataFormat.class)) {
-            Map<String, String> dataformats = new HashMap<String, String>();
+            Map<String, String> dataformats = new HashMap<>();
             for (Enumeration<?> e = bundle.getEntryPaths(META_INF_DATAFORMAT); e != null && e.hasMoreElements();) {
                 String path = (String) e.nextElement();
                 LOG.debug("Found entry: {} in bundle {}", path, bundle.getSymbolicName());
@@ -242,14 +242,41 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             return true;
         }
         BundleCapability packageCap = packageCapabilities.get(clazz.getPackage().getName());
-        BundleWiring wiring = bundle.adapt(BundleWiring.class);
-        List<BundleWire> imports = wiring.getRequiredWires(PACKAGE_NAMESPACE);
-        for (BundleWire importWire : imports) {
-            if (packageCap.equals(importWire.getCapability())) {
-                return true;
+        if (packageCap != null) {
+            BundleWiring wiring = bundle.adapt(BundleWiring.class);
+            List<BundleWire> imports = wiring.getRequiredWires(PACKAGE_NAMESPACE);
+            for (BundleWire importWire : imports) {
+                if (packageCap.equals(importWire.getCapability())) {
+                    return true;
+                }
             }
         }
+
+        // it may be running outside real OSGi container such as when unit testing with camel-test-blueprint
+        // then we need to use a different canSee algorithm that works outside real OSGi
+        if (bundle.getBundleId() >= 0) {
+            Bundle root = bundle.getBundleContext().getBundle(0);
+            if (root != null && "org.apache.felix.connect".equals(root.getSymbolicName())) {
+                return checkCompat(bundle, clazz);
+            }
+        }
+
         return false;
+    }
+
+    /**
+     * Check if bundle can see the given class used by camel-test-blueprint
+     */
+    protected static boolean checkCompat(Bundle bundle, Class<?> clazz) {
+        // Check bundle compatibility
+        try {
+            if (bundle.loadClass(clazz.getName()) != clazz) {
+                return false;
+            }
+        } catch (Throwable t) {
+            return false;
+        }
+        return true;
     }
 
     protected static class BundleComponentResolver extends BaseResolver<Component> implements ComponentResolver {
@@ -318,7 +345,18 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             this.dataformats = dataformats;
         }
 
+        @Override
         public DataFormat resolveDataFormat(String name, CamelContext context) {
+            DataFormat dataFormat = createInstance(name, dataformats.get(name), context);
+            if (dataFormat == null) {
+                dataFormat = createDataFormat(name, context);
+            }
+
+            return dataFormat;
+        }
+
+        @Override
+        public DataFormat createDataFormat(String name, CamelContext context) {
             return createInstance(name, dataformats.get(name), context);
         }
 
@@ -326,6 +364,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             return null;
         }
 
+        @Override
         public void register() {
             doRegister(DataFormatResolver.class, "dataformat", dataformats.keySet());
         }
@@ -372,7 +411,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
             public void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {
                 PackageScanFilter test = new AnnotatedWithPackageScanFilter(Converter.class, true);
-                Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
+                Set<Class<?>> classes = new LinkedHashSet<>();
                 Set<String> packages = getConverterPackages(bundle.getEntry(META_INF_TYPE_CONVERTER));
 
                 if (LOG.isTraceEnabled()) {
@@ -398,9 +437,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                         LOG.trace("Loading {} class", pkg);
                         try {
                             Class<?> clazz = bundle.loadClass(pkg);
-                            if (test.matches(clazz)) {
-                                classes.add(clazz);
-                            }
+                            classes.add(clazz);
                             // the class could be found and loaded so continue to next
                             continue;
                         } catch (Throwable t) {
@@ -528,7 +565,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
         }
 
         protected void doRegister(Class<?> type, String key, Object value) {
-            Dictionary<String, Object> props = new Hashtable<String, Object>();
+            Dictionary<String, Object> props = new Hashtable<>();
             props.put(key, value);
             doRegister(type, props);
         }
@@ -561,7 +598,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     }
     
     protected static Set<String> getConverterPackages(URL resource) {
-        Set<String> packages = new LinkedHashSet<String>();
+        Set<String> packages = new LinkedHashSet<>();
         if (resource != null) {
             BufferedReader reader = null;
             try {

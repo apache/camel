@@ -34,6 +34,7 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.RoutesBuilder;
 import org.apache.camel.Service;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -62,23 +63,18 @@ import org.testng.annotations.BeforeMethod;
  */
 public abstract class CamelTestSupport extends TestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class);
-    private static final ThreadLocal<Boolean> INIT = new ThreadLocal<Boolean>();
+    private static final ThreadLocal<Boolean> INIT = new ThreadLocal<>();
 
 
-    private static ThreadLocal<ModelCamelContext> threadCamelContext
-        = new ThreadLocal<ModelCamelContext>();
-    private static ThreadLocal<ProducerTemplate> threadTemplate
-        = new ThreadLocal<ProducerTemplate>();
-    private static ThreadLocal<ConsumerTemplate> threadConsumer
-        = new ThreadLocal<ConsumerTemplate>();
-    private static ThreadLocal<Service> threadService
-        = new ThreadLocal<Service>();
+    private static ThreadLocal<ModelCamelContext> threadCamelContext = new ThreadLocal<>();
+    private static ThreadLocal<ProducerTemplate> threadTemplate = new ThreadLocal<>();
+    private static ThreadLocal<ConsumerTemplate> threadConsumer = new ThreadLocal<>();
+    private static ThreadLocal<Service> threadService = new ThreadLocal<>();
 
     protected volatile ModelCamelContext context;
     protected volatile ProducerTemplate template;
     protected volatile ConsumerTemplate consumer;
     protected volatile Service camelContextService;
-
 
     private boolean useRouteBuilder = true;
     private final DebugBreakpoint breakpoint = new DebugBreakpoint();
@@ -287,8 +283,8 @@ public abstract class CamelTestSupport extends TestSupport {
         postProcessTest();
 
         if (isUseRouteBuilder()) {
-            RouteBuilder[] builders = createRouteBuilders();
-            for (RouteBuilder builder : builders) {
+            RoutesBuilder[] builders = createRouteBuilders();
+            for (RoutesBuilder builder : builders) {
                 log.debug("Using created route builder: " + builder);
                 context.addRoutes(builder);
             }
@@ -354,16 +350,6 @@ public abstract class CamelTestSupport extends TestSupport {
      * @return <tt>false</tt> by default.
      */
     protected boolean useJmx() {
-        return false;
-    }
-
-    /**
-     * Whether or not type converters should be lazy loaded (notice core converters is always loaded)
-     *
-     * @return <tt>false</tt> by default.
-     */
-    @Deprecated
-    protected boolean isLazyLoadingTypeConverter() {
         return false;
     }
 
@@ -439,10 +425,8 @@ public abstract class CamelTestSupport extends TestSupport {
         }
     }
 
-    @SuppressWarnings("deprecation")
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext(createRegistry());
-        context.setLazyLoadTypeConverters(isLazyLoadingTypeConverter());
         return context;
     }
 
@@ -461,14 +445,14 @@ public abstract class CamelTestSupport extends TestSupport {
         } else {
             properties.put("java.naming.factory.initial", "org.apache.camel.util.jndi.CamelInitialContextFactory");
         }
-        return new InitialContext(new Hashtable<Object, Object>(properties));
+        return new InitialContext(new Hashtable<>(properties));
     }
 
     /**
-     * Factory method which derived classes can use to create a {@link RouteBuilder}
+     * Factory method which derived classes can use to create a {@link RoutesBuilder}
      * to define the routes for testing
      */
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
                 // no routes added by default
@@ -478,12 +462,12 @@ public abstract class CamelTestSupport extends TestSupport {
 
     /**
      * Factory method which derived classes can use to create an array of
-     * {@link org.apache.camel.builder.RouteBuilder}s to define the routes for testing
+     * {@link org.apache.camel.RoutesBuilder}s to define the routes for testing
      *
      * @see #createRouteBuilder()
      */
-    protected RouteBuilder[] createRouteBuilders() throws Exception {
-        return new RouteBuilder[] {createRouteBuilder()};
+    protected RoutesBuilder[] createRouteBuilders() throws Exception {
+        return new RoutesBuilder[] {createRouteBuilder()};
     }
 
     /**

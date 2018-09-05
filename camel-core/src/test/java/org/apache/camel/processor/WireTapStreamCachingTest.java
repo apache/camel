@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
 
 import java.io.StringReader;
 
@@ -68,7 +69,8 @@ public class WireTapStreamCachingTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         x = getMockEndpoint("mock:x");
@@ -100,7 +102,7 @@ public class WireTapStreamCachingTest extends ContextTestSupport {
 
                 from("direct:x").process(processor).to("mock:x");
                 // even if a process takes more time then the others the wire tap shall work
-                from("direct:y").delay(2000).process(processor).to("mock:y");
+                from("direct:y").delay(500).process(processor).to("mock:y");
                 from("direct:z").process(processor).to("mock:z");
             }
         };

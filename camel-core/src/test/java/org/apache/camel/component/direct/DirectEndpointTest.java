@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.direct;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -30,6 +32,7 @@ public class DirectEndpointTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testDirectEndpoint() throws Exception {
         final DirectEndpoint de = new DirectEndpoint();
         de.setCamelContext(context);
@@ -51,6 +54,7 @@ public class DirectEndpointTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testDirectEndpointAgain() throws Exception {
         final DirectEndpoint de = new DirectEndpoint("direct://foo", context.getComponent("direct"));
 

@@ -19,10 +19,10 @@ package org.apache.camel.processor.idempotent.jpa;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
 import org.apache.camel.Exchange;
@@ -87,8 +87,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
 
     @Override
     public boolean add(final Exchange exchange, final String messageId) {
-        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager);
-
+        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
         // Run this in single transaction.
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus status) {
@@ -96,17 +95,31 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
                     entityManager.joinTransaction();
                 }
 
-                List<?> list = query(entityManager, messageId);
-                if (list.isEmpty()) {
-                    MessageProcessed processed = new MessageProcessed();
-                    processed.setProcessorName(processorName);
-                    processed.setMessageId(messageId);
-                    processed.setCreatedAt(new Date());
-                    entityManager.persist(processed);
-                    entityManager.flush();
-                    return Boolean.TRUE;
-                } else {
-                    return Boolean.FALSE;
+                try {
+                    List<?> list = query(entityManager, messageId);
+                    if (list.isEmpty()) {
+                        MessageProcessed processed = new MessageProcessed();
+                        processed.setProcessorName(processorName);
+                        processed.setMessageId(messageId);
+                        processed.setCreatedAt(new Date());
+                        entityManager.persist(processed);
+                        entityManager.flush();
+                        entityManager.close();
+                        return Boolean.TRUE;
+                    } else {
+                        return Boolean.FALSE;
+                    }
+                } catch (Exception ex) {
+                    LOG.error("Something went wrong trying to add message to repository {}", ex);
+                    throw new PersistenceException(ex);
+                } finally {
+                    try {
+                        if (entityManager.isOpen()) {
+                            entityManager.close();
+                        }
+                    } catch (Exception e) {
+                        // ignore
+                    }
                 }
             }
         });
@@ -122,7 +135,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
 
     @Override
     public boolean contains(final Exchange exchange, final String messageId) {
-        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager);
+        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
 
         // Run this in single transaction.
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
@@ -151,22 +164,35 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
 
     @Override
     public boolean remove(final Exchange exchange, final String messageId) {
-        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager);
+        final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, true, sharedEntityManager, true);
 
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus status) {
                 if (isJoinTransaction()) {
                     entityManager.joinTransaction();
                 }
-
-                List<?> list = query(entityManager, messageId);
-                if (list.isEmpty()) {
-                    return Boolean.FALSE;
-                } else {
-                    MessageProcessed processed = (MessageProcessed) list.get(0);
-                    entityManager.remove(processed);
-                    entityManager.flush();
-                    return Boolean.TRUE;
+                try {
+                    List<?> list = query(entityManager, messageId);
+                    if (list.isEmpty()) {
+                        return Boolean.FALSE;
+                    } else {
+                        MessageProcessed processed = (MessageProcessed) list.get(0);
+                        entityManager.remove(processed);
+                        entityManager.flush();
+                        entityManager.close();
+                        return Boolean.TRUE;
+                    }
+                } catch (Exception ex) {
+                    LOG.error("Something went wrong trying to remove message to repository {}", ex);
+                    throw new PersistenceException(ex);
+                } finally {
+                    try {
+                        if (entityManager.isOpen()) {
+                            entityManager.close();
+                        }
+                    } catch (Exception e) {
+                        // ignore
+                    }
                 }
             }
         });
@@ -188,28 +214,41 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
 
     @ManagedOperation(description = "Clear the store")
     public void clear() {
-        final EntityManager entityManager = getTargetEntityManager(null, entityManagerFactory, true, sharedEntityManager);
+        final EntityManager entityManager = getTargetEntityManager(null, entityManagerFactory, true, sharedEntityManager, true);
 
-        Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus status) {
                 if (isJoinTransaction()) {
                     entityManager.joinTransaction();
                 }
-
-                List<?> list = queryClear(entityManager);
-                if (!list.isEmpty()) {
-                    Iterator it = list.iterator();
-                    while (it.hasNext()) {
-                        Object item = it.next();
-                        entityManager.remove(item);
+                try {
+                    List<?> list = queryClear(entityManager);
+                    if (!list.isEmpty()) {
+                        Iterator it = list.iterator();
+                        while (it.hasNext()) {
+                            Object item = it.next();
+                            entityManager.remove(item);
+                        }
+                        entityManager.flush();
+                        entityManager.close();
                     }
-                    entityManager.flush();
+                    return Boolean.TRUE;
+                } catch (Exception ex) {
+                    LOG.error("Something went wrong trying to clear the repository {}", ex);
+                    throw new PersistenceException(ex);
+                } finally {
+                    try {
+                        if (entityManager.isOpen()) {
+                            entityManager.close();
+                        }
+                    } catch (Exception e) {
+                        // ignore
+                    }
                 }
-                return Boolean.TRUE;
             }
         });
 
-        LOG.debug("clear the store {}", MessageProcessed.class.getName());        
+        LOG.debug("clear the store {}", MessageProcessed.class.getName());
     }
 
     private List<?> query(final EntityManager entityManager, final String messageId) {
@@ -218,7 +257,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
         query.setParameter(2, messageId);
         return query.getResultList();
     }
-    
+
     private List<?> queryClear(final EntityManager entityManager) {
         Query query = entityManager.createQuery(QUERY_CLEAR_STRING);
         query.setParameter(1, processorName);
@@ -247,7 +286,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
     public void setSharedEntityManager(boolean sharedEntityManager) {
         this.sharedEntityManager = sharedEntityManager;
     }
-    
+
     @Override
     protected void doStart() throws Exception {
         // noop

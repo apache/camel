@@ -16,26 +16,32 @@
  */
 package org.apache.camel.component.dozer;
 
-import java.io.InputStream;
+import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.github.dozermapper.core.CustomConverter;
+import com.github.dozermapper.core.Mapper;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.converter.dozer.DozerTypeConverterLoader;
+import org.apache.camel.converter.dozer.DozerBeanMapperConfiguration;
+import org.apache.camel.converter.dozer.MapperFactory;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ResourceHelper;
-import org.dozer.CustomConverter;
-import org.dozer.DozerBeanMapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@UriEndpoint(scheme = "dozer", title = "Dozer", syntax = "dozer:name", producerOnly = true, label = "transformation")
+/**
+ * The dozer component provides the ability to map between Java beans using the Dozer mapping library.
+ */
+@UriEndpoint(firstVersion = "2.15.0", scheme = "dozer", title = "Dozer", syntax = "dozer:name", producerOnly = true, label = "transformation")
 public class DozerEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(DozerEndpoint.class);
 
@@ -44,7 +50,7 @@ public class DozerEndpoint extends DefaultEndpoint {
     private static final String VARIABLE_MAPPING_ID = "_variableMapping";
     private static final String EXPRESSION_MAPPING_ID = "_expressionMapping";
 
-    private DozerBeanMapper mapper;
+    private Mapper mapper;
     private VariableMapper variableMapper;
     private CustomMapper customMapper;
     private ExpressionMapper expressionMapper;
@@ -75,7 +81,7 @@ public class DozerEndpoint extends DefaultEndpoint {
         return true;
     }
 
-    public DozerBeanMapper getMapper() throws Exception {
+    public Mapper getMapper() throws Exception {
         return mapper;
     }
 
@@ -86,15 +92,15 @@ public class DozerEndpoint extends DefaultEndpoint {
     public void setConfiguration(DozerConfiguration configuration) {
         this.configuration = configuration;
     }
-    
+
     CustomMapper getCustomMapper() {
         return customMapper;
     }
-    
+
     VariableMapper getVariableMapper() {
         return variableMapper;
     }
-    
+
     ExpressionMapper getExpressionMapper() {
         return expressionMapper;
     }
@@ -103,15 +109,7 @@ public class DozerEndpoint extends DefaultEndpoint {
     protected void doStart() throws Exception {
         super.doStart();
 
-        if (mapper == null) {
-            if (configuration.getMappingConfiguration() != null) {
-                mapper = DozerTypeConverterLoader.createDozerBeanMapper(
-                        configuration.getMappingConfiguration());
-            } else {
-                mapper = createDozerBeanMapper();
-            }
-            configureMapper(mapper);
-        }
+        initDozerBeanContainerAndMapper();
     }
 
     @Override
@@ -119,29 +117,44 @@ public class DozerEndpoint extends DefaultEndpoint {
         super.doStop();
         // noop
     }
-    
-    private DozerBeanMapper createDozerBeanMapper() throws Exception {
-        DozerBeanMapper answer = new DozerBeanMapper();
-        InputStream mapStream = null;
-        try {
-            LOG.info("Loading Dozer mapping file {}.", configuration.getMappingFile());
-            // create the mapper instance and add the mapping file
-            mapStream = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), configuration.getMappingFile());
-            answer.addMapping(mapStream);
-        } finally {
-            IOHelper.close(mapStream);
-        }
 
-        return answer;
+    protected void initDozerBeanContainerAndMapper() throws Exception {
+        LOG.info("Configuring {}...", Mapper.class.getName());
+
+        if (mapper == null) {
+            if (configuration.getMappingConfiguration() == null) {
+                URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), configuration.getMappingFile());
+
+                DozerBeanMapperConfiguration config = new DozerBeanMapperConfiguration();
+                config.setCustomConvertersWithId(getCustomConvertersWithId());
+                config.setMappingFiles(Arrays.asList(url.toString()));
+
+                configuration.setMappingConfiguration(config);
+            } else {
+                DozerBeanMapperConfiguration config = configuration.getMappingConfiguration();
+                if (config.getCustomConvertersWithId() == null) {
+                    config.setCustomConvertersWithId(getCustomConvertersWithId());
+                } else {
+                    config.getCustomConvertersWithId().putAll(getCustomConvertersWithId());
+                }
+
+                if (config.getMappingFiles() == null || config.getMappingFiles().size() <= 0) {
+                    URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), configuration.getMappingFile());
+                    config.setMappingFiles(Arrays.asList(url.toString()));
+                }
+            }
+
+            MapperFactory factory = new MapperFactory(getCamelContext(), configuration.getMappingConfiguration());
+            mapper = factory.create();
+        }
     }
 
-    private void configureMapper(DozerBeanMapper mapper) throws Exception {
-        // add our built-in converters
-        Map<String, CustomConverter> converters = new HashMap<String, CustomConverter>();
-        converters.put(CUSTOM_MAPPING_ID, customMapper);
-        converters.put(VARIABLE_MAPPING_ID, variableMapper);
-        converters.put(EXPRESSION_MAPPING_ID, expressionMapper);
-        converters.putAll(mapper.getCustomConvertersWithId());
-        mapper.setCustomConvertersWithId(converters);
+    private Map<String, CustomConverter> getCustomConvertersWithId() {
+        Map<String, CustomConverter> customConvertersWithId = new HashMap<>();
+        customConvertersWithId.put(CUSTOM_MAPPING_ID, customMapper);
+        customConvertersWithId.put(VARIABLE_MAPPING_ID, variableMapper);
+        customConvertersWithId.put(EXPRESSION_MAPPING_ID, expressionMapper);
+
+        return customConvertersWithId;
     }
 }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -30,17 +32,19 @@ public class FileConsumerIdleMessageTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/empty?delay=50&sendEmptyMessageWhenIdle=true").convertBodyTo(String.class).
+                from("file://target/empty?initialDelay=0&delay=10&sendEmptyMessageWhenIdle=true").convertBodyTo(String.class).
                     to("mock:result");
             }
         };
     }
 
+    @Test
     public void testConsumeIdleMessages() throws Exception {
-        Thread.sleep(110);
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
+
         assertMockEndpointsSatisfied();
+
         assertTrue(mock.getExchanges().get(0).getIn().getBody() == null);
         assertTrue(mock.getExchanges().get(1).getIn().getBody() == null);
     }

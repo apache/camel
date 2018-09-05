@@ -56,7 +56,6 @@ public class ThrowExceptionProcessor extends ServiceSupport implements AsyncProc
         AsyncProcessorHelper.process(this, exchange);
     }
 
-    @SuppressWarnings("unchecked")
     public boolean process(Exchange exchange, AsyncCallback callback) {
         Exception cause = exception;
 
@@ -67,6 +66,11 @@ public class ThrowExceptionProcessor extends ServiceSupport implements AsyncProc
                 // create a new exception of that type, and provide the message as
                 Constructor<?> constructor = type.getDeclaredConstructor(String.class);
                 cause = (Exception) constructor.newInstance(text);
+                exchange.setException(cause);
+            } else if (cause == null && type != null) {
+                // create a new exception of that type using its default constructor
+                Constructor<?> constructor = type.getDeclaredConstructor();
+                cause = (Exception) constructor.newInstance();
                 exchange.setException(cause);
             } else {
                 exchange.setException(cause);
@@ -80,7 +84,8 @@ public class ThrowExceptionProcessor extends ServiceSupport implements AsyncProc
     }
 
     public String getTraceLabel() {
-        return "throwException[" + exception.getClass().getSimpleName() + "]";
+        String className = this.exception == null ? this.type.getSimpleName() : this.exception.getClass().getSimpleName();
+        return "throwException[" + className + "]";
     }
 
     public String getId() {

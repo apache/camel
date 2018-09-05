@@ -40,6 +40,7 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
 
     @UriParam(label = "sign")
     private XPathFilterParameterSpec parentXpath;
+    @UriParam(label = "sign")
     private List<XPathFilterParameterSpec> xpathsToIdAttributes = Collections.emptyList();
     @UriParam(label = "sign")
     private List<AlgorithmMethod> transformMethods = Collections.singletonList(XmlSignatureHelper

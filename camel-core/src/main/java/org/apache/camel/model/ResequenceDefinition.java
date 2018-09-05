@@ -63,7 +63,7 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
     @XmlElementRef @Metadata(required = "true")
     private ExpressionDefinition expression;
     @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
 
     public ResequenceDefinition() {
     }
@@ -150,6 +150,21 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
             }
             batchConfig.setBatchTimeout(timeout);
         }
+        return this;
+    }
+
+    /**
+     * Sets the interval in milli seconds the stream resequencer will at most wait
+     * while waiting for condition of being able to deliver.
+     *
+     * @param deliveryAttemptInterval  interval in millis
+     * @return the builder
+     */
+    public ResequenceDefinition deliveryAttemptInterval(long deliveryAttemptInterval) {
+        if (streamConfig == null) {
+            throw new IllegalStateException("deliveryAttemptInterval() only supported for stream resequencer");
+        }
+        streamConfig.setDeliveryAttemptInterval(deliveryAttemptInterval);
         return this;
     }
 
@@ -270,6 +285,11 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         return "Resequencer[" + getExpression() + " -> " + getOutputs() + "]";
     }
     
+    @Override
+    public String getShortName() {
+        return "resequence";
+    }
+
     @Override
     public String getLabel() {
         return "resequencer[" + (getExpression() != null ? getExpression().getLabel() : "") + "]";
@@ -405,6 +425,9 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
 
         StreamResequencer resequencer = new StreamResequencer(routeContext.getCamelContext(), internal, comparator, expression);
         resequencer.setTimeout(config.getTimeout());
+        if (config.getDeliveryAttemptInterval() != null) {
+            resequencer.setDeliveryAttemptInterval(config.getDeliveryAttemptInterval());
+        }
         resequencer.setCapacity(config.getCapacity());
         resequencer.setRejectOld(config.getRejectOld());
         if (config.getIgnoreInvalidExchanges() != null) {

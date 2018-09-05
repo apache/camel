@@ -16,13 +16,15 @@
  */
 package org.apache.camel.converter.dozer;
 
+import com.github.dozermapper.core.Mapper;
+import com.github.dozermapper.core.metadata.ClassMappingMetadata;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.support.TypeConverterSupport;
-import org.dozer.DozerBeanMapper;
-import org.dozer.Mapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,51 +34,69 @@ import org.slf4j.LoggerFactory;
  * types. <code>DozerTypeConverter</code>s are created and installed into a
  * {@link CamelContext} by an instance of {@link DozerTypeConverterLoader}.
  * <p>
- * See <a href="http://dozer.sourceforge.net">dozer project page</a> or more information on configuring Dozer
+ * See <a href="https://github.com/DozerMapper/dozer">dozer project page</a> or more information on configuring Dozer
  *
  * @see DozerTypeConverterLoader
  */
 public class DozerTypeConverter extends TypeConverterSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DozerTypeConverter.class);
-    
-    private final DozerBeanMapper mapper;
 
-    public DozerTypeConverter(DozerBeanMapper mapper) {
+    private final Mapper mapper;
+
+    public DozerTypeConverter(Mapper mapper) {
         this.mapper = mapper;
     }
 
-    public DozerBeanMapper getMapper() {
+    public Mapper getMapper() {
         return mapper;
     }
 
     @Override
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {
-        // if the exchange is null, we have no chance to ensure that the TCCL is the one from the CamelContext
-        if (exchange == null) {
-            return mapper.map(value, type);
-        }
-        
-        T answer = null;
 
-        ClassLoader prev = Thread.currentThread().getContextClassLoader();
-        ClassLoader contextCl = exchange.getContext().getApplicationContextClassLoader();
-        if (contextCl != null) {
-            // otherwise, we ensure that the TCCL is the correct one
-            LOG.debug("Switching TCCL to: {}.", contextCl);
-            try {
-                Thread.currentThread().setContextClassLoader(contextCl);
-                answer = mapper.map(value, type);
-            } finally {
-                LOG.debug("Restored TCCL to: {}.", prev);
-                Thread.currentThread().setContextClassLoader(prev);
+        CamelContext context = exchange != null ? exchange.getContext() : null;
+        ClassLoader appcl = context != null ? context.getApplicationContextClassLoader() : null;
+
+        T result;
+
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        try {
+            if (appcl != null && appcl != tccl) {
+                LOG.debug("Switching TCCL to: {}", appcl);
+                Thread.currentThread().setContextClassLoader(appcl);
             }
-        } else {
-            // just try with the current TCCL as-is
-            answer = mapper.map(value, type);
+
+            // find the map id, so we can provide that when trying to map from source to destination
+            String mapId = null;
+            if (value != null) {
+                Class<?> sourceType = value.getClass();
+                ClassMappingMetadata metadata = getClassMappingMetadata(sourceType, type);
+                if (metadata != null) {
+                    mapId = metadata.getMapId();
+                }
+            }
+
+            result = mapper.map(value, type, mapId);
+
+        } finally {
+            if (appcl != null && appcl != tccl) {
+                Thread.currentThread().setContextClassLoader(tccl);
+                LOG.debug("Restored TCCL to: {}", tccl);
+            }
         }
 
-        return answer;
+        return result;
     }
 
+    private ClassMappingMetadata getClassMappingMetadata(Class<?> sourceType, Class<?> destType) {
+        ClassMappingMetadata result = null;
+        for (ClassMappingMetadata aux : mapper.getMappingMetadata().getClassMappingsBySource(sourceType)) {
+            if (destType.isAssignableFrom(aux.getDestinationClass())) {
+                result = aux;
+                break;
+            }
+        }
+        return result;
+    }
 }

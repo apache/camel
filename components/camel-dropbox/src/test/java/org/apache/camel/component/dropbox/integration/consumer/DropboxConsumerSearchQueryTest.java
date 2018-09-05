@@ -25,7 +25,6 @@ import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-
 public class DropboxConsumerSearchQueryTest extends DropboxTestSupport {
 
     public DropboxConsumerSearchQueryTest() throws Exception { }
@@ -39,7 +38,7 @@ public class DropboxConsumerSearchQueryTest extends DropboxTestSupport {
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
         Exchange exchange = exchanges.get(0);
-        Object header =  exchange.getIn().getHeader(DropboxResultHeader.FOUNDED_FILES.name());
+        Object header =  exchange.getIn().getHeader(DropboxResultHeader.FOUND_FILES.name());
         Object body = exchange.getIn().getBody();
         assertNotNull(header);
         assertNotNull(body);
@@ -49,7 +48,7 @@ public class DropboxConsumerSearchQueryTest extends DropboxTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("dropbox://search?" + getAuthParams() + "&remotePath=/XXX&query=XXX")
+                from("dropbox://search?accessToken={{accessToken}}&remotePath=/XXX&query=XXX")
                         .to("mock:result");
             }
         };

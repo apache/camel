@@ -49,7 +49,7 @@ public class CamelJobExecutionListener implements JobExecutionListener {
         LOG.debug("sent after job execution event");
     }
 
-    public static enum EventType {
+    public enum EventType {
 
         BEFORE, AFTER;
 

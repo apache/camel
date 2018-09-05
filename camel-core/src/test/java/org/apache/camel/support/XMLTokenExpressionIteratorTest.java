@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.support;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
@@ -23,16 +26,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 
+import static org.apache.camel.TestSupport.getJavaMajorVersion;
 
 /**
  *
  */
-public class XMLTokenExpressionIteratorTest extends TestCase {
+public class XMLTokenExpressionIteratorTest extends Assert {
     private static final byte[] TEST_BODY = 
         ("<?xml version='1.0' encoding='UTF-8'?>"
             + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt>"
@@ -271,154 +274,180 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
 
     private Map<String, String> nsmap;
 
-    @Override
-    protected void setUp() throws Exception {
-        nsmap = new HashMap<String, String>();
+    @Before
+    public void setUp() throws Exception {
+        nsmap = new HashMap<>();
         nsmap.put("G", "urn:g");
         nsmap.put("C", "urn:c");
     }
 
 
+    @Test
     public void testExtractChild() throws Exception {
         invokeAndVerify("//C:child", 'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
     }
 
+    @Test
     public void testExtractChildInjected() throws Exception {
-        String[] result = RESULTS_CHILD;
-        if (isJavaVersion("1.8")) {
-            result = RESULTS_CHILD_JAVA8;
+        String[] result = RESULTS_CHILD_JAVA8;
+        if (isJava7OrLower()) {
+            result = RESULTS_CHILD;
         }
         invokeAndVerify("//C:child", 'i', new ByteArrayInputStream(TEST_BODY), result);
     }
 
+    @Test
     public void testExtractChildNSMixed() throws Exception {
         invokeAndVerify("//*:child", 'w', new ByteArrayInputStream(TEST_BODY_NS_MIXED), RESULTS_CHILD_MIXED_WRAPPED);
     }
 
+    @Test
     public void testExtractChildNSMixedInjected() throws Exception {
-        String[] result =  RESULTS_CHILD_MIXED;
-        if (isJavaVersion("1.8")) {
-            result =  RESULTS_CHILD_MIXED_JAVA8;
+        String[] result = RESULTS_CHILD_MIXED_JAVA8;
+        if (isJava7OrLower()) {
+            result = RESULTS_CHILD_MIXED;
         }
         invokeAndVerify("//*:child", 'i', new ByteArrayInputStream(TEST_BODY_NS_MIXED), result);
     }
 
+    @Test
     public void testExtractAnyChild() throws Exception {
         invokeAndVerify("//*:child", 'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
     }
 
+    @Test
     public void testExtractCxxxd() throws Exception {
-        String[] result =  RESULTS_CHILD;
-        if (isJavaVersion("1.8")) {
-            result =  RESULTS_CHILD_JAVA8;
+        String[] result = RESULTS_CHILD_JAVA8;
+        if (isJava7OrLower()) {
+            result = RESULTS_CHILD;
         }
         invokeAndVerify("//C:c*d", 'i', new ByteArrayInputStream(TEST_BODY), result);
     }
 
+    @Test
     public void testExtractUnqualifiedChild() throws Exception {
         invokeAndVerify("//child", 'w', new ByteArrayInputStream(TEST_BODY), RESULTS_NULL);
     }
 
+    @Test
     public void testExtractSomeUnqualifiedChild() throws Exception {
         invokeAndVerify("//child", 'w', new ByteArrayInputStream(TEST_BODY_NO_NS_MIXED), RESULTS_CHILD_NO_NS_MIXED_WRAPPED);
     }
 
+    @Test
     public void testExtractSomeUnqualifiedChildInjected() throws Exception {
-        String[] result = RESULTS_CHILD_NO_NS_MIXED;
-        if (isJavaVersion("1.8"))  {
-            result = RESULTS_CHILD_NO_NS_MIXED_JAVA8;
+        String[] result = RESULTS_CHILD_NO_NS_MIXED_JAVA8;
+        if (isJava7OrLower())  {
+            result = RESULTS_CHILD_NO_NS_MIXED;
         }
         invokeAndVerify("//child", 'i', new ByteArrayInputStream(TEST_BODY_NO_NS_MIXED), result);
     }
 
+    @Test
     public void testExtractSomeQualifiedChild() throws Exception {
         nsmap.put("", "urn:c");
         invokeAndVerify("//child", 'w', new ByteArrayInputStream(TEST_BODY_NO_NS_MIXED), RESULTS_CHILD_NS_MIXED_WRAPPED);
     }
 
+    @Test
     public void testExtractSomeQualifiedChildInjected() throws Exception {
         nsmap.put("", "urn:c");
-        String[] result = RESULTS_CHILD_NS_MIXED;
-        if (isJavaVersion("1.8")) {
-            result = RESULTS_CHILD_NS_MIXED_JAVA8;
+        String[] result = RESULTS_CHILD_NS_MIXED_JAVA8;
+        if (isJava7OrLower()) {
+            result = RESULTS_CHILD_NS_MIXED;
         }
         invokeAndVerify("//child", 'i', new ByteArrayInputStream(TEST_BODY_NO_NS_MIXED), result);
     }
 
+    @Test
     public void testExtractWithNullNamespaceMap() throws Exception {
         nsmap = null;
-        String[] result = RESULTS_CHILD_NO_NS_MIXED;
-        if (isJavaVersion("1.8")) {
-            result = RESULTS_CHILD_NO_NS_MIXED_JAVA8;
+        String[] result = RESULTS_CHILD_NO_NS_MIXED_JAVA8;
+        if (isJava7OrLower()) {
+            result = RESULTS_CHILD_NO_NS_MIXED;
         }
         invokeAndVerify("//child", 'i', new ByteArrayInputStream(TEST_BODY_NO_NS_MIXED), result);
     }
 
+    @Test
     public void testExtractChildWithAncestorGGPdGP() throws Exception {
         invokeAndVerify("/G:greatgrandparent/grandparent//C:child", 
                         'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
     }
 
+    @Test
     public void testExtractChildWithAncestorGGPdP() throws Exception {
         invokeAndVerify("/G:greatgrandparent//C:parent/C:child", 
                         'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
     }
 
+    @Test
     public void testExtractChildWithAncestorGPddP() throws Exception {
         invokeAndVerify("//grandparent//C:parent/C:child", 
                         'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
     }
 
+    @Test
     public void testExtractChildWithAncestorGPdP() throws Exception {
         invokeAndVerify("//grandparent/C:parent/C:child", 
                         'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
     }
 
+    @Test
     public void testExtractChildWithAncestorP() throws Exception {
         invokeAndVerify("//C:parent/C:child", 
                         'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
     }
 
+    @Test
     public void testExtractChildWithAncestorGGPdGPdP() throws Exception {
         invokeAndVerify("/G:greatgrandparent/grandparent/C:parent/C:child", 
                         'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
     }
     
+    @Test
     public void testExtractParent() throws Exception {
         invokeAndVerify("//C:parent", 
                         'w', new ByteArrayInputStream(TEST_BODY), RESULTS_PARENT_WRAPPED);
     }
     
+    @Test
     public void testExtractParentInjected() throws Exception {
         invokeAndVerify("//C:parent", 
                         'i', new ByteArrayInputStream(TEST_BODY), RESULTS_PARENT);
     }
     
+    @Test
     public void testExtractAuntWC1() throws Exception {
         invokeAndVerify("//a*t", 
                         'w', new ByteArrayInputStream(TEST_BODY), RESULTS_AUNT_WRAPPED);
     }
 
+    @Test
     public void testExtractAuntWC2() throws Exception {
         invokeAndVerify("//au?t", 
                         'w', new ByteArrayInputStream(TEST_BODY), RESULTS_AUNT_WRAPPED);
     }
 
+    @Test
     public void testExtractAunt() throws Exception {
         invokeAndVerify("//aunt", 
                         'w', new ByteArrayInputStream(TEST_BODY), RESULTS_AUNT_WRAPPED);
     }
 
+    @Test
     public void testExtractAuntInjected() throws Exception {
         invokeAndVerify("//aunt", 
                         'i', new ByteArrayInputStream(TEST_BODY), RESULTS_AUNT);
     }
 
+    @Test
     public void testExtractAuntUnwrapped() throws Exception {
         invokeAndVerify("//aunt", 
                         'u', new ByteArrayInputStream(TEST_BODY), RESULTS_AUNT_UNWRAPPED);
     }
 
+    @Test
     public void testExtractGrandParentText() throws Exception {
         invokeAndVerify("//grandparent", 
                         't', new ByteArrayInputStream(TEST_BODY), RESULTS_GRANDPARENT_TEXT);
@@ -429,7 +458,7 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
         xtei.setNamespaces(nsmap);
         
         Iterator<?> it = xtei.createIterator(in, "utf-8");
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         while (it.hasNext()) {
             results.add((String)it.next());
         }
@@ -439,11 +468,9 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
         for (int i = 0; i < expected.length; i++) {
             assertEquals("mismatch [" + i + "]", expected[i], results.get(i));
         }
-
     }
-    
-    public static boolean isJavaVersion(String version) {
-        String javaVersion = System.getProperty("java.version");
-        return javaVersion.contains(version.toLowerCase(Locale.ENGLISH));
+
+    private boolean isJava7OrLower() {
+        return getJavaMajorVersion() <= 7;
     }
 }

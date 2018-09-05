@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.simple;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +32,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class SimpleParserPredicateTest extends ExchangeTestSupport {
 
+    @Test
     public void testSimpleBooleanValue() throws Exception {
         exchange.getIn().setBody("foo");
 
@@ -42,6 +45,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         assertFalse(pre.matches(exchange));
     }
 
+    @Test
     public void testSimpleEq() throws Exception {
         exchange.getIn().setBody("foo");
 
@@ -51,6 +55,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         assertTrue(pre.matches(exchange));
     }
 
+    @Test
     public void testSimpleEqNumeric() throws Exception {
         exchange.getIn().setBody(123);
 
@@ -60,6 +65,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         assertTrue("Should match", pre.matches(exchange));
     }
 
+    @Test
     public void testSimpleEqFunctionFunction() throws Exception {
         exchange.getIn().setBody(122);
         exchange.getIn().setHeader("val", 122);
@@ -70,6 +76,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         assertTrue("Should match", pre.matches(exchange));
     }
 
+    @Test
     public void testSimpleEqFunctionNumeric() throws Exception {
         exchange.getIn().setBody(122);
 
@@ -79,6 +86,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         assertTrue("Should match", pre.matches(exchange));
     }
 
+    @Test
     public void testSimpleGtFunctionNumeric() throws Exception {
         exchange.getIn().setBody(122);
 
@@ -88,6 +96,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         assertTrue("Should match", pre.matches(exchange));
     }
 
+    @Test
     public void testSimpleUnaryInc() throws Exception {
         exchange.getIn().setBody(122);
 
@@ -97,6 +106,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         assertTrue("Should match", pre.matches(exchange));
     }
 
+    @Test
     public void testSimpleUnaryDec() throws Exception {
         exchange.getIn().setBody(122);
 
@@ -106,6 +116,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         assertTrue("Should match", pre.matches(exchange));
     }
 
+    @Test
     public void testSimpleEqFunctionBoolean() throws Exception {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("high", true);
@@ -116,6 +127,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         assertTrue("Should match", pre.matches(exchange));
     }
 
+    @Test
     public void testSimpleEqFunctionBooleanSpaces() throws Exception {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("high", true);
@@ -126,6 +138,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         assertTrue("Should match", pre.matches(exchange));
     }
 
+    @Test
     public void testSimpleLogicalAnd() throws Exception {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("high", true);
@@ -137,6 +150,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         assertTrue("Should match", pre.matches(exchange));
     }
 
+    @Test
     public void testSimpleLogicalOr() throws Exception {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("high", true);
@@ -148,6 +162,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         assertTrue("Should match", pre.matches(exchange));
     }
 
+    @Test
     public void testSimpleLogicalAndAnd() throws Exception {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("high", true);
@@ -160,6 +175,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         assertTrue("Should match", pre.matches(exchange));
     }
 
+    @Test
     public void testSimpleManyAndLogical() throws Exception {
         exchange.getIn().setBody("Hello");
 
@@ -178,6 +194,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         assertTrue("Should match", pre.matches(exchange));
     }
 
+    @Test
     public void testSimpleManyOrLogical() throws Exception {
         exchange.getIn().setBody("Hello");
 
@@ -196,6 +213,7 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         assertTrue("Should match", pre.matches(exchange));
     }
 
+    @Test
     public void testSimpleExpressionPredicate() throws Exception {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("number", "1234");
@@ -204,8 +222,9 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         assertTrue("Should match", pre.matches(exchange));
     }
 
+    @Test
     public void testSimpleMap() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("foo", "123");
         map.put("foo bar", "456");
 
@@ -223,12 +242,17 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         parser = new SimplePredicateParser("${body[foo bar]} == 456", true);
         pre = parser.parsePredicate();
         assertTrue("Should match", pre.matches(exchange));
+
+        // no header with that name
+        parser = new SimplePredicateParser("${body[unknown]} == 456", true);
+        pre = parser.parsePredicate();
+        assertFalse("Should not match", pre.matches(exchange));
     }
 
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
 
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("foo");
         list.add("bar");
 
@@ -236,8 +260,9 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         return jndi;
     }
 
+    @Test
     public void testSimpleIn() throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("key", "foo");
         map.put("key2", "bar");
         map.put("key3", "none");
@@ -254,5 +279,23 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         parser = new SimplePredicateParser("${body[key3]} in ${ref:myList}", true);
         pre = parser.parsePredicate();
         assertFalse("Should not match", pre.matches(exchange));
+    }
+
+    @Test
+    public void testSimpleInEmpty() throws Exception {
+        SimplePredicateParser parser = new SimplePredicateParser("${body} in ',,gold,silver'", true);
+        Predicate pre = parser.parsePredicate();
+
+        exchange.getIn().setBody("gold");
+        assertTrue("Should match gold", pre.matches(exchange));
+
+        exchange.getIn().setBody("silver");
+        assertTrue("Should match silver", pre.matches(exchange));
+
+        exchange.getIn().setBody("");
+        assertTrue("Should match empty", pre.matches(exchange));
+
+        exchange.getIn().setBody("bronze");
+        assertFalse("Should not match bronze", pre.matches(exchange));
     }
 }

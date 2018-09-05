@@ -16,6 +16,12 @@
  */
 package org.apache.camel;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
+
+import org.apache.camel.component.extension.ComponentExtension;
+
 /**
  * A <a href="http://camel.apache.org/component.html">component</a> is
  * a factory of {@link Endpoint} objects.
@@ -59,6 +65,7 @@ public interface Component extends CamelContextAware {
      *
      * @since Camel 2.9.0
      */
+    @Deprecated
     EndpointConfiguration createConfiguration(String uri) throws Exception;
 
     /**
@@ -70,5 +77,25 @@ public interface Component extends CamelContextAware {
      * configure an endpoint yet; but rather there are a number of parameters to configure
      * to then build up a new URI or directly create an Endpoint from the parameter values.
      */
+    @Deprecated
     ComponentConfiguration createComponentConfiguration();
+
+    /**
+     * Gets a list of supported extensions.
+     *
+     * @return the list of extensions.
+     */
+    default Collection<Class<? extends ComponentExtension>> getSupportedExtensions() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Gets the extension of the given type.
+     *
+     * @param extensionType tye type of the extensions
+     * @return an optional extension
+     */
+    default <T extends ComponentExtension> Optional<T> getExtension(Class<T> extensionType) {
+        return Optional.empty();
+    }
 }

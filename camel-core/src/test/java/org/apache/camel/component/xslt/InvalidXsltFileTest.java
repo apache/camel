@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.xslt;
 
+import org.junit.Test;
+
+import javax.xml.transform.TransformerConfigurationException;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToCreateRouteException;
-import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -28,6 +31,7 @@ import org.apache.camel.impl.DefaultCamelContext;
  */
 public class InvalidXsltFileTest extends TestSupport {
 
+    @Test
     public void testInvalidStylesheet() throws Exception {
         try {
             RouteBuilder builder = createRouteBuilder();
@@ -38,7 +42,7 @@ public class InvalidXsltFileTest extends TestSupport {
             fail("Should have thrown an exception due XSL compilation error");
         } catch (FailedToCreateRouteException e) {
             // expected
-            assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
+            assertIsInstanceOf(TransformerConfigurationException.class, e.getCause());
         }
     }
 

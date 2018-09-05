@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -28,6 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ManagedRouteStopTest extends ManagementTestSupport {
 
+    @Test
     public void testStopRoute() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -57,6 +60,13 @@ public class ManagedRouteStopTest extends ManagementTestSupport {
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Should be started", ServiceStatus.Started.name(), state);
 
+        String uptime = (String) mbeanServer.getAttribute(on, "Uptime");
+        assertNotNull(uptime);
+        log.info("Uptime: {}", uptime);
+
+        long uptimeMillis = (Long) mbeanServer.getAttribute(on, "UptimeMillis");
+        assertTrue(uptimeMillis > 0);
+
         mbeanServer.invoke(on, "stop", null, null);
 
         registered = mbeanServer.isRegistered(on);
@@ -65,6 +75,12 @@ public class ManagedRouteStopTest extends ManagementTestSupport {
         // should be stopped, eg its removed
         state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Should be stopped", ServiceStatus.Stopped.name(), state);
+
+        uptime = (String) mbeanServer.getAttribute(on, "Uptime");
+        assertEquals("", uptime);
+
+        uptimeMillis = (Long) mbeanServer.getAttribute(on, "UptimeMillis");
+        assertEquals(0, uptimeMillis);
     }
 
     @Override
@@ -72,7 +88,7 @@ public class ManagedRouteStopTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("log:foo").to("mock:result");
+                from("direct:start").delayer(10).to("log:foo").to("mock:result");
             }
         };
     }

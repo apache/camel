@@ -95,7 +95,7 @@ public class QuickfixjEngine extends ServiceSupport {
     private LogFactory sessionLogFactory;
     private MessageFactory messageFactory;
     private final MessageCorrelator messageCorrelator = new MessageCorrelator();
-    private List<QuickfixjEventListener> eventListeners = new CopyOnWriteArrayList<QuickfixjEventListener>();
+    private List<QuickfixjEventListener> eventListeners = new CopyOnWriteArrayList<>();
     private final String uri;
     private ObjectName acceptorObjectName;
     private ObjectName initiatorObjectName;
@@ -329,7 +329,7 @@ public class QuickfixjEngine extends ServiceSupport {
     }
 
     private MessageStoreFactory inferMessageStoreFactory(SessionSettings settings) throws ConfigError {
-        Set<MessageStoreFactory> impliedMessageStoreFactories = new HashSet<MessageStoreFactory>();
+        Set<MessageStoreFactory> impliedMessageStoreFactories = new HashSet<>();
         isJdbcStore(settings, impliedMessageStoreFactories);
         isFileStore(settings, impliedMessageStoreFactories);
         isSleepycatStore(settings, impliedMessageStoreFactories);
@@ -365,7 +365,7 @@ public class QuickfixjEngine extends ServiceSupport {
     }
 
     private LogFactory inferLogFactory(SessionSettings settings) throws ConfigError {
-        Set<LogFactory> impliedLogFactories = new HashSet<LogFactory>();
+        Set<LogFactory> impliedLogFactories = new HashSet<>();
         isFileLog(settings, impliedLogFactories);
         isScreenLog(settings, impliedLogFactories);
         isSL4JLog(settings, impliedLogFactories);
@@ -418,14 +418,9 @@ public class QuickfixjEngine extends ServiceSupport {
         boolean hasRole = false;
         Iterator<SessionID> sessionIdItr = settings.sectionIterator();
         while (sessionIdItr.hasNext()) {
-            try {
-                if (connectorRole.equals(settings.getString(sessionIdItr.next(),
-                        SessionFactory.SETTING_CONNECTION_TYPE))) {
-                    hasRole = true;
-                    break;
-                }
-            } catch (FieldConvertError e) {
-                throw new ConfigError(e);
+            if (connectorRole.equals(settings.getString(sessionIdItr.next(), SessionFactory.SETTING_CONNECTION_TYPE))) {
+                hasRole = true;
+                break;
             }
         }
         return hasRole;
@@ -533,7 +528,7 @@ public class QuickfixjEngine extends ServiceSupport {
 
             private static final long serialVersionUID = 1L;
 
-            public DispatcherException(Throwable cause) {
+            DispatcherException(Throwable cause) {
                 super(cause);
             }
         }

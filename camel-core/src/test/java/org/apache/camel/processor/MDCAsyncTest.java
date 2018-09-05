@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -37,6 +39,7 @@ import static org.junit.Assert.assertNotEquals;
  */
 public class MDCAsyncTest extends ContextTestSupport {
 
+    @Test
     public void testMdcPreservedAfterAsyncEndpoint() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:end");
         mock.expectedMessageCount(1);
@@ -71,7 +74,7 @@ public class MDCAsyncTest extends ContextTestSupport {
         
         private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(1);
 
-        public MyAsyncProcessor() {
+        MyAsyncProcessor() {
             // submit a Runnable that does nothing just to initialise the threads
             EXECUTOR.submit(new Runnable() {
                 @Override

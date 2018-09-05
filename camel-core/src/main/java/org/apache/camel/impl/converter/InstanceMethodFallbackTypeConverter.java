@@ -45,7 +45,7 @@ public class InstanceMethodFallbackTypeConverter extends TypeConverterSupport {
     public InstanceMethodFallbackTypeConverter(CachingInjector<?> injector, Method method, TypeConverterRegistry registry, boolean allowNull) {
         this.injector = injector;
         this.method = method;
-        this.useExchange = method.getParameterTypes().length == 4;
+        this.useExchange = method.getParameterCount() == 4;
         this.registry = registry;
         this.allowNull = allowNull;
     }

@@ -19,13 +19,16 @@ package org.apache.camel.component.docker.headers;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.WaitContainerCmd;
-
+import com.github.dockerjava.core.command.WaitContainerResultCallback;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Validates Wait Container Request headers are applied properly
@@ -35,6 +38,9 @@ public class WaitContainerCmdHeaderTest extends BaseDockerHeaderTest<WaitContain
     @Mock
     private WaitContainerCmd mockObject;
 
+    @Mock
+    private WaitContainerResultCallback callback;
+    
     @Test
     public void waitContainerHeaderTest() {
 
@@ -52,7 +58,9 @@ public class WaitContainerCmdHeaderTest extends BaseDockerHeaderTest<WaitContain
 
     @Override
     protected void setupMocks() {
-        Mockito.when(dockerClient.waitContainerCmd(Matchers.anyString())).thenReturn(mockObject);
+        Mockito.when(dockerClient.waitContainerCmd(anyString())).thenReturn(mockObject);
+        Mockito.when(mockObject.exec(any())).thenReturn(callback);
+        Mockito.when(callback.awaitStatusCode()).thenReturn(anyInt());
     }
 
     @Override

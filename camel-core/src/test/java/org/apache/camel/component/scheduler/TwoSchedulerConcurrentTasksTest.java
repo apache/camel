@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.scheduler;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class TwoSchedulerConcurrentTasksTest extends ContextTestSupport {
 
+    @Test
     public void testTwoScheduler() throws Exception {
         getMockEndpoint("mock:a").expectedMinimumMessageCount(4);
         getMockEndpoint("mock:b").expectedMinimumMessageCount(2);
@@ -39,9 +42,11 @@ public class TwoSchedulerConcurrentTasksTest extends ContextTestSupport {
                 comp.setConcurrentTasks(2);
 
                 from("scheduler://foo?delay=100")
+                    .to("log:a")
                     .to("mock:a");
 
                 from("scheduler://foo?delay=200")
+                    .to("log:b")
                     .to("mock:b");
             }
         };

@@ -75,9 +75,9 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
     private final AtomicBoolean enabled = new AtomicBoolean();
     private final AtomicLong debugCounter = new AtomicLong(0);
     private final Debugger debugger;
-    private final ConcurrentMap<String, NodeBreakpoint> breakpoints = new ConcurrentHashMap<String, NodeBreakpoint>();
-    private final ConcurrentMap<String, SuspendedExchange> suspendedBreakpoints = new ConcurrentHashMap<String, SuspendedExchange>();
-    private final ConcurrentMap<String, BacklogTracerEventMessage> suspendedBreakpointMessages = new ConcurrentHashMap<String, BacklogTracerEventMessage>();
+    private final ConcurrentMap<String, NodeBreakpoint> breakpoints = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, SuspendedExchange> suspendedBreakpoints = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, BacklogTracerEventMessage> suspendedBreakpointMessages = new ConcurrentHashMap<>();
     private volatile String singleStepExchangeId;
     private int bodyMaxChars = 128 * 1024;
     private boolean bodyIncludeStreams;
@@ -237,7 +237,7 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
     }
 
     public Set<String> getBreakpoints() {
-        return new LinkedHashSet<String>(breakpoints.keySet());
+        return new LinkedHashSet<>(breakpoints.keySet());
     }
 
     public void resumeBreakpoint(String nodeId) {
@@ -420,7 +420,7 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
     }
 
     public Set<String> getSuspendedBreakpointNodeIds() {
-        return new LinkedHashSet<String>(suspendedBreakpoints.keySet());
+        return new LinkedHashSet<>(suspendedBreakpoints.keySet());
     }
 
     /**
@@ -561,13 +561,13 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
             final SuspendedExchange se = suspendedBreakpoints.get(nodeId);
             if (se != null) {
                 // now wait until we should continue
-                logger.log("NodeBreakpoint at node " + toNode + " is waiting to continue for exchangeId: " + exchange.getExchangeId());
+                logger.log("NodeBreakpoint at node " + toNode + " is waiting to continue for exchangeId: " + exchangeId);
                 try {
                     boolean hit = se.getLatch().await(fallbackTimeout, TimeUnit.SECONDS);
                     if (!hit) {
-                        logger.log("NodeBreakpoint at node " + toNode + " timed out and is continued exchangeId: " + exchange.getExchangeId(), LoggingLevel.WARN);
+                        logger.log("NodeBreakpoint at node " + toNode + " timed out and is continued exchangeId: " + exchangeId, LoggingLevel.WARN);
                     } else {
-                        logger.log("NodeBreakpoint at node " + toNode + " is continued exchangeId: " + exchange.getExchangeId());
+                        logger.log("NodeBreakpoint at node " + toNode + " is continued exchangeId: " + exchangeId);
                     }
                 } catch (InterruptedException e) {
                     // ignore

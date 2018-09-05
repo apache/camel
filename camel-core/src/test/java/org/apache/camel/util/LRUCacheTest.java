@@ -15,22 +15,27 @@
  * limitations under the License.
  */
 package org.apache.camel.util;
+import org.junit.Before;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import org.junit.Assert;
 import org.apache.camel.Service;
 
 /**
  * @version 
  */
-public class LRUCacheTest extends TestCase {
+public class LRUCacheTest extends Assert {
 
     private LRUCache<String, Service> cache;
 
-    @Override
-    protected void setUp() throws Exception {
-        cache = new LRUCache<String, Service>(10);
+    @Before
+    public void setUp() throws Exception {
+        // for testing use sync listener
+        cache = new LRUCache<>(10, 10, true, false, false, true);
     }
 
+    @Test
     public void testLRUCache() {
         MyService service1 = new MyService();
         MyService service2 = new MyService();
@@ -44,7 +49,8 @@ public class LRUCacheTest extends TestCase {
         assertSame(service2, cache.get("B"));
     }
 
-    public void testLRUCacheEviction() {
+    @Test
+    public void testLRUCacheEviction() throws Exception {
         MyService service1 = new MyService();
         MyService service2 = new MyService();
         MyService service3 = new MyService();
@@ -85,18 +91,18 @@ public class LRUCacheTest extends TestCase {
         cache.put("K", service11);
         assertNull(service11.getStopped());
 
-        // should evict the eldest, and stop the service
-        assertTrue(service1.getStopped());
+        // the eviction is async so force cleanup
+        cache.cleanUp();
 
         cache.put("L", service12);
-        assertNull(service12.getStopped());
 
-        // should evict the eldest, and stop the service
-        assertTrue(service2.getStopped());
+        // the eviction is async so force cleanup
+        cache.cleanUp();
 
         assertEquals(10, cache.size());
     }
 
+    @Test
     public void testLRUCacheHitsAndMisses() {
         MyService service1 = new MyService();
         MyService service2 = new MyService();

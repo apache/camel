@@ -47,4 +47,9 @@ public class GuiceInjector implements Injector {
         return newInstance(type);
     }
 
+    @Override
+    public boolean supportsAutoWiring() {
+        return false;
+    }
+
 }

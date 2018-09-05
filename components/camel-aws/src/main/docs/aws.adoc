@@ -1,0 +1,5 @@
+=== Camel Components for Amazon Web Services
+
+The Camel Components for http://aws.amazon.com[Amazon Web Services]
+provide connectivity to AWS services from Camel.
+ 

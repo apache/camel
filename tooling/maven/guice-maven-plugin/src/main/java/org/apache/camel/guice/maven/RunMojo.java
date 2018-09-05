@@ -309,7 +309,7 @@ public class RunMojo extends AbstractExecMojo {
         }
 
         // lets create the command line arguments to pass in...
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
         if (jndiProperties != null) {
             args.add("-j");
             args.add(jndiProperties);
@@ -401,7 +401,7 @@ public class RunMojo extends AbstractExecMojo {
     class IsolatedThreadGroup extends ThreadGroup {
         Throwable uncaughtException; // synchronize access to this
 
-        public IsolatedThreadGroup(String name) {
+        IsolatedThreadGroup(String name) {
             super(name);
         }
 
@@ -460,7 +460,7 @@ public class RunMojo extends AbstractExecMojo {
     @SuppressWarnings("deprecation")
     private void terminateThreads(ThreadGroup threadGroup) {
         long startTime = System.currentTimeMillis();
-        Set<Thread> uncooperativeThreads = new HashSet<Thread>(); // these were not responsive
+        Set<Thread> uncooperativeThreads = new HashSet<>(); // these were not responsive
         // to interruption
         for (Collection<Thread> threads = getActiveThreads(threadGroup); !threads.isEmpty(); threads = getActiveThreads(threadGroup), threads
             .removeAll(uncooperativeThreads)) {
@@ -513,8 +513,10 @@ public class RunMojo extends AbstractExecMojo {
                 // even log in future
                 Thread[] threadsArray = new Thread[1];
                 threadGroup.enumerate(threadsArray);
-                getLog().debug("strange; " + activeCount + " thread(s) still active in the group "
+                if (getLog().isDebugEnabled()) {
+                    getLog().debug("strange; " + activeCount + " thread(s) still active in the group "
                                    + threadGroup + " such as " + threadsArray[0]);
+                }
             }
         }
     }
@@ -522,7 +524,7 @@ public class RunMojo extends AbstractExecMojo {
     private Collection<Thread> getActiveThreads(ThreadGroup threadGroup) {
         Thread[] threads = new Thread[threadGroup.activeCount()];
         int numThreads = threadGroup.enumerate(threads);
-        Collection<Thread> result = new ArrayList<Thread>(numThreads);
+        Collection<Thread> result = new ArrayList<>(numThreads);
         for (int i = 0; i < threads.length && threads[i] != null; i++) {
             result.add(threads[i]);
         }
@@ -550,7 +552,7 @@ public class RunMojo extends AbstractExecMojo {
      * @throws org.apache.maven.plugin.MojoExecutionException
      */
     private ClassLoader getClassLoader() throws MojoExecutionException {
-        List<URL> classpathURLs = new ArrayList<URL>();
+        List<URL> classpathURLs = new ArrayList<>();
         this.addRelevantPluginDependenciesToClasspath(classpathURLs);
         this.addRelevantProjectDependenciesToClasspath(classpathURLs);
 
@@ -627,7 +629,7 @@ public class RunMojo extends AbstractExecMojo {
     }
 
     private Collection<Artifact> getAllNonTestScopedDependencies() throws MojoExecutionException {
-        List<Artifact> answer = new ArrayList<Artifact>();
+        List<Artifact> answer = new ArrayList<>();
 
         for (Artifact artifact : getAllDependencies()) {
 
@@ -641,7 +643,7 @@ public class RunMojo extends AbstractExecMojo {
 
     // generic method to retrieve all the transitive dependencies
     private Collection<Artifact> getAllDependencies() throws MojoExecutionException {
-        List<Artifact> artifacts = new ArrayList<Artifact>();
+        List<Artifact> artifacts = new ArrayList<>();
 
         for (Iterator<?> dependencies = project.getDependencies().iterator(); dependencies.hasNext();) {
             Dependency dependency = (Dependency)dependencies.next();
@@ -674,10 +676,9 @@ public class RunMojo extends AbstractExecMojo {
                 art.setFile(new File(dependency.getSystemPath()));
             }
 
-            List<String> exclusions = new ArrayList<String>();
-            for (Iterator<?> j = dependency.getExclusions().iterator(); j.hasNext();) {
-                Exclusion e = (Exclusion)j.next();
-                exclusions.add(e.getGroupId() + ":" + e.getArtifactId());
+            List<String> exclusions = new ArrayList<>();
+            for (Exclusion exclusion : dependency.getExclusions()) {
+                exclusions.add(exclusion.getGroupId() + ":" + exclusion.getArtifactId());
             }
 
             ArtifactFilter newFilter = new ExcludesArtifactFilter(exclusions);
@@ -703,7 +704,7 @@ public class RunMojo extends AbstractExecMojo {
         if (this.includePluginDependencies) {
             if (this.executableDependency == null) {
                 getLog().debug("All Plugin Dependencies will be included.");
-                relevantDependencies = new HashSet<Artifact>(this.pluginDependencies);
+                relevantDependencies = new HashSet<>(this.pluginDependencies);
             } else {
                 getLog().debug("Selected plugin Dependencies will be included.");
                 Artifact executableArtifact = this.findExecutableArtifact();
@@ -734,7 +735,7 @@ public class RunMojo extends AbstractExecMojo {
      * @return an artifact which refers to the actual executable tool (not a POM)
      * @throws org.apache.maven.plugin.MojoExecutionException
      */
-    private Artifact findExecutableArtifact() throws MojoExecutionException {
+    protected Artifact findExecutableArtifact() throws MojoExecutionException {
         // ILimitedArtifactIdentifier execToolAssembly =
         // this.getExecutableToolAssembly();
 

@@ -61,7 +61,7 @@ public class ManagedSendProcessor extends ManagedProcessor implements ManagedSen
     }
 
     @Override
-    public synchronized void reset() {
+    public void reset() {
         super.reset();
         processor.reset();
     }
@@ -92,7 +92,6 @@ public class ManagedSendProcessor extends ManagedProcessor implements ManagedSen
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.endpointsUtilizationTabularType());
 
             // we only have 1 endpoint
-
             CompositeType ct = CamelOpenMBeanTypes.endpointsUtilizationCompositeType();
             String url = getDestination();
             Long hits = processor.getCounter();

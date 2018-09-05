@@ -19,11 +19,12 @@ package org.apache.camel.example.splunk;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class SplunkPublishEventClient {
 
-    private static final Logger LOG = Logger.getLogger(SplunkPublishEventClient.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SplunkPublishEventClient.class);
 
     private SplunkPublishEventClient() {
     }

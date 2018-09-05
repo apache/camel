@@ -16,13 +16,20 @@
  */
 package org.apache.camel.component.hl7;
 
+import java.io.IOException;
+
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.parser.Parser;
+import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
+import ca.uhn.hl7v2.parser.ParserConfiguration;
+import ca.uhn.hl7v2.parser.UnexpectedSegmentBehaviourEnum;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
+
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
+import org.apache.camel.converter.IOConverter;
 
 /**
  * HL7 converters.
@@ -30,7 +37,16 @@ import org.apache.camel.Converter;
 @Converter
 public final class HL7Converter {
 
-    private static final HapiContext DEFAULT_CONTEXT = new DefaultHapiContext(ValidationContextFactory.noValidation());
+    private static final HapiContext DEFAULT_CONTEXT;
+
+    static {
+        ParserConfiguration parserConfiguration = new ParserConfiguration();
+        parserConfiguration.setDefaultObx2Type("ST");
+        parserConfiguration.setInvalidObx2Type("ST");
+        parserConfiguration.setUnexpectedSegmentBehaviour(UnexpectedSegmentBehaviourEnum.ADD_INLINE);
+
+        DEFAULT_CONTEXT = new DefaultHapiContext(parserConfiguration, ValidationContextFactory.noValidation(), new DefaultModelClassFactory());
+    }
 
     private HL7Converter() {
         // Helper class
@@ -42,26 +58,18 @@ public final class HL7Converter {
     }
 
     @Converter
-    public static byte[] toByteArray(Message message) throws HL7Exception {
-        return message.encode().getBytes();
+    public static byte[] toByteArray(Message message, Exchange exchange) throws HL7Exception, IOException {
+        return IOConverter.toByteArray(message.encode(), exchange);
     }
 
     @Converter
     public static Message toMessage(String body) throws HL7Exception {
-        return parse(body, DEFAULT_CONTEXT.getGenericParser());
+        return DEFAULT_CONTEXT.getGenericParser().parse(body);
     }
 
     @Converter
-    public static Message toMessage(byte[] body) throws HL7Exception {
-        return parse(new String(body), DEFAULT_CONTEXT.getGenericParser());
-    }
-
-    static Message parse(String body, Parser parser) throws HL7Exception {
-        return parser.parse(body);
-    }
-
-    static String encode(Message message, Parser parser) throws HL7Exception {
-        return parser.encode(message);
+    public static Message toMessage(byte[] body, Exchange exchange) throws HL7Exception, IOException {
+        return DEFAULT_CONTEXT.getGenericParser().parse(IOConverter.toString(body, exchange));
     }
 
 }

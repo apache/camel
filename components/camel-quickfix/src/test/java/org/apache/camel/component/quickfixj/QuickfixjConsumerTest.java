@@ -23,7 +23,6 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 import quickfix.FixVersions;
 import quickfix.Message;
@@ -32,6 +31,8 @@ import quickfix.SessionID;
 import quickfix.field.BeginString;
 import quickfix.field.SenderCompID;
 import quickfix.field.TargetCompID;
+
+import static org.mockito.ArgumentMatchers.isA;
 
 public class QuickfixjConsumerTest {
     private Exchange mockExchange;
@@ -52,7 +53,7 @@ public class QuickfixjConsumerTest {
         inboundFixMessage.getHeader().setString(TargetCompID.FIELD, "TARGET");
         Mockito.when(mockCamelMessage.getBody(quickfix.Message.class)).thenReturn(inboundFixMessage);
         
-        mockProcessor = Mockito.mock(Processor.class);        
+        mockProcessor = Mockito.mock(Processor.class);
         mockEndpoint = Mockito.mock(QuickfixjEndpoint.class);
         Mockito.when(mockEndpoint.createExchange(ExchangePattern.InOnly)).thenReturn(mockExchange);  
     }
@@ -76,7 +77,7 @@ public class QuickfixjConsumerTest {
         consumer.onExchange(mockExchange);
         
         // Second message should be processed
-        Mockito.verify(mockProcessor).process(Matchers.isA(Exchange.class));
+        Mockito.verify(mockProcessor).process(isA(Exchange.class));
     }
     
     @Test
@@ -115,7 +116,7 @@ public class QuickfixjConsumerTest {
         // Simulate a message from the FIX engine
         consumer.onExchange(mockExchange);
 
-        Mockito.verify(mockExchange).setException(Matchers.isA(IllegalStateException.class));
+        Mockito.verify(mockExchange).setException(isA(IllegalStateException.class));
     }
 
     @Test
@@ -127,7 +128,7 @@ public class QuickfixjConsumerTest {
 
         QuickfixjConsumer consumer = Mockito.spy(new QuickfixjConsumer(mockEndpoint, mockProcessor));
         Mockito.doReturn(mockSession).when(consumer).getSession(mockSessionId);
-        Mockito.doReturn(true).when(mockSession).send(Matchers.isA(Message.class));
+        Mockito.doReturn(true).when(mockSession).send(isA(Message.class));
 
         Mockito.when(mockExchange.getPattern()).thenReturn(ExchangePattern.InOut);
         Mockito.when(mockExchange.hasOut()).thenReturn(true);
@@ -140,7 +141,7 @@ public class QuickfixjConsumerTest {
         consumer.start();
 
         consumer.onExchange(mockExchange);
-        Mockito.verify(mockExchange, Mockito.never()).setException(Matchers.isA(Exception.class));
+        Mockito.verify(mockExchange, Mockito.never()).setException(isA(Exception.class));
         Mockito.verify(mockSession).send(outboundFixMessage);
     }
 }

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -44,6 +47,7 @@ public class ExchangeIdempotentConsumerTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
         assertEquals(0, repo.getExchange().size());
 
@@ -89,7 +93,8 @@ public class ExchangeIdempotentConsumerTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         startEndpoint = resolveMandatoryEndpoint("direct:start");
@@ -99,7 +104,7 @@ public class ExchangeIdempotentConsumerTest extends ContextTestSupport {
     private final class MyIdempotentRepo implements ExchangeIdempotentRepository<String> {
 
         private IdempotentRepository<String> delegate;
-        private Set<String> exchanges = new LinkedHashSet<String>();
+        private Set<String> exchanges = new LinkedHashSet<>();
 
         private MyIdempotentRepo() {
             delegate = MemoryIdempotentRepository.memoryIdempotentRepository(200);

@@ -19,8 +19,10 @@ package org.apache.camel.component.infinispan.processor.idempotent;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.component.infinispan.InfinispanUtil;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
+import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.commons.api.BasicCacheContainer;
 import org.infinispan.manager.DefaultCacheManager;
@@ -29,25 +31,26 @@ import org.infinispan.manager.DefaultCacheManager;
 public class InfinispanIdempotentRepository extends ServiceSupport implements IdempotentRepository<Object> {
     private final String cacheName;
     private final BasicCacheContainer cacheContainer;
-    private boolean isManagedCacheContainer;
+    private final boolean isManagedCacheContainer;
+    private BasicCache<Object, Boolean> cache;
 
     public InfinispanIdempotentRepository(BasicCacheContainer cacheContainer, String cacheName) {
         this.cacheContainer = cacheContainer;
         this.cacheName = cacheName;
+        this.isManagedCacheContainer = false;
     }
 
     public InfinispanIdempotentRepository(String cacheName) {
-        cacheContainer = new DefaultCacheManager();
+        this.cacheContainer = new DefaultCacheManager();
         this.cacheName = cacheName;
-        isManagedCacheContainer = true;
+        this.isManagedCacheContainer = true;
     }
 
     public InfinispanIdempotentRepository() {
         this(null);
     }
 
-    public static InfinispanIdempotentRepository infinispanIdempotentRepository(
-            BasicCacheContainer cacheContainer, String processorName) {
+    public static InfinispanIdempotentRepository infinispanIdempotentRepository(BasicCacheContainer cacheContainer, String processorName) {
         return new InfinispanIdempotentRepository(cacheContainer, processorName);
     }
 
@@ -62,6 +65,12 @@ public class InfinispanIdempotentRepository extends ServiceSupport implements Id
     @Override
     @ManagedOperation(description = "Adds the key to the store")
     public boolean add(Object key) {
+        // need to check first as put will update the entry lifetime so it can not expire its cache lifespan
+        if (getCache().containsKey(key)) {
+            // there is already an entry so return false
+            return false;
+        }
+        
         Boolean put = getCache().put(key, true);
         return put == null;
     }
@@ -106,16 +115,31 @@ public class InfinispanIdempotentRepository extends ServiceSupport implements Id
 
     @Override
     protected void doShutdown() throws Exception {
-        super.doShutdown();
         if (isManagedCacheContainer) {
             cacheContainer.stop();
         }
+
+        super.doShutdown();
     }
 
     private BasicCache<Object, Boolean> getCache() {
-        return cacheName != null
-                ? cacheContainer.<Object, Boolean>getCache(cacheName)
-                : cacheContainer.<Object, Boolean>getCache();
+        if (cache == null) {
+            // By default, previously existing values for java.util.Map operations
+            // are not returned for remote caches but idempotent repository needs
+            // them so force it.
+            if (InfinispanUtil.isRemote(cacheContainer)) {
+                RemoteCacheManager manager = InfinispanUtil.asRemote(cacheContainer);
+                cache = cacheName != null
+                    ? manager.getCache(cacheName, true)
+                    : manager.getCache(true);
+            } else {
+                cache = cacheName != null
+                    ? cacheContainer.getCache(cacheName)
+                    : cacheContainer.getCache();
+            }
+        }
+
+        return cache;
     }
 }
 

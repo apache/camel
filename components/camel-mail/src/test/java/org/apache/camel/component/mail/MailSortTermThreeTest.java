@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+import org.junit.Before;
 
 import java.util.Date;
 import javax.mail.Folder;
@@ -37,6 +38,7 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailSortTermThreeTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();
@@ -79,16 +81,19 @@ public class MailSortTermThreeTest extends CamelTestSupport {
         Message[] messages = new Message[3];
         messages[0] = new MimeMessage(sender.getSession());
         messages[0].setText("Earlier date");
+        messages[0].setHeader("Message-ID", "0");
         messages[0].setSentDate(new Date(10000));
         messages[0].setSubject("Camel");
 
         messages[1] = new MimeMessage(sender.getSession());
         messages[1].setText("Later date");
+        messages[1].setHeader("Message-ID", "1");
         messages[1].setSentDate(new Date(20000));
         messages[1].setSubject("Camel");
 
         messages[2] = new MimeMessage(sender.getSession());
         messages[2].setText("Even later date");
+        messages[2].setHeader("Message-ID", "2");
         messages[2].setSentDate(new Date(30000));
         messages[2].setSubject("Invalid");
 
@@ -101,7 +106,7 @@ public class MailSortTermThreeTest extends CamelTestSupport {
             public void configure() throws Exception {
                 context.setAutoStartup(false);
 
-                from("imap://bill@localhost?password=secret&sortTerm=#sortDescendingDate").to("mock:resultDescendingImap");
+                from("imap://bill@localhost?password=secret&sortTerm=#sortDescendingDate&consumer.initialDelay=100&consumer.delay=100").to("mock:resultDescendingImap");
             }
         };
     }

@@ -1,0 +1,14 @@
+@if{!components.isEmpty()}
+
+Number of Components: @{components.size} in @{numberOfArtifacts} JAR artifacts (@{numberOfDeprecated} deprecated)
+
+[width="100%",cols="4,1,5",options="header"]
+|===
+| Component | Available From | Description
+@foreach{row : components}
+| link:@{row.docLink}/${row.scheme}-component.adoc[@{row.title}] (@{row.artifactId}) +
+`@{row.syntax}` | @{row.firstVersionShort} | @if{row.deprecated == "true"}*deprecated* @end{}@{row.description}
+@end{}
+|===
+
+@end{}

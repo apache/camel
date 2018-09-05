@@ -30,6 +30,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509KeyManager;
 
+import org.apache.camel.CamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +66,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
      * The optional configuration options to be applied purely to the client side settings
      * of the {@link SSLContext}.  Settings specified here override any duplicate settings
      * provided at the overall level by this class.  These parameters apply to 
-     * {@link SSLSocketFactory}s and {@link SSLEngine}s produced by the the {@code SSLContext}
+     * {@link SSLSocketFactory}s and {@link SSLEngine}s produced by the {@code SSLContext}
      * produced from this class as well as to the {@code SSLContext} itself.
      */
     private SSLContextClientParameters clientParameters;
@@ -74,7 +75,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
      * The optional configuration options to be applied purely to the server side settings
      * of the {@link SSLContext}.  Settings specified here override any duplicate settings
      * provided at the overall level by this class.  These parameters apply to 
-     * {@link SSLServerSocketFactory}s and {@link SSLEngine}s produced by the the {@code SSLContext}
+     * {@link SSLServerSocketFactory}s and {@link SSLEngine}s produced by the {@code SSLContext}
      * produced from this class as well as to the {@code SSLContext} itself.
      */
     private SSLContextServerParameters serverParameters;
@@ -152,7 +153,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
      * The optional configuration options to be applied purely to the client side settings
      * of the {@link SSLContext}.  Settings specified here override any duplicate settings
      * provided at the overall level by this class.  These parameters apply to 
-     * {@link SSLSocketFactory}s and {@link SSLEngine}s produced by the the {@code SSLContext}
+     * {@link SSLSocketFactory}s and {@link SSLEngine}s produced by the {@code SSLContext}
      * produced from this class as well as to the {@code SSLContext} itself.
      *
      * @param clientParameters the optional additional client-side parameters
@@ -169,7 +170,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
      * The optional configuration options to be applied purely to the server side settings
      * of the {@link SSLContext}.  Settings specified here override any duplicate settings
      * provided at the overall level by this class.  These parameters apply to 
-     * {@link SSLServerSocketFactory}s and {@link SSLEngine}s produced by the the {@code SSLContext}
+     * {@link SSLServerSocketFactory}s and {@link SSLEngine}s produced by the {@code SSLContext}
      * produced from this class as well as to the {@code SSLContext} itself.
      *
      * @param serverParameters the optional additional client-side parameters
@@ -234,21 +235,60 @@ public class SSLContextParameters extends BaseSSLContextParameters {
     }
     
     ////////////////////////////////////////////
-    
+
     /**
      * Creates an {@link SSLContext} based on the related configuration options
      * of this instance. Namely, {@link #keyManagers}, {@link #trustManagers}, and
      * {@link #secureRandom}, but also respecting the chosen provider and secure
      * socket protocol as well.
-     * 
+     *
+     * @return a newly configured instance
+     *
+     * @throws GeneralSecurityException if there is a problem in this instances
+     *             configuration or that of its nested configuration options
+     * @throws IOException if there is an error reading a key/trust store
+     * @deprecated use {@link #configureSSLContext(SSLContext)}
+     */
+    @Deprecated
+    public SSLContext createSSLContext() throws GeneralSecurityException, IOException {
+        return createSSLContext(null);
+    }
+
+    /**
+     * Creates an {@link SSLContext} based on the related configuration options
+     * of this instance. Namely, {@link #keyManagers}, {@link #trustManagers}, and
+     * {@link #secureRandom}, but also respecting the chosen provider and secure
+     * socket protocol as well.
+     *
+     * @param camelContext  The camel context
+     *
      * @return a newly configured instance
      *
      * @throws GeneralSecurityException if there is a problem in this instances
      *             configuration or that of its nested configuration options
      * @throws IOException if there is an error reading a key/trust store
      */
-    public SSLContext createSSLContext() throws GeneralSecurityException, IOException {
-        
+    public SSLContext createSSLContext(CamelContext camelContext) throws GeneralSecurityException, IOException {
+        if (camelContext != null) {
+            // setup CamelContext before creating SSLContext
+            setCamelContext(camelContext);
+            if (keyManagers != null) {
+                keyManagers.setCamelContext(camelContext);
+            }
+            if (trustManagers != null) {
+                trustManagers.setCamelContext(camelContext);
+            }
+            if (secureRandom != null) {
+                secureRandom.setCamelContext(camelContext);
+            }
+            if (clientParameters != null) {
+                clientParameters.setCamelContext(camelContext);
+            }
+            if (serverParameters != null) {
+                serverParameters.setCamelContext(camelContext);
+            }
+        }
+
         LOG.trace("Creating SSLContext from SSLContextParameters [{}].", this);
         
         LOG.info("Available providers: {}.", Security.getProviders());
@@ -373,7 +413,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("SSLContextParameters [keyManagers=");
+        builder.append("SSLContextParameters[keyManagers=");
         builder.append(keyManagers);
         builder.append(", trustManagers=");
         builder.append(trustManagers);
@@ -399,8 +439,6 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         builder.append(getSecureSocketProtocolsFilter());
         builder.append(", getSessionTimeout()=");
         builder.append(getSessionTimeout());
-        builder.append(", getContext()=");
-        builder.append(getCamelContext());
         builder.append("]");
         return builder.toString();
     }

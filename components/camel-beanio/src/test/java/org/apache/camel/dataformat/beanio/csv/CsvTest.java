@@ -66,7 +66,7 @@ public class CsvTest extends CamelTestSupport {
                 log.info("received message {} of class {}", body, body.getClass().getName());
             }
         }
-        List<Map> results = new ArrayList<Map>();
+        List<Map> results = new ArrayList<>();
         for (Exchange exchange : exchanges) {
             Map body = exchange.getIn().getBody(Map.class);
             if (body != null) {

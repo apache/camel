@@ -22,10 +22,6 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.spi.ExchangeFormatter;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,11 +35,6 @@ public class LogCustomFormatterTest extends ContextTestSupport {
     @Before @Override
     public void setUp() throws Exception {
         super.setUp();
-        // we add an appender explicitly to avoid getting a NOPLogger which permit logging; 
-        // otherwise the ExchangeFormatter wouldn't get called
-        Logger.getLogger(LogCustomFormatterTest.class).removeAllAppenders();
-        Logger.getLogger(LogCustomFormatterTest.class).addAppender(new ConsoleAppender(new SimpleLayout()));
-        Logger.getLogger(LogCustomFormatterTest.class).setLevel(Level.TRACE);
     }
     
     @Test

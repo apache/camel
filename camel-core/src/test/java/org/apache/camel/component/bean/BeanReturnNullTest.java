@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,17 +26,20 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class BeanReturnNullTest extends ContextTestSupport {
 
+    @Test
     public void testReturnBean() throws Exception {
         MyBean out = template.requestBody("direct:start", "Camel", MyBean.class);
         assertNotNull(out);
         assertEquals("Camel", out.getName());
     }
 
+    @Test
     public void testReturnNull() throws Exception {
         Object out = template.requestBody("direct:start", "foo");
         assertNull(out);
     }
 
+    @Test
     public void testReturnNullMyBean() throws Exception {
         MyBean out = template.requestBody("direct:start", "foo", MyBean.class);
         assertNull(out);

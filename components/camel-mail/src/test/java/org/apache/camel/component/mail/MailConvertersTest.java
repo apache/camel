@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+import org.junit.Before;
 
 import java.io.InputStream;
 import javax.mail.Message;
@@ -34,6 +35,7 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailConvertersTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         Mailbox.clearAll();
         super.setUp();
@@ -90,9 +92,34 @@ public class MailConvertersTest extends CamelTestSupport {
         assertNotNull(mailMessage);
 
         Object content = mailMessage.getContent();
-        Multipart mp = assertIsInstanceOf(Multipart.class, content);
+        assertIsInstanceOf(Multipart.class, content);
 
-        InputStream is = MailConverters.toInputStream(mp);
+        InputStream is = mock.getReceivedExchanges().get(0).getIn().getBody(InputStream.class);
+        assertNotNull(is);
+        assertEquals("Alternative World", context.getTypeConverter().convertTo(String.class, is));
+    }
+
+    @Test
+    public void testMultipartToByteArray() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        template.send("direct:a", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("Hello World");
+                exchange.getIn().setHeader(MailConstants.MAIL_ALTERNATIVE_BODY, "Alternative World");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        Message mailMessage = mock.getReceivedExchanges().get(0).getIn().getBody(MailMessage.class).getMessage();
+        assertNotNull(mailMessage);
+
+        Object content = mailMessage.getContent();
+        assertIsInstanceOf(Multipart.class, content);
+
+        byte[] is = mock.getReceivedExchanges().get(0).getIn().getBody(byte[].class);
         assertNotNull(is);
         assertEquals("Alternative World", context.getTypeConverter().convertTo(String.class, is));
     }
@@ -128,7 +155,7 @@ public class MailConvertersTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:a").to("smtp://localhost?username=james@localhost");
 
-                from("pop3://localhost?username=james&password=secret&consumer.delay=1000").to("mock:result");
+                from("pop3://localhost?username=james&password=secret&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
             }
         };
     }

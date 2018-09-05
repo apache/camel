@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Set;
 
 import javax.management.MBeanServer;
@@ -30,6 +32,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class ManagedRouteStopWithAbortAfterTimeoutTest extends ManagementTestSupport {
 
+    @Test
     public void testStopRouteWithAbortAfterTimeoutTrue() throws Exception {
         // JMX tests dont work well on AIX or windows CI servers (hangs them)
         if (isPlatform("aix") || isPlatform("windows")) {
@@ -51,8 +54,8 @@ public class ManagedRouteStopWithAbortAfterTimeoutTest extends ManagementTestSup
             template.sendBody("seda:start", "message-" + i);
         }
         
-        // stop route with a 2s timeout and abortAfterTimeout=true (should abort after 2s)
-        Long timeout = new Long(2);
+        // stop route with a 1s timeout and abortAfterTimeout=true (should abort after 1s)
+        Long timeout = new Long(1);
         Boolean abortAfterTimeout = Boolean.TRUE;
         Object[] params = {timeout, abortAfterTimeout};
         String[] sig = {"java.lang.Long", "java.lang.Boolean"};
@@ -71,6 +74,7 @@ public class ManagedRouteStopWithAbortAfterTimeoutTest extends ManagementTestSup
         mockEP.assertIsSatisfied();
     }
 
+    @Test
     public void testStopRouteWithAbortAfterTimeoutFalse() throws Exception {
         // JMX tests dont work well on AIX or windows CI servers (hangs them)
         if (isPlatform("aix") || isPlatform("windows")) {
@@ -91,8 +95,8 @@ public class ManagedRouteStopWithAbortAfterTimeoutTest extends ManagementTestSup
             template.sendBody("seda:start", "message-" + i);
         }
         
-        // stop route with a 2s timeout and abortAfterTimeout=false (normal timeout behavior)
-        Long timeout = new Long(2);
+        // stop route with a 1s timeout and abortAfterTimeout=false (normal timeout behavior)
+        Long timeout = new Long(1);
         Boolean abortAfterTimeout = Boolean.FALSE;
         Object[] params = {timeout, abortAfterTimeout};
         String[] sig = {"java.lang.Long", "java.lang.Boolean"};
@@ -108,7 +112,7 @@ public class ManagedRouteStopWithAbortAfterTimeoutTest extends ManagementTestSup
             template.sendBody("seda:start", "message-" + i);
         }
         
-        Thread.sleep(3000);
+        Thread.sleep(1000);
         
         assertTrue("Should not have received more than 5 messages", mockEP.getExchanges().size() <= 5);
     }
@@ -127,7 +131,7 @@ public class ManagedRouteStopWithAbortAfterTimeoutTest extends ManagementTestSup
                 // shutdown this test faster
                 context.getShutdownStrategy().setTimeout(3);
 
-                from("seda:start").delay(500).to("mock:result");
+                from("seda:start").delay(100).to("mock:result");
             }
         };
     }

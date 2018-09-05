@@ -1,0 +1,528 @@
+:experimental:
+
+[[Karaf-KarafSupport]]
+Karaf Support
+~~~~~~~~~~~~~
+
+Apache Camel is designed to work nicely into
+http://karaf.apache.org[Apache Karaf] OSGi container.
+
+It includes:
+
+* Camel features descriptor allowing to easily and quickly install Camel
+in Karaf.
+* Karaf commands allowing you to view, start, stop, get info, about the
+Camel contexts and routes running in the Karaf instance. +
+
+NOTE: Karaf commands are available starting with Camel 2.8.0, and the
+commands was renamed in Camel 2.9.0.
+
+Here are the versions that are compatible:
+
+[width="100%",cols="1m,1m",options="header",]
+|============================
+|Camel Version |Karaf Version
+|2.2.0 |1.2.0
+|2.3.0 |1.3.0
+|2.4.0 |1.4.0
+|2.5.0 |2.1.0
+|2.7.0 |2.2.0
+|2.7.2 |2.2.2
+|2.8.2 |2.2.4
+|2.9.0 |2.2.5
+|2.10.0 |2.2.8
+|2.11.0 |2.3.1
+|2.12.0 |2.3.2
+|2.13.0 |2.3.3
+|2.14.0 |2.3.7
+|2.15.0 |2.4.0
+|============================
+
+[[Karaf-PreparingKarafforCamel]]
+Preparing Karaf for Camel
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Camel uses several bundles to provide low level package, such as
+`javax.annotation` or `javax.xml.bind`.
+
+Due to that, we mustn't use the default system package coming from the
+JDK. It means that we need to _exclude_ some packages from system
+packages in order to use packages provided by tiers bundles.
+
+Camel provides a ready to use `config.properties` file that you can
+download:
+
+http://svn.apache.org/repos/asf/camel/tags/camel-2.7.2/platforms/karaf/features/src/main/resources/config.properties
+
+This file has to be copied into Karaf etc folder.
+
+TIP: *Karaf 2.2.5 or newer* +
+Notice that Karaf 2.2.5 now provides an extra configuration file that
+has been configured to work with Camel and CXF, so its recommended to
+use this file if you use Karaf 2.2.5 or newer. You can prepare Karaf by
+copying the `etc/jre.properties.cxf` and override the existing
+`etc/jre.properties` file.
+
+
+[[Karaf-InstallCamelinKaraf]]
+Install Camel in Karaf
+~~~~~~~~~~~~~~~~~~~~~~
+
+Assuming that you have a running Karaf instance, you can register the
+Camel features descriptor:
+
+[source,sh]
+----
+karaf@root> features:addurl mvn:org.apache.camel.karaf/apache-camel/2.8.2/xml/features
+----
+
+From Karaf 2.2.6 onwards this has been simplified as there is a new
+`features:chooseurl` command that is pre-setup for Camel:
+
+[source,sh]
+----
+karaf@root> features:chooseurl camel 2.9.1
+----
+
+Now, we have all Camel features available:
+
+[source,sh]
+----
+karaf@root> features:list|grep -i camel
+[uninstalled] [2.8.0          ] camel                         repo-0
+[uninstalled] [2.8.0          ] camel-core                    repo-0
+[uninstalled] [2.8.0          ] camel-spring                  repo-0
+[uninstalled] [2.8.0          ] camel-blueprint               repo-0
+[uninstalled] [2.8.0          ] camel-test                    repo-0
+[uninstalled] [2.8.0          ] camel-cxf                     repo-0
+[uninstalled] [2.8.0          ] camel-cache                   repo-0
+[uninstalled] [2.8.0          ] camel-castor                  repo-0
+[uninstalled] [2.8.0          ] camel-crypto                  repo-0
+[uninstalled] [2.8.0          ] camel-http                    repo-0
+[uninstalled] [2.8.0          ] camel-http4                   repo-0
+[uninstalled] [2.8.0          ] camel-mina                    repo-0
+[uninstalled] [2.8.0          ] camel-jetty                   repo-0
+[uninstalled] [2.8.0          ] camel-servlet                 repo-0
+[uninstalled] [2.8.0          ] camel-jms                     repo-0
+...
+----
+
+To install Camel, just install the `camel` feature:
+
+[source,sh]
+----
+karaf@root> features:install camel
+----
+
+You have to install the Camel features depending of your requirements.
+
+For instance, if you want to use blueprint as Camel DSL, you have to
+install the `camel-blueprint` feature:
+
+[source,sh]
+----
+karaf@root> features:install camel-blueprint
+----
+
+If, in your route, you use an endpoint like `stream:out`, you have to
+install the `camel-stream` feature:
+
+[source,sh]
+----
+karaf@root> features:install camel-stream
+----
+
+[[Karaf-Karafcommands]]
+Karaf commands
+~~~~~~~~~~~~~~
+
+When you install the camel feature, new Karaf commands become available
+automatically.
+
+[[Karaf-KarafcommandsinCamel2.8.x]]
+Karaf commands in Camel 2.8.x
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[width="100%",cols="1s,4",options="header",]
+|=======================================================================
+|Command |Description
+|camel:list-contexts |Lists the camel contexts available in the
+current Karaf instance
+
+|camel:list-routes |Displays the list of Camel routes available in the
+current Karaf instance
+
+|camel:info-context |Displays detail information about a given Camel
+context
+
+|camel:start-context |Starts the given Camel context
+
+|camel:stop-context |Stops the given Camel context
+
+|camel:info-route |Provides detail information about a Camel route
+
+|camel:show-route |Renders the route in XML
+
+|camel:start-route |Starts the given route
+
+|camel:stop-route |Stops the given route
+|=======================================================================
+
+[[Karaf-KarafcommandsinCamel2.9onwards]]
+Karaf commands in Camel 2.9 onwards
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[width="100%",cols="1s,4",options="header",]
+|=======================================================================
+|Command |Description
+|camel:context-list |Lists the camel contexts available in the current
+Karaf instance
+
+|camel:context-info |Displays detail information about a given Camel
+context
+
+|camel:context-start |Starts the given Camel context
+
+|camel:context-stop |Stops the given Camel context (it becomes
+unavailable and it can't be started afterwards)
+
+|camel:route-list |Displays the list of Camel routes available in the
+current Karaf instance
+
+|camel:route-info |Provides detail information about a Camel route
+
+|camel:route-show |Renders the route in XML
+
+|camel:route-start |Starts the given route. From Camel *2.10* onwards
+you can use `*` as wildcard to match multiple routes.
+
+|camel:route-stop |Stops the given route. From Camel *2.10* onwards
+you can use `*` as wildcard to match multiple routes.
+
+|camel:route-suspend |Suspends the given route. From Camel *2.10*
+onwards you can use `*` as wildcard to match multiple routes.
+
+|camel:route-resume |Resumes the given route. From Camel *2.10*
+onwards you can use `*` as wildcard to match multiple routes.
+|=======================================================================
+
+[[Karaf-KarafcommandsinCamel2.10onwards]]
+Karaf commands in Camel 2.10 onwards
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[width="100%",cols="1s,4",options="header",]
+|=======================================================================
+|Command |Description
+|camel:endpoint-list |Lists endpoints from all camel contexts
+available in the current Karaf instance
+|=======================================================================
+
+[[Karaf-KarafcommandsinCamel2.11onwards]]
+Karaf commands in Camel 2.11 onwards
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[width="100%",cols="1s,4",options="header",]
+|=======================================================================
+|Command |Description
+|camel:route-profile |To profile route(s)
+
+|camel:route-reset-stats |To reset performance stats on the given
+route(s)
+|=======================================================================
+
+[[Karaf-KarafcommandsinCamel2.12.4onwards]]
+Karaf commands in Camel 2.12.4 onwards
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[width="100%",cols="1s,4",options="header",]
+|=========================================================
+|Command |Description
+|camel:context-suspend |Suspends the given Camel context
+|camel:context-resume |Resumes the given Camel context
+|=========================================================
+
+[[Karaf-camel:context-list]]
+`camel:context-list`
+^^^^^^^^^^^^^^^^^^^^
+
+The `camel:context-list` command displays the list of Camel contexts
+available in the current Karaf instance:
+
+[source,sh]
+----
+karaf@root> camel:context-list
+Name                 Status               Uptime
+[66-camel-3        ] [Started           ] [14.559 seconds    ]
+----
+
+It displays the context name/ID (used in others commands), the current
+status (started/stopped), the uptime (since when the context has been
+started).
+
+[[Karaf-camel:route-list]]
+`camel:route-list`
+^^^^^^^^^^^^^^^^^^
+
+The `camel:route-list` command displays the list of Camel routes
+available in the current Karaf instance:
+
+[source,sh]
+----
+karaf@root> camel:route-list
+[route1              ]
+----
+
+You can also filter the routes by Camel context:
+
+[source,sh]
+----
+karaf@root> camel:route-list 66-camel-3
+[route1              ]
+----
+
+TIP: use the kbd:[TAB] key to completion on the Camel context ID.
+
+[[Karaf-camel:info-context]]
+`camel:info-context`
+^^^^^^^^^^^^^^^^^^^^
+
+The `camel:context-info` command displays detail information about a
+given Camel context:
+
+add the `--verbose` option (following the context name) to also list
+the endpoints:
+
+[source]
+----
+karaf@root> camel:context-info 66-camel-3
+Camel Context 66-camel-3
+        Name: 66-camel-3
+        Version: 2.8.0
+        Status: Started
+        Uptime: 1 minute
+
+Advanced
+        Auto Startup: true
+        Starting Routes: false
+        Suspended: false
+        Tracing: false
+
+Properties
+
+Components
+        timer
+        properties
+        log
+
+Endpoints
+        timer://test
+        log://test
+
+Routes
+        route1
+
+Used Languages
+----
+
+You can see the current Camel version used by the Camel context, some
+context attributes, the components involved in the context, and the
+endpoints defined.
+
+TIP: use kbd:[TAB] key for completion on the Camel context name.
+
+[[Karaf-camel:context-start]]
+`camel:context-start`
+^^^^^^^^^^^^^^^^^^^^^
+
+The `camel:context-start` command starts a given Camel context:
+
+[source,sh]
+----
+karaf@root> camel:context-start 66-camel-3
+----
+
+TIP: use kbd:[TAB] key for completion on the Camel context name.
+
+[[Karaf-camel:context-stop]]
+`camel:context-stop`
+^^^^^^^^^^^^^^^^^^^^
+
+The `camel:context-stop` command stops a given Camel context. After
+stopping the context it becomes unavailable and cannot be started again.
+
+[source,sh]
+----
+karaf@root> karaf@root> camel:context-stop 66-camel-3
+----
+
+TIP: use kbd:[TAB] key for completion on the Camel context name.
+
+[[Karaf-camel:route-info]]
+`camel:route-info`
+^^^^^^^^^^^^^^^^^^
+
+The `camel:route-info` command provides detail information about a
+Camel route:
+
+[source]
+----
+karaf@root> camel:route-info route1
+Camel Route route1
+        Camel Context: 66-camel-3
+
+Properties
+                id = route1
+                parent = 2e7aacc1
+
+Statistics
+        Exchanges Total: 98
+        Exchanges Completed: 98
+        Exchanges Failed: 0
+        Min Processing Time: 1ms
+        Max Processing Time: 2ms
+        Mean Processing Time: 1ms
+        Total Processing Time: 134ms
+        Last Processing Time: 1ms
+        First Exchange Date: 2011-06-29 07:21:57
+        Last Exchange Completed Date: 2011-06-29 07:23:34
+
+Definition
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<route id="route1" xmlns="http://camel.apache.org/schema/spring">
+    <from uri="timer:test"/>
+    <to uri="log:test" id="to1"/>
+</route>
+----
+
+You can see some statistics (the number of processed exchanges, the
+processing time, etc) and a XML rendering of your route (whatever DSL
+used to define the route).
+
+TIP: use kbd:[TAB] key for completion on the route name.
+
+[[Karaf-camel:route-show]]
+`camel:route-show`
+^^^^^^^^^^^^^^^^^^
+
+The `camel:route-show` command renders the route in XML. It's
+independent from the DSL used to define the route:
+
+[source]
+----
+karaf@root> camel:route-show route1
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<route id="route1" xmlns="http://camel.apache.org/schema/spring">
+    <from uri="timer:test"/>
+    <to uri="log:test" id="to1"/>
+</route>
+----
+
+TIP: use kbd:[TAB] key for completion on the route name.
+
+[[Karaf-camel:route-start]]
+`camel:route-start`
+^^^^^^^^^^^^^^^^^^^
+
+The `camel:route-start` command starts a Camel route:
+
+[source,sh]
+----
+karaf@root> camel:route-start route1
+----
+
+TIP: use kbd:[TAB] key for completion on the route name.
+
+[[Karaf-camel:route-stop]]
+`camel:route-stop`
+^^^^^^^^^^^^^^^^^^
+
+The `camel:route-stop` command stops a Camel route:
+
+[source,sh]
+----
+karaf@root> camel:route-stop route1
+----
+
+[[Karaf-Camel2.9ornewer]]
+Camel 2.9 or newer
+++++++++++++++++++
+
+[[Karaf-camel:route-suspend]]
+`camel:route-suspend`
+^^^^^^^^^^^^^^^^^^^^^
+
+The `camel:route-suspend` command suspends a Camel route:
+
+[source,sh]
+----
+karaf@root> camel:route-suspend route1
+----
+
+TIP: use kbd:[TAB] key for completion on the route name.
+
+[[Karaf-camel:route-resume]]
+`camel:route-resume`
+^^^^^^^^^^^^^^^^^^^^
+
+The `camel:route-resume` command resume a Camel route:
+
+[source,sh]
+----
+karaf@root> camel:route-resume route1
+----
+
+TIP: use kbd:[TAB] key for completion on the route name.
+
+[[Karaf-Camel2.10ornewer]]
+Camel 2.10 or newer
++++++++++++++++++++
+
+[[Karaf-camel:endpoint-list]]
+`camel:endpoint-list`
+^^^^^^^^^^^^^^^^^^^^^
+
+The `camel:endpoint-list` command displays the list of the endpoints
+available in all camel contexts of the current Karaf instance:
+
+[source]
+----
+karaf@root> camel:endpoint-list
+camel-id             uri                  Status
+[test              ] [timer://test      ] [Started           ]
+[test              ] [direct://A        ] [Started           ]
+----
+
+It displays the context name/ID (used in others commands), the URI of
+the endpoint and the current status (started/stopped).
+
+[[Karaf-Camel2.12.4ornewer]]
+Camel 2.12.4 or newer
+++++++++++++++++++++++
+
+[[Karaf-camel:context-suspend]]
+`camel:context-suspend`
+^^^^^^^^^^^^^^^^^^^^^^^
+
+The `camel:context-suspend` command suspends a given Camel context.
+It then may be resumed again.
+
+[source,sh]
+----
+karaf@root> karaf@root> camel:context-suspend 66-camel-3
+----
+
+TIP: use kbd:[TAB] key for completion on the Camel context name.
+
+[[Karaf-camel:context-resume]]
+`camel:context-resume`
+^^^^^^^^^^^^^^^^^^^^^^
+
+The `camel:context-resume` command resumes a given Camel context.
+After that it returns to the _started_ state.
+
+[source,sh]
+----
+karaf@root> karaf@root> camel:context-resume 66-camel-3
+----
+
+TIP: use kbd:[TAB] key for completion on the Camel context name.

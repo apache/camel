@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,8 +47,9 @@ public class ExpressionListComparatorTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testExpressionListComparator() {
-        List<Expression> list = new ArrayList<Expression>();
+        List<Expression> list = new ArrayList<>();
         list.add(new MyFooExpression());
         list.add(new MyBarExpression());
 

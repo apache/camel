@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
@@ -25,6 +27,7 @@ import org.apache.camel.model.RouteDefinition;
  */
 public class StopRouteImpactsErrorHandlerTest extends ContextTestSupport {
 
+    @Test
     public void testIssue() throws Exception {
         RouteDefinition testRoute = context.getRouteDefinition("TestRoute");
         testRoute.adviceWith(context, new RouteBuilder() {

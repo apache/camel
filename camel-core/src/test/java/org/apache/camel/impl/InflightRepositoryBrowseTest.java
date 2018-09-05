@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import java.util.Collection;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,6 +31,7 @@ import org.apache.camel.spi.InflightRepository;
  */
 public class InflightRepositoryBrowseTest extends ContextTestSupport {
 
+    @Test
     public void testInflight() throws Exception {
         assertEquals(0, context.getInflightRepository().browse().size());
 
@@ -54,7 +57,8 @@ public class InflightRepositoryBrowseTest extends ContextTestSupport {
                                 assertNotNull(inflight);
 
                                 assertEquals(exchange, inflight.getExchange());
-                                assertEquals("foo", inflight.getRouteId());
+                                assertEquals("foo", inflight.getFromRouteId());
+                                assertEquals("foo", inflight.getAtRouteId());
                                 assertEquals("myProcessor", inflight.getNodeId());
                             }
                         }).id("myProcessor")

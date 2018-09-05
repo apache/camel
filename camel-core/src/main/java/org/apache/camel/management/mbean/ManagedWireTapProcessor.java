@@ -59,7 +59,7 @@ public class ManagedWireTapProcessor extends ManagedProcessor implements Managed
     }
 
     @Override
-    public synchronized void reset() {
+    public void reset() {
         super.reset();
         if (processor.getEndpointUtilizationStatistics() != null) {
             processor.getEndpointUtilizationStatistics().clear();
@@ -89,6 +89,14 @@ public class ManagedWireTapProcessor extends ManagedProcessor implements Managed
 
     public Boolean isCopy() {
         return processor.isCopy();
+    }
+
+    public Boolean isDynamicUri() {
+        return processor.isDynamicUri();
+    }
+
+    public Integer getTaskSize() {
+        return processor.getPendingExchangesSize();
     }
 
     @Override

@@ -23,6 +23,7 @@ import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.processor.AnalyticsApiProcessor;
 import org.apache.camel.component.salesforce.internal.processor.BulkApiProcessor;
+import org.apache.camel.component.salesforce.internal.processor.CompositeApiProcessor;
 import org.apache.camel.component.salesforce.internal.processor.JsonRestProcessor;
 import org.apache.camel.component.salesforce.internal.processor.SalesforceProcessor;
 import org.apache.camel.component.salesforce.internal.processor.XmlRestProcessor;
@@ -48,6 +49,8 @@ public class SalesforceProducer extends DefaultAsyncProducer {
             processor = new BulkApiProcessor(endpoint);
         } else if (isAnalyticsOperation(operationName)) {
             processor = new AnalyticsApiProcessor(endpoint);
+        } else if (isCompositeOperation(operationName)) {
+            processor = new CompositeApiProcessor(endpoint);
         } else {
             // create an appropriate processor
             if (payloadFormat == PayloadFormat.JSON) {
@@ -59,7 +62,7 @@ public class SalesforceProducer extends DefaultAsyncProducer {
         }
     }
 
-    private boolean isBulkOperation(OperationName operationName) {
+    private static boolean isBulkOperation(OperationName operationName) {
         switch (operationName) {
         case CREATE_JOB:
         case GET_JOB:
@@ -79,7 +82,7 @@ public class SalesforceProducer extends DefaultAsyncProducer {
         }
     }
 
-    private boolean isAnalyticsOperation(OperationName operationName) {
+    private static boolean isAnalyticsOperation(OperationName operationName) {
         switch (operationName) {
         case GET_RECENT_REPORTS:
         case GET_REPORT_DESCRIPTION:
@@ -87,6 +90,17 @@ public class SalesforceProducer extends DefaultAsyncProducer {
         case EXECUTE_ASYNCREPORT:
         case GET_REPORT_INSTANCES:
         case GET_REPORT_RESULTS:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    private static  boolean isCompositeOperation(OperationName operationName) {
+        switch (operationName) {
+        case COMPOSITE_TREE:
+        case COMPOSITE_BATCH:
+        case COMPOSITE:
             return true;
         default:
             return false;

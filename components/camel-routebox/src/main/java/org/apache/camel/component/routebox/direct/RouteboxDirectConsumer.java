@@ -20,13 +20,13 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ShutdownRunningTask;
-import org.apache.camel.SuspendableService;
+import org.apache.camel.Suspendable;
 import org.apache.camel.component.routebox.RouteboxConsumer;
 import org.apache.camel.component.routebox.RouteboxServiceSupport;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 
-public class RouteboxDirectConsumer extends RouteboxServiceSupport implements RouteboxConsumer, ShutdownAware, SuspendableService {
+public class RouteboxDirectConsumer extends RouteboxServiceSupport implements RouteboxConsumer, ShutdownAware, Suspendable {
     protected ProducerTemplate producer;
     private final Processor processor;
     private volatile AsyncProcessor asyncProcessor;
@@ -96,7 +96,7 @@ public class RouteboxDirectConsumer extends RouteboxServiceSupport implements Ro
     }
 
     @Override
-    public void prepareShutdown(boolean forced) {
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
         // noop
     }
     

@@ -123,7 +123,7 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
     
     @Test
     public void testInvokingServiceFromCamel() throws Exception {
-        Object result = template.sendBodyAndHeader("direct:start", ExchangePattern.InOut, "hello world" , CxfConstants.OPERATION_NAME, "echo");
+        Object result = template.sendBodyAndHeader("direct:start", ExchangePattern.InOut, "hello world", CxfConstants.OPERATION_NAME, "echo");
         assertTrue("Exception is not instance of SoapFault", result instanceof SoapFault);
         assertEquals("Expect to get right detail message", DETAIL_TEXT, ((SoapFault)result).getDetail().getTextContent());
         assertEquals("Expect to get right fault-code", "{http://schemas.xmlsoap.org/soap/envelope/}Client", ((SoapFault)result).getFaultCode().toString());

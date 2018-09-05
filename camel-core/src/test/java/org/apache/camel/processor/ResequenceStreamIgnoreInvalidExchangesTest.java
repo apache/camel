@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ResequenceStreamIgnoreInvalidExchangesTest extends ContextTestSupport {
 
+    @Test
     public void testBadFirstMessage() throws Exception {
         // bad messages is ignored
         getMockEndpoint("mock:result").expectedBodiesReceived("B", "C", "D");
@@ -36,6 +39,7 @@ public class ResequenceStreamIgnoreInvalidExchangesTest extends ContextTestSuppo
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBadSecondMessage() throws Exception {
         // bad messages is ignored
         getMockEndpoint("mock:result").expectedBodiesReceived("B", "C", "D");
@@ -48,6 +52,7 @@ public class ResequenceStreamIgnoreInvalidExchangesTest extends ContextTestSuppo
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBadThirdMessage() throws Exception {
         // bad messages is ignored
         getMockEndpoint("mock:result").expectedBodiesReceived("B", "C", "D");
@@ -60,6 +65,7 @@ public class ResequenceStreamIgnoreInvalidExchangesTest extends ContextTestSuppo
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBadForthMessage() throws Exception {
         // bad messages is ignored
         getMockEndpoint("mock:result").expectedBodiesReceived("B", "C", "D");
@@ -79,7 +85,7 @@ public class ResequenceStreamIgnoreInvalidExchangesTest extends ContextTestSuppo
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    .resequence(header("seqno")).stream().timeout(1000)
+                    .resequence(header("seqno")).stream().timeout(50).deliveryAttemptInterval(10)
                         // ignore invalid exchanges (they are discarded)
                         .ignoreInvalidExchanges()
                     .to("mock:result");

@@ -28,7 +28,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
 @UriParams
@@ -40,9 +40,9 @@ public class PrinterConfiguration {
 
     @UriPath @Metadata(required = "true")
     private String hostname;
-    @UriPath @Metadata(required = "true")
+    @UriPath
     private int port;
-    @UriPath @Metadata(required = "true")
+    @UriPath
     private String printername;
     @UriParam
     private String printerPrefix;
@@ -85,8 +85,8 @@ public class PrinterConfiguration {
 
         // use path as printer name, but without any leading slashes
         String path = uri.getPath();
-        path = ObjectHelper.removeStartingCharacters(path, '/');
-        path = ObjectHelper.removeStartingCharacters(path, '\\');
+        path = StringHelper.removeStartingCharacters(path, '/');
+        path = StringHelper.removeStartingCharacters(path, '\\');
         setPrintername(path);
 
         Map<String, Object> printSettings = URISupport.parseParameters(uri);

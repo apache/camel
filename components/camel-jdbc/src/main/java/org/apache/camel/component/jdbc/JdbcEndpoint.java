@@ -30,14 +30,15 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * @version
+ * The jdbc component enables you to access databases through JDBC, where SQL queries are sent in the message body.
  */
-@UriEndpoint(scheme = "jdbc", title = "JDBC", syntax = "jdbc:dataSourceName", producerOnly = true, label = "database,sql")
+@UriEndpoint(firstVersion = "1.2.0", scheme = "jdbc", title = "JDBC", syntax = "jdbc:dataSourceName", producerOnly = true, label = "database,sql")
 public class JdbcEndpoint extends DefaultEndpoint {
 
     private DataSource dataSource;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath
+    @Metadata(required = "true")
     private String dataSourceName;
     @UriParam
     private int readSize;
@@ -45,10 +46,13 @@ public class JdbcEndpoint extends DefaultEndpoint {
     private boolean transacted;
     @UriParam(defaultValue = "true")
     private boolean resetAutoCommit = true;
+    @UriParam(prefix = "statement.", multiValue = true)
     private Map<String, Object> parameters;
     @UriParam(defaultValue = "true")
     private boolean useJDBC4ColumnNameAndLabelSemantics = true;
     @UriParam
+    private boolean useGetBytesForBlob;
+    @UriParam(label = "advanced")
     private JdbcPrepareStatementStrategy prepareStatementStrategy = new DefaultJdbcPrepareStatementStrategy();
     @UriParam(defaultValue = "true")
     private boolean allowNamedParameters = true;
@@ -58,7 +62,7 @@ public class JdbcEndpoint extends DefaultEndpoint {
     private JdbcOutputType outputType = JdbcOutputType.SelectList;
     @UriParam
     private String outputClass;
-    @UriParam
+    @UriParam(label = "advanced")
     private BeanRowMapper beanRowMapper = new DefaultBeanRowMapper();
 
     public JdbcEndpoint() {
@@ -86,7 +90,9 @@ public class JdbcEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Name of DataSource to lookup in the Registry.
+     * Name of DataSource to lookup in the Registry. If the name is dataSource or default, then Camel
+     * will attempt to lookup a default DataSource from the registry, meaning if there is a only
+     * one instance of DataSource found, then this DataSource will be used.
      */
     public void setDataSourceName(String dataSourceName) {
         this.dataSourceName = dataSourceName;
@@ -239,6 +245,19 @@ public class JdbcEndpoint extends DefaultEndpoint {
      */
     public void setBeanRowMapper(BeanRowMapper beanRowMapper) {
         this.beanRowMapper = beanRowMapper;
+    }
+
+    public boolean isUseGetBytesForBlob() {
+        return this.useGetBytesForBlob;
+    }
+
+    /**
+     * To read BLOB columns as bytes instead of string data.
+     * <p/>
+     * This may be needed for certain databases such as Oracle where you must read BLOB columns as bytes.
+     */
+    public void setUseGetBytesForBlob(boolean useGetBytesForBlob) {
+        this.useGetBytesForBlob = useGetBytesForBlob;
     }
 
     @Override

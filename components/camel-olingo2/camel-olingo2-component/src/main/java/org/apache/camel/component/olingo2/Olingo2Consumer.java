@@ -40,7 +40,7 @@ public class Olingo2Consumer extends AbstractApiConsumer<Olingo2ApiName, Olingo2
     @Override
     protected int poll() throws Exception {
         // invoke the consumer method
-        final Map<String, Object> args = new HashMap<String, Object>();
+        final Map<String, Object> args = new HashMap<>();
         args.putAll(endpoint.getEndpointProperties());
 
         // let the endpoint and the Consumer intercept properties
@@ -55,7 +55,7 @@ public class Olingo2Consumer extends AbstractApiConsumer<Olingo2ApiName, Olingo2
 
             args.put(Olingo2Endpoint.RESPONSE_HANDLER_PROPERTY, new Olingo2ResponseHandler<Object>() {
                 @Override
-                public void onResponse(Object response) {
+                public void onResponse(Object response, Map<String, String> responseHeaders) {
                     result[0] = response;
                     latch.countDown();
                 }

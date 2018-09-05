@@ -16,45 +16,95 @@
  */
 package org.apache.camel.component.weather;
 
-import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Scanner;
 
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.weather.geolocation.FreeGeoIpGeoLocationProvider;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.httpclient.HttpConnectionManager;
 
+import static org.apache.camel.component.weather.WeatherLanguage.en;
 import static org.apache.camel.component.weather.WeatherMode.JSON;
-import static org.apache.camel.component.weather.WeatherUnits.METRIC;
-import static org.apache.camel.util.ObjectHelper.isEmpty;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 @UriParams
 public class WeatherConfiguration {
 
     private final WeatherComponent component;
+    private final WeatherQuery weatherQuery;
 
-    @UriPath(description = "The name value is not used.") @Metadata(required = "true")
+    @UriPath(description = "The name value is not used.")
+    @Metadata(required = "true")
     private String name;
     @UriParam
+    @Metadata(required = "true")
+    private String appid;
+    @UriParam
+    private WeatherApi weatherApi;
+    @UriParam(label = "filter")
     private String location = "";
-    @UriParam
+    @UriParam(label = "filter")
     private String lat;
-    @UriParam
+    @UriParam(label = "filter")
     private String lon;
+    @UriParam(label = "filter")
+    private String rightLon;
+    @UriParam(label = "filter")
+    private String topLat;
+    @UriParam(label = "filter")
+    private Integer zoom;
     @UriParam
     private String period = "";
     @UriParam(defaultValue = "JSON")
     private WeatherMode mode = JSON;
-    @UriParam(defaultValue = "METRIC")
-    private WeatherUnits units = METRIC;
+    @UriParam
+    private WeatherUnits units;
+    @UriParam(defaultValue = "en")
+    private WeatherLanguage language = en;
     @UriParam
     private String headerName;
+    @UriParam(label = "filter")
+    private String zip;
+    @UriParam(label = "filter", javaType = "java.lang.String")
+    private List<String> ids;
+    @UriParam(label = "filter")
+    private Integer cnt;
+
+    @UriParam(label = "proxy")
+    private String proxyHost;
+    @UriParam(label = "proxy")
+    private Integer proxyPort;
+    @UriParam(label = "proxy")
+    private String proxyAuthMethod;
+    @UriParam(label = "proxy", secret = true)
+    private String proxyAuthUsername;
+    @UriParam(label = "proxy", secret = true)
+    private String proxyAuthPassword;
+    @UriParam(label = "proxy")
+    private String proxyAuthDomain;
+    @UriParam(label = "proxy")
+    private String proxyAuthHost;
+    @UriParam(label = "advanced")
+    private HttpConnectionManager httpConnectionManager;
+    @UriParam(label = "security")
+    @Metadata(required = "true")
+    private String geolocationAccessKey;
+    @UriParam(label = "security")
+    @Metadata(required = "true")
+    private String geolocationRequestHostIP;
 
     public WeatherConfiguration(WeatherComponent component) {
         this.component = notNull(component, "component");
+        weatherQuery = new WeatherQuery(this);
+        FreeGeoIpGeoLocationProvider geoLocationProvider = new FreeGeoIpGeoLocationProvider(component, geolocationAccessKey);
+        weatherQuery.setGeoLocationProvider(geoLocationProvider);
     }
 
     public String getPeriod() {
@@ -62,8 +112,10 @@ public class WeatherConfiguration {
     }
 
     /**
-     * If null, the current weather will be returned, else use values of 5, 7, 14 days.
-     * Only the numeric value for the forecast period is actually parsed, so spelling, capitalisation of the time period is up to you (its ignored)
+     * If null, the current weather will be returned, else use values of 5, 7,
+     * 14 days. Only the numeric value for the forecast period is actually
+     * parsed, so spelling, capitalisation of the time period is up to you (its
+     * ignored)
      */
     public void setPeriod(String period) {
         notNull(period, "period");
@@ -113,11 +165,14 @@ public class WeatherConfiguration {
     }
 
     /**
-     * If null Camel will try and determine your current location using the geolocation of your ip address,
-     * else specify the city,country. For well known city names, Open Weather Map will determine the best fit,
-     * but multiple results may be returned. Hence specifying and country as well will return more accurate data.
-     * If you specify "current" as the location then the component will try to get the current latitude and longitude
-     * and use that to get the weather details. You can use lat and lon options instead of location.
+     * If null Camel will try and determine your current location using the
+     * geolocation of your ip address, else specify the city,country. For well
+     * known city names, Open Weather Map will determine the best fit, but
+     * multiple results may be returned. Hence specifying and country as well
+     * will return more accurate data. If you specify "current" as the location
+     * then the component will try to get the current latitude and longitude and
+     * use that to get the weather details. You can use lat and lon options
+     * instead of location.
      */
     public void setLocation(String location) {
         this.location = location;
@@ -128,7 +183,8 @@ public class WeatherConfiguration {
     }
 
     /**
-     * To store the weather result in this header instead of the message body. This is useable if you want to keep current message body as-is.
+     * To store the weather result in this header instead of the message body.
+     * This is useable if you want to keep current message body as-is.
      */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
@@ -139,7 +195,8 @@ public class WeatherConfiguration {
     }
 
     /**
-     * Latitude of location. You can use lat and lon options instead of location.
+     * Latitude of location. You can use lat and lon options instead of
+     * location. For boxed queries this is the bottom latitude.
      */
     public void setLat(String lat) {
         this.lat = lat;
@@ -150,58 +207,242 @@ public class WeatherConfiguration {
     }
 
     /**
-     * Longitude of location. You can use lat and lon options instead of location.
+     * Longitude of location. You can use lat and lon options instead of
+     * location. For boxed queries this is the left longtitude.
      */
     public void setLon(String lon) {
         this.lon = lon;
     }
 
-    public String getQuery() throws Exception {
-        return getQuery(getLocation());
+    /**
+     * APPID ID used to authenticate the user connected to the API Server
+     */
+    public void setAppid(String appid) {
+        this.appid = appid;
     }
 
-    public String getQuery(String location) throws Exception {
-        String answer = "http://api.openweathermap.org/data/2.5/";
-
-        if (lat != null && lon != null) {
-            location = "lat=" + lat + "&lon=" + lon;
-        } else if (isEmpty(location) || "current".equals(location)) {
-            location = getCurrentGeoLocation();
-        } else {
-            // assuming the location is a town or country
-            location = "q=" + location;
-        }
-
-        if (isEmpty(getPeriod())) {
-            answer += "weather?" + location;
-        } else {
-            answer += "forecast/daily?" + location + "&cnt=" + getPeriod();
-        }
-
-        // append the desired measurement unit if not the default (which is metric)
-        if (getUnits() != METRIC) {
-            answer += "&units=" + getUnits().name().toLowerCase();
-        }
-
-        // append the desired output mode if not the default (which is json)
-        if (getMode() != JSON) {
-            answer += "&mode=" + getMode().name().toLowerCase();
-        }
-
-        return answer;
+    public String getAppid() {
+        return appid;
     }
 
-    private String getCurrentGeoLocation() throws Exception {
-        String geoLocation = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, new URL("http://freegeoip.net/json/"));
-        if (isEmpty(geoLocation)) {
-            throw new IllegalStateException("Got the unexpected value '" + geoLocation + "' for the geolocation");
+    String getQuery() throws Exception {
+        return weatherQuery.getQuery();
+    }
+
+    String getQuery(String location) throws Exception {
+        return weatherQuery.getQuery(location);
+    }
+
+    public WeatherLanguage getLanguage() {
+        return language;
+    }
+
+    /**
+     * Language of the response.
+     */
+    public void setLanguage(WeatherLanguage language) {
+        this.language = language;
+    }
+
+    public String getRightLon() {
+        return rightLon;
+    }
+
+    /**
+     * For boxed queries this is the right longtitude. Needs to be used in
+     * combination with topLat and zoom.
+     */
+    public void setRightLon(String rightLon) {
+        this.rightLon = rightLon;
+    }
+
+    public String getTopLat() {
+        return topLat;
+    }
+
+    /**
+     * For boxed queries this is the top latitude. Needs to be used in
+     * combination with rightLon and zoom.
+     */
+    public void setTopLat(String topLat) {
+        this.topLat = topLat;
+    }
+
+    public Integer getZoom() {
+        return zoom;
+    }
+
+    /**
+     * For boxed queries this is the zoom. Needs to be used in combination with
+     * rightLon and topLat.
+     */
+    public void setZoom(Integer zoom) {
+        this.zoom = zoom;
+    }
+
+    public HttpConnectionManager getHttpConnectionManager() {
+        return httpConnectionManager;
+    }
+
+    /**
+     * To use a custom HttpConnectionManager to manage connections
+     */
+    public void setHttpConnectionManager(HttpConnectionManager httpConnectionManager) {
+        this.httpConnectionManager = httpConnectionManager;
+    }
+
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    /**
+     * The proxy host name
+     */
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
+    }
+
+    /**
+     * The proxy port number
+     */
+    public void setProxyPort(Integer proxyPort) {
+        this.proxyPort = proxyPort;
+    }
+
+    public String getProxyAuthMethod() {
+        return proxyAuthMethod;
+    }
+
+    /**
+     * Authentication method for proxy, either as Basic, Digest or NTLM.
+     */
+    public void setProxyAuthMethod(String proxyAuthMethod) {
+        this.proxyAuthMethod = proxyAuthMethod;
+    }
+
+    public String getProxyAuthUsername() {
+        return proxyAuthUsername;
+    }
+
+    /**
+     * Username for proxy authentication
+     */
+    public void setProxyAuthUsername(String proxyAuthUsername) {
+        this.proxyAuthUsername = proxyAuthUsername;
+    }
+
+    public String getProxyAuthPassword() {
+        return proxyAuthPassword;
+    }
+
+    /**
+     * Password for proxy authentication
+     */
+    public void setProxyAuthPassword(String proxyAuthPassword) {
+        this.proxyAuthPassword = proxyAuthPassword;
+    }
+
+    public String getProxyAuthDomain() {
+        return proxyAuthDomain;
+    }
+
+    /**
+     * Domain for proxy NTLM authentication
+     */
+    public void setProxyAuthDomain(String proxyAuthDomain) {
+        this.proxyAuthDomain = proxyAuthDomain;
+    }
+
+    public String getProxyAuthHost() {
+        return proxyAuthHost;
+    }
+
+    /**
+     * Optional host for proxy NTLM authentication
+     */
+    public void setProxyAuthHost(String proxyAuthHost) {
+        this.proxyAuthHost = proxyAuthHost;
+    }
+
+    public String getZip() {
+        return zip;
+    }
+
+    /**
+     * Zip-code, e.g. 94040,us
+     */
+    public void setZip(String zip) {
+        this.zip = zip;
+    }
+
+    public List<String> getIds() {
+        return ids;
+    }
+
+    /**
+     * List of id's of city/stations. You can separate multiple ids by comma.
+     */
+    public void setIds(String id) {
+        if (ids == null) {
+            ids = new ArrayList<>();
         }
+        Iterator<?> it = ObjectHelper.createIterator(id);
+        while (it.hasNext()) {
+            String myId = (String)it.next();
+            ids.add(myId);
+        }
+    }
 
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode node = mapper.readValue(geoLocation, JsonNode.class);
-        JsonNode latitudeNode = notNull(node.get("latitude"), "latitude");
-        JsonNode longitudeNode = notNull(node.get("longitude"), "longitude");
+    public void setIds(List<String> ids) {
+        this.ids = ids;
+    }
 
-        return "lat=" + latitudeNode + "&lon=" + longitudeNode;
+    public Integer getCnt() {
+        return cnt;
+    }
+
+    /**
+     * Number of results to be found
+     */
+    public void setCnt(Integer cnt) {
+        this.cnt = cnt;
+    }
+
+    public WeatherApi getWeatherApi() {
+        return weatherApi;
+    }
+
+    /**
+     * The API to be use (current, forecast/3 hour, forecast daily, station)
+     */
+    public void setWeatherApi(WeatherApi weatherApi) {
+        this.weatherApi = weatherApi;
+    }
+
+    public String getGeolocationAccessKey() {
+        return geolocationAccessKey;
+    }
+
+    /**
+     * The geolocation service now needs an accessKey to be used
+     */
+    public void setGeolocationAccessKey(String geolocationAccessKey) {
+        this.geolocationAccessKey = geolocationAccessKey;
+    }
+
+    public String getGeolocationRequestHostIP() {
+        return geolocationRequestHostIP;
+    }
+
+    /**
+     * The geolocation service now needs to specify the IP associated to the
+     * accessKey you're using
+     */
+    public void setGeolocationRequestHostIP(String geolocationRequestHostIP) {
+        this.geolocationRequestHostIP = geolocationRequestHostIP;
     }
 }

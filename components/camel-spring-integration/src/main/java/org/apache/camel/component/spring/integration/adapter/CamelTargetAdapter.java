@@ -23,11 +23,11 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.spring.integration.SpringIntegrationBinding;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
-import org.springframework.integration.Message;
-import org.springframework.integration.MessageChannel;
-import org.springframework.integration.MessageDeliveryException;
-import org.springframework.integration.MessageHeaders;
-import org.springframework.integration.core.MessageHandler;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessageDeliveryException;
+import org.springframework.messaging.MessageHandler;
+import org.springframework.messaging.MessageHeaders;
 
 /**
  * CamelTargetAdapter will redirect the Spring Integration message to the Camel context.

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.slf4j.Logger;
@@ -44,6 +46,7 @@ public class XPathRouteConcurrentBigTest extends ContextTestSupport {
             + "<sentDate>2009-10-12T12:22:02+02:00</sentDate> <receivedDate>2009-10-12T12:23:31.248+02:00</receivedDate>"
             + "<intproperty>1</intproperty><stringproperty>aaaaaaabbbbbbbccccccccdddddddd</stringproperty></message>";
 
+    @Test
     public void testConcurrent() throws Exception {
         doSendMessages(333);
     }
@@ -79,11 +82,11 @@ public class XPathRouteConcurrentBigTest extends ContextTestSupport {
             }
         }
 
-        LOG.info("Sent " + messageCount + " messages in " + (System.currentTimeMillis() - now) + " ms");
+        LOG.info("Sent {} messages in {} ms", messageCount, System.currentTimeMillis() - now);
 
         assertMockEndpointsSatisfied();
 
-        LOG.info("Processed " + messageCount + " messages in " + (System.currentTimeMillis() - now) + " ms");
+        LOG.info("Processed {} messages in {} ms", messageCount, System.currentTimeMillis() - now);
     }
 
     @Override

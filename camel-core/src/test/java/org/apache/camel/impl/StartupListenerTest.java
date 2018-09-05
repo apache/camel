@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.StartupListener;
@@ -44,8 +46,13 @@ public class StartupListenerTest extends ContextTestSupport {
             invoked++;
             this.alreadyStarted = alreadyStarted;
 
-            // the route should have been started
-            assertTrue(context.getRouteStatus("foo").isStarted());
+            if (alreadyStarted) {
+                // the routes should already been started as we add the listener afterwards
+                assertTrue(context.getRouteStatus("foo").isStarted());
+            } else {
+                // the routes should not have been started as they start afterwards
+                assertTrue(context.getRouteStatus("foo").isStopped());
+            }
         }
 
         public int getInvoked() {
@@ -57,7 +64,11 @@ public class StartupListenerTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testStartupListenerComponent() throws Exception {
+        // and now the routes are started
+        assertTrue(context.getRouteStatus("foo").isStarted());
+
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBody("direct:foo", "Hello World");
@@ -68,7 +79,11 @@ public class StartupListenerTest extends ContextTestSupport {
         assertFalse(my.isAlreadyStarted());
     }
 
+    @Test
     public void testStartupListenerComponentAlreadyStarted() throws Exception {
+        // and now the routes are started
+        assertTrue(context.getRouteStatus("foo").isStarted());
+
         MyStartupListener other = new MyStartupListener();
         context.addStartupListener(other);
 

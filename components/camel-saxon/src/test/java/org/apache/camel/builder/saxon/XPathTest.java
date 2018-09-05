@@ -21,6 +21,7 @@ import javax.xml.xpath.XPathFactory;
 import net.sf.saxon.xpath.XPathFactoryImpl;
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -72,6 +73,7 @@ public class XPathTest extends CamelTestSupport {
         // END SNIPPET: e1
     }
 
+    @Ignore("See http://www.saxonica.com/documentation/index.html#!xpath-api/jaxp-xpath/factory")
     @Test
     public void testXPathFunctionTokenizeUsingObjectModel() throws Exception {
         // START SNIPPET: e2

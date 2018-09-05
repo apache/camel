@@ -16,15 +16,26 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
 
 /**
  * @version 
  */
 public class SedaConcurrentConsumersTest extends ContextTestSupport {
 
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("count", "5");
+        return jndi;
+    }
+
+    @Test
     public void testSendToSeda() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -39,7 +50,7 @@ public class SedaConcurrentConsumersTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo?concurrentConsumers=5").to("mock:result");
+                from("seda:foo?concurrentConsumers=#count").to("mock:result");
             }
         };
     }

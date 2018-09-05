@@ -30,15 +30,17 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.server.Handler;
 
-@UriEndpoint(scheme = "websocket", title = "Jetty Websocket", syntax = "websocket:host:port/resourceUri", consumerClass = WebsocketConsumer.class, label = "websocket")
+/**
+ * The websocket component provides websocket endpoints with Jetty for communicating with clients using websocket.
+ *
+ * This component uses Jetty as the websocket implementation.
+ */
+@UriEndpoint(firstVersion = "2.10.0", scheme = "websocket", title = "Jetty Websocket", syntax = "websocket:host:port/resourceUri", consumerClass = WebsocketConsumer.class, label = "websocket")
 public class WebsocketEndpoint extends DefaultEndpoint {
 
-    private NodeSynchronization sync;
-    private WebsocketStore memoryStore;
     private WebsocketComponent component;
     private URI uri;
     private List<Handler> handlers;
@@ -52,36 +54,36 @@ public class WebsocketEndpoint extends DefaultEndpoint {
 
     @UriParam(label = "producer")
     private Boolean sendToAll;
-    @UriParam
+    @UriParam(label = "producer", defaultValue = "30000")
+    private Integer sendTimeout = 30000;
+    @UriParam(label = "monitoring")
     private boolean enableJmx;
-    @UriParam
+    @UriParam(label = "consumer")
     private boolean sessionSupport;
-    @UriParam
+    @UriParam(label = "cors")
     private boolean crossOriginFilterOn;
-    @UriParam
+    @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
-    @UriParam
+    @UriParam(label = "cors")
     private String allowedOrigins;
-    @UriParam
+    @UriParam(label = "cors")
     private String filterPath;
-    @UriParam
+    @UriParam(label = "consumer")
     private String staticResources;
-    @UriParam(defaultValue = "8192")
+    @UriParam(label = "advanced", defaultValue = "8192")
     private Integer bufferSize;
-    @UriParam(defaultValue = "300000")
+    @UriParam(label = "advanced", defaultValue = "300000")
     private Integer maxIdleTime;
-    @UriParam
+    @UriParam(label = "advanced")
     private Integer maxTextMessageSize;
     @UriParam(defaultValue = "-1")
     private Integer maxBinaryMessageSize;
-    @UriParam(defaultValue = "13")
+    @UriParam(label = "advanced", defaultValue = "13")
     private Integer minVersion;
 
     public WebsocketEndpoint(WebsocketComponent component, String uri, String resourceUri, Map<String, Object> parameters) {
         super(uri, component);
         this.resourceUri = resourceUri;
-        this.memoryStore = new MemoryWebsocketStore();
-        this.sync = new DefaultNodeSynchronization(memoryStore);
         this.component = component;
         try {
             this.uri = new URI(uri);
@@ -106,27 +108,23 @@ public class WebsocketEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new WebsocketProducer(this, memoryStore);
+        return new WebsocketProducer(this);
     }
 
     public void connect(WebsocketConsumer consumer) throws Exception {
         component.connect(consumer);
-        component.addServlet(sync, consumer, resourceUri);
     }
 
     public void disconnect(WebsocketConsumer consumer) throws Exception {
         component.disconnect(consumer);
-        // Servlet should be removed
     }
 
     public void connect(WebsocketProducer producer) throws Exception {
         component.connect(producer);
-        component.addServlet(sync, producer, resourceUri);
     }
 
     public void disconnect(WebsocketProducer producer) throws Exception {
         component.disconnect(producer);
-        // Servlet should be removed
     }
 
     @Override
@@ -190,6 +188,18 @@ public class WebsocketEndpoint extends DefaultEndpoint {
      */
     public void setSendToAll(Boolean sendToAll) {
         this.sendToAll = sendToAll;
+    }
+
+    public Integer getSendTimeout() {
+        return sendTimeout;
+    }
+
+    /**
+     * Timeout in millis when sending to a websocket channel.
+     * The default timeout is 30000 (30 seconds).
+     */
+    public void setSendTimeout(Integer sendTimeout) {
+        this.sendTimeout = sendTimeout;
     }
 
     public String getProtocol() {
@@ -338,17 +348,5 @@ public class WebsocketEndpoint extends DefaultEndpoint {
      */
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        ServiceHelper.startService(memoryStore);
-        super.doStart();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        ServiceHelper.stopService(memoryStore);
-        super.doStop();
     }
 }

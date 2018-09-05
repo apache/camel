@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Order {
     private long id;
     private String description;
-    private Map<Long, Product> products = new HashMap<Long, Product>();
+    private Map<Long, Product> products = new HashMap<>();
 
     public Order() {
         init();

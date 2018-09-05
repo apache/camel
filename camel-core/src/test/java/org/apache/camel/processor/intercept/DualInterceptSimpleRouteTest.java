@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.intercept;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class DualInterceptSimpleRouteTest extends ContextTestSupport {
 
+    @Test
     public void testDualIntercept() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);

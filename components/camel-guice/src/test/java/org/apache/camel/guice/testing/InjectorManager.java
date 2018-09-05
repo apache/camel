@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.guice.testing;
+
 import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -36,12 +37,11 @@ import org.apache.camel.guice.util.CloseableScope;
 
 /**
  * Used to manage the injectors for the various injection points
- * 
  */
 public class InjectorManager {
     private static final String NESTED_MODULE_CLASS = "TestModule";
 
-    private Map<Object, Injector> injectors = new ConcurrentHashMap<Object, Injector>();
+    private Map<Object, Injector> injectors = new ConcurrentHashMap<>();
     private AtomicInteger initializeCounter = new AtomicInteger(0);
     private CloseableScope testScope = new CloseableScope(TestScoped.class);
     private CloseableScope classScope = new CloseableScope(ClassScoped.class);
@@ -78,8 +78,7 @@ public class InjectorManager {
         if (injector != null) {
             classScope.close(injector);
         } else {
-            System.out.println("Could not close Class scope as there is no Injector for module type "
-                               + injector);
+            System.out.println("Could not close Class scope as there is no Injector for module type");
         }
 
         // NOTE that we don't have any good hooks yet to call complete()
@@ -97,14 +96,11 @@ public class InjectorManager {
         Class<? extends Object> testType = test.getClass();
         moduleType = getModuleForTestClass(testType);
 
-        Injector classInjector;
-        synchronized (injectors) {
-            classInjector = injectors.get(moduleType);
-            if (classInjector == null) {
-                classInjector = createInjector(moduleType);
-                Preconditions.checkNotNull(classInjector, "classInjector");
-                injectors.put(moduleType, classInjector);
-            }
+        Injector classInjector = injectors.get(moduleType);
+        if (classInjector == null) {
+            classInjector = createInjector(moduleType);
+            Preconditions.checkNotNull(classInjector, "classInjector");
+            injectors.put(moduleType, classInjector);
         }
         injectors.put(testType, classInjector);
 
@@ -147,7 +143,6 @@ public class InjectorManager {
         CloseErrors errors = new CloseErrorsImpl(this);
         Set<Entry<Object, Injector>> entries = injectors.entrySet();
         for (Entry<Object, Injector> entry : entries) {
-            // Object key = entry.getKey();
             Injector injector = entry.getValue();
             Injectors.close(injector, errors);
         }

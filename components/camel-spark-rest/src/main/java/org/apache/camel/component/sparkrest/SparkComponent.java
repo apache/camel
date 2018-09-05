@@ -26,21 +26,43 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
-import spark.Spark;
-import spark.SparkBase;
 
-public class SparkComponent extends UriEndpointComponent implements RestConsumerFactory {
+public class SparkComponent extends UriEndpointComponent implements RestConsumerFactory, RestApiConsumerFactory {
 
-    private final Pattern pattern = Pattern.compile("\\{(.*?)\\}");
+    private static final Pattern PATTERN = Pattern.compile("\\{(.*?)\\}");
 
-    private int port = SparkBase.SPARK_DEFAULT_PORT;
+    @Metadata(defaultValue = "4567")
+    private int port = 4567;
+    @Metadata(defaultValue = "0.0.0.0")
     private String ipAddress;
+
+    @Metadata(label = "advanced")
+    private int minThreads;
+    @Metadata(label = "advanced")
+    private int maxThreads;
+    @Metadata(label = "advanced")
+    private int timeOutMillis;
+
+    @Metadata(label = "security")
+    private String keystoreFile;
+    @Metadata(label = "security", secret = true)
+    private String keystorePassword;
+    @Metadata(label = "security")
+    private String truststoreFile;
+    @Metadata(label = "security", secret = true)
+    private String truststorePassword;
+
+    @Metadata(label = "advanced")
     private SparkConfiguration sparkConfiguration = new SparkConfiguration();
+    @Metadata(label = "advanced")
     private SparkBinding sparkBinding = new DefaultSparkBinding();
 
     public SparkComponent() {
@@ -71,6 +93,83 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
         this.ipAddress = ipAddress;
     }
 
+    public int getMinThreads() {
+        return minThreads;
+    }
+
+    /**
+     * Minimum number of threads in Spark thread-pool (shared globally)
+     */
+    public void setMinThreads(int minThreads) {
+        this.minThreads = minThreads;
+    }
+
+    public int getMaxThreads() {
+        return maxThreads;
+    }
+
+    /**
+     * Maximum number of threads in Spark thread-pool (shared globally)
+     */
+    public void setMaxThreads(int maxThreads) {
+        this.maxThreads = maxThreads;
+    }
+
+    public int getTimeOutMillis() {
+        return timeOutMillis;
+    }
+
+    /**
+     * Thread idle timeout in millis where threads that has been idle for a longer period will be terminated from the thread pool
+     */
+    public void setTimeOutMillis(int timeOutMillis) {
+        this.timeOutMillis = timeOutMillis;
+    }
+
+    public String getKeystoreFile() {
+        return keystoreFile;
+    }
+
+    /**
+     * Configures connection to be secure to use the keystore file
+     */
+    public void setKeystoreFile(String keystoreFile) {
+        this.keystoreFile = keystoreFile;
+    }
+
+    public String getKeystorePassword() {
+        return keystorePassword;
+    }
+
+    /**
+     * Configures connection to be secure to use the keystore password
+     */
+    public void setKeystorePassword(String keystorePassword) {
+        this.keystorePassword = keystorePassword;
+    }
+
+    public String getTruststoreFile() {
+        return truststoreFile;
+    }
+
+    /**
+     * Configures connection to be secure to use the truststore file
+     */
+    public void setTruststoreFile(String truststoreFile) {
+        this.truststoreFile = truststoreFile;
+    }
+
+    public String getTruststorePassword() {
+        return truststorePassword;
+    }
+
+    /**
+     * Configures connection to be secure to use the truststore password
+     */
+    public void setTruststorePassword(String truststorePassword) {
+        this.truststorePassword = truststorePassword;
+    }
+
     public SparkConfiguration getSparkConfiguration() {
         return sparkConfiguration;
     }
@@ -95,8 +194,11 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        SparkConfiguration config = getSparkConfiguration().copy();
+        setProperties(config, parameters);
+
         SparkEndpoint answer = new SparkEndpoint(uri, this);
-        answer.setSparkConfiguration(getSparkConfiguration());
+        answer.setSparkConfiguration(config);
         answer.setSparkBinding(getSparkBinding());
         setProperties(answer, parameters);
 
@@ -117,18 +219,38 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
     protected void doStart() throws Exception {
         super.doStart();
 
-        if (getPort() != SparkBase.SPARK_DEFAULT_PORT) {
-            SparkBase.setPort(getPort());
+        if (getPort() != 4567) {
+            CamelSpark.port(getPort());
         } else {
             // if no explicit port configured, then use port from rest configuration
             RestConfiguration config = getCamelContext().getRestConfiguration("spark-rest", true);
             int port = config.getPort();
             if (port > 0) {
-                SparkBase.setPort(port);
+                CamelSpark.port(port);
             }
         }
-        if (getIpAddress() != null) {
-            SparkBase.setIpAddress(getIpAddress());
+
+        String host = getIpAddress();
+        if (host != null) {
+            CamelSpark.ipAddress(host);
+        } else {
+            // if no explicit port configured, then use port from rest configuration
+            RestConfiguration config = getCamelContext().getRestConfiguration("spark-rest", true);
+            host = config.getHost();
+            if (ObjectHelper.isEmpty(host)) {
+                if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
+                    host = "0.0.0.0";
+                } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+                    host = HostUtils.getLocalHostName();
+                } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
+                    host = HostUtils.getLocalIp();
+                }
+            }
+            CamelSpark.ipAddress(host);
+        }
+
+        if (keystoreFile != null || truststoreFile != null) {
+            CamelSpark.security(keystoreFile, keystorePassword, truststoreFile, truststorePassword);
         }
 
         // configure component options
@@ -142,12 +264,24 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
     @Override
     protected void doShutdown() throws Exception {
         super.doShutdown();
-        SparkBase.stop();
+        CamelSpark.stop();
     }
 
     @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+                                   String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+        return doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, consumes, produces, configuration, parameters, false);
+    }
+
+    @Override
+    public Consumer createApiConsumer(CamelContext camelContext, Processor processor, String contextPath,
+                                      RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+        // reuse the createConsumer method we already have. The api need to use GET and match on uri prefix
+        return doCreateConsumer(camelContext, processor, "get", contextPath, null, null, null, configuration, parameters, true);
+    }
+
+    Consumer doCreateConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
+                              String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters, boolean api) throws Exception {
 
         String path = basePath;
         if (uriTemplate != null) {
@@ -160,43 +294,67 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
         }
         path = FileUtil.stripLeadingSeparator(path);
 
-        if (ObjectHelper.isNotEmpty(path)) {
-            // spark-rest uses :name syntax instead of {name} so we need to replace those
-            Matcher matcher = pattern.matcher(path);
-            path = matcher.replaceAll(":$1");
+        RestConfiguration config = configuration;
+        if (config == null) {
+            config = camelContext.getRestConfiguration("spark-rest", true);
         }
 
-        String uri = String.format("spark-rest:%s:%s", verb, path);
-
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         if (consumes != null) {
             map.put("accept", consumes);
         }
 
-        // build query string, and append any endpoint configuration properties
-        RestConfiguration config = getCamelContext().getRestConfiguration("spark-rest", true);
         // setup endpoint options
         if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
             map.putAll(config.getEndpointProperties());
         }
 
-        String query = URISupport.createQueryString(map);
+        if (ObjectHelper.isNotEmpty(path)) {
+            // spark-rest uses :name syntax instead of {name} so we need to replace those
+            Matcher matcher = PATTERN.matcher(path);
+            path = matcher.replaceAll(":$1");
+        }
 
-        String url = uri;
+        // prefix path with context-path if configured in rest-dsl configuration
+        String contextPath = config.getContextPath();
+        if (ObjectHelper.isNotEmpty(contextPath)) {
+            contextPath = FileUtil.stripTrailingSeparator(contextPath);
+            contextPath = FileUtil.stripLeadingSeparator(contextPath);
+            if (ObjectHelper.isNotEmpty(contextPath)) {
+                path = contextPath + "/" + path;
+            }
+        }
+
+        String url;
+        if (api) {
+            url = "spark-rest:%s:%s?matchOnUriPrefix=true";
+        } else {
+            url = "spark-rest:%s:%s";
+        }
+
+        url = String.format(url, verb, path);
+
+        String query = URISupport.createQueryString(map);
         if (!query.isEmpty()) {
             url = url + "?" + query;
         }
 
         // get the endpoint
         SparkEndpoint endpoint = camelContext.getEndpoint(url, SparkEndpoint.class);
-        setProperties(endpoint, parameters);
+        setProperties(camelContext, endpoint, parameters);
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
-        if (config != null && config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
-            setProperties(consumer, config.getConsumerProperties());
+        if (config.isEnableCORS()) {
+            // if CORS is enabled then configure that on the spark consumer
+            if (config.getConsumerProperties() == null) {
+                config.setConsumerProperties(new HashMap<String, Object>());
+            }
+            config.getConsumerProperties().put("enableCors", true);
         }
-
+        if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
+            setProperties(camelContext, consumer, config.getConsumerProperties());
+        }
         return consumer;
     }
 }

@@ -16,3 +16,11 @@
 #
 
 org.apache.camel.component.hl7.HL7Converter
+org.apache.camel.component.hl7.HL721Converter
+org.apache.camel.component.hl7.HL722Converter
+org.apache.camel.component.hl7.HL723Converter
+org.apache.camel.component.hl7.HL7231Converter
+org.apache.camel.component.hl7.HL724Converter
+org.apache.camel.component.hl7.HL725Converter
+org.apache.camel.component.hl7.HL7251Converter
+org.apache.camel.component.hl7.HL726Converter

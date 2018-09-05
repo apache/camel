@@ -18,6 +18,7 @@ package org.apache.camel.spi;
 
 import java.util.List;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.RouteNode;
 import org.apache.camel.model.ProcessorDefinition;
 
@@ -25,8 +26,9 @@ import org.apache.camel.model.ProcessorDefinition;
  * Tracing information used by {@link org.apache.camel.processor.interceptor.TraceInterceptor}
  * so we can trace the exact route path a given {@link org.apache.camel.Exchange} has been processed.
  *
- * @version 
+ * @deprecated use {@link Exchange#MESSAGE_HISTORY} instead.
  */
+@Deprecated
 public interface TracedRouteNodes {
 
     /**

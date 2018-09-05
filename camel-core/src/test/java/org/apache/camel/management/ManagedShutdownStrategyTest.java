@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import javax.management.MBeanServer;
@@ -28,6 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ManagedShutdownStrategyTest extends ManagementTestSupport {
 
+    @Test
     public void testManagedShutdownStrategy() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

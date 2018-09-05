@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,32 +30,30 @@ import org.apache.camel.processor.BodyInAggregatingStrategy;
  */
 public class AggregateExpressionTimeoutPerGroupTest extends ContextTestSupport {
 
+    @Test
     public void testAggregateExpressionPerGroupTimeout() throws Exception {
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("G+H+I", "D+E+F", "A+B+C");
 
-        // will use fallback timeout (5 sec)
+        // will use fallback timeout (1 sec)
         template.sendBodyAndHeader("direct:start", "A", "id", 789);
         template.sendBodyAndHeader("direct:start", "B", "id", 789);
         template.sendBodyAndHeader("direct:start", "C", "id", 789);
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        // will use 0.5 sec timeout
+        Map<String, Object> headers = new HashMap<>();
         headers.put("id", 123);
-        headers.put("timeout", 3000);
-
-        // will use 3 sec timeout
+        headers.put("timeout", 500);
         template.sendBodyAndHeaders("direct:start", "D", headers);
         template.sendBodyAndHeaders("direct:start", "E", headers);
         template.sendBodyAndHeaders("direct:start", "F", headers);
 
-        Map<String, Object> headers2 = new HashMap<String, Object>();
+        // will use 0.1 sec timeout
+        Map<String, Object> headers2 = new HashMap<>();
         headers2.put("id", 456);
-        headers2.put("timeout", 1000);
-
-        // will use 1 sec timeout
+        headers2.put("timeout", 100);
         template.sendBodyAndHeaders("direct:start", "G", headers2);
         template.sendBodyAndHeaders("direct:start", "H", headers2);
         template.sendBodyAndHeaders("direct:start", "I", headers2);
-
 
         assertMockEndpointsSatisfied();
     }
@@ -70,7 +70,7 @@ public class AggregateExpressionTimeoutPerGroupTest extends ContextTestSupport {
                     // and the timeout header contains the timeout in millis of inactivity them timeout and complete the aggregation
                     // and send it to mock:aggregated
                     .aggregate(header("id"), new BodyInAggregatingStrategy())
-                        .completionTimeout(header("timeout")).completionTimeout(5000)
+                        .completionTimeout(header("timeout")).completionTimeout(1000).completionTimeoutCheckerInterval(10)
                         .to("mock:aggregated");
                 // END SNIPPET: e1
             }

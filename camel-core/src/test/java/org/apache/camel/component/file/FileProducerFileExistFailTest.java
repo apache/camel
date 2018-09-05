@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -29,16 +32,19 @@ import org.apache.camel.util.FileUtil;
 public class FileProducerFileExistFailTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/file");
         super.setUp();
-        template.sendBodyAndHeader("file://target/file", "Hello World", Exchange.FILE_NAME, "hello.txt");
     }
 
+    @Test
     public void testFail() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
         mock.expectedFileExists("target/file/hello.txt", "Hello World");
+
+        template.sendBodyAndHeader("file://target/file", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         try {
             template.sendBodyAndHeader("file://target/file?fileExist=Fail", "Bye World", Exchange.FILE_NAME, "hello.txt");
@@ -56,7 +62,7 @@ public class FileProducerFileExistFailTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/file?noop=true&delay=1000").convertBodyTo(String.class).to("mock:result");
+                from("file://target/file?noop=true&initialDelay=0&delay=10").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

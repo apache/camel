@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 
 /**
  * The <a href="http://camel.apache.org/validation.html">Validator Component</a> is for validating XML against a schema
@@ -28,6 +29,9 @@ import org.apache.camel.impl.UriEndpointComponent;
  */
 public class ValidatorComponent extends UriEndpointComponent {
 
+    @Metadata(label = "advanced", description = "To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI")
+    private ValidatorResourceResolverFactory resourceResolverFactory;
+    
     public ValidatorComponent() {
         this(ValidatorEndpoint.class);
     }
@@ -38,8 +42,30 @@ public class ValidatorComponent extends UriEndpointComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ValidatorEndpoint endpoint = new ValidatorEndpoint(uri, this, remaining);
+        // lookup custom resolver to use
+        ValidatorResourceResolverFactory resolverFactory = resolveAndRemoveReferenceParameter(parameters, "resourceResolverFactory", ValidatorResourceResolverFactory.class);
+        if (resolverFactory == null) {
+            // not in endpoint then use component specific resource resolver factory
+            resolverFactory = getResourceResolverFactory();
+        }
+        if (resolverFactory == null) {
+            // fallback to use a Camel default resource resolver factory
+            resolverFactory = new DefaultValidatorResourceResolverFactory();
+        }
+        endpoint.setResourceResolverFactory(resolverFactory);
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    public ValidatorResourceResolverFactory getResourceResolverFactory() {
+        return resourceResolverFactory;
+    }
+
+    /**
+     * To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI
+     */
+    public void setResourceResolverFactory(ValidatorResourceResolverFactory resourceResolverFactory) {
+        this.resourceResolverFactory = resourceResolverFactory;
     }
 
 }

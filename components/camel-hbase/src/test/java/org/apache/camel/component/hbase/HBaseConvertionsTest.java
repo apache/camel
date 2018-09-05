@@ -23,9 +23,12 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.IOHelper;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.client.Connection;
+import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.junit.Test;
 
@@ -40,28 +43,29 @@ public class HBaseConvertionsTest extends CamelHBaseTestSupport {
     public void testPutMultiRows() throws Exception {
         if (systemReady) {
             ProducerTemplate template = context.createProducerTemplate();
-            Map<String, Object> headers = new HashMap<String, Object>();
-            headers.put(HbaseAttribute.HBASE_ROW_ID.asHeader(), key[0]);
-            headers.put(HbaseAttribute.HBASE_FAMILY.asHeader(), INFO_FAMILY);
-            headers.put(HbaseAttribute.HBASE_QUALIFIER.asHeader(), column[0]);
-            headers.put(HbaseAttribute.HBASE_VALUE.asHeader(), body[0]);
+            Map<String, Object> headers = new HashMap<>();
+            headers.put(HBaseAttribute.HBASE_ROW_ID.asHeader(), key[0]);
+            headers.put(HBaseAttribute.HBASE_FAMILY.asHeader(), INFO_FAMILY);
+            headers.put(HBaseAttribute.HBASE_QUALIFIER.asHeader(), column[0]);
+            headers.put(HBaseAttribute.HBASE_VALUE.asHeader(), body[0]);
 
-            headers.put(HbaseAttribute.HBASE_ROW_ID.asHeader(2), key[1]);
-            headers.put(HbaseAttribute.HBASE_FAMILY.asHeader(2), INFO_FAMILY);
-            headers.put(HbaseAttribute.HBASE_QUALIFIER.asHeader(2), column[0]);
-            headers.put(HbaseAttribute.HBASE_VALUE.asHeader(2), body[1]);
+            headers.put(HBaseAttribute.HBASE_ROW_ID.asHeader(2), key[1]);
+            headers.put(HBaseAttribute.HBASE_FAMILY.asHeader(2), INFO_FAMILY);
+            headers.put(HBaseAttribute.HBASE_QUALIFIER.asHeader(2), column[0]);
+            headers.put(HBaseAttribute.HBASE_VALUE.asHeader(2), body[1]);
 
-            headers.put(HbaseAttribute.HBASE_ROW_ID.asHeader(3), key[2]);
-            headers.put(HbaseAttribute.HBASE_FAMILY.asHeader(3), INFO_FAMILY);
-            headers.put(HbaseAttribute.HBASE_QUALIFIER.asHeader(3), column[0]);
-            headers.put(HbaseAttribute.HBASE_VALUE.asHeader(3), body[2]);
+            headers.put(HBaseAttribute.HBASE_ROW_ID.asHeader(3), key[2]);
+            headers.put(HBaseAttribute.HBASE_FAMILY.asHeader(3), INFO_FAMILY);
+            headers.put(HBaseAttribute.HBASE_QUALIFIER.asHeader(3), column[0]);
+            headers.put(HBaseAttribute.HBASE_VALUE.asHeader(3), body[2]);
 
             headers.put(HBaseConstants.OPERATION, HBaseConstants.PUT);
 
             template.sendBodyAndHeaders("direct:start", null, headers);
 
             Configuration configuration = hbaseUtil.getHBaseAdmin().getConfiguration();
-            HTable bar = new HTable(configuration, PERSON_TABLE.getBytes());
+            Connection conn = ConnectionFactory.createConnection(configuration);
+            Table bar = conn.getTable(TableName.valueOf(PERSON_TABLE));
             Get get = new Get(Bytes.toBytes((Integer) key[0]));
 
             //Check row 1
@@ -99,9 +103,8 @@ public class HBaseConvertionsTest extends CamelHBaseTestSupport {
             public void configure() {
                 from("direct:start")
                     .to("hbase://" + PERSON_TABLE);
-
                 from("direct:scan")
-                    .to("hbase://" + PERSON_TABLE + "?operation=" + HBaseConstants.SCAN + "&maxResults=2&family=family1&qualifier=column1");
+                    .to("hbase://" + PERSON_TABLE + "?operation=" + HBaseConstants.SCAN + "&maxResults=2&row.family=family1&row.qualifier=column1");
             }
         };
     }

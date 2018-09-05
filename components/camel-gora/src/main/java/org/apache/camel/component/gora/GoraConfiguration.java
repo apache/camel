@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.gora;
 
 import com.google.common.base.Strings;
@@ -27,150 +26,62 @@ import org.apache.hadoop.conf.Configuration;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
-
 /**
  * Gora Configuration.
- *
  */
 @UriParams
 public class GoraConfiguration {
 
     @UriPath @Metadata(required = "true")
     private String name;
-
-    /**
-     * key type
-     */
     @UriParam
     private String keyClass;
-
-    /**
-     * configuration
-     */
-    @UriParam
-    private Configuration hadoopConfiguration;
-
-    /**
-     * value type
-     */
     @UriParam
     private String valueClass;
-
-    /**
-     *  dataStore type
-     */
     @UriParam
     private String dataStoreClass;
+    @UriParam(label = "advanced")
+    private Configuration hadoopConfiguration;
 
-    /** Consumer only properties! */
-
-    /**
-     *  Gora Query Start Time attribute
-     */
-    @UriParam
+    @UriParam(label = "consumer")
     private long startTime;
-
-    /**
-     * Gora Query End Time attribute
-     */
-    @UriParam
+    @UriParam(label = "consumer")
     private long endTime;
-
-    /**
-     * Gora Query Time Range From attribute
-     */
-    @UriParam
+    @UriParam(label = "consumer")
     private long timeRangeFrom;
-
-    /**
-     * Gora Query Key Range To attribute
-     */
-    @UriParam
+    @UriParam(label = "consumer")
     private long timeRangeTo;
-
-    /**
-     * Gora Query Limit attribute
-     */
-    @UriParam
+    @UriParam(label = "consumer")
     private long limit;
-
-    /**
-     * Gora Query Timestamp attribute
-     */
-    @UriParam
+    @UriParam(label = "consumer")
     private long timestamp;
-
-    /**
-     * Gora Query Start Key attribute
-     */
-    @UriParam
+    @UriParam(label = "consumer")
     private Object startKey;
-
-    /**
-     * Gora Query End Key attribute
-     */
-    @UriParam
+    @UriParam(label = "consumer")
     private Object endKey;
-
-    /**
-     * Gora Query Key Range From attribute
-     */
-    @UriParam
+    @UriParam(label = "consumer")
     private Object keyRangeFrom;
-
-    /**
-     * Gora Query Key Range To attribute
-     */
-    @UriParam
+    @UriParam(label = "consumer")
     private Object keyRangeTo;
-
-    /**
-     * Gora Query Fields attribute
-     */
-    @UriParam
+    @UriParam(label = "consumer")
     private Strings fields;
-
-    /**
-     * Concurrent Consumers
-     *
-     * <b>NOTE:<b/> used only by consumer
-     */
-    @UriParam(defaultValue = "1")
+    @UriParam(label = "consumer", defaultValue = "1")
     private int concurrentConsumers = 1;
-
-    /**
-     * Flush on every operation
-     *
-     * <b>NOTE:<b/> used only by producer
-     */
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "producer", defaultValue = "true")
     private boolean flushOnEveryOperation = true;
 
-    /**
-     * Default Constructor
-     */
     public GoraConfiguration() {
-
         this.hadoopConfiguration = new Configuration();
     }
 
-    /**
-     * Get type of the key (i.e clients)
-     *
-     * @return key class
-     */
     public String getKeyClass() {
-
         return keyClass;
     }
 
     /**
-     * Set type class of the key
-     *
-     * @param keyClass
+     * The type class of the key
      */
     public void setKeyClass(final String keyClass) {
-
         if (isNullOrEmpty(keyClass)) {
             throw new IllegalArgumentException("Key class could not be null or empty!");
         }
@@ -178,318 +89,185 @@ public class GoraConfiguration {
         this.keyClass = keyClass;
     }
 
-    /**
-     * Get type of the value
-     *
-     * @return
-     */
     public String getValueClass() {
-
         return valueClass;
     }
 
     /**
-     * Set type of the value
-     *
-     * @param valueClass
+     * The type of the value
      */
     public void setValueClass(final String valueClass) {
-
         if (isNullOrEmpty(valueClass)) {
             throw new IllegalArgumentException("Value class  could not be null or empty!");
         }
-
         this.valueClass = valueClass;
     }
 
-    /**
-     * Get type of the dataStore
-     *
-     * @return  DataStore class
-     */
     public String getDataStoreClass() {
-
         return dataStoreClass;
     }
 
     /**
-     * Set type of the dataStore
-     *
-     * @param dataStoreClass
+     * The type of the dataStore
      */
     public void setDataStoreClass(String dataStoreClass) {
-
-
         if (isNullOrEmpty(dataStoreClass)) {
             throw new IllegalArgumentException("DataStore class could not be null or empty!");
         }
-
         this.dataStoreClass = dataStoreClass;
     }
 
-    /**
-     * Get Hadoop Configuration
-     *
-     * @return
-     */
     public Configuration getHadoopConfiguration() {
-
         return hadoopConfiguration;
     }
 
-    /**
-     * Get Start Time
-     *
-     * @return
-     */
     public long getStartTime() {
-
         return startTime;
     }
 
     /**
-     * Set Start Time
-     *
-     * @return
+     * The Start Time
      */
     public void setStartTime(long startTime) {
-
         this.startTime = startTime;
     }
 
-    /**
-     * Get End Time
-     *
-     * @return
-     */
     public long getEndTime() {
-
         return endTime;
     }
 
     /**
-     * Set End Time
-     *
-     * @return
+     * The End Time
      */
     public void setEndTime(long endTime) {
-
         this.endTime = endTime;
     }
 
-    /**
-     * Get Time Range From
-     *
-     * @return
-     */
     public long getTimeRangeFrom() {
-
         return timeRangeFrom;
     }
 
     /**
-     * Set Time Range From
-     *
-     * @return
+     * The Time Range From
      */
     public void setTimeRangeFrom(long timeRangeFrom) {
-
         this.timeRangeFrom = timeRangeFrom;
     }
 
-    /**
-     * Get Time Range To
-     *
-     * @return
-     */
     public long getTimeRangeTo() {
-
         return timeRangeTo;
     }
 
     /**
-     * Set Time Range To
-     *
-     * @return
+     * The Time Range To
      */
     public void setTimeRangeTo(long timeRangeTo) {
-
         this.timeRangeTo = timeRangeTo;
     }
 
-    /**
-     * Get Limit
-     *
-     * @return
-     */
     public long getLimit() {
-
         return limit;
     }
 
     /**
-     * Set Limit
-     *
-     * @param limit
+     * The Limit
      */
     public void setLimit(long limit) {
         this.limit = limit;
     }
 
-    /**
-     * Get Timestamp
-     *
-     * @return
-     */
     public long getTimestamp() {
-
         return timestamp;
     }
 
     /**
-     * Set Timestamp
-     *
-     * @param timestamp
+     * The Timestamp
      */
     public void setTimestamp(long timestamp) {
-
         this.timestamp = timestamp;
     }
 
-    /**
-     * Get Start Key
-     *
-     * @return
-     */
     public Object getStartKey() {
         return startKey;
     }
 
     /**
-     * Set Start Key
-     *
-     * @param startKey
+     * The Start Key
      */
     public void setStartKey(Object startKey) {
         this.startKey = startKey;
     }
 
-    /**
-     * Get End Key
-     *
-     * @return
-     */
     public Object getEndKey() {
         return endKey;
     }
 
     /**
-     * Set End Key
-     *
-     * @param endKey
+     * The End Key
      */
     public void setEndKey(Object endKey) {
         this.endKey = endKey;
     }
 
-    /**
-     * Get Key Range From
-     * @return
-     */
     public Object getKeyRangeFrom() {
         return keyRangeFrom;
     }
 
     /**
-     * Set Key Range From
-     *
-     * @param keyRangeFrom
+     * The Key Range From
      */
     public void setKeyRangeFrom(Object keyRangeFrom) {
         this.keyRangeFrom = keyRangeFrom;
     }
 
-    /**
-     * Get Key Range To
-     * @return
-     */
     public Object getKeyRangeTo() {
         return keyRangeTo;
     }
 
     /**
-     * Set Key Range To
-     *
-     * @param keyRangeTo
+     * The Key Range To
      */
     public void setKeyRangeTo(Object keyRangeTo) {
         this.keyRangeTo = keyRangeTo;
     }
 
-    /**
-     * Get Fields
-     *
-     * @return
-     */
     public Strings getFields() {
-
         return fields;
     }
 
     /**
-     * Set Fields
-     *
-     * @param fields
+     * The Fields
      */
     public void setFields(Strings fields) {
-
         this.fields = fields;
     }
 
-    /**
-     * Get Concurrent Consumers
-     * @return
-     */
     public int getConcurrentConsumers() {
-
         return concurrentConsumers;
     }
 
     /**
-     * Set Concurrent Consumers
-     *
-     * @param concurrentConsumers
+     * Number of concurrent consumers
      */
     public void setConcurrentConsumers(int concurrentConsumers) {
-
         this.concurrentConsumers = concurrentConsumers;
     }
 
-    /**
-     * Get flush on every operation
-     *
-     * @return
-     */
     public boolean isFlushOnEveryOperation() {
         return flushOnEveryOperation;
     }
 
     /**
-     * Set flush on every operation
-     *
-     * @param flushOnEveryOperation
+     * Flush on every operation
      */
     public void setFlushOnEveryOperation(boolean flushOnEveryOperation) {
         this.flushOnEveryOperation = flushOnEveryOperation;
     }
 
     /**
-     * Set Hadoop Configuration
-     *
-     * @param hadoopConfiguration
+     * Hadoop Configuration
      */
     public void setHadoopConfiguration(Configuration hadoopConfiguration) {
-
         checkNotNull(hadoopConfiguration, "Hadoop Configuration could not be null!");
         this.hadoopConfiguration = hadoopConfiguration;
     }

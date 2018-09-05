@@ -17,7 +17,6 @@
 package org.apache.camel.component.quartz;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 public class BaseQuartzTest extends CamelTestSupport {

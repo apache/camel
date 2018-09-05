@@ -30,11 +30,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
-import org.apache.camel.SuspendableService;
+import org.apache.camel.Suspendable;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.support.EmptyAsyncCallback;
 import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
@@ -52,7 +53,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, ShutdownAware, SuspendableService {
+public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, ShutdownAware, Suspendable {
     private static final Logger LOG = LoggerFactory.getLogger(SedaConsumer.class);
 
     private final AtomicInteger taskCount = new AtomicInteger();
@@ -109,7 +110,14 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
     }
 
     @Override
-    public void prepareShutdown(boolean forced) {
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
+        // if we are suspending then we want to keep the thread running but just not route the exchange
+        // this logic is only when we stop or shutdown the consumer
+        if (suspendOnly) {
+            LOG.debug("Skip preparing to shutdown as consumer is being suspended");
+            return;
+        }
+
         // signal we want to shutdown
         shutdownPending = true;
         forceShutdown = forced;
@@ -147,13 +155,15 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
             doRun();
         } finally {
             taskCount.decrementAndGet();
+            latch.countDown();
+            LOG.debug("Ending this polling consumer thread, there are still {} consumer threads left.", latch.getCount());
         }
     }
 
     protected void doRun() {
         BlockingQueue<Exchange> queue = endpoint.getQueue();
         // loop while we are allowed, or if we are stopping loop until the queue is empty
-        while (queue != null && (isRunAllowed())) {
+        while (queue != null && isRunAllowed()) {
 
             // do not poll during CamelContext is starting, as we should only poll when CamelContext is fully started
             if (getEndpoint().getCamelContext().getStatus().isStarting()) {
@@ -167,8 +177,8 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
                 continue;
             }
 
-            // do not poll if we are suspended
-            if (isSuspending() || isSuspended()) {
+            // do not poll if we are suspended or starting again after resuming
+            if (isSuspending() || isSuspended() || isStarting()) {
                 if (shutdownPending && queue.isEmpty()) {
                     LOG.trace("Consumer is suspended and shutdown is pending, so this consumer thread is breaking out because the task queue is empty.");
                     // we want to shutdown so break out if there queue is empty
@@ -228,9 +238,6 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
                 }
             }
         }
-
-        latch.countDown();
-        LOG.debug("Ending this polling consumer thread, there are still {} consumer threads left.", latch.getCount());
     }
 
     /**
@@ -288,11 +295,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
             });
         } else {
             // use the regular processor and use the asynchronous routing engine to support it
-            processor.process(exchange, new AsyncCallback() {
-                public void done(boolean doneSync) {
-                    // noop
-                }
-            });
+            processor.process(exchange, EmptyAsyncCallback.get());
         }
     }
 
@@ -312,7 +315,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
 
     @Override
     protected void doResume() throws Exception {
-        doStart();
+        endpoint.onStarted(this);
     }
 
     protected void doStop() throws Exception {

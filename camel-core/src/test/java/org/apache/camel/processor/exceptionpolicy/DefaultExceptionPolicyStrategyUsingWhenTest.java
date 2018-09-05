@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.exceptionpolicy;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -38,6 +40,7 @@ public class DefaultExceptionPolicyStrategyUsingWhenTest extends ContextTestSupp
         }
     }
 
+    @Test
     public void testNoWhen() throws Exception {
         MockEndpoint mock = getMockEndpoint(ERROR_QUEUE);
         mock.expectedMessageCount(1);
@@ -52,6 +55,7 @@ public class DefaultExceptionPolicyStrategyUsingWhenTest extends ContextTestSupp
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testWithWhen() throws Exception {
         MockEndpoint mock = getMockEndpoint(ERROR_USER_QUEUE);
         mock.expectedMessageCount(1);
@@ -76,6 +80,8 @@ public class DefaultExceptionPolicyStrategyUsingWhenTest extends ContextTestSupp
                 // there is a header[user] on the exchange that is not null
                 onException(MyUserException.class).onWhen(header("user").isNotNull())
                     .maximumRedeliveries(1)
+                    // setting delay to zero is just to make unit testing faster
+                    .redeliveryDelay(0)
                     .to(ERROR_USER_QUEUE);
 
                 // here we define onException to catch MyUserException as a kind
@@ -85,6 +91,8 @@ public class DefaultExceptionPolicyStrategyUsingWhenTest extends ContextTestSupp
                 // have been defined
                 onException(MyUserException.class)
                     .maximumRedeliveries(2)
+                    // setting delay to zero is just to make unit testing faster
+                    .redeliveryDelay(0)
                     .to(ERROR_QUEUE);
                 // END SNIPPET e1
 

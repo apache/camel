@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.util.HashMap;
@@ -29,7 +32,8 @@ import org.apache.camel.Processor;
 public class NewFileProduceTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/producefile");
         super.setUp();
     }
@@ -39,6 +43,7 @@ public class NewFileProduceTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testNewFileProducer() throws Exception {
         FileComponent comp = new FileComponent();
         comp.setCamelContext(context);

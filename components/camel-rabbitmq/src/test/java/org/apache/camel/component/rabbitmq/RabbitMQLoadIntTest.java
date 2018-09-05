@@ -29,14 +29,13 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Integration test to check that RabbitMQ Endpoint is able handle heavy load using multiple producers and
  * consumers
  */
-public class RabbitMQLoadIntTest extends CamelTestSupport {
+public class RabbitMQLoadIntTest extends AbstractRabbitMQIntTest {
     public static final String ROUTING_KEY = "rk4";
     private static final int PRODUCER_COUNT = 10;
     private static final int CONSUMER_COUNT = 10;
@@ -79,7 +78,7 @@ public class RabbitMQLoadIntTest extends CamelTestSupport {
     public void testSendEndReceive() throws Exception {
         // Start producers
         ExecutorService executorService = Executors.newFixedThreadPool(PRODUCER_COUNT);
-        List<Future> futures = new ArrayList<Future>(PRODUCER_COUNT);
+        List<Future<?>> futures = new ArrayList<>(PRODUCER_COUNT);
         for (int i = 0; i < PRODUCER_COUNT; i++) {
             futures.add(executorService.submit(new Runnable() {
                 @Override
@@ -92,7 +91,7 @@ public class RabbitMQLoadIntTest extends CamelTestSupport {
             }));
         }
         // Wait for producers to end
-        for (Future future : futures) {
+        for (Future<?> future : futures) {
             future.get(5, TimeUnit.SECONDS);
         }
         // Check message count

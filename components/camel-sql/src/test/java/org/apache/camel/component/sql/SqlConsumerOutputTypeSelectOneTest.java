@@ -61,7 +61,7 @@ public class SqlConsumerOutputTypeSelectOneTest {
         camel1.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sql:select * from projects where id=3?outputType=SelectOne&outputClass=org.apache.camel.component.sql.ProjectModel")
+                from("sql:select * from projects where id=3?outputType=SelectOne&outputClass=org.apache.camel.component.sql.ProjectModel&consumer.initialDelay=0&consumer.delay=50")
                         .to("mock:result");
             }
         });
@@ -85,7 +85,7 @@ public class SqlConsumerOutputTypeSelectOneTest {
         camel1.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sql:select * from projects where id=3?outputType=SelectOne")
+                from("sql:select * from projects where id=3?outputType=SelectOne&consumer.initialDelay=0&consumer.delay=50")
                         .to("mock:result");
             }
         });
@@ -109,7 +109,7 @@ public class SqlConsumerOutputTypeSelectOneTest {
         camel1.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sql:select project from projects where id=3?outputType=SelectOne")
+                from("sql:select project from projects where id=3?outputType=SelectOne&consumer.initialDelay=0&consumer.delay=50")
                         .to("mock:result");
             }
         });
@@ -131,7 +131,7 @@ public class SqlConsumerOutputTypeSelectOneTest {
         camel1.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sql:select count(*) from projects?outputType=SelectOne")
+                from("sql:select count(*) from projects?outputType=SelectOne&consumer.initialDelay=0&consumer.delay=50")
                         .to("mock:result");
             }
         });

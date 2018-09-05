@@ -41,7 +41,7 @@ public class DdbComponentIntegrationTest extends CamelTestSupport {
 
     @Test
     public void select() {
-        final Map<String, AttributeValue> attributeMap = new HashMap<String, AttributeValue>();
+        final Map<String, AttributeValue> attributeMap = new HashMap<>();
         AttributeValue attributeValue = new AttributeValue("test value");
         attributeMap.put("name", attributeValue);
 

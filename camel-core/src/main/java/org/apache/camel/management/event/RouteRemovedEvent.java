@@ -16,29 +16,21 @@
  */
 package org.apache.camel.management.event;
 
-import java.util.EventObject;
-
 import org.apache.camel.Route;
 
 /**
  * @version 
  */
-public class RouteRemovedEvent extends EventObject {
+public class RouteRemovedEvent extends AbstractRouteEvent {
 
     private static final long serialVersionUID = 7966471393751298719L;
-    private final Route route;
 
     public RouteRemovedEvent(Route source) {
         super(source);
-        this.route = source;
-    }
-
-    public Route getRoute() {
-        return route;
     }
 
     @Override
     public String toString() {
-        return "Removed route: " + route.getId();
+        return "Removed route: " + getRoute().getId();
     }
 }

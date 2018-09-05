@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27,6 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class SplitterCorrelationIdIssueTest extends ContextTestSupport {
 
+    @Test
     public void testSplitCorrelationId() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedMessageCount(3);

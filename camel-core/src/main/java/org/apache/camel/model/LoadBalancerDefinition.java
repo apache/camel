@@ -16,16 +16,19 @@
  */
 package org.apache.camel.model;
 
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.namespace.QName;
 
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Balances message processing among a number of nodes
@@ -33,11 +36,14 @@ import org.apache.camel.util.ObjectHelper;
 @Metadata(label = "eip,routing")
 @XmlType(name = "loadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LoadBalancerDefinition extends IdentifiedType {
+public class LoadBalancerDefinition extends IdentifiedType implements OtherAttributesAware {
     @XmlTransient
     private LoadBalancer loadBalancer;
     @XmlTransient
     private String loadBalancerTypeName;
+    // use xs:any to support optional property placeholders
+    @XmlAnyAttribute
+    private Map<QName, Object> otherAttributes;
 
     public LoadBalancerDefinition() {
     }
@@ -82,11 +88,21 @@ public class LoadBalancerDefinition extends IdentifiedType {
         this.loadBalancer = loadBalancer;
     }
 
+    @Override
+    public Map<QName, Object> getOtherAttributes() {
+        return otherAttributes;
+    }
+
+    @Override
+    public void setOtherAttributes(Map<QName, Object> otherAttributes) {
+        this.otherAttributes = otherAttributes;
+    }
+
     /**
      * Factory method to create the load balancer from the loadBalancerTypeName
      */
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
-        ObjectHelper.notEmpty(loadBalancerTypeName, "loadBalancerTypeName", this);
+        StringHelper.notEmpty(loadBalancerTypeName, "loadBalancerTypeName", this);
 
         LoadBalancer answer = null;
         if (loadBalancerTypeName != null) {

@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestsDefinition;
 
 /**
  * Model level interface for the {@link CamelContext}
@@ -53,6 +54,15 @@ public interface ModelCamelContext extends CamelContext {
      */
     RoutesDefinition loadRoutesDefinition(InputStream is) throws Exception;
 
+    /**
+     * Loads a collection of rest definitions from the given {@link java.io.InputStream}.
+     *
+     * @param is input stream with the rest(s) definition to add
+     * @return the rest definitions
+     * @throws Exception if the rest definitions could not be loaded for whatever reason
+     */
+    RestsDefinition loadRestsDefinition(InputStream is) throws Exception;
+    
     /**
      * Adds a collection of route definitions to the context
      * <p/>

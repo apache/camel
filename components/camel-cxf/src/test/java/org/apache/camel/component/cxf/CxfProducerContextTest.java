@@ -67,12 +67,12 @@ public class CxfProducerContextTest extends CxfProducerTest {
     protected Exchange sendSimpleMessage() {
         Exchange exchange = template.send(getSimpleEndpointUri(), new Processor() {
             public void process(final Exchange exchange) {
-                final List<String> params = new ArrayList<String>();
+                final List<String> params = new ArrayList<>();
                 params.add(TEST_MESSAGE);
-                Map<String, Object> requestContext = new HashMap<String, Object>();
+                Map<String, Object> requestContext = new HashMap<>();
                 requestContext.put(Message.ENDPOINT_ADDRESS, getSimpleServerAddress());
                 exchange.getIn().setBody(params);
-                exchange.getIn().setHeader(Client.REQUEST_CONTEXT , requestContext);
+                exchange.getIn().setHeader(Client.REQUEST_CONTEXT, requestContext);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, ECHO_OPERATION);
                 exchange.getIn().setHeader(Exchange.FILE_NAME, "testFile");
                 exchange.getIn().setHeader("requestObject", new DefaultCxfBinding());
@@ -87,12 +87,12 @@ public class CxfProducerContextTest extends CxfProducerTest {
     protected Exchange sendJaxWsMessage() {
         Exchange exchange = template.send(getJaxwsEndpointUri(), new Processor() {
             public void process(final Exchange exchange) {
-                final List<String> params = new ArrayList<String>();
+                final List<String> params = new ArrayList<>();
                 params.add(TEST_MESSAGE);
-                Map<String, Object> requestContext = new HashMap<String, Object>();
+                Map<String, Object> requestContext = new HashMap<>();
                 requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getJaxWsServerAddress());
                 exchange.getIn().setBody(params);
-                exchange.getIn().setHeader(Client.REQUEST_CONTEXT , requestContext);
+                exchange.getIn().setHeader(Client.REQUEST_CONTEXT, requestContext);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, GREET_ME_OPERATION);
                 exchange.getIn().setHeader(Exchange.FILE_NAME, "testFile");
             }

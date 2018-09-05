@@ -28,6 +28,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
+import static org.mockito.ArgumentMatchers.any;
+
 /**
  * Validates Authentication Request headers are parsed properly
  */
@@ -57,7 +59,7 @@ public class AuthCmdHeaderTest extends BaseDockerHeaderTest<AuthCmd> {
         template.sendBodyAndHeaders("direct:in", "", headers);
 
         Mockito.verify(dockerClient, Mockito.times(1)).authCmd();
-        Mockito.verify(mockObject, Mockito.times(1)).withAuthConfig((AuthConfig) Mockito.anyObject());
+        Mockito.verify(mockObject, Mockito.times(1)).withAuthConfig((AuthConfig) any());
 
     }
 

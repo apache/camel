@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.async;
 
+import org.junit.Test;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
@@ -33,6 +35,7 @@ public class AsyncEndpointDelayUoWTest extends ContextTestSupport {
     private static String afterThreadName;
     private MySynchronization sync = new MySynchronization();
 
+    @Test
     public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:after").expectedBodiesReceived("Bye Camel");
@@ -44,7 +47,7 @@ public class AsyncEndpointDelayUoWTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // wait a bit to ensure UoW has been run
-        Thread.sleep(1000);
+        assertTrue(oneExchangeDone.matchesMockWaitTime());
 
         assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
         assertEquals(1, sync.isOnComplete());

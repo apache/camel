@@ -125,7 +125,6 @@ public class JmsBlockedAsyncRoutingEngineTest extends CamelTestSupport {
         };
     }
     
-    @SuppressWarnings("unchecked")
     private class DelayerBrokerPlugin extends BrokerPluginSupport {
         int i;
 

@@ -63,7 +63,7 @@ public class ApnsConsumer extends ScheduledPollConsumer {
 
         Map<String, Date> inactiveDeviceMap = ae.getApnsService().getInactiveDevices();
 
-        List<InactiveDevice> inactiveDeviceList = new ArrayList<InactiveDevice>();
+        List<InactiveDevice> inactiveDeviceList = new ArrayList<>();
         for (Entry<String, Date> inactiveDeviceEntry : inactiveDeviceMap.entrySet()) {
             String deviceToken = inactiveDeviceEntry.getKey();
             Date date = inactiveDeviceEntry.getValue();

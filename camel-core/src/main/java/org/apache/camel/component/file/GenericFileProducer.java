@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -25,7 +26,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StringHelper;
@@ -40,14 +41,14 @@ public class GenericFileProducer<T> extends DefaultProducer {
     protected final GenericFileEndpoint<T> endpoint;
     protected GenericFileOperations<T> operations;
     // assume writing to 100 different files concurrently at most for the same file producer
-    private final LRUCache<String, Lock> locks = new LRUCache<String, Lock>(100);
+    private final Map<String, Lock> locks = LRUCacheFactory.newLRUCache(100);
 
     protected GenericFileProducer(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations) {
         super(endpoint);
         this.endpoint = endpoint;
         this.operations = operations;
     }
-    
+
     public String getFileSeparator() {
         return File.separator;
     }
@@ -116,7 +117,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
             boolean writeAsTempAndRename = ObjectHelper.isNotEmpty(endpoint.getTempFileName());
             String tempTarget = null;
             // remember if target exists to avoid checking twice
-            Boolean targetExists = null;
+            Boolean targetExists;
             if (writeAsTempAndRename) {
                 // compute temporary name with the temp prefix
                 tempTarget = createTempFileName(exchange, target);
@@ -141,6 +142,9 @@ public class GenericFileProducer<T> extends DefaultProducer {
                             return;
                         } else if (endpoint.getFileExist() == GenericFileExist.Fail) {
                             throw new GenericFileOperationFailedException("File already exist: " + target + ". Cannot write new file.");
+                        } else if (endpoint.getFileExist() == GenericFileExist.Move) {
+                            // move any existing file first
+                            doMoveExistingFile(target);
                         } else if (endpoint.isEagerDeleteTargetFile() && endpoint.getFileExist() == GenericFileExist.Override) {
                             // we override the target so we do this by deleting it so the temp file can be renamed later
                             // with success as the existing target file have been deleted
@@ -153,7 +157,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
                 }
 
                 // delete any pre existing temp file
-                if (operations.existsFile(tempTarget)) {
+                if (endpoint.getFileExist() != GenericFileExist.TryRename && operations.existsFile(tempTarget)) {
                     log.trace("Deleting existing temp file: {}", tempTarget);
                     if (!operations.deleteFile(tempTarget)) {
                         throw new GenericFileOperationFailedException("Cannot delete file: " + tempTarget);
@@ -204,7 +208,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
             // any done file to write?
             if (endpoint.getDoneFileName() != null) {
                 String doneFileName = endpoint.createDoneFileName(target);
-                ObjectHelper.notEmpty(doneFileName, "doneFileName", endpoint);
+                StringHelper.notEmpty(doneFileName, "doneFileName", endpoint);
 
                 // create empty exchange with empty body to write as the done file
                 Exchange empty = new DefaultExchange(exchange);
@@ -227,7 +231,31 @@ public class GenericFileProducer<T> extends DefaultProducer {
             handleFailedWrite(exchange, e);
         }
 
-        postWriteCheck();
+        postWriteCheck(exchange);
+    }
+
+    private void doMoveExistingFile(String fileName) throws GenericFileOperationFailedException {
+        // need to evaluate using a dummy and simulate the file first, to have access to all the file attributes
+        // create a dummy exchange as Exchange is needed for expression evaluation
+        // we support only the following 3 tokens.
+        Exchange dummy = endpoint.createExchange();
+        String parent = FileUtil.onlyPath(fileName);
+        String onlyName = FileUtil.stripPath(fileName);
+        dummy.getIn().setHeader(Exchange.FILE_NAME, fileName);
+        dummy.getIn().setHeader(Exchange.FILE_NAME_ONLY, onlyName);
+        dummy.getIn().setHeader(Exchange.FILE_PARENT, parent);
+
+        String to = endpoint.getMoveExisting().evaluate(dummy, String.class);
+        // we must normalize it (to avoid having both \ and / in the name which confuses java.io.File)
+        to = FileUtil.normalizePath(to);
+        if (ObjectHelper.isEmpty(to)) {
+            throw new GenericFileOperationFailedException("moveExisting evaluated as empty String, cannot move existing file: " + fileName);
+        }
+
+        boolean renamed = operations.renameFile(fileName, to);
+        if (!renamed) {
+            throw new GenericFileOperationFailedException("Cannot rename file from: " + fileName + " to: " + to);
+        }
     }
 
     /**
@@ -248,7 +276,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
     /**
      * Perform any actions that need to occur after we are done such as disconnecting.
      */
-    public void postWriteCheck() {
+    public void postWriteCheck(Exchange exchange) {
         // nothing needed to check
     }
 
@@ -274,7 +302,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
             log.trace("About to write [{}] to [{}] from exchange [{}]", new Object[]{fileName, getEndpoint(), exchange});
         }
 
-        boolean success = operations.storeFile(fileName, exchange);
+        boolean success = operations.storeFile(fileName, exchange, -1);
         if (!success) {
             throw new GenericFileOperationFailedException("Error writing file [" + fileName + "]");
         }
@@ -309,7 +337,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
 
         // expression support
         Expression expression = endpoint.getFileName();
-        if (value != null && value instanceof Expression) {
+        if (value instanceof Expression) {
             expression = (Expression) value;
         }
 
@@ -389,18 +417,21 @@ public class GenericFileProducer<T> extends DefaultProducer {
             answer = normalizePath(answer);
         }
 
+        // stack path in case the temporary file uses .. paths
+        answer = FileUtil.compactPath(answer, getFileSeparator());
+
         return answer;
     }
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
         ServiceHelper.startService(locks);
+        super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(locks);
         super.doStop();
+        ServiceHelper.stopService(locks);
     }
 }

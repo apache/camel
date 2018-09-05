@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -28,6 +30,18 @@ import org.apache.camel.impl.DefaultExchange;
  */
 public class BeanHandlerMethodTest extends ContextTestSupport {
 
+    @Test
+    public void testInterfaceBeanMethod() throws Exception {
+        BeanInfo info = new BeanInfo(context, MyConcreteBean.class);
+
+        Exchange exchange = new DefaultExchange(context);
+        MyConcreteBean pojo = new MyConcreteBean();
+        MethodInvocation mi = info.createInvocation(pojo, exchange);
+        assertNotNull(mi);
+        assertEquals("hello", mi.getMethod().getName());
+    }
+
+    @Test
     public void testNoHandleMethod() throws Exception {
         BeanInfo info = new BeanInfo(context, MyNoDummyBean.class);
 
@@ -38,6 +52,7 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
         assertEquals("hello", mi.getMethod().getName());
     }
 
+    @Test
     public void testAmbigiousMethod() throws Exception {
         BeanInfo info = new BeanInfo(context, MyAmbigiousBean.class);
 
@@ -51,6 +66,7 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testHandleMethod() throws Exception {
         BeanInfo info = new BeanInfo(context, MyDummyBean.class);
 
@@ -61,6 +77,7 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
         assertEquals("hello", mi.getMethod().getName());
     }
 
+    @Test
     public void testHandleAndBodyMethod() throws Exception {
         BeanInfo info = new BeanInfo(context, MyOtherDummyBean.class);
 
@@ -71,6 +88,7 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
         assertEquals("hello", mi.getMethod().getName());
     }
 
+    @Test
     public void testHandleAmbigious() throws Exception {
         BeanInfo info = new BeanInfo(context, MyReallyDummyBean.class);
 
@@ -84,6 +102,7 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testNoHandlerAmbigious() throws Exception {
         BeanInfo info = new BeanInfo(context, MyNoHandlerBean.class);
 
@@ -95,6 +114,30 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
         } catch (AmbiguousMethodCallException e) {
             assertEquals(3, e.getMethods().size());
         }
+    }
+
+    public interface MyBaseInterface {
+
+        @Handler
+        String hello(@Body String hi);
+
+    }
+
+    public abstract static class MyAbstractBean implements MyBaseInterface {
+
+        public String hello(@Body String hi) {
+            return "Hello " + hi;
+        }
+
+        public String doCompute(String input) {
+            fail("Should not invoke me");
+            return null;
+        }
+
+    }
+
+    public static class MyConcreteBean extends MyAbstractBean {
+
     }
 
     public static class MyNoDummyBean {

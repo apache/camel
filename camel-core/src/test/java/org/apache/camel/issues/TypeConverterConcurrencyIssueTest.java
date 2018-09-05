@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.lang.reflect.Method;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -33,6 +35,7 @@ public class TypeConverterConcurrencyIssueTest extends ContextTestSupport {
 
     private int size = 100 * 1000;
     
+    @Test
     public void testTypeConverter() throws Exception {
         // add as type converter
         Method method = TypeConverterConcurrencyIssueTest.class.getMethod("toMyCamelBean", String.class);
@@ -59,7 +62,7 @@ public class TypeConverterConcurrencyIssueTest extends ContextTestSupport {
         }
         
         assertTrue("The expected mandatory conversions failed!", latch.await(1, TimeUnit.MINUTES));
-        log.info("Took " + watch.stop() + " millis to convert " + size + " objects");
+        log.info("Took {} millis to convert {} objects", watch.taken(), size);
     }
     
     public static MyCamelBean toMyCamelBean(String body) {

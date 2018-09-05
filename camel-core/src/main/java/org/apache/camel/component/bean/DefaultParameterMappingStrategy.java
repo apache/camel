@@ -33,7 +33,7 @@ import org.apache.camel.spi.Registry;
  * @version 
  */
 public class DefaultParameterMappingStrategy implements ParameterMappingStrategy {
-    private final Map<Class<?>, Expression> parameterTypeToExpressionMap = new ConcurrentHashMap<Class<?>, Expression>();
+    private final Map<Class<?>, Expression> parameterTypeToExpressionMap = new ConcurrentHashMap<>();
 
     public DefaultParameterMappingStrategy() {
         loadDefaultRegistry();

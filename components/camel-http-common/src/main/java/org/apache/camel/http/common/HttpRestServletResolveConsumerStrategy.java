@@ -29,37 +29,16 @@ import org.apache.camel.support.RestConsumerContextPathMatcher;
 public class HttpRestServletResolveConsumerStrategy extends HttpServletResolveConsumerStrategy {
 
     @Override
-    @SuppressWarnings("unchecked")
-    public HttpConsumer resolve(HttpServletRequest request, Map<String, HttpConsumer> consumers) {
+    protected HttpConsumer doResolve(HttpServletRequest request, String method, Map<String, HttpConsumer> consumers) {
         HttpConsumer answer = null;
 
         String path = request.getPathInfo();
         if (path == null) {
             return null;
         }
-        String method = request.getMethod();
-        if (method == null) {
-            return null;
-        }
-
-        List<RestConsumerContextPathMatcher.ConsumerPath> paths = new ArrayList<RestConsumerContextPathMatcher.ConsumerPath>();
+        List<RestConsumerContextPathMatcher.ConsumerPath> paths = new ArrayList<>();
         for (final Map.Entry<String, HttpConsumer> entry : consumers.entrySet()) {
-            paths.add(new RestConsumerContextPathMatcher.ConsumerPath<HttpConsumer>() {
-                @Override
-                public String getRestrictMethod() {
-                    return entry.getValue().getEndpoint().getHttpMethodRestrict();
-                }
-
-                @Override
-                public String getConsumerPath() {
-                    return entry.getValue().getPath();
-                }
-
-                @Override
-                public HttpConsumer getConsumer() {
-                    return entry.getValue();
-                }
-            });
+            paths.add(new HttpRestConsumerPath(entry.getValue()));
         }
 
         RestConsumerContextPathMatcher.ConsumerPath<HttpConsumer> best = RestConsumerContextPathMatcher.matchBestPath(method, path, paths);
@@ -69,10 +48,9 @@ public class HttpRestServletResolveConsumerStrategy extends HttpServletResolveCo
 
         if (answer == null) {
             // fallback to default
-            answer = super.resolve(request, consumers);
+            answer = super.doResolve(request, method, consumers);
         }
 
         return answer;
     }
-
 }

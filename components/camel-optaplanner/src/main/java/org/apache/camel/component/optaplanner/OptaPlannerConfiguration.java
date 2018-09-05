@@ -24,51 +24,44 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class OptaPlannerConfiguration {
 
-    /**
-     * Specifies the solverId to user for the solver instance key
-     */
+    @UriPath @Metadata(required = "true")
+    private String configFile;
     @UriParam(label = "common", defaultValue = "DEFAULT_SOLVER")
     private String solverId = OptaPlannerConstants.DEFAULT_SOLVER_ID;
+    @UriParam(label = "producer", defaultValue = "10")
+    private int threadPoolSize = 10;
+    @UriParam(label = "producer")
+    private boolean async;
+
+    public String getConfigFile() {
+        return configFile;
+    }
 
     /**
      * Specifies the location to the solver file
      */
-    @UriPath
-    @Metadata(required = "true")
-    private String configFile;
-
-    /**
-     * Specifies the thread pool size to use when async is true
-     */
-    @UriParam(label = "producer", defaultValue = "10")
-    private int threadPoolSize = 10;
-
-    /**
-     * Specifies to perform operations in async mode
-     */
-    @UriParam(label = "producer", defaultValue = "false")
-    private boolean async;
+    public void setConfigFile(String configFile) {
+        this.configFile = configFile;
+    }
 
     public String getSolverId() {
         return solverId;
     }
 
+    /**
+     * Specifies the solverId to user for the solver instance key
+     */
     public void setSolverId(String solverId) {
         this.solverId = solverId;
-    }
-
-    public void setConfigFile(String configFile) {
-        this.configFile = configFile;
-    }
-
-    public String getConfigFile() {
-        return configFile;
     }
 
     public int getThreadPoolSize() {
         return threadPoolSize;
     }
 
+    /**
+     * Specifies the thread pool size to use when async is true
+     */
     public void setThreadPoolSize(int threadPoolSize) {
         this.threadPoolSize = threadPoolSize;
     }
@@ -77,6 +70,9 @@ public class OptaPlannerConfiguration {
         return async;
     }
 
+    /**
+     * Specifies to perform operations in async mode
+     */
     public void setAsync(boolean async) {
         this.async = async;
     }

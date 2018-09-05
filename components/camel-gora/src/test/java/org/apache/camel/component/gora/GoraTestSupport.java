@@ -24,5 +24,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
  *
  */
 public class GoraTestSupport extends CamelTestSupport {
-    //TODO
+
+    // currently empty
 }

@@ -28,36 +28,45 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class DockerConfiguration implements Cloneable {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath(enums = "events,stats,auth,info,ping,version,imagebuild,imagecreate,imageinspect,imagelist,imagepull,imagepush"
+            + "imageremove,imagesearch,imagetag,containerattach,containercommit,containercopyfile,containercreate,containerdiff"
+            + "inspectcontainer,containerkill,containerlist,containerlog,containerpause,containerrestart,containerremove,containerstart"
+            + "containerstop,containertop,containerunpause,containerwait,execcreate,execstart") @Metadata(required = "true")
     private DockerOperation operation;
     @UriParam(defaultValue = "localhost") @Metadata(required = "true")
     private String host = "localhost";
     @UriParam(defaultValue = "2375") @Metadata(required = "true")
     private Integer port = 2375;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String username;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String password;
     @UriParam
     private String email;
-    @UriParam(defaultValue = "https://index.docker.io/v1/")
+    @UriParam(label = "advanced", defaultValue = "https://index.docker.io/v1/")
     private String serverAddress = "https://index.docker.io/v1/";
     @UriParam
     private Integer requestTimeout;
-    @UriParam
+    @UriParam(label = "security")
     private boolean secure;
-    @UriParam
+    @UriParam(label = "security")
     private String certPath;
-    @UriParam(defaultValue = "100")
+    @UriParam(label = "advanced", defaultValue = "100")
     private Integer maxTotalConnections = 100;
-    @UriParam(defaultValue = "100")
+    @UriParam(label = "advanced", defaultValue = "100")
     private Integer maxPerRouteConnections = 100;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean loggingFilter;
-    @UriParam
+    @UriParam(label = "advanced")
     private boolean followRedirectFilter;
-
-    private Map<String, Object> parameters = new HashMap<String, Object>();
+    @UriParam(label = "security", defaultValue = "false")
+    private boolean tlsVerify;
+    @UriParam(label = "advanced", defaultValue = "true")
+    private boolean socket;
+    @UriParam(label = "advanced", defaultValue = "com.github.dockerjava.netty.NettyDockerCmdExecFactory")
+    private String cmdExecFactory = "com.github.dockerjava.netty.NettyDockerCmdExecFactory";
+    
+    private Map<String, Object> parameters = new HashMap<>();
 
     public String getHost() {
         return host;
@@ -224,6 +233,39 @@ public class DockerConfiguration implements Cloneable {
         this.operation = operation;
     }
 
+    public boolean isTlsVerify() {
+        return tlsVerify;
+    }
+    
+    /**
+     * Check TLS 
+     */
+    public void setTlsVerify(boolean tlsVerify) {
+        this.tlsVerify = tlsVerify;
+    }
+    
+    public boolean isSocket() {
+        return socket;
+    }
+
+    /**
+     * Socket connection mode
+     */
+    public void setSocket(boolean socket) {
+        this.socket = socket;
+    }
+
+    public String getCmdExecFactory() {
+        return cmdExecFactory;
+    }
+
+    /**
+     * The fully qualified class name of the DockerCmdExecFactory implementation to use
+     */
+    public void setCmdExecFactory(String cmdExecFactory) {
+        this.cmdExecFactory = cmdExecFactory;
+    }
+
     public DockerConfiguration copy() {
         try {
             return (DockerConfiguration) clone();
@@ -231,5 +273,4 @@ public class DockerConfiguration implements Cloneable {
             throw new RuntimeCamelException(e);
         }
     }
-
 }

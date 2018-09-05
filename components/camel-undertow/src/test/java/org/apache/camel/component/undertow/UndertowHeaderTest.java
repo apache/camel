@@ -30,7 +30,7 @@ public class UndertowHeaderTest extends BaseUndertowTest {
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://localhost:" + getPort() + "/headers");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URI, "/headers");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_QUERY, "param=true");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_PATH, "/headers");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_PATH, "");
 
         String out = template.requestBody("http://localhost:" + getPort() + "/headers?param=true", null, String.class);
         assertEquals("Bye World", out);
@@ -45,10 +45,21 @@ public class UndertowHeaderTest extends BaseUndertowTest {
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://localhost:" + getPort() + "/headers");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URI, "/headers");
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_QUERY, "");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_PATH, "/headers");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_PATH, "");
 
         String out = template.requestBody("http://localhost:" + getPort() + "/headers", "Hello World", String.class);
         assertEquals("Bye World", out);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testHttpPathHeader() throws Exception {
+        getMockEndpoint("mock:input").expectedMessageCount(1);
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_PATH, "/headers");
+
+        String out = template.requestBody("http://localhost:" + getPort() + "/hello/headers", null, String.class);
+        assertEquals("Hello World", out);
 
         assertMockEndpointsSatisfied();
     }
@@ -61,6 +72,10 @@ public class UndertowHeaderTest extends BaseUndertowTest {
                 from("undertow:http://localhost:{{port}}/headers")
                     .to("mock:input")
                     .transform().constant("Bye World");
+
+                from("undertow:http://localhost:{{port}}/hello?matchOnUriPrefix=true")
+                    .to("mock:input")
+                    .transform().constant("Hello World");
             }
         };
     }

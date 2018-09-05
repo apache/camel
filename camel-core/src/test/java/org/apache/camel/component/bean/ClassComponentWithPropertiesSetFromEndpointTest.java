@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -24,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ClassComponentWithPropertiesSetFromEndpointTest extends ContextTestSupport {
 
+    @Test
     public void testClassComponent() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
@@ -38,7 +41,7 @@ public class ClassComponentWithPropertiesSetFromEndpointTest extends ContextTest
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("class:org.apache.camel.component.bean.MyPrefixBean?prefix=Bye")
+                    .to("class:org.apache.camel.component.bean.MyPrefixBean?bean.prefix=Bye")
                     .to("mock:result");
             }
         };

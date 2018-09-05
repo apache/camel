@@ -19,8 +19,8 @@ package org.apache.camel.spi;
 import java.util.Map;
 
 /**
- * Configuration use by {@link org.apache.camel.spi.RestConsumerFactory} for Camel components to support
- * the Camel {@link org.apache.camel.model.rest.RestDefinition rest} DSL.
+ * Configuration use by {@link org.apache.camel.spi.RestConsumerFactory} and {@link org.apache.camel.spi.RestApiConsumerFactory}
+ * for Camel components to support the Camel {@link org.apache.camel.model.rest.RestDefinition rest} DSL.
  */
 public class RestConfiguration {
 
@@ -34,17 +34,27 @@ public class RestConfiguration {
     }
 
     public enum RestHostNameResolver {
-        localIp, localHostName
+        allLocalIp, localIp, localHostName
     }
 
     private String component;
+    private String apiComponent;
+    private String producerComponent;
+    private String producerApiDoc;
     private String scheme;
     private String host;
+    private String apiHost;
     private int port;
     private String contextPath;
-    private RestHostNameResolver restHostNameResolver = RestHostNameResolver.localHostName;
+    private String apiContextPath;
+    private String apiContextRouteId;
+    private String apiContextIdPattern;
+    private boolean apiContextListing;
+    private boolean apiVendorExtension;
+    private RestHostNameResolver hostNameResolver = RestHostNameResolver.allLocalIp;
     private RestBindingMode bindingMode = RestBindingMode.off;
     private boolean skipBindingOnErrorCode = true;
+    private boolean clientRequestValidation;
     private boolean enableCORS;
     private String jsonDataFormat;
     private String xmlDataFormat;
@@ -52,6 +62,7 @@ public class RestConfiguration {
     private Map<String, Object> endpointProperties;
     private Map<String, Object> consumerProperties;
     private Map<String, Object> dataFormatProperties;
+    private Map<String, Object> apiProperties;
     private Map<String, String> corsHeaders;
 
     /**
@@ -73,6 +84,63 @@ public class RestConfiguration {
     }
 
     /**
+     * Gets the name of the Camel component to use as the REST API (such as swagger)
+     *
+     * @return the component name, or <tt>null</tt> to let Camel use the default name <tt>swagger</tt>
+     */
+    public String getApiComponent() {
+        return apiComponent;
+    }
+
+    /**
+     * Sets the name of the Camel component to use as the REST API (such as swagger)
+     *
+     * @param apiComponent the name of the component (such as swagger)
+     */
+    public void setApiComponent(String apiComponent) {
+        this.apiComponent = apiComponent;
+    }
+
+    /**
+     * Gets the name of the Camel component to use as the REST producer
+     *
+     * @return the component name, or <tt>null</tt> to let Camel search the {@link Registry} to find suitable implementation
+     */
+    public String getProducerComponent() {
+        return producerComponent;
+    }
+
+    /**
+     * Sets the name of the Camel component to use as the REST producer
+     *
+     * @param componentName the name of the component (such as restlet, jetty, etc.)
+     */
+    public void setProducerComponent(String componentName) {
+        this.producerComponent = componentName;
+    }
+
+    /**
+     * Gets the location of the api document (swagger api) the REST producer will use
+     * to validate the REST uri and query parameters are valid accordingly to the api document.
+     */
+    public String getProducerApiDoc() {
+        return producerApiDoc;
+    }
+
+    /**
+     * Sets the location of the api document (swagger api) the REST producer will use
+     * to validate the REST uri and query parameters are valid accordingly to the api document.
+     * This requires adding camel-swagger-java to the classpath, and any miss configuration
+     * will let Camel fail on startup and report the error(s).
+     * <p/>
+     * The location of the api document is loaded from classpath by default, but you can use
+     * <tt>file:</tt> or <tt>http:</tt> to refer to resources to load from file or http url.
+     */
+    public void setProducerApiDoc(String producerApiDoc) {
+        this.producerApiDoc = producerApiDoc;
+    }
+
+    /**
      * Gets the hostname to use by the REST consumer
      *
      * @return the hostname, or <tt>null</tt> to use default hostname
@@ -88,6 +156,19 @@ public class RestConfiguration {
      */
     public void setHost(String host) {
         this.host = host;
+    }
+
+    public String getApiHost() {
+        return apiHost;
+    }
+
+    /**
+     * To use an specific hostname for the API documentation (eg swagger)
+     * <p/>
+     * This can be used to override the generated host with this configured hostname
+     */
+    public void setApiHost(String apiHost) {
+        this.apiHost = apiHost;
     }
 
     /**
@@ -139,7 +220,8 @@ public class RestConfiguration {
      * Sets a leading context-path the REST services will be using.
      * <p/>
      * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application
-     * is deployed using a context-path.
+     * is deployed using a context-path. Or for components such as <tt>camel-jetty</tt> or <tt>camel-netty4-http</tt>
+     * that includes a HTTP server.
      *
      * @param contextPath the context path
      */
@@ -147,31 +229,136 @@ public class RestConfiguration {
         this.contextPath = contextPath;
     }
 
+    public String getApiContextPath() {
+        return apiContextPath;
+    }
+
+    /**
+     * Sets a leading API context-path the REST API services will be using.
+     * <p/>
+     * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application
+     * is deployed using a context-path.
+     *
+     * @param contextPath the API context path
+     */
+    public void setApiContextPath(String contextPath) {
+        this.apiContextPath = contextPath;
+    }
+
+    public String getApiContextRouteId() {
+        return apiContextRouteId;
+    }
+
+    /**
+     * Sets the route id to use for the route that services the REST API.
+     * <p/>
+     * The route will by default use an auto assigned route id.
+     *
+     * @param apiContextRouteId  the route id
+     */
+    public void setApiContextRouteId(String apiContextRouteId) {
+        this.apiContextRouteId = apiContextRouteId;
+    }
+
+    public String getApiContextIdPattern() {
+        return apiContextIdPattern;
+    }
+
+    /**
+     * Optional CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name matches the pattern.
+     * <p/>
+     * The pattern <tt>#name#</tt> refers to the CamelContext name, to match on the current CamelContext only.
+     * For any other value, the pattern uses the rules from {@link org.apache.camel.util.EndpointHelper#matchPattern(String, String)}
+     *
+     * @param apiContextIdPattern  the pattern
+     */
+    public void setApiContextIdPattern(String apiContextIdPattern) {
+        this.apiContextIdPattern = apiContextIdPattern;
+    }
+
+    public boolean isApiContextListing() {
+        return apiContextListing;
+    }
+
+    /**
+     * Sets whether listing of all available CamelContext's with REST services in the JVM is enabled. If enabled it allows to discover
+     * these contexts, if <tt>false</tt> then only the current CamelContext is in use.
+     */
+    public void setApiContextListing(boolean apiContextListing) {
+        this.apiContextListing = apiContextListing;
+    }
+
+    public boolean isApiVendorExtension() {
+        return apiVendorExtension;
+    }
+
+    /**
+     * Whether vendor extension is enabled in the Rest APIs. If enabled then Camel will include additional information
+     * as vendor extension (eg keys starting with x-) such as route ids, class names etc.
+     * Not all 3rd party API gateways and tools supports vendor-extensions when importing your API docs.
+     */
+    public void setApiVendorExtension(boolean apiVendorExtension) {
+        this.apiVendorExtension = apiVendorExtension;
+    }
+
+    /**
+     * Gets the resolver to use for resolving hostname
+     *
+     * @return the resolver
+     * @deprecated use getHostNameResolver
+     */
+    @Deprecated
+    public RestHostNameResolver getRestHostNameResolver() {
+        return getHostNameResolver();
+    }
+
+    /**
+     * Sets the resolver to use for resolving hostname
+     *
+     * @param restHostNameResolver the resolver
+     * @deprecated use setHostNameResolver
+     */
+    @Deprecated
+    public void setRestHostNameResolver(RestHostNameResolver restHostNameResolver) {
+        setHostNameResolver(restHostNameResolver);
+    }
+
+    /**
+     * Sets the resolver to use for resolving hostname
+     *
+     * @param restHostNameResolver the resolver
+     * @deprecated use setHostNameResolver
+     */
+    @Deprecated
+    public void setRestHostNameResolver(String restHostNameResolver) {
+        settHostNameResolver(restHostNameResolver);
+    }
+
     /**
      * Gets the resolver to use for resolving hostname
      *
      * @return the resolver
      */
-    public RestHostNameResolver getRestHostNameResolver() {
-        return restHostNameResolver;
+    public RestHostNameResolver getHostNameResolver() {
+        return hostNameResolver;
     }
 
     /**
      * Sets the resolver to use for resolving hostname
      *
-     * @param restHostNameResolver the resolver
+     * @param hostNameResolver the resolver
      */
-    public void setRestHostNameResolver(RestHostNameResolver restHostNameResolver) {
-        this.restHostNameResolver = restHostNameResolver;
+    public void setHostNameResolver(RestHostNameResolver hostNameResolver) {
+        this.hostNameResolver = hostNameResolver;
     }
 
     /**
      * Sets the resolver to use for resolving hostname
      *
-     * @param restHostNameResolver the resolver
+     * @param hostNameResolver the resolver
      */
-    public void setRestHostNameResolver(String restHostNameResolver) {
-        this.restHostNameResolver = RestHostNameResolver.valueOf(restHostNameResolver);
+    public void settHostNameResolver(String hostNameResolver) {
+        this.hostNameResolver = RestHostNameResolver.valueOf(hostNameResolver);
     }
 
     /**
@@ -221,6 +408,22 @@ public class RestConfiguration {
      */
     public void setSkipBindingOnErrorCode(boolean skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+    }
+
+    public boolean isClientRequestValidation() {
+        return clientRequestValidation;
+    }
+
+    /**
+     * Whether to enable validation of the client request to check whether the Content-Type and Accept headers from
+     * the client is supported by the Rest-DSL configuration of its consumes/produces settings.
+     * <p/>
+     * This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned.
+     * <p/>
+     * The default value is false.
+     */
+    public void setClientRequestValidation(boolean clientRequestValidation) {
+        this.clientRequestValidation = clientRequestValidation;
     }
 
     /**
@@ -359,6 +562,19 @@ public class RestConfiguration {
      */
     public void setDataFormatProperties(Map<String, Object> dataFormatProperties) {
         this.dataFormatProperties = dataFormatProperties;
+    }
+
+    public Map<String, Object> getApiProperties() {
+        return apiProperties;
+    }
+
+    /**
+     * Sets additional options on api level
+     *
+     * @param apiProperties the options
+     */
+    public void setApiProperties(Map<String, Object> apiProperties) {
+        this.apiProperties = apiProperties;
     }
 
     /**

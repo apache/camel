@@ -21,8 +21,8 @@ import java.util.List;
 
 public class ShutdownOrderBean {
 
-    private List<String> start = new ArrayList<String>();
-    private List<String> shutdown = new ArrayList<String>();
+    private List<String> start = new ArrayList<>();
+    private List<String> shutdown = new ArrayList<>();
 
     public void start(String name) {
         start.add(name);

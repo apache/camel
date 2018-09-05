@@ -35,11 +35,11 @@ public class StreamGroupLinesLastStrategyTest extends StreamGroupLinesStrategyTe
         assertMockEndpointsSatisfied();
 
         Object result = mock.getExchanges().get(0).getIn().getBody();
-        assertEquals("Get a wrong result.", "A\nB\nC\nD\n", result);
+        assertEquals("Get a wrong result.", "A" + LS + "B" + LS + "C" + LS + "D" + LS, result);
 
         // we did not have 4 lines but since its the last it was triggered anyway
         Object result2 = mock.getExchanges().get(1).getIn().getBody();
-        assertEquals("Get a wrong result.", "E\nF\n", result2);
+        assertEquals("Get a wrong result.", "E" + LS + "F" + LS, result2);
     }
 
     @Override

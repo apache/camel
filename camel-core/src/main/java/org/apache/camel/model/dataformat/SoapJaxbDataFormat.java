@@ -28,9 +28,9 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 
 /**
- * SOAP data format
+ * SOAP is a data format which uses JAXB2 and JAX-WS annotations to marshal and unmarshal SOAP payloads.
  */
-@Metadata(label = "dataformat,transformation", title = "SOAP")
+@Metadata(firstVersion = "2.3.0", label = "dataformat,transformation,xml", title = "SOAP")
 @XmlRootElement(name = "soapjaxb")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SoapJaxbDataFormat extends DataFormatDefinition {

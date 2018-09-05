@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.Map;
 
@@ -34,12 +37,17 @@ public class EventDrivenPollingConsumerQueueSizeTest extends ContextTestSupport 
     private String uri = "my:foo?pollingConsumerQueueSize=10&pollingConsumerBlockWhenFull=false";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         context.addComponent("my", new MyQueueComponent());
     }
 
+    @Test
     public void testQueueSize() throws Exception {
+        // must start context as we do not use route builder that auto-start
+        context.start();
+
         PollingConsumer consumer = context.getEndpoint(uri).createPollingConsumer();
         consumer.start();
 

@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AsyncCallback;
@@ -36,12 +35,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Traceable;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.aggregate.DelegateAggregationStrategy;
+import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
@@ -68,12 +68,18 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
                 streaming, stopOnException, timeout, onPrepare, useSubUnitOfWork, false);
     }
 
-    public Splitter(CamelContext camelContext, Expression expression, Processor destination, AggregationStrategy aggregationStrategy,
-                    boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService,
-                    boolean streaming, boolean stopOnException, long timeout, Processor onPrepare, boolean useSubUnitOfWork,
-                    boolean parallelAggregate) {
-        super(camelContext, Collections.singleton(destination), aggregationStrategy, parallelProcessing, executorService,
-                shutdownExecutorService, streaming, stopOnException, timeout, onPrepare, useSubUnitOfWork, parallelAggregate);
+    public Splitter(CamelContext camelContext, Expression expression, Processor destination, AggregationStrategy aggregationStrategy, boolean parallelProcessing,
+                    ExecutorService executorService, boolean shutdownExecutorService, boolean streaming, boolean stopOnException, long timeout, Processor onPrepare,
+                    boolean useSubUnitOfWork, boolean parallelAggregate) {
+        this(camelContext, expression, destination, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService, streaming, stopOnException, timeout,
+             onPrepare, useSubUnitOfWork, false, false);
+    }
+
+    public Splitter(CamelContext camelContext, Expression expression, Processor destination, AggregationStrategy aggregationStrategy, boolean parallelProcessing,
+                    ExecutorService executorService, boolean shutdownExecutorService, boolean streaming, boolean stopOnException, long timeout, Processor onPrepare,
+                    boolean useSubUnitOfWork, boolean parallelAggregate, boolean stopOnAggregateException) {
+        super(camelContext, Collections.singleton(destination), aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService, streaming, stopOnException,
+              timeout, onPrepare, useSubUnitOfWork, parallelAggregate, stopOnAggregateException);
         this.expression = expression;
         notNull(expression, "expression");
         notNull(destination, "destination");
@@ -91,13 +97,31 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
 
     @Override
     public boolean process(Exchange exchange, final AsyncCallback callback) {
-        final AggregationStrategy strategy = getAggregationStrategy();
+        AggregationStrategy strategy = getAggregationStrategy();
+
+        if (strategy instanceof DelegateAggregationStrategy) {
+            strategy = ((DelegateAggregationStrategy) strategy).getDelegate();
+        }
+
+        // set original exchange if not already pre-configured
+        if (strategy instanceof UseOriginalAggregationStrategy) {
+            // need to create a new private instance, as we can also have concurrency issue so we cannot store state
+            UseOriginalAggregationStrategy original = (UseOriginalAggregationStrategy) strategy;
+            AggregationStrategy clone = original.newInstance(exchange);
+            if (isShareUnitOfWork()) {
+                clone = new ShareUnitOfWorkAggregationStrategy(clone);
+            }
+            setAggregationStrategyOnExchange(exchange, clone);
+        }
 
         // if no custom aggregation strategy is being used then fallback to keep the original
         // and propagate exceptions which is done by a per exchange specific aggregation strategy
         // to ensure it supports async routing
         if (strategy == null) {
-            UseOriginalAggregationStrategy original = new UseOriginalAggregationStrategy(exchange, true);
+            AggregationStrategy original = new UseOriginalAggregationStrategy(exchange, true);
+            if (isShareUnitOfWork()) {
+                original = new ShareUnitOfWorkAggregationStrategy(original);
+            }
             setAggregationStrategyOnExchange(exchange, original);
         }
 
@@ -176,28 +200,32 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
 
                 public ProcessorExchangePair next() {
                     Object part = iterator.next();
-                    // create a correlated copy as the new exchange to be routed in the splitter from the copy
-                    // and do not share the unit of work
-                    Exchange newExchange = ExchangeHelper.createCorrelatedCopy(copy, false);
-                    // If the splitter has an aggregation strategy
-                    // then the StreamCache created by the child routes must not be 
-                    // closed by the unit of work of the child route, but by the unit of 
-                    // work of the parent route or grand parent route or grand grand parent route... (in case of nesting).
-                    // Therefore, set the unit of work of the parent route as stream cache unit of work, if not already set.
-                    if (newExchange.getProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK) == null) {
-                        newExchange.setProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK, original.getUnitOfWork());
-                    }
-                    // if we share unit of work, we need to prepare the child exchange
-                    if (isShareUnitOfWork()) {
-                        prepareSharedUnitOfWork(newExchange, copy);
-                    }
-                    if (part instanceof Message) {
-                        newExchange.setIn((Message) part);
+                    if (part != null) {
+                        // create a correlated copy as the new exchange to be routed in the splitter from the copy
+                        // and do not share the unit of work
+                        Exchange newExchange = ExchangeHelper.createCorrelatedCopy(copy, false);
+                        // If the splitter has an aggregation strategy
+                        // then the StreamCache created by the child routes must not be
+                        // closed by the unit of work of the child route, but by the unit of
+                        // work of the parent route or grand parent route or grand grand parent route... (in case of nesting).
+                        // Therefore, set the unit of work of the parent route as stream cache unit of work, if not already set.
+                        if (newExchange.getProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK) == null) {
+                            newExchange.setProperty(Exchange.STREAM_CACHE_UNIT_OF_WORK, original.getUnitOfWork());
+                        }
+                        // if we share unit of work, we need to prepare the child exchange
+                        if (isShareUnitOfWork()) {
+                            prepareSharedUnitOfWork(newExchange, copy);
+                        }
+                        if (part instanceof Message) {
+                            newExchange.setIn((Message) part);
+                        } else {
+                            Message in = newExchange.getIn();
+                            in.setBody(part);
+                        }
+                        return createProcessorExchangePair(index++, getProcessors().iterator().next(), newExchange, routeContext);
                     } else {
-                        Message in = newExchange.getIn();
-                        in.setBody(part);
+                        return null;
                     }
-                    return createProcessorExchangePair(index++, getProcessors().iterator().next(), newExchange, routeContext);
                 }
 
                 public void remove() {
@@ -208,30 +236,21 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
 
         @Override
         public void close() throws IOException {
-            if (value instanceof Scanner) {
-                // special for Scanner which implement the Closeable since JDK7 
-                Scanner scanner = (Scanner) value;
-                scanner.close();
-                IOException ioException = scanner.ioException();
-                if (ioException != null) {
-                    throw ioException;
-                }
-            } else if (value instanceof Closeable) {
-                // we should throw out the exception here   
-                IOHelper.closeWithException((Closeable) value);
-            }
+            IOHelper.closeIterator(value);
         }
        
     }
 
     private Iterable<ProcessorExchangePair> createProcessorExchangePairsList(Exchange exchange, Object value) {
-        List<ProcessorExchangePair> result = new ArrayList<ProcessorExchangePair>();
+        List<ProcessorExchangePair> result = new ArrayList<>();
 
         // reuse iterable and add it to the result list
         Iterable<ProcessorExchangePair> pairs = createProcessorExchangePairsIterable(exchange, value);
         try {
             for (ProcessorExchangePair pair : pairs) {
-                result.add(pair);
+                if (pair != null) {
+                    result.add(pair);
+                }
             }
         } finally {
             if (pairs instanceof Closeable) {
@@ -274,7 +293,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     private static Exchange copyExchangeNoAttachments(Exchange exchange, boolean preserveExchangeId) {
         Exchange answer = ExchangeHelper.createCopy(exchange, preserveExchangeId);
         // we do not want attachments for the splitted sub-messages
-        answer.getIn().setAttachments(null);
+        answer.getIn().setAttachmentObjects(null);
         // we do not want to copy the message history for splitted sub-messages
         answer.getProperties().remove(Exchange.MESSAGE_HISTORY);
         return answer;

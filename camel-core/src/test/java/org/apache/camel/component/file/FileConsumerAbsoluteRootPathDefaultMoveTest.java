@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -30,6 +32,7 @@ public class FileConsumerAbsoluteRootPathDefaultMoveTest extends ContextTestSupp
 
     private String base = "/tmp/mytemp";
 
+    @Test
     public void testDummy() {
         // noop
     }
@@ -51,7 +54,7 @@ public class FileConsumerAbsoluteRootPathDefaultMoveTest extends ContextTestSupp
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file:" + base).routeId("foo").noAutoStartup()
+                from("file:" + base + "?initialDelay=0&delay=10").routeId("foo").noAutoStartup()
                     .convertBodyTo(String.class).to("mock:report");
             }
         };

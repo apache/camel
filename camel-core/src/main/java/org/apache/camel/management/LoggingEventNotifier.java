@@ -34,7 +34,12 @@ public class LoggingEventNotifier extends EventNotifierSupport {
     private String logName;
 
     public void notify(EventObject event) throws Exception {
-        log.info("Event: " + event);
+        log.info("Event: {}", event);
+    }
+
+    @Override
+    public boolean isDisabled() {
+        return !log.isInfoEnabled();
     }
 
     public boolean isEnabled(EventObject event) {

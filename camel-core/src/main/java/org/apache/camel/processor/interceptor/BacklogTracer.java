@@ -33,7 +33,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +52,7 @@ public final class BacklogTracer extends ServiceSupport implements InterceptStra
     private boolean enabled;
     private final AtomicLong traceCounter = new AtomicLong(0);
     // use a queue with a upper limit to avoid storing too many messages
-    private final Queue<BacklogTracerEventMessage> queue = new LinkedBlockingQueue<BacklogTracerEventMessage>(MAX_BACKLOG_SIZE);
+    private final Queue<BacklogTracerEventMessage> queue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE);
     // how many of the last messages to keep in the backlog at total
     private int backlogSize = 1000;
     private boolean removeOnDump = true;
@@ -244,7 +244,7 @@ public final class BacklogTracer extends ServiceSupport implements InterceptStra
         this.traceFilter = filter;
         if (filter != null) {
             // assume simple language
-            String name = ObjectHelper.before(filter, ":");
+            String name = StringHelper.before(filter, ":");
             if (name == null) {
                 // use simple language by default
                 name = "simple";
@@ -262,7 +262,7 @@ public final class BacklogTracer extends ServiceSupport implements InterceptStra
     }
 
     public List<BacklogTracerEventMessage> dumpTracedMessages(String nodeId) {
-        List<BacklogTracerEventMessage> answer = new ArrayList<BacklogTracerEventMessage>();
+        List<BacklogTracerEventMessage> answer = new ArrayList<>();
         if (nodeId != null) {
             for (BacklogTracerEventMessage message : queue) {
                 if (nodeId.equals(message.getToNode()) || nodeId.equals(message.getRouteId())) {
@@ -291,7 +291,7 @@ public final class BacklogTracer extends ServiceSupport implements InterceptStra
     }
 
     public List<BacklogTracerEventMessage> dumpAllTracedMessages() {
-        List<BacklogTracerEventMessage> answer = new ArrayList<BacklogTracerEventMessage>();
+        List<BacklogTracerEventMessage> answer = new ArrayList<>();
         answer.addAll(queue);
         if (isRemoveOnDump()) {
             queue.clear();

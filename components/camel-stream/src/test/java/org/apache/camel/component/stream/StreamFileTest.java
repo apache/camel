@@ -58,6 +58,8 @@ public class StreamFileTest extends CamelTestSupport {
 
     @Test
     public void testFile() throws Exception {
+        context.start();
+
         try {
             MockEndpoint mock = getMockEndpoint("mock:result");
             mock.expectedBodiesReceived("Hello");
@@ -90,7 +92,7 @@ public class StreamFileTest extends CamelTestSupport {
                 from("direct:start").routeId("produce")
                     .to("stream:file?fileName=target/stream/StreamFileTest.txt&autoCloseCount=2");
                 from("file://target/stream?fileName=StreamFileTest.txt&noop=true").routeId("consume").autoStartup(false)
-                    .split().tokenize("\n").to("mock:result");
+                    .split().tokenize(LS).to("mock:result");
             }
         });
         context.start();

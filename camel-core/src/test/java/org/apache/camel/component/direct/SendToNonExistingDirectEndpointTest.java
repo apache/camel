@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.direct;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
@@ -30,7 +32,10 @@ public class SendToNonExistingDirectEndpointTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testDirect() throws Exception {
+        context.getComponent("direct", DirectComponent.class).setBlock(false);
+        
         try {
             template.sendBody("direct:foo", "Hello World");
             fail("Should have thrown exception");

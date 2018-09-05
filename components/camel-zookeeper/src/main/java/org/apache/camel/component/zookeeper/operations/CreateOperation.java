@@ -49,14 +49,16 @@ public class CreateOperation extends ZooKeeperOperation<String> {
     @Override
     public OperationResult<String> getResult() {
         try {
+            // ensure parent nodes is created first as persistent (cannot be ephemeral without children)
+            ZooKeeperHelper.mkdirs(connection, node, false, CreateMode.PERSISTENT);
             String created = connection.create(node, data, permissions, createMode);
             if (LOG.isDebugEnabled()) {
                 LOG.debug(format("Created node '%s' using mode '%s'", created, createMode));
             }
             // for consistency with other operations return an empty stats set.
-            return new OperationResult<String>(created, new Stat());
+            return new OperationResult<>(created, new Stat());
         } catch (Exception e) {
-            return new OperationResult<String>(e);
+            return new OperationResult<>(e);
         }
     }
 

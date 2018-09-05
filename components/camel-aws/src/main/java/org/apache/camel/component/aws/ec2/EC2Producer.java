@@ -21,6 +21,10 @@ import java.util.Collection;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.model.CreateTagsRequest;
+import com.amazonaws.services.ec2.model.CreateTagsResult;
+import com.amazonaws.services.ec2.model.DeleteTagsRequest;
+import com.amazonaws.services.ec2.model.DeleteTagsResult;
 import com.amazonaws.services.ec2.model.DescribeInstanceStatusRequest;
 import com.amazonaws.services.ec2.model.DescribeInstanceStatusResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
@@ -50,6 +54,8 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageForResponse;
+
 /**
  * A Producer which sends messages to the Amazon EC2 Service
  * <a href="http://aws.amazon.com/ec2/">AWS EC2</a>
@@ -58,6 +64,8 @@ public class EC2Producer extends DefaultProducer {
     
     private static final Logger LOG = LoggerFactory.getLogger(EC2Producer.class);
     
+    private transient String ec2ProducerToString;
+
     public EC2Producer(Endpoint endpoint) {
         super(endpoint);
     }
@@ -91,6 +99,12 @@ public class EC2Producer extends DefaultProducer {
         case unmonitorInstances:
             unmonitorInstances(getEndpoint().getEc2Client(), exchange);
             break; 
+        case createTags:
+            createTags(getEndpoint().getEc2Client(), exchange);
+            break;
+        case deleteTags:
+            deleteTags(getEndpoint().getEc2Client(), exchange);
+            break; 
         default:
             throw new IllegalArgumentException("Unsupported operation");
         }
@@ -110,35 +124,20 @@ public class EC2Producer extends DefaultProducer {
 
     @Override
     public String toString() {
-        return "EC2Producer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        if (ec2ProducerToString == null) {
+            ec2ProducerToString = "EC2Producer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        }
+        return ec2ProducerToString;
     }
 
     @Override
     public EC2Endpoint getEndpoint() {
         return (EC2Endpoint) super.getEndpoint();
     }
-
-    private Message getMessageForResponse(final Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            return out;
-        }
-        return exchange.getIn();
-    }
     
     private void createAndRunInstance(AmazonEC2Client ec2Client, Exchange exchange) {
         String ami;
         InstanceType instanceType;
-        int minCount;
-        int maxCount;
-        boolean monitoring;
-        String kernelId;
-        boolean ebsOptimized;
-        Collection securityGroups;
-        String keyName;
-        String clientToken;
-        Placement placement;
         RunInstancesRequest request = new RunInstancesRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.IMAGE_ID))) {
             ami = exchange.getIn().getHeader(EC2Constants.IMAGE_ID, String.class);
@@ -153,44 +152,48 @@ public class EC2Producer extends DefaultProducer {
             throw new IllegalArgumentException("Instance Type must be specified");
         }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCE_MIN_COUNT))) {
-            minCount = exchange.getIn().getHeader(EC2Constants.INSTANCE_MIN_COUNT, Integer.class);
+            int minCount = exchange.getIn().getHeader(EC2Constants.INSTANCE_MIN_COUNT, Integer.class);
             request.withMinCount(minCount);
         } else {
             throw new IllegalArgumentException("Min instances count must be specified");
         }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCE_MAX_COUNT))) {
-            maxCount = exchange.getIn().getHeader(EC2Constants.INSTANCE_MAX_COUNT, Integer.class);
+            int maxCount = exchange.getIn().getHeader(EC2Constants.INSTANCE_MAX_COUNT, Integer.class);
             request.withMaxCount(maxCount);
         } else {
             throw new IllegalArgumentException("Max instances count must be specified");
         }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCE_MONITORING))) {
-            monitoring = exchange.getIn().getHeader(EC2Constants.INSTANCE_MONITORING, Boolean.class);
+            boolean monitoring = exchange.getIn().getHeader(EC2Constants.INSTANCE_MONITORING, Boolean.class);
             request.withMonitoring(monitoring);
         }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCE_KERNEL_ID))) {
-            kernelId = exchange.getIn().getHeader(EC2Constants.INSTANCE_KERNEL_ID, String.class);
+            String kernelId = exchange.getIn().getHeader(EC2Constants.INSTANCE_KERNEL_ID, String.class);
             request.withKernelId(kernelId);
         }       
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCE_EBS_OPTIMIZED))) {
-            ebsOptimized = exchange.getIn().getHeader(EC2Constants.INSTANCE_EBS_OPTIMIZED, Boolean.class);
+            boolean ebsOptimized = exchange.getIn().getHeader(EC2Constants.INSTANCE_EBS_OPTIMIZED, Boolean.class);
             request.withEbsOptimized(ebsOptimized);
         }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCE_SECURITY_GROUPS))) {
-            securityGroups = exchange.getIn().getHeader(EC2Constants.INSTANCE_SECURITY_GROUPS, Collection.class);
+            Collection securityGroups = exchange.getIn().getHeader(EC2Constants.INSTANCE_SECURITY_GROUPS, Collection.class);
             request.withSecurityGroups(securityGroups);
         }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_KEY_PAIR))) {
-            keyName = exchange.getIn().getHeader(EC2Constants.INSTANCES_KEY_PAIR, String.class);
+            String keyName = exchange.getIn().getHeader(EC2Constants.INSTANCES_KEY_PAIR, String.class);
             request.withKeyName(keyName);
         }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_CLIENT_TOKEN))) {
-            clientToken = exchange.getIn().getHeader(EC2Constants.INSTANCES_CLIENT_TOKEN, String.class);
+            String clientToken = exchange.getIn().getHeader(EC2Constants.INSTANCES_CLIENT_TOKEN, String.class);
             request.withClientToken(clientToken);
         }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_PLACEMENT))) {
-            placement = exchange.getIn().getHeader(EC2Constants.INSTANCES_PLACEMENT, Placement.class);
+            Placement placement = exchange.getIn().getHeader(EC2Constants.INSTANCES_PLACEMENT, Placement.class);
             request.withPlacement(placement);
+        }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.SUBNET_ID))) {
+            String subnetId = exchange.getIn().getHeader(EC2Constants.SUBNET_ID, String.class);
+            request.withSubnetId(subnetId);
         }
         RunInstancesResult result;
         try {
@@ -359,6 +362,62 @@ public class EC2Producer extends DefaultProducer {
             throw ase;
         }
         LOG.trace("Stop Monitoring instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result); 
+    }
+    
+    private void createTags(AmazonEC2Client ec2Client, Exchange exchange) {
+        Collection instanceIds;
+        Collection tags;
+        CreateTagsRequest request = new CreateTagsRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS))) {
+            instanceIds = exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS, Collection.class);
+            request.withResources(instanceIds);
+        } else {
+            throw new IllegalArgumentException("Instances Ids must be specified");
+        }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_TAGS))) {
+            tags = exchange.getIn().getHeader(EC2Constants.INSTANCES_TAGS, Collection.class);
+            request.withTags(tags);
+        } else {
+            throw new IllegalArgumentException("Tags must be specified");
+        }
+        CreateTagsResult result = new CreateTagsResult();
+        try {
+            result = ec2Client.createTags(request);
+        } catch (AmazonServiceException ase) {
+            LOG.trace("Create tags command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        LOG.trace("Created tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()), Arrays.toString(instanceIds.toArray()));
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result); 
+    }
+    
+    private void deleteTags(AmazonEC2Client ec2Client, Exchange exchange) {
+        Collection instanceIds;
+        Collection tags;
+        DeleteTagsRequest request = new DeleteTagsRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS))) {
+            instanceIds = exchange.getIn().getHeader(EC2Constants.INSTANCES_IDS, Collection.class);
+            request.withResources(instanceIds);
+        } else {
+            throw new IllegalArgumentException("Instances Ids must be specified");
+        }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EC2Constants.INSTANCES_TAGS))) {
+            tags = exchange.getIn().getHeader(EC2Constants.INSTANCES_TAGS, Collection.class);
+            request.withTags(tags);
+        } else {
+            throw new IllegalArgumentException("Tags must be specified");
+        }
+        DeleteTagsResult result = new DeleteTagsResult();
+        try {
+            result = ec2Client.deleteTags(request);
+        } catch (AmazonServiceException ase) {
+            LOG.trace("Delete tags command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        LOG.trace("Delete tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()), Arrays.toString(instanceIds.toArray()));
         Message message = getMessageForResponse(exchange);
         message.setBody(result); 
     }

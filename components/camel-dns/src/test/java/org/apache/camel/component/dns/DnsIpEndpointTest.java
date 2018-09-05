@@ -37,11 +37,12 @@ public class DnsIpEndpointTest extends CamelTestSupport {
     protected ProducerTemplate template;
 
     protected RouteBuilder createRouteBuilder() throws Exception {
-        RouteBuilder routeBuilder = super.createRouteBuilder();
-
-        routeBuilder.from("direct:start").to("dns:ip").to("mock:result");
-
-        return routeBuilder;
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("dns:ip").to("mock:result");
+            }
+        };
     }
 
     @Test

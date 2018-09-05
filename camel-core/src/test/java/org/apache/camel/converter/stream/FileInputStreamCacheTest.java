@@ -16,6 +16,8 @@
  */
 package org.apache.camel.converter.stream;
 
+import org.junit.Test;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
@@ -29,6 +31,7 @@ public class FileInputStreamCacheTest extends ContextTestSupport {
 
     private static final String TEST_FILE = "src/test/resources/org/apache/camel/converter/stream/test.xml";
 
+    @Test
     public void testFileInputStreamCache() throws Exception {
        
         File file = new File(TEST_FILE);

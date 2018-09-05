@@ -29,11 +29,11 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * For XQuery expressions and predicates
+ * To use XQuery (XML) in Camel expressions or predicates.
  *
  * @version 
  */
-@Metadata(label = "language", title = "XQuery")
+@Metadata(firstVersion = "1.0.0", label = "language,xml", title = "XQuery")
 @XmlRootElement(name = "xquery")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XQueryExpression extends NamespaceAwareExpression {

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +38,7 @@ public class CustomInterceptorRouteWithChildOutputTest extends ContextTestSuppor
 
     private MyInterceptor myInterceptor = new MyInterceptor();
 
+    @Test
     public void testCustomInterceptor() throws Exception {
         getMockEndpoint("mock:child").expectedMessageCount(3);
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -74,7 +77,7 @@ public class CustomInterceptorRouteWithChildOutputTest extends ContextTestSuppor
     @SuppressWarnings("rawtypes")
     private static class MyInterceptor implements InterceptStrategy {
 
-        private final List<ProcessorDefinition> defs = new ArrayList<ProcessorDefinition>();
+        private final List<ProcessorDefinition> defs = new ArrayList<>();
 
         @Override
         public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition,

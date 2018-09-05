@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.rest;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -35,6 +37,7 @@ public class FromRestGetEmbeddedRouteTest extends ContextTestSupport {
         return 3;
     }
 
+    @Test
     public void testFromRestModel() throws Exception {
         assertEquals(getExpectedNumberOfRoutes(), context.getRoutes().size());
 
@@ -43,7 +46,7 @@ public class FromRestGetEmbeddedRouteTest extends ContextTestSupport {
         assertNotNull(rest);
         assertEquals("/say/hello", rest.getPath());
         assertEquals(1, rest.getVerbs().size());
-        ToDefinition to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getRoute().getOutputs().get(1));
+        ToDefinition to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getRoute().getOutputs().get(0));
         assertEquals("mock:hello", to.getUri());
 
         rest = context.getRestDefinitions().get(1);
@@ -51,7 +54,7 @@ public class FromRestGetEmbeddedRouteTest extends ContextTestSupport {
         assertEquals("/say/bye", rest.getPath());
         assertEquals(2, rest.getVerbs().size());
         assertEquals("application/json", rest.getVerbs().get(0).getConsumes());
-        to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getRoute().getOutputs().get(1));
+        to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getRoute().getOutputs().get(0));
         assertEquals("mock:bye", to.getUri());
 
         // the rest becomes routes and the input is a seda endpoint created by the DummyRestConsumerFactory

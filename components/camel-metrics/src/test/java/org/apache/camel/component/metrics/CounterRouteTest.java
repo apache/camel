@@ -28,7 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader;
-import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
+import org.apache.camel.test.spring.CamelSpringRunner;
 import org.apache.camel.test.spring.MockEndpoints;
 import org.junit.After;
 import org.junit.Before;
@@ -49,7 +49,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
-@RunWith(CamelSpringJUnit4ClassRunner.class)
+@RunWith(CamelSpringRunner.class)
 @ContextConfiguration(
         classes = { CounterRouteTest.TestConfig.class },
         loader = CamelSpringDelegatingTestContextLoader.class)
@@ -154,7 +154,7 @@ public class CounterRouteTest {
     public void testOverrideIncrementAndDecrement() throws Exception {
         when(mockRegistry.counter("A")).thenReturn(mockCounter);
         endpoint.expectedMessageCount(1);
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(HEADER_COUNTER_INCREMENT, 912L);
         headers.put(HEADER_COUNTER_DECREMENT, 43219L);
         producer1.sendBodyAndHeaders(new Object(), headers);

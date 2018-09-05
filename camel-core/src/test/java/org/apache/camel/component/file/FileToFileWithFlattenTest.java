@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+import org.junit.After;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -34,7 +38,8 @@ public class FileToFileWithFlattenTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/flatten-in");
         deleteDirectory("target/flatten-out");
         super.setUp();
@@ -44,16 +49,19 @@ public class FileToFileWithFlattenTest extends ContextTestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         context.stop();
         super.tearDown();
     }
 
+    @Test
     public void testFlatternConsumer() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/flatten-in?recursive=true&flatten=true").to("file://target/flatten-out", "mock:result");
+                from("file://target/flatten-in?initialDelay=0&delay=10&recursive=true&flatten=true")
+                    .to("file://target/flatten-out", "mock:result");
             }
         });
         context.start();
@@ -74,11 +82,13 @@ public class FileToFileWithFlattenTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFlatternProducer() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/flatten-in?recursive=true").to("file://target/flatten-out?flatten=true", "mock:result");
+                from("file://target/flatten-in?initialDelay=0&delay=10&recursive=true")
+                    .to("file://target/flatten-out?flatten=true", "mock:result");
             }
         });
         context.start();

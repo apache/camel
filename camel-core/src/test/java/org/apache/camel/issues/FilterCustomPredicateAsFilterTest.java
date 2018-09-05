@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +35,7 @@ public class FilterCustomPredicateAsFilterTest extends ContextTestSupport {
 
     private static class MyFiler implements Predicate {
 
-        private List<String> bodies = new ArrayList<String>();
+        private List<String> bodies = new ArrayList<>();
 
         public boolean matches(Exchange exchange) {
             String body = exchange.getIn().getBody(String.class);
@@ -47,6 +49,7 @@ public class FilterCustomPredicateAsFilterTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testFilterCustomPredicateAsFilter() throws Exception {
         getMockEndpoint("mock:good").expectedBodiesReceived("Hello World", "Bye World");
 

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -27,12 +30,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileConsumeNoopIdempotentDisabledTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/noop");
         super.setUp();
         template.sendBodyAndHeader("file://target/noop", "Hello World", Exchange.FILE_NAME, "hello.txt");
     }
 
+    @Test
     public void testNoop() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         // should be able to read the file multiple times as idempotent is false
@@ -46,7 +51,7 @@ public class FileConsumeNoopIdempotentDisabledTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/noop?noop=true&idempotent=false").convertBodyTo(String.class).to("mock:result");
+                from("file://target/noop?initialDelay=0&delay=10&noop=true&idempotent=false").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

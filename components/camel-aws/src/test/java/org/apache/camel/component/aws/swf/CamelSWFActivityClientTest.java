@@ -16,36 +16,39 @@
  */
 package org.apache.camel.component.aws.swf;
 
-import com.amazonaws.services.simpleworkflow.flow.ActivitySchedulingOptions;
 import com.amazonaws.services.simpleworkflow.flow.DynamicActivitiesClient;
 import com.amazonaws.services.simpleworkflow.flow.core.Promise;
 import com.amazonaws.services.simpleworkflow.model.ActivityType;
+
 import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.isNull;
+import org.mockito.ArgumentMatchers;
+
+
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class CamelSWFActivityClientTest {
 
-    private DynamicActivitiesClient activitiesClient;
+    private DynamicActivitiesClient actClient;
     private CamelSWFActivityClient camelSWFActivityClient;
 
     @Before
     public void setUp() throws Exception {
-        activitiesClient = mock(DynamicActivitiesClient.class);
+        actClient = mock(DynamicActivitiesClient.class);
         camelSWFActivityClient = new CamelSWFActivityClient(new SWFConfiguration()) {
             @Override
             DynamicActivitiesClient getDynamicActivitiesClient() {
-                return activitiesClient;
+                return actClient;
             }
         };
     }
 
     @Test
     public void testScheduleActivity() throws Exception {
-        Object result = camelSWFActivityClient.scheduleActivity("eventName", "version", "input");
-        verify(activitiesClient).scheduleActivity(any(ActivityType.class),  any(Promise[].class), isNull(ActivitySchedulingOptions.class), any(Class.class), isNull(Promise.class));
+        camelSWFActivityClient.scheduleActivity("eventName", "version", "input");
+
+        verify(actClient).scheduleActivity(any(ActivityType.class), ArgumentMatchers.<Promise<?>[]> any(), ArgumentMatchers.isNull(), ArgumentMatchers.<Class<?>> any(), ArgumentMatchers.isNull());
     }
 }

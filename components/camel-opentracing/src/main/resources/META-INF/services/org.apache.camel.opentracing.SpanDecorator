@@ -1,0 +1,54 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+org.apache.camel.opentracing.decorators.AhcSpanDecorator
+org.apache.camel.opentracing.decorators.AmqpSpanDecorator
+org.apache.camel.opentracing.decorators.AwsSqsSpanDecorator
+org.apache.camel.opentracing.decorators.AwsSnsSpanDecorator
+org.apache.camel.opentracing.decorators.CometdSpanDecorator
+org.apache.camel.opentracing.decorators.CometdsSpanDecorator
+org.apache.camel.opentracing.decorators.CqlSpanDecorator
+org.apache.camel.opentracing.decorators.DirectSpanDecorator
+org.apache.camel.opentracing.decorators.DirectvmSpanDecorator
+org.apache.camel.opentracing.decorators.DisruptorSpanDecorator
+org.apache.camel.opentracing.decorators.DisruptorvmSpanDecorator
+org.apache.camel.opentracing.decorators.ElasticsearchSpanDecorator
+org.apache.camel.opentracing.decorators.Http4SpanDecorator
+org.apache.camel.opentracing.decorators.HttpSpanDecorator
+org.apache.camel.opentracing.decorators.IronmqSpanDecorator
+org.apache.camel.opentracing.decorators.JdbcSpanDecorator
+org.apache.camel.opentracing.decorators.JettySpanDecorator
+org.apache.camel.opentracing.decorators.JmsSpanDecorator
+org.apache.camel.opentracing.decorators.KafkaSpanDecorator
+org.apache.camel.opentracing.decorators.LogSpanDecorator
+org.apache.camel.opentracing.decorators.MongoDBSpanDecorator
+org.apache.camel.opentracing.decorators.MqttSpanDecorator
+org.apache.camel.opentracing.decorators.NettyHttp4SpanDecorator
+org.apache.camel.opentracing.decorators.NettyHttpSpanDecorator
+org.apache.camel.opentracing.decorators.PahoSpanDecorator
+org.apache.camel.opentracing.decorators.RabbitmqSpanDecorator
+org.apache.camel.opentracing.decorators.RestletSpanDecorator
+org.apache.camel.opentracing.decorators.RestSpanDecorator
+org.apache.camel.opentracing.decorators.SedaSpanDecorator
+org.apache.camel.opentracing.decorators.ServletSpanDecorator
+org.apache.camel.opentracing.decorators.SjmsSpanDecorator
+org.apache.camel.opentracing.decorators.SqlSpanDecorator
+org.apache.camel.opentracing.decorators.StompSpanDecorator
+org.apache.camel.opentracing.decorators.TimerSpanDecorator
+org.apache.camel.opentracing.decorators.UndertowSpanDecorator
+org.apache.camel.opentracing.decorators.VmSpanDecorator
+

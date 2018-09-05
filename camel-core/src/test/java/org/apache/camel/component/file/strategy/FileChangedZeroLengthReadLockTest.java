@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.strategy;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.FileOutputStream;
 
@@ -28,12 +31,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileChangedZeroLengthReadLockTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/changed/");
         createDirectory("target/changed/in");
         super.setUp();
     }
 
+    @Test
     public void testChangedReadLock() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -55,7 +60,8 @@ public class FileChangedZeroLengthReadLockTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/changed/in?readLock=changed&readLockMinLength=0").to("file:target/changed/out", "mock:result");
+                from("file:target/changed/in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100&readLockMinLength=0")
+                    .to("file:target/changed/out", "mock:result");
             }
         };
     }

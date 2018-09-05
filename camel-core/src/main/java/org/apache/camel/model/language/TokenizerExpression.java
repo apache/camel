@@ -29,11 +29,11 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
- * For expressions and predicates using a body or header tokenizer.
+ * To use Camel message body or header with a tokenizer in Camel expressions or predicates.
  *
  * @see TokenizeLanguage
  */
-@Metadata(label = "language", title = "Tokenize")
+@Metadata(firstVersion = "2.0.0", label = "language,core", title = "Tokenize")
 @XmlRootElement(name = "tokenize")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TokenizerExpression extends ExpressionDefinition {
@@ -52,7 +52,9 @@ public class TokenizerExpression extends ExpressionDefinition {
     @XmlAttribute
     private Boolean includeTokens;
     @XmlAttribute
-    private Integer group;
+    private String group;
+    @XmlAttribute
+    private Boolean skipFirst;
 
     public TokenizerExpression() {
     }
@@ -67,7 +69,8 @@ public class TokenizerExpression extends ExpressionDefinition {
     }
 
     /**
-     * The (start) token to use as tokenizer, for example \n for a new line token
+     * The (start) token to use as tokenizer, for example you can use the new line token.
+     * You can use simple language as the token to support dynamic tokens.
      */
     public void setToken(String token) {
         this.token = token;
@@ -79,6 +82,7 @@ public class TokenizerExpression extends ExpressionDefinition {
 
     /**
      * The end token to use as tokenizer if using start/end token pairs.
+     * You can use simple language as the token to support dynamic tokens.
      */
     public void setEndToken(String endToken) {
         this.endToken = endToken;
@@ -113,7 +117,8 @@ public class TokenizerExpression extends ExpressionDefinition {
     }
 
     /**
-     * To inherit namepaces from a root/parent tag name when using XML
+     * To inherit namespaces from a root/parent tag name when using XML
+     * You can use simple language as the tag name to support dynamic names.
      */
     public void setInheritNamespaceTagName(String inheritNamespaceTagName) {
         this.inheritNamespaceTagName = inheritNamespaceTagName;
@@ -144,15 +149,27 @@ public class TokenizerExpression extends ExpressionDefinition {
         this.includeTokens = includeTokens;
     }
 
-    public Integer getGroup() {
+    public String getGroup() {
         return group;
     }
 
     /**
      * To group N parts together, for example to split big files into chunks of 1000 lines.
+     * You can use simple language as the group to support dynamic group sizes.
      */
-    public void setGroup(Integer group) {
+    public void setGroup(String group) {
         this.group = group;
+    }
+
+    public Boolean getSkipFirst() {
+        return skipFirst;
+    }
+
+    /**
+     * To skip the very first element
+     */
+    public void setSkipFirst(Boolean skipFirst) {
+        this.skipFirst = skipFirst;
     }
 
     @Override
@@ -176,11 +193,11 @@ public class TokenizerExpression extends ExpressionDefinition {
         if (includeTokens != null) {
             language.setIncludeTokens(includeTokens);
         }
-        if (group != null) {
-            if (group <= 0) {
-                throw new IllegalArgumentException("Group must be a positive number, was: " + group);
-            }
+        if (group != null && !"0".equals(group)) {
             language.setGroup(group);
+        }
+        if (skipFirst != null) {
+            language.setSkipFirst(skipFirst);
         }
         return language.createExpression();
     }

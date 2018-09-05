@@ -37,7 +37,7 @@ public class GsonMarshalExclusionTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:reversePojoExcludeWeight");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(TestPojoExclusion.class);
-        mock.message(0).body().equals(in);
+        mock.message(0).body().isEqualTo(in);
 
         Object marshalled = template.requestBody("direct:inPojoExcludeWeight", in);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
@@ -56,7 +56,7 @@ public class GsonMarshalExclusionTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:reversePojoExcludeAge");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(TestPojoExclusion.class);
-        mock.message(0).body().equals(in);
+        mock.message(0).body().isEqualTo(in);
 
         Object marshalled = template.requestBody("direct:inPojoExcludeAge", in);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);

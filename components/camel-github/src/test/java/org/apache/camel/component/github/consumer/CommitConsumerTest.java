@@ -34,7 +34,7 @@ public class CommitConsumerTest extends GitHubComponentTestBase {
             @Override
             public void configure() throws Exception {
                 context.addComponent("github", new GitHubComponent());
-                from("github://commit/master?" + GITHUB_CREDENTIALS_STRING).
+                from("github://commit/master?username=someguy&password=apassword&repoOwner=anotherguy&repoName=somerepo").
                         process(new GitHubCommitProcessor())
                         .to(mockResultEndpoint);
             }
@@ -60,7 +60,9 @@ public class CommitConsumerTest extends GitHubComponentTestBase {
             Message in = exchange.getIn();
             RepositoryCommit commit = (RepositoryCommit) in.getBody();
             User author = commit.getAuthor();
-            log.debug("Got commit with author: " + author.getLogin() + ": " + author.getHtmlUrl() + " SHA " + commit.getSha());
+            if (log.isDebugEnabled()) {
+                log.debug("Got commit with author: " + author.getLogin() + ": " + author.getHtmlUrl() + " SHA " + commit.getSha());
+            }
         }
     }
 }

@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
@@ -43,6 +44,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppBinding</code>
@@ -52,6 +55,7 @@ import static org.junit.Assert.assertTrue;
 public class SmppBindingTest {
     
     private SmppBinding binding;
+    private CamelContext camelContext;
 
     @Before
     public void setUp() {
@@ -60,6 +64,7 @@ public class SmppBindingTest {
                 return new Date(1251666387000L);
             }
         };
+        camelContext = new DefaultCamelContext();
     }
 
     @Test
@@ -86,7 +91,7 @@ public class SmppBindingTest {
         alertNotification.setEsmeAddr("1717");
         alertNotification.setEsmeAddrNpi(NumberingPlanIndicator.NATIONAL.value());
         alertNotification.setEsmeAddrTon(TypeOfNumber.NATIONAL.value());
-        SmppMessage smppMessage = binding.createSmppMessage(alertNotification);
+        SmppMessage smppMessage = binding.createSmppMessage(camelContext, alertNotification);
         
         assertNull(smppMessage.getBody());
         assertEquals(10, smppMessage.getHeaders().size());
@@ -106,8 +111,10 @@ public class SmppBindingTest {
     public void createSmppMessageFromDeliveryReceiptShouldReturnASmppMessage() throws Exception {
         DeliverSm deliverSm = new DeliverSm();
         deliverSm.setSmscDeliveryReceipt();
-        deliverSm.setShortMessage("id:2 sub:001 dlvrd:001 submit date:0908312310 done date:0908312311 stat:DELIVRD err:xxx Text:Hello SMPP world!".getBytes());
-        SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
+        deliverSm.setShortMessage(
+            "id:2 sub:001 dlvrd:001 submit date:0908312310 done date:0908312311 stat:DELIVRD err:xxx Text:Hello SMPP world!"
+                .getBytes());
+        SmppMessage smppMessage = binding.createSmppMessage(camelContext, deliverSm);
         
         assertEquals("Hello SMPP world!", smppMessage.getBody());
         assertEquals(8, smppMessage.getHeaders().size());
@@ -129,14 +136,14 @@ public class SmppBindingTest {
         DeliverSm deliverSm = new DeliverSm();
         deliverSm.setSmscDeliveryReceipt();
         deliverSm.setShortMessage("id:2 sub:001 dlvrd:001 submit date:0908312310 done date:0908312311 stat:DELIVRD err:xxx Text:Hello SMPP world!".getBytes());
-        deliverSm.setOptionalParametes(
+        deliverSm.setOptionalParameters(
             new OptionalParameter.OctetString(Tag.SOURCE_SUBADDRESS, "OctetString"),
             new OptionalParameter.COctetString((short) 0x001D, "COctetString"),
             new OptionalParameter.Byte(Tag.DEST_ADDR_SUBUNIT, (byte) 0x01),
             new OptionalParameter.Short(Tag.DEST_TELEMATICS_ID, (short) 1),
             new OptionalParameter.Int(Tag.QOS_TIME_TO_LIVE, 1),
             new OptionalParameter.Null(Tag.ALERT_ON_MESSAGE_DELIVERY));
-        SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
+        SmppMessage smppMessage = binding.createSmppMessage(camelContext, deliverSm);
 
         assertEquals("Hello SMPP world!", smppMessage.getBody());
         assertEquals(10, smppMessage.getHeaders().size());
@@ -153,7 +160,7 @@ public class SmppBindingTest {
         Map<String, Object> optionalParameters = smppMessage.getHeader(SmppConstants.OPTIONAL_PARAMETERS, Map.class);
         assertEquals(6, optionalParameters.size());
         assertEquals("OctetString", optionalParameters.get("SOURCE_SUBADDRESS"));
-        assertEquals("COctetStrin", optionalParameters.get("ADDITIONAL_STATUS_INFO_TEXT"));
+        assertEquals("COctetString", optionalParameters.get("ADDITIONAL_STATUS_INFO_TEXT"));
         assertEquals(Byte.valueOf((byte) 0x01), optionalParameters.get("DEST_ADDR_SUBUNIT"));
         assertEquals(Short.valueOf((short) 1), optionalParameters.get("DEST_TELEMATICS_ID"));
         assertEquals(Integer.valueOf(1), optionalParameters.get("QOS_TIME_TO_LIVE"));
@@ -162,11 +169,48 @@ public class SmppBindingTest {
         Map<Short, Object> optionalParameter = smppMessage.getHeader(SmppConstants.OPTIONAL_PARAMETER, Map.class);
         assertEquals(6, optionalParameter.size());
         assertArrayEquals("OctetString".getBytes("UTF-8"), (byte[]) optionalParameter.get(Short.valueOf((short) 0x0202)));
-        assertEquals("COctetStrin", optionalParameter.get(Short.valueOf((short) 0x001D)));
+        assertEquals("COctetString", optionalParameter.get(Short.valueOf((short) 0x001D)));
         assertEquals(Byte.valueOf((byte) 0x01), optionalParameter.get(Short.valueOf((short) 0x0005)));
         assertEquals(Short.valueOf((short) 1), optionalParameter.get(Short.valueOf((short) 0x0008)));
         assertEquals(Integer.valueOf(1), optionalParameter.get(Short.valueOf((short) 0x0017)));
         assertNull("0x00", optionalParameter.get(Short.valueOf((short) 0x130C)));
+    }
+
+    @Test
+    public void createSmppMessageFromDeliveryReceiptWithPayloadInOptionalParameterShouldReturnASmppMessage() {
+        DeliverSm deliverSm = new DeliverSm();
+        deliverSm.setSmscDeliveryReceipt();
+        deliverSm.setOptionalParameters(new OctetString(OptionalParameter.Tag.MESSAGE_PAYLOAD,
+            "id:2 sub:001 dlvrd:001 submit date:0908312310 done date:0908312311 stat:DELIVRD err:xxx Text:Hello SMPP world!"));
+        try {
+            SmppMessage smppMessage = binding.createSmppMessage(camelContext, deliverSm);
+
+            assertEquals("Hello SMPP world!", smppMessage.getBody());
+            assertEquals(10, smppMessage.getHeaders().size());
+            assertEquals("2", smppMessage.getHeader(SmppConstants.ID));
+            assertEquals(1, smppMessage.getHeader(SmppConstants.DELIVERED));
+            assertEquals("xxx", smppMessage.getHeader(SmppConstants.ERROR));
+            assertEquals(1, smppMessage.getHeader(SmppConstants.SUBMITTED));
+            assertEquals(DeliveryReceiptState.DELIVRD, smppMessage.getHeader(SmppConstants.FINAL_STATUS));
+            assertEquals(SmppMessageType.DeliveryReceipt.toString(), smppMessage.getHeader(SmppConstants.MESSAGE_TYPE));
+        } catch (Exception e) {
+            fail("Should not throw exception while creating smppMessage.");
+        }
+    }
+
+    @Test
+    public void createSmppMessageFromDeliveryReceiptWithoutShortMessageShouldNotThrowException() throws Exception {
+        DeliverSm deliverSm = new DeliverSm();
+        deliverSm.setSmscDeliveryReceipt();
+        deliverSm.setOptionalParameters(new OptionalParameter.Short((short) 0x2153, (short) 0));
+
+        try {
+            SmppMessage smppMessage = binding.createSmppMessage(camelContext, deliverSm);
+            Map<Short, Object> optionalParameter = smppMessage.getHeader(SmppConstants.OPTIONAL_PARAMETER, Map.class);
+            assertEquals(Short.valueOf((short) 0), optionalParameter.get(Short.valueOf((short) 0x2153)));
+        } catch (Exception e) {
+            fail("Should not throw exception while creating smppMessage in absence of shortMessage");
+        }
     }
 
     @Test
@@ -184,7 +228,7 @@ public class SmppBindingTest {
         deliverSm.setScheduleDeliveryTime("090831230627004+");
         deliverSm.setValidityPeriod("090901230627004+");
         deliverSm.setServiceType("WAP");
-        SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
+        SmppMessage smppMessage = binding.createSmppMessage(camelContext, deliverSm);
         
         assertEquals("Hello SMPP world!", smppMessage.getBody());
         assertEquals(13, smppMessage.getHeaders().size());
@@ -194,7 +238,7 @@ public class SmppBindingTest {
         assertEquals((byte) 8, smppMessage.getHeader(SmppConstants.SOURCE_ADDR_NPI));
         assertEquals((byte) 2, smppMessage.getHeader(SmppConstants.SOURCE_ADDR_TON));
         assertEquals("1919", smppMessage.getHeader(SmppConstants.DEST_ADDR));
-        assertEquals((byte) 20, smppMessage.getHeader(SmppConstants.DEST_ADDR_NPI));
+        assertEquals((byte) 14, smppMessage.getHeader(SmppConstants.DEST_ADDR_NPI));
         assertEquals((byte) 3, smppMessage.getHeader(SmppConstants.DEST_ADDR_TON));
         assertEquals("090831230627004+", smppMessage.getHeader(SmppConstants.SCHEDULE_DELIVERY_TIME));
         assertEquals("090901230627004+", smppMessage.getHeader(SmppConstants.VALIDITY_PERIOD));
@@ -216,8 +260,8 @@ public class SmppBindingTest {
         deliverSm.setScheduleDeliveryTime("090831230627004+");
         deliverSm.setValidityPeriod("090901230627004+");
         deliverSm.setServiceType("WAP");
-        deliverSm.setOptionalParametes(new OctetString(OptionalParameter.Tag.MESSAGE_PAYLOAD, "Hello SMPP world!"));
-        SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
+        deliverSm.setOptionalParameters(new OctetString(OptionalParameter.Tag.MESSAGE_PAYLOAD, "Hello SMPP world!"));
+        SmppMessage smppMessage = binding.createSmppMessage(camelContext, deliverSm);
         
         assertEquals("Hello SMPP world!", smppMessage.getBody());
         assertEquals(13, smppMessage.getHeaders().size());
@@ -227,7 +271,7 @@ public class SmppBindingTest {
         assertEquals((byte) 8, smppMessage.getHeader(SmppConstants.SOURCE_ADDR_NPI));
         assertEquals((byte) 2, smppMessage.getHeader(SmppConstants.SOURCE_ADDR_TON));
         assertEquals("1919", smppMessage.getHeader(SmppConstants.DEST_ADDR));
-        assertEquals((byte) 20, smppMessage.getHeader(SmppConstants.DEST_ADDR_NPI));
+        assertEquals((byte) 14, smppMessage.getHeader(SmppConstants.DEST_ADDR_NPI));
         assertEquals((byte) 3, smppMessage.getHeader(SmppConstants.DEST_ADDR_TON));
         assertEquals("090831230627004+", smppMessage.getHeader(SmppConstants.SCHEDULE_DELIVERY_TIME));
         assertEquals("090901230627004+", smppMessage.getHeader(SmppConstants.VALIDITY_PERIOD));
@@ -249,7 +293,7 @@ public class SmppBindingTest {
         dataSm.setDestAddrTon(TypeOfNumber.NATIONAL.value());
         dataSm.setServiceType("WAP");
         dataSm.setRegisteredDelivery((byte) 0);
-        SmppMessage smppMessage = binding.createSmppMessage(dataSm, "1");
+        SmppMessage smppMessage = binding.createSmppMessage(camelContext, dataSm, "1");
         
         assertNull(smppMessage.getBody());
         assertEquals(14, smppMessage.getHeaders().size());
@@ -293,7 +337,7 @@ public class SmppBindingTest {
 
             for (String encoding : encodings) {
                 binding.getConfiguration().setEncoding(encoding);
-                SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
+                SmppMessage smppMessage = binding.createSmppMessage(camelContext, deliverSm);
                 assertArrayEquals(
                     String.format("data coding=0x%02X; encoding=%s",
                                   dataCoding,

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -28,6 +30,7 @@ public class DeadLetterChannelNoRedeliveryTest extends ContextTestSupport {
 
     private static volatile int counter;
 
+    @Test
     public void testDLCNoRedelivery() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:b").expectedMessageCount(0);

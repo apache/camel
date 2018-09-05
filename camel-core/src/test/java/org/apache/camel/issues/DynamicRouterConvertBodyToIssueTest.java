@@ -16,13 +16,15 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import java.util.Map;
 import java.util.UUID;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeProperties;
 import org.apache.camel.Processor;
-import org.apache.camel.Properties;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Ignore;
 
@@ -32,6 +34,7 @@ public class DynamicRouterConvertBodyToIssueTest extends ContextTestSupport impl
     private static final int MAX_ITERATIONS = 1000;
     private static int counter;
 
+    @Test
     public void testIssue() throws Exception {
         template.sendBody("seda:foo", "Hello World");
 
@@ -70,14 +73,14 @@ public class DynamicRouterConvertBodyToIssueTest extends ContextTestSupport impl
         }
         exchange.getIn().setBody(sb);
 
-        Thread.currentThread().sleep(100);
+        Thread.sleep(100);
 
         if (counter++ > MAX_ITERATIONS) {
             exchange.setProperty("EXIT", "PLEASE");
         }
     }
 
-    public String slip(String body, @Properties Map<String, Object> properties) {
+    public String slip(String body, @ExchangeProperties Map<String, Object> properties) {
         log.info("slip " + properties.get("EXIT"));
         if (properties.get("EXIT") != null && properties.get("EXIT").equals("PLEASE")) {
             log.info("Exiting after " + MAX_ITERATIONS + " iterations");

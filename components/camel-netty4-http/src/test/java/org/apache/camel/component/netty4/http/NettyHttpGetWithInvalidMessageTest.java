@@ -49,10 +49,10 @@ public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
         StringEncoder stringEncoder = new StringEncoder();
         registry.bind("string-encoder", stringEncoder);
 
-        List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
+        List<ChannelHandler> decoders = new ArrayList<>();
         decoders.add(stringDecoder);
 
-        List<ChannelHandler> encoders = new ArrayList<ChannelHandler>();
+        List<ChannelHandler> encoders = new ArrayList<>();
         encoders.add(stringEncoder);
 
         registry.bind("encoders", encoders);
@@ -72,7 +72,7 @@ public class NettyHttpGetWithInvalidMessageTest extends CamelTestSupport {
     }
     
     private void invokeService(int port) {
-        Exchange out = template.request("netty4:tcp://localhost:" + port + "?encoders=#encoders&decoders=#decoders&sync=true" , new Processor() {
+        Exchange out = template.request("netty4:tcp://localhost:" + port + "?encoders=#encoders&decoders=#decoders&sync=true", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(REQUEST_STRING);

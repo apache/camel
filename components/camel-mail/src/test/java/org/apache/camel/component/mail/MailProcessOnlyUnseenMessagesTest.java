@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+import org.junit.Before;
 
 import javax.mail.Flags;
 import javax.mail.Folder;
@@ -34,6 +35,7 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailProcessOnlyUnseenMessagesTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();
@@ -72,9 +74,11 @@ public class MailProcessOnlyUnseenMessagesTest extends CamelTestSupport {
         Message[] msg = new Message[2];
         msg[0] = new MimeMessage(sender.getSession());
         msg[0].setText("Message 1");
+        msg[0].setHeader("Message-ID", "0");
         msg[0].setFlag(Flags.Flag.SEEN, true);
         msg[1] = new MimeMessage(sender.getSession());
         msg[1].setText("Message 2");
+        msg[0].setHeader("Message-ID", "1");
         msg[1].setFlag(Flags.Flag.SEEN, true);
         folder.appendMessages(msg);
         folder.close(true);
@@ -85,7 +89,7 @@ public class MailProcessOnlyUnseenMessagesTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:a").to("smtp://claus@localhost");
 
-                from("imap://localhost?username=claus&password=secret&unseen=true&consumer.delay=1000").to("mock:result");
+                from("imap://localhost?username=claus&password=secret&unseen=true&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
             }
         };
     }

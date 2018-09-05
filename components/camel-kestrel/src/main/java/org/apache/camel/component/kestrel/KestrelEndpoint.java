@@ -27,9 +27,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * Camel endpoint for communication with a kestrel based queue.
+ * The kestrel component allows messages to be sent to (or consumed from) Kestrel brokers.
  */
-@UriEndpoint(scheme = "kestrel", title = "Kestrel", syntax = "kestrel:addresses/queue", consumerClass = KestrelConsumer.class, label = "messaging")
+@UriEndpoint(firstVersion = "2.6.0", scheme = "kestrel", title = "Kestrel", syntax = "kestrel:addresses/queue", consumerClass = KestrelConsumer.class, label = "messaging")
 public class KestrelEndpoint extends DefaultEndpoint {
 
     /**
@@ -89,12 +89,7 @@ public class KestrelEndpoint extends DefaultEndpoint {
         return component.getMemcachedClient(configuration, queue);
     }
 
-    @Override
-    public boolean isLenientProperties() {
-        return false;
-    }
-
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 }

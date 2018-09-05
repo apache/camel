@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.postprocessor;
 
+import org.junit.Test;
+
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -30,6 +32,7 @@ public class CamelCustomPostProcessorOnRouteBuilderTest extends SpringTestSuppor
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/postprocessor/camelCustomPostProcessorOnRouteBuilderTest.xml");
     }
 
+    @Test
     public void testShouldProcessAnnotatedFields() throws Exception {
         getMockEndpoint("mock:injected").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(1);

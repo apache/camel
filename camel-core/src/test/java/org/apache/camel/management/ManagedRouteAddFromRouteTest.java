@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -64,6 +66,7 @@ public class ManagedRouteAddFromRouteTest extends ManagementTestSupport {
         };
     }
 
+    @Test
     public void testAddRouteFromRoute() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

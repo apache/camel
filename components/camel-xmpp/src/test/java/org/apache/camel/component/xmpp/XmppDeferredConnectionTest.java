@@ -15,9 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.component.xmpp;
+import org.junit.After;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -28,13 +30,25 @@ import org.junit.Test;
  */
 public class XmppDeferredConnectionTest extends CamelTestSupport {
 
+    private EmbeddedXmppTestServer embeddedXmppTestServer;
+
     /**
      * Ensures that the XMPP server instance is created and 'stopped' before the camel 
      * routes are initialized
      */
     @Override
     public void doPreSetup() throws Exception {
-        EmbeddedXmppTestServer.instance().stopXmppEndpoint();
+        embeddedXmppTestServer = new EmbeddedXmppTestServer();
+        embeddedXmppTestServer.stopXmppEndpoint();
+    }
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+
+        embeddedXmppTestServer.bindSSLContextTo(registry);
+
+        return registry;
     }
 
     @Test
@@ -60,7 +74,7 @@ public class XmppDeferredConnectionTest extends CamelTestSupport {
         template.sendBody("direct:simple", "Hello simple!");
         simpleEndpoint.assertIsSatisfied();
 
-        EmbeddedXmppTestServer.instance().startXmppEndpoint();
+        embeddedXmppTestServer.startXmppEndpoint();
 
         // wait for the connection to be established
         Thread.sleep(2000);
@@ -90,15 +104,21 @@ public class XmppDeferredConnectionTest extends CamelTestSupport {
     }
 
     protected String getProducerUri() {
-        return "xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort()
-            + "/camel_consumer@apache.camel?user=camel_producer&password=secret&serviceName=apache.camel"
+        return "xmpp://localhost:" + embeddedXmppTestServer.getXmppPort()
+            + "/camel_producer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_producer&password=secret&serviceName=apache.camel"
             + "&testConnectionOnStartup=false";
     }
 
     protected String getConsumerUri() {
-        return "xmpp://localhost:" + EmbeddedXmppTestServer.instance().getXmppPort()
-            + "/camel_consumer@apache.camel?user=camel_consumer&password=secret&serviceName=apache.camel"
+        return "xmpp://localhost:" + embeddedXmppTestServer.getXmppPort()
+            + "/camel_consumer@apache.camel?connectionConfig=#customConnectionConfig&room=camel-test@conference.apache.camel&user=camel_consumer&password=secret&serviceName=apache.camel"
             + "&testConnectionOnStartup=false&connectionPollDelay=1";
     }
 
-}   
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+        embeddedXmppTestServer.stop();
+    }
+}

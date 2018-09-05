@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.List;
 
@@ -32,6 +35,7 @@ public class RedeliveryPolicyPerExceptionTest extends ContextTestSupport {
     protected MockEndpoint a;
     protected MockEndpoint b;
 
+    @Test
     public void testUsingCustomExceptionHandlerAndOneRedelivery() throws Exception {
         a.expectedMessageCount(1);
 
@@ -50,6 +54,7 @@ public class RedeliveryPolicyPerExceptionTest extends ContextTestSupport {
         assertMessageHeader(in, Exchange.REDELIVERED, true);
     }
 
+    @Test
     public void testUsingCustomExceptionHandlerWithNoRedeliveries() throws Exception {
         b.expectedMessageCount(1);
 
@@ -69,7 +74,8 @@ public class RedeliveryPolicyPerExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         a = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
         b = resolveMandatoryEndpoint("mock:b", MockEndpoint.class);
@@ -91,7 +97,7 @@ public class RedeliveryPolicyPerExceptionTest extends ContextTestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
-                onException(IllegalArgumentException.class).maximumRedeliveries(2).to("mock:a");
+                onException(IllegalArgumentException.class).redeliveryDelay(0).maximumRedeliveries(2).to("mock:a");
                 onException(NullPointerException.class).to("mock:b");
 
                 from("direct:start").process(processor);

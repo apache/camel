@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
@@ -84,6 +85,11 @@ public final class StreamCacheConverter {
     }
 
     @Converter
+    public static StreamCache convertToStreamCache(CachedOutputStream cos, Exchange exchange) throws IOException {
+        return cos.newStreamCache();
+    }
+
+    @Converter
     public static StreamCache convertToStreamCache(Reader reader, Exchange exchange) throws IOException {
         String data = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, reader);
         return new ReaderCache(data);
@@ -101,6 +107,12 @@ public final class StreamCacheConverter {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         cache.writeTo(os);
         return os.toByteArray();
+    }
+
+    @Converter
+    public static ByteBuffer convertToByteBuffer(StreamCache cache, Exchange exchange) throws IOException {
+        byte[] array = convertToByteArray(cache, exchange);
+        return ByteBuffer.wrap(array);
     }
 
 }

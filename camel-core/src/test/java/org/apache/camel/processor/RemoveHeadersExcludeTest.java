@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,12 +27,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 
 public class RemoveHeadersExcludeTest extends ContextTestSupport {
 
+    @Test
     public void testRemoveHeadersWildcard() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:end");
         mock.expectedBodiesReceived("Hello World");
         mock.expectedHeaderReceived("duck", "Donald");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("dudeCool", "cool");
         headers.put("dudeWicket", "wicket");
         headers.put("duck", "Donald");
@@ -44,6 +47,7 @@ public class RemoveHeadersExcludeTest extends ContextTestSupport {
         assertEquals(2, mock.getReceivedExchanges().get(0).getIn().getHeaders().size());
     }
 
+    @Test
     public void testRemoveHeadersRegEx() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:end");
         mock.expectedBodiesReceived("Hello World");
@@ -51,7 +55,7 @@ public class RemoveHeadersExcludeTest extends ContextTestSupport {
         mock.expectedHeaderReceived("BeerHeineken", "Good");
         mock.expectedHeaderReceived("BeerTuborg", "Also Great");
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("dudeCool", "cool");
         headers.put("dudeWicket", "wicket");
         headers.put("duck", "Donald");

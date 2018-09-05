@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
+import org.junit.Test;
+
 import java.util.Collection;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -33,13 +35,14 @@ public class CollectionProducerTest extends ContextTestSupport {
 
     private static class MyProducer extends CollectionProducer {
 
-        public MyProducer(Endpoint endpoint, Collection<Exchange> queue) {
+        MyProducer(Endpoint endpoint, Collection<Exchange> queue) {
             super(endpoint, queue);
         }
     }
 
+    @Test
     public void testCollectionProducer() throws Exception {
-        Queue<Exchange> queue = new ArrayBlockingQueue<Exchange>(10);
+        Queue<Exchange> queue = new ArrayBlockingQueue<>(10);
 
         Endpoint endpoint = context.getEndpoint("seda://foo");
         MyProducer my = new MyProducer(endpoint, queue);

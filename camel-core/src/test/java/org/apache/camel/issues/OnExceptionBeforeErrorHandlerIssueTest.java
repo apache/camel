@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -26,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class OnExceptionBeforeErrorHandlerIssueTest extends ContextTestSupport {
 
+    @Test
     public void testOk() throws Exception {
         context.startRoute("foo");
 
@@ -38,6 +41,7 @@ public class OnExceptionBeforeErrorHandlerIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testKabom() throws Exception {
         context.startRoute("foo");
 
@@ -50,6 +54,7 @@ public class OnExceptionBeforeErrorHandlerIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testIllegal() throws Exception {
         context.startRoute("foo");
 

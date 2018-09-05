@@ -1,0 +1,130 @@
+# Spring Boot Example with gRPC on Kubernetes
+
+### Introduction
+
+This example demonstrates how you can use Camel-gRPC Starter component. The example is composed of a standalone gRPC server and a Camel Spring-boot gRPC route acting as client. We will run this example on Minikube (0.21.0)
+
+### Server
+
+You can build the server under the directory hello-camel-grpc-server with:
+
+    $ mvn clean install 
+
+and then run the server with
+
+    $ mvn -Pkubernetes-install fabric8:deploy
+
+then check your pod status with
+
+    $ kubectl get pods
+
+[source,bash]
+----
+NAME                                                          READY     STATUS    RESTARTS   AGE
+camel-example-hello-grpc-server-kubernetes-2604940788-g47hr   1/1       Running   0          13s
+----
+
+and get the logs
+
+    $ kubectl logs camel-example-hello-grpc-server-kubernetes-2604940788-g47hr
+
+You should see the following output:
+
+[source,bash]
+----
+Aug 30, 2017 7:31:11 AM org.apache.camel.examples.grpc.HelloCamelServer start
+INFO: Server started. I'm listening on 8080
+----
+
+### Run the client
+
+You can build the client example under the directory hello-camel-grpc-client with:
+
+    $ mvn clean install
+
+and then run the server with
+
+    $ mvn -Pkubernetes-install fabric8:deploy
+
+then check your pod status with
+
+    $ kubectl get pods
+
+[source,bash]
+----
+NAME                                                          READY     STATUS    RESTARTS   AGE
+camel-example-hello-grpc-client-kubernetes-1594657646-ptrkn   1/1       Running   0          15s
+camel-example-hello-grpc-server-kubernetes-2604940788-g47hr   1/1       Running   0          7m
+
+----
+
+and get the logs
+
+    $ kubectl logs camel-example-hello-grpc-client-kubernetes-1594657646-ptrkn
+
+And you should see this output in the console.
+
+[source,bash]
+----
+2017-08-30 07:38:50.753:INFO:ifasjipjsoejs.Server:jetty-8.y.z-SNAPSHOT
+2017-08-30 07:38:50.787:INFO:ifasjipjsoejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:9779
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v1.5.6.RELEASE)
+
+2017-08-30 07:38:51.742  INFO 1 --- [           main] o.a.c.e.springboot.grpc.Application      : Starting Application v2.20.0-SNAPSHOT on camel-example-hello-grpc-client-kubernetes-1594657646-ptrkn with PID 1 (/deployments/camel-example-hello-grpc-client-kubernetes-2.20.0-SNAPSHOT.jar started by root in /deployments)
+2017-08-30 07:38:51.744  INFO 1 --- [           main] o.a.c.e.springboot.grpc.Application      : No active profile set, falling back to default profiles: default
+2017-08-30 07:38:51.899  INFO 1 --- [           main] s.c.a.AnnotationConfigApplicationContext : Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@5faeada1: startup date [Wed Aug 30 07:38:51 GMT 2017]; root of context hierarchy
+2017-08-30 07:38:53.236  INFO 1 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.apache.camel.spring.boot.CamelAutoConfiguration' of type [org.apache.camel.spring.boot.CamelAutoConfiguration$$EnhancerBySpringCGLIB$$bd99dea4] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2017-08-30 07:38:54.109  INFO 1 --- [           main] o.a.c.i.converter.DefaultTypeConverter   : Type converters loaded (core: 192, classpath: 1)
+2017-08-30 07:38:54.906  INFO 1 --- [           main] o.s.j.e.a.AnnotationMBeanExporter        : Registering beans for JMX exposure on startup
+2017-08-30 07:38:54.976  INFO 1 --- [           main] o.a.camel.spring.boot.RoutesCollector    : Loading additional Camel XML routes from: classpath:camel/*.xml
+2017-08-30 07:38:54.977  INFO 1 --- [           main] o.a.camel.spring.boot.RoutesCollector    : Loading additional Camel XML rests from: classpath:camel-rest/*.xml
+2017-08-30 07:38:54.977  INFO 1 --- [           main] o.a.camel.spring.boot.RoutesCollector    : Starting CamelMainRunController to ensure the main thread keeps running
+2017-08-30 07:38:54.980  INFO 1 --- [inRunController] o.a.camel.spring.SpringCamelContext      : Apache Camel 2.20.0-SNAPSHOT (CamelContext: gRPC) is starting
+2017-08-30 07:38:54.983  INFO 1 --- [inRunController] o.a.c.m.ManagedManagementStrategy        : JMX is enabled
+2017-08-30 07:38:55.005  INFO 1 --- [           main] o.a.c.e.springboot.grpc.Application      : Started Application in 3.745 seconds (JVM running for 4.657)
+2017-08-30 07:38:55.308  INFO 1 --- [inRunController] o.a.camel.spring.SpringCamelContext      : StreamCaching is not in use. If using streams then its recommended to enable stream caching. See more details at http://camel.apache.org/stream-caching.html
+2017-08-30 07:38:55.387  INFO 1 --- [inRunController] o.a.camel.component.grpc.GrpcProducer    : Creating channel to the remote gRPC server grpc-server:80
+2017-08-30 07:38:55.544  INFO 1 --- [inRunController] o.a.camel.spring.SpringCamelContext      : Route: route1 started and consuming from: timer://foo?period=10000&repeatCount=5
+2017-08-30 07:38:55.545  INFO 1 --- [inRunController] o.a.camel.spring.SpringCamelContext      : Total 1 routes, of which 1 are started
+2017-08-30 07:38:55.546  INFO 1 --- [inRunController] o.a.camel.spring.SpringCamelContext      : Apache Camel 2.20.0-SNAPSHOT (CamelContext: gRPC) started in 0.565 seconds
+2017-08-30 07:38:57.443  INFO 1 --- [2 - timer://foo] route1                                   : Received message: "Hello Camel"
+
+2017-08-30 07:39:06.556  INFO 1 --- [2 - timer://foo] route1                                   : Received message: "Hello Camel"
+
+2017-08-30 07:39:16.551  INFO 1 --- [2 - timer://foo] route1                                   : Received message: "Hello Camel"
+
+2017-08-30 07:39:26.551  INFO 1 --- [2 - timer://foo] route1                                   : Received message: "Hello Camel"
+
+2017-08-30 07:39:36.551  INFO 1 --- [2 - timer://foo] route1                                   : Received message: "Hello Camel"
+
+----
+
+### Cleanup
+
+Undeploy server and client
+```
+$ cd hello-camel-grpc-client-kubernetes
+$ mvn -Pkubernetes-install fabric8:undeploy
+$ cd ../hello-camel-grpc-server-kubernetes
+$ mvn -Pkubernetes-install fabric8:undeploy
+```
+Make sure no pod is running
+```
+$ kubectl get pods
+No resources found.
+```
+
+### Help
+
+If you hit any problems please let us know on the http://camel.apache.org/discussion-forums.html[Camel Forums].
+
+Please help us make Apache Camel better - we appreciate any feedback you may have. Enjoy!
+
+The Camel riders!

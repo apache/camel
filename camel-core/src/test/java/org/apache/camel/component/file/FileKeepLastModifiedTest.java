@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -29,26 +32,29 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileKeepLastModifiedTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/keep");
         super.setUp();
-        template.sendBodyAndHeader("file://target/keep", "Hello World", "CamelFileName", "hello.txt");
     }
 
+    @Test
     public void testKeepLastModified() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/keep?noop=true")
-                    .delay(3000).to("file://target/keep/out?keepLastModified=true", "mock:result");
+                from("file://target/keep?noop=true?initialDelay=0&delay=10")
+                    .delay(10)
+                    .to("file://target/keep/out?keepLastModified=true", "mock:result");
             }
         });
         context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/keep/out/hello.txt");
         mock.message(0).header(Exchange.FILE_LAST_MODIFIED).isNotNull();
+
+        template.sendBodyAndHeader("file://target/keep", "Hello World", "CamelFileName", "hello.txt");
 
         assertMockEndpointsSatisfied();
 
@@ -58,20 +64,23 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
         assertEquals("Timestamp should have been kept", t1, t2);
     }
 
+    @Test
     public void testDoNotKeepLastModified() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/keep?noop=true")
-                    .delay(3000).to("file://target/keep/out?keepLastModified=false", "mock:result");
+                from("file://target/keep?noop=true?initialDelay=0&delay=10")
+                    .delay(10)
+                    .to("file://target/keep/out?keepLastModified=false", "mock:result");
             }
         });
         context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/keep/out/hello.txt");
         mock.message(0).header(Exchange.FILE_LAST_MODIFIED).isNotNull();
+
+        template.sendBodyAndHeader("file://target/keep", "Hello World", "CamelFileName", "hello.txt");
 
         assertMockEndpointsSatisfied();
 
@@ -81,20 +90,23 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
         assertNotSame("Timestamp should NOT have been kept", t1, t2);
     }
 
+    @Test
     public void testDoNotKeepLastModifiedIsDefault() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/keep?noop=true")
-                    .delay(3000).to("file://target/keep/out", "mock:result");
+                from("file://target/keep?noop=true&initialDelay=0&delay=10")
+                    .delay(10)
+                    .to("file://target/keep/out", "mock:result");
             }
         });
         context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/keep/out/hello.txt");
         mock.message(0).header(Exchange.FILE_LAST_MODIFIED).isNotNull();
+
+        template.sendBodyAndHeader("file://target/keep", "Hello World", "CamelFileName", "hello.txt");
 
         assertMockEndpointsSatisfied();
 

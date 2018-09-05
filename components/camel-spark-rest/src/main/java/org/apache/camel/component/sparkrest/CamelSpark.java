@@ -24,6 +24,53 @@ public final class CamelSpark {
     private CamelSpark() {
     }
 
+    /**
+     * Stops the Spark Server
+     */
+    public static void stop() {
+        Spark.stop();
+    }
+
+    /**
+     * Configures the port number to use
+     */
+    public static void port(int port) {
+        Spark.port(port);
+    }
+
+    /**
+     * Configures the IP address to use
+     */
+    public static void ipAddress(String ip) {
+        Spark.ipAddress(ip);
+    }
+
+    /**
+     * Configures the thread pool
+     */
+    public static void threadPool(int minThreads, int maxThreads, int timeOutMillis) {
+        int min = minThreads > 0 ? minThreads : -1;
+        int max = maxThreads > 0 ? maxThreads : -1;
+        int idle = timeOutMillis > 0 ? timeOutMillis : -1;
+
+        Spark.threadPool(max, min, idle);
+    }
+
+    /**
+     * Configures connection to be secure
+     */
+    public static void security(String keystoreFile, String keystorePassword, String truststoreFile, String truststorePassword) {
+        Spark.secure(keystoreFile, keystorePassword, truststoreFile, truststorePassword);
+    }
+
+    /**
+     * Adds a Spark REST verb that routes to the given spark route
+     *
+     * @param verb   the HTTP verb
+     * @param path   the context path
+     * @param accept the accept header
+     * @param route  the spark route (we call a Camel route from here)
+     */
     public static void spark(String verb, String path, String accept, Route route) {
         if ("get".equals(verb)) {
             if (accept != null) {

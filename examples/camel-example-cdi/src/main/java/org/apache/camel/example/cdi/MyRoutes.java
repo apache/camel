@@ -20,33 +20,28 @@ import javax.inject.Inject;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.ContextName;
 import org.apache.camel.cdi.Uri;
 
 /**
  * Configures all our Camel routes, components, endpoints and beans
  */
-@ContextName
 public class MyRoutes extends RouteBuilder {
 
     @Inject
-    @Uri("file://target/testdata/result")
-    private Endpoint resultEndpoint;
+    @Uri("timer:foo?period=5000")
+    private Endpoint inputEndpoint;
 
     @Inject
-    private SomeBean someBean;
+    @Uri("log:output")
+    private Endpoint resultEndpoint;
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         // you can configure the route rule with Java DSL here
 
-        // populate the message queue with some messages
-        from("file:src/data?noop=true")
-            .bean(someBean)
+        from(inputEndpoint)
+            .to("bean:counterBean")
             .to(resultEndpoint);
     }
 
-    public Endpoint getResultEndpoint() {
-        return resultEndpoint;
-    }
 }

@@ -25,7 +25,7 @@ public class SequenceBuffer<E> implements SequenceSender<E> {
     private BlockingQueue<E> queue;
     
     public SequenceBuffer() {
-        this.queue = new LinkedBlockingQueue<E>();
+        this.queue = new LinkedBlockingQueue<>();
     }
     
     public int size() {

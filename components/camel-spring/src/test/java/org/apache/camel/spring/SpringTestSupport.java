@@ -29,6 +29,8 @@ import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
 import org.apache.camel.impl.scan.InvertingPackageScanFilter;
 import org.apache.camel.util.IOHelper;
+import org.junit.After;
+import org.junit.Before;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -41,13 +43,22 @@ public abstract class SpringTestSupport extends ContextTestSupport {
     protected AbstractXmlApplicationContext applicationContext;
     protected abstract AbstractXmlApplicationContext createApplicationContext();
 
+    @Before
     @SuppressWarnings("deprecation")
     @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         if (isLazyLoadingTypeConverter()) {
             System.setProperty(AbstractCamelContextFactoryBean.LAZY_LOAD_TYPE_CONVERTERS, "true");
         } else {
             System.setProperty(AbstractCamelContextFactoryBean.LAZY_LOAD_TYPE_CONVERTERS, "false");
+        }
+
+        // we want SpringTestSupport to startup faster and not use JMX by default and should stop seda quicker
+        System.setProperty("CamelSedaPollTimeout", "10");
+        if (!this.useJmx()) {
+            this.disableJMX();
+        } else {
+            this.enableJMX();
         }
 
         applicationContext = createApplicationContext();
@@ -55,8 +66,9 @@ public abstract class SpringTestSupport extends ContextTestSupport {
         super.setUp();
     }
 
+    @After
     @Override
-    protected void tearDown() throws Exception {
+    public void tearDown() throws Exception {
         super.tearDown();
         IOHelper.close(applicationContext);
     }
@@ -101,7 +113,7 @@ public abstract class SpringTestSupport extends ContextTestSupport {
 
         ExcludingPackageScanClassResolver excludingResolver = routeExcludingContext.getBean("excludingResolver", ExcludingPackageScanClassResolver.class);
         List<Class<?>> excluded = Arrays.asList(excludeRoutes());
-        excludingResolver.setExcludedClasses(new HashSet<Class<?>>(excluded));
+        excludingResolver.setExcludedClasses(new HashSet<>(excluded));
 
         return routeExcludingContext;
     }

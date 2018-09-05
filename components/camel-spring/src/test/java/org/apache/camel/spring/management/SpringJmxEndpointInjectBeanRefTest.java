@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.management;
 
+import org.junit.Test;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -29,6 +31,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class SpringJmxEndpointInjectBeanRefTest extends SpringTestSupport {
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringJmxEndpointInjectBeanRefTest.xml");
     }
@@ -37,6 +44,7 @@ public class SpringJmxEndpointInjectBeanRefTest extends SpringTestSupport {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
+    @Test
     public void testJmxEndpointInjectBean() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 

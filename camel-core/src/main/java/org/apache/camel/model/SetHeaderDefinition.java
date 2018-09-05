@@ -39,7 +39,7 @@ import org.apache.camel.util.ObjectHelper;
 public class SetHeaderDefinition extends NoOutputExpressionNode {
     @XmlAttribute(required = true)
     private String headerName;
-    
+
     public SetHeaderDefinition() {
     }
 
@@ -50,17 +50,22 @@ public class SetHeaderDefinition extends NoOutputExpressionNode {
 
     public SetHeaderDefinition(String headerName, Expression expression) {
         super(expression);
-        setHeaderName(headerName);        
+        setHeaderName(headerName);
     }
 
     public SetHeaderDefinition(String headerName, String value) {
         super(ExpressionBuilder.constantExpression(value));
-        setHeaderName(headerName);        
-    }   
-    
+        setHeaderName(headerName);
+    }
+
     @Override
     public String toString() {
         return "SetHeader[" + getHeaderName() + ", " + getExpression() + "]";
+    }
+
+    @Override
+    public String getShortName() {
+        return "setHeader";
     }
 
     @Override
@@ -72,7 +77,8 @@ public class SetHeaderDefinition extends NoOutputExpressionNode {
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         ObjectHelper.notNull(headerName, "headerName");
         Expression expr = getExpression().createExpression(routeContext);
-        return new SetHeaderProcessor(getHeaderName(), expr);
+        Expression nameExpr = ExpressionBuilder.parseSimpleOrFallbackToConstantExpression(getHeaderName(), routeContext.getCamelContext());
+        return new SetHeaderProcessor(nameExpr, expr);
     }
 
     /**
@@ -86,6 +92,9 @@ public class SetHeaderDefinition extends NoOutputExpressionNode {
 
     /**
      * Name of message header to set a new value
+     * <p/>
+     * The <tt>simple</tt> language can be used to define a dynamic evaluated header name to be used.
+     * Otherwise a constant name will be used.
      */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
@@ -94,5 +103,5 @@ public class SetHeaderDefinition extends NoOutputExpressionNode {
     public String getHeaderName() {
         return headerName;
     }
-    
+
 }

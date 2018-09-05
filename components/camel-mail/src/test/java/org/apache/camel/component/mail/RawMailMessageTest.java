@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+import org.junit.Before;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -38,6 +39,7 @@ import org.jvnet.mock_javamail.Mailbox;
 public class RawMailMessageTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         Mailbox.clearAll();
         prepareMailbox("jonesPop3", "pop3");
@@ -51,7 +53,7 @@ public class RawMailMessageTest extends CamelTestSupport {
     public void testGetRawJavaMailMessage() throws Exception {
         Mailbox.clearAll();
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("To", "davsclaus@apache.org");
         map.put("From", "jstrachan@apache.org");
         map.put("Subject", "Camel rocks");
@@ -154,16 +156,16 @@ public class RawMailMessageTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("pop3://davsclaus@apache.org").to("mock:mail");
 
-                from("pop3://jonesRawPop3@localhost?password=secret&consumer.delay=2000&delete=true&mapMailMessage=false")
+                from("pop3://jonesRawPop3@localhost?password=secret&consumer.initialDelay=100&consumer.delay=100&delete=true&mapMailMessage=false")
                     .to("mock://rawMessagePop3");
 
-                from("imap://jonesRawImap@localhost?password=secret&consumer.delay=2000&delete=true&mapMailMessage=false")
+                from("imap://jonesRawImap@localhost?password=secret&consumer.initialDelay=100&consumer.delay=100&delete=true&mapMailMessage=false")
                     .to("mock://rawMessageImap");
 
-                from("pop3://jonesPop3@localhost?password=secret&consumer.delay=2000&delete=true")
+                from("pop3://jonesPop3@localhost?password=secret&consumer.initialDelay=100&consumer.delay=100&delete=true")
                     .to("mock://normalMessagePop3");
 
-                from("imap://jonesImap@localhost?password=secret&consumer.delay=2000&delete=true")
+                from("imap://jonesImap@localhost?password=secret&consumer.initialDelay=100&consumer.delay=100&delete=true")
                     .to("mock://normalMessageImap");
             }
         };

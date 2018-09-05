@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.enricher;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -25,6 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class EnricherDefaultAggregationStrategyTest extends ContextTestSupport {
 
+    @Test
     public void testEnrichInOnly() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
@@ -34,6 +37,7 @@ public class EnricherDefaultAggregationStrategyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testEnrichInOut() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");

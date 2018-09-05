@@ -43,7 +43,7 @@ public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
     @UriParam(label = "verify")
     private ValidationFailedHandler validationFailedHandler = new DefaultValidationFailedHandler();
     private String validationFailedHandlerName;
-    @UriParam(label = "verify")
+    @UriParam(label = "verify", javaType = "java.lang.String")
     private Object outputNodeSearch;
     @UriParam(label = "verify", defaultValue = DefaultXmlSignature2Message.OUTPUT_NODE_SEARCH_TYPE_DEFAULT)
     private String outputNodeSearchType = DefaultXmlSignature2Message.OUTPUT_NODE_SEARCH_TYPE_DEFAULT;
@@ -255,4 +255,15 @@ public class XmlVerifierConfiguration extends XmlSignatureConfiguration {
         this.secureValidation = secureValidation;
     }
 
+    public String getValidationFailedHandlerName() {
+        return validationFailedHandlerName;
+    }
+
+    /**
+     * Name of handler to
+     * @param validationFailedHandlerName
+     */
+    public void setValidationFailedHandlerName(String validationFailedHandlerName) {
+        this.validationFailedHandlerName = validationFailedHandlerName;
+    }
 }

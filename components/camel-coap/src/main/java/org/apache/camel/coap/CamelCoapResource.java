@@ -36,7 +36,7 @@ final class CamelCoapResource extends CoapResource {
 
     CamelCoapResource(String name, CoAPConsumer consumer) {
         super(name);
-        consumers.put(consumer.getCoapEndpoint().getCoapMethod(), consumer);
+        addConsumer(consumer);
         possibles = null;
     }
 
@@ -46,7 +46,11 @@ final class CamelCoapResource extends CoapResource {
     }
     
     void addConsumer(CoAPConsumer consumer) {
-        consumers.put(consumer.getCoapEndpoint().getCoapMethod(), consumer);
+        CoAPEndpoint coapEndpoint = consumer.getCoapEndpoint();
+        String coapMethodRestrict = CoAPHelper.getDefaultMethodRestrict(coapEndpoint.getCoapMethodRestrict());
+        for (String method : coapMethodRestrict.split(",")) {
+            consumers.put(method.trim(), consumer);
+        }
     }
     
     @Override
@@ -82,9 +86,10 @@ final class CamelCoapResource extends CoapResource {
         try {
             consumer = consumers.get(exchange.getRequest().getCode().name());
             if (consumer == null) {
-                consumer = consumers.get("*");
+                cexchange.respond(ResponseCode.METHOD_NOT_ALLOWED);
+                return;
             }
-            
+
             camelExchange = consumer.getEndpoint().createExchange();
             consumer.createUoW(camelExchange);
             
@@ -125,8 +130,8 @@ final class CamelCoapResource extends CoapResource {
             
             byte bytes[] = exchange.getCurrentRequest().getPayload();
             camelExchange.getIn().setBody(bytes);
-                       
-            consumer.getProcessor().process(camelExchange);            
+
+            consumer.getProcessor().process(camelExchange);
             Message target = camelExchange.hasOut() ? camelExchange.getOut() : camelExchange.getIn();
             
             int format = MediaTypeRegistry.parse(target.getHeader(org.apache.camel.Exchange.CONTENT_TYPE, String.class));

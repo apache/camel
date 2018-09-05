@@ -21,38 +21,92 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
 import java.lang.reflect.Proxy;
+import java.util.HashMap;
 
 import org.apache.camel.CamelContext;
 
 /**
  * This class is copied from the Apache ActiveMQ project.
  */
+@SuppressWarnings("rawtypes")
 public class ClassLoadingAwareObjectInputStream extends ObjectInputStream {
 
+    private static final ClassLoader FALLBACK_CLASS_LOADER = ClassLoadingAwareObjectInputStream.class.getClassLoader();
+
+    /**
+     * Maps primitive type names to corresponding class objects.
+     */
+    private static final HashMap<String, Class> PRIM_CLASSES = new HashMap<>(8, 1.0F);
+
     private CamelContext camelContext;
+    private final ClassLoader inLoader;
+
+    public ClassLoadingAwareObjectInputStream(InputStream in) throws IOException {
+        super(in);
+        inLoader = in.getClass().getClassLoader();
+    }
 
     public ClassLoadingAwareObjectInputStream(CamelContext camelContext, InputStream in) throws IOException {
         super(in);
-        this.camelContext = camelContext;
+        inLoader = camelContext.getApplicationContextClassLoader();
     }
 
-    @Override
     protected Class<?> resolveClass(ObjectStreamClass classDesc) throws IOException, ClassNotFoundException {
-        return camelContext.getClassResolver().resolveClass(classDesc.getName());
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        return load(classDesc.getName(), cl, inLoader);
     }
 
-    @Override
     protected Class<?> resolveProxyClass(String[] interfaces) throws IOException, ClassNotFoundException {
-        Class<?>[] cinterfaces = new Class[interfaces.length];
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        Class[] cinterfaces = new Class[interfaces.length];
         for (int i = 0; i < interfaces.length; i++) {
-            cinterfaces[i] = camelContext.getClassResolver().resolveClass(interfaces[i]);
+            cinterfaces[i] = load(interfaces[i], cl);
         }
 
         try {
-            return Proxy.getProxyClass(cinterfaces[0].getClassLoader(), cinterfaces);
+            return Proxy.getProxyClass(cl, cinterfaces);
         } catch (IllegalArgumentException e) {
+            try {
+                return Proxy.getProxyClass(inLoader, cinterfaces);
+            } catch (IllegalArgumentException e1) {
+                // ignore
+            }
+            try {
+                return Proxy.getProxyClass(FALLBACK_CLASS_LOADER, cinterfaces);
+            } catch (IllegalArgumentException e2) {
+                // ignore
+            }
+
             throw new ClassNotFoundException(null, e);
         }
     }
 
+    private Class<?> load(String className, ClassLoader... cl) throws ClassNotFoundException {
+        for (ClassLoader loader : cl) {
+            try {
+                return Class.forName(className, false, loader);
+            } catch (ClassNotFoundException e) {
+                // ignore
+            }
+        }
+        // fallback
+        final Class<?> clazz = PRIM_CLASSES.get(className);
+        if (clazz != null) {
+            return clazz;
+        } else {
+            return Class.forName(className, false, FALLBACK_CLASS_LOADER);
+        }
+    }
+
+    static {
+        PRIM_CLASSES.put("boolean", boolean.class);
+        PRIM_CLASSES.put("byte", byte.class);
+        PRIM_CLASSES.put("char", char.class);
+        PRIM_CLASSES.put("short", short.class);
+        PRIM_CLASSES.put("int", int.class);
+        PRIM_CLASSES.put("long", long.class);
+        PRIM_CLASSES.put("float", float.class);
+        PRIM_CLASSES.put("double", double.class);
+        PRIM_CLASSES.put("void", void.class);
+    }
 }

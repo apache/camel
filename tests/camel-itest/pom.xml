@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Licensed to the Apache Software Foundation (ASF) under one or more
-  contributor license agreements.  See the NOTICE file distributed with
-  this work for additional information regarding copyright ownership.
-  The ASF licenses this file to You under the Apache License, Version 2.0
-  (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
@@ -22,7 +24,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>tests</artifactId>
-    <version>2.16-SNAPSHOT</version>
+    <version>2.23.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-itest</artifactId>
@@ -30,11 +32,6 @@
   <description>Performs cross component integration tests</description>
 
   <repositories>
-    <repository>
-      <id>maven-restlet</id>
-      <name>Public online Restlet repository</name>
-      <url>http://maven.restlet.org</url>
-    </repository>
 
     <!-- required for validator tests -->
     <repository>
@@ -45,6 +42,11 @@
   </repositories>
 
   <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jms</artifactId>
@@ -69,7 +71,6 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-security</artifactId>
-      <version>${cxf-version}</version>
       <scope>test</scope>        
     </dependency>        
     <dependency>
@@ -95,11 +96,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-http4</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-hawtdb</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -136,18 +132,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-restlet</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <!-- restlet JAXB binding -->
-    <dependency>
-      <groupId>org.restlet.osgi</groupId>
-      <artifactId>org.restlet.ext.jaxb</artifactId>
-      <version>${restlet-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-security</artifactId>
       <scope>test</scope>
     </dependency>
@@ -175,6 +159,12 @@
       <groupId>org.jvnet.mock-javamail</groupId>
       <artifactId>mock-javamail</artifactId>
       <version>${mock-javamail-version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.mail</groupId>
+          <artifactId>mail</artifactId>
+        </exclusion>
+      </exclusions>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -210,11 +200,6 @@
       <groupId>org.apache.mina</groupId>
       <artifactId>mina-core</artifactId>
       <version>${mina2-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -315,20 +300,54 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-transports-http-jetty</artifactId>
-      <version>${cxf-version}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
           <groupId>org.slf4j</groupId>
           <artifactId>slf4j-jdk14</artifactId>
         </exclusion>
+        <!-- we use the version from camel-jetty9 -->
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-util</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-io</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-http</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-continuation</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
+
+    <!-- logging -->
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-1.2-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
@@ -351,46 +370,65 @@
       <version>1.0.0</version>
     </dependency>
 
-    <!-- atomikos XA TX manager -->
+    <!-- Narayana XA TX manager -->
     <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>transactions</artifactId>
-      <version>${atomikos-transactions-version}</version>
+      <groupId>org.jboss.narayana.jta</groupId>
+      <artifactId>jdbc</artifactId>
+      <version>${narayana-version}</version>
     </dependency>
     <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>transactions-jta</artifactId>
-      <version>${atomikos-transactions-version}</version>
+      <groupId>org.jboss.narayana.jta</groupId>
+      <artifactId>jms</artifactId>
+      <version>${narayana-version}</version>
     </dependency>
     <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>transactions-jms</artifactId>
-      <version>${atomikos-transactions-version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.jms</groupId>
-          <artifactId>jms</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.jboss.narayana.jta</groupId>
+      <artifactId>jta</artifactId>
+      <version>${narayana-version}</version>
     </dependency>
     <dependency>
-      <groupId>com.atomikos</groupId>
-      <artifactId>transactions-jdbc</artifactId>
-      <version>${atomikos-transactions-version}</version>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-transaction-spi</artifactId>
+      <version>${jboss-transaction-spi.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
+      <version>${jboss-logging-version}</version>
+    </dependency>
+
   </dependencies>
 
   <build>
     <plugins>
+
+      <!-- to validate Camel endpoints: mvn camel:validate -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <failOnError>false</failOnError>
+          <includeTest>true</includeTest>
+          <includeXml>true</includeXml>
+          <ignoreLenientProperties>false</ignoreLenientProperties>
+        </configuration>
+      </plugin>
+            
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <!-- must for per test -->
-          <forkMode>always</forkMode>
+          <forkCount>1</forkCount>
+          <reuseForks>false</reuseForks>
           <forkedProcessTimeoutInSeconds>3000</forkedProcessTimeoutInSeconds>
           <systemPropertyVariables>
             <derby.stream.error.file>target/derby.log</derby.stream.error.file>
           </systemPropertyVariables>
+          <excludes>
+            <!-- exclude doc tests as they dont work on CI server -->
+            <exclude>**/*DocumentationTest.*</exclude>
+          </excludes>
         </configuration>
       </plugin>
       <plugin>
@@ -401,6 +439,8 @@
             <id>generate-test-sources</id>
             <phase>generate-sources</phase>
             <configuration>
+              <fork>${cxf.codegenplugin.forkmode}</fork>
+              <additionalJvmArgs>-Dlog4j.configurationFile=${project.basedir}/src/test/resources/log4j2.properties ${cxf.codegen.jvmArgs}</additionalJvmArgs>
               <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
               <wsdlOptions>
                 <wsdlOption>
@@ -428,5 +468,27 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>jdk9+-build</id>
+      <activation>
+        <jdk>[9,)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <excludes>
+                <!-- exclude doc tests as they dont work on CI server -->
+                <exclude>**/*DocumentationTest.*</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>

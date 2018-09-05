@@ -33,7 +33,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 
 public abstract class CamelSpringTestSupport extends CamelTestSupport {
-    protected static ThreadLocal<AbstractApplicationContext> threadAppContext = new ThreadLocal<AbstractApplicationContext>();
+    protected static ThreadLocal<AbstractApplicationContext> threadAppContext = new ThreadLocal<>();
     protected static Object lock = new Object();
     protected static AbstractApplicationContext applicationContext;
 
@@ -127,7 +127,7 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
 
         ExcludingPackageScanClassResolver excludingResolver = routeExcludingContext.getBean("excludingResolver", ExcludingPackageScanClassResolver.class);
         List<Class<?>> excluded = Arrays.asList(excludeRoutes());
-        excludingResolver.setExcludedClasses(new HashSet<Class<?>>(excluded));
+        excludingResolver.setExcludedClasses(new HashSet<>(excluded));
 
         return routeExcludingContext;
     }

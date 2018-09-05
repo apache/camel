@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -31,7 +34,8 @@ import org.apache.camel.language.bean.BeanLanguage;
 public class FileConsumerMoveExpressionTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/filelanguage");
         super.setUp();
     }
@@ -48,11 +52,12 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testRenameToId() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filelanguage/?exclude=.*bak"
+                from("file://target/filelanguage/?initialDelay=0&delay=10&exclude=.*bak"
                         + "&move=${id}.bak").convertBodyTo(String.class).to("mock:result");
             }
         });
@@ -71,11 +76,12 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         assertTrue("File should have been renamed", file.exists());
     }
 
+    @Test
     public void testRenameToComplexWithId() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filelanguage/?exclude=.*bak"
+                from("file://target/filelanguage/?initialDelay=0&delay=10&exclude=.*bak"
                      + "&move=backup-${id}-${file:name.noext}.bak").convertBodyTo(String.class).to("mock:result");
             }
         });
@@ -94,11 +100,12 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         assertTrue("File should have been renamed", file.exists());
     }
 
+    @Test
     public void testRenameToBean() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filelanguage/?exclude=.*bak"
+                from("file://target/filelanguage/?initialDelay=0&delay=10&exclude=.*bak"
                       + "&move=backup/${bean:myguidgenerator.guid}.txt").convertBodyTo(String.class).to("mock:result");
             }
         });
@@ -112,11 +119,12 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRenameToSiblingFolder() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filelanguage/?exclude=.*bak"
+                from("file://target/filelanguage/?initialDelay=0&delay=10&exclude=.*bak"
                      + "&move=../backup/${file:name}.bak").to("mock:result");
             }
         });
@@ -130,6 +138,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRenameToBeanWithBeanLanguage() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -141,6 +150,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
                 endpoint.setAutoCreate(false);
                 endpoint.setMove(BeanLanguage.bean("myguidgenerator"));
                 endpoint.setExclude(".*bak");
+                endpoint.setInitialDelay(10);
 
                 from(endpoint).to("mock:result");
             }

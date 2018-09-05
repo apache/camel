@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.salesforce.api.dto;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.joda.time.DateTime;
+import java.time.ZonedDateTime;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 //CHECKSTYLE:OFF
-public class AbstractSObjectBase extends AbstractDTOBase {
+public abstract class AbstractSObjectBase extends AbstractDTOBase {
 
     // WARNING: these fields have case sensitive names,
     // the field name MUST match the field name used by Salesforce
@@ -29,14 +31,14 @@ public class AbstractSObjectBase extends AbstractDTOBase {
     private String OwnerId;
     private Boolean IsDeleted;
     private String Name;
-    private DateTime CreatedDate;
+    private ZonedDateTime CreatedDate;
     private String CreatedById;
-    private DateTime LastModifiedDate;
+    private ZonedDateTime LastModifiedDate;
     private String LastModifiedById;
-    private DateTime SystemModstamp;
-    private String LastActivityDate;
-    private DateTime LastViewedDate;
-    private DateTime LastReferencedDate;
+    private ZonedDateTime SystemModstamp;
+    private ZonedDateTime LastActivityDate;
+    private ZonedDateTime LastViewedDate;
+    private ZonedDateTime LastReferencedDate;
 
     /**
      * Utility method to clear all system {@link AbstractSObjectBase} fields.
@@ -46,7 +48,6 @@ public class AbstractSObjectBase extends AbstractDTOBase {
     public final void clearBaseFields() {
         attributes = null;
         Id = null;
-        OwnerId = null;
         IsDeleted = null;
         CreatedDate = null;
         CreatedById = null;
@@ -105,12 +106,12 @@ public class AbstractSObjectBase extends AbstractDTOBase {
     }
 
     @JsonProperty("CreatedDate")
-    public DateTime getCreatedDate() {
+    public ZonedDateTime getCreatedDate() {
         return CreatedDate;
     }
 
     @JsonProperty("CreatedDate")
-    public void setCreatedDate(DateTime createdDate) {
+    public void setCreatedDate(ZonedDateTime createdDate) {
         this.CreatedDate = createdDate;
     }
 
@@ -125,12 +126,12 @@ public class AbstractSObjectBase extends AbstractDTOBase {
     }
 
     @JsonProperty("LastModifiedDate")
-    public DateTime getLastModifiedDate() {
+    public ZonedDateTime getLastModifiedDate() {
         return LastModifiedDate;
     }
 
     @JsonProperty("LastModifiedDate")
-    public void setLastModifiedDate(DateTime lastModifiedDate) {
+    public void setLastModifiedDate(ZonedDateTime lastModifiedDate) {
         this.LastModifiedDate = lastModifiedDate;
     }
 
@@ -145,42 +146,42 @@ public class AbstractSObjectBase extends AbstractDTOBase {
     }
 
     @JsonProperty("SystemModstamp")
-    public DateTime getSystemModstamp() {
+    public ZonedDateTime getSystemModstamp() {
         return SystemModstamp;
     }
 
     @JsonProperty("SystemModstamp")
-    public void setSystemModstamp(DateTime systemModstamp) {
+    public void setSystemModstamp(ZonedDateTime systemModstamp) {
         this.SystemModstamp = systemModstamp;
     }
 
     @JsonProperty("LastActivityDate")
-    public String getLastActivityDate() {
+    public ZonedDateTime getLastActivityDate() {
         return LastActivityDate;
     }
 
     @JsonProperty("LastActivityDate")
-    public void setLastActivityDate(String lastActivityDate) {
+    public void setLastActivityDate(ZonedDateTime lastActivityDate) {
         this.LastActivityDate = lastActivityDate;
     }
 
     @JsonProperty("LastViewedDate")
-    public DateTime getLastViewedDate() {
+    public ZonedDateTime getLastViewedDate() {
         return LastViewedDate;
     }
 
     @JsonProperty("LastViewedDate")
-    public void setLastViewedDate(DateTime lastViewedDate) {
+    public void setLastViewedDate(ZonedDateTime lastViewedDate) {
         LastViewedDate = lastViewedDate;
     }
 
     @JsonProperty("LastReferencedDate")
-    public DateTime getLastReferencedDate() {
+    public ZonedDateTime getLastReferencedDate() {
         return LastReferencedDate;
     }
 
     @JsonProperty("LastReferencedDate")
-    public void setLastReferencedDate(DateTime lastReferencedDate) {
+    public void setLastReferencedDate(ZonedDateTime lastReferencedDate) {
         LastReferencedDate = lastReferencedDate;
     }
 }

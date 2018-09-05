@@ -28,6 +28,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.ShutdownableService;
 import org.apache.camel.StatefulService;
+import org.apache.camel.Suspendable;
 import org.apache.camel.SuspendableService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -290,13 +291,13 @@ public final class ServiceHelper {
     /**
      * Resumes the given {@code service}.
      * <p/>
-     * If {@code service} is a {@link org.apache.camel.SuspendableService} then
-     * it's {@link org.apache.camel.SuspendableService#resume()} is called but
+     * If {@code service} is both {@link org.apache.camel.Suspendable} and {@link org.apache.camel.SuspendableService} then
+     * its {@link org.apache.camel.SuspendableService#resume()} is called but
      * <b>only</b> if {@code service} is already {@link #isSuspended(Object)
      * suspended}.
      * <p/>
      * If {@code service} is <b>not</b> a
-     * {@link org.apache.camel.SuspendableService} then it's
+     * {@link org.apache.camel.Suspendable} and {@link org.apache.camel.SuspendableService} then its
      * {@link org.apache.camel.Service#start()} is called.
      * <p/>
      * Calling this method has no effect if {@code service} is {@code null}.
@@ -309,7 +310,7 @@ public final class ServiceHelper {
      * @see #startService(Service)
      */
     public static boolean resumeService(Object service) throws Exception {
-        if (service instanceof SuspendableService) {
+        if (service instanceof Suspendable && service instanceof SuspendableService) {
             SuspendableService ss = (SuspendableService) service;
             if (ss.isSuspended()) {
                 LOG.debug("Resuming service {}", service);
@@ -361,13 +362,13 @@ public final class ServiceHelper {
     /**
      * Suspends the given {@code service}.
      * <p/>
-     * If {@code service} is a {@link org.apache.camel.SuspendableService} then
-     * it's {@link org.apache.camel.SuspendableService#suspend()} is called but
+     * If {@code service} is both {@link org.apache.camel.Suspendable} and {@link org.apache.camel.SuspendableService} then
+     * its {@link org.apache.camel.SuspendableService#suspend()} is called but
      * <b>only</b> if {@code service} is <b>not</b> already
      * {@link #isSuspended(Object) suspended}.
      * <p/>
      * If {@code service} is <b>not</b> a
-     * {@link org.apache.camel.SuspendableService} then it's
+     * {@link org.apache.camel.Suspendable} and {@link org.apache.camel.SuspendableService} then its
      * {@link org.apache.camel.Service#stop()} is called.
      * <p/>
      * Calling this method has no effect if {@code service} is {@code null}.
@@ -380,7 +381,7 @@ public final class ServiceHelper {
      * @see #stopService(Object)
      */
     public static boolean suspendService(Object service) throws Exception {
-        if (service instanceof SuspendableService) {
+        if (service instanceof Suspendable && service instanceof SuspendableService) {
             SuspendableService ss = (SuspendableService) service;
             if (!ss.isSuspended()) {
                 LOG.trace("Suspending service {}", service);
@@ -466,7 +467,7 @@ public final class ServiceHelper {
      * @return the services, including the parent service, and all its children
      */
     public static Set<Service> getChildServices(Service service, boolean includeErrorHandler) {
-        Set<Service> answer = new LinkedHashSet<Service>();
+        Set<Service> answer = new LinkedHashSet<>();
         doGetChildServices(answer, service, includeErrorHandler);
         return answer;
     }
@@ -482,12 +483,12 @@ public final class ServiceHelper {
                         if (includeErrorHandler) {
                             // special for error handler as they are tied to the Channel
                             Processor errorHandler = ((Channel) child).getErrorHandler();
-                            if (errorHandler != null && errorHandler instanceof Service) {
+                            if (errorHandler instanceof Service) {
                                 services.add((Service) errorHandler);
                             }
                         }
                         Processor next = ((Channel) child).getNextProcessor();
-                        if (next != null && next instanceof Service) {
+                        if (next instanceof Service) {
                             services.add((Service) next);
                         }
                     }

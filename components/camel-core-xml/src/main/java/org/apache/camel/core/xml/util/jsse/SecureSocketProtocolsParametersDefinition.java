@@ -38,7 +38,7 @@ public class SecureSocketProtocolsParametersDefinition {
      */
     public List<String> getSecureSocketProtocol() {
         if (this.secureSocketProtocol == null) {
-            this.secureSocketProtocol = new ArrayList<String>();
+            this.secureSocketProtocol = new ArrayList<>();
         }
         return this.secureSocketProtocol;
     }

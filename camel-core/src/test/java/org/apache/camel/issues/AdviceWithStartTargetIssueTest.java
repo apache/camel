@@ -16,6 +16,8 @@
  */
 package org.apache.camel.issues;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -32,6 +34,7 @@ import org.slf4j.LoggerFactory;
  */
 public class AdviceWithStartTargetIssueTest extends ContextTestSupport {
 
+    @Test
     public void testAdvised() throws Exception {
         context.getRouteDefinitions().get(0).adviceWith(context,
                 new RouteBuilder() {

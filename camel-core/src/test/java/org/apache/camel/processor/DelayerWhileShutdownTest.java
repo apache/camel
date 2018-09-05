@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -27,6 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class DelayerWhileShutdownTest extends ContextTestSupport {
 
+    @Test
     public void testSendingMessageGetsDelayed() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Short delay");
@@ -40,8 +43,8 @@ public class DelayerWhileShutdownTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("seda:a").delay(5000).to("mock:result");
-                from("seda:b").delay(10).to("mock:result");
+                from("seda:a").delay(500).to("mock:result");
+                from("seda:b").delay(1).to("mock:result");
             }
         };
     }

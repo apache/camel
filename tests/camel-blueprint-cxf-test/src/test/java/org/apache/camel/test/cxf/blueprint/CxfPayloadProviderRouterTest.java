@@ -16,6 +16,8 @@
  */
 
 package org.apache.camel.test.cxf.blueprint;
+import org.junit.Before;
+import org.junit.After;
 
 import java.util.Properties;
 
@@ -109,7 +111,7 @@ public class CxfPayloadProviderRouterTest extends CamelBlueprintTestSupport {
     static class VerifyInboundInterceptor extends AbstractPhaseInterceptor<Message> {
         private boolean called;
         
-        public VerifyInboundInterceptor() {
+        VerifyInboundInterceptor() {
             super(Phase.USER_PROTOCOL);
         }
 

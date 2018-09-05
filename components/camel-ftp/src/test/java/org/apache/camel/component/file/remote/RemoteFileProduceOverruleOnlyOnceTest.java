@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.remote;
+import org.junit.Before;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +32,7 @@ public class RemoteFileProduceOverruleOnlyOnceTest extends FtpServerTestSupport 
 
     @Test
     public void testFileToFtp() throws Exception {
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put(Exchange.FILE_NAME, "/sub/hello.txt");
         headers.put(Exchange.OVERRULE_FILE_NAME, "/sub/ruled.txt");
         template.sendBodyAndHeaders("direct:input", "Hello World", headers);
@@ -45,6 +46,7 @@ public class RemoteFileProduceOverruleOnlyOnceTest extends FtpServerTestSupport 
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/out");
         super.setUp();
@@ -56,9 +58,8 @@ public class RemoteFileProduceOverruleOnlyOnceTest extends FtpServerTestSupport 
             @Override
             public void configure() throws Exception {
                 from("direct:input")
-                    .to("ftp://admin:admin@localhost:" + getPort()
-                        + "/out/")
-                    .to("file://target/out", "mock:result");
+                    .to("ftp://admin:admin@localhost:" + getPort() + "/out/")
+                        .to("file://target/out", "mock:result");
             }
         };
     }

@@ -34,7 +34,7 @@ public class HazelcastSedaSpringSupportTest extends CamelSpringTestSupport {
     public void simpleSend() throws Exception {
         mock.expectedMessageCount(1);
 
-        template.sendBody("hazelcast:seda:foo", "test");
+        template.sendBody("hazelcast-seda:foo", "test");
 
         assertMockEndpointsSatisfied();
     }

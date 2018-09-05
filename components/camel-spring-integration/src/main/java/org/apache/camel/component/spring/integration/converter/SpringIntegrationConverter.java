@@ -20,9 +20,9 @@ import org.apache.camel.Converter;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.spring.integration.SpringIntegrationEndpoint;
 import org.apache.camel.component.spring.integration.SpringIntegrationMessage;
-import org.springframework.integration.MessageChannel;
-import org.springframework.integration.MessageHeaders;
-import org.springframework.integration.message.GenericMessage;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.support.GenericMessage;
 
 /**
  * The <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
@@ -45,10 +45,10 @@ public final class SpringIntegrationConverter {
     }
 
     @Converter
-    public static org.springframework.integration.Message<?> toSpringMessage(final org.apache.camel.Message camelMessage) throws Exception {
+    public static org.springframework.messaging.Message<?> toSpringMessage(final org.apache.camel.Message camelMessage) throws Exception {
         if (camelMessage instanceof SpringIntegrationMessage) {
             SpringIntegrationMessage siMessage = (SpringIntegrationMessage)camelMessage;
-            org.springframework.integration.Message<?> message =  siMessage.getMessage();
+            org.springframework.messaging.Message<?> message =  siMessage.getMessage();
             if (message != null) {
                 return message;
             }
@@ -56,11 +56,11 @@ public final class SpringIntegrationConverter {
 
         // Create a new spring message and copy the attributes and body from the camel message
         MessageHeaders messageHeaders = new MessageHeaders(camelMessage.getHeaders());
-        return new GenericMessage<Object>(camelMessage.getBody(), messageHeaders);
+        return new GenericMessage<>(camelMessage.getBody(), messageHeaders);
     }
 
     @Converter
-    public static org.apache.camel.Message toCamelMessage(final org.springframework.integration.Message<?> springMessage) throws Exception {
+    public static org.apache.camel.Message toCamelMessage(final org.springframework.messaging.Message<?> springMessage) throws Exception {
         return new SpringIntegrationMessage(springMessage);
     }
 

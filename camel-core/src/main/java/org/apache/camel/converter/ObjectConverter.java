@@ -16,6 +16,7 @@
  */
 package org.apache.camel.converter;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -38,6 +39,10 @@ public final class ObjectConverter {
     private ObjectConverter() {
     }
 
+    /**
+     * @deprecated not in use
+     */
+    @Deprecated
     public static boolean isCollection(Object value) {
         return value instanceof Collection || (value != null && value.getClass().isArray());
     }
@@ -185,6 +190,29 @@ public final class ObjectConverter {
             return number.longValue();
         } else if (value instanceof String) {
             return Long.valueOf((String) value);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns the converted value, or null if the value is null
+     */
+    @Converter
+    public static BigInteger toBigInteger(Object value) {
+        if (value instanceof String) {
+            return new BigInteger((String) value);
+        }
+
+        Long num = null;
+        if (value instanceof Long) {
+            num = (Long) value;
+        } else if (value instanceof Number) {
+            Number number = (Number) value;
+            num = number.longValue();
+        }
+        if (num != null) {
+            return BigInteger.valueOf(num);
         } else {
             return null;
         }

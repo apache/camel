@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -35,7 +38,8 @@ public class ValidatingProcessorNotUseSharedSchemaTest extends ContextTestSuppor
     protected ValidatingProcessor validating;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         validating = new ValidatingProcessor();
         validating.setSchemaFile(new File("src/test/resources/org/apache/camel/processor/ValidatingProcessor.xsd"));
         validating.setUseSharedSchema(false);
@@ -43,6 +47,7 @@ public class ValidatingProcessorNotUseSharedSchemaTest extends ContextTestSuppor
         super.setUp();
     }
 
+    @Test
     public void testValidMessage() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:valid");
         mock.expectedMessageCount(1);
@@ -58,6 +63,7 @@ public class ValidatingProcessorNotUseSharedSchemaTest extends ContextTestSuppor
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testValidMessageTwice() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:valid");
         mock.expectedMessageCount(2);
@@ -74,6 +80,7 @@ public class ValidatingProcessorNotUseSharedSchemaTest extends ContextTestSuppor
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInvalidMessage() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:invalid");
         mock.expectedMessageCount(1);
@@ -94,6 +101,7 @@ public class ValidatingProcessorNotUseSharedSchemaTest extends ContextTestSuppor
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNoXMLBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:invalid");
         mock.expectedMessageCount(1);
@@ -108,6 +116,7 @@ public class ValidatingProcessorNotUseSharedSchemaTest extends ContextTestSuppor
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testValidatingOptions() throws Exception {
         assertNotNull(validating.getErrorHandler());
         assertNotNull(validating.getSchema());

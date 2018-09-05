@@ -42,9 +42,9 @@ public class GetDataOperation extends ZooKeeperOperation<byte[]> {
                     LOG.debug(format("Received data from '%s' path ", node));
                 }
             }
-            return new OperationResult<byte[]>(connection.getData(node, true, statistics), statistics);
+            return new OperationResult<>(connection.getData(node, true, statistics), statistics);
         } catch (Exception e) {
-            return new OperationResult<byte[]>(e);
+            return new OperationResult<>(e);
         }
     }
 

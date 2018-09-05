@@ -22,6 +22,7 @@ import java.util.Stack;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.github.GitHubConstants;
 import org.apache.camel.component.github.GitHubEndpoint;
 import org.apache.camel.spi.Registry;
 import org.eclipse.egit.github.core.RepositoryCommit;
@@ -34,13 +35,13 @@ public class CommitConsumer extends AbstractGitHubConsumer {
     
     private CommitService commitService;
     
-    private List<String> commitHashes = new ArrayList<String>();
+    private List<String> commitHashes = new ArrayList<>();
     
     public CommitConsumer(GitHubEndpoint endpoint, Processor processor, String branchName) throws Exception {
         super(endpoint, processor);
 
         Registry registry = endpoint.getCamelContext().getRegistry();
-        Object service = registry.lookupByName("githubCommitService");
+        Object service = registry.lookupByName(GitHubConstants.GITHUB_COMMIT_SERVICE);
         if (service != null) {
             LOG.debug("Using CommitService found in registry " + service.getClass().getCanonicalName());
             commitService = (CommitService) service;
@@ -60,7 +61,7 @@ public class CommitConsumer extends AbstractGitHubConsumer {
     protected int poll() throws Exception {
         List<RepositoryCommit> commits = commitService.getCommits(getRepository());
         // In the end, we want tags oldest to newest.
-        Stack<RepositoryCommit> newCommits = new Stack<RepositoryCommit>();
+        Stack<RepositoryCommit> newCommits = new Stack<>();
         for (RepositoryCommit commit : commits) {
             if (!commitHashes.contains(commit.getSha())) {
                 newCommits.push(commit);

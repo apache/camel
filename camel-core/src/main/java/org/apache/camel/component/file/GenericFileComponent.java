@@ -26,6 +26,7 @@ import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,7 +112,7 @@ public abstract class GenericFileComponent<T> extends UriEndpointComponent {
         boolean ignoreCase = reminder.startsWith("ignoreCase:");
         reminder = ignoreCase ? ifStartsWithReturnRemainder("ignoreCase:", reminder) : reminder;
 
-        ObjectHelper.notEmpty(reminder, "sortBy expression", this);
+        StringHelper.notEmpty(reminder, "sortBy expression", this);
 
         // recursive add nested sorters
         return GenericFileDefaultSorter.sortByFileLanguage(getCamelContext(), 

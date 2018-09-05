@@ -23,7 +23,8 @@ public enum MongoDbOperation {
     findOneByQuery,
     findAll,
     // group,       // future operation
-    // mapReduce,   // future operation
+    // mapReduce,   // future operation,
+    findDistinct,
     
     // create/update operations
     insert,
@@ -32,6 +33,9 @@ public enum MongoDbOperation {
     
     // delete operations
     remove, 
+    
+    //Bulk operations
+    bulkWrite,
     
     // aggregate
     aggregate,

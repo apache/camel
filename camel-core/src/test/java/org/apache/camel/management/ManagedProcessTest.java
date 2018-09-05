@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
@@ -37,6 +39,7 @@ public class ManagedProcessTest extends ManagementTestSupport {
         return jndi;
     }
 
+    @Test
     public void testManageProcess() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -82,7 +85,7 @@ public class ManagedProcessTest extends ManagementTestSupport {
 
         String json = (String) mbeanServer.invoke(on, "informationJson", null, null);
         assertNotNull(json);
-        assertTrue(json.contains("\"description\": \"Calls a Camel processor."));
+        assertTrue(json.contains("\"description\": \"Calls a Camel processor"));
     }
 
     @Override

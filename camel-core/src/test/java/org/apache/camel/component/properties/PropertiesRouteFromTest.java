@@ -16,12 +16,13 @@
  */
 package org.apache.camel.component.properties;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.SendDefinition;
 
 /**
@@ -29,6 +30,7 @@ import org.apache.camel.model.SendDefinition;
  */
 public class PropertiesRouteFromTest extends ContextTestSupport {
 
+    @Test
     public void testPropertiesRouteFrom() throws Exception {
         ProcessorDefinition out = context.getRouteDefinition("foo").getOutputs().get(0);
         assertEquals("{{cool.end}}", ((SendDefinition) out).getUri());
@@ -39,7 +41,7 @@ public class PropertiesRouteFromTest extends ContextTestSupport {
         // use a routes definition to dump the routes
         String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("foo"));
         assertTrue(xml.contains("<from uri=\"{{cool.start}}\"/>"));
-        assertTrue(xml.contains("<to uri=\"{{cool.end}}\""));
+        assertTrue(xml.contains("<to id=\"to1\" uri=\"{{cool.end}}\"/>"));
     }
 
     @Override

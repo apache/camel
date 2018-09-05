@@ -176,7 +176,7 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
         if (!hasNext()) {
             return null;
         }
-        List<Processor> answer = new ArrayList<Processor>();
+        List<Processor> answer = new ArrayList<>();
         if (filters != null) {
             answer.addAll(filters);
         }

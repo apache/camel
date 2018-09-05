@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
@@ -26,11 +29,13 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class CreateRouteWithNonExistingEndpointTest extends ContextTestSupport {
 
+    @Test
     public void testCreateRouteWithBadEndpoint() throws Exception {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         try {
             super.setUp();
             fail("Should have failed to create this route!");

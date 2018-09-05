@@ -24,9 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.linkedin.internal.GroupsResourceApiMethod;
-import org.apache.camel.component.linkedin.internal.LinkedInApiCollection;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -39,13 +36,13 @@ import org.slf4j.LoggerFactory;
 public class GroupsResourceIntegrationTest extends AbstractLinkedInTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(GroupsResourceIntegrationTest.class);
-    private static final String PATH_PREFIX = LinkedInApiCollection.getCollection().getApiName(GroupsResourceApiMethod.class).getName();
+    private static final String PATH_PREFIX = "groups";
 
     // TODO provide parameter values for addPost
     @Ignore
     @Test
     public void testAddPost() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        final Map<String, Object> headers = new HashMap<>();
         headers.put("CamelLinkedIn.group_id", 0L);
         // parameter type is org.apache.camel.component.linkedin.api.model.Post
         headers.put("CamelLinkedIn.post", null);

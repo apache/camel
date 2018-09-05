@@ -16,11 +16,14 @@
  */
 package org.apache.camel.language.simple;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class SimpleSetHeaderPredicateTest extends ContextTestSupport {
 
+    @Test
     public void testSetHeaderPredicateFalse() throws Exception {
         getMockEndpoint("mock:result").expectedHeaderReceived("bar", false);
 
@@ -29,6 +32,7 @@ public class SimpleSetHeaderPredicateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSetHeaderPredicateTrue() throws Exception {
         getMockEndpoint("mock:result").expectedHeaderReceived("bar", true);
 
@@ -37,6 +41,7 @@ public class SimpleSetHeaderPredicateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOther() throws Exception {
         getMockEndpoint("mock:other").expectedHeaderReceived("param1", "hello");
         getMockEndpoint("mock:other").expectedHeaderReceived("param2", true);

@@ -22,6 +22,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * A <a href="http://camel.apache.org/bean-language.html">bean language</a>
@@ -88,13 +89,22 @@ public class BeanLanguage implements Language, IsSingleton {
         // we support both the .method name and the ?method= syntax
         // as the ?method= syntax is very common for the bean component
         if (expression.contains("?method=")) {
-            beanName = ObjectHelper.before(expression, "?");
-            method = ObjectHelper.after(expression, "?method=");
+            beanName = StringHelper.before(expression, "?");
+            method = StringHelper.after(expression, "?method=");
         } else {
-            int idx = expression.indexOf('.');
-            if (idx > 0) {
-                beanName = expression.substring(0, idx);
-                method = expression.substring(idx + 1);
+            //first check case :: because of my.own.Bean::method
+            int doubleColonIndex = expression.indexOf("::");
+            //need to check that not inside params
+            int beginOfParameterDeclaration = expression.indexOf("(");
+            if (doubleColonIndex > 0 && (expression.indexOf("(") < 0 || doubleColonIndex < beginOfParameterDeclaration)) {
+                beanName = expression.substring(0, doubleColonIndex);
+                method = expression.substring(doubleColonIndex + 2);
+            } else {
+                int idx = expression.indexOf('.');
+                if (idx > 0) {
+                    beanName = expression.substring(0, idx);
+                    method = expression.substring(idx + 1);
+                }
             }
         }
 

@@ -17,10 +17,16 @@
 package org.apache.camel.scr;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.SimpleRegistry;
 
 public class TestRouteBuilder2 extends RouteBuilder {
+
     @Override
     public void configure() throws Exception {
+
+        // Add a bean to local registry
+        AbstractCamelRunner.getRegistry(getContext(), SimpleRegistry.class).put("testString", "this is a test");
+
         from("direct://start2")
                 .routeId("Second")
                 .log("{{messageOk}}")

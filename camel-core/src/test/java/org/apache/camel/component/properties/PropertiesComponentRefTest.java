@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.properties;
 
+import org.junit.Test;
+
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
@@ -33,6 +35,7 @@ public class PropertiesComponentRefTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testPropertiesComponent() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -49,6 +52,7 @@ public class PropertiesComponentRefTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPropertiesComponentLocationsOverride() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -88,7 +92,6 @@ public class PropertiesComponentRefTest extends ContextTestSupport {
         CamelContext context = super.createCamelContext();
 
         PropertiesComponent pc = new PropertiesComponent();
-        pc.setCamelContext(context);
         pc.setLocations(new String[]{"ref:myCoolProperties"});
         context.addComponent("properties", pc);
 

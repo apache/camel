@@ -22,6 +22,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Navigate;
@@ -50,8 +52,9 @@ import org.slf4j.LoggerFactory;
  * @see org.apache.camel.spi.IdempotentRepository
  * @see org.apache.camel.spi.ExchangeIdempotentRepository
  */
-public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, IdAware {
+public class IdempotentConsumer extends ServiceSupport implements CamelContextAware, AsyncProcessor, Navigate<Processor>, IdAware {
     private static final Logger LOG = LoggerFactory.getLogger(IdempotentConsumer.class);
+    private CamelContext camelContext;
     private String id;
     private final Expression messageIdExpression;
     private final AsyncProcessor processor;
@@ -78,6 +81,16 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
         return "IdempotentConsumer[" + messageIdExpression + " -> " + processor + "]";
     }
 
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
     public String getId() {
         return id;
     }
@@ -91,51 +104,65 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
     }
 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        final String messageId = messageIdExpression.evaluate(exchange, String.class);
-        if (messageId == null) {
-            exchange.setException(new NoMessageIdException(exchange, messageIdExpression));
+        final AsyncCallback target;
+
+        final String messageId;
+        try {
+            messageId = messageIdExpression.evaluate(exchange, String.class);
+            if (messageId == null) {
+                exchange.setException(new NoMessageIdException(exchange, messageIdExpression));
+                callback.done(true);
+                return true;
+            }
+        } catch (Exception e) {
+            exchange.setException(e);
             callback.done(true);
             return true;
         }
 
-        boolean newKey;
-        if (eager) {
-            // add the key to the repository
-            if (idempotentRepository instanceof ExchangeIdempotentRepository) {
-                newKey = ((ExchangeIdempotentRepository<String>) idempotentRepository).add(exchange, messageId);
+        try {
+            boolean newKey;
+            if (eager) {
+                // add the key to the repository
+                if (idempotentRepository instanceof ExchangeIdempotentRepository) {
+                    newKey = ((ExchangeIdempotentRepository<String>) idempotentRepository).add(exchange, messageId);
+                } else {
+                    newKey = idempotentRepository.add(messageId);
+                }
             } else {
-                newKey = idempotentRepository.add(messageId);
+                // check if we already have the key
+                if (idempotentRepository instanceof ExchangeIdempotentRepository) {
+                    newKey = !((ExchangeIdempotentRepository<String>) idempotentRepository).contains(exchange, messageId);
+                } else {
+                    newKey = !idempotentRepository.contains(messageId);
+                }
             }
-        } else {
-            // check if we already have the key
-            if (idempotentRepository instanceof ExchangeIdempotentRepository) {
-                newKey = ((ExchangeIdempotentRepository<String>) idempotentRepository).contains(exchange, messageId);
-            } else {
-                newKey = !idempotentRepository.contains(messageId);
+
+            if (!newKey) {
+                // mark the exchange as duplicate
+                exchange.setProperty(Exchange.DUPLICATE_MESSAGE, Boolean.TRUE);
+
+                // we already have this key so its a duplicate message
+                onDuplicate(exchange, messageId);
+
+                if (skipDuplicate) {
+                    // if we should skip duplicate then we are done
+                    LOG.debug("Ignoring duplicate message with id: {} for exchange: {}", messageId, exchange);
+                    callback.done(true);
+                    return true;
+                }
             }
-        }
 
-
-        if (!newKey) {
-            // mark the exchange as duplicate
-            exchange.setProperty(Exchange.DUPLICATE_MESSAGE, Boolean.TRUE);
-
-            // we already have this key so its a duplicate message
-            onDuplicate(exchange, messageId);
-
-            if (skipDuplicate) {
-                // if we should skip duplicate then we are done
-                LOG.debug("Ignoring duplicate message with id: {} for exchange: {}", messageId, exchange);
-                callback.done(true);
-                return true;
+            final Synchronization onCompletion = new IdempotentOnCompletion(idempotentRepository, messageId, eager, removeOnFailure);
+            target = new IdempotentConsumerCallback(exchange, onCompletion, callback, completionEager);
+            if (!completionEager) {
+                // the scope is to do the idempotent completion work as an unit of work on the exchange when its done being routed
+                exchange.addOnCompletion(onCompletion);
             }
-        }
-
-        final Synchronization onCompletion = new IdempotentOnCompletion(idempotentRepository, messageId, eager, removeOnFailure);
-        final AsyncCallback target = new IdempotentConsumerCallback(exchange, onCompletion, callback, completionEager);
-        if (!completionEager) {
-            // the scope is to do the idempotent completion work as an unit of work on the exchange when its done being routed
-            exchange.addOnCompletion(onCompletion);
+        } catch (Exception e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
         }
 
         // process the exchange
@@ -146,7 +173,7 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
         if (!hasNext()) {
             return null;
         }
-        List<Processor> answer = new ArrayList<Processor>(1);
+        List<Processor> answer = new ArrayList<>(1);
         answer.add(processor);
         return answer;
     }
@@ -177,11 +204,21 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
     // -------------------------------------------------------------------------
 
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(processor);
+        // must add before start so it will have CamelContext injected first
+        if (!camelContext.hasService(idempotentRepository)) {
+            camelContext.addService(idempotentRepository);
+        }
+        ServiceHelper.startServices(processor, idempotentRepository);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(processor);
+        ServiceHelper.stopServices(processor, idempotentRepository);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownServices(processor, idempotentRepository);
+        camelContext.removeService(idempotentRepository);
     }
 
     public boolean isEager() {
@@ -240,7 +277,7 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
         private final AsyncCallback callback;
         private final boolean completionEager;
 
-        public IdempotentConsumerCallback(Exchange exchange, Synchronization onCompletion, AsyncCallback callback, boolean completionEager) {
+        IdempotentConsumerCallback(Exchange exchange, Synchronization onCompletion, AsyncCallback callback, boolean completionEager) {
             this.exchange = exchange;
             this.onCompletion = onCompletion;
             this.callback = callback;

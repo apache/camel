@@ -33,7 +33,8 @@ public class TarSplitter implements Expression {
 
     public Object evaluate(Exchange exchange) {
         Message inputMessage = exchange.getIn();
-        return new TarIterator(inputMessage, inputMessage.getBody(InputStream.class));
+        InputStream inputStream = inputMessage.getBody(InputStream.class);
+        return new TarIterator(exchange, inputStream);
     }
 
     @Override

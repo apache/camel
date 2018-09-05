@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+import org.junit.Before;
 
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -33,6 +34,7 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailConsumerUnsupportedCharsetTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();
@@ -67,7 +69,7 @@ public class MailConsumerUnsupportedCharsetTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://jones@localhost?password=secret&consumer.delay=1000&ignoreUnsupportedCharset=true").to("mock:result");
+                from("pop3://jones@localhost?password=secret&consumer.initialDelay=100&consumer.delay=100&ignoreUnsupportedCharset=true").to("mock:result");
             }
         };
     }

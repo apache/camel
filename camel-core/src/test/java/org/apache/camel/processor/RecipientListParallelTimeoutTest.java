@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,6 +29,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
  */
 public class RecipientListParallelTimeoutTest extends ContextTestSupport {
 
+    @Test
     public void testRecipientListParallelTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         // A will timeout so we only get B and/or C
@@ -55,14 +58,14 @@ public class RecipientListParallelTimeoutTest extends ContextTestSupport {
                                 return oldExchange;
                             }
                         })
-                        .parallelProcessing().timeout(1000)
+                        .parallelProcessing().timeout(500)
                     .to("mock:result");
 
-                from("direct:a").delay(5000).setBody(constant("A"));
+                from("direct:a").delay(1000).setBody(constant("A"));
 
                 from("direct:b").setBody(constant("B"));
 
-                from("direct:c").delay(500).setBody(constant("C"));
+                from("direct:c").delay(100).setBody(constant("C"));
             }
         };
     }

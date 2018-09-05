@@ -78,7 +78,7 @@ public class MailProducerConcurrentTest extends CamelTestSupport {
         assertEquals(files, box.size());
 
         // as we use concurrent producers the mails can arrive out of order
-        Set<Object> bodies = new HashSet<Object>();
+        Set<Object> bodies = new HashSet<>();
         for (int i = 0; i < files; i++) {
             bodies.add(box.get(i).getContent());
         }

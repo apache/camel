@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.vertx.enabled",
+      "description": "Enable vertx component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

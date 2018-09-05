@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -54,7 +54,7 @@ class RestSwaggerReader {
       resourcePath = "/" + resourcePath
     }
 
-    LOG.debug("Reading rest path: {} -> {}", resourcePath, rest)
+    LOG.debug("Reading rest path: " + resourcePath + " -> " + rest)
 
     // create a list of apis
     val apis = new ListBuffer[ApiDescription]
@@ -107,7 +107,7 @@ class RestSwaggerReader {
         summary = ""
       }
 
-      LOG.debug("Adding operation {} {}", method, nickName)
+      LOG.debug("Adding operation " + method + " " + nickName)
 
       operations += Operation(
         method,
@@ -178,7 +178,7 @@ class RestSwaggerReader {
 
     for (param:RestOperationResponseMsgDefinition <- verb.getResponseMsgs.asScala) {
       responseMsgs += ResponseMessage(
-        param.getCode,
+        param.getCode.asInstanceOf[Integer],
         param.getMessage,
         Option( param.getResponseModel )
       )
@@ -202,7 +202,7 @@ class RestSwaggerReader {
         Some( param.getDescription ),
         Some( param.getDefaultValue),
         if (param.getRequired != null) param.getRequired.booleanValue() else false,
-        if (param.getAllowMultiple != null) param.getAllowMultiple.booleanValue() else false,
+        false,
         param.getDataType,
         allowValues,
         param.getType.toString,

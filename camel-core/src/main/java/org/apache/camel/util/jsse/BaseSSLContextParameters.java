@@ -34,9 +34,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.KeyManager;
+import javax.net.ssl.SNIServerName;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLContextSpi;
 import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLParameters;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSessionContext;
@@ -71,7 +73,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
     
     private static final Logger LOG = LoggerFactory.getLogger(BaseSSLContextParameters.class);
     
-    private static final String LS = System.getProperty("line.separator");
+    private static final String LS = System.lineSeparator();
     
     private static final String SSL_ENGINE_CIPHER_SUITE_LOG_MSG = createCipherSuiteLogMessage("SSLEngine");
     
@@ -109,7 +111,10 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * The optional {@link SSLSessionContext} timeout time for {@link javax.net.ssl.SSLSession}s in seconds.
      */
     private String sessionTimeout;
-    
+
+    protected List<SNIServerName> getSNIHostNames() {
+        return Collections.emptyList();
+    }
 
     /**
      * Returns the optional explicitly configured cipher suites for this configuration.
@@ -380,7 +385,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
             }
         };
         
-        List<Configurer<SSLEngine>> sslEngineConfigurers = new LinkedList<Configurer<SSLEngine>>();
+        List<Configurer<SSLEngine>> sslEngineConfigurers = new LinkedList<>();
         sslEngineConfigurers.add(sslEngineConfigurer);
         
         return sslEngineConfigurers;
@@ -418,7 +423,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         
 
         List<Configurer<SSLSocketFactory>> sslSocketFactoryConfigurers = 
-            new LinkedList<Configurer<SSLSocketFactory>>();
+            new LinkedList<>();
         sslSocketFactoryConfigurers.add(sslSocketFactoryConfigurer);
         
         return sslSocketFactoryConfigurers;
@@ -456,7 +461,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         
 
         List<Configurer<SSLServerSocketFactory>> sslServerSocketFactoryConfigurers = 
-            new LinkedList<Configurer<SSLServerSocketFactory>>();
+            new LinkedList<>();
         sslServerSocketFactoryConfigurers.add(sslServerSocketFactoryConfigurer);
         
         return sslServerSocketFactoryConfigurers;
@@ -515,7 +520,13 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
             
             @Override
             public SSLSocket configure(SSLSocket socket) {
-                
+
+                if (!getSNIHostNames().isEmpty()) {
+                    SSLParameters sslParameters = socket.getSSLParameters();
+                    sslParameters.setServerNames(getSNIHostNames());
+                    socket.setSSLParameters(sslParameters);
+                }
+
                 Collection<String> filteredCipherSuites = BaseSSLContextParameters.this
                     .filter(enabledCipherSuites, Arrays.asList(socket.getSSLParameters().getCipherSuites()),
                             Arrays.asList(socket.getEnabledCipherSuites()),
@@ -539,7 +550,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                             Arrays.asList(socket.getEnabledProtocols()),
                             enabledSecureSocketProtocolsPatterns, defaultEnabledSecureSocketProtocolsPatterns,
                             !allowPassthrough);
-                
+
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(SSL_SOCKET_PROTOCOL_LOG_MSG,
                             new Object[] {socket,
@@ -556,7 +567,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
             }
         };
         
-        List<Configurer<SSLSocket>> sslSocketConfigurers = new LinkedList<Configurer<SSLSocket>>();
+        List<Configurer<SSLSocket>> sslSocketConfigurers = new LinkedList<>();
         sslSocketConfigurers.add(sslSocketConfigurer);
         
         return sslSocketConfigurers;
@@ -656,7 +667,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
             }
         };
         
-        List<Configurer<SSLServerSocket>> sslServerSocketConfigurers = new LinkedList<Configurer<SSLServerSocket>>();
+        List<Configurer<SSLServerSocket>> sslServerSocketConfigurers = new LinkedList<>();
         sslServerSocketConfigurers.add(sslServerSocketConfigurer);
         
         return sslServerSocketConfigurers;
@@ -755,9 +766,9 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         // Explicit list has precedence over filters, even when the list is
         // empty.
         if (explicitValues != null) {
-            returnValues = new ArrayList<String>(explicitValues);
+            returnValues = new ArrayList<>(explicitValues);
         } else {
-            returnValues = new LinkedList<String>();
+            returnValues = new LinkedList<>();
             
             for (String value : availableValues) {
                 if (this.matchesOneOf(value, includePatterns)

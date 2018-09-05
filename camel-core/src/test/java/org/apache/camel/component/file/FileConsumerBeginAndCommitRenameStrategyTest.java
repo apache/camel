@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 
@@ -30,13 +33,15 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileConsumerBeginAndCommitRenameStrategyTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/inprogress");
         deleteDirectory("target/done");
         deleteDirectory("target/reports");
         super.setUp();
     }
 
+    @Test
     public void testRenameSuccess() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedMessageCount(1);
@@ -48,6 +53,7 @@ public class FileConsumerBeginAndCommitRenameStrategyTest extends ContextTestSup
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testIllegalOptions() throws Exception {
         try {
             context.getEndpoint("file://target?move=../done/${file:name}&delete=true").createConsumer(new Processor() {
@@ -73,7 +79,7 @@ public class FileConsumerBeginAndCommitRenameStrategyTest extends ContextTestSup
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/reports?preMove=../inprogress/${file:name}&move=../done/${file:name}&delay=5000")
+                from("file://target/reports?preMove=../inprogress/${file:name}&move=../done/${file:name}&initialDelay=0&delay=10")
                         .process(new Processor() {
                             @SuppressWarnings("unchecked")
                             public void process(Exchange exchange) throws Exception {

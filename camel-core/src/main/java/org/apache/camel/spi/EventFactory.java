@@ -163,7 +163,7 @@ public interface EventFactory {
      * Creates an {@link EventObject} when an {@link org.apache.camel.Exchange} has failed
      * but is being handled by the Camel error handlers such as an dead letter channel, or a doTry .. doCatch block.
      * <p/>
-     * This event is triggered <b>before</b> sending the the failure handler, where as
+     * This event is triggered <b>before</b> sending the failure handler, where as
      * <tt>createExchangeFailureHandledEvent</tt> if the event <b>after</b>.
      *
      * @param exchange          the exchange

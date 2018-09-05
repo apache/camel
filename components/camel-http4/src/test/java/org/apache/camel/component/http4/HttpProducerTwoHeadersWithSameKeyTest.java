@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.http4.handler.BasicValidationHandler;
 import org.apache.http.Header;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
@@ -104,7 +103,7 @@ public class HttpProducerTwoHeadersWithSameKeyTest extends BaseHttpTest {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(null);
                 exchange.getIn().setHeader("from", "me");
-                List<String> list = new ArrayList<String>();
+                List<String> list = new ArrayList<>();
                 list.add("foo");
                 list.add("bar");
                 exchange.getIn().setHeader("to", list);

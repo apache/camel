@@ -29,6 +29,8 @@ import static org.apache.camel.component.atmos.util.AtmosConstants.ATMOS_FILE_SE
 
 public final class AtmosConfigurationValidator {
 
+    private static final Pattern UNIX_PATH_PATTERN = Pattern.compile("/*?(\\S+)/*?", Pattern.CASE_INSENSITIVE);
+
     private AtmosConfigurationValidator() {
     }
 
@@ -63,7 +65,7 @@ public final class AtmosConfigurationValidator {
             throw new AtmosException("option <uri> is not present!");
         } else {
             try {
-                URI uri = new URI(configuration.getUri());
+                new URI(configuration.getUri());
             } catch (URISyntaxException use) {
                 throw new AtmosException("option <uri> is not valid!", use);
             }
@@ -118,8 +120,7 @@ public final class AtmosConfigurationValidator {
     }
 
     private static void validatePathInUnix(String path) throws AtmosException {
-        Pattern pattern = Pattern.compile("/*?(\\S+)/*?", Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(path);
+        Matcher matcher = UNIX_PATH_PATTERN.matcher(path);
         if (!matcher.matches()) {
             throw new AtmosException(path + " is not a valid path, must be in UNIX form!");
         }

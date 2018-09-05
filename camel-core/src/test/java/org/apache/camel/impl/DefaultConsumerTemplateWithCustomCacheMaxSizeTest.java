@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.junit.Test;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ContextTestSupport;
@@ -30,10 +32,11 @@ public class DefaultConsumerTemplateWithCustomCacheMaxSizeTest extends ContextTe
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getProperties().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "200");
+        context.getGlobalOptions().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "200");
         return context;
     }
 
+    @Test
     public void testCacheConsumers() throws Exception {
         ConsumerTemplate template = context.createConsumerTemplate();
 
@@ -45,6 +48,9 @@ public class DefaultConsumerTemplateWithCustomCacheMaxSizeTest extends ContextTe
             template.receiveNoWait(e);
         }
 
+        // the eviction is async so force cleanup
+        template.cleanUp();
+
         assertEquals("Size should be 200", 200, template.getCurrentCacheSize());
         template.stop();
 
@@ -52,8 +58,9 @@ public class DefaultConsumerTemplateWithCustomCacheMaxSizeTest extends ContextTe
         assertEquals("Size should be 0", 0, template.getCurrentCacheSize());
     }
 
+    @Test
     public void testInvalidSizeABC() {
-        context.getProperties().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "ABC");
+        context.getGlobalOptions().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "ABC");
         try {
             context.createConsumerTemplate();
             fail("Should have thrown an exception");
@@ -62,8 +69,9 @@ public class DefaultConsumerTemplateWithCustomCacheMaxSizeTest extends ContextTe
         }
     }
 
+    @Test
     public void testInvalidSizeZero() {
-        context.getProperties().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "0");
+        context.getGlobalOptions().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "0");
         try {
             context.createConsumerTemplate();
             fail("Should have thrown an exception");

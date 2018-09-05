@@ -1,0 +1,24 @@
+{
+    "revapi" : {
+        "java": {
+            "missing-classes": {
+              "behavior": "ignore"
+            }
+          },
+        "ignore" : [ 
+        {
+          "code" : "java.class.nonPublicPartOfAPI"
+        },
+        {
+          "code" : "java.method.returnTypeChanged",
+          "package" : "org.apache.camel.management.mbean",
+          "classSimpleName" : "ManagedClaimCheck",
+          "methodName": "getDefinition",
+          "elementKind": "method",
+          "justification": "Needed for Claim-Check EIP",
+          "oldType": "org.apache.camel.model.ExpressionNode",
+          "newType": "org.apache.camel.model.ProcessorDefinition<?>"
+        }
+      ]
+    }
+}

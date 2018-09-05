@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
@@ -29,6 +31,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class ManagedLoopTest extends ManagementTestSupport {
 
+    @Test
     public void testManageLoop() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -70,7 +73,7 @@ public class ManagedLoopTest extends ManagementTestSupport {
 
         data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{true}, new String[]{"boolean"});
         assertNotNull(data);
-        assertEquals(5, data.size());
+        assertEquals(6, data.size());
 
         String json = (String) mbeanServer.invoke(on, "informationJson", null, null);
         assertNotNull(json);

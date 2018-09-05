@@ -22,53 +22,50 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.IdentifiedType;
+import org.apache.camel.spi.Metadata;
 
 /**
- * The JAXB type class for the configuration of stream caching
+ * Stream caching configuration.
  *
  * @version 
  */
+@Metadata(label = "spring,configuration")
 @XmlRootElement(name = "streamCaching")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
 
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "false")
     private String enabled;
-
     @XmlAttribute
     private String spoolDirectory;
-
     @XmlAttribute
     private String spoolChiper;
-
     @XmlAttribute
     private String spoolThreshold;
-
     @XmlAttribute
     private String spoolUsedHeapMemoryThreshold;
-
     @XmlAttribute
     private String spoolUsedHeapMemoryLimit;
-
     @XmlAttribute
     private String spoolRules;
-
     @XmlAttribute
     private String bufferSize;
-
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "true")
     private String removeSpoolDirectoryWhenStopping;
-
     @XmlAttribute
     private String statisticsEnabled;
-
-    @XmlAttribute
+    @XmlAttribute @Metadata(defaultValue = "false")
     private String anySpoolRules;
 
     public String getEnabled() {
         return enabled;
     }
 
+    /**
+     * Sets whether the stream caching is enabled.
+     * <p/>
+     * <b>Notice:</b> This cannot be changed at runtime.
+     */
     public void setEnabled(String enabled) {
         this.enabled = enabled;
     }
@@ -77,6 +74,12 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
         return spoolDirectory;
     }
 
+    /**
+     * Sets the spool (temporary) directory to use for overflow and spooling to disk.
+     * <p/>
+     * If no spool directory has been explicit configured, then a temporary directory
+     * is created in the <tt>java.io.tmpdir</tt> directory.
+     */
     public void setSpoolDirectory(String spoolDirectory) {
         this.spoolDirectory = spoolDirectory;
     }
@@ -85,6 +88,11 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
         return spoolChiper;
     }
 
+    /**
+     * Sets a chiper name to use when spooling to disk to write with encryption.
+     * <p/>
+     * By default the data is not encrypted.
+     */
     public void setSpoolChiper(String spoolChiper) {
         this.spoolChiper = spoolChiper;
     }
@@ -93,6 +101,12 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
         return spoolThreshold;
     }
 
+    /**
+     * Threshold in bytes when overflow to disk is activated.
+     * <p/>
+     * The default threshold is {@link org.apache.camel.StreamCache#DEFAULT_SPOOL_THRESHOLD} bytes (eg 128kb).
+     * Use <tt>-1</tt> to disable overflow to disk.
+     */
     public void setSpoolThreshold(String spoolThreshold) {
         this.spoolThreshold = spoolThreshold;
     }
@@ -101,6 +115,9 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
         return spoolUsedHeapMemoryThreshold;
     }
 
+    /**
+     * Sets a percentage (1-99) of used heap memory threshold to activate spooling to disk.
+     */
     public void setSpoolUsedHeapMemoryThreshold(String spoolUsedHeapMemoryThreshold) {
         this.spoolUsedHeapMemoryThreshold = spoolUsedHeapMemoryThreshold;
     }
@@ -109,6 +126,10 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
         return spoolUsedHeapMemoryLimit;
     }
 
+    /**
+     * Sets what the upper bounds should be when spoolUsedHeapMemoryThreshold
+     * is in use.
+     */
     public void setSpoolUsedHeapMemoryLimit(String spoolUsedHeapMemoryLimit) {
         this.spoolUsedHeapMemoryLimit = spoolUsedHeapMemoryLimit;
     }
@@ -117,6 +138,10 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
         return spoolRules;
     }
 
+    /**
+     * Reference to one or more custom {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} to use.
+     * Multiple rules can be separated by comma.
+     */
     public void setSpoolRules(String spoolRules) {
         this.spoolRules = spoolRules;
     }
@@ -125,6 +150,11 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
         return bufferSize;
     }
 
+    /**
+     * Sets the buffer size to use when allocating in-memory buffers used for in-memory stream caches.
+     * <p/>
+     * The default size is {@link org.apache.camel.util.IOHelper#DEFAULT_BUFFER_SIZE}
+     */
     public void setBufferSize(String bufferSize) {
         this.bufferSize = bufferSize;
     }
@@ -133,6 +163,11 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
         return removeSpoolDirectoryWhenStopping;
     }
 
+    /**
+     * Whether to remove the temporary directory when stopping.
+     * <p/>
+     * This option is default <tt>true</tt>
+     */
     public void setRemoveSpoolDirectoryWhenStopping(String removeSpoolDirectoryWhenStopping) {
         this.removeSpoolDirectoryWhenStopping = removeSpoolDirectoryWhenStopping;
     }
@@ -141,6 +176,9 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
         return statisticsEnabled;
     }
 
+    /**
+     * Sets whether statistics is enabled.
+     */
     public void setStatisticsEnabled(String statisticsEnabled) {
         this.statisticsEnabled = statisticsEnabled;
     }
@@ -149,7 +187,16 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
         return anySpoolRules;
     }
 
+    /**
+     * Sets whether if just any of the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} rules
+     * returns <tt>true</tt> then shouldSpoolCache(long) returns <tt>true</tt>.
+     * If this option is <tt>false</tt>, then <b>all</b> the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} must
+     * return <tt>true</tt>.
+     * <p/>
+     * The default value is <tt>false</tt> which means that all the rules must return <tt>true</tt>.
+     */
     public void setAnySpoolRules(String anySpoolRules) {
         this.anySpoolRules = anySpoolRules;
     }
+
 }

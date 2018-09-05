@@ -22,6 +22,7 @@ import java.io.InputStream;
 
 import org.apache.camel.Message;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultMessage;
 import org.junit.Test;
 
@@ -83,7 +84,7 @@ public class GZIPHelperTest {
     }
 
     private Message createMessageWithContentEncodingHeader(String contentEncoding) {
-        Message msg = new DefaultMessage();
+        Message msg = new DefaultMessage(new DefaultCamelContext());
         msg.setHeader("Content-Encoding", contentEncoding);
 
         return msg;

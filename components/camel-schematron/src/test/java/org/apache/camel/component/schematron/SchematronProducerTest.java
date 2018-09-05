@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.schematron;
+import org.junit.Before;
 
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerFactory;
@@ -42,7 +43,7 @@ public class SchematronProducerTest extends CamelTestSupport {
     public static void setUP() {
         SchematronEndpoint endpoint = new SchematronEndpoint();
         TransformerFactory fac = new TransformerFactoryImpl();
-        fac.setURIResolver(new ClassPathURIResolver(Constants.SCHEMATRON_TEMPLATES_ROOT_DIR));
+        fac.setURIResolver(new ClassPathURIResolver(Constants.SCHEMATRON_TEMPLATES_ROOT_DIR, endpoint.getUriResolver()));
         Templates templates = TemplatesFactory.newInstance().getTemplates(ClassLoader.
                 getSystemResourceAsStream("sch/schematron-1.sch"), fac);
         endpoint.setRules(templates);

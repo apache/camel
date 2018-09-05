@@ -21,6 +21,7 @@ import org.apache.camel.processor.ThrottlerTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringThrottlerTest extends ThrottlerTest {
+
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this,
                 "org/apache/camel/spring/processor/throttler.xml");

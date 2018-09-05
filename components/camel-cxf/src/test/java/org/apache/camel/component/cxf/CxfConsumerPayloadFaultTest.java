@@ -63,7 +63,7 @@ public class CxfConsumerPayloadFaultTest extends CamelTestSupport {
     protected final String serviceAddress = "http://localhost:" + CXFTestSupport.getPort1() 
         + "/" + getClass().getSimpleName() + "/PersonService";
     protected final String fromURI = "cxf://" + serviceAddress + "?" 
-        + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP + "&dataFormat=" + DataFormat.PAYLOAD;
+        + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP + "&dataFormat=payload";
     
     @Override
     public boolean isCreateCamelContextPerClass() {
@@ -100,10 +100,10 @@ public class CxfConsumerPayloadFaultTest extends CamelTestSupport {
         ((BindingProvider)client).getRequestContext()
             .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, serviceAddress);
         
-        Holder<String> personId = new Holder<String>();
+        Holder<String> personId = new Holder<>();
         personId.value = "";
-        Holder<String> ssn = new Holder<String>();
-        Holder<String> name = new Holder<String>();
+        Holder<String> ssn = new Holder<>();
+        Holder<String> name = new Holder<>();
         Throwable t = null;
         try {
             client.getPerson(personId, ssn, name);

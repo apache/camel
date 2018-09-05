@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,15 +33,16 @@ import org.apache.camel.language.XPath;
 public class ClaimCheckTest extends ContextTestSupport {
 
     // in memory data store for testing only!
-    public static Map<String, Object> dataStore = new HashMap<String, Object>();
+    public static Map<String, Object> dataStore = new HashMap<>();
     
+    @Test
     public void testClaimCheck() throws Exception {
         String body = "<order custId=\"123\"><lotsOfContent/></order>";
         
         // check to make sure the message body gets added back in properly
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(1);
-        resultEndpoint.message(0).body().equals(body);
+        resultEndpoint.message(0).body().isEqualTo(body);
 
         // check to make sure the claim check is added to the message and
         // the body is removed

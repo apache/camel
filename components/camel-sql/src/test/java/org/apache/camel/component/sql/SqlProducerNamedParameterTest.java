@@ -57,7 +57,7 @@ public class SqlProducerNamedParameterTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("lic", "ASF");
 
         template.sendBody("direct:start", map);

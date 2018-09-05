@@ -38,19 +38,19 @@ public class SplunkConfiguration {
     private String host = Service.DEFAULT_HOST;
     @UriParam(defaultValue = "8089")
     private int port = Service.DEFAULT_PORT;
-    @UriParam(enums = "TLSv1.2,TLSv1.1,TLSv1,SSLv3", defaultValue = "TLSv1.2")
+    @UriParam(enums = "TLSv1.2,TLSv1.1,TLSv1,SSLv3", defaultValue = "TLSv1.2", label = "security")
     private SSLSecurityProtocol sslProtocol = SSLSecurityProtocol.TLSv1_2;
     @UriParam
     private String app;
     @UriParam
     private String owner;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String username;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String password;
     @UriParam(defaultValue = "5000")
     private int connectionTimeout = 5000;
-    @UriParam
+    @UriParam(label = "security")
     private boolean useSunHttpsHandler;
 
     @UriParam(label = "producer")
@@ -59,6 +59,8 @@ public class SplunkConfiguration {
     private String sourceType;
     @UriParam(label = "producer")
     private String source;
+    @UriParam(label = "producer")
+    private String eventHost;
     @UriParam(label = "producer")
     private int tcpReceiverPort;
     @UriParam(label = "producer", defaultValue = "false")
@@ -184,6 +186,17 @@ public class SplunkConfiguration {
      */
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public String getEventHost() {
+        return eventHost;
+    }
+
+    /**
+     * Override the default Splunk event host field
+     */
+    public void setEventHost(String eventHost) {
+        this.eventHost = eventHost;
     }
 
     /**
@@ -359,4 +372,5 @@ public class SplunkConfiguration {
         splunkConnectionFactory.setSslProtocol(getSslProtocol());
         return splunkConnectionFactory;
     }
+
 }

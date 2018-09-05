@@ -36,12 +36,17 @@ import org.springframework.transaction.support.TransactionTemplate;
  * <p/>
  * Subclasses need only implement theses methods:
  * <ul>
- *   <li>{@link #queryForInt(T key)}</li>
- *   <li>{@link #insert(T key)}</li>
- *   <li>{@link #delete(T key)}</li>
+ *   <li>{@link #queryForInt(Object key) queryForInt(T key)}</li>
+ *   <li>{@link #insert(Object key) insert(T key)}</li>
+ *   <li>{@link #delete(Object key) delete(T key)}</li>
  * </ul>
  * <p/>
  * These methods should perform the named database operation.
+ * <p/>
+ * <b>Important:</b> Implementations of this should use <tt>String</tt> as the generic type as that is
+ * what is required by Camel to allow using the idempotent repository with the Idempotent Consumer EIP
+ * and also as file consumer read-lock. It was a mistake to make {@link IdempotentRepository} parameterized,
+ * as it should have been a pre-configured to use a <tt>String</tt> type.
  */
 @ManagedResource(description = "JDBC IdempotentRepository")
 public abstract class AbstractJdbcMessageIdRepository<T> extends ServiceSupport implements IdempotentRepository<T> {
@@ -77,7 +82,7 @@ public abstract class AbstractJdbcMessageIdRepository<T> extends ServiceSupport 
      * @param key  the key
      * @return int number of rows
      */
-    protected abstract int queryForInt(final T key);
+    protected abstract int queryForInt(T key);
 
     /**
      * Operation that inserts the key if it does not already exist
@@ -85,7 +90,7 @@ public abstract class AbstractJdbcMessageIdRepository<T> extends ServiceSupport 
      * @param key  the key
      * @return int number of rows inserted
      */
-    protected abstract int insert(final T key);
+    protected abstract int insert(T key);
 
     /**
      * Operations that deletes the key if it exists
@@ -93,12 +98,11 @@ public abstract class AbstractJdbcMessageIdRepository<T> extends ServiceSupport 
      * @param key  the key
      * @return int number of rows deleted
      */
-    protected abstract int delete(final T key);
+    protected abstract int delete(T key);
     
     /**
      * Operations that deletes all the rows
      *
-     * @param key  the key
      * @return int number of rows deleted
      */
     protected abstract int delete();

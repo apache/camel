@@ -21,6 +21,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
+import org.apache.camel.util.ExchangeHelper;
 
 public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrategySupport<T> {
 
@@ -60,7 +61,7 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
 
         try {
             deleteLocalWorkFile(exchange);
-            operations.releaseRetreivedFileResources(exchange);
+            operations.releaseRetrievedFileResources(exchange);
 
             int retries = 3;
             boolean deleted = false;
@@ -100,12 +101,12 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
     public void rollback(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
         try {
             deleteLocalWorkFile(exchange);
-            operations.releaseRetreivedFileResources(exchange);
+            operations.releaseRetrievedFileResources(exchange);
 
             // moved the failed file if specifying the moveFailed option
             if (failureRenamer != null) {
                 // create a copy and bind the file to the exchange to be used by the renamer to evaluate the file name
-                Exchange copy = exchange.copy();
+                Exchange copy = ExchangeHelper.createCopy(exchange, true);
                 file.bindToExchange(copy);
                 // must preserve message id
                 copy.getIn().setMessageId(exchange.getIn().getMessageId());

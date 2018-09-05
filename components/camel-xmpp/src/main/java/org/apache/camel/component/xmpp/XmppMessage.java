@@ -21,24 +21,24 @@ import java.util.Map;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.ExchangeHelper;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with XMPP
  */
 public class XmppMessage extends DefaultMessage {
-    private Packet xmppPacket;
+    private Stanza xmppPacket;
 
     public XmppMessage() {
         this(new Message());
     }
 
-    public XmppMessage(Message jmsMessage) {
-        this.xmppPacket = jmsMessage;
+    public XmppMessage(Message message) {
+        this.xmppPacket = message;
     }
 
-    public XmppMessage(Packet jmsMessage) {
-        this.xmppPacket = jmsMessage;
+    public XmppMessage(Stanza stanza) {
+        this.xmppPacket = stanza;
     }
 
     @Override
@@ -64,17 +64,19 @@ public class XmppMessage extends DefaultMessage {
     /**
      * Returns the underlying XMPP packet
      */
-    public Packet getXmppPacket() {
+    public Stanza getXmppPacket() {
         return xmppPacket;
     }
 
-    public void setXmppPacket(Packet xmppPacket) {
+    public void setXmppPacket(Stanza xmppPacket) {
         this.xmppPacket = xmppPacket;
     }
 
     @Override
     public XmppMessage newInstance() {
-        return new XmppMessage();
+        XmppMessage answer = new XmppMessage();
+        answer.setCamelContext(getCamelContext());
+        return answer;
     }
 
     @Override

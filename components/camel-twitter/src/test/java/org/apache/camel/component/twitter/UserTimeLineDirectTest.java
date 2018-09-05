@@ -26,7 +26,7 @@ public class UserTimeLineDirectTest extends CamelTwitterConsumerTestSupport {
    
     @Override
     protected String getUri() {
-        return "twitter://timeline/user?type=direct&user=brettemeyer&";
+        return "twitter-timeline://user?type=direct&user=brettemeyer&";
     }
 
     @Override

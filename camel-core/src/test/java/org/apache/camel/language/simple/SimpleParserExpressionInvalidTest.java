@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.simple;
 
+import org.junit.Test;
+
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 
@@ -24,6 +26,7 @@ import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
  */
 public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
 
+    @Test
     public void testSimpleUnbalanceFunction() throws Exception {
         SimpleExpressionParser parser = new SimpleExpressionParser("${body is a nice day", true);
         try {
@@ -34,6 +37,7 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
         }
     }
 
+    @Test
     public void testSimpleNestedUnbalanceFunction() throws Exception {
         SimpleExpressionParser parser = new SimpleExpressionParser("${body${foo}", true);
         try {
@@ -44,6 +48,7 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
         }
     }
 
+    @Test
     public void testSimpleUnknownFunction() throws Exception {
         SimpleExpressionParser parser = new SimpleExpressionParser("Hello ${foo} how are you?", true);
         try {
@@ -54,6 +59,7 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
         }
     }
 
+    @Test
     public void testSimpleNestedUnknownFunction() throws Exception {
         SimpleExpressionParser parser = new SimpleExpressionParser("Hello ${bodyAs(${foo})} how are you?", true);
         try {
@@ -61,10 +67,12 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
             parser.parseExpression().evaluate(exchange, String.class);
             fail("Should thrown exception");
         } catch (SimpleIllegalSyntaxException e) {
-            assertEquals(15, e.getIndex());
+            // its a nested function is it reset the index
+            assertEquals(0, e.getIndex());
         }
     }
     
+    @Test
     public void testNoEndFunction() throws Exception {
         SimpleExpressionParser parser = new SimpleExpressionParser("Hello ${body", true);
         try {

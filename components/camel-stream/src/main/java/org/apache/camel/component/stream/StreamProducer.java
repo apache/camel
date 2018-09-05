@@ -90,6 +90,16 @@ public class StreamProducer extends DefaultProducer {
 
         URL url = new URL(u);
         URLConnection c = url.openConnection();
+        c.setDoOutput(true);
+        if (endpoint.getConnectTimeout() > 0) {
+            c.setConnectTimeout(endpoint.getConnectTimeout());
+        }
+        if (endpoint.getReadTimeout() > 0) {
+            c.setReadTimeout(endpoint.getReadTimeout());
+        }
+        if (endpoint.getHttpHeaders() != null) {
+            endpoint.getHttpHeaders().forEach((k, v) -> c.addRequestProperty(k, v.toString()));
+        }
         return c.getOutputStream();
     }
 
@@ -143,7 +153,7 @@ public class StreamProducer extends DefaultProducer {
             LOG.debug("Writing as text: {} to {} using encoding: {}", new Object[]{body, outputStream, charset});
         }
         bw.write(s);
-        bw.write("\n");
+        bw.write(System.lineSeparator());
         bw.flush();
     }
 

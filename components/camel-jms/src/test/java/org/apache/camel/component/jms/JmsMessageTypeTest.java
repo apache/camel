@@ -58,6 +58,7 @@ public class JmsMessageTypeTest extends CamelTestSupport {
         // we use Text type then it should be a String
         mock.message(0).body().isInstanceOf(String.class);
 
+        // we send an object and force it to use Text type
         template.sendBodyAndHeader("direct:foo", new MyFooBean("World"), JMS_MESSAGE_TYPE, "Text");
 
         assertMockEndpointsSatisfied();
@@ -70,7 +71,7 @@ public class JmsMessageTypeTest extends CamelTestSupport {
         // we use Text type then it should be a String
         mock.message(0).body().isInstanceOf(String.class);
 
-        // we send an object and fore it to use Text type
+        // we send an object and force it to use Text type
         template.sendBody("direct:text", new MyFooBean("World"));
 
         assertMockEndpointsSatisfied();
@@ -83,7 +84,7 @@ public class JmsMessageTypeTest extends CamelTestSupport {
         // we use Text type then it should be a String
         mock.message(0).body().isInstanceOf(String.class);
 
-        // we send an object and fore it to use Text type
+        // we send a string and force it to use Text type
         template.sendBody("direct:text", "Hello World");
 
         assertMockEndpointsSatisfied();
@@ -95,6 +96,7 @@ public class JmsMessageTypeTest extends CamelTestSupport {
         mock.expectedBodiesReceived("Bye World".getBytes());
         mock.message(0).body().isInstanceOf(byte[].class);
 
+        // we send an object and force it to use Bytes type
         template.sendBodyAndHeader("direct:foo", new MyFooBean("World"), JMS_MESSAGE_TYPE, "Bytes");
 
         assertMockEndpointsSatisfied();
@@ -106,7 +108,7 @@ public class JmsMessageTypeTest extends CamelTestSupport {
         mock.expectedBodiesReceived("Bye World".getBytes());
         mock.message(0).body().isInstanceOf(byte[].class);
 
-        // we send an object and fore it to use Bytes type
+        // we send an object and force it to use Bytes type
         template.sendBody("direct:bytes", new MyFooBean("World"));
 
         assertMockEndpointsSatisfied();
@@ -118,8 +120,8 @@ public class JmsMessageTypeTest extends CamelTestSupport {
         mock.expectedBodiesReceived("Bye World".getBytes());
         mock.message(0).body().isInstanceOf(byte[].class);
 
-        // we send an object and fore it to use Text type
-        template.sendBody("direct:bytes", "Bye World".getBytes());
+        // we send a string and force it to use Bytes type
+        template.sendBody("direct:bytes", "Bye World");
 
         assertMockEndpointsSatisfied();
     }
@@ -130,6 +132,7 @@ public class JmsMessageTypeTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(Map.class);
 
+        // we send an object and force it to use Map type
         template.sendBodyAndHeader("direct:foo", new MyFooBean("Claus"), JMS_MESSAGE_TYPE, "Map");
 
         assertMockEndpointsSatisfied();
@@ -143,6 +146,7 @@ public class JmsMessageTypeTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(Map.class);
 
+        // we send an object and force it to use Map type
         template.sendBody("direct:map", new MyFooBean("Claus"));
 
         assertMockEndpointsSatisfied();
@@ -156,9 +160,10 @@ public class JmsMessageTypeTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(Map.class);
 
-        Map<String, Object> body = new HashMap<String, Object>();
+        Map<String, Object> body = new HashMap<>();
         body.put("name", "Claus");
 
+        // we send a Map object and force it to use Map type
         template.sendBody("direct:map", body);
 
         assertMockEndpointsSatisfied();
@@ -170,10 +175,10 @@ public class JmsMessageTypeTest extends CamelTestSupport {
     public void testHeaderObjectType() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        // we use Text type then it should be a String
+        // we use Object type then it should be a MyFooBean object
         mock.message(0).body().isInstanceOf(MyFooBean.class);
 
-        // we send an object and fore it to use Text type
+        // we send an object and force it to use Object type
         template.sendBodyAndHeader("direct:foo", new MyFooBean("James"), JMS_MESSAGE_TYPE, "Object");
 
         assertMockEndpointsSatisfied();
@@ -185,10 +190,10 @@ public class JmsMessageTypeTest extends CamelTestSupport {
     public void testObjectType() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        // we use Text type then it should be a String
+        // we use Object type then it should be a MyFooBean object
         mock.message(0).body().isInstanceOf(MyFooBean.class);
 
-        // we send an object and fore it to use Text type
+        // we send an object and force it to use Object type
         template.sendBody("direct:object", new MyFooBean("James"));
 
         assertMockEndpointsSatisfied();
@@ -239,7 +244,7 @@ public class JmsMessageTypeTest extends CamelTestSupport {
                 return (T) ("Bye " + ((MyFooBean)value).getName()).getBytes();
             }
             if (type.isAssignableFrom(Map.class)) {
-                Map<String, Object> map = new HashMap<String, Object>();
+                Map<String, Object> map = new HashMap<>();
                 map.put("name", ((MyFooBean)value).getName());
                 return (T) map;
             }

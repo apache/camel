@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.jms;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
@@ -35,12 +35,11 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  */
 public class JmsRequestReplyExclusiveReplyToConcurrentTest extends CamelTestSupport {
 
-    private int size = 100;
+    private final int size = 100;
+    private final CountDownLatch latch = new CountDownLatch(size);
 
     @Test
     public void testJmsRequestReplyExclusiveFixedReplyTo() throws Exception {
-        NotifyBuilder builder = new NotifyBuilder(context).from("direct:start").whenDone(size).create();
-
         StopWatch watch = new StopWatch();
         ExecutorService executor = Executors.newFixedThreadPool(10);
         for (int i = 0; i < size; i++) {
@@ -52,12 +51,15 @@ public class JmsRequestReplyExclusiveReplyToConcurrentTest extends CamelTestSupp
                     log.info("Sent {} expecting reply 'Hello {}' got --> {}", new Object[]{num, num, reply});
                     assertNotNull(reply);
                     assertEquals("Hello " + num, reply);
+                    latch.countDown();
                 }
             });
         }
 
         log.info("Waiting to process {} messages...", size);
-        assertTrue(builder.matches(60, TimeUnit.SECONDS));
+
+        // if any of the assertions above fails then the latch will not get decremented 
+        assertTrue("All assertions outside the main thread above should have passed", latch.await(3, TimeUnit.SECONDS));
 
         long delta = watch.stop();
         log.info("Took {} millis", delta);

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.EventObject;
@@ -35,10 +38,11 @@ import org.apache.camel.support.EventNotifierSupport;
  */
 public class EventNotifierServiceStoppingFailedEventTest extends ContextTestSupport {
 
-    private static List<EventObject> events = new ArrayList<EventObject>();
+    private static List<EventObject> events = new ArrayList<>();
     private static String stopOrder;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         events.clear();
         super.setUp();
@@ -71,6 +75,7 @@ public class EventNotifierServiceStoppingFailedEventTest extends ContextTestSupp
         return context;
     }
 
+    @Test
     public void testStopWithFailure() throws Exception {
         stopOrder = "";
 

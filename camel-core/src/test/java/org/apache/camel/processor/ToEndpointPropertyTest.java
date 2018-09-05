@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -32,6 +34,7 @@ public class ToEndpointPropertyTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testSimpleToEndpoint() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -50,6 +53,7 @@ public class ToEndpointPropertyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMediumToEndpoint() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -71,6 +75,7 @@ public class ToEndpointPropertyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRecipientListToEndpoint() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -89,6 +94,7 @@ public class ToEndpointPropertyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRoutingSlipToEndpoint() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -115,6 +121,7 @@ public class ToEndpointPropertyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testWireTapToEndpoint() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -137,6 +144,7 @@ public class ToEndpointPropertyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMulticastToEndpoint() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -164,6 +172,7 @@ public class ToEndpointPropertyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testDLCToEndpoint() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -187,6 +196,7 @@ public class ToEndpointPropertyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMediumDLCToEndpoint() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -212,6 +222,7 @@ public class ToEndpointPropertyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMulticastDLC() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

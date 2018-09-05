@@ -41,7 +41,7 @@ public class DisruptorConcurrentConsumersNPEIssueTest extends CamelTestSupport {
         } catch (FailedToStartRouteException e) {
             assertEquals(
                     "Failed to start route first because of Multiple consumers for the same endpoint is not allowed:"
-                            + " Endpoint[disruptor://foo?concurrentConsumers=5]", e.getMessage());
+                            + " disruptor://foo?concurrentConsumers=5", e.getMessage());
         }
     }
 
@@ -63,7 +63,7 @@ public class DisruptorConcurrentConsumersNPEIssueTest extends CamelTestSupport {
         } catch (FailedToStartRouteException e) {
             assertEquals(
                     "Failed to start route first because of Multiple consumers for the same endpoint is not allowed:"
-                            + " Endpoint[disruptor://foo?concurrentConsumers=5]", e.getMessage());
+                            + " disruptor://foo?concurrentConsumers=5", e.getMessage());
         }
     }
 

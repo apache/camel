@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregator;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -30,12 +33,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
+import org.junit.Ignore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  *
  */
+@Ignore("Manual unit test")
 public class AggregateSimpleExpressionIssueTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(AggregateSimpleExpressionIssueTest.class);
@@ -45,11 +50,13 @@ public class AggregateSimpleExpressionIssueTest extends ContextTestSupport {
     private AggStrategy aggStrategy = new AggStrategy();
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/files");
         super.setUp();
     }
 
+    @Test
     public void testDummy() throws Exception {
         // noop
     }
@@ -119,7 +126,7 @@ public class AggregateSimpleExpressionIssueTest extends ContextTestSupport {
             String str = newExchange.getIn().getBody(String.class);
 
             if (oldExchange == null) {
-                List<String> list = new ArrayList<String>(batchSize);
+                List<String> list = new ArrayList<>(batchSize);
                 list.add(str);
                 newExchange.getIn().setBody(list);
                 return newExchange;

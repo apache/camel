@@ -18,21 +18,19 @@ package org.apache.camel.karaf.commands;
 
 import org.apache.camel.commands.RouteProfileCommand;
 import org.apache.camel.commands.StringEscape;
-import org.apache.felix.gogo.commands.Command;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 @Command(scope = "camel", name = "route-profile", description = "Display profile information about Camel route(s).")
+@Service
 public class RouteProfile extends AbstractRouteCommand {
 
-    private StringEscape stringEscape;
-
-    public void setStringEscape(StringEscape stringEscape) {
-        this.stringEscape = stringEscape;
-    }
+    private StringEscape stringEscape = org.apache.camel.karaf.commands.internal.StringEscape.getInstance();
 
     @Override
-    protected Object doExecute() throws Exception {
+    public Object execute() throws Exception {
         RouteProfileCommand command = new RouteProfileCommand(route, context);
         command.setStringEscape(stringEscape);
-        return command.execute(camelController, System.out, System.err);
+        return command.execute(this, System.out, System.err);
     }
 }

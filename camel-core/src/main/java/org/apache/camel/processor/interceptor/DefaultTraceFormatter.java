@@ -28,7 +28,12 @@ import org.apache.camel.util.MessageHelper;
 /**
  * @version 
  */
+@Deprecated
 public class DefaultTraceFormatter implements TraceFormatter {
+    
+    protected static final String LS = System.lineSeparator();
+    private static final String SEPARATOR = "###REPLACE_ME###";
+    
     private int breadCrumbLength;
     private int nodeLength;
     private boolean showBreadCrumb = true;
@@ -45,6 +50,8 @@ public class DefaultTraceFormatter implements TraceFormatter {
     private boolean showOutBodyType;
     private boolean showException = true;
     private boolean showRouteId = true;
+    private boolean multiline;
+
     private int maxChars = 10000;
 
     public Object format(final TraceInterceptor interceptor, final ProcessorDefinition<?> node, final Exchange exchange) {
@@ -55,50 +62,92 @@ public class DefaultTraceFormatter implements TraceFormatter {
         }
 
         StringBuilder sb = new StringBuilder();
+        if (multiline) {
+            sb.append(SEPARATOR);
+        }
         sb.append(extractBreadCrumb(interceptor, node, exchange));
         
         if (showExchangePattern) {
+            if (multiline) {
+                sb.append(SEPARATOR);
+            }
             sb.append(", Pattern:").append(exchange.getPattern());
         }
         // only show properties if we have any
         if (showProperties && !exchange.getProperties().isEmpty()) {
+            if (multiline) {
+                sb.append(SEPARATOR);
+            }
             sb.append(", Properties:").append(exchange.getProperties());
         }
         // only show headers if we have any
         if (showHeaders && !in.getHeaders().isEmpty()) {
+            if (multiline) {
+                sb.append(SEPARATOR);
+            }
             sb.append(", Headers:").append(in.getHeaders());
         }
         if (showBodyType) {
+            if (multiline) {
+                sb.append(SEPARATOR);
+            }
             sb.append(", BodyType:").append(MessageHelper.getBodyTypeName(in));
         }
         if (showBody) {
+            if (multiline) {
+                sb.append(SEPARATOR);
+            }
             sb.append(", Body:").append(MessageHelper.extractBodyForLogging(in, ""));
         }
         if (showOutHeaders && out != null) {
+            if (multiline) {
+                sb.append(SEPARATOR);
+            }
             sb.append(", OutHeaders:").append(out.getHeaders());
         }
         if (showOutBodyType && out != null) {
+            if (multiline) {
+                sb.append(SEPARATOR);
+            }
             sb.append(", OutBodyType:").append(MessageHelper.getBodyTypeName(out));
         }
         if (showOutBody && out != null) {
+            if (multiline) {
+                sb.append(SEPARATOR);
+            }
             sb.append(", OutBody:").append(MessageHelper.extractBodyForLogging(out, ""));
         }        
         if (showException && exchange.getException() != null) {
+            if (multiline) {
+                sb.append(SEPARATOR);
+            }
             sb.append(", Exception:").append(exchange.getException());
         }
 
         // replace ugly <<<, with <<<
-        String s = sb.toString();
-        s = s.replaceFirst("<<<,", "<<<");
-
+        sb = new StringBuilder(sb.toString().replaceFirst("<<<,", "<<<"));
+        
         if (maxChars > 0) {
-            if (s.length() > maxChars) {
-                s = s.substring(0, maxChars) + "...";
+            StringBuilder answer = new StringBuilder();
+            for (String s : sb.toString().split(SEPARATOR)) {
+                if (s != null) {
+                    if (s.length() > maxChars) {
+                        s = s.substring(0, maxChars);
+                        answer.append(s).append("...");
+                    } else {
+                        answer.append(s);
+                    }
+                    if (multiline) {
+                        answer.append(LS);
+                    }
+                }
             }
-            return s;
-        } else {
-            return s;
+
+            // switch string buffer
+            sb = answer;
         }
+
+        return sb.toString();
     }
 
     public boolean isShowBody() {
@@ -205,6 +254,14 @@ public class DefaultTraceFormatter implements TraceFormatter {
         this.showRouteId = showRouteId;
     }
 
+    public boolean isMultiline() {
+        return multiline;
+    }
+
+    public void setMultiline(boolean multiline) {
+        this.multiline = multiline;
+    }
+
     public int getBreadCrumbLength() {
         return breadCrumbLength;
     }
@@ -295,24 +352,25 @@ public class DefaultTraceFormatter implements TraceFormatter {
         if (showNode || showRouteId) {
             if (exchange.getUnitOfWork() != null) {
                 TracedRouteNodes traced = exchange.getUnitOfWork().getTracedRouteNodes();
-
-                RouteNode traceFrom = traced.getSecondLastNode();
-                if (traceFrom != null) {
-                    from = getNodeMessage(traceFrom, exchange);
-                } else if (exchange.getFromEndpoint() != null) {
-                    from = "from(" + exchange.getFromEndpoint().getEndpointUri() + ")";
-                }
-
-                RouteNode traceTo = traced.getLastNode();
-                if (traceTo != null) {
-                    to = getNodeMessage(traceTo, exchange);
-                    // if its an abstract dummy holder then we have to get the 2nd last so we can get the real node that has
-                    // information which route it belongs to
-                    if (traceTo.isAbstract() && traceTo.getProcessorDefinition() == null) {
-                        traceTo = traced.getSecondLastNode();
+                if (traced != null) {
+                    RouteNode traceFrom = traced.getSecondLastNode();
+                    if (traceFrom != null) {
+                        from = getNodeMessage(traceFrom, exchange);
+                    } else if (exchange.getFromEndpoint() != null) {
+                        from = "from(" + exchange.getFromEndpoint().getEndpointUri() + ")";
                     }
+
+                    RouteNode traceTo = traced.getLastNode();
                     if (traceTo != null) {
-                        route = extractRoute(traceTo.getProcessorDefinition());
+                        to = getNodeMessage(traceTo, exchange);
+                        // if its an abstract dummy holder then we have to get the 2nd last so we can get the real node that has
+                        // information which route it belongs to
+                        if (traceTo.isAbstract() && traceTo.getProcessorDefinition() == null) {
+                            traceTo = traced.getSecondLastNode();
+                        }
+                        if (traceTo != null) {
+                            route = extractRoute(traceTo.getProcessorDefinition());
+                        }
                     }
                 }
             }

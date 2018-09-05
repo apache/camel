@@ -26,7 +26,6 @@ import javax.jcr.Session;
 import javax.jcr.observation.EventListener;
 
 import org.apache.camel.Processor;
-import org.apache.camel.SuspendableService;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -37,7 +36,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version $Id$
  */
-public class JcrConsumer extends DefaultConsumer implements SuspendableService {
+public class JcrConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(JcrConsumer.class);
 
@@ -60,19 +59,6 @@ public class JcrConsumer extends DefaultConsumer implements SuspendableService {
         super.doStop();
         cancelSessionListenerChecker();
         unregisterListenerAndLogoutSession();
-    }
-
-    @Override
-    protected void doSuspend() throws Exception {
-        super.doSuspend();
-        cancelSessionListenerChecker();
-        unregisterListenerAndLogoutSession();
-    }
-
-    @Override
-    protected void doResume() throws Exception {
-        super.doResume();
-        scheduleSessionListenerChecker();
     }
 
     protected JcrEndpoint getJcrEndpoint() {

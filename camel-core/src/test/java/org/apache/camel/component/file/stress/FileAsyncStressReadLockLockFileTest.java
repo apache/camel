@@ -21,10 +21,12 @@ import java.util.Random;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Ignore;
 
 /**
  * @version 
  */
+@Ignore("Manual test")
 public class FileAsyncStressReadLockLockFileTest extends FileAsyncStressTest {
 
     @Override
@@ -35,7 +37,7 @@ public class FileAsyncStressReadLockLockFileTest extends FileAsyncStressTest {
                 // leverage the fact that we can limit to max 50 files per poll
                 // this will result in polling again and potentially picking up files
                 // that already are in progress
-                from("file:target/filestress?maxMessagesPerPoll=50&readLock=lockFile").routeId("foo").noAutoStartup()
+                from("file:target/filestress?maxMessagesPerPoll=50&readLock=fileLock").routeId("foo").noAutoStartup()
                     .threads(10)
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {

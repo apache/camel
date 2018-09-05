@@ -20,7 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventListener;
 import org.schwering.irc.lib.ssl.SSLIRCConnection;
@@ -30,11 +33,14 @@ import org.slf4j.LoggerFactory;
 /**
  * Defines the <a href="http://camel.apache.org/irc.html">IRC Component</a>
  *
- * @version 
+ * @version
  */
-public class IrcComponent extends UriEndpointComponent {
+public class IrcComponent extends UriEndpointComponent implements SSLContextParametersAware {
     private static final Logger LOG = LoggerFactory.getLogger(IrcComponent.class);
-    private final transient Map<String, IRCConnection> connectionCache = new HashMap<String, IRCConnection>();
+    private final transient Map<String, IRCConnection> connectionCache = new HashMap<>();
+
+    @Metadata(label = "security", defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
 
     public IrcComponent() {
         super(IrcEndpoint.class);
@@ -69,16 +75,21 @@ public class IrcComponent extends UriEndpointComponent {
         IRCEventListener ircLogger;
 
         if (configuration.getUsingSSL()) {
-            
+
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Creating SSL Connection to {} destination(s): {} nick: {} user: {}",
                     new Object[]{configuration.getHostname(), configuration.getListOfChannels(), configuration.getNickname(), configuration.getUsername()});
             }
-            
-            if (configuration.getSslContextParameters() != null) {
+
+            SSLContextParameters sslParams = configuration.getSslContextParameters();
+            if (sslParams == null) {
+                sslParams = retrieveGlobalSslContextParameters();
+            }
+
+            if (sslParams != null) {
                 conn = new CamelSSLIRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(),
                                                  configuration.getNickname(), configuration.getUsername(), configuration.getRealname(),
-                                                 configuration.getSslContextParameters());
+                                                 sslParams, getCamelContext());
             } else {
                 SSLIRCConnection sconn = new SSLIRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(),
                         configuration.getNickname(), configuration.getUsername(), configuration.getRealname());
@@ -125,7 +136,7 @@ public class IrcComponent extends UriEndpointComponent {
     @Override
     protected void doStop() throws Exception {
         // lets use a copy so we can clear the connections eagerly in case of exceptions
-        Map<String, IRCConnection> map = new HashMap<String, IRCConnection>(connectionCache);
+        Map<String, IRCConnection> map = new HashMap<>(connectionCache);
         connectionCache.clear();
         for (Map.Entry<String, IRCConnection> entry : map.entrySet()) {
             closeConnection(entry.getKey(), entry.getValue());
@@ -140,5 +151,18 @@ public class IrcComponent extends UriEndpointComponent {
     @Deprecated
     protected String preProcessUri(String uri) {
         return IrcConfiguration.sanitize(uri);
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return this.useGlobalSslContextParameters;
+    }
+
+    /**
+     * Enable usage of global SSL context parameters.
+     */
+    @Override
+    public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 }

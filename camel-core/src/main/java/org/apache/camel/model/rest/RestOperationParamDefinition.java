@@ -28,14 +28,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * To specify the rest operation parameters using Swagger.
  * <p/>
- * This maps to the Swagger Parameter Object.
- * see com.wordnik.swagger.model.Parameter
- * and https://github.com/swagger-api/swagger-spec/blob/master/versions/1.2.md#524-parameter-object.
+ * This maps to the Swagger Parameter Message Object.
  */
 @Metadata(label = "rest")
 @XmlRootElement(name = "param")
@@ -65,12 +63,19 @@ public class RestOperationParamDefinition {
     private Boolean required;
 
     @XmlAttribute
-    @Metadata(defaultValue = "false")
-    private Boolean allowMultiple;
+    @Metadata(defaultValue = "csv")
+    private CollectionFormat collectionFormat;
+
+    @XmlAttribute
+    @Metadata(defaultValue = "string")
+    private String arrayType;
 
     @XmlAttribute
     @Metadata(defaultValue = "string")
     private String dataType;
+
+    @XmlAttribute
+    private String dataFormat;
 
     @XmlElementWrapper(name = "allowableValues")
     @XmlElement(name = "value")
@@ -79,6 +84,9 @@ public class RestOperationParamDefinition {
     @XmlAttribute
     @Metadata(defaultValue = "")
     private String access;
+
+    @XmlElement(name = "examples")
+    private List<RestPropertyDefinition> examples;
 
     public RestOperationParamDefinition() {
     }
@@ -142,15 +150,27 @@ public class RestOperationParamDefinition {
         this.required = required;
     }
 
-    public Boolean getAllowMultiple() {
-        return allowMultiple != null ? allowMultiple : false;
+    public CollectionFormat getCollectionFormat() {
+        return collectionFormat;
     }
 
     /**
-     * Sets the Swagger Parameter allowMultiple flag.
+     * Sets the Swagger Parameter collection format.
      */
-    public void setAllowMultiple(Boolean allowMultiple) {
-        this.allowMultiple = allowMultiple;
+    public void setCollectionFormat(CollectionFormat collectionFormat) {
+        this.collectionFormat = collectionFormat;
+    }
+
+    public String getArrayType() {
+        return arrayType;
+    }
+
+    /**
+     * Sets the Swagger Parameter array type.
+     * Required if data type is "array". Describes the type of items in the array.
+     */
+    public void setArrayType(String arrayType) {
+        this.arrayType = arrayType;
     }
 
     public String getDataType() {
@@ -164,30 +184,61 @@ public class RestOperationParamDefinition {
         this.dataType = dataType;
     }
 
+    public String getDataFormat() {
+        return dataFormat;
+    }
+
+    /**
+     * Sets the Swagger Parameter data format.
+     */
+    public void setDataFormat(String dataFormat) {
+        this.dataFormat = dataFormat;
+    }
+
     public List<String> getAllowableValues() {
         if (allowableValues != null) {
             return allowableValues;
         }
 
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     /**
-     * Sets the Swagger Parameter list of allowable values.
+     * Sets the Swagger Parameter list of allowable values (enum).
      */
     public void setAllowableValues(List<String> allowableValues) {
         this.allowableValues = allowableValues;
     }
 
+    /**
+     * Gets the Swagger Parameter paramAccess flag.
+     *
+     * @deprecated is not in use in swagger specification 2.0
+     */
+    @Deprecated
     public String getAccess() {
         return access != null ? access : "";
     }
 
     /**
      * Sets the Swagger Parameter paramAccess flag.
+     *
+     * @deprecated is not in use in swagger specification 2.0
      */
+    @Deprecated
     public void setAccess(String access) {
         this.access = access;
+    }
+
+    public List<RestPropertyDefinition> getExamples() {
+        return examples;
+    }
+
+    /**
+     * Sets the Swagger Parameter examples.
+     */
+    public void setExamples(List<RestPropertyDefinition> examples) {
+        this.examples = examples;
     }
 
     /**
@@ -225,18 +276,36 @@ public class RestOperationParamDefinition {
     }
 
     /**
-     * Whether the parameter can be used multiple times
+     * Sets the collection format.
      */
-    public RestOperationParamDefinition allowMultiple(Boolean allowMultiple) {
-        setAllowMultiple(allowMultiple);
+    public RestOperationParamDefinition collectionFormat(CollectionFormat collectionFormat) {
+        setCollectionFormat(collectionFormat);
         return this;
     }
 
     /**
-     * The data type of the parameter such as <tt>string</tt>, <tt>long</tt>, <tt>int</tt>, <tt>boolean</tt>
+     * The data type of the array data type
+     */
+    public RestOperationParamDefinition arrayType(String arrayType) {
+        setArrayType(arrayType);
+        return this;
+    }
+
+    /**
+     * The data type of the parameter such as <tt>string</tt>, <tt>integer</tt>, <tt>boolean</tt>
      */
     public RestOperationParamDefinition dataType(String type) {
         setDataType(type);
+        return this;
+    }
+
+    /**
+     * The data format of the parameter such as <tt>binary</tt>, <tt>date</tt>, <tt>date-time</tt>, <tt>password</tt>.
+     * The format is usually derived from the dataType alone. However you can set this option for more fine grained control
+     * of the format in use.
+     */
+    public RestOperationParamDefinition dataFormat(String type) {
+        setDataFormat(type);
         return this;
     }
 
@@ -267,9 +336,34 @@ public class RestOperationParamDefinition {
     /**
      * Parameter access. Use <tt>false</tt> or <tt>internal</tt> to indicate the parameter
      * should be hidden for the public.
+     *
+     * @deprecated is not in use in swagger specification 2.0
      */
+    @Deprecated
     public RestOperationParamDefinition access(String paramAccess) {
         setAccess(paramAccess);
+        return this;
+    }
+
+    /**
+     * Adds a body example with the given content-type
+     */
+    public RestOperationParamDefinition example(String contentType, String example) {
+        if (examples == null) {
+            examples = new ArrayList<>();
+        }
+        examples.add(new RestPropertyDefinition(contentType, example));
+        return this;
+    }
+
+    /**
+     * Adds a single example
+     */
+    public RestOperationParamDefinition example(String example) {
+        if (examples == null) {
+            examples = new ArrayList<>();
+        }
+        examples.add(new RestPropertyDefinition("", example));
         return this;
     }
 
@@ -278,7 +372,7 @@ public class RestOperationParamDefinition {
      */
     public RestDefinition endParam() {
         // name is mandatory
-        ObjectHelper.notEmpty(name, "name");
+        StringHelper.notEmpty(name, "name");
         verb.getParams().add(this);
         return verb.getRest();
     }

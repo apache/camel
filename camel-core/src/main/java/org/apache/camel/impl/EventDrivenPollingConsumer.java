@@ -59,9 +59,9 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         super(endpoint);
         this.queueCapacity = queueSize;
         if (queueSize <= 0) {
-            this.queue = new LinkedBlockingQueue<Exchange>();
+            this.queue = new LinkedBlockingQueue<>();
         } else {
-            this.queue = new ArrayBlockingQueue<Exchange>(queueSize);
+            this.queue = new ArrayBlockingQueue<>(queueSize);
         }
         this.interruptedExceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), EventDrivenPollingConsumer.class);
     }
@@ -114,14 +114,17 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         }
 
         while (isRunAllowed()) {
-            try {
-                beforePoll(0);
-                // take will block waiting for message
-                return queue.take();
-            } catch (InterruptedException e) {
-                handleInterruptedException(e);
-            } finally {
-                afterPoll();
+            // synchronizing the ordering of beforePoll, poll and afterPoll as an atomic activity
+            synchronized (this) {
+                try {
+                    beforePoll(0);
+                    // take will block waiting for message
+                    return queue.take();
+                } catch (InterruptedException e) {
+                    handleInterruptedException(e);
+                } finally {
+                    afterPoll();
+                }
             }
         }
         LOG.trace("Consumer is not running, so returning null");
@@ -134,15 +137,18 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
             throw new RejectedExecutionException(this + " is not started, but in state: " + getStatus().name());
         }
 
-        try {
-            // use the timeout value returned from beforePoll
-            timeout = beforePoll(timeout);
-            return queue.poll(timeout, TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-            handleInterruptedException(e);
-            return null;
-        } finally {
-            afterPoll();
+        // synchronizing the ordering of beforePoll, poll and afterPoll as an atomic activity
+        synchronized (this) {
+            try {
+                // use the timeout value returned from beforePoll
+                timeout = beforePoll(timeout);
+                return queue.poll(timeout, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                handleInterruptedException(e);
+                return null;
+            } finally {
+                afterPoll();
+            }
         }
     }
 
@@ -174,6 +180,10 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         this.interruptedExceptionHandler = interruptedExceptionHandler;
     }
 
+    public Consumer getDelegateConsumer() {
+        return consumer;
+    }
+
     protected void handleInterruptedException(InterruptedException e) {
         getInterruptedExceptionHandler().handleException(e);
     }
@@ -201,9 +211,17 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         }
     }
 
+    protected Consumer getConsumer() {
+        return consumer;
+    }
+
+    protected Consumer createConsumer() throws Exception {
+        return getEndpoint().createConsumer(this);
+    }
+
     protected void doStart() throws Exception {
         // lets add ourselves as a consumer
-        consumer = getEndpoint().createConsumer(this);
+        consumer = createConsumer();
 
         // if the consumer has a polling strategy then invoke that
         if (consumer instanceof PollingConsumerPollingStrategy) {

@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hawtdb;
+import org.junit.Before;
+import org.junit.After;
 
 import java.io.File;
 import java.util.Date;
@@ -29,6 +31,7 @@ public class HawtDBExchangeSerializationTest extends CamelTestSupport {
     private HawtDBFile hawtDBFile;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("target/data");
@@ -39,6 +42,7 @@ public class HawtDBExchangeSerializationTest extends CamelTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         hawtDBFile.stop();
         super.tearDown();

@@ -31,14 +31,14 @@ import org.slf4j.LoggerFactory;
 public class DefaultHttpRegistry implements HttpRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultHttpRegistry.class);
 
-    private static Map<String, HttpRegistry> registries = new HashMap<String, HttpRegistry>();
+    private static Map<String, HttpRegistry> registries = new HashMap<>();
     
     private final Set<HttpConsumer> consumers;
     private final Set<CamelServlet> providers;
 
     public DefaultHttpRegistry() {
-        consumers = new HashSet<HttpConsumer>();
-        providers = new HashSet<CamelServlet>();
+        consumers = new HashSet<>();
+        providers = new HashSet<>();
     }
     
     /**

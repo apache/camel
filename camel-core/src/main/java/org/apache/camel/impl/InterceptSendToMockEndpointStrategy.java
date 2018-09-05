@@ -21,7 +21,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +30,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 /**
  * A {@link EndpointStrategy} which is capable of mocking endpoints.
  * <p/>
- * This strategy will only apply when new endpoints is being created. If you want to apply
+ * This strategy will only apply when new endpoints are being created. If you want to replace
  * existing endpoints, you will have to remove them from the {@link org.apache.camel.CamelContext} beforehand.
  *
  * @version 
@@ -89,9 +89,9 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
             String key = "mock:" + endpoint.getEndpointKey().replaceFirst("://", ":");
             // strip off parameters as well
             if (key.contains("?")) {
-                key = ObjectHelper.before(key, "?");
+                key = StringHelper.before(key, "?");
             }
-            LOG.info("Adviced endpoint [" + uri + "] with mock endpoint [" + key + "]");
+            LOG.info("Adviced endpoint [{}] with mock endpoint [{}]", uri, key);
 
             MockEndpoint mock = endpoint.getCamelContext().getEndpoint(key, MockEndpoint.class);
             Producer producer;

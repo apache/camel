@@ -26,6 +26,7 @@ import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
@@ -45,7 +46,11 @@ public final class UndertowHelper {
      * @return the URL to invoke
      */
     public static String createURL(Exchange exchange, UndertowEndpoint endpoint) {
-        String uri = uri = endpoint.getHttpURI().toASCIIString();
+        // rest producer may provide an override url to be used which we should discard if using (hence the remove)
+        String uri = (String) exchange.getIn().removeHeader(Exchange.REST_HTTP_URI);
+        if (uri == null) {
+            uri = endpoint.getHttpURI().toASCIIString();
+        }
 
         // resolve placeholders in uri
         try {
@@ -87,8 +92,12 @@ public final class UndertowHelper {
      */
     public static URI createURI(Exchange exchange, String url, UndertowEndpoint endpoint) throws URISyntaxException {
         URI uri = new URI(url);
+        // rest producer may provide an override query string to be used which we should discard if using (hence the remove)
+        String queryString = (String) exchange.getIn().removeHeader(Exchange.REST_HTTP_QUERY);
         // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
-        String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        if (queryString == null) {
+            queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        }
         if (queryString == null) {
             queryString = endpoint.getHttpURI().getRawQuery();
         }
@@ -111,7 +120,7 @@ public final class UndertowHelper {
             if (existing instanceof List) {
                 list = (List<Object>) existing;
             } else {
-                list = new ArrayList<Object>();
+                list = new ArrayList<>();
                 list.add(existing);
             }
             list.add(value);
@@ -123,10 +132,6 @@ public final class UndertowHelper {
 
     /**
      * Creates the HttpMethod to use to call the remote server, often either its GET or POST.
-     *
-     * @param exchange the exchange
-     * @return the created method
-     * @throws URISyntaxException
      */
     public static HttpString createMethod(Exchange exchange, UndertowEndpoint endpoint, boolean hasPayload) throws URISyntaxException {
         // is a query string provided in the endpoint URI or in a header (header
@@ -153,6 +158,8 @@ public final class UndertowHelper {
         String m = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);
         if (m != null) {
             // always use what end-user provides in a header
+            // must be in upper case
+            m = m.toUpperCase();
             answer = new HttpString(m);
         } else if (queryString != null) {
             // if a query string is provided then use GET
@@ -163,6 +170,32 @@ public final class UndertowHelper {
         }
 
         return answer;
+    }
+
+    public static URI makeHttpURI(String httpURI) {
+        return makeHttpURI(
+            URI.create(UnsafeUriCharactersEncoder.encodeHttpURI(httpURI))
+        );
+    }
+
+    public static URI makeHttpURI(URI httpURI) {
+        if (ObjectHelper.isEmpty(httpURI.getPath())) {
+            try {
+                return new URI(
+                    httpURI.getScheme(),
+                    httpURI.getUserInfo(),
+                    httpURI.getHost(),
+                    httpURI.getPort(),
+                    "/",
+                    httpURI.getQuery(),
+                    httpURI.getFragment()
+                );
+            } catch (URISyntaxException e) {
+                throw new IllegalArgumentException(e);
+            }
+        } else {
+            return httpURI;
+        }
     }
 
 }

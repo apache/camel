@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.metrics.enabled",
+      "description": "Enable metrics component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

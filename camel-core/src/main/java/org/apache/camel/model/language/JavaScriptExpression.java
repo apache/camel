@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * For JavaScript expressions and predicates
+ * To use JavaScript in Camel expressions or predicates.
  *
  * @version 
  */
-@Metadata(label = "language", title = "JavaScript")
+@Metadata(firstVersion = "1.0.0", label = "language,script", title = "JavaScript")
 @XmlRootElement(name = "javaScript")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JavaScriptExpression extends ExpressionDefinition {

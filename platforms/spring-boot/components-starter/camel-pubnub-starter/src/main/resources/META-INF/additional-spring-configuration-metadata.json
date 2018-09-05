@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.pubnub.enabled",
+      "description": "Enable pubnub component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+@if{!eips.isEmpty()}
+
+Number of EIPs: @{eips.size} (@{numberOfDeprecated} deprecated)
+
+[width="100%",cols="4,6",options="header"]
+|===
+| EIP | Description
+@foreach{row : eips}
+| link:@{row.docLink}/${row.name}-eip.adoc[@{row.title}] +
+`<@{row.name}>` | @if{row.deprecated == "true"}*deprecated* @end{}@{row.description}
+@end{}
+|===
+
+@end{}

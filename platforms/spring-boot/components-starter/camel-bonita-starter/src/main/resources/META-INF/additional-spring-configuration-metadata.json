@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.bonita.enabled",
+      "description": "Enable bonita component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

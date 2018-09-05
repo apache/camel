@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -35,6 +37,7 @@ public class ExceptionWithManagementTest extends ContextTestSupport {
         return true;
     }
 
+    @Test
     public void testExceptionHandler() throws Exception {
         MockEndpoint error = this.resolveMandatoryEndpoint("mock:error", MockEndpoint.class);
         error.expectedMessageCount(1);
@@ -59,7 +62,7 @@ public class ExceptionWithManagementTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
-                onException(IllegalArgumentException.class).maximumRedeliveries(1).to("mock:error");
+                onException(IllegalArgumentException.class).redeliveryDelay(0).maximumRedeliveries(1).to("mock:error");
 
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

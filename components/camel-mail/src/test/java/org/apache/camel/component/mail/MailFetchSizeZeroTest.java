@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+import org.junit.Before;
 
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -33,6 +34,7 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailFetchSizeZeroTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();
@@ -67,6 +69,7 @@ public class MailFetchSizeZeroTest extends CamelTestSupport {
         Message[] messages = new Message[5];
         for (int i = 0; i < 5; i++) {
             messages[i] = new MimeMessage(sender.getSession());
+            messages[i].setHeader("Message-ID", "" + i);
             messages[i].setText("Message " + i);
         }
         folder.appendMessages(messages);
@@ -76,7 +79,7 @@ public class MailFetchSizeZeroTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://bill@localhost?password=secret&fetchSize=0&consumer.delay=1000").to("mock:result");
+                from("pop3://bill@localhost?password=secret&fetchSize=0&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
             }
         };
     }

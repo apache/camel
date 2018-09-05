@@ -28,7 +28,7 @@ import org.apache.camel.avro.generated.Value;
 
 public class KeyValueProtocolImpl implements KeyValueProtocol {
 
-    private Map<Key, Value> store = new HashMap<Key, Value>();
+    private Map<Key, Value> store = new HashMap<>();
 
     @Override
     public Void put(Key key, Value value) throws AvroRemoteException {

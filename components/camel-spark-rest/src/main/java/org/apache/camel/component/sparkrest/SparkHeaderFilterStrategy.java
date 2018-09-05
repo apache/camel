@@ -28,6 +28,8 @@ public class SparkHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     }
 
     protected void initialize() {
+        getInFilter().add("content-type");
+        
         getOutFilter().add("content-length");
         getOutFilter().add("content-type");
         getOutFilter().add("host");

@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
+import org.junit.Before;
+
+import org.junit.Test;
 
 import java.net.URL;
 import javax.xml.bind.JAXBContext;
@@ -35,7 +38,8 @@ public class CamelContextAddRouteDefinitionsFromXmlTest extends ContextTestSuppo
     protected JAXBContext jaxbContext;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         jaxbContext = context.getModelJAXBContextFactory().newJAXBContext();
     }
@@ -53,6 +57,7 @@ public class CamelContextAddRouteDefinitionsFromXmlTest extends ContextTestSuppo
         return assertIsInstanceOf(RouteDefinition.class, route);
     }
 
+    @Test
     public void testAddRouteDefinitionsFromXml() throws Exception {
         RouteDefinition route = loadRoute("route1.xml");
         assertNotNull(route);
@@ -69,6 +74,7 @@ public class CamelContextAddRouteDefinitionsFromXmlTest extends ContextTestSuppo
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRemoveRouteDefinitionsFromXml() throws Exception {
         RouteDefinition route = loadRoute("route1.xml");
         assertNotNull(route);
@@ -88,6 +94,7 @@ public class CamelContextAddRouteDefinitionsFromXmlTest extends ContextTestSuppo
         assertEquals(0, context.getRouteDefinitions().size());
     }
 
+    @Test
     public void testAddRouteDefinitionsFromXml2() throws Exception {
         RouteDefinition route = loadRoute("route2.xml");
         assertNotNull(route);
@@ -107,6 +114,7 @@ public class CamelContextAddRouteDefinitionsFromXmlTest extends ContextTestSuppo
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAddRouteDefinitionsFromXmlIsPrepared() throws Exception {
         RouteDefinition route = loadRoute("route1.xml");
         assertNotNull(route);
@@ -127,6 +135,7 @@ public class CamelContextAddRouteDefinitionsFromXmlTest extends ContextTestSuppo
         }
     }
 
+    @Test
     public void testAddRouteDefinitionsFromXml3() throws Exception {
         RouteDefinition route = loadRoute("route3.xml");
         assertNotNull(route);
@@ -153,4 +162,26 @@ public class CamelContextAddRouteDefinitionsFromXmlTest extends ContextTestSuppo
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testAddRouteDefinitionsAfterExceptionFromXml() throws Exception {
+        RouteDefinition route = loadRoute("route4_error.xml");
+        assertNotNull(route);
+
+        assertEquals("foo", route.getId());
+        assertEquals(0, context.getRoutes().size());
+
+        try {
+            context.addRouteDefinition(route);
+        } catch (Exception e) {
+            // catch this is error to simulate test case!!!!
+        }
+        // load route with same id
+        route = loadRoute("route4_ok.xml");
+        assertNotNull(route);
+        assertEquals("foo", route.getId());
+        assertEquals(0, context.getRoutes().size());
+
+        context.addRouteDefinition(route);
+        assertEquals(1, context.getRoutes().size());
+    }
 }

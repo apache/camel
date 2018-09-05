@@ -38,11 +38,11 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 
 /**
- * For expressions and predicates using a java bean (aka method call)
+ * To use a Java bean (aka method call) in Camel expressions or predicates.
  *
  * @version
  */
-@Metadata(label = "language", title = "Bean method")
+@Metadata(firstVersion = "1.3.0", label = "language,core,java", title = "Bean method")
 @XmlRootElement(name = "method")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MethodCallExpression extends ExpressionDefinition {
@@ -268,6 +268,7 @@ public class MethodCallExpression extends ExpressionDefinition {
 
     @Override
     public String toString() {
-        return "bean{" + beanName() + (method != null ? ", method=" + method : "") + "}";
+        boolean isRef = bean != null || ref != null;
+        return "bean[" + (isRef ? "ref:" : "") + beanName() + (method != null ? " method:" + method : "") + "]";
     }
 }

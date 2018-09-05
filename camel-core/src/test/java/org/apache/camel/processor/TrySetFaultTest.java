@@ -16,14 +16,21 @@
  */
 package org.apache.camel.processor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 public class TrySetFaultTest extends ContextTestSupport {
 
+    @Test
     public void testSetFault() throws Exception {
+        // only mock:start gets the message as a fault body stops routing
+        getMockEndpoint("mock:start").expectedMessageCount(1);
         getMockEndpoint("mock:a").expectedMessageCount(0);
+        getMockEndpoint("mock:catch-a").expectedMessageCount(0);
         getMockEndpoint("mock:b").expectedMessageCount(0);
+        getMockEndpoint("mock:catch-b").expectedMessageCount(0);
 
         template.requestBody("direct:start", "Hello World");
 
@@ -36,6 +43,7 @@ public class TrySetFaultTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
+                    .to("mock:start")
                     .to("direct:a")
                     .to("mock:a")
                     .to("direct:b")
@@ -45,6 +53,7 @@ public class TrySetFaultTest extends ContextTestSupport {
                     .doTry()
                         .setFaultBody(constant("Failed at A"))
                     .doCatch(Exception.class)
+                        // fault will not throw an exception
                         .to("mock:catch-a")
                     .end();
 
@@ -52,7 +61,8 @@ public class TrySetFaultTest extends ContextTestSupport {
                     .doTry()
                         .setFaultBody(constant("Failed at B"))
                     .doCatch(Exception.class)
-                        .to("mock:catch-a")
+                        // fault will not throw an exception
+                        .to("mock:catch-b")
                     .end()
                     .to("log:b");
             }

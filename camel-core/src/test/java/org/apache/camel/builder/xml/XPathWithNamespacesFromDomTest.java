@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder.xml;
 
+import org.junit.Test;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -26,6 +28,7 @@ import org.apache.camel.ContextTestSupport;
  */
 public class XPathWithNamespacesFromDomTest extends ContextTestSupport {
 
+    @Test
     public void testXPathUsingDomForNamespaces() throws Exception {
         Document document = context.getTypeConverter()
             .convertTo(Document.class, "<x:foo xmlns:x='n1' xmlns:y='n2'><bar id='a' xmlns:y='n3'/></x:foo>");

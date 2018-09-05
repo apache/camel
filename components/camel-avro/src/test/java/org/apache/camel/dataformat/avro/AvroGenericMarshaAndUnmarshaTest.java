@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.avro;
+import org.junit.Before;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +34,7 @@ public class AvroGenericMarshaAndUnmarshaTest extends CamelTestSupport {
     private Schema schema;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         schema = getSchema();
         super.setUp();
@@ -51,7 +53,7 @@ public class AvroGenericMarshaAndUnmarshaTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:reverse");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(GenericRecord.class);
-        mock.message(0).body().equals(input);
+        mock.message(0).body().isEqualTo(input);
 
         Object marshalled = template.requestBody(inURI, input);
         template.sendBody(outURI, marshalled);

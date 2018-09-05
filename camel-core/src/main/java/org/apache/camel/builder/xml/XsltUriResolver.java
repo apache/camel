@@ -23,22 +23,23 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.CamelContext;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Camel specific {@link javax.xml.transform.URIResolver} which is capable of loading files
- * from the classpath and file system.
+ * from classpath, file system and more.
  * <p/>
- * Use prefix <tt>classpath:</tt> or <tt>file:</tt> to denote either classpath or file system.
- * If no prefix is provided then the prefix from the <tt>location</tt> parameter is used.
- * If it neither has a prefix then <tt>classpath:</tt> is used.
- * <p/>
- * This implementation <b>cannot</b> load files over http.
+ * You can prefix with: classpath, file, http, ref, or bean.
+ * classpath, file and http loads the resource using these protocols (classpath is default).
+ * ref will lookup the resource in the registry.
+ * bean will call a method on a bean to be used as the resource.
+ * For bean you can specify the method name after dot, eg bean:myBean.myMethod
  *
  * @version 
  */
@@ -46,12 +47,12 @@ public class XsltUriResolver implements URIResolver {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltUriResolver.class);
 
-    private final ClassResolver resolver;
+    private final CamelContext context;
     private final String location;
     private final String baseScheme;
 
-    public XsltUriResolver(ClassResolver resolver, String location) {
-        this.resolver = resolver;
+    public XsltUriResolver(CamelContext context, String location) {
+        this.context = context;
         this.location = location;
         if (ResourceHelper.hasScheme(location)) {
             baseScheme = ResourceHelper.getScheme(location);
@@ -61,6 +62,7 @@ public class XsltUriResolver implements URIResolver {
         }
     }
 
+    @Override
     public Source resolve(String href, String base) throws TransformerException {
         // supports the empty href
         if (ObjectHelper.isEmpty(href)) {
@@ -73,24 +75,26 @@ public class XsltUriResolver implements URIResolver {
         LOG.trace("Resolving URI with href: {} and base: {}", href, base);
 
         String scheme = ResourceHelper.getScheme(href);
+
         if (scheme != null) {
             // need to compact paths for file/classpath as it can be relative paths using .. to go backwards
+            String hrefPath = StringHelper.after(href, scheme);
             if ("file:".equals(scheme)) {
                 // compact path use file OS separator
-                href = FileUtil.compactPath(href);
+                href = scheme + FileUtil.compactPath(hrefPath);
             } else if ("classpath:".equals(scheme)) {
                 // for classpath always use /
-                href = FileUtil.compactPath(href, '/');
+                href = scheme + FileUtil.compactPath(hrefPath, '/');
             }
             LOG.debug("Resolving URI from {}: {}", scheme, href);
 
             InputStream is;
             try {
-                is = ResourceHelper.resolveMandatoryResourceAsInputStream(resolver, href);
+                is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, href);
             } catch (IOException e) {
                 throw new TransformerException(e);
             }
-            return new StreamSource(is);
+            return new StreamSource(is, href);
         }
 
         // if href and location is the same, then its the initial resolve
@@ -99,8 +103,8 @@ public class XsltUriResolver implements URIResolver {
             return resolve(path, base);
         }
 
-        // okay then its relative to the starting location from the XSLT component
-        String path = FileUtil.onlyPath(location);
+        // okay then its relative to the starting location from the XSLT importing this one
+        String path = FileUtil.onlyPath(base);
         if (ObjectHelper.isEmpty(path)) {
             path = baseScheme + href;
             return resolve(path, base);

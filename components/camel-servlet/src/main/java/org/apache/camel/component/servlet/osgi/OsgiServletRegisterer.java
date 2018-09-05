@@ -51,7 +51,7 @@ public class OsgiServletRegisterer {
     private HttpServlet servlet;
     
     /**
-     * HttpService to register with. Get this with osgi:reference in the blueprint/spring-dm file
+     * HttpService to register with. Get this with osgi:reference in the blueprint file
      */
     private HttpService httpService;
     
@@ -93,7 +93,7 @@ public class OsgiServletRegisterer {
         HttpContext actualHttpContext = (httpContext == null)
             ? httpService.createDefaultHttpContext()
             : httpContext;
-        final Dictionary<String, String> initParams = new Hashtable<String, String>();
+        final Dictionary<String, String> initParams = new Hashtable<>();
         initParams.put("matchOnUriPrefix", matchOnUriPrefix ? "true" : "false");
         initParams.put("servlet-name", servletName);
         httpService.registerServlet(alias, servlet, initParams, actualHttpContext);

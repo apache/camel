@@ -16,29 +16,20 @@
  */
 package org.apache.camel.management.event;
 
-import java.util.EventObject;
-
 import org.apache.camel.CamelContext;
 
 /**
  * @version 
  */
-public class CamelContextStoppedEvent extends EventObject {
+public class CamelContextStoppedEvent extends AbstractContextEvent {
     private static final long serialVersionUID = -8406258841784891998L;
-
-    private final CamelContext context;
 
     public CamelContextStoppedEvent(CamelContext source) {
         super(source);
-        this.context = source;
-    }
-
-    public CamelContext getContext() {
-        return context;
     }
 
     @Override
     public String toString() {
-        return "Stopped CamelContext: " + context.getName();
+        return "Stopped CamelContext: " + getContext().getName();
     }
 }

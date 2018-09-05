@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregator;
+import org.junit.Before;
+import org.junit.After;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -32,6 +34,7 @@ public abstract class AbstractDistributedTest extends ContextTestSupport {
     protected CamelContext context2;
     protected ProducerTemplate template2;
 
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         context.setUseMDCLogging(true);
@@ -45,6 +48,7 @@ public abstract class AbstractDistributedTest extends ContextTestSupport {
         context2.addRoutes(createRouteBuilder2());
     }
 
+    @After
     public void tearDown() throws Exception {
         ServiceHelper.stopAndShutdownServices(context2, template2);
 

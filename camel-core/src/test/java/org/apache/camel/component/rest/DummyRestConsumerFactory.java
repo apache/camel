@@ -22,27 +22,66 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.component.seda.SedaEndpoint;
-import org.apache.camel.impl.ActiveMQUuidGenerator;
+import org.apache.camel.impl.DefaultUuidGenerator;
+import org.apache.camel.spi.RestApiConsumerFactory;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.util.CamelContextHelper;
 
-public class DummyRestConsumerFactory implements RestConsumerFactory {
+public class DummyRestConsumerFactory implements RestConsumerFactory, RestApiConsumerFactory {
+
+    private Object dummy;
+
+    public Object getDummy() {
+        return dummy;
+    }
+
+    public void setDummy(Object dummy) {
+        this.dummy = dummy;
+    }
 
     @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
-                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+                                   String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
         // just use a seda endpoint for testing purpose
         String id;
         if (uriTemplate != null) {
-            id = ActiveMQUuidGenerator.generateSanitizedId(basePath + uriTemplate);
+            id = DefaultUuidGenerator.generateSanitizedId(basePath + uriTemplate);
         } else {
-            id = ActiveMQUuidGenerator.generateSanitizedId(basePath);
+            id = DefaultUuidGenerator.generateSanitizedId(basePath);
         }
         // remove leading dash as we add that ourselves
         if (id.startsWith("-")) {
             id = id.substring(1);
         }
+
+        if (configuration.getConsumerProperties() != null) {
+            String ref = (String) configuration.getConsumerProperties().get("dummy");
+            if (ref != null) {
+                dummy = CamelContextHelper.mandatoryLookup(camelContext, ref.substring(1));
+            }
+        }
+
         SedaEndpoint seda = camelContext.getEndpoint("seda:" + verb + "-" + id, SedaEndpoint.class);
+        // speedup pooling to also be able to shutdown faster
+        seda.setPollTimeout(10);
         return seda.createConsumer(processor);
     }
+
+    @Override
+    public Consumer createApiConsumer(CamelContext camelContext, Processor processor, String contextPath,
+                                      RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+        // just use a seda endpoint for testing purpose
+        String id = DefaultUuidGenerator.generateSanitizedId(contextPath);
+        // remove leading dash as we add that ourselves
+        if (id.startsWith("-")) {
+            id = id.substring(1);
+        }
+        SedaEndpoint seda = camelContext.getEndpoint("seda:api:" + "-" + id, SedaEndpoint.class);
+        // speedup pooling to also be able to shutdown faster
+        seda.setPollTimeout(10);
+        return seda.createConsumer(processor);
+    }
+
 
 }

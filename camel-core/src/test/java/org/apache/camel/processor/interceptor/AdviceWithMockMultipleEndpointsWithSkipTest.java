@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import org.junit.Test;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,6 +29,8 @@ import org.apache.camel.component.seda.SedaEndpoint;
 public class AdviceWithMockMultipleEndpointsWithSkipTest extends ContextTestSupport {
 
     // START SNIPPET: e1
+    // tag::e1[]
+    @Test
     public void testAdvisedMockEndpointsWithSkip() throws Exception {
         // advice the first route using the inlined AdviceWith route builder
         // which has extended capabilities than the regular route builder
@@ -50,9 +54,11 @@ public class AdviceWithMockMultipleEndpointsWithSkipTest extends ContextTestSupp
         SedaEndpoint seda = context.getEndpoint("seda:foo", SedaEndpoint.class);
         assertEquals(0, seda.getCurrentQueueSize());
     }
+    // end::e1[]
     // END SNIPPET: e1
 
     // START SNIPPET: route
+    // tag::route[]
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -65,5 +71,6 @@ public class AdviceWithMockMultipleEndpointsWithSkipTest extends ContextTestSupp
             }
         };
     }
+    // end::route[]
     // END SNIPPET: route
 }
