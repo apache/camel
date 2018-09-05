@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.elasticsearch;
-import org.junit.Before;
-import org.junit.After;
 
 import java.net.InetAddress;
 import java.util.HashMap;
