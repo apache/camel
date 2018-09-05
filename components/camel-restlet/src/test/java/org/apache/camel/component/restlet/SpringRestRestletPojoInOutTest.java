@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.restlet;
-import org.junit.Before;
 
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
