@@ -94,7 +94,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *collect* (producer) | Indicates if results should be collected or counted. | true | boolean
-| *dataFrame* (producer) | DataFrame to compute against. |  | DataFrame
+| *dataFrame* (producer) | DataFrame to compute against. |  | Dataset<Row>
 | *dataFrameCallback* (producer) | Function performing action against an DataFrame. |  | DataFrameCallback
 | *rdd* (producer) | RDD to compute against. |  | JavaRDDLike
 | *rddCallback* (producer) | Function performing action against an RDD. |  | RddCallback
@@ -315,7 +315,7 @@ spark:dataframe?dataFrame=#testDataFrame&dataFrameCallback=#transformation
 --------------------------------------------------------------------------
 
  Where `dataFrame` option refers to the name of an DataFrame instance
-(`instance of of org.apache.spark.sql.DataFrame`) from a Camel registry,
+(`instances of org.apache.spark.sql.Dataset and org.apache.spark.sql.Row`) from a Camel registry,
 while `dataFrameCallback` refers to the implementation
 of `org.apache.camel.component.spark.DataFrameCallback` interface (also
 from a registry). DataFrame callback provides a single method used to
@@ -327,7 +327,7 @@ computations are saved as a body to an exchange.
 [source,java]
 -----------------------------------------------------------
 public interface DataFrameCallback<T> {
-    T onDataFrame(DataFrame dataFrame, Object... payloads);
+    T onDataFrame(Dataset<Row> dataFrame, Object... payloads);
 }
 -----------------------------------------------------------
 
@@ -353,7 +353,7 @@ could look as follows:
 RddCallback<Long> findCarWithModel() {
     return new DataFrameCallback<Long>() {
         @Override
-        public Long onDataFrame(DataFrame dataFrame, Object... payloads) {
+        public Long onDataFrame(Dataset<Row> dataFrame, Object... payloads) {
             String model = (String) payloads[0];
             return dataFrame.where(dataFrame.col("model").eqNullSafe(model)).count();
         }
@@ -368,8 +368,8 @@ The DataFrame definition in Spring could looks as follows:
 [source,java]
 ------------------------------------------------------------------------
 @Bean
-DataFrame cars(HiveContext hiveContext) {
-    DataFrame jsonCars = hiveContext.read().json("/var/data/cars.json");
+Dataset<Row> cars(HiveContext hiveContext) {
+    Dataset<Row> jsonCars = hiveContext.read().json("/var/data/cars.json");
     jsonCars.registerTempTable("cars");
     return jsonCars;
 }
@@ -408,8 +408,8 @@ could look as follows:
 [source,java]
 ------------------------------------------------------------------------
 @Bean
-DataFrame cars(HiveContext hiveContext) {
-    DataFrame jsonCars = hiveContext.read().json("/var/data/cars.json");
+Dataset<Row> cars(HiveContext hiveContext) {
+     jsonCars = hiveContext.read().json("/var/data/cars.json");
     jsonCars.registerTempTable("cars");
     return jsonCars;
 }
