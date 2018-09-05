@@ -61,6 +61,6 @@ public class StubEndpoint extends VmEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new StubProducer(this, getWaitForTaskToComplete(), getTimeout(), isBlockWhenFull(), getOfferTimeout());
+        return new StubProducer(this, getWaitForTaskToComplete(), getTimeout(), isBlockWhenFull());
     }
 }
