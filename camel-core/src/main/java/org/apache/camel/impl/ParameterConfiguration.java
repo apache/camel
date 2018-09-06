@@ -16,13 +16,13 @@
  */
 package org.apache.camel.impl;
 
-import static org.apache.camel.util.StringQuoteHelper.doubleQuote;
-
 import java.lang.reflect.Field;
 
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.JsonSchemaHelper;
+
+import static org.apache.camel.util.StringQuoteHelper.doubleQuote;
 
 /**
  * Represents the configuration of a URI query parameter value to allow type conversion

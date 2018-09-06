@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import static org.apache.camel.impl.MDCUnitOfWork.MDC_CAMEL_CONTEXT_ID;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -199,6 +197,8 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+
+import static org.apache.camel.impl.MDCUnitOfWork.MDC_CAMEL_CONTEXT_ID;
 
 /**
  * Represents the context used to configure routes and the policies to use.

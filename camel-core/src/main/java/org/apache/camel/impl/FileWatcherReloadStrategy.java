@@ -16,9 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -41,6 +38,9 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.support.ReloadStrategySupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 /**
  * A file based {@link org.apache.camel.spi.ReloadStrategy} which watches a file folder

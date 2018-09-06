@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
-
 import java.util.List;
 
 import org.apache.camel.CamelContext;
@@ -31,6 +29,8 @@ import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.UnitOfWorkHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * Template (named like Spring's TransactionTemplate & JmsTemplate
