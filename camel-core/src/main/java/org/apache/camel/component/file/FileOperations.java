@@ -115,7 +115,7 @@ public class FileOperations implements GenericFileOperations<File> {
                 if (!subDir.exists()) {
                     if (subDir.mkdir()) {
                         if (LOG.isTraceEnabled()) {
-                            LOG.trace("Setting chmod: {} on directory: {} ", PosixFilePermissions.toString(permissions), subDir);
+                            LOG.trace("Setting chmod: {} on directory: {}", PosixFilePermissions.toString(permissions), subDir);
                         }
                         Files.setPosixFilePermissions(subDir.toPath(), permissions);
                     } else {
@@ -287,7 +287,7 @@ public class FileOperations implements GenericFileOperations<File> {
                             Set<PosixFilePermission> permissions = endpoint.getPermissions();
                             if (!permissions.isEmpty()) {
                                 if (LOG.isTraceEnabled()) {
-                                    LOG.trace("Setting chmod: {} on file: {} ", PosixFilePermissions.toString(permissions), file);
+                                    LOG.trace("Setting chmod: {} on file: {}", PosixFilePermissions.toString(permissions), file);
                                 }
                                 Files.setPosixFilePermissions(file.toPath(), permissions);
                             }
@@ -308,7 +308,7 @@ public class FileOperations implements GenericFileOperations<File> {
                         Set<PosixFilePermission> permissions = endpoint.getPermissions();
                         if (!permissions.isEmpty()) {
                             if (LOG.isTraceEnabled()) {
-                                LOG.trace("Setting chmod: {} on file: {} ", PosixFilePermissions.toString(permissions), file);
+                                LOG.trace("Setting chmod: {} on file: {}", PosixFilePermissions.toString(permissions), file);
                             }
                             Files.setPosixFilePermissions(file.toPath(), permissions);
                         }
@@ -341,7 +341,7 @@ public class FileOperations implements GenericFileOperations<File> {
                 Set<PosixFilePermission> permissions = endpoint.getPermissions();
                 if (!permissions.isEmpty()) {
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("Setting chmod: {} on file: {} ", PosixFilePermissions.toString(permissions), file);
+                        LOG.trace("Setting chmod: {} on file: {}", PosixFilePermissions.toString(permissions), file);
                     }
                     Files.setPosixFilePermissions(file.toPath(), permissions);
                 }

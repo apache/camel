@@ -91,7 +91,7 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
             Object pongResponse = template.requestBody("direct:grpc-sync-sync", pingRequest);
             assertEquals(((PongResponse)pongResponse).getPongId(), id);
         }
-        LOG.info("Multiple sync invocation time {} milliseconds, everage operations/sec {} ", stopwatch.stop().elapsed(TimeUnit.MILLISECONDS),
+        LOG.info("Multiple sync invocation time {} milliseconds, everage operations/sec {}", stopwatch.stop().elapsed(TimeUnit.MILLISECONDS),
                  Math.round(1000 * MULTIPLE_RUN_TEST_COUNT / stopwatch.elapsed(TimeUnit.MILLISECONDS)));
     }
 

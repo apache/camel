@@ -113,7 +113,7 @@ public class InOutMessageHandler extends AbstractMessageHandler {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("SjmsMessageConsumer invoked for Exchange id:{} ", exchange.getExchangeId());
+            log.debug("SjmsMessageConsumer invoked for Exchange id:{}", exchange.getExchangeId());
         }
     }
 

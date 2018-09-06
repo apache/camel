@@ -389,7 +389,7 @@ public class KafkaConsumer extends DefaultConsumer {
             } catch (Exception e) {
                 getExceptionHandler().handleException("Error consuming " + threadId + " from kafka topic", e);
             } finally {
-                log.debug("Closing {} ", threadId);
+                log.debug("Closing {}", threadId);
                 IOHelper.close(consumer);
             }
 

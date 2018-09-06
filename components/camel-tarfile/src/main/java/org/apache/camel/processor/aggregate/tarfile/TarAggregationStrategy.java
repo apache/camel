@@ -278,7 +278,7 @@ public class TarAggregationStrategy implements AggregationStrategy {
 
         @Override
         public void onComplete(Exchange exchange) {
-            LOG.debug("Deleting tar file on completion: {} ", this.fileToDelete);
+            LOG.debug("Deleting tar file on completion: {}", this.fileToDelete);
             FileUtil.deleteFile(this.fileToDelete);
         }
     }

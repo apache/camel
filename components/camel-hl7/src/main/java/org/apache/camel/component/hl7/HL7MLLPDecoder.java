@@ -101,7 +101,7 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
             // Could not find a complete message in the buffer.
             // Reset to the initial position (just as nothing had been read yet)
             // and return false so that this method is called again with more data.
-            LOG.debug("No complete message yet at position {} ", in.position());
+            LOG.debug("No complete message yet at position {}", in.position());
             state.markCurrent(in.position());
             in.position(0);
         }

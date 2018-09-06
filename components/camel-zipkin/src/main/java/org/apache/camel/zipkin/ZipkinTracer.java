@@ -356,7 +356,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
 
         if (spanReporter == null) {
             if (endpoint != null) {
-                LOG.info("Configuring Zipkin URLConnectionSender using endpoint: {} ", endpoint);
+                LOG.info("Configuring Zipkin URLConnectionSender using endpoint: {}", endpoint);
                 spanReporter = AsyncReporter.create(URLConnectionSender.create(endpoint));
             } else if (hostName != null && port > 0) {
                 LOG.info("Configuring Zipkin ScribeSpanCollector using host: {} and port: {}", hostName, port);
