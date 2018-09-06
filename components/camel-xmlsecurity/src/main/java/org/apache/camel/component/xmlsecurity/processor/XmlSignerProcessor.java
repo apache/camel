@@ -536,7 +536,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
             // should not happen because has been checked before
             throw new IllegalStateException("No element found for element ID " + elementId);
         }
-        LOG.debug("Sibling element of the detached XML Signature with reference URI {}: {}  {} ",
+        LOG.debug("Sibling element of the detached XML Signature with reference URI {}: {}  {}",
                 new Object[] {referenceUri, el.getLocalName(), el.getNamespaceURI() });
         Element result = getParentElement(el);
         if (result != null) {

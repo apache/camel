@@ -163,7 +163,7 @@ public class EhcacheAggregationRepository extends ServiceSupport implements Reco
 
     @Override
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
-        LOG.trace("Removing an exchange with ID {} for key {} ", exchange.getExchangeId(), key);
+        LOG.trace("Removing an exchange with ID {} for key {}", exchange.getExchangeId(), key);
         cache.remove(key);
     }
 

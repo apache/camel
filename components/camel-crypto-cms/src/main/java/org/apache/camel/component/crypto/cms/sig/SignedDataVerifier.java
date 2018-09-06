@@ -135,7 +135,7 @@ public class SignedDataVerifier extends CryptoCmsUnmarshaller {
         int i = 0;
         for (SignerInformation signer : signers.getSigners()) {
             i++;
-            LOG.debug("    Signer {}: {} ", new Object[] {i, signerInformationToString(signer)});
+            LOG.debug("    Signer {}: {}", new Object[] {i, signerInformationToString(signer)});
             if (signer.getSignedAttributes() != null) {
                 @SuppressWarnings("unchecked")
                 Hashtable<String, Attribute> authAttTable = signer.getSignedAttributes().toHashtable();
