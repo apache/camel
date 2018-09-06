@@ -111,6 +111,7 @@ public class HttpProducer extends DefaultProducer {
                 skipRequestHeaders = URISupport.parseQuery(queryString, false, true);
             }
         }
+
         HttpRequestBase httpRequest = createMethod(exchange);
         Message in = exchange.getIn();
         String httpProtocolVersion = in.getHeader(Exchange.HTTP_PROTOCOL_VERSION, String.class);
@@ -558,13 +559,9 @@ public class HttpProducer extends DefaultProducer {
                     if (answer == null) {
                         // force the body as an input stream since this is the fallback
                         InputStream is = in.getMandatoryBody(InputStream.class);
-                        String length = in.getHeader(Exchange.CONTENT_LENGTH, String.class);
-                        InputStreamEntity entity = null;
-                        if (ObjectHelper.isEmpty(length)) {
-                            entity = new InputStreamEntity(is, -1);
-                        } else {
-                            entity = new InputStreamEntity(is, Long.parseLong(length));
-                        }
+                        
+                        InputStreamEntity entity = new InputStreamEntity(is, -1);
+                        
                         if (contentType != null) {
                             entity.setContentType(contentType.toString());
                         }
