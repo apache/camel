@@ -44,7 +44,6 @@ public class RestletInvalidURLTest extends RestletTestSupport {
     @Test
     public void testExceptionResponse() throws Exception {
         HttpResponse response = doExecute(new HttpPost("http://localhost:" + portNum + "/users/123/45"));
-        System.out.println(response.getStatusLine().getStatusCode());
         assertEquals(404, response.getStatusLine().getStatusCode());
     }
    
