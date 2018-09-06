@@ -16,9 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import static org.apache.camel.impl.MDCUnitOfWork.MDC_CAMEL_CONTEXT_ID;
-import static org.apache.camel.impl.MDCUnitOfWork.MDC_ROUTE_ID;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -52,6 +49,9 @@ import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+
+import static org.apache.camel.impl.MDCUnitOfWork.MDC_CAMEL_CONTEXT_ID;
+import static org.apache.camel.impl.MDCUnitOfWork.MDC_ROUTE_ID;
 
 /**
  * Represents the runtime objects for a given {@link RouteDefinition} so that it can be stopped independently

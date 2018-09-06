@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import static org.apache.camel.processor.PipelineHelper.continueProcessing;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
@@ -27,6 +25,8 @@ import org.apache.camel.Producer;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
 /**
  * {@link org.apache.camel.Processor} used to interceptor and detour the routing

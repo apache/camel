@@ -19,6 +19,8 @@ package org.apache.camel.component.validator;
 import javax.xml.XMLConstants;
 import javax.xml.validation.SchemaFactory;
 
+import org.w3c.dom.ls.LSResourceResolver;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -34,7 +36,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.w3c.dom.ls.LSResourceResolver;
 
 
 /**

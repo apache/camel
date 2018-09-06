@@ -19,12 +19,12 @@ package org.apache.camel.impl.cloud;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
+
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.util.ObjectHelper;
-
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.LoadingCache;
 
 public final class CachingServiceDiscovery implements ServiceDiscovery {
     private final ServiceDiscovery delegate;

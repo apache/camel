@@ -16,10 +16,6 @@
  */
 package org.apache.camel.impl.converter;
 
-import static java.lang.reflect.Modifier.isAbstract;
-import static java.lang.reflect.Modifier.isPublic;
-import static java.lang.reflect.Modifier.isStatic;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -48,6 +44,10 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.lang.reflect.Modifier.isAbstract;
+import static java.lang.reflect.Modifier.isPublic;
+import static java.lang.reflect.Modifier.isStatic;
 
 /**
  * A class which will auto-discover {@link Converter} objects and methods to pre-load
