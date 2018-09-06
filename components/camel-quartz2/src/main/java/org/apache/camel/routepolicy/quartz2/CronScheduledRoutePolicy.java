@@ -60,7 +60,7 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
 
         // validate time options has been configured
         if ((getRouteStartTime() == null) && (getRouteStopTime() == null) && (getRouteSuspendTime() == null) && (getRouteResumeTime() == null)) {
-            throw new IllegalArgumentException("Scheduled Route Policy for route {} has no start/stop/suspend/resume times specified");
+            throw new IllegalArgumentException("Scheduled Route Policy for route " + route.getId() + " has no start/stop/suspend/resume times specified");
         }
 
         registerRouteToScheduledRouteDetails(route);

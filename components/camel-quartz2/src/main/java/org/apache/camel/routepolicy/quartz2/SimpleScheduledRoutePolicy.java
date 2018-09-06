@@ -66,7 +66,7 @@ public class SimpleScheduledRoutePolicy extends ScheduledRoutePolicy {
 
         // validate time options has been configured
         if ((getRouteStartDate() == null) && (getRouteStopDate() == null) && (getRouteSuspendDate() == null) && (getRouteResumeDate() == null)) {
-            throw new IllegalArgumentException("Scheduled Route Policy for route {} has no start/stop/suspend/resume times specified");
+            throw new IllegalArgumentException("Scheduled Route Policy for route " + route.getId() + " has no start/stop/suspend/resume times specified");
         }
 
         registerRouteToScheduledRouteDetails(route);

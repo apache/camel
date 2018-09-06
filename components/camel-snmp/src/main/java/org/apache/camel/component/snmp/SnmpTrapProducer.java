@@ -101,7 +101,7 @@ public class SnmpTrapProducer extends DefaultProducer {
             } else if ("udp".equals(this.endpoint.getProtocol())) {
                 transport = new DefaultUdpTransportMapping();
             } else {
-                throw new IllegalArgumentException("Unknown protocol: {} " + this.endpoint.getProtocol());
+                throw new IllegalArgumentException("Unknown protocol: " + this.endpoint.getProtocol());
             }
     
             snmp = new Snmp(transport);
