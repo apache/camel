@@ -32,8 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Flexible Aggregation Strategy is a highly customizable, fluently configurable aggregation strategy. It allows you to quickly 
- * allows you to quickly whip up an {@link AggregationStrategy} that is capable of performing the most typical aggregation duties, 
+ * The Flexible Aggregation Strategy is a highly customizable, fluently configurable aggregation strategy. It allows you to quickly whip up an {@link AggregationStrategy} that is capable of performing the most typical aggregation duties, 
  * with zero Java code. 
  * <p/>
  * It can perform the following logic:
