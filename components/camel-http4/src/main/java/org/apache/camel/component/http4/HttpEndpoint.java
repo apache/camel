@@ -108,8 +108,6 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     private int connectionsPerRoute;
     @UriParam(label = "security", description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier")
     private HostnameVerifier x509HostnameVerifier;
-    @UriParam(label = "producer,proxy", description = "Ignore Content-Length Header")
-    private boolean ignoreContentLengthHeader = true;
 
     public HttpEndpoint() {
     }
@@ -455,25 +453,6 @@ public class HttpEndpoint extends HttpCommonEndpoint {
      */
     public void setSocketTimeout(int socketTimeout) {
         this.socketTimeout = socketTimeout;
-    }
-    
-    /**
-     * Ignore Content-Length Header
-     * <p>
-     * Ignore the HTTP Content-Length Header when sending the 
-     * request to the HttpProducer.  Set this to false to explicitly 
-     * set Content-Length of a request body.
-     * </p>
-     * <p>
-     * Default: {@code true}
-     * </p>
-     */
-    public boolean isIgnoreContentLengthHeader() {
-        return ignoreContentLengthHeader;
-    }
-    
-    public void setIgnoreContentLengthHeader(boolean ignoreContentLengthHeader) {
-        this.ignoreContentLengthHeader = ignoreContentLengthHeader;
     }
 
 }
