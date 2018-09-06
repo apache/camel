@@ -112,7 +112,7 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     }
 
     /**
-     * Google mail application name. Example would be "camel-google-mail/1.0"
+     * Google Calendar application name. Example would be "camel-google-calendar/1.0"
      */
     public void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
@@ -124,7 +124,7 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
 
     /**
      * Specifies the level of permissions you want a mail application to have to
-     * a user account. See https://developers.google.com/gmail/api/auth/scopes
+     * a user account. See https://developers.google.com/calendar/api/auth/scopes
      * for more info.
      */
     public void setScopes(List<String> scopes) {
@@ -147,7 +147,7 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     }
 
     /**
-     * The query to execute on gmail box
+     * The query to execute on calendar
      */
     public void setQuery(String query) {
         this.query = query;

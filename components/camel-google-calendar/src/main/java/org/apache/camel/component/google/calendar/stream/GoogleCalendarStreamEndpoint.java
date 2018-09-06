@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * The google-mail component provides access to Google Mail.
+ * The google-calendar component provides access to Google Calendar in a streaming mod.
  */
 @UriEndpoint(firstVersion = "2.23.0", 
              scheme = "google-calendar-stream", 
@@ -54,7 +54,7 @@ public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        throw new UnsupportedOperationException("The camel google mail stream component doesn't support producer");
+        throw new UnsupportedOperationException("The camel google calendar stream component doesn't support producer");
     }
 
     @Override
@@ -90,7 +90,6 @@ public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint {
         Exchange exchange = super.createExchange();
         Message message = exchange.getIn();
         message.setBody(event);
-        System.err.println("Ciao " + message.getBody().toString());
         return exchange;
     }
 }
