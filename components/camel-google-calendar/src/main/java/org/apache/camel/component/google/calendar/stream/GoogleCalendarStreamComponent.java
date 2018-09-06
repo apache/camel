@@ -18,14 +18,14 @@ package org.apache.camel.component.google.calendar.stream;
 
 import java.util.Map;
 
+import com.google.api.services.calendar.Calendar;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.calendar.BatchGoogleCalendarClientFactory;
 import org.apache.camel.component.google.calendar.GoogleCalendarClientFactory;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
-
-import com.google.api.services.calendar.Calendar;
 
 /**
  * Represents the component that manages {@link GoogleCalendarStreamEndpoint}.
