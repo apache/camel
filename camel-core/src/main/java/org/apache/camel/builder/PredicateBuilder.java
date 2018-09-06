@@ -16,8 +16,6 @@
  */
 package org.apache.camel.builder;
 
-import static org.apache.camel.util.ObjectHelper.notNull;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -28,6 +26,8 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 import org.apache.camel.util.ObjectHelper;
+
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * A helper class for working with predicates

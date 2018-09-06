@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.validator;
 
-import org.apache.camel.CamelContext;
 import org.w3c.dom.ls.LSResourceResolver;
+import org.apache.camel.CamelContext;
 
 /**
  * Default resource rsolver factory which instantiates the default resource
