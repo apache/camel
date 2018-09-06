@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.bean;
 
-import static org.apache.camel.util.ObjectHelper.asString;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.AnnotatedElement;
@@ -60,6 +58,8 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.util.ObjectHelper.asString;
 
 /**
  * Information about a method to be used for invocation.
