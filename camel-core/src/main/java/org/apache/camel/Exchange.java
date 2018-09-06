@@ -160,7 +160,6 @@ public interface Exchange {
     String HTTP_SERVLET_REQUEST    = "CamelHttpServletRequest";
     String HTTP_SERVLET_RESPONSE   = "CamelHttpServletResponse";
 
-    String IGNORE_CONTENT_LENGTH_HEADER   = "CamelIgnoreContentLengthHeader";
     String INTERCEPTED_ENDPOINT = "CamelInterceptedEndpoint";
     String INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED = "CamelInterceptSendToEndpointWhenMatched";
     String INTERRUPTED = "CamelInterrupted";
