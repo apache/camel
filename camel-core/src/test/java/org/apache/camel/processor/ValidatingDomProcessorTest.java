@@ -15,13 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.validation.NoXmlBodyValidationException;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test of ValidatingProcessor.

@@ -15,12 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.language.simple;
-import org.junit.Before;
-import org.junit.After;
-
-import org.junit.Test;
-
 import org.apache.camel.LanguageTestSupport;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *

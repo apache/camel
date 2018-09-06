@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl.validator;
 
-import org.junit.Test;
-
 import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
@@ -37,6 +35,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Validator;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

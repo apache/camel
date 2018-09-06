@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Test;
-
 import java.io.ByteArrayInputStream;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Date;
@@ -30,6 +28,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class ConvertBodyTest extends ContextTestSupport {
     

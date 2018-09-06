@@ -15,11 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
-import org.junit.Before;
-import org.junit.After;
-
-import org.junit.Test;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
@@ -30,6 +25,9 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test of the string data format.

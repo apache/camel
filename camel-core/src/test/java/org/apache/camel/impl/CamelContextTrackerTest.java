@@ -16,15 +16,14 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.CamelContextTracker;
 import org.apache.camel.support.LifecycleStrategySupport;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class CamelContextTrackerTest extends Assert {
 

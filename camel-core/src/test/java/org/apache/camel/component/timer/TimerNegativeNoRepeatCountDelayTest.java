@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.timer;
 
-import org.junit.Test;
-
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,6 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 

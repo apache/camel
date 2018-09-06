@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.builder;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
@@ -26,6 +22,8 @@ import org.apache.camel.Predicate;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 

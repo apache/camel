@@ -16,8 +16,6 @@
  */
 package org.apache.camel.converter;
 
-import org.junit.Test;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
@@ -29,6 +27,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 
 import org.apache.camel.ContextTestSupport;
+import org.junit.Test;
 
 public class IOConverterCharsetTest extends ContextTestSupport {
     private static final String CONTENT = "G\u00f6tzend\u00e4mmerung,Joseph und seine Br\u00fcder";

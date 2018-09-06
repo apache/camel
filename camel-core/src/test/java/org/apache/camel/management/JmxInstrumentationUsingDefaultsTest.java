@@ -15,10 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
-import org.junit.Before;
-import org.junit.After;
-
-import org.junit.Test;
+import static org.awaitility.Awaitility.await;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -34,8 +31,9 @@ import javax.management.ObjectName;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-
-import static org.awaitility.Awaitility.await;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * This test verifies JMX is enabled by default and it uses local mbean

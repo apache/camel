@@ -25,16 +25,15 @@ import java.util.List;
 
 import javax.xml.transform.TransformerException;
 
+import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
-
-import org.apache.camel.Converter;
-import org.apache.camel.Exchange;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Converts from some DOM types to Java types

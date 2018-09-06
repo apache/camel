@@ -15,14 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.language.tokenizer;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.Namespaces;
+import org.junit.Before;
+import org.junit.Test;
 
 public class XMLTokenizeLanguageStreamingFileTest extends ContextTestSupport {
 

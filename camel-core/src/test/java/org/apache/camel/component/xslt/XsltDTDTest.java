@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.xslt;
 
-import org.junit.Test;
-
 import java.io.InputStream;
 import java.util.List;
 
@@ -30,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Test;
 
 
 public class XsltDTDTest extends ContextTestSupport {

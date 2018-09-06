@@ -16,8 +16,6 @@
  */
 package org.apache.camel.builder;
 
-import org.junit.Test;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -26,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * @version 

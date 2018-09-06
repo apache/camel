@@ -16,13 +16,12 @@
  */
 package org.apache.camel.util.concurrent;
 
-import org.junit.Test;
-
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
+import org.junit.Test;
 
 /**
  *

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.async;
 
-import org.junit.Test;
-
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
@@ -27,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
+import org.junit.Test;
 
 /**
  * Using a custom interceptor which is not a {@link org.apache.camel.AsyncProcessor} which Camel

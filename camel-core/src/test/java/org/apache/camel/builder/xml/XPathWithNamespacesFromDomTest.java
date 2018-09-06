@@ -16,12 +16,10 @@
  */
 package org.apache.camel.builder.xml;
 
+import org.apache.camel.ContextTestSupport;
 import org.junit.Test;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import org.apache.camel.ContextTestSupport;
 
 /**
  * @version 

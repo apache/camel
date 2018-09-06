@@ -16,16 +16,14 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import org.junit.Assert;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class ErrorHandlerSupportTest extends Assert {
 

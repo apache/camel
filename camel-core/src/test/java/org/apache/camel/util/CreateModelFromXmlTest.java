@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
+
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -30,8 +32,6 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.NamespaceAware;
 import org.junit.Test;
-
-import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
 public class CreateModelFromXmlTest extends ContextTestSupport {
 

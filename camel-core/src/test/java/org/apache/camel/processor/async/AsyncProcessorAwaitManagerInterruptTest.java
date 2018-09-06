@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.async;
 
-import org.junit.Test;
-
 import java.util.Collection;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -27,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.junit.Test;
 
 /**
  * @version 

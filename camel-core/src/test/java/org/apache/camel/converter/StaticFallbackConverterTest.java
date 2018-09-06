@@ -16,8 +16,6 @@
  */
 package org.apache.camel.converter;
 
-import org.junit.Test;
-
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.TimeZone;
@@ -26,6 +24,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Test;
 
 /**
  * @version 

@@ -16,6 +16,10 @@
  */
 package org.apache.camel.impl.converter;
 
+import static java.lang.reflect.Modifier.isAbstract;
+import static java.lang.reflect.Modifier.isPublic;
+import static java.lang.reflect.Modifier.isStatic;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -29,9 +33,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
-import static java.lang.reflect.Modifier.isAbstract;
-import static java.lang.reflect.Modifier.isPublic;
-import static java.lang.reflect.Modifier.isStatic;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;

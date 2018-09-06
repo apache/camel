@@ -16,8 +16,6 @@
  */
 package org.apache.camel.util.jsse;
 
-import org.junit.Test;
-
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 
@@ -26,6 +24,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.camel.CamelContext;
+import org.junit.Test;
 
 public class TrustManagersParametersTest extends AbstractJsseParametersTest {
     

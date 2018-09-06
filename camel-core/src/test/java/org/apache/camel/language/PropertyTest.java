@@ -16,11 +16,10 @@
  */
 package org.apache.camel.language;
 
-import org.junit.Test;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.language.property.ExchangePropertyLanguage;
+import org.junit.Test;
 
 public class PropertyTest extends LanguageTestSupport {
 

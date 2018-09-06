@@ -16,13 +16,12 @@
  */
 package org.apache.camel.processor.onexception;
 
-import org.junit.Test;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 

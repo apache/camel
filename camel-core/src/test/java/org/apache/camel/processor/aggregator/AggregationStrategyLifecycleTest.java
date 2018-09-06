@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.aggregator;
 
-import org.junit.Test;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ContextTestSupport;
@@ -27,6 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.junit.Test;
 
 public class AggregationStrategyLifecycleTest extends ContextTestSupport {
 

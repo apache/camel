@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import org.junit.Test;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -29,6 +27,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.ExceptionHandler;
+import org.junit.Test;
 
 /**
  *

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -38,6 +36,7 @@ import org.apache.camel.component.log.LogComponent;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
+import org.junit.Test;
 
 /**
  * @version 

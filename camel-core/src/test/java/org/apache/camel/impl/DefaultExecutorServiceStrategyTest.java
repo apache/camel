@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.util.concurrent.ThreadHelper;
+import org.junit.Test;
 
 /**
  * Unit test to ensure the {@link org.apache.camel.spi.ExecutorServiceStrategy} still

@@ -15,11 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.builder;
-import org.junit.Before;
-import org.junit.After;
-
-import org.junit.Test;
-
 import java.util.List;
 
 import org.apache.camel.Channel;
@@ -33,6 +28,9 @@ import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.LoggingErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.SendProcessor;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 

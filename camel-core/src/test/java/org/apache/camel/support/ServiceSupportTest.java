@@ -16,9 +16,8 @@
  */
 package org.apache.camel.support;
 
-import org.junit.Test;
-
 import org.apache.camel.TestSupport;
+import org.junit.Test;
 
 /**
  * @version

@@ -15,11 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.net.URL;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -29,6 +26,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 

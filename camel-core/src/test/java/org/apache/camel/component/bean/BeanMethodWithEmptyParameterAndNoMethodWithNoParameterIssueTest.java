@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.bean;
 
-import org.junit.Test;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * CAMEL-6455

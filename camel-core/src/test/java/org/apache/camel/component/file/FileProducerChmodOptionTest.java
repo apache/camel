@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -32,6 +28,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 public class FileProducerChmodOptionTest extends ContextTestSupport {
     public static final String TEST_DIRECTORY = "target/fileProducerChmodOptionTest/";

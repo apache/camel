@@ -22,13 +22,12 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.w3c.dom.ls.LSInput;
-import org.w3c.dom.ls.LSResourceResolver;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
+import org.w3c.dom.ls.LSInput;
+import org.w3c.dom.ls.LSResourceResolver;
 
 /**
  * Default {@link LSResourceResolver} which can included schema resources.

@@ -16,13 +16,12 @@
  */
 package org.apache.camel.issues;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  *

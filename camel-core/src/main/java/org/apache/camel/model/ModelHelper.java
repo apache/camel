@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model;
 
+import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
+
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.Iterator;
@@ -23,17 +25,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
 import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
@@ -44,8 +42,10 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 /**
  * Helper for the Camel {@link org.apache.camel.model model} classes.

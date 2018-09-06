@@ -16,12 +16,11 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bar.BarComponent;
 import org.apache.camel.component.bar.BarConstants;
+import org.junit.Test;
 
 public class ToDynamicSendDynamicAwareTest extends ContextTestSupport {
 

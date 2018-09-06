@@ -16,13 +16,12 @@
  */
 package org.apache.camel.processor.aggregator;
 
-import org.junit.Test;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.aggregate.ClosedCorrelationKeyException;
+import org.junit.Test;
 
 /**
  * @version 

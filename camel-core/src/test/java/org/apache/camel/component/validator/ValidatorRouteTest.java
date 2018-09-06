@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.validator;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -31,6 +27,8 @@ import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.validation.NoXmlHeaderValidationException;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ValidatorRouteTest extends ContextTestSupport {
 

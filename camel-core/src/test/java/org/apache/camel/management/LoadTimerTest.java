@@ -16,7 +16,7 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Test;
+import static org.awaitility.Awaitility.await;
 
 import java.util.concurrent.TimeUnit;
 
@@ -24,8 +24,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.TimerListener;
 import org.apache.camel.management.mbean.LoadTriplet;
 import org.apache.camel.support.TimerListenerManager;
-
-import static org.awaitility.Awaitility.await;
+import org.junit.Test;
 
 public class LoadTimerTest extends ContextTestSupport {
 

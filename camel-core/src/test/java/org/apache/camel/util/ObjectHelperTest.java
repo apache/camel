@@ -16,8 +16,6 @@
  */
 package org.apache.camel.util;
 
-import org.junit.Test;
-
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -31,11 +29,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import org.junit.Assert;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -46,6 +39,10 @@ import org.apache.camel.component.bean.MyOtherFooBean.InterfaceSize;
 import org.apache.camel.component.bean.MyStaticClass;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultMessage;
+import org.junit.Assert;
+import org.junit.Test;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * @version 

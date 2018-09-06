@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl.transformer;
 
-import org.junit.Test;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -47,6 +45,7 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.Transformer;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

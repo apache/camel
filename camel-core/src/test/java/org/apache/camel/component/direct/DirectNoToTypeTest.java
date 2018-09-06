@@ -16,12 +16,11 @@
  */
 package org.apache.camel.component.direct;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Simple unit test based on user forum question.

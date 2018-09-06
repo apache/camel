@@ -15,13 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.validator;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.net.URL;
-
-import org.w3c.dom.ls.LSResourceResolver;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ValidationException;
@@ -33,6 +27,9 @@ import org.apache.camel.processor.validation.CatalogLSResourceResolver;
 import org.apache.camel.util.ResourceHelper;
 import org.apache.xml.resolver.CatalogManager;
 import org.apache.xml.resolver.tools.CatalogResolver;
+import org.junit.Before;
+import org.junit.Test;
+import org.w3c.dom.ls.LSResourceResolver;
 
 public class ValidatorWithResourceResolverRouteTest extends ContextTestSupport {
 

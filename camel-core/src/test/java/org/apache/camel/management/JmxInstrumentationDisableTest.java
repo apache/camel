@@ -16,14 +16,13 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Test;
-
 import java.util.Set;
 
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * A unit test which verifies disabling of JMX instrumentation.

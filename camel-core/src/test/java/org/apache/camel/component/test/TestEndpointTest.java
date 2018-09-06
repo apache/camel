@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.test;
 
-import org.junit.Test;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
@@ -28,6 +26,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Test;
 
 /**
  *

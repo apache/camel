@@ -16,12 +16,11 @@
  */
 package org.apache.camel.processor.interceptor;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.seda.SedaEndpoint;
+import org.junit.Test;
 
 /**
  * @version 

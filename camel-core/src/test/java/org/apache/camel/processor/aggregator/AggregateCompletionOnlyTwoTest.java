@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.aggregator;
 
-import org.junit.Test;
-
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
@@ -27,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
+import org.junit.Test;
 
 /**
  * @version 

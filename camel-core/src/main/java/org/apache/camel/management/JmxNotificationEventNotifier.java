@@ -18,6 +18,7 @@ package org.apache.camel.management;
 
 import java.util.EventObject;
 import java.util.concurrent.atomic.AtomicLong;
+
 import javax.management.Notification;
 import javax.management.NotificationBroadcasterSupport;
 

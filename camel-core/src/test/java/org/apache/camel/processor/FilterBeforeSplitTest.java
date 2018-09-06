@@ -16,14 +16,13 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
 /**
  * Unit test to verify that Splitter aggregator clear the filtered history in case

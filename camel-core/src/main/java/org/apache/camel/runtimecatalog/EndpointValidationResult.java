@@ -16,6 +16,8 @@
  */
 package org.apache.camel.runtimecatalog;
 
+import static org.apache.camel.runtimecatalog.URISupport.isEmpty;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,8 +26,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import static org.apache.camel.runtimecatalog.URISupport.isEmpty;
 
 /**
  * Details result of validating endpoint uri.

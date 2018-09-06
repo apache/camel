@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -35,6 +31,8 @@ import org.apache.camel.management.event.ExchangeRedeliveryEvent;
 import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 

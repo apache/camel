@@ -16,8 +16,6 @@
  */
 package org.apache.camel.support;
 
-import org.junit.Test;
-
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
@@ -33,6 +31,7 @@ import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 
 import org.junit.Assert;
+import org.junit.Test;
 
 /**
  *

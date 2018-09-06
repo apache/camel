@@ -15,11 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.util.jndi;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.util.Hashtable;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
@@ -29,6 +26,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *

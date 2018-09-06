@@ -16,14 +16,13 @@
  */
 package org.apache.camel.builder.xml;
 
-import org.junit.Test;
+import static org.apache.camel.builder.PredicateBuilder.not;
+import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-
-import static org.apache.camel.builder.PredicateBuilder.not;
-import static org.apache.camel.builder.xml.XPathBuilder.xpath;
+import org.junit.Test;
 
 /**
  * @version 

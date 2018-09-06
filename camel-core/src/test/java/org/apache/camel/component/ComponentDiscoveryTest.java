@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -27,9 +30,6 @@ import org.apache.camel.util.CamelContextHelper;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Test we can auto discover components on the classpath

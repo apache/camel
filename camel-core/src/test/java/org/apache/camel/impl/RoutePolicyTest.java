@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
@@ -25,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.RoutePolicy;
+import org.junit.Test;
 
 public class RoutePolicyTest extends ContextTestSupport {
     private MyRoutPolicy routePolicy = new MyRoutPolicy();

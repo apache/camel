@@ -16,14 +16,13 @@
  */
 package org.apache.camel.converter;
 
-import org.junit.Test;
-
 import java.io.File;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.junit.Test;
 
 /**
  * @version 

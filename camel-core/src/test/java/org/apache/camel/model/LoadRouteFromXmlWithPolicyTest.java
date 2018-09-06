@@ -16,8 +16,6 @@
  */
 package org.apache.camel.model;
 
-import org.junit.Test;
-
 import java.io.InputStream;
 
 import org.apache.camel.ContextTestSupport;
@@ -26,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
+import org.junit.Test;
 
 /**
  * @version 

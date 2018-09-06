@@ -16,10 +16,9 @@
  */
 package org.apache.camel.component.bean;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version

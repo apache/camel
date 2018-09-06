@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Test;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -27,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.ServiceSupport;
+import org.junit.Test;
 
 /**
  *

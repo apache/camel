@@ -16,9 +16,8 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Test;
-
 import java.util.Set;
+
 import javax.management.AttributeValueExp;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -27,6 +26,7 @@ import javax.management.QueryExp;
 import javax.management.StringValueExp;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 

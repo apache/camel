@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.log;
 
-import org.junit.Test;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -27,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.processor.DefaultExchangeFormatter;
+import org.junit.Test;
 
 /**
  * Logger formatter test.

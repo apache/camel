@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.routingslip;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.util.concurrent.TimeUnit;
 
 import javax.naming.Context;
@@ -29,6 +25,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Before;
+import org.junit.Test;
 
 public class RoutingSlipWithExceptionTest extends ContextTestSupport {
 

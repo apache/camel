@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.interceptor;
 
-import org.junit.Test;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Date;
@@ -29,6 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Test;
 
 /**
  * @version 

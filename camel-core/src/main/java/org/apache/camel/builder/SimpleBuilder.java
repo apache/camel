@@ -19,7 +19,6 @@ package org.apache.camel.builder;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.language.Simple;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;

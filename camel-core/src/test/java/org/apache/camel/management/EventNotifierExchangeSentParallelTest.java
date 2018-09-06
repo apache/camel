@@ -16,12 +16,11 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Test;
-
 import java.util.EventObject;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.management.event.ExchangeSendingEvent;
+import org.junit.Test;
 
 /**
  * @version 

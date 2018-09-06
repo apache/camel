@@ -16,17 +16,16 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import java.util.Map;
 
-import org.junit.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Test that endpoints are only shutdown once when CamelContext is stopping.

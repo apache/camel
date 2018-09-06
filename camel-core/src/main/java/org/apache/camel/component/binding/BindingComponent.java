@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.binding;
 
+import static org.apache.camel.util.CamelContextHelper.getMandatoryEndpoint;
+
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -23,8 +25,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Binding;
 import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.util.CamelContextHelper.getMandatoryEndpoint;
 
 /**
  * A composite {@link org.apache.camel.Component} which creates a {@link BindingEndpoint} from a

@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.seda;
 
-import org.junit.Test;
-
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.SedaConstants;
+import org.junit.Test;
 
 /**
  * @version

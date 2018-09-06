@@ -15,9 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-import org.junit.After;
-
-import org.junit.Test;
+import static org.awaitility.Awaitility.await;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -27,8 +25,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-
-import static org.awaitility.Awaitility.await;
+import org.junit.After;
+import org.junit.Test;
 
 /**
  * Unit test to verify that the noop file strategy usage of lock files.

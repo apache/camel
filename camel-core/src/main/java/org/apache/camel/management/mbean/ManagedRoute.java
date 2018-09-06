@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.management.AttributeValueExp;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -38,8 +39,6 @@ import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;
 import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
-
-import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
@@ -61,6 +60,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.XmlLineNumberParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 
 @ManagedResource(description = "Managed Route")
 public class ManagedRoute extends ManagedPerformanceCounter implements TimerListener, ManagedRouteMBean {

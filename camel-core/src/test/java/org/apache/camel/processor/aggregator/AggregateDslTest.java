@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.aggregator;
 
-import org.junit.Test;
-
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,6 +23,7 @@ import java.util.stream.Stream;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class AggregateDslTest extends ContextTestSupport {
 

@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.xslt;
 
-import org.junit.Test;
-
 import javax.xml.transform.TransformerException;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class XsltFeatureRouteTest extends ContextTestSupport {
 

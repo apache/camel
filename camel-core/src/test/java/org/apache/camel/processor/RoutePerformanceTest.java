@@ -16,12 +16,11 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Test;
-
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dataset.SimpleDataSet;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.StopWatch;
+import org.junit.Test;
 
 /**
  * A route for simple performance testing that can be used when we suspect

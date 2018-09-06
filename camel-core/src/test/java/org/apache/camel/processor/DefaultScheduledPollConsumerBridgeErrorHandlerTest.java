@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Test;
-
 import java.util.Map;
 
 import org.apache.camel.Component;
@@ -31,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.ScheduledPollConsumer;
+import org.junit.Test;
 
 /**
  *

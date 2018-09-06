@@ -16,13 +16,12 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Test;
-
 import javax.management.JMX;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
+import org.junit.Test;
 
 public class ManagedCamelContextNewProxyTest extends ManagementTestSupport {
 

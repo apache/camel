@@ -15,8 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
-import org.junit.Before;
-import org.junit.After;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -27,8 +26,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class EndpointConfigurationTest {
 

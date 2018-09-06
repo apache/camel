@@ -19,10 +19,9 @@ package org.apache.camel.processor.validation;
 import javax.xml.transform.Result;
 import javax.xml.validation.Schema;
 
-import org.xml.sax.ErrorHandler;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
+import org.xml.sax.ErrorHandler;
 
 /**
  * Validator error handler.

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.xslt;
 
-import org.junit.Test;
-
 import java.io.File;
 
 import org.apache.camel.CamelExecutionException;
@@ -26,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  *

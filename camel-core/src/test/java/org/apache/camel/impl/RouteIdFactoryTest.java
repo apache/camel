@@ -16,12 +16,11 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.component.rest.DummyRestProcessorFactory;
+import org.junit.Test;
 
 public class RouteIdFactoryTest extends ContextTestSupport {
 

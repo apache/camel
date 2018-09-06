@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,6 +24,8 @@ import java.nio.file.Paths;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *

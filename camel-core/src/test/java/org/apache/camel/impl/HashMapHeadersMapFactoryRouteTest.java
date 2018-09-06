@@ -16,14 +16,13 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class HashMapHeadersMapFactoryRouteTest extends ContextTestSupport {
 

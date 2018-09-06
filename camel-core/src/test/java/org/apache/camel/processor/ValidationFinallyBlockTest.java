@@ -15,16 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.TryDefinition;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test finallyBlock

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.enricher;
 
-import org.junit.Test;
-
 import java.util.EventObject;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -32,6 +30,7 @@ import org.apache.camel.processor.async.MyAsyncComponent;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.support.EventNotifierSupport;
+import org.junit.Test;
 
 
 public class EnricherSendEventTest extends ContextTestSupport {

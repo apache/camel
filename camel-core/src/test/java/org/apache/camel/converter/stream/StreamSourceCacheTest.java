@@ -16,14 +16,14 @@
  */
 package org.apache.camel.converter.stream;
 
-import org.junit.Test;
-
 import java.io.ByteArrayOutputStream;
+
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Test;
 
 /**
  * @version 

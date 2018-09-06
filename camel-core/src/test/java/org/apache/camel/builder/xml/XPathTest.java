@@ -16,8 +16,7 @@
  */
 package org.apache.camel.builder.xml;
 
-import org.apache.camel.util.StringHelper;
-import org.junit.Test;
+import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -28,23 +27,22 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFunctionResolver;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-
-import static org.apache.camel.builder.xml.XPathBuilder.xpath;
+import org.apache.camel.util.StringHelper;
+import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 /**
  * @version 

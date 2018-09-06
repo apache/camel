@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +23,7 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangeProperties;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 

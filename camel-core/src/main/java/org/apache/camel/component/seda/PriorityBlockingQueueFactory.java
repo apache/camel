@@ -17,7 +17,6 @@
 package org.apache.camel.component.seda;
 
 import java.util.Comparator;
-
 import java.util.concurrent.PriorityBlockingQueue;
 
 /**

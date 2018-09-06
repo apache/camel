@@ -16,10 +16,10 @@
  */
 package org.apache.camel.util;
 
+import static org.apache.camel.util.CamelVersionHelper.isGE;
+
 import org.junit.Assert;
 import org.junit.Test;
-
-import static org.apache.camel.util.CamelVersionHelper.isGE;
 
 public class CamelVersionHelperTest extends Assert {
 

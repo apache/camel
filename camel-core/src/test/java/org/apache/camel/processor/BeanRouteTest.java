@@ -15,11 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
@@ -28,6 +25,8 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Before;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

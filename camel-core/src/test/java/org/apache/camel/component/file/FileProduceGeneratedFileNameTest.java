@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.file;
 
-import org.junit.Test;
-
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Unit test that FileProducer can use message id as the filename.

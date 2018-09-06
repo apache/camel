@@ -15,18 +15,15 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-import org.junit.Before;
-import org.junit.After;
-
-import org.junit.Test;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.nio.file.Paths;
 
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 
 public class FileURLDecodingTest extends ContextTestSupport {

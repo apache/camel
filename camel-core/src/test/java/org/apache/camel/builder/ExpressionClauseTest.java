@@ -16,8 +16,6 @@
  */
 package org.apache.camel.builder;
 
-import org.junit.Test;
-
 import java.util.Map;
 
 import javax.activation.DataHandler;
@@ -31,6 +29,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultAttachment;
+import org.junit.Test;
 
 /**
  * @version 

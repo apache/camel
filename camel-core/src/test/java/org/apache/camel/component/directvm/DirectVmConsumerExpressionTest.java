@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.directvm;
 
-import org.junit.Test;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,6 +24,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ServiceHelper;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 
 /**
  *

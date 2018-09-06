@@ -22,12 +22,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.LongAdder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.RemovalCause;
 import com.github.benmanes.caffeine.cache.RemovalListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A cache that uses a near optional LRU Cache.

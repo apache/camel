@@ -15,11 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-import org.junit.Before;
-import org.junit.After;
-
-import org.junit.Test;
-
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -30,6 +25,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.processor.interceptor.DefaultChannel;
 import org.apache.camel.processor.interceptor.StreamCaching;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 

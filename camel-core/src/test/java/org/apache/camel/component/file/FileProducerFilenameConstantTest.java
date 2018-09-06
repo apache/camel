@@ -15,13 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 

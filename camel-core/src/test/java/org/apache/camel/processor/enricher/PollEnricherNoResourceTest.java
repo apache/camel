@@ -16,11 +16,10 @@
  */
 package org.apache.camel.processor.enricher;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class PollEnricherNoResourceTest extends ContextTestSupport {
 

@@ -16,14 +16,12 @@
  */
 package org.apache.camel.util;
 
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
-
 import org.apache.camel.Ordered;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 

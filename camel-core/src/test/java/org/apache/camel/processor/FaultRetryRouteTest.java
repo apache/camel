@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import org.apache.camel.CamelException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -27,6 +23,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.interceptor.HandleFault;
+import org.junit.Before;
+import org.junit.Test;
 
 public class FaultRetryRouteTest extends ContextTestSupport {
     protected MockEndpoint a;

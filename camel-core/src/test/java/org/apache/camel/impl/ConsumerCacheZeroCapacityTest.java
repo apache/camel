@@ -16,7 +16,7 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
+import static org.awaitility.Awaitility.await;
 
 import java.util.concurrent.TimeUnit;
 
@@ -24,8 +24,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.support.ServiceSupport;
-
-import static org.awaitility.Awaitility.await;
+import org.junit.Test;
 
 /**
  * @version 

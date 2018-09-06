@@ -15,13 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.onexception;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Before;
+import org.junit.Test;
 
 public class OnExceptionComplexRouteTest extends ContextTestSupport {
 

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.bean;
 
-import org.junit.Test;
-
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -25,6 +23,7 @@ import org.apache.camel.ExchangeException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * @version 

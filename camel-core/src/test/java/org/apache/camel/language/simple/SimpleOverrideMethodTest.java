@@ -16,12 +16,11 @@
  */
 package org.apache.camel.language.simple;
 
-import org.junit.Test;
-
 import java.io.File;
 import java.nio.file.Path;
 
 import org.apache.camel.LanguageTestSupport;
+import org.junit.Test;
 
 public class SimpleOverrideMethodTest extends LanguageTestSupport {
 

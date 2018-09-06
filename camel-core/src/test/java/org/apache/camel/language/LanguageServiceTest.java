@@ -16,8 +16,6 @@
  */
 package org.apache.camel.language;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Expression;
 import org.apache.camel.IsSingleton;
@@ -27,6 +25,7 @@ import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.ServiceSupport;
+import org.junit.Test;
 
 public class LanguageServiceTest extends ContextTestSupport {
 

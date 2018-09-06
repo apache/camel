@@ -16,12 +16,11 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import java.io.InputStream;
 import java.net.URL;
 
 import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 

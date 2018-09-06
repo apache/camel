@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 
@@ -24,8 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
 
 /**
  * An {@link org.apache.camel.processor.ErrorHandler} used as a safe fallback when

@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.builder;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.util.List;
 
 import org.apache.camel.Channel;
@@ -31,6 +27,8 @@ import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.LoggingErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.SendProcessor;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ContextErrorHandlerTest extends ContextTestSupport {
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.extension.verifier;
 
+import static org.apache.camel.util.StreamUtils.stream;
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -33,8 +35,6 @@ import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IntrospectionSupport;
-
-import static org.apache.camel.util.StreamUtils.stream;
 
 public class DefaultComponentVerifierExtension implements ComponentVerifierExtension, ComponentVerifier, CamelContextAware, ComponentAware {
     private final String defaultScheme;

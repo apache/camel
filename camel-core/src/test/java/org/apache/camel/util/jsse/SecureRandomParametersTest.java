@@ -16,13 +16,12 @@
  */
 package org.apache.camel.util.jsse;
 
-import org.junit.Test;
-
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 
 import org.apache.camel.CamelContext;
+import org.junit.Test;
 
 public class SecureRandomParametersTest extends AbstractJsseParametersTest {
     

@@ -16,11 +16,10 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Test;
-
-import org.junit.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class CamelContextDisableJmxTest extends Assert {
 

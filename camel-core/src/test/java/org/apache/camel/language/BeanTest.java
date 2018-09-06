@@ -16,8 +16,6 @@
  */
 package org.apache.camel.language;
 
-import org.junit.Test;
-
 import javax.naming.Context;
 
 import org.apache.camel.Exchange;
@@ -27,6 +25,7 @@ import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.Message;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.language.bean.BeanLanguage;
+import org.junit.Test;
 
 /**
  * @version 

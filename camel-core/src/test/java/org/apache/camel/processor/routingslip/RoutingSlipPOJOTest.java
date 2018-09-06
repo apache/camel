@@ -16,14 +16,13 @@
  */
 package org.apache.camel.processor.routingslip;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RoutingSlip;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class RoutingSlipPOJOTest extends ContextTestSupport {
     

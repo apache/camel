@@ -16,10 +16,9 @@
  */
 package org.apache.camel.language;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Unit test routing with simple language using random function which will reuse cached expressions.

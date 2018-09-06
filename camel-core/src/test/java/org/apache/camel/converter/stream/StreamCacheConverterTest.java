@@ -15,18 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.converter.stream;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
-
-import org.xml.sax.InputSource;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -34,6 +29,9 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Before;
+import org.junit.Test;
+import org.xml.sax.InputSource;
 
 /**
  * Test cases for {@link StreamCacheConverter}

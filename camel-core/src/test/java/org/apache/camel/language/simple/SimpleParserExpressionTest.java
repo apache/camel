@@ -16,13 +16,12 @@
  */
 package org.apache.camel.language.simple;
 
-import org.junit.Test;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.Expression;
+import org.junit.Test;
 
 public class SimpleParserExpressionTest extends ExchangeTestSupport {
 

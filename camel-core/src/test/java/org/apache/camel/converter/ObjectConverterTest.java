@@ -16,14 +16,13 @@
  */
 package org.apache.camel.converter;
 
-import org.junit.Test;
-
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
 import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 

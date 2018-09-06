@@ -15,15 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.camel.Exchange;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version

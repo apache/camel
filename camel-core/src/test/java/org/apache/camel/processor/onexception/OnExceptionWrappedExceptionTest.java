@@ -16,14 +16,13 @@
  */
 package org.apache.camel.processor.onexception;
 
-import org.junit.Test;
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.TypeConverterSupport;
-
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+import org.junit.Test;
 
 /**
  * Unit test to test that onException handles wrapped exceptions

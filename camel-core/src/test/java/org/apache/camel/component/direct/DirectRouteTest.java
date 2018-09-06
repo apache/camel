@@ -16,11 +16,7 @@
  */
 package org.apache.camel.component.direct;
 
-import org.junit.Test;
-
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.junit.Assert;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -29,6 +25,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 

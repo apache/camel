@@ -15,17 +15,16 @@
  * limitations under the License.
  */
 package org.apache.camel.component.dataset;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 

@@ -15,12 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.util;
-import org.junit.Before;
-
-import org.junit.Test;
-
-import org.junit.Assert;
 import org.apache.camel.Service;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 

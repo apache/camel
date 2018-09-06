@@ -16,13 +16,12 @@
  */
 package org.apache.camel.model;
 
-import org.junit.Test;
-
 import javax.xml.bind.JAXBException;
 
 import org.apache.camel.model.rest.GetVerbDefinition;
 import org.apache.camel.model.rest.RestContainer;
 import org.apache.camel.model.rest.RestDefinition;
+import org.junit.Test;
 
 public class XmlRestParseTest extends XmlTestSupport {
 

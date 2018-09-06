@@ -16,8 +16,6 @@
  */
 package org.apache.camel.converter;
 
-import org.junit.Test;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -40,6 +38,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.junit.Test;
 
 /**
  * Test case for {@link IOConverter}

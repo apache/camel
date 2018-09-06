@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.io.File;
 import java.util.Properties;
 
@@ -29,6 +25,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test for writing done files

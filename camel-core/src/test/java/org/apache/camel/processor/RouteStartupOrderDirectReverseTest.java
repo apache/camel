@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Test;
-
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -25,6 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.junit.Test;
 
 /**
  * @version 

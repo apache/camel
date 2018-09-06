@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.mock;
 
-import org.junit.Test;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -35,6 +33,7 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * @version 

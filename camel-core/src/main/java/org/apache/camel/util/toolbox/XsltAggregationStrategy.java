@@ -18,12 +18,11 @@ package org.apache.camel.util.toolbox;
 
 import java.io.IOException;
 import java.util.concurrent.RejectedExecutionException;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
-
-import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -37,6 +36,7 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 
 /**
  * The XSLT Aggregation Strategy enables you to use XSL stylesheets to aggregate messages.

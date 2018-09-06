@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.rest;
 
+import static org.apache.camel.spi.RestProducerFactoryHelper.setupComponent;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -40,8 +42,6 @@ import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.spi.RestProducerFactoryHelper.setupComponent;
 
 /**
  * The rest component is used for either hosting REST services (consumer) or calling external REST services (producer).

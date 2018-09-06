@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Test;
-
 import java.util.List;
 
 import org.apache.camel.Navigate;
@@ -30,6 +28,7 @@ import org.apache.camel.model.SendDefinition;
 import org.apache.camel.processor.interceptor.DefaultChannel;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
+import org.junit.Test;
 
 /**
  * A crude unit test to navigate the route and build a Java DSL from the route definition

@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
-import org.junit.After;
-
-import org.junit.Test;
-
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
@@ -27,6 +23,8 @@ import javax.management.remote.JMXServiceURL;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.After;
+import org.junit.Test;
 
 /**
  * @version 

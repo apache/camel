@@ -16,13 +16,13 @@
  */
 package org.apache.camel.converter.jaxp;
 
-import org.junit.Test;
-
 import java.io.InputStream;
 import java.io.Reader;
+
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.ContextTestSupport;
+import org.junit.Test;
 
 /**
  * @version 

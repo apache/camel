@@ -16,8 +16,6 @@
  */
 package org.apache.camel.model;
 
-import org.junit.Test;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Set;
@@ -27,10 +25,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 
-import org.junit.Assert;
-
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.util.IntrospectionSupport;
+import org.junit.Assert;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

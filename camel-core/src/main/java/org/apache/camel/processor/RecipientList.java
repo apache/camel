@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import static org.apache.camel.util.ObjectHelper.notNull;
+
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 
@@ -40,8 +42,6 @@ import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * Implements a dynamic <a

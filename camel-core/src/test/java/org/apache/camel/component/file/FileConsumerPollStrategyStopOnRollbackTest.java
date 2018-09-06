@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -28,6 +24,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.util.ObjectHelper;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test for poll strategy

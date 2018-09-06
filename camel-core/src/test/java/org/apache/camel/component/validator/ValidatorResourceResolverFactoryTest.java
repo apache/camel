@@ -16,14 +16,11 @@
  */
 package org.apache.camel.component.validator;
 
-import org.junit.Test;
+import static org.awaitility.Awaitility.await;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
-import org.w3c.dom.ls.LSInput;
-import org.w3c.dom.ls.LSResourceResolver;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -33,8 +30,9 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.junit.Assert;
-
-import static org.awaitility.Awaitility.await;
+import org.junit.Test;
+import org.w3c.dom.ls.LSInput;
+import org.w3c.dom.ls.LSResourceResolver;
 
 public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
 

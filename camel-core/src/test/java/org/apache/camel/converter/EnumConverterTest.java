@@ -16,13 +16,12 @@
  */
 package org.apache.camel.converter;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Test;
 
 /**
  * @version 

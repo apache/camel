@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.log;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.io.StringWriter;
 
 import org.apache.camel.ContextTestSupport;
@@ -30,6 +26,8 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.WriterAppender;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.junit.Before;
+import org.junit.Test;
 
 public class LogBodyWithNewLineTest extends ContextTestSupport {
 

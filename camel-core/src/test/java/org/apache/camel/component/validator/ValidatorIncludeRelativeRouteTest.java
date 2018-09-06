@@ -16,11 +16,10 @@
  */
 package org.apache.camel.component.validator;
 
-import org.junit.Test;
-
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class ValidatorIncludeRelativeRouteTest extends ValidatorIncludeRouteTest {
     

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Test;
-
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
@@ -27,6 +25,7 @@ import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 

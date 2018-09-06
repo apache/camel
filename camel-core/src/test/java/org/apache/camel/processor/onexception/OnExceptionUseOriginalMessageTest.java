@@ -16,14 +16,13 @@
  */
 package org.apache.camel.processor.onexception;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.stream.InputStreamCache;
+import org.junit.Test;
 
 /**
  * @version 

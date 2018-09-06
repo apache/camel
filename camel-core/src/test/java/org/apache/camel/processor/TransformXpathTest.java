@@ -16,15 +16,13 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Test;
-
 import java.io.File;
-
-import org.w3c.dom.NodeList;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
+import org.w3c.dom.NodeList;
 
 /**
  * Based on user forum trouble

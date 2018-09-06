@@ -16,8 +16,6 @@
  */
 package org.apache.camel.issues;
 
-import org.junit.Test;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -39,6 +37,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.ServiceSupport;
+import org.junit.Test;
 
 public class ServicePoolAwareLeakyTest extends ContextTestSupport {
 

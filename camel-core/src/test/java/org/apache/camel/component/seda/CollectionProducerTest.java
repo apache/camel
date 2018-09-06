@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.seda;
 
-import org.junit.Test;
-
 import java.util.Collection;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -26,6 +24,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Test;
 
 /**
  * @version 

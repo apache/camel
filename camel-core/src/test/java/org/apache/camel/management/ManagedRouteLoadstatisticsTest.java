@@ -16,15 +16,15 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Test;
+import static org.awaitility.Awaitility.await;
 
 import java.util.concurrent.TimeUnit;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
-
-import static org.awaitility.Awaitility.await;
+import org.junit.Test;
 
 /**
  * @version 

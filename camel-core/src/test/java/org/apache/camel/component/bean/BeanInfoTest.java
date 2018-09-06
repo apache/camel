@@ -16,12 +16,9 @@
  */
 package org.apache.camel.component.bean;
 
-import org.junit.Test;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
-
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
@@ -30,6 +27,7 @@ import org.apache.camel.InOut;
 import org.apache.camel.Pattern;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

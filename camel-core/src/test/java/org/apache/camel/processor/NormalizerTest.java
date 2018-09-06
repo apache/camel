@@ -16,14 +16,13 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Test;
-
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
 public class NormalizerTest extends ContextTestSupport {
    

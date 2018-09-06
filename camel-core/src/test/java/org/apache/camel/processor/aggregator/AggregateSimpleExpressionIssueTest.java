@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregator;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
@@ -33,7 +29,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

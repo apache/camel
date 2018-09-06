@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.properties;
 
-import org.junit.Test;
-
 import java.util.List;
 import java.util.Properties;
 
@@ -25,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
+import org.junit.Test;
 
 /**
  * @version 
