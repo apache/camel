@@ -16,17 +16,16 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import java.util.Map;
 
-import org.junit.Assert;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 

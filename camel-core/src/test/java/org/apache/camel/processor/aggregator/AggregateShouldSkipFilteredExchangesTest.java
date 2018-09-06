@@ -16,14 +16,13 @@
  */
 package org.apache.camel.processor.aggregator;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
 /**
  * Unit test to verify that Aggregate aggregator does not included filtered exchanges.

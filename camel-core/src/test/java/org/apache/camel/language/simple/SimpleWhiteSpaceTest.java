@@ -16,9 +16,8 @@
  */
 package org.apache.camel.language.simple;
 
-import org.junit.Test;
-
 import org.apache.camel.LanguageTestSupport;
+import org.junit.Test;
 
 public class SimpleWhiteSpaceTest extends LanguageTestSupport {
 

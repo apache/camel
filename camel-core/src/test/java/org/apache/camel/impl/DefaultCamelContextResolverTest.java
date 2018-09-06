@@ -15,8 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
-import org.junit.Before;
-import org.junit.After;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,11 +36,6 @@ import org.apache.camel.spi.Language;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Tests if the default camel context is able to resolve components and data formats using both their real names and/or fallback names.

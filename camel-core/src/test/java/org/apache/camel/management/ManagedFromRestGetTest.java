@@ -16,8 +16,6 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Test;
-
 import java.util.Arrays;
 
 import javax.management.MBeanServer;
@@ -30,6 +28,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.RestParamType;
+import org.junit.Test;
 
 public class ManagedFromRestGetTest extends ManagementTestSupport {
 

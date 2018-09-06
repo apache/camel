@@ -16,8 +16,6 @@
  */
 package org.apache.camel.util.jsse;
 
-import org.junit.Test;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -28,6 +26,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchProviderException;
 
 import org.apache.camel.CamelContext;
+import org.junit.Test;
 
 public class KeyStoreParametersTest extends AbstractJsseParametersTest {
     

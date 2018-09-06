@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +25,7 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
+import org.junit.Test;
 
 /**
  * @version 

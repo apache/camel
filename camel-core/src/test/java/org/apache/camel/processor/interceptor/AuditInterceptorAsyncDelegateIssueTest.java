@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.interceptor;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -28,6 +24,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.InterceptStrategy;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 

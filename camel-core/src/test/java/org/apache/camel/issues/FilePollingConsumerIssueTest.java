@@ -15,14 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.issues;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 

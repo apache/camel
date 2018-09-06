@@ -18,6 +18,7 @@ package org.apache.camel.converter.jaxp;
 
 import java.io.InputStream;
 import java.io.Reader;
+
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.Converter;

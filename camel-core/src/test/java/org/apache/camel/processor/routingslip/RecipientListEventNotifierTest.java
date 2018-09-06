@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.routingslip;
 
-import org.junit.Test;
-
 import java.util.EventObject;
 
 import org.apache.camel.CamelContext;
@@ -26,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
+import org.junit.Test;
 
 public class RecipientListEventNotifierTest extends ContextTestSupport {
 

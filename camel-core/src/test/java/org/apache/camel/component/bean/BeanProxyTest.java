@@ -16,15 +16,13 @@
  */
 package org.apache.camel.component.bean;
 
-import org.junit.Test;
-
-import org.w3c.dom.Document;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.builder.ProxyBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
+import org.w3c.dom.Document;
 
 
 /**

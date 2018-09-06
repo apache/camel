@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.dataset;
 
-import org.junit.Test;
-
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,6 +27,7 @@ import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.util.PredicateAssertHelper;
+import org.junit.Test;
 
 /**
  * @version 

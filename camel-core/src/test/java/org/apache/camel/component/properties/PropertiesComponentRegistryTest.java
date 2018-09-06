@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.properties;
 
-import org.junit.Test;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.bean.MyDummyBean;
 import org.apache.camel.component.bean.MyFooBean;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * @version 

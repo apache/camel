@@ -16,10 +16,9 @@
  */
 package org.apache.camel.converter;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.util.StopWatch;
+import org.junit.Test;
 
 /**
  * @version 

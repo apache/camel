@@ -16,14 +16,13 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.main.MainSupport;
+import org.junit.Test;
 
 /**
  * @version 

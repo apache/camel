@@ -16,12 +16,12 @@
  */
 package org.apache.camel.builder;
 
+import static org.apache.camel.util.ObjectHelper.notNull;
+
 import org.apache.camel.BinaryPredicate;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * A useful base class for {@link Predicate} implementations

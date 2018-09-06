@@ -16,11 +16,10 @@
  */
 package org.apache.camel.converter;
 
-import org.junit.Test;
-
 import java.sql.Timestamp;
 
 import org.apache.camel.ContextTestSupport;
+import org.junit.Test;
 
 public class SQLConverterTest extends ContextTestSupport {
 

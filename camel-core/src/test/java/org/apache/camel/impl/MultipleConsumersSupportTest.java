@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToStartRouteException;
@@ -25,6 +23,7 @@ import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 

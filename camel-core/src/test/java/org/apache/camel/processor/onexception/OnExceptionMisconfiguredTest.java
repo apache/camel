@@ -16,14 +16,14 @@
  */
 package org.apache.camel.processor.onexception;
 
-import org.junit.Test;
-
 import java.io.IOException;
+
 import javax.xml.soap.SOAPException;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *

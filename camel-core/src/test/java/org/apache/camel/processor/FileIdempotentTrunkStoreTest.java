@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
@@ -36,6 +32,8 @@ import org.apache.camel.processor.idempotent.FileIdempotentRepository;
 import org.apache.camel.spi.IdempotentRepository;
 import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 

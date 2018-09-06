@@ -16,11 +16,10 @@
  */
 package org.apache.camel.processor.onexception;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
+import org.junit.Test;
 
 public class OnExceptionRouteIdTest extends ContextTestSupport {
 

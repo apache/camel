@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.interceptor;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,6 +23,7 @@ import org.apache.camel.model.LogDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.TransformDefinition;
+import org.junit.Test;
 
 /**
  * Advice with tests

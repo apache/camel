@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.bean;
 
-import org.junit.Test;
-
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
 /**
  * Unit test to demonstrate beans in pipelines.

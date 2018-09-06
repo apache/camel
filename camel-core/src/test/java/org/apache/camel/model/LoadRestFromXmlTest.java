@@ -16,8 +16,6 @@
  */
 package org.apache.camel.model;
 
-import org.junit.Test;
-
 import java.io.InputStream;
 import java.util.List;
 
@@ -29,6 +27,7 @@ import org.apache.camel.component.rest.DummyRestProcessorFactory;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.junit.Test;
 
 /**
  * @version

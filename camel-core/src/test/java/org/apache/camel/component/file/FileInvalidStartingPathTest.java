@@ -16,10 +16,9 @@
  */
 package org.apache.camel.component.file;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.junit.Test;
 
 /**
  * @version 

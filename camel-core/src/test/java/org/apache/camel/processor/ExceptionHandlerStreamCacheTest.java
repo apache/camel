@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +29,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test cases for dealing with stream types in an exception handler

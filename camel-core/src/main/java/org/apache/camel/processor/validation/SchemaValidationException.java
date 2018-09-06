@@ -18,10 +18,9 @@ package org.apache.camel.processor.validation;
 
 import java.util.List;
 
-import org.xml.sax.SAXParseException;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
+import org.xml.sax.SAXParseException;
 
 /**
  * A Schema validation exception occurred

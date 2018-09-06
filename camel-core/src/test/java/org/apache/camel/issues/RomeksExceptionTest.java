@@ -16,8 +16,6 @@
  */
 package org.apache.camel.issues;
 
-import org.junit.Test;
-
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -26,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

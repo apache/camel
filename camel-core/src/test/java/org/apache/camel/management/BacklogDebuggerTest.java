@@ -16,17 +16,17 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Test;
+import static org.awaitility.Awaitility.await;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-
-import static org.awaitility.Awaitility.await;
+import org.junit.Test;
 
 public class BacklogDebuggerTest extends ManagementTestSupport {
 

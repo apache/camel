@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.onexception;
 
-import org.junit.Test;
-
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -26,6 +24,7 @@ import org.apache.camel.Header;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * Unit test for the retry until predicate

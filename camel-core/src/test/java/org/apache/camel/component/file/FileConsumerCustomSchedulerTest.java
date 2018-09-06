@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -29,6 +25,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
+import org.junit.Before;
+import org.junit.Test;
 
 public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
 

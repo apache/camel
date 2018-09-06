@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -26,6 +24,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.interceptor.TraceEventMessage;
 import org.apache.camel.processor.interceptor.Tracer;
+import org.junit.Test;
 
 /**
  * Default error handler test with trace

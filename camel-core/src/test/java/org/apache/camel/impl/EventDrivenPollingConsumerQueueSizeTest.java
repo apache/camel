@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.util.Map;
 
 import org.apache.camel.CamelExecutionException;
@@ -31,6 +27,8 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.util.ServiceHelper;
+import org.junit.Before;
+import org.junit.Test;
 
 public class EventDrivenPollingConsumerQueueSizeTest extends ContextTestSupport {
 

@@ -16,11 +16,9 @@
  */
 package org.apache.camel.component.stub;
 
-import org.junit.Test;
-
 import org.apache.camel.builder.RouteBuilder;
-
 import org.apache.camel.component.vm.AbstractVmTestSupport;
+import org.junit.Test;
 
 public class StubInOnlyTest extends AbstractVmTestSupport {
 

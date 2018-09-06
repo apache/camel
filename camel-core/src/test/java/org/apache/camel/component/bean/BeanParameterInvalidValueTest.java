@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.bean;
 
-import org.junit.Test;
-
 import java.util.Map;
 
 import org.apache.camel.CamelExecutionException;
@@ -26,6 +24,7 @@ import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  *

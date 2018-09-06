@@ -16,8 +16,6 @@
  */
 package org.apache.camel.issues;
 
-import org.junit.Test;
-
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -35,6 +33,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * @version 

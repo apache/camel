@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import java.io.IOException;
 import java.net.ConnectException;
 
@@ -28,6 +26,7 @@ import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.util.ObjectHelper;
+import org.junit.Test;
 
 /**
  * @version 

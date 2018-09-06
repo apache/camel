@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
@@ -41,8 +43,6 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
 
 /**
  * A content enricher that enriches input data by first obtaining additional

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import org.junit.Test;
-
 import java.io.File;
 
 import org.apache.camel.CamelContext;
@@ -25,6 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.FileUtil;
+import org.junit.Test;
 
 public class GenericFileMessageTest extends ContextTestSupport {
 

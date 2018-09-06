@@ -16,8 +16,6 @@
  */
 package org.apache.camel.issues;
 
-import org.junit.Test;
-
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -26,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.junit.Test;
 
 /**
  * @version 

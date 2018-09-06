@@ -15,13 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-import org.junit.Before;
-import org.junit.After;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.After;
+import org.junit.Before;
 
 /**
  * @version 

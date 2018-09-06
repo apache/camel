@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.bean;
 
-import org.junit.Test;
-
 import java.lang.reflect.Method;
 
 import org.apache.camel.ContextTestSupport;
@@ -25,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
+import org.junit.Test;
 
 /**
  * @version 

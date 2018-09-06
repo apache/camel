@@ -15,16 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Assert;
-
 import org.apache.camel.util.jndi.JndiTest;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 

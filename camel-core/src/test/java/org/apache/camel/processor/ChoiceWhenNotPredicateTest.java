@@ -16,12 +16,12 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Test;
+import static org.apache.camel.builder.PredicateBuilder.not;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import static org.apache.camel.builder.PredicateBuilder.not;
+import org.junit.Test;
 
 /**
  * @version 

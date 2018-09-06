@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.xslt;
 
-import org.junit.Test;
-
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  *

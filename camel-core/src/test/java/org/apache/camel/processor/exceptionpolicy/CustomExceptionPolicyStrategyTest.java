@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.exceptionpolicy;
 
-import org.junit.Test;
-
 import java.util.Map;
 
 import org.apache.camel.CamelException;
@@ -28,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.junit.Test;
 
 /**
  * Unit test with a user plugged in exception policy to use instead of default.

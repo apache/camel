@@ -15,17 +15,15 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.stress;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.io.File;
 import java.io.FileOutputStream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  *

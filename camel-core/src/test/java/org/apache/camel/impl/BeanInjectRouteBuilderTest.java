@@ -16,14 +16,13 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import org.apache.camel.BeanInject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class BeanInjectRouteBuilderTest extends ContextTestSupport {
 

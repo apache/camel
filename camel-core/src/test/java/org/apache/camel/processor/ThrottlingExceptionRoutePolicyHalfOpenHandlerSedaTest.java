@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import static org.awaitility.Awaitility.await;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -32,8 +34,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.awaitility.Awaitility.await;
 
 public class ThrottlingExceptionRoutePolicyHalfOpenHandlerSedaTest extends ContextTestSupport {
     private static Logger log = LoggerFactory.getLogger(ThrottlingExceptionRoutePolicyHalfOpenHandlerSedaTest.class);

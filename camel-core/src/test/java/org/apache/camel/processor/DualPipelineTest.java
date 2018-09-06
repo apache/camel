@@ -16,13 +16,12 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.MulticastDefinition;
 import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.model.SendDefinition;
+import org.junit.Test;
 
 /**
  * @version 

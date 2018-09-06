@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.mock;
 
-import org.junit.Test;
-
 import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -28,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Service;
 import org.apache.camel.StatefulService;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 

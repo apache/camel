@@ -16,9 +16,8 @@
  */
 package org.apache.camel.component.log;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -16,11 +16,10 @@
  */
 package org.apache.camel.model;
 
-import org.junit.Test;
-
 import java.io.InputStream;
 
 import org.apache.camel.ContextTestSupport;
+import org.junit.Test;
 
 /**
  * @version 

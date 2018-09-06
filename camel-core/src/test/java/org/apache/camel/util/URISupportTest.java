@@ -16,8 +16,6 @@
  */
 package org.apache.camel.util;
 
-import org.junit.Test;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -25,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
+import org.junit.Test;
 
 /**
  * @version

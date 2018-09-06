@@ -16,14 +16,13 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Test;
-
 import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
+import org.junit.Test;
 
 /**
  * @version 

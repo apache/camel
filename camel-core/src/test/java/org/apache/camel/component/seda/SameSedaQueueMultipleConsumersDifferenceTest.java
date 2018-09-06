@@ -16,11 +16,10 @@
  */
 package org.apache.camel.component.seda;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *

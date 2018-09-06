@@ -16,12 +16,11 @@
  */
 package org.apache.camel;
 
-import org.junit.Test;
-
 import java.util.Date;
 
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Test;
 
 /**
  * @version 

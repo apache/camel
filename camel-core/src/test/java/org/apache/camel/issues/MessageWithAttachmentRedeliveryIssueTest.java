@@ -16,9 +16,8 @@
  */
 package org.apache.camel.issues;
 
-import org.junit.Test;
-
 import java.io.File;
+
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 
@@ -28,6 +27,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultAttachment;
+import org.junit.Test;
 
 /**
  *

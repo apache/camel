@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.rest;
 
-import org.junit.Test;
-
 import java.util.Arrays;
 
 import org.apache.camel.ContextTestSupport;
@@ -27,6 +25,7 @@ import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestParamType;
+import org.junit.Test;
 
 public class FromRestGetTest extends ContextTestSupport {
 

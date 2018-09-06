@@ -16,11 +16,10 @@
  */
 package org.apache.camel.language;
 
-import org.junit.Test;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  *

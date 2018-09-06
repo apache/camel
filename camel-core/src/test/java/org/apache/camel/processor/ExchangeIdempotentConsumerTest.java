@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -32,6 +28,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.ExchangeIdempotentRepository;
 import org.apache.camel.spi.IdempotentRepository;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 

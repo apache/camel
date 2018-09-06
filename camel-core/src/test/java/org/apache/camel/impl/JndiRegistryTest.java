@@ -16,16 +16,15 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Assert;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.jndi.JndiTest;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class JndiRegistryTest extends Assert {
 

@@ -16,11 +16,10 @@
  */
 package org.apache.camel.language.tokenizer;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.Namespaces;
+import org.junit.Test;
 
 public class XMLTokenizeWrapLanguageGroupingTest extends ContextTestSupport {
 

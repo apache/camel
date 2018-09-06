@@ -16,10 +16,11 @@
  */
 package org.apache.camel.model;
 
-import org.junit.Test;
-
 import java.util.Objects;
+
 import javax.xml.bind.JAXBException;
+
+import org.junit.Test;
 
 public class XmlRoutePropertiesTest extends XmlTestSupport {
 

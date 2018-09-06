@@ -19,6 +19,7 @@ package org.apache.camel.component.xslt;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.XMLConstants;
 import javax.xml.transform.TransformerFactory;
 

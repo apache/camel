@@ -16,13 +16,12 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Test;
-
 import java.util.Iterator;
 import java.util.function.Consumer;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class SplitIteratorNullTest extends ContextTestSupport {
 

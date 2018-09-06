@@ -16,13 +16,12 @@
  */
 package org.apache.camel.issues;
 
-import org.junit.Test;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class OnCompletionIssueTest extends ContextTestSupport {
 

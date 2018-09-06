@@ -16,9 +16,8 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Test;
-
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
@@ -29,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
+import org.junit.Test;
 
 public class ManagedRestRegistryTest extends ManagementTestSupport {
 

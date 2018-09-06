@@ -16,7 +16,7 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
+import static org.awaitility.Awaitility.await;
 
 import java.io.File;
 import java.util.EventObject;
@@ -29,8 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.management.event.RouteAddedEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.util.FileUtil;
-
-import static org.awaitility.Awaitility.await;
+import org.junit.Test;
 
 public class FileWatcherReloadStrategyTest extends ContextTestSupport {
 

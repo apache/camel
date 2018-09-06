@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file.strategy;
 
-import org.junit.Test;
-
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -27,6 +25,7 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.util.FileUtil;
+import org.junit.Test;
 
 /**
  * Unit test about retrying deleting processed file, that can be a bit more tricky

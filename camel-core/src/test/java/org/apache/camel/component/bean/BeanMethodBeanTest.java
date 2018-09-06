@@ -16,11 +16,10 @@
  */
 package org.apache.camel.component.bean;
 
-import org.junit.Test;
-
 import java.lang.reflect.Method;
 
 import org.apache.camel.TestSupport;
+import org.junit.Test;
 
 /**
  * @version 

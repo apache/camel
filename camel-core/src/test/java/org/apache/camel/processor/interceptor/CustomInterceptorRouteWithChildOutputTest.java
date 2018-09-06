@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.interceptor;
 
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +28,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.InterceptStrategy;
+import org.junit.Test;
 
 /**
  *

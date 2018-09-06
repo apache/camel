@@ -16,8 +16,6 @@
  */
 package org.apache.camel.converter;
 
-import org.junit.Test;
-
 import java.sql.Timestamp;
 import java.util.concurrent.Future;
 
@@ -26,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Test;
 
 /**
  * @version 

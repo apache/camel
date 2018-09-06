@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.rest;
 
+import static org.apache.camel.util.ObjectHelper.isEmpty;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
@@ -45,9 +48,6 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
-
-import static org.apache.camel.util.ObjectHelper.isEmpty;
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 /**
  * Rest producer for calling remote REST services.

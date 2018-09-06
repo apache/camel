@@ -16,11 +16,10 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Test;
-
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
@@ -28,6 +27,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.junit.Test;
 
 /**
  * JmxInstrumentationCustomMBeanTest will verify that all endpoints are registered

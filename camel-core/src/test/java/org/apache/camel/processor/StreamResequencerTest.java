@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Test;
-
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
@@ -32,6 +30,7 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.util.ServiceHelper;
+import org.junit.Test;
 
 public class StreamResequencerTest extends ContextTestSupport {
 

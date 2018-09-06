@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.converter.stream;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -36,6 +32,8 @@ import org.apache.camel.impl.DefaultUnitOfWork;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.IOHelper;
+import org.junit.Before;
+import org.junit.Test;
 
 public class CachedOutputStreamTest extends ContextTestSupport {
     private static final String TEST_STRING = "This is a test string and it has enough" 

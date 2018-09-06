@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.rest;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,6 +23,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
+import org.junit.Test;
 
 public class FromRestGetPolicyTest extends ContextTestSupport {
 

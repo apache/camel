@@ -16,9 +16,8 @@
  */
 package org.apache.camel.model;
 
-import org.junit.Test;
-
 import java.util.List;
+
 import javax.xml.bind.JAXBException;
 
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -28,6 +27,7 @@ import org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
+import org.junit.Test;
 
 /**
  * @version 

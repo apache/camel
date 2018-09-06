@@ -17,11 +17,10 @@
 
 package org.apache.camel.support;
 
-import org.junit.Test;
-
 import java.io.ByteArrayInputStream;
 
 import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * 

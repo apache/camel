@@ -16,11 +16,10 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.junit.Test;
 
 /**
  * Unit test for URI validation when creating an endpoint

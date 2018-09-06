@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl.osgi;
 
+import static org.osgi.framework.wiring.BundleRevision.PACKAGE_NAMESPACE;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -69,8 +71,6 @@ import org.osgi.framework.wiring.BundleWire;
 import org.osgi.framework.wiring.BundleWiring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.osgi.framework.wiring.BundleRevision.PACKAGE_NAMESPACE;
 
 public class Activator implements BundleActivator, BundleTrackerCustomizer {
 

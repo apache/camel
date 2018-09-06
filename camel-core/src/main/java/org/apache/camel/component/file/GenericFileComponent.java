@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
@@ -29,8 +31,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 /**
  * Base class file component. To be extended.

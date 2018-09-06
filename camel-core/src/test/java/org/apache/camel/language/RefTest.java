@@ -16,12 +16,11 @@
  */
 package org.apache.camel.language;
 
-import org.junit.Test;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.ExpressionAdapter;
+import org.junit.Test;
 
 public class RefTest extends LanguageTestSupport {
 

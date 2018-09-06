@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import java.util.concurrent.ThreadPoolExecutor;
+
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 

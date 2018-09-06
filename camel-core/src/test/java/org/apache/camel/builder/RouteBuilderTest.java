@@ -16,8 +16,6 @@
  */
 package org.apache.camel.builder;
 
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -45,6 +43,7 @@ import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
+import org.junit.Test;
 
 /**
  * @version 

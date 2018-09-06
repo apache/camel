@@ -16,14 +16,13 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
+import org.junit.Test;
 
 /**
  *

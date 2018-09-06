@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;

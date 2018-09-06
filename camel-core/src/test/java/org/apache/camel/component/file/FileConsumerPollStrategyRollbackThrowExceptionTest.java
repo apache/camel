@@ -15,9 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-import org.junit.Before;
-
-import org.junit.Test;
+import static org.awaitility.Awaitility.await;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -29,8 +27,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
-
-import static org.awaitility.Awaitility.await;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test for poll strategy

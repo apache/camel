@@ -16,11 +16,10 @@
  */
 package org.apache.camel.component.seda;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * Tests that a Seda component properly set blockWhenFull on endpoints.

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.ExpressionBuilder;
+import org.junit.Test;
 
 /**
  * Unit test for reference properties

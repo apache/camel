@@ -16,13 +16,12 @@
  */
 package org.apache.camel.processor.aggregator;
 
-import org.junit.Test;
-
 import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.toolbox.AggregationStrategies;
+import org.junit.Test;
 
 public class AggregationStrategyBeanAdapterWithHeadersAndPropertiesTest extends ContextTestSupport {
 

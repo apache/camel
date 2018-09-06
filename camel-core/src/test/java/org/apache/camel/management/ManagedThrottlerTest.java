@@ -16,13 +16,12 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Test;
-
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
 import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -32,6 +31,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version

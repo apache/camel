@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.aggregator;
 
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
 /**
  * @version 

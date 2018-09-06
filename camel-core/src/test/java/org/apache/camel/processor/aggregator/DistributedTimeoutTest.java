@@ -16,7 +16,7 @@
  */
 package org.apache.camel.processor.aggregator;
 
-import org.junit.Test;
+import static org.awaitility.Awaitility.await;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -26,8 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
-
-import static org.awaitility.Awaitility.await;
+import org.junit.Test;
 
 /**
  * @version

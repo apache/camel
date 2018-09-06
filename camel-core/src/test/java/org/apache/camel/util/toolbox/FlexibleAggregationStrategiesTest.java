@@ -25,8 +25,6 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.w3c.dom.Node;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -36,6 +34,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.toolbox.FlexibleAggregationStrategy.CompletionAwareMixin;
 import org.apache.camel.util.toolbox.FlexibleAggregationStrategy.TimeoutAwareMixin;
 import org.junit.Test;
+import org.w3c.dom.Node;
 
 /**
  * Unit tests for the {@link FlexibleAggregationStrategy}.

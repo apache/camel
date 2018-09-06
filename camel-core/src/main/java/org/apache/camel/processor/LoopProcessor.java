@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import static org.apache.camel.processor.PipelineHelper.continueProcessing;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -29,8 +31,6 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.util.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
 /**
  * The processor which sends messages in a loop.

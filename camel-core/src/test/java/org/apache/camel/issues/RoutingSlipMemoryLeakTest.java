@@ -15,13 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.issues;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.RoutingSlip;
+import org.junit.Before;
+import org.junit.Test;
 
 public class RoutingSlipMemoryLeakTest extends ContextTestSupport {
 

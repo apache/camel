@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.dataset;
 
-import org.junit.Test;
-
 import java.util.concurrent.TimeUnit;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * @version 

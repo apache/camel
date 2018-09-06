@@ -16,10 +16,9 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Test;
-
-import org.junit.Assert;
 import org.apache.camel.management.mbean.LoadTriplet;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class LoadTripletTest extends Assert {
 

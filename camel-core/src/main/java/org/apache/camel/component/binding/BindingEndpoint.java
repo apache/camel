@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.binding;
 
+import static org.apache.camel.util.CamelContextHelper.getMandatoryEndpoint;
+
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -32,8 +34,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ServiceHelper;
-
-import static org.apache.camel.util.CamelContextHelper.getMandatoryEndpoint;
 
 /**
  * The binding component is used for as a of wrapping an Endpoint in a contract with a data format.

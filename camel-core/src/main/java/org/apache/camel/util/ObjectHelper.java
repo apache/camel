@@ -48,9 +48,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExecutionException;
@@ -65,6 +62,8 @@ import org.apache.camel.WrappedFile;
 import org.apache.camel.util.function.ThrowingFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * A number of useful helper methods for working with Objects

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.intercept;
 
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
+import org.junit.Test;
 
 /**
  *

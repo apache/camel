@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EventObject;
@@ -30,6 +26,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.support.EventNotifierSupport;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 

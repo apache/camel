@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.stress;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.util.Random;
 
 import org.apache.camel.ContextTestSupport;
@@ -26,7 +22,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * @version 

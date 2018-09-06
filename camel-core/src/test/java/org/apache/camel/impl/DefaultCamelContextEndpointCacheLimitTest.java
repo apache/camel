@@ -16,9 +16,8 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import java.util.Collection;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
@@ -26,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.junit.Test;
 
 /**
  * @version 

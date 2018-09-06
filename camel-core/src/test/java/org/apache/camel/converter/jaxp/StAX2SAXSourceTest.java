@@ -16,11 +16,12 @@
  */
 package org.apache.camel.converter.jaxp;
 
-import org.junit.Test;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.nio.charset.Charset;
+
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.OutputKeys;
@@ -32,9 +33,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
-
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
+import org.junit.Test;
 
 public class StAX2SAXSourceTest extends ContextTestSupport {
 

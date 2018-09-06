@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.interceptor;
 
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +26,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 

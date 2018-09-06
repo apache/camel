@@ -16,14 +16,13 @@
  */
 package org.apache.camel.main;
 
-import org.junit.Test;
-
 import java.util.List;
 
-import org.junit.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 

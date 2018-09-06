@@ -16,22 +16,20 @@
  */
 package org.apache.camel.util.jsse;
 
-import org.junit.Test;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
+
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLSocket;
 
-
-
 import org.apache.camel.CamelContext;
+import org.junit.Test;
 
 public class SSLContextParametersTest extends AbstractJsseParametersTest {
 

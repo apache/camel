@@ -16,14 +16,13 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Test;
+import static org.apache.camel.ThreadPoolRejectedPolicy.Abort;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ThreadPoolProfile;
-
-import static org.apache.camel.ThreadPoolRejectedPolicy.Abort;
+import org.junit.Test;
 
 public class ThreadsInvalidConfigTest extends ContextTestSupport {
 

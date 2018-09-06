@@ -15,19 +15,16 @@
  * limitations under the License.
  */
 package org.apache.camel.language;
-import org.junit.Before;
-
-import org.junit.Test;
-
-import org.w3c.dom.NodeList;
+import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-
-import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
+import org.junit.Before;
+import org.junit.Test;
+import org.w3c.dom.NodeList;
 
 /**
  * @version 

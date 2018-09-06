@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.impl.verifier;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +25,8 @@ import org.apache.camel.component.extension.ComponentVerifierExtension.Scope;
 import org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class DefaultComponentVerifierTest extends ContextTestSupport {
     private ComponentVerifierExtension verifier;

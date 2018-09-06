@@ -16,12 +16,11 @@
  */
 package org.apache.camel.util;
 
-import org.junit.Test;
-
 import java.util.List;
 import java.util.Locale;
 
 import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Unit test for StringHelper

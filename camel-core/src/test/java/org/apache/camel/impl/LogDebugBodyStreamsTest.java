@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
@@ -26,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.StringSource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 

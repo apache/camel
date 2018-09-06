@@ -16,12 +16,11 @@
  */
 package org.apache.camel.builder.xml;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.junit.Ignore;
 //import com.sun.org.apache.xerces.internal.dom.ElementNSImpl;
+import org.junit.Test;
 
 @Ignore("For manual testing CAMEL-6922")
 public class NodeListToDocumentTest extends ContextTestSupport {

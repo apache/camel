@@ -16,8 +16,6 @@
  */
 package org.apache.camel.builder;
 
-import org.junit.Test;
-
 import java.lang.reflect.Field;
 
 import org.apache.camel.CamelContext;
@@ -30,6 +28,7 @@ import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
+import org.junit.Test;
 
 public class TransformerBuilderTest extends TestSupport {
 

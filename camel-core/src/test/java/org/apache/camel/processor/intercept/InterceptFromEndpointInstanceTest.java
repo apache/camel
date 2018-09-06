@@ -16,11 +16,10 @@
  */
 package org.apache.camel.processor.intercept;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Testing intercept from can intercept when endpoint is an instance

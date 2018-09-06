@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.interceptor;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ChoiceDefinition;
@@ -26,6 +24,7 @@ import org.apache.camel.model.OtherwiseDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.WhenDefinition;
+import org.junit.Test;
 
 /**
  * Tests that when tracing is enabled the ids of all the nodes is forced assigned

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.async;
 
-import org.junit.Test;
-
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncCallback;
@@ -29,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.InterceptStrategy;
+import org.junit.Test;
 
 /**
  * @version 

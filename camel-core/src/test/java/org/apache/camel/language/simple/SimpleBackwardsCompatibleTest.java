@@ -16,10 +16,9 @@
  */
 package org.apache.camel.language.simple;
 
-import org.junit.Test;
-
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.Predicate;
+import org.junit.Test;
 
 /**
  *

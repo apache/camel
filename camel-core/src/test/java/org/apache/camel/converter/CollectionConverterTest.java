@@ -16,8 +16,6 @@
  */
 package org.apache.camel.converter;
 
-import org.junit.Test;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,9 +25,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.junit.Assert;
-
 import org.apache.camel.util.CaseInsensitiveMap;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Test cases for {@link CollectionConverter}

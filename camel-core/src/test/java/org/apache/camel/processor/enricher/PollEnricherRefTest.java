@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.enricher;
 
-import org.junit.Test;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -26,6 +24,7 @@ import org.apache.camel.component.seda.SedaEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.junit.Test;
 
 /**
  * @version 

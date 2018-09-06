@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Test;
-
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
@@ -35,6 +33,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.junit.Test;
 
 /**
  * @version 

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.util;
 
-import org.junit.Test;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,6 +29,7 @@ import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.util.jndi.ExampleBean;
+import org.junit.Test;
 
 /**
  * Unit test for IntrospectionSupport

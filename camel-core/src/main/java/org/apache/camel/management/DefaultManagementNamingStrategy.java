@@ -18,6 +18,7 @@ package org.apache.camel.management;
 
 import java.net.UnknownHostException;
 import java.util.concurrent.ThreadPoolExecutor;
+
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 

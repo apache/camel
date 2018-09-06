@@ -16,13 +16,12 @@
  */
 package org.apache.camel.util.jsse;
 
-import org.junit.Test;
-
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
+import org.junit.Test;
 
 public class FilterParametersTest extends AbstractJsseParametersTest {
     

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.async;
 
-import org.junit.Test;
-
 import java.util.EventObject;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -29,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
+import org.junit.Test;
 
 /**
  * @version 

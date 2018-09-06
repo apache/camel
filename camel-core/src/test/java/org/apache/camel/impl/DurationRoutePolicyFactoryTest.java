@@ -16,14 +16,13 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
+import static org.awaitility.Awaitility.await;
 
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-
-import static org.awaitility.Awaitility.await;
+import org.junit.Test;
 
 public class DurationRoutePolicyFactoryTest extends ContextTestSupport {
 

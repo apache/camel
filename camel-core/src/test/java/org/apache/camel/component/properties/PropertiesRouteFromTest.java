@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.properties;
 
-import org.junit.Test;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SendDefinition;
+import org.junit.Test;
 
 /**
  *

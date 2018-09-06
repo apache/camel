@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.xslt;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import javax.xml.transform.TransformerFactory;
 
 import org.apache.camel.CamelContext;
@@ -30,6 +26,8 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *

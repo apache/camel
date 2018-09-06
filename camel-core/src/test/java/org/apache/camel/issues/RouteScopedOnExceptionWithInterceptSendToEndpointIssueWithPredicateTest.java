@@ -16,8 +16,6 @@
  */
 package org.apache.camel.issues;
 
-import org.junit.Test;
-
 import java.net.ConnectException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -29,6 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
+import org.junit.Test;
 
 /**
  * Based on user forum issue

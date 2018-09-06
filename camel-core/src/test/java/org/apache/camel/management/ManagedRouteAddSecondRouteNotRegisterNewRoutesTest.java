@@ -16,13 +16,12 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Test;
-
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Tests mbeans is NOT registered when adding a 2nd route after CamelContext has been started,

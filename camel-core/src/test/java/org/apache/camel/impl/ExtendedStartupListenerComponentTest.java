@@ -16,13 +16,12 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedStartupListener;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectComponent;
+import org.junit.Test;
 
 /**
  * @version 

@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.dataset;
 
-import org.junit.Test;
-
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 

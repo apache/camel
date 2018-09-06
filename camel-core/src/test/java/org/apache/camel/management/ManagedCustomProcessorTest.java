@@ -16,8 +16,6 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Test;
-
 import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -28,6 +26,7 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.ServiceSupport;
+import org.junit.Test;
 
 /**
  * @version 

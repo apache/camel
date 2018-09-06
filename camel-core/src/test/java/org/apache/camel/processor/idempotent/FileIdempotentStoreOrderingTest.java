@@ -16,6 +16,9 @@
  */
 package org.apache.camel.processor.idempotent;
 
+import static org.apache.camel.TestSupport.createDirectory;
+import static org.apache.camel.TestSupport.deleteDirectory;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -27,9 +30,6 @@ import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.apache.camel.TestSupport.createDirectory;
-import static org.apache.camel.TestSupport.deleteDirectory;
 
 public class FileIdempotentStoreOrderingTest {
 

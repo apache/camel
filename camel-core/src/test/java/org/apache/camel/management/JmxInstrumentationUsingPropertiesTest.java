@@ -15,11 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import javax.management.ObjectName;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * This module contains test cases that verifies jmx system property uses.

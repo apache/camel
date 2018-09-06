@@ -16,8 +16,6 @@
  */
 
 package org.apache.camel.component.file;
-import org.junit.Before;
-
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -25,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.FileUtil;
+import org.junit.Before;
 import org.junit.Test;
 
 /**

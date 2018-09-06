@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import static org.apache.camel.util.StringQuoteHelper.doubleQuote;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -25,8 +27,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static org.apache.camel.util.StringQuoteHelper.doubleQuote;
 
 /**
  * Helper methods for working with Strings.

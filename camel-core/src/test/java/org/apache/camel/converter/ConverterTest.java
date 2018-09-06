@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.converter;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.beans.PropertyEditorManager;
 import java.beans.PropertyEditorSupport;
 import java.io.File;
@@ -30,7 +26,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
@@ -45,6 +40,9 @@ import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ReflectionInjector;
 import org.apache.camel.util.ServiceHelper;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

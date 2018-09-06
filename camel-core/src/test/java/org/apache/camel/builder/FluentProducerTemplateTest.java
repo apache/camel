@@ -16,8 +16,6 @@
  */
 package org.apache.camel.builder;
 
-import org.junit.Test;
-
 import java.util.concurrent.Future;
 
 import org.apache.camel.CamelExecutionException;
@@ -27,6 +25,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Unit test for FluentProducerTemplate

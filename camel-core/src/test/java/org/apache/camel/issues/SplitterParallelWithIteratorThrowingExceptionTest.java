@@ -16,14 +16,13 @@
  */
 package org.apache.camel.issues;
 
-import org.junit.Test;
-
 import java.util.Iterator;
 import java.util.function.Consumer;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.junit.Test;
 
 /**
  * Tests the issue stated in

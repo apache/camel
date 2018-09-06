@@ -18,6 +18,7 @@ package org.apache.camel.builder.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;

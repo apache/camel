@@ -15,16 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.converter;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
-import org.junit.Assert;
 
 import org.apache.camel.StringSource;
 import org.apache.camel.TypeConverter;
@@ -34,6 +28,9 @@ import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.util.ReflectionInjector;
 import org.apache.camel.util.ServiceHelper;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 

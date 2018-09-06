@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.vm;
 
-import org.junit.Test;
-
 import java.util.Iterator;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.seda.QueueReference;
+import org.junit.Test;
 
 /**
  *

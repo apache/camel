@@ -16,8 +16,6 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Test;
-
 import javax.management.Notification;
 import javax.management.NotificationFilter;
 import javax.management.NotificationListener;
@@ -27,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Test;
 
 /**
  * @version 

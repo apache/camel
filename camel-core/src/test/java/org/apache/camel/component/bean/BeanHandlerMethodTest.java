@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.bean;
 
-import org.junit.Test;
-
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Handler;
 import org.apache.camel.Header;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Test;
 
 /**
  * @version 

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -28,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
+import org.junit.Test;
 
 /**
  * @version 

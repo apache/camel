@@ -16,16 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.URL;
-import java.util.List;
-
-import org.apache.camel.NoFactoryAvailableException;
-import org.apache.camel.spi.ClassResolver;
-import org.apache.camel.spi.Injector;
-import org.junit.Test;
-
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
@@ -35,6 +25,16 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
+
+import org.apache.camel.NoFactoryAvailableException;
+import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.Injector;
+import org.junit.Test;
 
 public class DefaultFactoryFinderTest {
 

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.builder;
 
-import org.junit.Test;
-
 import java.util.Map;
 
 import org.apache.camel.Consumer;
@@ -28,6 +26,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * @version 

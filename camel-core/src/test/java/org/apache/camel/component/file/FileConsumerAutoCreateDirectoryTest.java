@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import org.junit.Test;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 
@@ -26,6 +24,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.junit.Test;
 
 /**
  * @version 

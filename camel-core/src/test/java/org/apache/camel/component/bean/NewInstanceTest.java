@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.bean;
 
-import org.junit.Test;
-
 import javax.naming.Context;
 
 import org.apache.camel.Body;
@@ -27,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BeanRouteTest;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

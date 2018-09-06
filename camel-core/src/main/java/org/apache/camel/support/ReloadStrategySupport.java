@@ -22,10 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
@@ -40,6 +36,9 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.XmlLineNumberParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Base class for implementing custom {@link ReloadStrategy} SPI plugins.

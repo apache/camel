@@ -15,11 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.seda;
-import org.junit.Before;
-import org.junit.After;
-
-import org.junit.Test;
-
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -31,6 +26,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 

@@ -16,13 +16,12 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Test;
-
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.w3c.dom.Document;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
+import org.w3c.dom.Document;
 
 /**
  * @version 

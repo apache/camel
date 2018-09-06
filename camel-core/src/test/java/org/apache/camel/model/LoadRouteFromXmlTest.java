@@ -16,13 +16,12 @@
  */
 package org.apache.camel.model;
 
-import org.junit.Test;
-
 import java.io.InputStream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 

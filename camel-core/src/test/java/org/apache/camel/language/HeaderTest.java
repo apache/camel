@@ -16,10 +16,9 @@
  */
 package org.apache.camel.language;
 
-import org.junit.Test;
-
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.language.header.HeaderLanguage;
+import org.junit.Test;
 
 public class HeaderTest extends LanguageTestSupport {
 

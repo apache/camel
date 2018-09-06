@@ -15,20 +15,20 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
-import org.junit.Before;
-import org.junit.After;
-
-import org.junit.Test;
-
 import java.rmi.NoSuchObjectException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Locale;
 import java.util.Random;
+
 import javax.management.MBeanServerConnection;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test that verifies JMX connector server can be connected by

@@ -16,11 +16,10 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
-import org.junit.Assert;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
+import org.junit.Assert;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

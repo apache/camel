@@ -16,13 +16,12 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.junit.Test;
 
 /**
  * @version 

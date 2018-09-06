@@ -16,18 +16,17 @@
  */
 package org.apache.camel.component.xslt;
 
-import org.junit.Test;
-
 import java.io.IOException;
 import java.io.StringReader;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 public class XsltCustomizeEntityResolverTest extends ContextTestSupport {
 

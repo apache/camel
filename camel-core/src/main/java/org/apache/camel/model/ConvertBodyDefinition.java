@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;

@@ -15,13 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
-import org.junit.Before;
-import org.junit.After;
-
-import org.junit.Test;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.issues;
 
-import org.junit.Test;
-
 import java.util.List;
 import java.util.Properties;
 
@@ -27,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.component.properties.PropertiesResolver;
+import org.junit.Test;
 
 public class PropertiesAvailableEverywhereTest extends ContextTestSupport {
 

@@ -16,11 +16,10 @@
  */
 package org.apache.camel.issues;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
+import org.junit.Test;
 
 public class AdviceWithInterceptSendToEndpointWithLoadbalancerTest extends ContextTestSupport {
 

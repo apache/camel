@@ -16,11 +16,10 @@
  */
 package org.apache.camel.util.concurrent;
 
-import org.junit.Test;
-
 import java.util.concurrent.ExecutorService;
 
 import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 

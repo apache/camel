@@ -16,10 +16,9 @@
  */
 package org.apache.camel.component.seda;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Tests that a Seda producer supports the blockWhenFull option by blocking

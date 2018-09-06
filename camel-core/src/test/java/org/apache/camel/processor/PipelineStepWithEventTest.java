@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -34,6 +32,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.StopWatch;
+import org.junit.Test;
 
 /**
  * Test showing how you can use pipeline to group together statistics and implement your own event listener.

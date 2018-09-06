@@ -16,8 +16,6 @@
  */
 package org.apache.camel.util;
 
-import org.junit.Test;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -36,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
 import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * @version 

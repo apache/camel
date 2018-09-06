@@ -16,14 +16,13 @@
  */
 package org.apache.camel.language;
 
-import org.junit.Test;
-
 import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.Expression;
 import org.apache.camel.language.tokenizer.TokenizeLanguage;
+import org.junit.Test;
 
 public class TokenizerTest extends ExchangeTestSupport {
 

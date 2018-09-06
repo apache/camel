@@ -16,11 +16,10 @@
  */
 package org.apache.camel.processor.onexception;
 
-import org.junit.Test;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Test that exceptions in an onException handler route do not go into recursion

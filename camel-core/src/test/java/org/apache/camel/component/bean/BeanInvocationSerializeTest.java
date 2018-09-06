@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.bean;
 
-import org.junit.Test;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -25,6 +23,7 @@ import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
 
 import org.apache.camel.TestSupport;
+import org.junit.Test;
 
 /**
  * @version 

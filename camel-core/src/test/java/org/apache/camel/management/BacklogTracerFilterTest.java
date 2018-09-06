@@ -16,9 +16,8 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Test;
-
 import java.util.List;
+
 import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -26,6 +25,7 @@ import javax.management.ObjectName;
 import org.apache.camel.Exchange;
 import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class BacklogTracerFilterTest extends ManagementTestSupport {
 

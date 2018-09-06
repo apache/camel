@@ -15,9 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
-import org.junit.Before;
-
-import org.junit.Test;
+import static org.awaitility.Awaitility.await;
 
 import java.util.ArrayList;
 import java.util.EventObject;
@@ -31,8 +29,8 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
-
-import static org.awaitility.Awaitility.await;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 

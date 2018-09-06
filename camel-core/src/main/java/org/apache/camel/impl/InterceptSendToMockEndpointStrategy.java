@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -24,8 +26,6 @@ import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * A {@link EndpointStrategy} which is capable of mocking endpoints.

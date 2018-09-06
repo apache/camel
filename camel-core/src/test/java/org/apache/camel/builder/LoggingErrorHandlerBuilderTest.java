@@ -16,10 +16,9 @@
  */
 package org.apache.camel.builder;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.LoggingLevel;
+import org.junit.Test;
 import org.slf4j.LoggerFactory;
 
 /**

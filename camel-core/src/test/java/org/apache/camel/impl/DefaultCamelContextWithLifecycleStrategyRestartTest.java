@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -27,6 +25,7 @@ import org.apache.camel.Route;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.LifecycleStrategySupport;
+import org.junit.Test;
 
 /**
  *
