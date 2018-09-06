@@ -210,6 +210,7 @@
 	* [GitHub](github-component.adoc)
 	* [Google BigQuery](google-bigquery-component.adoc)
 	* [Google Calendar](google-calendar-component.adoc)
+	* [Google Calendar Stream](google-calendar-stream-component.adoc)
 	* [Google Drive](google-drive-component.adoc)
 	* [Google Mail](google-mail-component.adoc)
 	* [Google Mail Stream](google-mail-stream-component.adoc)
