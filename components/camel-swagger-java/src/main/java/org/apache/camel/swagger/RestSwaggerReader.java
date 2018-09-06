@@ -224,6 +224,9 @@ public class RestSwaggerReader {
         // use annotation scanner to find models (annotated classes)
         for (String type : types) {
             Class<?> clazz = classResolver.resolveClass(type);
+            if (clazz == null) {
+                throw new RuntimeException("The ClassResolver could not resolve the model class of type: " + type);
+            }
             appendModels(clazz, swagger);
         }
 
