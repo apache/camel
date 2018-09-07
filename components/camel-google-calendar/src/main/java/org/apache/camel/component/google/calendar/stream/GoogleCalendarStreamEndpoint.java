@@ -18,6 +18,10 @@ package org.apache.camel.component.google.calendar.stream;
 
 import java.io.UnsupportedEncodingException;
 
+import com.google.api.services.calendar.Calendar;
+import com.google.api.services.calendar.model.CalendarListEntry;
+import com.google.api.services.calendar.model.Event;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -31,10 +35,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.api.services.calendar.Calendar;
-import com.google.api.services.calendar.model.CalendarListEntry;
-import com.google.api.services.calendar.model.Event;
 
 /**
  * The google-calendar component provides access to Google Calendar in a streaming mod.
@@ -66,7 +66,7 @@ public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         String calendarId = null;
-        if (getConfiguration().getCalendarSummaryName() != "primary") {
+        if (getConfiguration().getCalendarSummaryName().equals("primary")) {
             com.google.api.services.calendar.model.CalendarList calendars = getClient().calendarList().list().execute();
             if (calendars.getItems() != null) {
                 for (CalendarListEntry entry : calendars.getItems()) {
