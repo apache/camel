@@ -40,7 +40,6 @@ import org.apache.camel.spi.SubUnitOfWork;
 import org.apache.camel.spi.SubUnitOfWorkCallback;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationVetoable;
-import org.apache.camel.spi.TracedRouteNodes;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.UnitOfWorkHelper;
@@ -65,7 +64,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     private CamelContext context;
     private List<Synchronization> synchronizations;
     private Message originalInMessage;
-    private TracedRouteNodes tracedRouteNodes;
     private Set<Object> transactedBy;
     private final Deque<RouteContext> routeContextStack = new ArrayDeque<>();
     private Deque<DefaultSubUnitOfWork> subUnitOfWorks;
@@ -82,12 +80,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         }
 
         context = exchange.getContext();
-
-        // only use tracer if explicit enabled
-        if (context.isTracing() != null && context.isTracing()) {
-            // backwards compatible
-            tracedRouteNodes = new DefaultTracedRouteNodes();
-        }
 
         if (context.isAllowUseOriginalMessage()) {
             // special for JmsMessage as it can cause it to loose headers later.
@@ -169,9 +161,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         // need to clean up when we are stopping to not leak memory
         if (synchronizations != null) {
             synchronizations.clear();
-        }
-        if (tracedRouteNodes != null) {
-            tracedRouteNodes.clear();
         }
         if (transactedBy != null) {
             transactedBy.clear();
@@ -299,10 +288,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             throw new IllegalStateException("AllowUseOriginalMessage is disabled. Cannot access the original message.");
         }
         return originalInMessage;
-    }
-
-    public TracedRouteNodes getTracedRouteNodes() {
-        return tracedRouteNodes;
     }
 
     public boolean isTransacted() {

@@ -125,7 +125,6 @@
     <module>camel-example-swagger-cdi</module>
     <module>camel-example-swagger-osgi</module>
     <module>camel-example-swagger-xml</module>
-    <module>camel-example-tracer</module>
     <module>camel-example-transformer-blueprint</module>
     <module>camel-example-transformer-cdi</module>
     <module>camel-example-transformer-demo</module>

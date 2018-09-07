@@ -118,14 +118,6 @@ public interface UnitOfWork extends Service {
     Message getOriginalInMessage();
 
     /**
-     * Gets tracing information
-     *
-     * @return trace information
-     */
-    @Deprecated
-    TracedRouteNodes getTracedRouteNodes();
-
-    /**
      * Are we transacted?
      *
      * @return <tt>true</tt> if transacted, <tt>false</tt> otherwise

@@ -1527,23 +1527,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void setManagementStrategy(ManagementStrategy strategy);
 
     /**
-     * Gets the default tracer
-     *
-     * @return the default tracer
-     */
-    InterceptStrategy getDefaultTracer();
-
-    /**
-     * Sets a custom tracer to be used as the default tracer.
-     * <p/>
-     * <b>Note:</b> This must be set before any routes are created,
-     * changing the default tracer for existing routes is not supported.
-     *
-     * @param tracer the custom tracer to use as default tracer
-     */
-    void setDefaultTracer(InterceptStrategy tracer);
-
-    /**
      * Gets the default backlog tracer
      *
      * @return the default backlog tracer

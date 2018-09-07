@@ -72,7 +72,6 @@ import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedStreamCachingStrategy;
 import org.apache.camel.management.mbean.ManagedThrottlingExceptionRoutePolicy;
 import org.apache.camel.management.mbean.ManagedThrottlingInflightRoutePolicy;
-import org.apache.camel.management.mbean.ManagedTracer;
 import org.apache.camel.management.mbean.ManagedTransformerRegistry;
 import org.apache.camel.management.mbean.ManagedTypeConverterRegistry;
 import org.apache.camel.management.mbean.ManagedValidatorRegistry;
@@ -87,7 +86,6 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
-import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.DataFormat;
@@ -135,7 +133,6 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
     private volatile ManagedCamelContext camelContextMBean;
     private volatile boolean initialized;
     private final Set<String> knowRouteIds = new HashSet<>();
-    private final Map<Tracer, ManagedTracer> managedTracers = new HashMap<>();
     private final Map<BacklogTracer, ManagedBacklogTracer> managedBacklogTracers = new HashMap<>();
     private final Map<BacklogDebugger, ManagedBacklogDebugger> managedBacklogDebuggers = new HashMap<>();
     private final Map<ThreadPoolExecutor, Object> managedThreadPools = new HashMap<>();
@@ -478,16 +475,6 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
 
         if (service instanceof ManagementAware) {
             return ((ManagementAware<Service>) service).getManagedObject(service);
-        } else if (service instanceof Tracer) {
-            // special for tracer
-            Tracer tracer = (Tracer) service;
-            ManagedTracer mt = managedTracers.get(tracer);
-            if (mt == null) {
-                mt = new ManagedTracer(context, tracer);
-                mt.init(getManagementStrategy());
-                managedTracers.put(tracer, mt);
-            }
-            return mt;
         } else if (service instanceof BacklogTracer) {
             // special for backlog tracer
             BacklogTracer backlogTracer = (BacklogTracer) service;
@@ -1000,7 +987,6 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         knowRouteIds.clear();
         preServices.clear();
         wrappedProcessors.clear();
-        managedTracers.clear();
         managedBacklogTracers.clear();
         managedBacklogDebuggers.clear();
         managedThreadPools.clear();

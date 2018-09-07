@@ -253,18 +253,6 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
             addAdvice(new MessageHistoryAdvice(factory, targetOutputDef));
         }
 
-        // the regular tracer is not a task on internalProcessor as this is not really needed
-        // end users have to explicit enable the tracer to use it, and then its okay if we wrap
-        // the processors (but by default tracer is disabled, and therefore we do not wrap processors)
-        tracer = getOrCreateTracer();
-        if (tracer != null) {
-            camelContext.addService(tracer);
-            TraceInterceptor trace = (TraceInterceptor) tracer.wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, target, null);
-            // trace interceptor need to have a reference to route context so we at runtime can enable/disable tracing on-the-fly
-            trace.setRouteContext(routeContext);
-            target = trace;
-        }
-
         // sort interceptors according to ordered
         interceptors.sort(OrderedComparator.get());
         // then reverse list so the first will be wrapped last, as it would then be first being invoked
@@ -272,10 +260,6 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
         // wrap the output with the configured interceptors
         for (InterceptStrategy strategy : interceptors) {
             next = target == nextProcessor ? null : nextProcessor;
-            // skip tracer as we did the specially beforehand and it could potentially be added as an interceptor strategy
-            if (strategy instanceof Tracer) {
-                continue;
-            }
             // skip stream caching as it must be wrapped as outer most, which we do later
             if (strategy instanceof StreamCaching) {
                 continue;
@@ -342,39 +326,6 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
                 addAdvice(instrumentationProcessor);
             }
         }
-    }
-
-    private InterceptStrategy getOrCreateTracer() {
-        // only use tracer if explicit enabled
-        if (camelContext.isTracing() != null && !camelContext.isTracing()) {
-            return null;
-        }
-
-        InterceptStrategy tracer = Tracer.getTracer(camelContext);
-        if (tracer == null) {
-            if (camelContext.getRegistry() != null) {
-                // lookup in registry
-                Map<String, Tracer> map = camelContext.getRegistry().findByTypeWithName(Tracer.class);
-                if (map.size() == 1) {
-                    tracer = map.values().iterator().next();
-                }
-            }
-            if (tracer == null) {
-                // fallback to use the default tracer
-                tracer = camelContext.getDefaultTracer();
-
-                // configure and use any trace formatter if any exists
-                Map<String, TraceFormatter> formatters = camelContext.getRegistry().findByTypeWithName(TraceFormatter.class);
-                if (formatters.size() == 1) {
-                    TraceFormatter formatter = formatters.values().iterator().next();
-                    if (tracer instanceof Tracer) {
-                        ((Tracer) tracer).setFormatter(formatter);
-                    }
-                }
-            }
-        }
-
-        return tracer;
     }
 
     private InterceptStrategy getOrCreateBacklogTracer() {

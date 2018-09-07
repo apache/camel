@@ -22,7 +22,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.language.SimpleExpression;
-import org.apache.camel.processor.interceptor.Tracer;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -85,9 +84,6 @@ public class FileSplitInSplitTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                Tracer tracer = new Tracer();
-                getContext().addInterceptStrategy(tracer);
-                
                 from("file:target/split?initialDelay=0&delay=10").routeId("foo").noAutoStartup()
                     .split(body().tokenize(comma))
                         .parallelProcessing()

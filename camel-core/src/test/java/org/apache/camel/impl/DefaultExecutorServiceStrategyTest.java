@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ThreadPoolRejectedPolicy;
+import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.concurrent.ThreadHelper;
 import org.junit.Test;
 
@@ -149,7 +150,7 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
 
     @Test
     public void testDefaultUnboundedQueueThreadPool() throws Exception {
-        ThreadPoolProfileSupport custom = new ThreadPoolProfileSupport("custom");
+        ThreadPoolProfile custom = new ThreadPoolProfile("custom");
         custom.setPoolSize(10);
         custom.setMaxPoolSize(30);
         custom.setKeepAliveTime(50L);
@@ -174,7 +175,7 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
 
     @Test
     public void testCustomDefaultThreadPool() throws Exception {
-        ThreadPoolProfileSupport custom = new ThreadPoolProfileSupport("custom");
+        ThreadPoolProfile custom = new ThreadPoolProfile("custom");
         custom.setKeepAliveTime(20L);
         custom.setMaxPoolSize(40);
         custom.setPoolSize(5);
@@ -201,7 +202,7 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
     public void testGetThreadPoolProfile() throws Exception {
         assertNull(context.getExecutorServiceStrategy().getThreadPoolProfile("foo"));
 
-        ThreadPoolProfileSupport foo = new ThreadPoolProfileSupport("foo");
+        ThreadPoolProfile foo = new ThreadPoolProfile("foo");
         foo.setKeepAliveTime(20L);
         foo.setMaxPoolSize(40);
         foo.setPoolSize(5);
@@ -216,7 +217,7 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
     public void testTwoGetThreadPoolProfile() throws Exception {
         assertNull(context.getExecutorServiceStrategy().getThreadPoolProfile("foo"));
 
-        ThreadPoolProfileSupport foo = new ThreadPoolProfileSupport("foo");
+        ThreadPoolProfile foo = new ThreadPoolProfile("foo");
         foo.setKeepAliveTime(20L);
         foo.setMaxPoolSize(40);
         foo.setPoolSize(5);
@@ -224,7 +225,7 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
 
         context.getExecutorServiceStrategy().registerThreadPoolProfile(foo);
 
-        ThreadPoolProfileSupport bar = new ThreadPoolProfileSupport("bar");
+        ThreadPoolProfile bar = new ThreadPoolProfile("bar");
         bar.setKeepAliveTime(40L);
         bar.setMaxPoolSize(5);
         bar.setPoolSize(1);
@@ -243,7 +244,7 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
     @Test
     public void testGetThreadPoolProfileInheritDefaultValues() throws Exception {
         assertNull(context.getExecutorServiceStrategy().getThreadPoolProfile("foo"));
-        ThreadPoolProfileSupport foo = new ThreadPoolProfileSupport("foo");
+        ThreadPoolProfile foo = new ThreadPoolProfile("foo");
         foo.setMaxPoolSize(40);
         context.getExecutorServiceStrategy().registerThreadPoolProfile(foo);
         assertSame(foo, context.getExecutorServiceStrategy().getThreadPoolProfile("foo"));
@@ -259,7 +260,7 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
 
     @Test
     public void testGetThreadPoolProfileInheritCustomDefaultValues() throws Exception {
-        ThreadPoolProfileSupport newDefault = new ThreadPoolProfileSupport("newDefault");
+        ThreadPoolProfile newDefault = new ThreadPoolProfile("newDefault");
         newDefault.setKeepAliveTime(30L);
         newDefault.setMaxPoolSize(50);
         newDefault.setPoolSize(5);
@@ -268,7 +269,7 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
         context.getExecutorServiceStrategy().setDefaultThreadPoolProfile(newDefault);
 
         assertNull(context.getExecutorServiceStrategy().getThreadPoolProfile("foo"));
-        ThreadPoolProfileSupport foo = new ThreadPoolProfileSupport("foo");
+        ThreadPoolProfile foo = new ThreadPoolProfile("foo");
         foo.setMaxPoolSize(25);
         foo.setPoolSize(1);
         context.getExecutorServiceStrategy().registerThreadPoolProfile(foo);
@@ -286,13 +287,13 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
 
     @Test
     public void testGetThreadPoolProfileInheritCustomDefaultValues2() throws Exception {
-        ThreadPoolProfileSupport newDefault = new ThreadPoolProfileSupport("newDefault");
+        ThreadPoolProfile newDefault = new ThreadPoolProfile("newDefault");
         // just change the max pool as the default profile should then inherit the old default profile
         newDefault.setMaxPoolSize(50);
         context.getExecutorServiceStrategy().setDefaultThreadPoolProfile(newDefault);
 
         assertNull(context.getExecutorServiceStrategy().getThreadPoolProfile("foo"));
-        ThreadPoolProfileSupport foo = new ThreadPoolProfileSupport("foo");
+        ThreadPoolProfile foo = new ThreadPoolProfile("foo");
         foo.setPoolSize(1);
         context.getExecutorServiceStrategy().registerThreadPoolProfile(foo);
         assertSame(foo, context.getExecutorServiceStrategy().getThreadPoolProfile("foo"));
@@ -311,7 +312,7 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
     public void testNewThreadPoolProfile() throws Exception {
         assertNull(context.getExecutorServiceStrategy().getThreadPoolProfile("foo"));
 
-        ThreadPoolProfileSupport foo = new ThreadPoolProfileSupport("foo");
+        ThreadPoolProfile foo = new ThreadPoolProfile("foo");
         foo.setKeepAliveTime(20L);
         foo.setMaxPoolSize(40);
         foo.setPoolSize(5);
@@ -341,7 +342,7 @@ public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
 
         assertNull(context.getExecutorServiceStrategy().getThreadPoolProfile("fooProfile"));
 
-        ThreadPoolProfileSupport foo = new ThreadPoolProfileSupport("fooProfile");
+        ThreadPoolProfile foo = new ThreadPoolProfile("fooProfile");
         foo.setKeepAliveTime(20L);
         foo.setMaxPoolSize(40);
         foo.setPoolSize(5);
