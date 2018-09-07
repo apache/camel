@@ -296,7 +296,7 @@ public class SizedScheduledExecutorService implements ScheduledExecutorService {
         int size = delegate.getQueue().size();
         boolean answer = size < queueSize;
         if (LOG.isTraceEnabled()) {
-            LOG.trace("canScheduleOrExecute {} < {} -> {}", new Object[]{size, queueSize, answer});
+            LOG.trace("canScheduleOrExecute {} < {} -> {}", size, queueSize, answer);
         }
         return answer;
     }

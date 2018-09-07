@@ -362,7 +362,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         protected void recordTime(Exchange exchange, long duration) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("{}Recording duration: {} millis for exchange: {}", new Object[]{type != null ? type + ": " : "", duration, exchange});
+                LOG.trace("{}Recording duration: {} millis for exchange: {}", type != null ? type + ": " : "", duration, exchange);
             }
 
             if (!exchange.isFailed() && exchange.getException() == null) {

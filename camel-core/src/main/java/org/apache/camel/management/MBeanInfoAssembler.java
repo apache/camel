@@ -79,7 +79,7 @@ public class MBeanInfoAssembler implements Service {
         if (cache != null) {
             if (LOG.isDebugEnabled() && cache instanceof LRUCache) {
                 LRUCache cache = (LRUCache) this.cache;
-                LOG.debug("Clearing cache[size={}, hits={}, misses={}, evicted={}]", new Object[]{cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted()});
+                LOG.debug("Clearing cache[size={}, hits={}, misses={}, evicted={}]", cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted());
             }
             cache.clear();
         }

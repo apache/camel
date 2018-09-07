@@ -548,7 +548,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     }
 
     protected void doAggregationRepositoryAdd(CamelContext camelContext, String key, Exchange oldExchange, Exchange newExchange) {
-        LOG.trace("In progress aggregated oldExchange: {}, newExchange: {} with correlation key: {}", new Object[]{oldExchange, newExchange, key});
+        LOG.trace("In progress aggregated oldExchange: {}, newExchange: {} with correlation key: {}", oldExchange, newExchange, key);
         if (optimisticLocking) {
             try {
                 ((OptimisticLockingAggregationRepository)aggregationRepository).add(camelContext, key, oldExchange, newExchange);

@@ -1053,7 +1053,7 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Done evaluating exchange: {} as: {} with result: {}", new Object[] {exchange, resultQName, answer});
+            LOG.trace("Done evaluating exchange: {} as: {} with result: {}", exchange, resultQName, answer);
         }
         return answer;
     }
@@ -1366,7 +1366,7 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
                 String uri = StringHelper.after(key, ":");
                 if (uri != null) {
                     factory = XPathFactory.newInstance(uri);
-                    LOG.info("Using system property {} with value {} when created default XPathFactory {}", new Object[] {key, uri, factory});
+                    LOG.info("Using system property {} with value {} when created default XPathFactory {}", key, uri, factory);
                 }
             }
         }

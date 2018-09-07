@@ -213,7 +213,7 @@ public class ConfigurationHelperTest {
         if (anno != null) {
             LOG.info("  @URIField(component = \"{}\", parameter = \"{}\")", anno.component(), anno.parameter());
         }
-        LOG.info("  {} {}={}", new Object[] {field.getType().getName(), field.getName(), config.getParameter(field.getName())});
+        LOG.info("  {} {}={}", field.getType().getName(), field.getName(), config.getParameter(field.getName()));
     }
 
     private static class ConfiguredComponent implements Component {

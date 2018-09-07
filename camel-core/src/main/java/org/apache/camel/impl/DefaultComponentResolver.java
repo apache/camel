@@ -65,7 +65,7 @@ public class DefaultComponentResolver implements ComponentResolver {
         }
 
         if (getLog().isDebugEnabled()) {
-            getLog().debug("Found component: {} via type: {} via: {}{}", new Object[]{name, type.getName(), factoryFinder.getResourcePath(), name});
+            getLog().debug("Found component: {} via type: {} via: {}{}", name, type.getName(), factoryFinder.getResourcePath(), name);
         }
 
         // create the component

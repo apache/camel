@@ -134,7 +134,7 @@ public final class IntrospectionSupport {
     public static void stop() {
         if (LOG.isDebugEnabled() && CACHE instanceof LRUCache) {
             LRUCache localCache = (LRUCache) IntrospectionSupport.CACHE;
-            LOG.debug("Clearing cache[size={}, hits={}, misses={}, evicted={}]", new Object[]{localCache.size(), localCache.getHits(), localCache.getMisses(), localCache.getEvicted()});
+            LOG.debug("Clearing cache[size={}, hits={}, misses={}, evicted={}]", localCache.size(), localCache.getHits(), localCache.getMisses(), localCache.getEvicted());
         }
         CACHE.clear();
 
@@ -566,7 +566,7 @@ public final class IntrospectionSupport {
                             if (SECRETS.matcher(name).find()) {
                                 val = "xxxxxx";
                             }
-                            LOG.trace("Configured property: {} on bean: {} with value: {}", new Object[]{name, target, val});
+                            LOG.trace("Configured property: {} on bean: {} with value: {}", name, target, val);
                         }
                         return true;
                     } else {
@@ -581,7 +581,7 @@ public final class IntrospectionSupport {
                             if (SECRETS.matcher(name).find()) {
                                 val = "xxxxxx";
                             }
-                            LOG.trace("Configured property: {} on bean: {} with value: {}", new Object[]{name, target, val});
+                            LOG.trace("Configured property: {} on bean: {} with value: {}", name, target, val);
                         }
                         return true;
                     }

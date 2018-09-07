@@ -707,7 +707,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                         }
 
                         if (answer != null && log.isDebugEnabled()) {
-                            log.debug("{} converted to endpoint: {} by component: {}", new Object[]{URISupport.sanitizeUri(uri), answer, component});
+                            log.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer, component);
                         }
                     }
                 }
@@ -739,7 +739,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                         }
 
                         if (answer != null && log.isDebugEnabled()) {
-                            log.debug("{} converted to endpoint: {} by component: {}", new Object[]{URISupport.sanitizeUri(uri), answer, component});
+                            log.debug("{} converted to endpoint: {} by component: {}", URISupport.sanitizeUri(uri), answer, component);
                         }
                     }
 
@@ -1643,7 +1643,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
             ClassResolver resolver = getClassResolver();
             InputStream inputStream = resolver.loadResourceAsStream(path);
-            log.debug("Loading component JSON Schema for: {} using class resolver: {} -> {}", new Object[]{componentName, resolver, inputStream});
+            log.debug("Loading component JSON Schema for: {} using class resolver: {} -> {}", componentName, resolver, inputStream);
             if (inputStream != null) {
                 try {
                     return IOHelper.loadText(inputStream);
@@ -1685,7 +1685,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
             ClassResolver resolver = getClassResolver();
             InputStream inputStream = resolver.loadResourceAsStream(path);
-            log.debug("Loading dataformat JSON Schema for: {} using class resolver: {} -> {}", new Object[]{dataFormatName, resolver, inputStream});
+            log.debug("Loading dataformat JSON Schema for: {} using class resolver: {} -> {}", dataFormatName, resolver, inputStream);
             if (inputStream != null) {
                 try {
                     return IOHelper.loadText(inputStream);
@@ -1723,7 +1723,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
             ClassResolver resolver = getClassResolver();
             InputStream inputStream = resolver.loadResourceAsStream(path);
-            log.debug("Loading language JSON Schema for: {} using class resolver: {} -> {}", new Object[]{languageName, resolver, inputStream});
+            log.debug("Loading language JSON Schema for: {} using class resolver: {} -> {}", languageName, resolver, inputStream);
             if (inputStream != null) {
                 try {
                     return IOHelper.loadText(inputStream);
@@ -1746,7 +1746,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             ClassResolver resolver = getClassResolver();
             InputStream inputStream = resolver.loadResourceAsStream(path);
             if (inputStream != null) {
-                log.debug("Loading eip JSON Schema for: {} using class resolver: {} -> {}", new Object[]{eipName, resolver, inputStream});
+                log.debug("Loading eip JSON Schema for: {} using class resolver: {} -> {}", eipName, resolver, inputStream);
                 try {
                     return IOHelper.loadText(inputStream);
                 } finally {
@@ -3281,7 +3281,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     String replaced = resolvePropertyPlaceholders(value);
                     if (!value.equals(replaced)) {
                         if (log.isDebugEnabled()) {
-                            log.debug("Camel property with key {} replaced value from {} -> {}", new Object[]{key, value, replaced});
+                            log.debug("Camel property with key {} replaced value from {} -> {}", key, value, replaced);
                         }
                         entry.setValue(replaced);
                     }
@@ -3798,7 +3798,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     protected void logRouteState(Route route, String state) {
         if (log.isInfoEnabled()) {
             if (route.getConsumer() != null) {
-                log.info("Route: {} is {}, was consuming from: {}", new Object[]{route.getId(), state, route.getConsumer().getEndpoint()});
+                log.info("Route: {} is {}, was consuming from: {}", route.getId(), state, route.getConsumer().getEndpoint());
             } else {
                 log.info("Route: {} is {}.", route.getId(), state);
             }

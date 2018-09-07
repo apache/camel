@@ -188,7 +188,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             deliverToOnRedeliveryProcessor(exchange, data);
 
             if (log.isTraceEnabled()) {
-                log.trace("Redelivering exchangeId: {} -> {} for Exchange: {}", new Object[]{exchange.getExchangeId(), outputAsync, exchange});
+                log.trace("Redelivering exchangeId: {} -> {} for Exchange: {}", exchange.getExchangeId(), outputAsync, exchange);
             }
 
             // emmit event we are doing redelivery

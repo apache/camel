@@ -259,7 +259,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForCamelContext(newName, name);
             done = !getManagementStrategy().isManaged(mc, on);
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Using name: {} in ObjectName[{}] exists? {}", new Object[]{name, on, done});
+                LOG.trace("Using name: {} in ObjectName[{}] exists? {}", name, on, done);
             }
         }
         return newName;

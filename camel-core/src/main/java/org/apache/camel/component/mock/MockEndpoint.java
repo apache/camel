@@ -1488,7 +1488,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             List<Exchange> list = getReceivedExchanges();
             int index = 0;
             for (Exchange exchange : list) {
-                LOG.debug("{} failed and received[{}]: {}", new Object[]{getEndpointUri(), ++index, exchange});
+                LOG.debug("{} failed and received[{}]: {}", getEndpointUri(), ++index, exchange);
             }
         }
         throw new AssertionError(getEndpointUri() + " " + message);

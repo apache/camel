@@ -170,7 +170,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
                 QueueReference ref = getComponent().getOrCreateQueue(this, size, isMultipleConsumers(), queueFactory);
                 queue = ref.getQueue();
                 String key = getComponent().getQueueKey(getEndpointUri());
-                LOG.info("Endpoint {} is using shared queue: {} with size: {}", new Object[]{this, key, ref.getSize() !=  null ? ref.getSize() : Integer.MAX_VALUE});
+                LOG.info("Endpoint {} is using shared queue: {} with size: {}", this, key, ref.getSize() !=  null ? ref.getSize() : Integer.MAX_VALUE);
                 // and set the size we are using
                 if (ref.getSize() != null) {
                     setSize(ref.getSize());
@@ -178,7 +178,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
             } else {
                 // fallback and create queue (as this endpoint has no component)
                 queue = createQueue();
-                LOG.info("Endpoint {} is using queue: {} with size: {}", new Object[]{this, getEndpointUri(), getSize()});
+                LOG.info("Endpoint {} is using queue: {} with size: {}", this, getEndpointUri(), getSize());
             }
         }
         return queue;

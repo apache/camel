@@ -69,7 +69,7 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // process the detour so we do the detour routing
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Sending to endpoint: {} is intercepted and detoured to: {} for exchange: {}", new Object[]{getEndpoint(), endpoint.getDetour(), exchange});
+            LOG.debug("Sending to endpoint: {} is intercepted and detoured to: {} for exchange: {}", getEndpoint(), endpoint.getDetour(), exchange);
         }
         // add header with the real endpoint uri
         exchange.getIn().setHeader(Exchange.INTERCEPTED_ENDPOINT, delegate.getEndpointUri());

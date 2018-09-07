@@ -147,7 +147,7 @@ public class ThrottlerTest extends ContextTestSupport {
         long maximum = calculateMaximum(intervalMs, throttle, messageCount) + 50;
         // add 500 in case running on slow CI boxes
         maximum += 500;
-        log.info("Sent {} exchanges in {}ms, with throttle rate of {} per {}ms. Calculated min {}ms and max {}ms", new Object[]{messageCount, elapsedTimeMs, throttle, intervalMs, minimum, maximum});
+        log.info("Sent {} exchanges in {}ms, with throttle rate of {} per {}ms. Calculated min {}ms and max {}ms", messageCount, elapsedTimeMs, throttle, intervalMs, minimum, maximum);
 
         assertTrue("Should take at least " + minimum + "ms, was: " + elapsedTimeMs, elapsedTimeMs >= minimum);
         assertTrue("Should take at most " + maximum + "ms, was: " + elapsedTimeMs, elapsedTimeMs <= maximum + TOLERANCE);

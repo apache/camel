@@ -508,7 +508,7 @@ public final class CamelContextHelper {
      */
     public static SortedMap<String, Properties> findComponents(CamelContext camelContext) throws LoadPropertiesException {
         ClassResolver resolver = camelContext.getClassResolver();
-        LOG.debug("Finding all components using class resolver: {} -> {}", new Object[]{resolver});
+        LOG.debug("Finding all components using class resolver: {} -> {}", resolver);
         Enumeration<URL> iter = resolver.loadAllResourcesAsURL(COMPONENT_DESCRIPTOR);
         return findComponents(camelContext, iter);
     }
@@ -611,7 +611,7 @@ public final class CamelContextHelper {
         SortedMap<String, Properties> answer = new TreeMap<>();
 
         ClassResolver resolver = camelContext.getClassResolver();
-        LOG.debug("Finding all EIPs using class resolver: {} -> {}", new Object[]{resolver});
+        LOG.debug("Finding all EIPs using class resolver: {} -> {}", resolver);
         URL url = resolver.loadResourceAsURL(MODEL_DESCRIPTOR);
         if (url != null) {
             InputStream is = null;
@@ -787,7 +787,7 @@ public final class CamelContextHelper {
                         }
                         changedProperties.put(name, value);
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Changed property [{}] from: {} to: {}", new Object[]{name, value, text});
+                            LOG.debug("Changed property [{}] from: {} to: {}", name, value, text);
                         }
                     }
                 }
