@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.salesforce;
 
-import org.junit.Test;
-
 import java.io.InputStream;
 import java.util.List;
 
@@ -27,6 +25,7 @@ import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
 import org.apache.camel.component.salesforce.api.dto.bulk.JobInfo;
 import org.apache.camel.component.salesforce.api.dto.bulk.OperationEnum;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
+import org.junit.Test;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theory;
 

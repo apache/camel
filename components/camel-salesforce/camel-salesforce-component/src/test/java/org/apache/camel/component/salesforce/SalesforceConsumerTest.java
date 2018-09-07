@@ -23,9 +23,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.sun.xml.bind.v2.schemagen.xmlschema.Any;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -38,8 +36,8 @@ import org.cometd.common.HashMapMessage;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -237,7 +235,7 @@ public class SalesforceConsumerTest {
         verify(in).setHeader("CamelSalesforceEventType", "TestEvent__e");
         verify(in).setHeader("CamelSalesforcePlatformEventSchema", "30H2pgzuWcF844p26Ityvg");
 
-        verify(processor).process(same(exchange), any()) ;
+        verify(processor).process(same(exchange), any());
 
         verifyNoMoreInteractions(in, processor);
     }

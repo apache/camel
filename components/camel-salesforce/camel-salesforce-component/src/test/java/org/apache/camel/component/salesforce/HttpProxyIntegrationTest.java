@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.salesforce;
-import org.junit.Before;
 
 import java.util.Arrays;
 import java.util.HashMap;
