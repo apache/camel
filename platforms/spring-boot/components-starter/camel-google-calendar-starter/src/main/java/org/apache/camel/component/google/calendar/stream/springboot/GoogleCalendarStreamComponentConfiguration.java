@@ -125,6 +125,10 @@ public class GoogleCalendarStreamComponentConfiguration
          * Max results to be returned
          */
         private Integer maxResults = 10;
+        /**
+         * Calendar Summary name to use
+         */
+        private String calendarSummaryName = "primary";
 
         public String getClientId() {
             return clientId;
@@ -196,6 +200,14 @@ public class GoogleCalendarStreamComponentConfiguration
 
         public void setMaxResults(Integer maxResults) {
             this.maxResults = maxResults;
+        }
+
+        public String getCalendarSummaryName() {
+            return calendarSummaryName;
+        }
+
+        public void setCalendarSummaryName(String calendarSummaryName) {
+            this.calendarSummaryName = calendarSummaryName;
         }
     }
 }
