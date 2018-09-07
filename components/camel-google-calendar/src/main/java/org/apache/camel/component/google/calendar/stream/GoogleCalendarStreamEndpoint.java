@@ -18,9 +18,6 @@ package org.apache.camel.component.google.calendar.stream;
 
 import java.io.UnsupportedEncodingException;
 
-import com.google.api.services.calendar.Calendar;
-import com.google.api.services.calendar.model.Event;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -31,6 +28,13 @@ import org.apache.camel.component.google.calendar.GoogleCalendarClientFactory;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.api.services.calendar.Calendar;
+import com.google.api.services.calendar.model.CalendarListEntry;
+import com.google.api.services.calendar.model.Event;
 
 /**
  * The google-calendar component provides access to Google Calendar in a streaming mod.
@@ -43,6 +47,8 @@ import org.apache.camel.spi.UriParam;
              consumerOnly = true,
              label = "api,cloud")
 public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(GoogleCalendarStreamEndpoint.class);
 
     @UriParam
     private GoogleCalendarStreamConfiguration configuration;
@@ -59,7 +65,25 @@ public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        final GoogleCalendarStreamConsumer consumer = new GoogleCalendarStreamConsumer(this, processor);
+        String calendarId = null;
+        if (getConfiguration().getCalendarSummaryName() != "primary") {
+            com.google.api.services.calendar.model.CalendarList calendars = getClient().calendarList().list().execute();
+            if (calendars.getItems() != null) {
+                for (CalendarListEntry entry : calendars.getItems()) {
+                    if (getConfiguration().getCalendarSummaryName().equals(entry.getSummary())) {
+                        calendarId = entry.getId();
+                    }
+                }
+            }
+            if (ObjectHelper.isEmpty(calendarId)) {
+                LOG.warn("The calendar {} doesn't exists fallback to primary calendar", getConfiguration().getCalendarSummaryName());
+                calendarId = "primary";
+            }
+        } else {
+            LOG.debug("Setting calendarId as primary", getConfiguration().getCalendarSummaryName());
+            calendarId = "primary";
+        }
+        final GoogleCalendarStreamConsumer consumer = new GoogleCalendarStreamConsumer(this, processor, calendarId);
         configureConsumer(consumer);
         return consumer;
     }

@@ -59,6 +59,9 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
 
     @UriParam(defaultValue = "10")
     private int maxResults = 10;
+    
+    @UriParam(defaultValue = "primary")
+    private String calendarSummaryName = "primary";
 
     public String getClientId() {
         return clientId;
@@ -164,10 +167,20 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
         this.maxResults = maxResults;
     }
 
+    public String getCalendarSummaryName() {
+        return calendarSummaryName;
+    }
+
+    /**
+     * Calendar Summary name to use
+     */
+    public void setCalendarSummaryName(String calendarSummaryName) {
+        this.calendarSummaryName = calendarSummaryName;
+    } 
+
     // *************************************************
     //
     // *************************************************
-
     public GoogleCalendarStreamConfiguration copy() {
         try {
             return (GoogleCalendarStreamConfiguration)super.clone();
