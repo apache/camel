@@ -418,7 +418,7 @@ public class FileOperations implements GenericFileOperations<File> {
             if (last != null) {
                 boolean result = file.setLastModified(last);
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Keeping last modified timestamp: {} on file: {} with result: {}", new Object[]{last, file, result});
+                    LOG.trace("Keeping last modified timestamp: {} on file: {} with result: {}", last, file, result);
                 }
             }
         }

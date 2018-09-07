@@ -200,7 +200,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
                 // use the end user configured poll timeout
                 exchange = queue.poll(pollTimeout, TimeUnit.MILLISECONDS);
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Polled queue {} with timeout {} ms. -> {}", new Object[]{ObjectHelper.getIdentityHashCode(queue), pollTimeout, exchange});
+                    LOG.trace("Polled queue {} with timeout {} ms. -> {}", ObjectHelper.getIdentityHashCode(queue), pollTimeout, exchange);
                 }
                 if (exchange != null) {
                     try {

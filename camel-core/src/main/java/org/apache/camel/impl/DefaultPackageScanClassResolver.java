@@ -472,7 +472,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
             boolean found = false;
             for (ClassLoader classLoader : set) {
                 if (log.isTraceEnabled()) {
-                    log.trace("Testing for class {} matches criteria [{}] using classloader: {}", new Object[]{externalName, test, classLoader});
+                    log.trace("Testing for class {} matches criteria [{}] using classloader: {}", externalName, test, classLoader);
                 }
                 try {
                     Class<?> type = classLoader.loadClass(externalName);

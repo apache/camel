@@ -123,7 +123,7 @@ public final class BacklogTracer extends ServiceSupport implements InterceptStra
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Should trace evaluated {} -> pattern: {}, filter: {}", new Object[]{definition.getId(), pattern, filter});
+            LOG.trace("Should trace evaluated {} -> pattern: {}, filter: {}", definition.getId(), pattern, filter);
         }
         return pattern && filter;
     }

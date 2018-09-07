@@ -386,7 +386,7 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
                     long u = heapUsage.getHeapMemoryUsage().getUsed();
                     long c = heapUsage.getHeapMemoryUsage().getCommitted();
                     long m = heapUsage.getHeapMemoryUsage().getMax();
-                    LOG.trace("Heap memory: [used={}M ({}%), committed={}M, max={}M]", new Object[]{u >> 20, percentage, c >> 20, m >> 20});
+                    LOG.trace("Heap memory: [used={}M ({}%), committed={}M, max={}M]", u >> 20, percentage, c >> 20, m >> 20);
                 }
 
                 if (percentage > spoolUsedHeapMemoryThreshold) {

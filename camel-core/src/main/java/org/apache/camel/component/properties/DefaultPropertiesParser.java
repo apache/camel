@@ -228,7 +228,7 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
                                     + " returned null value which is not allowed, from input: " + input);
                         } else {
                             if (log.isDebugEnabled()) {
-                                log.debug("Property with key [{}] applied by function [{}] -> {}", new Object[]{key, function.getName(), value});
+                                log.debug("Property with key [{}] applied by function [{}] -> {}", key, function.getName(), value);
                             }
                             return value;
                         }

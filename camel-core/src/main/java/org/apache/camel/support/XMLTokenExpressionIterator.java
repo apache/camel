@@ -465,7 +465,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                     depth++;
                     QName name = reader.getName();
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("se={}; depth={}; trackdepth={}", new Object[]{name, depth, trackdepth});
+                        LOG.trace("se={}; depth={}; trackdepth={}", name, depth, trackdepth);
                     }
                     
                     String token = getCurrentText();

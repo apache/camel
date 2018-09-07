@@ -110,7 +110,7 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
         int size = getSize(route, exchange);
         boolean stop = maxInflightExchanges > 0 && size > maxInflightExchanges;
         if (log.isTraceEnabled()) {
-            log.trace("{} > 0 && {} > {} evaluated as {}", new Object[]{maxInflightExchanges, size, maxInflightExchanges, stop});
+            log.trace("{} > 0 && {} > {} evaluated as {}", maxInflightExchanges, size, maxInflightExchanges, stop);
         }
         if (stop) {
             try {
@@ -128,7 +128,7 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
         size = getSize(route, exchange);
         boolean start = size <= resumeInflightExchanges;
         if (log.isTraceEnabled()) {
-            log.trace("{} <= {} evaluated as {}", new Object[]{size, resumeInflightExchanges, start});
+            log.trace("{} <= {} evaluated as {}", size, resumeInflightExchanges, start);
         }
         if (start) {
             try {

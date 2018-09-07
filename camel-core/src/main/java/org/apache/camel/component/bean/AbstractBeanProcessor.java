@@ -145,7 +145,7 @@ public abstract class AbstractBeanProcessor implements AsyncProcessor {
             Class<?> clazz = beanInvoke.getMethod().getDeclaringClass();
             boolean sameBean = clazz.isInstance(bean);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("BeanHolder bean: {} and beanInvocation bean: {} is same instance: {}", new Object[]{bean.getClass(), clazz, sameBean});
+                LOG.debug("BeanHolder bean: {} and beanInvocation bean: {} is same instance: {}", bean.getClass(), clazz, sameBean);
             }
             if (sameBean) {
                 try {

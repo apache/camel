@@ -151,7 +151,7 @@ public class SedaComponent extends UriEndpointComponent {
             ref.addReference(endpoint);
 
             if (log.isDebugEnabled()) {
-                log.debug("Reusing existing queue {} with size {} and reference count {}", new Object[]{key, size, ref.getCount()});
+                log.debug("Reusing existing queue {} with size {} and reference count {}", key, size, ref.getCount());
             }
             return ref;
         }
