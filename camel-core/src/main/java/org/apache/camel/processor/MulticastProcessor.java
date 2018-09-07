@@ -54,7 +54,6 @@ import org.apache.camel.processor.aggregate.DelegateAggregationStrategy;
 import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spi.TracedRouteNodes;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
@@ -690,14 +689,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         Processor processor = pair.getProcessor();
         final Producer producer = pair.getProducer();
 
-        TracedRouteNodes traced = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getTracedRouteNodes() : null;
-
         try {
-            // prepare tracing starting from a new block
-            if (traced != null) {
-                traced.pushBlock();
-            }
-
             StopWatch sw = null;
             if (producer != null) {
                 boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), exchange, producer.getEndpoint());
@@ -822,10 +814,6 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 }
             });
         } finally {
-            // pop the block so by next round we have the same staring point and thus the tracing looks accurate
-            if (traced != null) {
-                traced.popBlock();
-            }
         }
 
         return sync;
@@ -836,16 +824,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         Processor processor = pair.getProcessor();
         Producer producer = pair.getProducer();
 
-        TracedRouteNodes traced = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getTracedRouteNodes() : null;
-
         // compute time taken if sending to another endpoint
         StopWatch watch = null;
         try {
-            // prepare tracing starting from a new block
-            if (traced != null) {
-                traced.pushBlock();
-            }
-
             if (producer != null) {
                 boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), exchange, producer.getEndpoint());
                 if (sending) {
@@ -859,10 +840,6 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             AsyncProcessorHelper.process(async, exchange);
         } finally {
             pair.done();
-            // pop the block so by next round we have the same staring point and thus the tracing looks accurate
-            if (traced != null) {
-                traced.popBlock();
-            }
             if (producer != null && watch != null) {
                 Endpoint endpoint = producer.getEndpoint();
                 long timeTaken = watch.taken();

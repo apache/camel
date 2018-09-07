@@ -83,8 +83,6 @@ import org.apache.camel.model.transformer.TransformersDefinition;
 import org.apache.camel.model.validator.ValidatorsDefinition;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.HandleFault;
-import org.apache.camel.processor.interceptor.TraceFormatter;
-import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.runtimecatalog.JSonSchemaResolver;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ClassResolver;
@@ -204,16 +202,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         // setup JMX agent at first
         initJMXAgent();
 
-        Tracer tracer = getBeanForType(Tracer.class);
-        if (tracer != null) {
-            // use formatter if there is a TraceFormatter bean defined
-            TraceFormatter formatter = getBeanForType(TraceFormatter.class);
-            if (formatter != null) {
-                tracer.setFormatter(formatter);
-            }
-            LOG.info("Using custom Tracer: {}", tracer);
-            getContext().addInterceptStrategy(tracer);
-        }
         BacklogTracer backlogTracer = getBeanForType(BacklogTracer.class);
         if (backlogTracer != null) {
             LOG.info("Using custom BacklogTracer: {}", backlogTracer);

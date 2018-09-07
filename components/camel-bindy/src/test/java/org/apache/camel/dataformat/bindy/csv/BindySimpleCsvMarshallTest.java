@@ -26,13 +26,12 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.camel.EndpointInject;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.simple.oneclass.Order;
-import org.apache.camel.processor.interceptor.Tracer;
+
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -102,12 +101,6 @@ public class BindySimpleCsvMarshallTest extends AbstractJUnit4SpringContextTests
     public static class ContextConfig extends RouteBuilder {
 
         public void configure() {
-
-            Tracer tracer = new Tracer();
-            tracer.setLogLevel(LoggingLevel.ERROR);
-            tracer.setLogName("org.apache.camel.bindy");
-
-            getContext().addInterceptStrategy(tracer);
 
             BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
             camelDataFormat.setLocale("en");

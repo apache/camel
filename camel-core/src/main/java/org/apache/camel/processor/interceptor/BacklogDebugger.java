@@ -111,7 +111,6 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
     public BacklogDebugger(CamelContext camelContext) {
         this.camelContext = camelContext;
         DefaultDebugger debugger = new DefaultDebugger(camelContext);
-        debugger.setUseTracer(false);
         this.debugger = debugger;
     }
 
