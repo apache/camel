@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.salesforce;
-import org.junit.After;
 
 import java.io.IOException;
 import java.util.HashMap;
