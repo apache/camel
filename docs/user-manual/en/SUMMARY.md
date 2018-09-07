@@ -15,6 +15,7 @@
     * [Camel Core](camel-core.adoc)
     * [CamelContext](camelcontext.adoc)
     * [CEP](cep.adoc)
+    * [Component](component.adoc)
     * [Debugger](debugger.adoc)
     * [Delay Interceptor](delay-interceptor.adoc)
     * [Dependency Injection](dependency-injection.adoc)
@@ -41,14 +42,13 @@
     * [OnCompletion](oncompletion.adoc)
     * [Predicate](predicate.adoc)
     * [Registry](registry.adoc)
-    * [Scala DSL](scala-dsl.adoc)
+    * [RouteBuilder](route-builder.adoc)
+    * [Routes](routes.adoc)
 
 <!--
     * [Pluggable Class Resolvers](.adoc)
     * [Processor](.adoc)
-    * [RouteBuilder](.adoc)
     * [RoutePolicy](.adoc)
-    * [Routes](.adoc)
     * [ServicePool](.adoc)
     * [Stream caching](.adoc)
     * [ToAsync](.adoc)
@@ -544,27 +544,28 @@
 
 
 
-* Example
+* [Examples](examples.adoc)
     * [BAM Example](bam-example.adoc)
+    * [Guice JMS Example](guice-jms-example.adoc)
 
 * User Guide
 
     * [Camel JAR Dependencies](camel-jar-dependencies.adoc)
     * [Camel Boot](camel-boot.adoc)
-    * [Working with Camel and CDI]
-    * [Working with Camel and Spring]
-    * [Working with Camel and Guice]
+    * [Working with Camel and CDI](../../../components/camel-cdi/src/main/docs/cdi.adoc)
+    * [Working with Camel and Spring](spring.adoc)
+    * [Working with Camel and Guice](guice.adoc)
     * [Working with Camel and Karaf](karaf.adoc)
     * [How Do I Configure Endpoints?]
-    * [Bean Integration]
+    * [Bean Integration](bean-integration.adoc)
     * [Configuring Camel]
     * [Configuring route startup ordering and autostartup]
     * [Graceful Shutdown]
     * [AsyncProcessorAwaitManager] for insight into the routing engine when it has been forced to block threads while exchanges are being processed asynchronous.
     * [Error handling in Camel](error-handling-in-camel.adoc)
-    * [How to use Camel property placeholders]
+    * [How to use Camel property placeholders](using-propertyplaceholder.adoc)
     * [Tutorials]
-    * [Examples]
+    * [Examples](examples.adoc)
     * [Testing](testing.adoc)
         * [Test](test.adoc)
         * [Blueprint Testing](test-blueprint.adoc)
