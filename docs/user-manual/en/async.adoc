@@ -279,9 +279,53 @@ reply. And then other route that we want to invoke while the
 <<http-component,HTTP>> service is on route. This allows you to be able to
 process the two routes simultaneously:
 
+[source,java]
+---------------------------------------------------------------------------
+// Some other service to return a name, this is invoked synchronously
+from("direct:name")
+  .transform(constant("Claus"))
+  .to("mock:result");
+	
+// Simulate a slow http service (delaying 1 sec) we want to invoke async
+from("jetty:http://0.0.0.0:%s/myservice", getPort())
+  .delay(1000)
+  .transform(constant("Bye World"))
+  .to("mock:result");
+---------------------------------------------------------------------------
+
 And then we have the client API where we call the two routes and we can
 get the responses from both of them. As the code is based on unit test
 there is a bit of mock in there as well:
+
+[source,java]
+---------------------------------------------------------------------------
+MockEndpoint mock = getMockEndpoint("mock:result");
+// We expect the name job to be faster than the async job even though the async job
+// was started first
+mock.expectedBodiesReceived("Claus", "Bye World");
+	
+// Send a async request/reply message to the http endpoint
+Future<Object> future = template.asyncRequestBody("http://0.0.0.0:" + getPort() + "/myservice", "Hello World");
+	
+// We got the future so in the meantime we can do other stuff, as this is Camel
+// so lets invoke another request/reply route but this time is synchronous
+String name = template.requestBody("direct:name", "Give me a name", String.class);
+assertEquals("Claus", name);
+	
+// Okay we got a name and we have done some other work at the same time
+// the async route is running, but now its about time to wait and get
+// get the response from the async task
+
+// We use the extract future body to get the response from the future
+// (waiting if needed) and then return a string body response.
+// This allows us to do this in a single code line instead of using the
+// JDK Future API to get hold of it, but you can also use that if you want
+// Adding the (String) To make the CS happy
+String response = template.extractFutureBody(future, String.class);
+assertEquals("Bye World", response);
+
+assertMockEndpointsSatisfied();
+---------------------------------------------------------------------------
 
 All together it should give you the basic idea how to use this
 Async API and what it can do.
@@ -294,6 +338,23 @@ This example is just a pure synchronous version of the async based example above
 
 The route is the same, so its just how the client initiate and send the
 messages that differs:
+
+[source,java]
+---------------------------------------------------------------------------
+MockEndpoint mock = getMockEndpoint("mock:result");
+// We expect the http job to complete before the name job
+mock.expectedBodiesReceived("Bye World", "Claus");
+
+// Send a sync request/reply message to the http endpoint
+String response = template.requestBody("http://0.0.0.0:" + getPort() + "/myservice", "Hello World", String.class);
+assertEquals("Bye World", response);
+
+// Send a sync request/reply message to the direct endpoint
+String name = template.requestBody("direct:name", "Give me a name", String.class);
+assertEquals("Claus", name);
+
+assertMockEndpointsSatisfied();
+---------------------------------------------------------------------------
 
 [[Async-UsingtheAPIwithcallbacks]]
 Using the Async API with callbacks
@@ -308,6 +369,16 @@ next request.
 First we define a route in Camel for the <<http-component,HTTP>> service
 where we simulate a slow server as it takes at least 1 second to reply.
 
+[source,java]
+---------------------------------------------------------------------------
+// The mocks are here for unit test
+// Simulate a slow http service (delaying a bit) we want to invoke async
+from("jetty:http://0.0.0.0:" + getPort() + "/myservice")
+  .delay(300)
+  .transform(body().prepend("Hello "))
+  .to("mock:result");
+---------------------------------------------------------------------------
+
 Then we define our callback where we gather the responses. As this is
 based on an unit test it just gathers the responses in a list. This is a
 shared callback we use for every request we send in, but you can use
@@ -317,12 +388,54 @@ Exchange was processed successfully or failed. The
 `org.apache.camel.spi.Synchronization` API provides fine grained methods
 for `onCompletion` and `onFailure` for the two situations.
 
+[source,java]
+---------------------------------------------------------------------------
+/**
+ * Our own callback that will gather all the responses.
+ * We extend the SynchronizationAdapter class as we then only need to override the onComplete method.
+ */
+private static class MyCallback extends SynchronizationAdapter {
+
+  // below the String elements are added in the context of different threads so that we should make
+  // sure that this's done in a thread-safe manner, that's no two threads should call the data.add()
+  // method below concurrently, so why we use Vector here and not e.g. ArrayList
+  private final List<String> data = new Vector<>();
+
+  @Override
+  public void onComplete(Exchange exchange) {
+    // this method is invoked when the exchange was a success and we can get the response
+    String body = exchange.getOut().getBody(String.class);
+    data.add(body);
+
+    // the latch is used for testing purposes
+    LATCH.countDown();
+  }
+
+  public List<String> getData() {
+    return data;
+  }
+}
+---------------------------------------------------------------------------
+
 And then we have the client API where we call the <<http-component,HTTP>>
 service using `asyncCallback` 3 times with different input. As the
 invocation is Async the client will send 3 requests
 right after each other, so we have 3 concurrent exchanges in progress.
 The response is gathered by our callback so we do not have to care how
 to get the response.
+
+
+[source,java]
+---------------------------------------------------------------------------
+MyCallback callback = new MyCallback();
+
+// Send 3 async request/reply message to the http endpoint
+// where we let the callback handle gathering the responses
+String url = "http://localhost:" + getPort() + "/myservice";
+template.asyncCallbackRequestBody(url, "Claus", callback);
+template.asyncCallbackRequestBody(url, "Hadrian", callback);
+template.asyncCallbackRequestBody(url, "Willem", callback);
+---------------------------------------------------------------------------
 
 [[Async-UsingtheAPIwiththeCamelclassicAPI]]
 Using the Async API with the Camel classic API
@@ -485,6 +598,30 @@ turn the route into multi threading asynchronous routing before the
 heavy CPU task. Then the messages that does not expect a reply can
 return beforehand. And the messages that expect a reply, well yeah they
 have to wait anyway. So this can be accomplished like the route below:
+
+[source,java]
+------------------------------------------------------------------------------------------------------------------------------
+// just a unit test but imagine using your own data format that does complex
+// and CPU heavy processing for decrypting the message
+DataFormat mySecureDataFormat = new StringDataFormat("iso-8859-1");
+
+// list on the JMS queue for new orders
+from("jms:queue:order")
+  // do some sanity check validation
+  .to("bean:validateOrder")
+  .to("mock:validate")
+  // use multi threading with a pool size of 20
+  // turn the route async as some others do not expect a reply
+  // and a few does then we can use the threads DSL as a turning point
+  // if the JMS ReplyTo was set then we expect a reply, otherwise not
+  // use a pool of 20 threads for the point forward
+  .threads(20)
+  // do some CPU heavy processing of the message (we simulate and delay just 500 ms)
+  .unmarshal(mySecureDataFormat)
+  .delay(500)
+  .to("bean:handleOrder")
+  .to("mock:order");
+------------------------------------------------------------------------------------------------------------------------------
 
 WARNING: *Transactions and threads DSL*
 Mind that when using transactions its often required that the
