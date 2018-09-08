@@ -118,7 +118,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 12 options, which are listed below.
+The component supports 13 options, which are listed below.
 
 
 
@@ -128,6 +128,7 @@ The component supports 12 options, which are listed below.
 | *camel.component.google-calendar-stream.client-factory* | The client Factory. The option is a org.apache.camel.component.google.calendar.GoogleCalendarClientFactory type. |  | String
 | *camel.component.google-calendar-stream.configuration.access-token* | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
 | *camel.component.google-calendar-stream.configuration.application-name* | Google Calendar application name. Example would be camel-google-calendar/1.0 |  | String
+| *camel.component.google-calendar-stream.configuration.calendar-summary-name* | Calendar Summary name to use | primary | String
 | *camel.component.google-calendar-stream.configuration.client-id* | Client ID of the mail application |  | String
 | *camel.component.google-calendar-stream.configuration.client-secret* | Client secret of the mail application |  | String
 | *camel.component.google-calendar-stream.configuration.index* | Specifies an index for the endpoint |  | String
