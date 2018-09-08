@@ -19,8 +19,15 @@ package org.apache.camel.parser.helper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Stack;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -102,6 +109,7 @@ public final class XmlLineNumberParser {
             private Locator locator;
             private boolean found;
             private final Map<String, String> localNs = new HashMap<>();
+            private final Map<String, String> anonymousNs = new LinkedHashMap<>();
 
             @Override
             public void setDocumentLocator(final Locator locator) {
@@ -146,6 +154,19 @@ public final class XmlLineNumberParser {
                                     ns = localNs.get(prefix);
                                 }
                             }
+                        } else {
+                            // maybe there is an anonymous namespace (xmlns)
+                            if (attributes != null) {
+                                ns = attributes.getValue("xmlns");
+                                if (ns != null) {
+                                    anonymousNs.put(qName, ns);
+                                } else if (!anonymousNs.isEmpty()) {
+                                    // grab latest anonymous namespace to use as the namespace as
+                                    // this child tag should use the parents+ namespace
+                                    List<String> values = new ArrayList<>(anonymousNs.values());
+                                    ns = values.get(values.size() - 1);
+                                }
+                            }
                         }
                         if (ns != null) {
                             el = doc.createElementNS(ns, qName);
@@ -154,8 +175,10 @@ public final class XmlLineNumberParser {
                         }
                     }
 
-                    for (int i = 0; i < attributes.getLength(); i++) {
-                        el.setAttribute(attributes.getQName(i), attributes.getValue(i));
+                    if (attributes != null) {
+                        for (int i = 0; i < attributes.getLength(); i++) {
+                            el.setAttribute(attributes.getQName(i), attributes.getValue(i));
+                        }
                     }
 
                     el.setUserData(LINE_NUMBER, String.valueOf(this.locator.getLineNumber()), null);
@@ -185,6 +208,8 @@ public final class XmlLineNumberParser {
                     closedEl.setUserData(LINE_NUMBER_END, String.valueOf(this.locator.getLineNumber()), null);
                     closedEl.setUserData(COLUMN_NUMBER_END, String.valueOf(this.locator.getColumnNumber()), null);
                 }
+
+                anonymousNs.remove(qName);
             }
 
             @Override
