@@ -115,7 +115,7 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
             if (response.getHeader(Exchange.HTTP_RESPONSE_CODE) != null && !cxfExchange.containsKey(org.apache.cxf.message.Message.RESPONSE_CODE)) {
                 cxfExchange.put(org.apache.cxf.message.Message.RESPONSE_CODE, response.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class));
             }
-            if (response.getHeader(Exchange.CONTENT_TYPE) != null) {
+            if (response.getHeader(Exchange.CONTENT_TYPE) != null && !cxfExchange.containsKey(org.apache.cxf.message.Message.CONTENT_TYPE)) {
                 if (!ObjectHelper.isEmpty(cxfExchange) && !ObjectHelper.isEmpty(cxfExchange.getOutMessage())) {
                     cxfExchange.getOutMessage().putIfAbsent(org.apache.cxf.message.Message.PROTOCOL_HEADERS, 
                                                         new TreeMap<>(String.CASE_INSENSITIVE_ORDER));
