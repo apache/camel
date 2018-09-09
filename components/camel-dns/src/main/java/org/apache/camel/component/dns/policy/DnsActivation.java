@@ -72,7 +72,7 @@ public class DnsActivation {
             }
         }
 
-        LOG.debug("Resolving " + hostname);
+        LOG.debug("Resolving {}", hostname);
         List<String> hostnames = new ArrayList<>();
         hostnames.add(hostname);
 
@@ -128,7 +128,7 @@ public class DnsActivation {
             while (inetAddressesEnumeration.hasMoreElements()) {
                 InetAddress inetAddress = inetAddressesEnumeration.nextElement();
                 String ip = inetAddress.getHostAddress();
-                LOG.debug("Local ip: " + ip);
+                LOG.debug("Local ip: {}", ip);
                 localIps.add(ip);
             }
         }

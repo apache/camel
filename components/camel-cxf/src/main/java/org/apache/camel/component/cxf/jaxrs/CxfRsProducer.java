@@ -637,7 +637,7 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
             } else {
                 body = binding.bindCamelMessageBodyToRequestBody(inMessage, exchange);
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Request body = " + body);
+                    LOG.trace("Request body = {}", body);
                 }
             }
         }

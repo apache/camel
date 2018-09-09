@@ -51,7 +51,7 @@ public class KestrelConsumer extends DefaultConsumer implements ShutdownAware {
 
     @Override
     protected void doStart() throws Exception {
-        log.info("Starting consumer for " + endpoint.getEndpointUri());
+        log.info("Starting consumer for {}", endpoint.getEndpointUri());
 
         int poolSize = endpoint.getConfiguration().getConcurrentConsumers();
 
@@ -83,7 +83,7 @@ public class KestrelConsumer extends DefaultConsumer implements ShutdownAware {
 
     @Override
     protected void doStop() throws Exception {
-        log.info("Stopping consumer for " + endpoint.getEndpointUri());
+        log.info("Stopping consumer for {}", endpoint.getEndpointUri());
 
         if (pollerExecutor != null) {
             endpoint.getCamelContext().getExecutorServiceManager().shutdown(pollerExecutor);

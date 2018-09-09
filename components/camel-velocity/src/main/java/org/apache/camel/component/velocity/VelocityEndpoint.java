@@ -102,7 +102,7 @@ public class VelocityEndpoint extends ResourceEndpoint {
                 InputStream reader = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), getPropertiesFile());
                 try {
                     properties.load(reader);
-                    log.info("Loaded the velocity configuration file " + getPropertiesFile());
+                    log.info("Loaded the velocity configuration file {}", getPropertiesFile());
                 } finally {
                     IOHelper.close(reader, getPropertiesFile(), log);
                 }

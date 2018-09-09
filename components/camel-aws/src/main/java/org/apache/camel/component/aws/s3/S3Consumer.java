@@ -127,7 +127,7 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
                 answer.add(exchange);
             }
         } catch (Throwable e) {
-            LOG.warn("Error getting S3Object due: " + e.getMessage(), e);
+            LOG.warn("Error getting S3Object due: {}", e.getMessage(), e);
             // ensure all previous gathered s3 objects are closed
             // if there was an exception creating the exchanges in this batch
             s3Objects.forEach(IOHelper::close);
@@ -209,7 +209,7 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
     protected void processRollback(Exchange exchange) {
         Exception cause = exchange.getException();
         if (cause != null) {
-            LOG.warn("Exchange failed, so rolling back message status: " + exchange, cause);
+            LOG.warn("Exchange failed, so rolling back message status: {}", exchange, cause);
         } else {
             LOG.warn("Exchange failed, so rolling back message status: {}", exchange);
         }

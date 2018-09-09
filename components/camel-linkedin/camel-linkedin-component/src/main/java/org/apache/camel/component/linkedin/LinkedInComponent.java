@@ -132,7 +132,7 @@ public class LinkedInComponent extends AbstractApiComponent<LinkedInApiName, Lin
         try {
             requestFilter.close();
         } catch (Exception e) {
-            LOG.warn("Error closing OAuth2 request filter: " + e.getMessage(), e);
+            LOG.warn("Error closing OAuth2 request filter: {}", e.getMessage(), e);
         }
     }
 }

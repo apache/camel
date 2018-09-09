@@ -315,7 +315,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
             List<ChildData<T>> children = new ArrayList<>(currentData.values());
             for (ChildData<T> child : children) {
                 if (ourState.uuid.equals(child.getNode().uuid) && !child.getPath().equals(pathId)) {
-                    LOG.debug("Deleting partially created znode: " + child.getPath());
+                    LOG.debug("Deleting partially created znode: {}", child.getPath());
                     client.delete().guaranteed().forPath(child.getPath());
                 }
             }

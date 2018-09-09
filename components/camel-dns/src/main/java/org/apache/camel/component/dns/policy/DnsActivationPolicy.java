@@ -47,36 +47,36 @@ public class DnsActivationPolicy extends RoutePolicySupport {
     }
 
     public void onInit(Route route) {
-        LOG.debug("onInit " + route.getId());
+        LOG.debug("onInit {}", route.getId());
         routes.put(route.getId(), route);
     }
 
     public void onRemove(Route route) {
-        LOG.debug("onRemove " + route.getId());
+        LOG.debug("onRemove {}", route.getId());
         // noop
     }
 
     @Override
     public void onStart(Route route) {
-        LOG.debug("onStart " + route.getId());
+        LOG.debug("onStart {}", route.getId());
         // noop
     }
 
     @Override
     public void onStop(Route route) {
-        LOG.debug("onStop " + route.getId());
+        LOG.debug("onStop {}", route.getId());
         // noop
     }
 
     @Override
     public void onSuspend(Route route) {
-        LOG.debug("onSuspend " + route.getId());
+        LOG.debug("onSuspend {}", route.getId());
         // noop
     }
 
     @Override
     public void onResume(Route route) {
-        LOG.debug("onResume " + route.getId());
+        LOG.debug("onResume {}", route.getId());
         // noop
     }
 
@@ -141,10 +141,10 @@ public class DnsActivationPolicy extends RoutePolicySupport {
         ServiceStatus routeStatus = route.getRouteContext().getCamelContext().getRouteStatus(route.getId());
 
         if (routeStatus == ServiceStatus.Stopped) {
-            LOG.info("Starting " + route.getId());
+            LOG.info("Starting {}", route.getId());
             startRoute(route);
         } else if (routeStatus == ServiceStatus.Suspended) {
-            LOG.info("Resuming " + route.getId());
+            LOG.info("Resuming {}", route.getId());
             startConsumer(route.getConsumer());
         } else {
             LOG.debug("Nothing to do " + route.getId() + " is " + routeStatus);
@@ -166,7 +166,7 @@ public class DnsActivationPolicy extends RoutePolicySupport {
         ServiceStatus routeStatus = route.getRouteContext().getCamelContext().getRouteStatus(route.getId());
 
         if (routeStatus == ServiceStatus.Started) {
-            LOG.info("Stopping " + route.getId());
+            LOG.info("Stopping {}", route.getId());
             stopRoute(route);
         } else {
             LOG.debug("Nothing to do " + route.getId() + " is " + routeStatus);

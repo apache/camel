@@ -132,7 +132,7 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
             messageHeaderfilter.filter(direction, (List<Header>)value);
         } catch (Throwable t) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Failed to cast value to Header<List> due to " + t.toString(), t);
+                LOG.debug("Failed to cast value to Header<List> due to {}", t.toString(), t);
             }
         }
         

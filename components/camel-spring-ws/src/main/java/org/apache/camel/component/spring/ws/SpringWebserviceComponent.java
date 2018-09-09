@@ -85,7 +85,7 @@ public class SpringWebserviceComponent extends UriEndpointComponent implements S
     private void addConsumerConfiguration(String remaining, Map<String, Object> parameters, SpringWebserviceConfiguration configuration) {
         EndpointMappingType type = EndpointMappingType.getTypeFromUriPrefix(remaining);
         if (type != null) {
-            LOG.debug("Building Spring Web Services consumer of type " + type);
+            LOG.debug("Building Spring Web Services consumer of type {}", type);
             String lookupKey = getLookupKey(remaining, type);
             if (EndpointMappingType.BEANNAME.equals(type)) {
                 addEndpointDispatcherToConfiguration(configuration, lookupKey);

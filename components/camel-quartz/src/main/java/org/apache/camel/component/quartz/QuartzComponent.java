@@ -257,7 +257,7 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
                 LOG.info("Cannot shutdown Quartz scheduler: " + scheduler.getSchedulerName() + " as there are still " + number.get() + " jobs registered.");
             } else {
                 // no more jobs then shutdown the scheduler
-                LOG.info("There are no more jobs registered, so shutting down Quartz scheduler: " + scheduler.getSchedulerName());
+                LOG.info("There are no more jobs registered, so shutting down Quartz scheduler: {}", scheduler.getSchedulerName());
                 scheduler.shutdown();
                 scheduler = null;
             }
@@ -360,7 +360,7 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
      */
     public void shutdownScheduler() throws SchedulerException {
         if (scheduler != null) {
-            LOG.info("Forcing shutdown of Quartz scheduler: " + scheduler.getSchedulerName());
+            LOG.info("Forcing shutdown of Quartz scheduler: {}", scheduler.getSchedulerName());
             scheduler.shutdown();
             scheduler = null;
         }
@@ -400,7 +400,7 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
                     getScheduler().start();
                 }
             } else {
-                LOG.info("Starting Quartz scheduler: " + getScheduler().getSchedulerName());
+                LOG.info("Starting Quartz scheduler: {}", getScheduler().getSchedulerName());
                 getScheduler().start();
             }
         }

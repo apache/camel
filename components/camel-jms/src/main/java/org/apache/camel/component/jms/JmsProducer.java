@@ -533,13 +533,13 @@ public class JmsProducer extends DefaultAsyncProducer {
             CamelJmsTemplate template = (CamelJmsTemplate) getInOnlyTemplate();
 
             if (log.isDebugEnabled()) {
-                log.debug("Testing JMS Connection on startup for destination: " + template.getDefaultDestinationName());
+                log.debug("Testing JMS Connection on startup for destination: {}", template.getDefaultDestinationName());
             }
 
             Connection conn = template.getConnectionFactory().createConnection();
             JmsUtils.closeConnection(conn);
 
-            log.debug("Successfully tested JMS Connection on startup for destination: " + template.getDefaultDestinationName());
+            log.debug("Successfully tested JMS Connection on startup for destination: {}", template.getDefaultDestinationName());
         } catch (Exception e) {
             throw new FailedToCreateProducerException(getEndpoint(), e);
         }

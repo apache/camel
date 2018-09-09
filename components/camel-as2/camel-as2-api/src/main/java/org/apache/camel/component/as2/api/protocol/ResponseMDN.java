@@ -73,7 +73,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
             // RFC4130 - 7.6 - Status codes in the 200 range SHOULD also be used when an entity is returned
             // (a signed receipt in a multipart/signed content type or an unsigned
             // receipt in a multipart/report)
-            LOG.debug("MDN not return due to response status code: " + statusCode);
+            LOG.debug("MDN not return due to response status code: {}", statusCode);
             return;
         }
 
@@ -85,7 +85,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
             LOG.debug("MDN not returned due to null request");
             throw new HttpException("request missing from HTTP context");
         }
-        LOG.debug("Processing MDN for request: " + request);
+        LOG.debug("Processing MDN for request: {}", request);
 
         if (HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_TO) == null) {
             // no receipt requested by sender
