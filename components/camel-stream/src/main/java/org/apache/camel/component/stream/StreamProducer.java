@@ -150,7 +150,7 @@ public class StreamProducer extends DefaultProducer {
         Writer writer = new OutputStreamWriter(outputStream, charset);
         BufferedWriter bw = IOHelper.buffered(writer);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Writing as text: {} to {} using encoding: {}", new Object[]{body, outputStream, charset});
+            LOG.debug("Writing as text: {} to {} using encoding: {}", body, outputStream, charset);
         }
         bw.write(s);
         bw.write(System.lineSeparator());

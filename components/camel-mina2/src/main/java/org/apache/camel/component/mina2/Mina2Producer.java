@@ -408,7 +408,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
             codecFactory = new Mina2UdpProtocolCodecFactory(this.getEndpoint().getCamelContext());
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("{}: Using CodecFactory: {}", new Object[]{type, codecFactory});
+                LOG.debug("{}: Using CodecFactory: {}", type, codecFactory);
             }
         }
 

@@ -217,7 +217,7 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
     protected Message getResponseMessage(Exchange exchange, MessageEvent messageEvent) throws Exception {
         Object body = messageEvent.getMessage();
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Channel: {} received body: {}", new Object[]{messageEvent.getChannel(), body});
+            LOG.debug("Channel: {} received body: {}", messageEvent.getChannel(), body);
         }
 
         // if textline enabled then covert to a String which must be used for textline

@@ -48,7 +48,7 @@ public class JmsRequestReplyExclusiveReplyToConcurrentTest extends CamelTestSupp
                 @Override
                 public void run() {
                     String reply = template.requestBody("direct:start", "" + num, String.class);
-                    log.info("Sent {} expecting reply 'Hello {}' got --> {}", new Object[]{num, num, reply});
+                    log.info("Sent {} expecting reply 'Hello {}' got --> {}", num, num, reply);
                     assertNotNull(reply);
                     assertEquals("Hello " + num, reply);
                     latch.countDown();

@@ -57,14 +57,14 @@ public class OsgiClassResolver extends DefaultClassResolver {
         if (clazz == null) {
             clazz = doLoadClass(name, bundleContext.getBundle());
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Loading class {} using BundleContext {} -> {}", new Object[]{name, bundleContext.getBundle(), clazz});
+                LOG.trace("Loading class {} using BundleContext {} -> {}", name, bundleContext.getBundle(), clazz);
             }
         }
         if (clazz == null && camelContext != null) {
             // fallback and load class using the application context classloader
             clazz = super.loadClass(name, camelContext.getApplicationContextClassLoader());
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Loading class {} using CamelContext {} -> {}", new Object[]{name, camelContext, clazz});
+                LOG.trace("Loading class {} using CamelContext {} -> {}", name, camelContext, clazz);
             }
         }
         return clazz;

@@ -192,7 +192,7 @@ public class VelocityEndpoint extends ResourceEndpoint {
             exchange.getIn().removeHeader(VelocityConstants.VELOCITY_TEMPLATE);
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Velocity content read from resource {} with resourceUri: {} for endpoint {}", new Object[]{getResourceUri(), path, getEndpointUri()});
+                log.debug("Velocity content read from resource {} with resourceUri: {} for endpoint {}", getResourceUri(), path, getEndpointUri());
             }
             reader = getEncoding() != null ? new InputStreamReader(getResourceAsInputStream(), getEncoding()) : new InputStreamReader(getResourceAsInputStream());
         }

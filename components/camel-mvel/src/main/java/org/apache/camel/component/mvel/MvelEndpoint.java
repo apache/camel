@@ -105,7 +105,7 @@ public class MvelEndpoint extends ResourceEndpoint {
             compiled = TemplateCompiler.compileTemplate(content, mvelContext);
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Mvel content read from resource {} with resourceUri: {} for endpoint {}", new Object[]{getResourceUri(), path, getEndpointUri()});
+                log.debug("Mvel content read from resource {} with resourceUri: {} for endpoint {}", getResourceUri(), path, getEndpointUri());
             }
             // getResourceAsInputStream also considers the content cache
             Reader reader = getEncoding() != null ? new InputStreamReader(getResourceAsInputStream(), getEncoding()) : new InputStreamReader(getResourceAsInputStream());

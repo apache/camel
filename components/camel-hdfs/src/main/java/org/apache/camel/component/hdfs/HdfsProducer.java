@@ -133,20 +133,20 @@ public class HdfsProducer extends DefaultProducer {
 
         // if we are starting up then log at info level, and if runtime then log at debug level to not flood the log
         if (onStartup) {
-            log.info("Connecting to hdfs file-system {}:{}/{} (may take a while if connection is not available)", new Object[]{config.getHostName(), config.getPort(), actualPath.toString()});
+            log.info("Connecting to hdfs file-system {}:{}/{} (may take a while if connection is not available)", config.getHostName(), config.getPort(), actualPath.toString());
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Connecting to hdfs file-system {}:{}/{} (may take a while if connection is not available)", new Object[]{config.getHostName(), config.getPort(), actualPath.toString()});
+                log.debug("Connecting to hdfs file-system {}:{}/{} (may take a while if connection is not available)", config.getHostName(), config.getPort(), actualPath.toString());
             }
         }
 
         HdfsOutputStream answer = HdfsOutputStream.createOutputStream(actualPath.toString(), config);
 
         if (onStartup) {
-            log.info("Connected to hdfs file-system {}:{}/{}", new Object[]{config.getHostName(), config.getPort(), actualPath.toString()});
+            log.info("Connected to hdfs file-system {}:{}/{}", config.getHostName(), config.getPort(), actualPath.toString());
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Connected to hdfs file-system {}:{}/{}", new Object[]{config.getHostName(), config.getPort(), actualPath.toString()});
+                log.debug("Connected to hdfs file-system {}:{}/{}", config.getHostName(), config.getPort(), actualPath.toString());
             }
         }
 

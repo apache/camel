@@ -778,7 +778,7 @@ public class WebsocketComponent extends UriEndpointComponent implements SSLConte
             StringHelper.notEmpty(host, "host", this);
             ObjectHelper.notNull(port, "port", this);
 
-            LOG.info("Starting static resources server {}:{} with static resource: {}", new Object[]{host, port, staticResources});
+            LOG.info("Starting static resources server {}:{} with static resource: {}", host, port, staticResources);
             ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
             staticResourcesServer = createStaticResourcesServer(context, host, port, staticResources);
             staticResourcesServer.start();
@@ -812,7 +812,7 @@ public class WebsocketComponent extends UriEndpointComponent implements SSLConte
         CONNECTORS.clear();
 
         if (staticResourcesServer != null) {
-            LOG.info("Stopping static resources server {}:{} with static resource: {}", new Object[]{host, port, staticResources});
+            LOG.info("Stopping static resources server {}:{} with static resource: {}", host, port, staticResources);
             staticResourcesServer.stop();
             staticResourcesServer.destroy();
             staticResourcesServer = null;

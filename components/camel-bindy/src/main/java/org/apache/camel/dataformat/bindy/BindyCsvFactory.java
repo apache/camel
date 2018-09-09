@@ -223,7 +223,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         field.setAccessible(true);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Pos: {}, Data: {}, Field type: {}", new Object[]{pos, data, field.getType()});
+            LOG.debug("Pos: {}, Data: {}, Field type: {}", pos, data, field.getType());
         }
 
         // Create format object to format the field
@@ -418,14 +418,14 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     v.add(l.get(idx));
                     index.put(ii, idx);
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Value: {}, pos: {}, at: {}", new Object[]{l.get(idx), ii, idx});
+                        LOG.debug("Value: {}, pos: {}, at: {}", l.get(idx), ii, idx);
                     }
                 } else {
                     v.add(l.get(0));
                     index.put(ii, 0);
                     ++idxSize;
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Value: {}, pos: {}, at index: {}", new Object[]{l.get(0), ii, 0});
+                        LOG.debug("Value: {}, pos: {}, at index: {}", l.get(0), ii, 0);
                     }
                 }
             }
@@ -486,7 +486,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     }
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Value to be formatted: {}, position: {}, and its formatted value: {}", new Object[]{value, datafield.pos(), result});
+                        LOG.debug("Value to be formatted: {}, position: {}, and its formatted value: {}", value, datafield.pos(), result);
                     }
 
                 } else {

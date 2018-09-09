@@ -593,7 +593,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         char separatorChar = '/';
         path = FileUtil.compactPath(path, separatorChar);
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Compacted path: {} -> {} using separator: {}", new Object[]{before, path, separatorChar});
+            LOG.trace("Compacted path: {} -> {} using separator: {}", before, path, separatorChar);
         }
 
         // not stepwise should change directory in one operation

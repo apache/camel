@@ -109,7 +109,7 @@ public class RestSwaggerProcessor implements Processor {
                         match = EndpointHelper.matchPattern(name, contextIdPattern);
                     }
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Match contextId: {} with pattern: {} -> {}", new Object[]{name, contextIdPattern, match});
+                        LOG.debug("Match contextId: {} with pattern: {} -> {}", name, contextIdPattern, match);
                     }
                 }
 

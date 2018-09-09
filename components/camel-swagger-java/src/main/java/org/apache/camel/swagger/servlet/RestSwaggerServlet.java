@@ -201,7 +201,7 @@ public class RestSwaggerServlet extends HttpServlet {
                             match = EndpointHelper.matchPattern(name, apiContextIdPattern);
                         }
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Match contextId: {} with pattern: {} -> {}", new Object[]{name, apiContextIdPattern, match});
+                            LOG.debug("Match contextId: {} with pattern: {} -> {}", name, apiContextIdPattern, match);
                         }
                     }
                 }

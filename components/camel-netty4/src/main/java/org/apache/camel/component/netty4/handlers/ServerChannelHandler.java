@@ -84,7 +84,7 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
         Object in = msg;
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Channel: {} received body: {}", new Object[]{ctx.channel(), in});
+            LOG.debug("Channel: {} received body: {}", ctx.channel(), in);
         }
 
         // create Exchange and let the consumer process it

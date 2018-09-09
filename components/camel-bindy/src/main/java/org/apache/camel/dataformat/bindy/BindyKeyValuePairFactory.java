@@ -93,7 +93,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                 KeyValuePairField keyValuePairField = field.getAnnotation(KeyValuePairField.class);
                 if (keyValuePairField != null) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Key declared in the class : {}, key : {}, Field : {}", new Object[]{cl.getName(), keyValuePairField.tag(), keyValuePairField});
+                        LOG.debug("Key declared in the class : {}, key : {}, Field : {}", cl.getName(), keyValuePairField.tag(), keyValuePairField);
                     }
                     keyValuePairFields.put(keyValuePairField.tag(), keyValuePairField);
                     annotatedFields.put(keyValuePairField.tag(), field);
@@ -445,7 +445,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
             field.setAccessible(true);
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Tag: {}, Field type: {}, class: {}", new Object[]{keyValuePairField.tag(), field.getType(), field.getDeclaringClass().getName()});
+                LOG.debug("Tag: {}, Field type: {}, class: {}", keyValuePairField.tag(), field.getType(), field.getDeclaringClass().getName());
             }
 
             // Create format
@@ -493,7 +493,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                         String value = keyValuePairField.tag() + this.getKeyValuePairSeparator() + valueFormatted;
 
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Value to be formatted: {}, for the tag: {}, and its formatted value: {}", new Object[]{keyValue, keyValuePairField.tag(), valueFormatted});
+                            LOG.debug("Value to be formatted: {}, for the tag: {}, and its formatted value: {}", keyValue, keyValuePairField.tag(), valueFormatted);
                         }
 
                         // Add the content to the TreeMap according to the
@@ -525,7 +525,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                         builder.append(value);
 
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Value added: {}{}{}{}", new Object[]{keyValuePairField.tag(), this.getKeyValuePairSeparator(), valueFormatted, separator});
+                            LOG.debug("Value added: {}{}{}{}", keyValuePairField.tag(), this.getKeyValuePairSeparator(), valueFormatted, separator);
                         }
                     }
                 }
@@ -542,7 +542,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                 String value = positions.get(posit.next());
 
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Value added at the position ({}) : {}{}", new Object[]{posit, value, separator});
+                    LOG.debug("Value added at the position ({}) : {}{}", posit, value, separator);
                 }
 
                 builder.append(value + separator);
