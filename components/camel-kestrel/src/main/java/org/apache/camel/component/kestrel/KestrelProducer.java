@@ -45,7 +45,7 @@ public class KestrelProducer extends DefaultProducer {
                 throw new CamelExchangeException("Error sending to: " + queue, exchange, e);
             }
         } else {
-            log.debug("No message body to send to: " + queue);
+            log.debug("No message body to send to: {}", queue);
         }
     }
 }

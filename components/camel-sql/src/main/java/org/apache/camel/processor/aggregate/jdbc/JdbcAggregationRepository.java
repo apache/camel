@@ -522,12 +522,12 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         if (current > 0) {
             LOG.info("On startup there are " + current + " aggregate exchanges (not completed) in repository: " + getRepositoryName());
         } else {
-            LOG.info("On startup there are no existing aggregate exchanges (not completed) in repository: " + getRepositoryName());
+            LOG.info("On startup there are no existing aggregate exchanges (not completed) in repository: {}", getRepositoryName());
         }
         if (completed > 0) {
             LOG.warn("On startup there are " + completed + " completed exchanges to be recovered in repository: " + getRepositoryNameCompleted());
         } else {
-            LOG.info("On startup there are no completed exchanges to be recovered in repository: " + getRepositoryNameCompleted());
+            LOG.info("On startup there are no completed exchanges to be recovered in repository: {}", getRepositoryNameCompleted());
         }
     }
 

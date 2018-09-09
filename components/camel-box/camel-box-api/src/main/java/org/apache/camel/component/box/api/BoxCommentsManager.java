@@ -92,7 +92,7 @@ public class BoxCommentsManager {
      */
     public List<BoxComment.Info> getFileComments(String fileId) {
         try {
-            LOG.debug("Getting comments of file(id=" + fileId + ")");
+            LOG.debug("Getting comments of file(id={})", fileId);
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
             }
@@ -116,7 +116,7 @@ public class BoxCommentsManager {
      */
     public BoxComment.Info getCommentInfo(String commentId) {
         try {
-            LOG.debug("Getting info for comment(id=" + commentId + ")");
+            LOG.debug("Getting info for comment(id={})", commentId);
             if (commentId == null) {
                 throw new IllegalArgumentException("Parameter 'commentId' can not be null");
             }
@@ -190,7 +190,7 @@ public class BoxCommentsManager {
      */
     public void deleteComment(String commentId) {
         try {
-            LOG.debug("Deleting comment(id=" + commentId + ")");
+            LOG.debug("Deleting comment(id={})", commentId);
             if (commentId == null) {
                 throw new IllegalArgumentException("Parameter 'commentId' can not be null");
             }

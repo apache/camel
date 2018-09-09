@@ -91,7 +91,7 @@ public final class NIOConverter {
                 try {
                     bytes = value.getBytes(charsetName);
                 } catch (UnsupportedEncodingException e) {
-                    LOG.warn("Cannot convert the byte to String with the charset " + charsetName, e);
+                    LOG.warn("Cannot convert the byte to String with the charset {}", charsetName, e);
                 }
             }
         }

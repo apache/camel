@@ -117,7 +117,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                         LOG.trace("Session isn't connected, trying to recreate and connect.");
                         session = createSession(configuration);
                         if (endpoint.getConfiguration().getConnectTimeout() > 0) {
-                            LOG.trace("Connecting use connectTimeout: " + endpoint.getConfiguration().getConnectTimeout() + " ...");
+                            LOG.trace("Connecting use connectTimeout: {} ...", endpoint.getConfiguration().getConnectTimeout());
                             session.connect(endpoint.getConfiguration().getConnectTimeout());
                         } else {
                             LOG.trace("Connecting ...");
@@ -129,13 +129,13 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                     channel = (ChannelSftp) session.openChannel("sftp");
 
                     if (endpoint.getConfiguration().getConnectTimeout() > 0) {
-                        LOG.trace("Connecting use connectTimeout: " + endpoint.getConfiguration().getConnectTimeout() + " ...");
+                        LOG.trace("Connecting use connectTimeout: {} ...", endpoint.getConfiguration().getConnectTimeout());
                         channel.connect(endpoint.getConfiguration().getConnectTimeout());
                     } else {
                         LOG.trace("Connecting ...");
                         channel.connect();
                     }
-                    LOG.debug("Connected to " + configuration.remoteServerInformation());
+                    LOG.debug("Connected to {}", configuration.remoteServerInformation());
                 }
 
                 // yes we could connect
@@ -332,13 +332,13 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             }
 
             public boolean promptYesNo(String s) {
-                LOG.warn("Server asks for confirmation (yes|no): " + s + ". Camel will answer no.");
+                LOG.warn("Server asks for confirmation (yes|no): {}. Camel will answer no.", s);
                 // Return 'false' indicating modification of the hosts file is disabled.
                 return false;
             }
 
             public void showMessage(String s) {
-                LOG.trace("Message received from Server: " + s);
+                LOG.trace("Message received from Server: {}", s);
             }
 
             public String[] promptKeyboardInteractive(String destination, String name,
@@ -473,7 +473,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             channel.rm(name);
             return true;
         } catch (SftpException e) {
-            LOG.debug("Cannot delete file: " + name, e);
+            LOG.debug("Cannot delete file: {}", name, e);
             throw new GenericFileOperationFailedException("Cannot delete file: " + name, e);
         }
     }

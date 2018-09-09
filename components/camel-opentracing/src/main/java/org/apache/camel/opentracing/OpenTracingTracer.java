@@ -239,7 +239,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                     ActiveSpanManager.activate(ese.getExchange(), span);
 
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("OpenTracing: start client span=" + span);
+                        LOG.trace("OpenTracing: start client span={}", span);
                     }
                 } else if (event instanceof ExchangeSentEvent) {
                     ExchangeSentEvent ese = (ExchangeSentEvent) event;
@@ -250,13 +250,13 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                     Span span = ActiveSpanManager.getSpan(ese.getExchange());
                     if (span != null) {
                         if (LOG.isTraceEnabled()) {
-                            LOG.trace("OpenTracing: start client span=" + span);
+                            LOG.trace("OpenTracing: start client span={}", span);
                         }
                         sd.post(span, ese.getExchange(), ese.getEndpoint());
                         span.finish();
                         ActiveSpanManager.deactivate(ese.getExchange());
                     } else {
-                        LOG.warn("OpenTracing: could not find managed span for exchange=" + ese.getExchange());
+                        LOG.warn("OpenTracing: could not find managed span for exchange={}", ese.getExchange());
                     }
                 }
             } catch (Throwable t) {
@@ -297,7 +297,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                 sd.pre(span, exchange, route.getEndpoint());
                 ActiveSpanManager.activate(exchange, span);
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("OpenTracing: start server span=" + span);
+                    LOG.trace("OpenTracing: start server span={}", span);
                 }
             } catch (Throwable t) {
                 // This exception is ignored
@@ -314,14 +314,14 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                 Span span = ActiveSpanManager.getSpan(exchange);
                 if (span != null) {
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("OpenTracing: finish server span=" + span);
+                        LOG.trace("OpenTracing: finish server span={}", span);
                     }
                     SpanDecorator sd = getSpanDecorator(route.getEndpoint());
                     sd.post(span, exchange, route.getEndpoint());
                     span.finish();
                     ActiveSpanManager.deactivate(exchange);
                 } else {
-                    LOG.warn("OpenTracing: could not find managed span for exchange=" + exchange);
+                    LOG.warn("OpenTracing: could not find managed span for exchange={}", exchange);
                 }
             } catch (Throwable t) {
                 // This exception is ignored

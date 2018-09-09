@@ -357,7 +357,7 @@ public class ProducerCache extends ServiceSupport {
 
         if (producer == null) {
             if (isStopped()) {
-                LOG.warn("Ignoring exchange sent after processor is stopped: " + exchange);
+                LOG.warn("Ignoring exchange sent after processor is stopped: {}", exchange);
                 return null;
             } else {
                 throw new IllegalStateException("No producer, this processor has not been started: " + this);
@@ -381,7 +381,7 @@ public class ProducerCache extends ServiceSupport {
                     ServiceHelper.stopAndShutdownService(producer);
                 } catch (Exception e) {
                     // ignore and continue
-                    LOG.warn("Error stopping/shutting down producer: " + producer, e);
+                    LOG.warn("Error stopping/shutting down producer: {}", producer, e);
                 }
             }
         }
@@ -411,7 +411,7 @@ public class ProducerCache extends ServiceSupport {
 
             if (target == null) {
                 if (isStopped()) {
-                    LOG.warn("Ignoring exchange sent after processor is stopped: " + exchange);
+                    LOG.warn("Ignoring exchange sent after processor is stopped: {}", exchange);
                     callback.done(true);
                     return true;
                 } else {
@@ -459,7 +459,7 @@ public class ProducerCache extends ServiceSupport {
                             ServiceHelper.stopAndShutdownService(producer);
                         } catch (Exception e) {
                             // ignore and continue
-                            LOG.warn("Error stopping/shutting down producer: " + producer, e);
+                            LOG.warn("Error stopping/shutting down producer: {}", producer, e);
                         }
                     }
                 } finally {

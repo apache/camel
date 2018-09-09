@@ -159,7 +159,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
             return null;
         }
         
-        LOG.debug("Found " + refs.length + " OSGi ScriptEngineResolver services");
+        LOG.debug("Found {} OSGi ScriptEngineResolver services", refs.length);
         
         for (ServiceReference<?> ref : refs) {
             ScriptEngineResolver resolver = (ScriptEngineResolver) context.getService(ref);
@@ -251,7 +251,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
                 }
                 return (ScriptEngineFactory) cls.newInstance();
             } catch (Exception e) {
-                LOG.warn("Cannot create the ScriptEngineFactory: " + e.getClass().getName(), e);
+                LOG.warn("Cannot create the ScriptEngineFactory: {}", e.getClass().getName(), e);
                 return null;
             }
         }
@@ -280,7 +280,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer, Serv
                     return null;
                 }
             } catch (Exception e) {
-                LOG.warn("Cannot create ScriptEngineFactory: " + e.getClass().getName(), e);
+                LOG.warn("Cannot create ScriptEngineFactory: {}", e.getClass().getName(), e);
                 return null;
             }
 

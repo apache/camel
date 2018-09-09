@@ -83,7 +83,7 @@ public class Web3jEndpoint extends DefaultEndpoint {
     }
 
     private Web3j buildService(String clientAddress, Web3jConfiguration configuration) {
-        LOG.info("Building service for endpoint: " + clientAddress + configuration);
+        LOG.info("Building service for endpoint: {}", clientAddress + configuration);
 
         if (configuration.getWeb3j() != null) {
             return configuration.getWeb3j();

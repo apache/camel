@@ -49,14 +49,14 @@ public class PahoConsumer extends DefaultConsumer {
                     try {
                         getEndpoint().getClient().subscribe(topic, getEndpoint().getQos());
                     } catch (MqttException e) {
-                        LOG.error("MQTT resubscribe failed " + e.getMessage(), e);
+                        LOG.error("MQTT resubscribe failed {}", e.getMessage(), e);
                     }
                 }
             }
 
             @Override
             public void connectionLost(Throwable cause) {
-                LOG.debug("MQTT broker connection lost due " + cause.getMessage(), cause);
+                LOG.debug("MQTT broker connection lost due {}", cause.getMessage(), cause);
             }
 
             @Override

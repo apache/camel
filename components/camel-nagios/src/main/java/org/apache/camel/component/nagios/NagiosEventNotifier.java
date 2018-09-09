@@ -136,7 +136,7 @@ public class NagiosEventNotifier extends EventNotifierSupport {
             sender = new NagiosPassiveCheckSender(nagiosSettings);
         }
 
-        log.info("Using " + configuration);
+        log.info("Using {}", configuration);
     }
 
     @Override

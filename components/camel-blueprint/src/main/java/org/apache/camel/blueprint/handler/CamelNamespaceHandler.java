@@ -904,7 +904,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             Class<?>[] parameterTypes = method.getParameterTypes();
             if (parameterTypes != null) {
                 if (parameterTypes.length != 1) {
-                    LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: " + method);
+                    LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
                 } else {
                     String propertyName = ObjectHelper.getPropertyName(method);
                     Object value = getInjectionPropertyValue(parameterTypes[0], propertyValue, propertyDefaultValue, propertyName, bean, beanName);
@@ -917,7 +917,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             Class<?>[] parameterTypes = method.getParameterTypes();
             if (parameterTypes != null) {
                 if (parameterTypes.length != 1) {
-                    LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: " + method);
+                    LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
                 } else {
                     Object value = getInjectionBeanValue(parameterTypes[0], name);
                     ObjectHelper.invokeMethod(method, bean, value);
@@ -929,7 +929,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             Class<?>[] parameterTypes = method.getParameterTypes();
             if (parameterTypes != null) {
                 if (parameterTypes.length != 1) {
-                    LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: " + method);
+                    LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
                 } else {
                     String propertyName = ObjectHelper.getPropertyName(method);
                     Object value = getInjectionValue(parameterTypes[0], endpointUri, endpointRef, endpointProperty, propertyName, bean, beanName);

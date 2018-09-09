@@ -99,7 +99,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Polling mailbox folder: " + getEndpoint().getConfiguration().getMailStoreLogInformation());
+            LOG.debug("Polling mailbox folder: {}", getEndpoint().getConfiguration().getMailStoreLogInformation());
         }
 
         if (getEndpoint().getConfiguration().getFetchSize() == 0) {
@@ -488,7 +488,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
 
         Exception cause = exchange.getException();
         if (cause != null) {
-            LOG.warn("Exchange failed, so rolling back message status: " + exchange, cause);
+            LOG.warn("Exchange failed, so rolling back message status: {}", exchange, cause);
         } else {
             LOG.warn("Exchange failed, so rolling back message status: {}", exchange);
         }

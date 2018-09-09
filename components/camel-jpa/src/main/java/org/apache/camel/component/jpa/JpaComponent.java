@@ -141,11 +141,11 @@ public class JpaComponent extends UriEndpointComponent {
                     LOG.info("Using EntityManagerFactory found in registry with id ["
                             + map.keySet().iterator().next() + "] " + entityManagerFactory);
                 } else {
-                    LOG.debug("Could not find a single EntityManagerFactory in registry as there was " + map.size() + " instances.");
+                    LOG.debug("Could not find a single EntityManagerFactory in registry as there was {} instances.", map.size());
                 }
             }
         } else {
-            LOG.info("Using EntityManagerFactory configured: " + entityManagerFactory);
+            LOG.info("Using EntityManagerFactory configured: {}", entityManagerFactory);
         }
 
         // lookup transaction manager and use it if only one provided
@@ -157,11 +157,11 @@ public class JpaComponent extends UriEndpointComponent {
                     LOG.info("Using TransactionManager found in registry with id ["
                             + map.keySet().iterator().next() + "] " + transactionManager);
                 } else {
-                    LOG.debug("Could not find a single TransactionManager in registry as there was " + map.size() + " instances.");
+                    LOG.debug("Could not find a single TransactionManager in registry as there was {} instances.", map.size());
                 }
             }
         } else {
-            LOG.info("Using TransactionManager configured on this component: " + transactionManager);
+            LOG.info("Using TransactionManager configured on this component: {}", transactionManager);
         }
 
         // transaction manager could also be hidden in a template
@@ -173,7 +173,7 @@ public class JpaComponent extends UriEndpointComponent {
                     LOG.info("Using TransactionManager found in registry with id ["
                             + map.keySet().iterator().next() + "] " + transactionManager);
                 } else {
-                    LOG.debug("Could not find a single TransactionTemplate in registry as there was " + map.size() + " instances.");
+                    LOG.debug("Could not find a single TransactionTemplate in registry as there was {} instances.", map.size());
                 }
             }
         }

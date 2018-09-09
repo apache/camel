@@ -65,7 +65,7 @@ public abstract class AbstractGitConsumer extends ScheduledPollConsumer {
                     .findGitDir() // scan up the file system tree
                     .build();
         } catch (IOException e) {
-            LOG.error("There was an error, cannot open " + endpoint.getLocalPath() + " repository");
+            LOG.error("There was an error, cannot open {} repository", endpoint.getLocalPath());
             throw e;
         }
         return repo;

@@ -108,7 +108,7 @@ public class InOutProducer extends SjmsProducer {
                 });
                 answer = new MessageConsumerResources(session, messageConsumer, replyToDestination);
             } catch (Exception e) {
-                log.error("Unable to create the MessageConsumerResource: " + e.getLocalizedMessage());
+                log.error("Unable to create the MessageConsumerResource: {}", e.getLocalizedMessage());
                 throw new CamelException(e);
             } finally {
                 connectionResource.returnConnection(conn);

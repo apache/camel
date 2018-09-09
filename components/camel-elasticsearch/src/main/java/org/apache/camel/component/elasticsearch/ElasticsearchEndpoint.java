@@ -80,7 +80,7 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
             if (configuration.isLocal()) {
                 LOG.info("Starting local ElasticSearch server");
             } else {
-                LOG.info("Joining ElasticSearch cluster " + configuration.getClusterName());
+                LOG.info("Joining ElasticSearch cluster {}", configuration.getClusterName());
             }
             
             if (configuration.getIp() != null) {
@@ -125,7 +125,7 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
             if (configuration.isLocal()) {
                 LOG.info("Stopping local ElasticSearch server");
             } else {
-                LOG.info("Leaving ElasticSearch cluster " + configuration.getClusterName());
+                LOG.info("Leaving ElasticSearch cluster {}", configuration.getClusterName());
             }
             client.close();
             if (node != null) {

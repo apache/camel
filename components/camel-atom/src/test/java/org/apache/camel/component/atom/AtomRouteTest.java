@@ -57,7 +57,7 @@ public class AtomRouteTest extends CamelTestSupport {
             String title = entry.getTitle();
             assertEquals("Title of message " + counter, expectedTitle, title);
 
-            LOG.debug("<<<< " + entry);
+            LOG.debug("<<<< {}", entry);
 
             counter++;
         }

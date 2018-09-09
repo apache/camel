@@ -61,7 +61,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Exception caught at Channel: " + ctx.channel(), cause);
+            LOG.trace("Exception caught at Channel: {}", ctx.channel(), cause);
         }
 
         if (exceptionHandled) {

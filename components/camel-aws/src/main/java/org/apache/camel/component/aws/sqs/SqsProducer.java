@@ -94,7 +94,7 @@ public class SqsProducer extends DefaultProducer {
             LOG.trace("Using the header delay");
             delayValue = headerValue;
         }
-        LOG.trace("found delay: " + delayValue);
+        LOG.trace("found delay: {}", delayValue);
         request.setDelaySeconds(delayValue == null ? Integer.valueOf(0) : delayValue);
     }
 

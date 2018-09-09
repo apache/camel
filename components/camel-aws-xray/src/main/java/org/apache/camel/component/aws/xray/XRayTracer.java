@@ -443,7 +443,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                             segment.getId(), segment.getName());
                 }
             } catch (AlreadyEmittedException aeEx) {
-                LOG.warn("Ignoring closing of (sub)segment " + route.getId() + " as the segment was already emitted.");
+                LOG.warn("Ignoring closing of (sub)segment {} as the segment was already emitted.", route.getId());
             }
         }
 

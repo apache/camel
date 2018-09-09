@@ -96,7 +96,7 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
                         }
                     } catch (InterruptedException e) {
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Hazelcast Queue Consumer Interrupted: " + e, e);
+                            LOG.debug("Hazelcast Queue Consumer Interrupted: {}", e, e);
                             continue;
                         }
                     }

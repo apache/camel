@@ -61,7 +61,7 @@ public final class CreateTopicSubscription {
         } catch (GoogleJsonResponseException e) {
             // 409 indicates that the resource is available already
             if (409 == e.getStatusCode()) {
-                LOG.info("Topic " + topic + " already exist");
+                LOG.info("Topic {} already exist", topic);
             } else {
                 throw e;
             }
@@ -79,7 +79,7 @@ public final class CreateTopicSubscription {
         } catch (GoogleJsonResponseException e) {
             // 409 indicates that the resource is available already
             if (409 == e.getStatusCode()) {
-                LOG.info("Subscription " + subscriptionName + " already exist");
+                LOG.info("Subscription {} already exist", subscriptionName);
             } else {
                 throw e;
             }

@@ -146,7 +146,7 @@ public class ZooKeeperElection {
         producerTemplate.send(zep, e);
 
         if (e.isFailed()) {
-            LOG.warn("Error setting up election node " + fullpath, e.getException());
+            LOG.warn("Error setting up election node {}", fullpath, e.getException());
         } else {
             LOG.info("Candidate node '{}' has been created", fullpath);
             try {

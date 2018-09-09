@@ -134,27 +134,27 @@ public class LdifProducer extends DefaultProducer {
         try {
             if (ldifEntry.isChangeAdd() || ldifEntry.isLdifContent()) {
                 if (log.isDebugEnabled()) {
-                    log.debug("attempting add of " + ldifEntry.toString());
+                    log.debug("attempting add of {}", ldifEntry.toString());
                 }
                 conn.add(ldifEntry.getEntry());
             } else if (ldifEntry.isChangeModify()) {
                 if (log.isDebugEnabled()) {
-                    log.debug("attempting modify of " + ldifEntry.toString());
+                    log.debug("attempting modify of {}", ldifEntry.toString());
                 }
                 conn.modify(ldifEntry.getDn(), ldifEntry.getModificationArray());
             } else if (ldifEntry.isChangeDelete()) {
                 if (log.isDebugEnabled()) {
-                    log.debug("attempting delete of " + ldifEntry.toString());
+                    log.debug("attempting delete of {}", ldifEntry.toString());
                 }
                 conn.delete(ldifEntry.getDn());
             } else if (ldifEntry.isChangeModDn()) {
                 if (log.isDebugEnabled()) {
-                    log.debug("attempting DN move of " + ldifEntry.toString());
+                    log.debug("attempting DN move of {}", ldifEntry.toString());
                 }
                 conn.moveAndRename(ldifEntry.getDn(), new Dn(ldifEntry.getNewRdn(), ldifEntry.getNewSuperior()), ldifEntry.isDeleteOldRdn());
             } else if (ldifEntry.isChangeModRdn()) {
                 if (log.isDebugEnabled()) {
-                    log.debug("attempting RDN move of " + ldifEntry.toString());
+                    log.debug("attempting RDN move of {}", ldifEntry.toString());
                 }
                 conn.rename(ldifEntry.getDn(), new Rdn(ldifEntry.getNewRdn()), ldifEntry.isDeleteOldRdn());
             }
