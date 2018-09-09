@@ -759,7 +759,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
 
         if (LOG.isDebugEnabled()) {
             if (minThreads != null) {
-                LOG.debug("Created HttpClient with thread pool {}-{} -> {}", new Object[]{minThreads, maxThreads, httpClient});
+                LOG.debug("Created HttpClient with thread pool {}-{} -> {}", minThreads, maxThreads, httpClient);
             } else {
                 LOG.debug("Created HttpClient with default thread pool size -> {}", httpClient);
             }

@@ -233,7 +233,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
         Object body = message;
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Channel: {} received body: {}", new Object[]{ctx.channel(), body});
+            LOG.debug("Channel: {} received body: {}", ctx.channel(), body);
         }
 
         // if textline enabled then covert to a String which must be used for textline

@@ -67,7 +67,7 @@ public class CamelServlet extends HttpServlet {
 
         final String asyncParam = config.getInitParameter(ASYNC_PARAM);
         this.async = asyncParam == null ? false : ObjectHelper.toBoolean(asyncParam);
-        log.trace("servlet '{}' initialized with: async={}", new Object[]{servletName, async});
+        log.trace("servlet '{}' initialized with: async={}", servletName, async);
     }
 
     @Override

@@ -184,7 +184,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             boolean login;
             if (username != null) {
                 if (account != null) {
-                    log.trace("Attempting to login user: {} using password: ******** and account: {}", new Object[]{username, account});
+                    log.trace("Attempting to login user: {} using password: ******** and account: {}", username, account);
                     login = client.login(username, configuration.getPassword(), account);
                 } else {
                     log.trace("Attempting to login user: {} using password: ********", username);

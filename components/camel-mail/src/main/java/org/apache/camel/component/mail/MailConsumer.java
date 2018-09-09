@@ -343,7 +343,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 Message message = holder.getValue();
 
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Mail #{} is of type: {} - {}", new Object[]{i, ObjectHelper.classCanonicalName(message), message});
+                    LOG.trace("Mail #{} is of type: {} - {}", i, ObjectHelper.classCanonicalName(message), message);
                 }
 
                 if (!message.getFlags().contains(Flags.Flag.DELETED)) {

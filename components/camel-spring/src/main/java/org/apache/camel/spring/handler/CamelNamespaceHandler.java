@@ -677,7 +677,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             autoRegisterMap.put(id, definition);
             parserContext.registerComponent(new BeanComponentDefinition(definition, id));
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Registered default: {} with id: {} on camel context: {}", new Object[]{definition.getBeanClassName(), id, contextId});
+                LOG.debug("Registered default: {} with id: {} on camel context: {}", definition.getBeanClassName(), id, contextId);
             }
         } else {
             // ups we have already registered it before with same id, but on another camel context

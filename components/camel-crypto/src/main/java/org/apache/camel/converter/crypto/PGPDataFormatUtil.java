@@ -218,8 +218,8 @@ public final class PGPDataFormatUtil {
                         useridParts);
                 continue;
             }
-            LOG.debug("User ID {} found in primary key with key ID {} containing one of the parts {}", new Object[] {
-                foundKeyUserIdForUserIdPart[0], primaryKey.getKeyID(), useridParts });
+            LOG.debug("User ID {} found in primary key with key ID {} containing one of the parts {}",
+                foundKeyUserIdForUserIdPart[0], primaryKey.getKeyID(), useridParts);
             // add adequate keys to the result
             for (Iterator<PGPPublicKey> keyIter = keyRing.getPublicKeys(); keyIter.hasNext();) {
                 PGPPublicKey key = keyIter.next();
@@ -418,8 +418,8 @@ public final class PGPDataFormatUtil {
                             useridParts);
                     continue;
                 }
-                LOG.debug("User ID {} found in primary key with key ID {} containing one of the parts {}", new Object[] {
-                    foundKeyUserIdForUserIdPart[0], primaryKey.getKeyID(), useridParts });
+                LOG.debug("User ID {} found in primary key with key ID {} containing one of the parts {}",
+                    foundKeyUserIdForUserIdPart[0], primaryKey.getKeyID(), useridParts);
                 // add all signing keys
                 for (Iterator<PGPSecretKey> iterKey = keyring.getSecretKeys(); iterKey.hasNext();) {
                     PGPSecretKey secKey = iterKey.next();

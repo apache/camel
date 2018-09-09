@@ -86,7 +86,7 @@ public class XmppPrivateChatProducer extends DefaultProducer {
             endpoint.getBinding().populateXmppMessage(message, exchange);
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Sending XMPP message to {} from {} : {}", new Object[]{participant, endpoint.getUser(), message.getBody()});
+                LOG.debug("Sending XMPP message to {} from {} : {}", participant, endpoint.getUser(), message.getBody());
             }
             chat.send(message);
         } catch (Exception e) {

@@ -336,7 +336,7 @@ public class MinaComponent extends UriEndpointComponent {
             codecFactory = new MinaUdpProtocolCodecFactory(getCamelContext());
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("{}: Using CodecFactory: {}", new Object[]{type, codecFactory});
+                LOG.debug("{}: Using CodecFactory: {}", type, codecFactory);
             }
         }
 

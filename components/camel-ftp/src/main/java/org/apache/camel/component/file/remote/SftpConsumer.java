@@ -160,7 +160,7 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
         for (SftpRemoteFile file : files) {
 
             if (log.isTraceEnabled()) {
-                log.trace("SftpFile[fileName={}, longName={}, dir={}]", new Object[]{file.getFilename(), file.getLongname(), file.isDirectory()});
+                log.trace("SftpFile[fileName={}, longName={}, dir={}]", file.getFilename(), file.getLongname(), file.isDirectory());
             }
 
             // check if we can continue polling in files
