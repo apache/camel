@@ -63,7 +63,7 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent exceptionEvent) throws Exception {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Exception caught at Channel: " + ctx.getChannel(), exceptionEvent.getCause());
+            LOG.trace("Exception caught at Channel: {}", ctx.getChannel(), exceptionEvent.getCause());
         }
          
         if (exceptionHandled) {

@@ -113,7 +113,7 @@ public class AvroListener {
     public boolean unregister(String messageName) {
         if (!StringUtils.isEmpty(messageName)) {
             if (consumerRegistry.remove(messageName) == null) {
-                Log.warn("Consumer with message name " + messageName + " was already unregistered.");
+                Log.warn("Consumer with message name {} was already unregistered.", messageName);
             }
         } else {
             defaultConsumer = null;

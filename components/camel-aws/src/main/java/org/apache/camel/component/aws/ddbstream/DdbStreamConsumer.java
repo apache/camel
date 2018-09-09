@@ -59,7 +59,7 @@ public class DdbStreamConsumer extends ScheduledBatchPollingConsumer {
                         .withLimit(getEndpoint().getConfiguration().getMaxResultsPerRequest());
             result = getClient().getRecords(req);
         } catch (ExpiredIteratorException e) {
-            LOG.warn("Expired Shard Iterator, attempting to resume from " + lastSeenSequenceNumber, e);
+            LOG.warn("Expired Shard Iterator, attempting to resume from {}", lastSeenSequenceNumber, e);
             GetRecordsRequest req = new GetRecordsRequest()
                         .withShardIterator(shardIteratorHandler.getShardIterator(lastSeenSequenceNumber))
                         .withLimit(getEndpoint().getConfiguration().getMaxResultsPerRequest());

@@ -502,7 +502,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                             case bE:
                                 break;
                             default:
-                                log.warn("Invalid acknowledgement type [" + acknowledgementMessageType + "] found in message - should be AA, AE or AR");
+                                log.warn("Invalid acknowledgement type [{}] found in message - should be AA, AE or AR", acknowledgementMessageType);
                             }
                         }
 

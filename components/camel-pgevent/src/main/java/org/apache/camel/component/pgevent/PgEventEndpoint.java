@@ -100,7 +100,7 @@ public class PgEventEndpoint extends DefaultEndpoint {
      * @throws IllegalArgumentException if there is an error in the parameters
      */
     protected final void parseUri() throws IllegalArgumentException {
-        LOG.info("URI: " + uri);
+        LOG.info("URI: {}", uri);
         if (uri.matches(FORMAT1)) {
             LOG.info("FORMAT1");
             String[] parts = uri.replaceFirst(FORMAT1, "$1:$2:$3:$4").split(":");

@@ -199,7 +199,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
                     fileList.add(remote);
                 }
             } else {
-                log.debug("Ignoring unsupported remote file type: " + file);
+                log.debug("Ignoring unsupported remote file type: {}", file);
             }
         }
 

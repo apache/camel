@@ -304,7 +304,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
         Boolean shutdownEager = CamelContextHelper.parseBoolean(getContext(), getShutdownEager());
         if (shutdownEager != null) {
-            LOG.debug("Using shutdownEager: " + shutdownEager);
+            LOG.debug("Using shutdownEager: {}", shutdownEager);
             getContext().setShutdownEager(shutdownEager);
         }
 
@@ -314,7 +314,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     protected void initCustomRegistry(SpringCamelContext context) {
         Registry registry = getBeanForType(Registry.class);
         if (registry != null) {
-            LOG.info("Using custom Registry: " + registry);
+            LOG.info("Using custom Registry: {}", registry);
             context.setRegistry(registry);
         }
     }
@@ -328,7 +328,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
             // setup properties component that uses this beans
             BridgePropertyPlaceholderConfigurer configurer = beans.values().iterator().next();
             String id = beans.keySet().iterator().next();
-            LOG.info("Bridging Camel and Spring property placeholder configurer with id: " + id);
+            LOG.info("Bridging Camel and Spring property placeholder configurer with id: {}", id);
 
             // get properties component
             PropertiesComponent pc = (PropertiesComponent) getContext().getComponent("properties", false);

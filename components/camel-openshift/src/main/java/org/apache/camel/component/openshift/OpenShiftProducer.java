@@ -388,7 +388,7 @@ public class OpenShiftProducer extends DefaultProducer {
         } else {
             ApplicationScale scale = app.getApplicationScale();
             if (scale.getValue().equals(ApplicationScale.NO_SCALE.getValue())) {
-                log.info("Scaling on application with id " + name + " is not enabled");
+                log.info("Scaling on application with id {} is not enabled", name);
             } else {
                 app.scaleDown();
                 ApplicationScale result = app.getApplicationScale();

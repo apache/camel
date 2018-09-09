@@ -57,7 +57,7 @@ public class CxfBeanDestination extends CamelDestination implements Processor {
         endpoint = cxfBeanComponent.getEndpoint(getCamelDestinationUri());
         
         if (endpoint == null) {
-            LOG.error("Failed to find endpoint " + getCamelDestinationUri());
+            LOG.error("Failed to find endpoint {}", getCamelDestinationUri());
             return;
         }
             

@@ -250,7 +250,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     protected void initCustomRegistry(BlueprintCamelContext context) {
         Registry registry = getBeanForType(Registry.class);
         if (registry != null) {
-            LOG.info("Using custom Registry: " + registry);
+            LOG.info("Using custom Registry: {}", registry);
             context.setRegistry(registry);
         }
     }

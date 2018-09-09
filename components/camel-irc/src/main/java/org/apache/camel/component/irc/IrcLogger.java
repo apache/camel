@@ -37,7 +37,7 @@ public class IrcLogger extends IRCEventAdapter {
 
     @Override
     public void onDisconnected() {
-        log.info("Server: " + server + " - onDisconnected");
+        log.info("Server: {} - onDisconnected", server);
     }
 
     @Override
@@ -107,7 +107,7 @@ public class IrcLogger extends IRCEventAdapter {
 
     @Override
     public void onRegistered() {
-        log.info("Server: " + server + " - onRegistered");
+        log.info("Server: {} - onRegistered", server);
     }
 
     @Override

@@ -169,7 +169,7 @@ public class KestrelComponent extends UriEndpointComponent {
         }
         synchronized (memcachedClientCache) {
             if ((memcachedClient = memcachedClientCache.get(key)) == null) {
-                LOG.info("Creating MemcachedClient for " + key);
+                LOG.info("Creating MemcachedClient for {}", key);
                 try {
                     memcachedClient = new MemcachedClient(memcachedConnectionFactory, config.getInetSocketAddresses());
                 } catch (Exception e) {
@@ -187,7 +187,7 @@ public class KestrelComponent extends UriEndpointComponent {
             memcachedClient.shutdown();
             memcachedClientCache.remove(key);
         } catch (Exception e) {
-            LOG.warn("Failed to close client connection to " + key, e);
+            LOG.warn("Failed to close client connection to {}", key, e);
         }
     }
 

@@ -181,7 +181,7 @@ public class DurationRoutePolicy extends org.apache.camel.support.RoutePolicySup
                     camelContext.suspend();
                 }
             } catch (Throwable e) {
-                log.warn("Error performing action: " + action, e);
+                log.warn("Error performing action: {}", action, e);
             }
         };
     }

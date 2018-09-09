@@ -75,14 +75,14 @@ public class AS2ServerConnection {
         
         @Override
         public void run() {
-            LOG.info("Listening on port " + this.serversocket.getLocalPort());
+            LOG.info("Listening on port {}", this.serversocket.getLocalPort());
             while (!Thread.interrupted()) {
                 try {
                     final int bufsize = 8 * 1024;
                     // Set up incoming HTTP connection
                     final Socket insocket = this.serversocket.accept();
                     final AS2BHttpServerConnection inconn = new AS2BHttpServerConnection(bufsize);
-                    LOG.info("Incoming connection from " + insocket.getInetAddress());
+                    LOG.info("Incoming connection from {}", insocket.getInetAddress());
                     inconn.bind(insocket);
 
                     // Start worker thread
@@ -95,7 +95,7 @@ public class AS2ServerConnection {
                     // Server socket closed
                     break;
                 } catch (final IOException e) {
-                    LOG.error("I/O error initialising connection thread: " + e.getMessage());
+                    LOG.error("I/O error initialising connection thread: {}", e.getMessage());
                     break;
                 }
             }
@@ -153,9 +153,9 @@ public class AS2ServerConnection {
             } catch (final ConnectionClosedException ex) {
                 LOG.info("Client closed connection");
             } catch (final IOException ex) {
-                LOG.error("I/O error: " + ex.getMessage());
+                LOG.error("I/O error: {}", ex.getMessage());
             } catch (final HttpException ex) {
-                LOG.error("Unrecoverable HTTP protocol violation: " + ex.getMessage());
+                LOG.error("Unrecoverable HTTP protocol violation: {}", ex.getMessage());
             } finally {
                 try {
                     this.serverConnection.shutdown();

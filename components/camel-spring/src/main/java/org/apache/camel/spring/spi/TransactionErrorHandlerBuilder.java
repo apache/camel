@@ -99,7 +99,7 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
             }
 
             if (transactionTemplate != null) {
-                LOG.debug("Found TransactionTemplate in registry to use: " + transactionTemplate);
+                LOG.debug("Found TransactionTemplate in registry to use: {}", transactionTemplate);
             }
         }
 

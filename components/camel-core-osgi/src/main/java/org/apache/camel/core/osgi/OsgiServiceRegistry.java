@@ -83,7 +83,7 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
                 }
             } catch (InvalidSyntaxException ex) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Invalid OSGi service reference filter, skipped lookup by service.pid. Filter expression: " + filterExpression, ex);
+                    LOG.debug("Invalid OSGi service reference filter, skipped lookup by service.pid. Filter expression: {}", filterExpression, ex);
                 }
             }
         }

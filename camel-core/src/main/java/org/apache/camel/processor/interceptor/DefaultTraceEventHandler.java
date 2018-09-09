@@ -118,7 +118,7 @@ public class DefaultTraceEventHandler implements TraceEventHandler, Service {
                 getTraceEventProducer(exchange).process(event);
             } catch (Exception e) {
                 // log and ignore this as the original Exchange should be allowed to continue
-                LOG.error("Error processing trace event (original Exchange will continue): " + event, e);
+                LOG.error("Error processing trace event (original Exchange will continue): {}", event, e);
             }
         }
     }

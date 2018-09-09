@@ -309,7 +309,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         // shutdown
         ShutdownStrategy shutdownStrategy = getBeanForType(ShutdownStrategy.class);
         if (shutdownStrategy != null) {
-            LOG.info("Using custom ShutdownStrategy: " + shutdownStrategy);
+            LOG.info("Using custom ShutdownStrategy: {}", shutdownStrategy);
             getContext().setShutdownStrategy(shutdownStrategy);
         }
         // add global interceptors
@@ -394,7 +394,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         // Route controller
         RouteController routeController = getBeanForType(RouteController.class);
         if (routeController != null) {
-            LOG.info("Using RouteController: " + routeController);
+            LOG.info("Using RouteController: {}", routeController);
             getContext().setRouteController(routeController);
         }
         // UuidGenerator

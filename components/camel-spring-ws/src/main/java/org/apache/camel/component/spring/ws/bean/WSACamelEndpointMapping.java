@@ -71,7 +71,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
             }
             // lookup for specific endpoint
             if (compositeOrSimpleKey != null && key.getLookupKey().equals(compositeOrSimpleKey)) {
-                LOG.debug("Found mapping for key" + key);
+                LOG.debug("Found mapping for key {}", key);
                 return endpoints.get(key);
             }
         }
@@ -97,7 +97,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
             }
             // look up for less specific endpoint
             if (simpleKey != null && key.getLookupKey().equals(simpleKey)) {
-                LOG.debug("Found mapping for key" + key);
+                LOG.debug("Found mapping for key {}", key);
                 return endpoints.get(key);
             }
         }

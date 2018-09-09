@@ -269,7 +269,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             if (knownHostsFile == null && config.isUseUserKnownHostsFile()) {
                 if (userKnownHostFile == null) {
                     userKnownHostFile = System.getProperty("user.home") + "/.ssh/known_hosts";
-                    LOG.info("Known host file not configured, using user known host file: " + userKnownHostFile);
+                    LOG.info("Known host file not configured, using user known host file: {}", userKnownHostFile);
                 }
                 knownHostsFile = userKnownHostFile;
             }
@@ -312,7 +312,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             }
         } catch (JSchException e) {
             session = null;
-            LOG.warn("Could not create ssh session for " + config.remoteServerInformation(), e);
+            LOG.warn("Could not create ssh session for {}", config.remoteServerInformation(), e);
         }
         return session;
     }

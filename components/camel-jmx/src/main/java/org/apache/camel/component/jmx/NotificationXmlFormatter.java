@@ -171,7 +171,7 @@ public class NotificationXmlFormatter extends ServiceSupport {
             LOG.info("Creating JAXBContext with contextPath: " + contextPath + " and classloader: " + cl);
             return JAXBContext.newInstance(contextPath, cl);
         } catch (Exception e) {
-            LOG.info("Creating JAXBContext with contextPath: " + contextPath);
+            LOG.info("Creating JAXBContext with contextPath: {}", contextPath);
             return JAXBContext.newInstance(contextPath);
         }
     }

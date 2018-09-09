@@ -176,14 +176,14 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
                     LOG.info("Attempting to start CamelContext: {}", this.getName());
                     this.maybeStart();
                 } catch (Exception startEx) {
-                    LOG.error("Error occurred during starting CamelContext: " + this.getName(), startEx);
+                    LOG.error("Error occurred during starting CamelContext: {}", this.getName(), startEx);
                 }
             } else if (event.getType() == BlueprintEvent.DESTROYING) {
                 try {
                     LOG.info("Stopping CamelContext: {}", this.getName());
                     this.stop();
                 } catch (Exception stopEx) {
-                    LOG.error("Error occurred during stopping CamelContext: " + this.getName(), stopEx);
+                    LOG.error("Error occurred during stopping CamelContext: {}", this.getName(), stopEx);
                 }
             }
         }

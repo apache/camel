@@ -264,7 +264,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
                 log.debug("Processing Exchange.id:{}", exchange.getExchangeId() + " - FAILED");
             }
             if (log.isDebugEnabled()) {
-                log.trace("Exception: " + e.getLocalizedMessage(), e);
+                log.trace("Exception: {}", e.getLocalizedMessage(), e);
             }
             exchange.setException(e);
         }
