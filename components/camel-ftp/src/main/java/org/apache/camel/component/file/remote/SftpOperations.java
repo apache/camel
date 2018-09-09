@@ -501,11 +501,10 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         // ignore absolute as all dirs are relative with FTP
         boolean success = false;
 
-        String originalDirectory = getCurrentDirectory();
         try {
             // maybe the full directory already exists
             try {
-                channel.cd(directory);
+                channel.ls(directory);
                 success = true;
             } catch (SftpException e) {
                 // ignore, we could not change directory so try to create it instead
@@ -523,17 +522,9 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                     success = buildDirectoryChunks(directory);
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | SftpException e) {
             throw new GenericFileOperationFailedException("Cannot build directory: " + directory, e);
-        } catch (SftpException e) {
-            throw new GenericFileOperationFailedException("Cannot build directory: " + directory, e);
-        } finally {
-            // change back to original directory
-            if (originalDirectory != null) {
-                changeCurrentDirectory(originalDirectory);
-            }
         }
-
         return success;
     }
 
