@@ -33,24 +33,18 @@ public class SimpleBackwardsCompatibleTest extends LanguageTestSupport {
     @Test
     public void testSimpleBody() throws Exception {
         assertExpression(exchange, "${body}", "<hello id='m123'>world!</hello>");
-        assertExpression(exchange, "$simple{body}", "<hello id='m123'>world!</hello>");
-        assertExpression(exchange, "body", "<hello id='m123'>world!</hello>");
 
         assertPredicate("${body}", true);
-        assertPredicate("body", true);
     }
 
     @Test
     public void testSimpleHeader() throws Exception {
         exchange.getIn().setHeader("foo", 123);
         assertExpression(exchange, "${header.foo}", 123);
-        assertExpression(exchange, "header.foo", 123);
 
         assertPredicate("${header.foo}", true);
-        assertPredicate("header.foo", true);
 
         assertPredicate("${header.unknown}", false);
-        assertPredicate("header.unknown", false);
     }
 
     @Test
@@ -59,7 +53,7 @@ public class SimpleBackwardsCompatibleTest extends LanguageTestSupport {
         exchange.getIn().setHeader("high", true);
         exchange.getIn().setHeader("foo", 123);
 
-        SimplePredicateParser parser = new SimplePredicateParser("${header.high} == true and ${header.foo} == 123", true);
+        SimplePredicateParser parser = new SimplePredicateParser("${header.high} == true && ${header.foo} == 123", true, null);
         Predicate pre = parser.parsePredicate();
 
         assertTrue("Should match", pre.matches(exchange));
@@ -71,7 +65,7 @@ public class SimpleBackwardsCompatibleTest extends LanguageTestSupport {
         exchange.getIn().setHeader("high", true);
         exchange.getIn().setHeader("foo", 123);
 
-        SimplePredicateParser parser = new SimplePredicateParser("${header.high} == false or ${header.foo} == 123", true);
+        SimplePredicateParser parser = new SimplePredicateParser("${header.high} == false || ${header.foo} == 123", true, null);
         Predicate pre = parser.parsePredicate();
 
         assertTrue("Should match", pre.matches(exchange));
