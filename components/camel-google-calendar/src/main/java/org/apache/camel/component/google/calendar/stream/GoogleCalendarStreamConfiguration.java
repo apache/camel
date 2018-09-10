@@ -65,6 +65,9 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     
     @UriParam(defaultValue = "true")
     private boolean consumeFromNow = true;
+    
+    @UriParam(defaultValue = "false")
+    private boolean considerLastUpdate = false;
 
     public String getClientId() {
         return clientId;
@@ -190,6 +193,17 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
      */
     public void setConsumeFromNow(boolean consumeFromNow) {
         this.consumeFromNow = consumeFromNow;
+    }
+
+    public boolean isConsiderLastUpdate() {
+        return considerLastUpdate;
+    }
+
+    /**
+     * Take into account the lastUpdate of the last event polled as start date for the next poll
+     */
+    public void setConsiderLastUpdate(boolean considerLastUpdate) {
+        this.considerLastUpdate = considerLastUpdate;
     }
 
     // *************************************************

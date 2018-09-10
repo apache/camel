@@ -133,6 +133,11 @@ public class GoogleCalendarStreamComponentConfiguration
          * Consume events in the selected calendar from now on
          */
         private Boolean consumeFromNow = true;
+        /**
+         * Take into account the lastUpdate of the last event polled as start
+         * date for the next poll
+         */
+        private Boolean considerLastUpdate = false;
 
         public String getClientId() {
             return clientId;
@@ -220,6 +225,14 @@ public class GoogleCalendarStreamComponentConfiguration
 
         public void setConsumeFromNow(Boolean consumeFromNow) {
             this.consumeFromNow = consumeFromNow;
+        }
+
+        public Boolean getConsiderLastUpdate() {
+            return considerLastUpdate;
+        }
+
+        public void setConsiderLastUpdate(Boolean considerLastUpdate) {
+            this.considerLastUpdate = considerLastUpdate;
         }
     }
 }
