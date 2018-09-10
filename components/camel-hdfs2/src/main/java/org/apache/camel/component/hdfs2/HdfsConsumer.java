@@ -69,10 +69,10 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
     private HdfsInfo setupHdfs(boolean onStartup) throws Exception {
         // if we are starting up then log at info level, and if runtime then log at debug level to not flood the log
         if (onStartup) {
-            log.info("Connecting to hdfs file-system {}:{}/{} (may take a while if connection is not available)", config.getHostName(), config.getPort(), hdfsPath.toString());
+            log.info("Connecting to hdfs file-system {}:{}/{} (may take a while if connection is not available)", config.getHostName(), config.getPort(), hdfsPath);
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Connecting to hdfs file-system {}:{}/{} (may take a while if connection is not available)", config.getHostName(), config.getPort(), hdfsPath.toString());
+                log.debug("Connecting to hdfs file-system {}:{}/{} (may take a while if connection is not available)", config.getHostName(), config.getPort(), hdfsPath);
             }
         }
 
@@ -80,10 +80,10 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         HdfsInfo answer = HdfsInfoFactory.newHdfsInfo(this.hdfsPath.toString());
 
         if (onStartup) {
-            log.info("Connected to hdfs file-system {}:{}/{}", config.getHostName(), config.getPort(), hdfsPath.toString());
+            log.info("Connected to hdfs file-system {}:{}/{}", config.getHostName(), config.getPort(), hdfsPath);
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Connected to hdfs file-system {}:{}/{}", config.getHostName(), config.getPort(), hdfsPath.toString());
+                log.debug("Connected to hdfs file-system {}:{}/{}", config.getHostName(), config.getPort(), hdfsPath);
             }
         }
         return answer;
@@ -128,7 +128,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
                 // must match owner
                 if (!config.getOwner().equals(status.getOwner())) {
                     if (log.isDebugEnabled()) {
-                        log.debug("Skipping file: {} as not matching owner: {}", status.getPath().toString(), config.getOwner());
+                        log.debug("Skipping file: {} as not matching owner: {}", status.getPath(), config.getOwner());
                     }
                     continue;
                 }
@@ -139,7 +139,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
                 this.istream = HdfsInputStream.createInputStream(status.getPath().toString(), this.config);
                 if (!this.istream.isOpened()) {
                     if (log.isDebugEnabled()) {
-                        log.debug("Skipping file: {} because it doesn't exist anymore", status.getPath().toString());
+                        log.debug("Skipping file: {} because it doesn't exist anymore", status.getPath());
                     }
                     continue;
                 }

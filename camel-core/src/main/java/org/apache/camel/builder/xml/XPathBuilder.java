@@ -1076,9 +1076,9 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
         XPath xPath = getXPathFactory().newXPath();
 
         if (!logNamespaces && LOG.isTraceEnabled()) {
-            LOG.trace("Creating new XPath expression in pool. Namespaces on XPath expression: {}", getNamespaceContext().toString());
+            LOG.trace("Creating new XPath expression in pool. Namespaces on XPath expression: {}", getNamespaceContext());
         } else if (logNamespaces && LOG.isInfoEnabled()) {
-            LOG.info("Creating new XPath expression in pool. Namespaces on XPath expression: {}", getNamespaceContext().toString());
+            LOG.info("Creating new XPath expression in pool. Namespaces on XPath expression: {}", getNamespaceContext());
         }
         xPath.setNamespaceContext(getNamespaceContext());
         xPath.setXPathVariableResolver(getVariableResolver());

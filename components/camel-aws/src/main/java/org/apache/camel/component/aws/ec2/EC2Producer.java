@@ -202,7 +202,7 @@ public class EC2Producer extends DefaultProducer {
             LOG.trace("Run Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
-        LOG.trace("Creating and running instances with ami [{}] and instance type {}", ami, instanceType.toString());
+        LOG.trace("Creating and running instances with ami [{}] and instance type {}", ami, instanceType);
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }

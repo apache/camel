@@ -1115,7 +1115,7 @@ public class XmlConverter {
                 }
                 featureString.append(feature);
             }
-            LOG.info("DocumentBuilderFactory has been set with features {{}}.", featureString.toString());
+            LOG.info("DocumentBuilderFactory has been set with features {{}}.", featureString);
         }
 
     }

@@ -121,7 +121,7 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
         assertNotNull(manufacturer);
         final Map<String, Object> properties = manufacturer.getProperties();
         assertEquals("Manufacturer Id", "1", properties.get(ID_PROPERTY));
-        LOG.info("Manufacturer: {}", properties.toString());
+        LOG.info("Manufacturer: {}", properties);
     }
 
     @Test

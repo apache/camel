@@ -257,14 +257,14 @@ public class Olingo4AppAPITest {
 
         ClientPrimitiveValue name = propertyHandler.await();
         assertEquals("San Francisco International Airport", name.toString());
-        LOG.info("Airport name property value {}", name.asPrimitive().toString());
+        LOG.info("Airport name property value {}", name.asPrimitive());
 
         final TestOlingo4ResponseHandler<ClientPrimitiveValue> valueHandler = new TestOlingo4ResponseHandler<>();
 
         olingoApp.read(edm, TEST_AIRPORTS_SIMPLE_PROPERTY_VALUE, null, null, valueHandler);
         ClientPrimitiveValue nameValue = valueHandler.await();
         assertEquals("San Francisco International Airport", name.toString());
-        LOG.info("Airport name property value {}", nameValue.toString());
+        LOG.info("Airport name property value {}", nameValue);
 
         TestOlingo4ResponseHandler<HttpStatusCode> statusHandler = new TestOlingo4ResponseHandler<>();
         // All properties updates (simple and complex) are performing through

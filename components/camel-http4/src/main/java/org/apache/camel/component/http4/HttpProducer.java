@@ -188,7 +188,7 @@ public class HttpProducer extends DefaultProducer {
         HttpResponse httpResponse = null;
         try {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Executing http {} method: {}", httpRequest.getMethod(), httpRequest.getURI().toString());
+                LOG.debug("Executing http {} method: {}", httpRequest.getMethod(), httpRequest.getURI());
             }
             httpResponse = executeMethod(httpRequest);
             int responseCode = httpResponse.getStatusLine().getStatusCode();

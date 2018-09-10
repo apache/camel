@@ -167,7 +167,7 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
                 break;
             }
 
-            LOG.debug("Received BlueprintEvent[replay={} type={} bundle={}] %s", event.isReplay(), eventTypeString, event.getBundle().getSymbolicName(), event.toString());
+            LOG.debug("Received BlueprintEvent[replay={} type={} bundle={}] %s", event.isReplay(), eventTypeString, event.getBundle().getSymbolicName(), event);
         }
 
         if (!event.isReplay() && this.getBundleContext().getBundle().getBundleId() == event.getBundle().getBundleId()) {
@@ -213,7 +213,7 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
             }
 
             // use trace logging as this is very noisy
-            LOG.trace("Service: {} changed to: {}", event.toString(), eventTypeString);
+            LOG.trace("Service: {} changed to: {}", event, eventTypeString);
         }
     }
 

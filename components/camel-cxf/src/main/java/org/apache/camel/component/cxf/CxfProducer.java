@@ -419,7 +419,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
 
             QName qname = new QName(ns, lp);
 
-            LOG.trace("Operation qname = {}", qname.toString());
+            LOG.trace("Operation qname = {}", qname);
             
             answer = client.getEndpoint().getEndpointInfo().getBinding().getOperation(qname);
             if (answer == null) {
