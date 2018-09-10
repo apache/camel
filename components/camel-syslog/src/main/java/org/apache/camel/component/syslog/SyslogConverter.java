@@ -248,7 +248,7 @@ public final class SyslogConverter {
         }
 
         syslogMessage.setLogMessage(msg.toString());
-        LOG.trace("Syslog message : {}", syslogMessage.toString());
+        LOG.trace("Syslog message : {}", syslogMessage);
 
         return syslogMessage;
     }

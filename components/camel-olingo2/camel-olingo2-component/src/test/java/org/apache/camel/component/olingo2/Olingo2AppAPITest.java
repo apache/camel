@@ -260,14 +260,14 @@ public class Olingo2AppAPITest {
         olingoApp.read(edm, TEST_MANUFACTURER_FOUNDED_PROPERTY, null, null, propertyHandler);
 
         Calendar founded = (Calendar) propertyHandler.await().get(FOUNDED_PROPERTY);
-        LOG.info("Founded property {}", founded.toString());
+        LOG.info("Founded property {}", founded);
 
         final TestOlingo2ResponseHandler<Calendar> valueHandler = new TestOlingo2ResponseHandler<>();
 
         olingoApp.read(edm, TEST_MANUFACTURER_FOUNDED_VALUE, null, null, valueHandler);
 
         founded = valueHandler.await();
-        LOG.info("Founded property {}", founded.toString());
+        LOG.info("Founded property {}", founded);
 
         final TestOlingo2ResponseHandler<HttpStatusCodes> statusHandler =
             new TestOlingo2ResponseHandler<>();

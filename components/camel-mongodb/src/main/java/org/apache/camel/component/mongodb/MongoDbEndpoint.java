@@ -204,7 +204,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      * @throws CamelMongoDbException
      */
     public void initializeConnection() throws CamelMongoDbException {
-        LOG.info("Initialising MongoDb endpoint: {}", this.toString());
+        LOG.info("Initialising MongoDb endpoint: {}", this);
         if (database == null || (collection == null && !(MongoDbOperation.getDbStats.equals(operation) || MongoDbOperation.command.equals(operation)))) {
             throw new CamelMongoDbException("Missing required endpoint configuration: database and/or collection");
         }

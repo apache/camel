@@ -99,7 +99,7 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
         assertEquals(20, count.intValue());
 
         final ClientPrimitiveValue value = (ClientPrimitiveValue)requestBodyAndHeaders("direct://readvalue", null, headers);
-        LOG.info("Client value \"{}\" has type {}", value.toString(), value.getTypeName());
+        LOG.info("Client value \"{}\" has type {}", value, value.getTypeName());
         assertEquals("Male", value.asPrimitive().toString());
 
         final ClientPrimitiveValue singleProperty = (ClientPrimitiveValue)requestBodyAndHeaders("direct://readsingleprop", null, headers);

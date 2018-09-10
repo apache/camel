@@ -108,7 +108,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
 
     @SuppressWarnings("deprecation")
     public void initializeConnection() throws Exception {
-        LOG.info("Initialize GridFS endpoint: {}", this.toString());
+        LOG.info("Initialize GridFS endpoint: {}", this);
         if (database == null) {
             throw new IllegalStateException("Missing required endpoint configuration: database");
         }
