@@ -78,7 +78,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (29 parameters):
+==== Query Parameters (30 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -90,6 +90,7 @@ with the following path and query parameters:
 | *calendarSummaryName* (consumer) | Calendar Summary Name to use | primary | String
 | *clientId* (consumer) | Client ID of the mail application |  | String
 | *clientSecret* (consumer) | Client secret of the mail application |  | String
+| *considerLastUpdate* (consumer) | Take into account the lastUpdate of the last event polled as start date for the next poll | false | boolean
 | *consumeFromNow* (consumer) | Consume events in the selected calendar from now on | true | boolean
 | *maxResults* (consumer) | Max results to be returned | 10 | int
 | *query* (consumer) | The query to execute on calendar |  | String

@@ -43,6 +43,7 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleCalendarStreamConsumer.class);
     private String calendarId;
+    private DateTime lastUpdate;
 
     public GoogleCalendarStreamConsumer(Endpoint endpoint, Processor processor, String calendarId) {
         super(endpoint, processor);
@@ -64,6 +65,7 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
 
     @Override
     protected int poll() throws Exception {
+        System.err.println("Io pollo");
         com.google.api.services.calendar.Calendar.Events.List request = getClient().events().list(calendarId).setOrderBy("updated");
         if (ObjectHelper.isNotEmpty(getConfiguration().getQuery())) {
             request.setQ(getConfiguration().getQuery());
@@ -71,9 +73,13 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
         if (ObjectHelper.isNotEmpty(getConfiguration().getMaxResults())) {
             request.setMaxResults(getConfiguration().getMaxResults());
         }
-        if (getConfiguration().isConsumeFromNow()) {
+        if (getConfiguration().isConsumeFromNow() && !getConfiguration().isConsiderLastUpdate()) {
             Date date = new Date();
             request.setTimeMin(new DateTime(date));
+        } else if (getConfiguration().isConsiderLastUpdate()) {
+            if (ObjectHelper.isNotEmpty(lastUpdate)) {
+                request.setTimeMin(lastUpdate);
+            }
         }
 
         Queue<Exchange> answer = new LinkedList<>();
@@ -82,9 +88,15 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
 
         if (c != null) {
             List<Event> list = c.getItems();
+            int i = 0;
+            
             for (Event event : list) {
                 Exchange exchange = getEndpoint().createExchange(getEndpoint().getExchangePattern(), event);
                 answer.add(exchange);
+                i++;
+                if (i == c.getItems().size()) {
+                    lastUpdate = event.getUpdated();
+                }
             }
         }
 
@@ -113,7 +125,7 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
                 }
             });
         }
-
+        System.err.println("Io ho pollato");
         return total;
     }
 
