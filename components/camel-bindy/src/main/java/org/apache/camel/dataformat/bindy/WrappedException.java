@@ -15,24 +15,24 @@
  * limitations under the License.
  */
 
-package org.apache.camel.dataformat.bindy.csv;
+package org.apache.camel.dataformat.bindy;
 
 /**
  * A {@link RuntimeException} which wraps a checked exception. This is necessary when dealing with streams,
  * since the API does not allow catching or propagating a checked exception.
  */
-class WrappedException extends RuntimeException {
+public class WrappedException extends RuntimeException {
     private final Exception exception;
 
     /**
      * Mandatory constructor.
      * @param wrappedException the checked exception being passed in
      */
-    WrappedException(Exception wrappedException) {
+    public WrappedException(Exception wrappedException) {
         this.exception = wrappedException;
     }
 
-    Exception getWrappedException() {
+    public Exception getWrappedException() {
         return exception;
     }
 }
