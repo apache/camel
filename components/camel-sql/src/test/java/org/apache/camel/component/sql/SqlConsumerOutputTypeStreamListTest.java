@@ -55,7 +55,7 @@ public class SqlConsumerOutputTypeStreamListTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
 
-        context.startRoute("route1");
+        context.getRouteController().startRoute("route1");
 
         mock.assertIsSatisfied();
         assertThat(resultBodyAt(mock, 0), instanceOf(Iterator.class));
@@ -66,7 +66,7 @@ public class SqlConsumerOutputTypeStreamListTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(3);
 
-        context.startRoute("route2");
+        context.getRouteController().startRoute("route2");
 
         mock.assertIsSatisfied();
         assertThat(resultBodyAt(mock, 0), instanceOf(Map.class));
@@ -79,7 +79,7 @@ public class SqlConsumerOutputTypeStreamListTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(3);
 
-        context.startRoute("route3");
+        context.getRouteController().startRoute("route3");
 
         mock.assertIsSatisfied();
         assertThat(resultBodyAt(mock, 0), instanceOf(ProjectModel.class));

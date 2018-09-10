@@ -42,7 +42,7 @@ public class FtpConsumerNotEagerMaxMessagesPerPollTest extends FtpServerTestSupp
     @Test
     public void testMaxMessagesPerPoll() throws Exception {
         // start route
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("AAA", "BBB");

@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ServiceHelper;
 
@@ -29,7 +29,7 @@ import org.apache.camel.util.ServiceHelper;
  *
  * @version
  */
-public class DirectComponent extends UriEndpointComponent {
+public class DirectComponent extends DefaultComponent {
 
     // must keep a map of consumers on the component to ensure endpoints can lookup old consumers
     // later in case the DirectEndpoint was re-created due the old was evicted from the endpoints LRUCache
@@ -41,7 +41,6 @@ public class DirectComponent extends UriEndpointComponent {
     private long timeout = 30000L;
 
     public DirectComponent() {
-        super(DirectEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

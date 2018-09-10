@@ -23,16 +23,15 @@ import com.microsoft.azure.storage.queue.CloudQueue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
-public class QueueServiceComponent extends UriEndpointComponent {
+public class QueueServiceComponent extends DefaultComponent {
 
     public QueueServiceComponent() {
-        super(QueueServiceEndpoint.class);
     }
 
     public QueueServiceComponent(CamelContext context) {
-        super(context, QueueServiceEndpoint.class);
+        super(context);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

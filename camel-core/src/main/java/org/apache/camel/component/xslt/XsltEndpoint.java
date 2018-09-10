@@ -102,15 +102,6 @@ public class XsltEndpoint extends ProcessorEndpoint {
     @UriParam(label = "advanced")
     private EntityResolver entityResolver;
 
-    @Deprecated
-    public XsltEndpoint(String endpointUri, Component component, XsltBuilder xslt, String resourceUri,
-            boolean cacheStylesheet) throws Exception {
-        super(endpointUri, component, xslt);
-        this.xslt = xslt;
-        this.resourceUri = resourceUri;
-        this.contentCache = cacheStylesheet;
-    }
-
     public XsltEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
     }

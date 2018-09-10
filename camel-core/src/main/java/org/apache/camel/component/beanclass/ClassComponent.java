@@ -35,7 +35,6 @@ import org.apache.camel.util.IntrospectionSupport;
 public class ClassComponent extends BeanComponent {
 
     public ClassComponent() {
-        super(ClassEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

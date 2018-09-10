@@ -61,11 +61,8 @@ public class ManagedRefEndpointTest extends SpringTestSupport {
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=producers,*"), null);
         assertEquals(2, set.size());
-        Iterator<ObjectName> it = set.iterator();
 
-        for (int i = 0; i < 2; i++) {
-            ObjectName on = it.next();
-
+        for (ObjectName on : set) {
             boolean registered = mbeanServer.isRegistered(on);
             assertEquals("Should be registered", true, registered);
 
@@ -78,17 +75,15 @@ public class ManagedRefEndpointTest extends SpringTestSupport {
         }
 
         set = mbeanServer.queryNames(new ObjectName("*:type=endpoints,*"), null);
-        assertEquals(3, set.size());
-        it = set.iterator();
+        assertEquals(4, set.size());
 
-        for (int i = 0; i < 3; i++) {
-            ObjectName on = it.next();
-
+        for (ObjectName on : set) {
             boolean registered = mbeanServer.isRegistered(on);
-            assertEquals("Should be registered", true, registered);
+            assertTrue("Should be registered", registered);
 
             String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
-            assertTrue(uri, uri.equals("direct://start") || uri.equals("mock://foo") || uri.equals("mock://result"));
+            assertTrue(uri, uri.equals("direct://start") || uri.equals("mock://foo")
+                    || uri.equals("mock://result") || uri.equals("ref://foo"));
         }
     }
 

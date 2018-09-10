@@ -242,24 +242,6 @@ public class SSLContextParameters extends BaseSSLContextParameters {
      * {@link #secureRandom}, but also respecting the chosen provider and secure
      * socket protocol as well.
      *
-     * @return a newly configured instance
-     *
-     * @throws GeneralSecurityException if there is a problem in this instances
-     *             configuration or that of its nested configuration options
-     * @throws IOException if there is an error reading a key/trust store
-     * @deprecated use {@link #configureSSLContext(SSLContext)}
-     */
-    @Deprecated
-    public SSLContext createSSLContext() throws GeneralSecurityException, IOException {
-        return createSSLContext(null);
-    }
-
-    /**
-     * Creates an {@link SSLContext} based on the related configuration options
-     * of this instance. Namely, {@link #keyManagers}, {@link #trustManagers}, and
-     * {@link #secureRandom}, but also respecting the chosen provider and secure
-     * socket protocol as well.
-     *
      * @param camelContext  The camel context
      *
      * @return a newly configured instance

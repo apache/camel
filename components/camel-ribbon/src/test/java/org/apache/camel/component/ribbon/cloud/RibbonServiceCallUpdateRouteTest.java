@@ -52,7 +52,7 @@ public class RibbonServiceCallUpdateRouteTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // stop the first server and remove it from the known list of servers
-        context.stopRoute("9090");
+        context.getRouteController().stopRoute("9090");
         servers.removeServer(s -> ObjectHelper.equal("localhost", s.getHost()) && 9090 == s.getPort());
 
         // call the other active server

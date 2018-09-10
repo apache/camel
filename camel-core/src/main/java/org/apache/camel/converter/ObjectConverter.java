@@ -40,14 +40,6 @@ public final class ObjectConverter {
     }
 
     /**
-     * @deprecated not in use
-     */
-    @Deprecated
-    public static boolean isCollection(Object value) {
-        return value instanceof Collection || (value != null && value.getClass().isArray());
-    }
-
-    /**
      * Converts the given value to a boolean, handling strings or Boolean
      * objects; otherwise returning false if the value could not be converted to
      * a boolean

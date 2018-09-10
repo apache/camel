@@ -20,7 +20,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.bean.ParameterInfo;
 
@@ -33,12 +32,7 @@ public class AggregationStrategyMethodInfo {
     private final List<ParameterInfo> oldParameters;
     private final List<ParameterInfo> newParameters;
 
-    
-    @Deprecated
-    public AggregationStrategyMethodInfo(CamelContext camelContext, Class<?> type, Method method,
-                                         List<ParameterInfo> oldParameters, List<ParameterInfo> newParameters) {
-        this(method, oldParameters, newParameters);
-    }
+
     public AggregationStrategyMethodInfo(Method method,
                                          List<ParameterInfo> oldParameters, 
                                          List<ParameterInfo> newParameters) {

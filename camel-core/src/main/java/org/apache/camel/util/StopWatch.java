@@ -62,17 +62,6 @@ public final class StopWatch {
     }
 
     /**
-     * Reports the time taken (does not stop the stop watch)
-     *
-     * @return the time taken in millis.
-     * @deprecated use {@link #taken()}
-     */
-    @Deprecated
-    public long stop() {
-        return taken();
-    }
-
-    /**
      * Returns the time taken in millis.
      *
      * @return time in millis, or <tt>0</tt> if not started yet.

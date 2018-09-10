@@ -47,7 +47,7 @@ public class FileRenameReadLockMustUseMarkerFileTest extends ContextTestSupport 
         template.sendBodyAndHeader("file:target/rename", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         // start the route
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
 

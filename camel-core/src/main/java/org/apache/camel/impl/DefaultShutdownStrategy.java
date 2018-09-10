@@ -747,7 +747,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         for (InflightRepository.InflightExchange inflight : filtered) {
             sb.append("\n\tInflightExchange: [exchangeId=").append(inflight.getExchange().getExchangeId())
                     .append(", fromRouteId=").append(inflight.getExchange().getFromRouteId())
-                    .append(", routeId=").append(inflight.getRouteId())
+                    .append(", atRouteId=").append(inflight.getAtRouteId())
                     .append(", nodeId=").append(inflight.getNodeId())
                     .append(", elapsed=").append(inflight.getElapsed())
                     .append(", duration=").append(inflight.getDuration())

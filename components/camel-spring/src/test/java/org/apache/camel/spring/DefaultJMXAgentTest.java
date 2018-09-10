@@ -83,7 +83,7 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
         int before = mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null).size();
 
         // start route should enlist the consumer to JMX
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         int after = mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null).size();
 

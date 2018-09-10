@@ -37,7 +37,7 @@ public class EmptyProducerCache extends ProducerCache {
         Producer answer;
         try {
             answer = endpoint.createProducer();
-            if (getCamelContext().isStartingRoutes() && answer.isSingleton()) {
+            if (getCamelContext().getRouteController().isStartingRoutes() && answer.isSingleton()) {
                 // if we are currently starting a route, then add as service and enlist in JMX
                 // - but do not enlist non-singletons in JMX
                 // - note addService will also start the service

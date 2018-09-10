@@ -54,7 +54,7 @@
         <endpoint id="input" uri="undertow:https://localhost:#{dynaPort}/spring?sslContextParameters=#sslContextParameters"/>
 
         <route>
-            <from ref="input"/>
+            <from uri="ref:input"/>
             <to uri="mock:input"/>
             <transform>
                 <simple>Bye World</simple>

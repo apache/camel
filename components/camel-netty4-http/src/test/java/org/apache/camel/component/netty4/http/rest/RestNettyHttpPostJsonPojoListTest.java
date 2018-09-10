@@ -59,7 +59,7 @@ public class RestNettyHttpPostJsonPojoListTest extends BaseNettyTest {
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .post("new").typeList(UserPojo.class)
+                    .post("new").type(UserPojo[].class)
                         .to("mock:input");
             }
         };

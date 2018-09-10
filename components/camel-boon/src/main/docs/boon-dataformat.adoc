@@ -74,7 +74,7 @@ from("activemq:My.Queue")
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/blueprint">
   <route>
     <from uri="activemq:My.Queue"/>
-    <unmarshal ref="boonDataFormat"/>
+    <unmarshal><custom ref="boonDataFormat"/></unmarshal>
     <to uri="mqseries:Another.Queue"/>
   </route>
 </camelContext>

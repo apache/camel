@@ -53,7 +53,7 @@ public class VmMultipleConsumersRemoteRouteTest extends Assert {
 
         // this test actually removes the route... so in effect we have one route consuming
         // a "multipleConsumer" seda queue
-        camelContext.stopRoute("route2");
+        camelContext.getRouteController().stopRoute("route2");
         camelContext.removeRoute("route2");
 
         MockEndpoint mock1 = (MockEndpoint) camelContext.getEndpoint("mock:route1");

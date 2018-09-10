@@ -29,7 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
-import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
+import static org.apache.camel.util.StringHelper.removeStartingCharacters;
 
 /**
  * Utility class for {@link javax.jms.Message}.

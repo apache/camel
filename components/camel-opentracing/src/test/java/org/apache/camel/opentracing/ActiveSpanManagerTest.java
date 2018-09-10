@@ -64,8 +64,8 @@ public class ActiveSpanManagerTest extends ExchangeTestSupport {
         Span parent = tracer.buildSpan("parent").start();
         ActiveSpanManager.activate(exchange, parent);
 
-        Exchange path1 = exchange.copy(true);
-        Exchange path2 = exchange.copy(true);
+        Exchange path1 = exchange.copy();
+        Exchange path2 = exchange.copy();
 
         // Check the parent span is available in the new exchanges
         assertEquals(parent, ActiveSpanManager.getSpan(path1));

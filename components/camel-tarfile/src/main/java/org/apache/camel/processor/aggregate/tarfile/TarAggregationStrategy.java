@@ -142,7 +142,7 @@ public class TarAggregationStrategy implements AggregationStrategy {
         // First time for this aggregation
         if (oldExchange == null) {
             try {
-                tarFile = FileUtil.createTempFile(this.filePrefix, this.fileSuffix, parentDir);
+                tarFile = FileUtil.createTempFile(this.filePrefix, this.fileSuffix, this.parentDir);
                 LOG.trace("Created temporary file: {}", tarFile);
             } catch (IOException e) {
                 throw new GenericFileOperationFailedException(e.getMessage(), e);

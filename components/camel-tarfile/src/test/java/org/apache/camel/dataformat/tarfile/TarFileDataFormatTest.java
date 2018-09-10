@@ -262,7 +262,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
                 from("direct:tar").marshal(tar).to("mock:tar");
                 from("direct:untar").unmarshal(tar).to("mock:untar");
                 from("direct:untarWithEmptyDirectory").unmarshal(tar)
-                                         .split(body(Iterator.class))
+                                         .split(bodyAs(Iterator.class))
                                          //.streaming()
                                          //.to("file:hello_out?autoCreate=true")
                                          .process(new Processor() {

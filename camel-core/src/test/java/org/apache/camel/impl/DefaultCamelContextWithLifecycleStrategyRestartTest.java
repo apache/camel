@@ -69,10 +69,10 @@ public class DefaultCamelContextWithLifecycleStrategyRestartTest extends Context
 
     @Test
     public void testRouteStopped() throws Exception {
-        assertTrue(context.getRouteStatus("foo").isStarted());
+        assertTrue(context.getRouteController().getRouteStatus("foo").isStarted());
         assertEquals(0, strategy.getRemoveCounter());
 
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
         assertEquals(0, strategy.getRemoveCounter());
 
         context.removeRoute("foo");

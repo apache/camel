@@ -284,7 +284,7 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
 
     public Exchange createExchange(Message message, Session session) {
         Exchange exchange = createExchange(getExchangePattern());
-        exchange.setIn(new SjmsMessage(message, session, getBinding()));
+        exchange.setIn(new SjmsMessage(exchange, message, session, getBinding()));
         return exchange;
     }
 

@@ -57,24 +57,24 @@ public class BeanCachedTest extends ContextTestSupport {
     @Test
     public void testFreshBeanInContext() throws Exception {
         // Just make sure the bean processor doesn't work if the cached is false
-        MyBean originalInstance = registry.lookup("something", MyBean.class);
+        MyBean originalInstance = registry.lookupByNameAndType("something", MyBean.class);
         template.sendBody("direct:noCache", null);
         context.unbind("something");
         context.bind("something", new MyBean());
         // Make sure we can get the object from the registry
-        assertNotSame(registry.lookup("something"), originalInstance);
+        assertNotSame(registry.lookupByName("something"), originalInstance);
         template.sendBody("direct:noCache", null);
     }
 
     @Test
     public void testBeanWithCached() throws Exception {
         // Just make sure the bean processor doesn't work if the cached is false
-        MyBean originalInstance = registry.lookup("something", MyBean.class);
+        MyBean originalInstance = registry.lookupByNameAndType("something", MyBean.class);
         template.sendBody("direct:cached", null);
         context.unbind("something");
         context.bind("something", new MyBean());
         // Make sure we can get the object from the registry
-        assertNotSame(registry.lookup("something"), originalInstance);
+        assertNotSame(registry.lookupByName("something"), originalInstance);
         try {
             template.sendBody("direct:cached", null);
             fail("The IllegalStateException is expected");

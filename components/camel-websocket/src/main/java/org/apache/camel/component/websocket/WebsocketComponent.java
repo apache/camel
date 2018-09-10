@@ -29,7 +29,7 @@ import javax.servlet.DispatcherType;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.SSLContextParametersAware;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -57,7 +57,7 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WebsocketComponent extends UriEndpointComponent implements SSLContextParametersAware {
+public class WebsocketComponent extends DefaultComponent implements SSLContextParametersAware {
 
     protected static final Logger LOG = LoggerFactory.getLogger(WebsocketComponent.class);
     protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<>();
@@ -125,7 +125,7 @@ public class WebsocketComponent extends UriEndpointComponent implements SSLConte
     }
 
     public WebsocketComponent() {
-        super(WebsocketEndpoint.class);
+        super();
 
         if (this.socketFactory == null) {
             this.socketFactory = new HashMap<>();

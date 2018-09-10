@@ -19,16 +19,15 @@ package org.apache.camel.component.influxdb;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class InfluxDbComponent extends UriEndpointComponent {
+public class InfluxDbComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(InfluxDbComponent.class);
 
     public InfluxDbComponent() {
-        super(InfluxDbEndpoint.class);
     }
 
     @Override

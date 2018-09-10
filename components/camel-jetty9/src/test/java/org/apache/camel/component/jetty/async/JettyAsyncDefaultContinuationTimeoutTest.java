@@ -43,7 +43,7 @@ public class JettyAsyncDefaultContinuationTimeoutTest extends BaseJettyTest {
         } catch (CamelExecutionException e) {
             log.info("Timeout hit and client got reply with failure status code");
 
-            long taken = watch.stop();
+            long taken = watch.taken();
 
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
             assertEquals(504, cause.getStatusCode());

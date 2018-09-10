@@ -25,7 +25,7 @@ import java.util.Timer;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
 /**
  * The <a href="http://camel.apache.org/timer.html">Timer Component</a> is for generating message exchanges when a timer fires.
@@ -35,12 +35,11 @@ import org.apache.camel.impl.UriEndpointComponent;
  *
  * @version 
  */
-public class TimerComponent extends UriEndpointComponent {
+public class TimerComponent extends DefaultComponent {
     private final Map<String, Timer> timers = new HashMap<>();
     private final Map<String, AtomicInteger> refCounts = new HashMap<>();
 
     public TimerComponent() {
-        super(TimerEndpoint.class);
     }
 
     public Timer getTimer(TimerConsumer consumer) {

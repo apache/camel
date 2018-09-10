@@ -90,18 +90,18 @@ public class JettyEnableJmxTest extends BaseJettyTest {
         Set<ObjectName> s = mbsc.queryNames(new ObjectName("org.eclipse.jetty.server:type=server,*"), null);
         assertEquals("Could not find 2 Jetty Server: " + s, 2, s.size());
         
-        context.stopRoute("route0");
+        context.getRouteController().stopRoute("route0");
         
         s = mbsc.queryNames(new ObjectName("org.eclipse.jetty.server:type=server,*"), null);
         assertEquals("Could not find 1 Jetty Server: " + s, 1, s.size());
         
-        context.stopRoute("route2");
-        context.stopRoute("route3");
+        context.getRouteController().stopRoute("route2");
+        context.getRouteController().stopRoute("route3");
         
         s = mbsc.queryNames(new ObjectName("org.eclipse.jetty.server:type=server,*"), null);
         assertEquals("Could not find 1 Jetty Server: " + s, 1, s.size());
         
-        context.stopRoute("route1");
+        context.getRouteController().stopRoute("route1");
         
         s = mbsc.queryNames(new ObjectName("org.eclipse.jetty.server:type=server,*"), null);
         assertEquals("Could not find 0 Jetty Server: " + s, 0, s.size());

@@ -149,11 +149,6 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
         this.propertyName = propertyName;
     }
 
-    @Deprecated
-    protected void initialize(CamelContext context) throws Exception {
-        this.camelContext = context;
-    }
-
     protected void configureOutput(XsltBuilder xslt, String output) throws Exception {
         if (ObjectHelper.isEmpty(output)) {
             return;

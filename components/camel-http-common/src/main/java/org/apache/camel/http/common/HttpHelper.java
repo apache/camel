@@ -92,7 +92,7 @@ public final class HttpHelper {
         if (contentType != null) {
             String charset = getCharsetFromContentType(contentType);
             if (charset != null) {
-                exchange.setProperty(Exchange.CHARSET_NAME, IOConverter.normalizeCharset(charset));
+                exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(charset));
             }
         }
     }

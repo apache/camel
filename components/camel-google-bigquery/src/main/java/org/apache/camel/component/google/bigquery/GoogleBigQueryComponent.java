@@ -28,7 +28,6 @@ public class GoogleBigQueryComponent extends DefaultComponent {
     private GoogleBigQueryConnectionFactory connectionFactory;
 
     public GoogleBigQueryComponent() {
-        super();
     }
 
     public GoogleBigQueryComponent(CamelContext camelContext) {

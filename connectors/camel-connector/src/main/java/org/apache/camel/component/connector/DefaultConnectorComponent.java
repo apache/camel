@@ -29,11 +29,9 @@ import java.util.Optional;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
-import org.apache.camel.VerifiableComponent;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
@@ -51,7 +49,7 @@ import static org.apache.camel.util.URISupport.sanitizeUri;
 /**
  * Base class for Camel Connector components.
  */
-public abstract class DefaultConnectorComponent extends DefaultComponent implements ConnectorComponent, VerifiableComponent {
+public abstract class DefaultConnectorComponent extends DefaultComponent implements ConnectorComponent {
     private final Logger log = LoggerFactory.getLogger(getClass());
     private final CamelCatalog catalog = new DefaultCamelCatalog(false);
 
@@ -213,11 +211,6 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
     @Override
     public void addOptions(Map<String, Object> options) {
         options.forEach((name, value)->  doAddOption(this.options, name, value));
-    }
-
-    @Override
-    public ComponentVerifier getVerifier() {
-        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 
     private ComponentVerifierExtension getComponentVerifierExtension() {

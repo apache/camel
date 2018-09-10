@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.jetty;
 
-import java.net.ConnectException;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.http.NoHttpResponseException;
 import org.junit.Test;
 
 public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
@@ -63,7 +62,7 @@ public class TwoCamelContextWithJettyRouteTest extends BaseJettyTest {
             // expert the exception here
             fail("Expert the exception here");
         } catch (Exception ex) {
-            assertTrue("Should get the ConnectException", ex.getCause() instanceof ConnectException);
+            assertTrue("Should get the ConnectException", ex.getCause() instanceof NoHttpResponseException);
         }
         
     }

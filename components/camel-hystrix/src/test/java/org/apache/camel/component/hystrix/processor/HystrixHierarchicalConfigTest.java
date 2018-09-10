@@ -21,6 +21,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.HystrixDefinition;
+import org.apache.camel.model.ModelCamelContext;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -72,8 +73,8 @@ public class HystrixHierarchicalConfigTest {
         ref.setGroupKey("ref-group-key");
         ref.setCorePoolSize(5);
 
-        context.setHystrixConfiguration(def);
-        context.addHystrixConfiguration("ref-hystrix", ref);
+        context.adapt(ModelCamelContext.class).setHystrixConfiguration(def);
+        context.adapt(ModelCamelContext.class).addHystrixConfiguration("ref-hystrix", ref);
 
         final HystrixProcessorFactory factory = new HystrixProcessorFactory();
         final HystrixConfigurationDefinition config = factory.buildHystrixConfiguration(
@@ -111,7 +112,7 @@ public class HystrixHierarchicalConfigTest {
         defReg.setThreadPoolKey("global-reg-thread-key");
         defReg.setCorePoolSize(20);
 
-        context.setHystrixConfiguration(def);
+        context.adapt(ModelCamelContext.class).setHystrixConfiguration(def);
 
         registry.put(HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, defReg);
         registry.put("ref-hystrix", ref);

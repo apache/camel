@@ -6,13 +6,12 @@ If you receive a message from one of the Camel link:https://github.com/apache/ca
 == Options
 
 // eip options: START
-The Unmarshal EIP supports 2 options which are listed below:
+The Unmarshal EIP supports 1 options which are listed below:
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *dataFormatType* | *Required* The data format to be used |  | DataFormatDefinition
-| *ref* | *Deprecated* To refer to a custom data format to use as unmarshaller |  | String
 |===
 // eip options: END
 

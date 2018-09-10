@@ -172,7 +172,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                 } else {
                     Message message = holder.getMessage();
                     Session session = holder.getSession();
-                    JmsMessage response = new JmsMessage(message, session, endpoint.getBinding());
+                    JmsMessage response = new JmsMessage(exchange, message, session, endpoint.getBinding());
                     // the JmsBinding is designed to be "pull-based": it will populate the Camel message on demand
                     // therefore, we link Exchange and OUT message before continuing, so that the JmsBinding has full access 
                     // to everything it may need, and can populate headers, properties, etc. accordingly (solves CAMEL-6218).

@@ -20,19 +20,18 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
 
 /**
  * Represents the component that manages {@link SshEndpoint}.
  */
-public class SshComponent extends UriEndpointComponent {
+public class SshComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private SshConfiguration configuration = new SshConfiguration();
 
     public SshComponent() {
-        super(SshEndpoint.class);
     }
 
     @Override

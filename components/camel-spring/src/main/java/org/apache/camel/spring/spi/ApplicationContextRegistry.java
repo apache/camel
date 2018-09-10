@@ -85,19 +85,4 @@ public class ApplicationContextRegistry implements Registry {
         return BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, type);
     }
 
-    @Override
-    public Object lookup(String name) {
-        return lookupByName(name);
-    }
-
-    @Override
-    public <T> T lookup(String name, Class<T> type) {
-        return lookupByNameAndType(name, type);
-    }
-
-    @Override
-    public <T> Map<String, T> lookupByType(Class<T> type) {
-        return findByTypeWithName(type);
-    }
-
 }

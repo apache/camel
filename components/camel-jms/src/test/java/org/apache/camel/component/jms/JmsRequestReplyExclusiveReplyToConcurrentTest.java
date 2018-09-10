@@ -62,7 +62,7 @@ public class JmsRequestReplyExclusiveReplyToConcurrentTest extends CamelTestSupp
         // if any of the assertions above fails then the latch will not get decremented 
         assertTrue("All assertions outside the main thread above should have passed", latch.await(3, TimeUnit.SECONDS));
 
-        long delta = watch.stop();
+        long delta = watch.taken();
         log.info("Took {} millis", delta);
 
         // just sleep a bit before shutting down

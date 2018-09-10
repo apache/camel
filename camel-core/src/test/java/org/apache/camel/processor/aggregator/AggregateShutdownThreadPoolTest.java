@@ -40,11 +40,11 @@ public class AggregateShutdownThreadPoolTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
 
         resetMocks();
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("D+E+F");
 
@@ -70,12 +70,12 @@ public class AggregateShutdownThreadPoolTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         assertEquals(false, myPool.isShutdown());
 
-        context.stopRoute("bar");
+        context.getRouteController().stopRoute("bar");
         assertEquals(false, myPool.isShutdown());
 
         resetMocks();
 
-        context.startRoute("bar");
+        context.getRouteController().startRoute("bar");
         assertEquals(false, myPool.isShutdown());
 
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("D+E+F");

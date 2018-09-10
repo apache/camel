@@ -104,7 +104,7 @@ public class ManagedRouteRemoveWireTapExplicitThreadPoolTest extends ManagementT
                 // create a new thread pool to use for wire tap
                 myThreadPool = Executors.newFixedThreadPool(1);
 
-                from("seda:foo").routeId("foo").wireTap("direct:tap", myThreadPool).to("mock:result");
+                from("seda:foo").routeId("foo").wireTap("direct:tap").executorService(myThreadPool).to("mock:result");
                 from("direct:tap").routeId("tap").to("mock:tap");
             }
         };

@@ -52,7 +52,7 @@
     <endpoint id="input1" uri="netty4-http:https://0.0.0.0:#{dynaPort}?ssl=true&amp;sslContextParameters=#mySsl"/>
 
     <route>
-      <from ref="input1"/>
+      <from uri="ref:input1"/>
       <to uri="mock:input"/>
       <transform>
         <simple>Bye World</simple>

@@ -169,14 +169,6 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         this(camelContext, processors, aggregationStrategy, false, null, false, false, false, 0, null, false, false);
     }
 
-    @Deprecated
-    public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy,
-                              boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService,
-                              boolean streaming, boolean stopOnException, long timeout, Processor onPrepare, boolean shareUnitOfWork) {
-        this(camelContext, processors, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService,
-                streaming, stopOnException, timeout, onPrepare, shareUnitOfWork, false);
-    }
-
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy, boolean parallelProcessing,
                               ExecutorService executorService, boolean shutdownExecutorService, boolean streaming, boolean stopOnException, long timeout, Processor onPrepare,
                               boolean shareUnitOfWork, boolean parallelAggregate) {

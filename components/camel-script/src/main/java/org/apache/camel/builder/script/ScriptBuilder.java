@@ -130,7 +130,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         try {
             // if we have camel context then load resources
             if (camelContext != null && scriptResource != null) {
-                reader = createScriptReader(camelContext.getClassResolver(), scriptResource);
+                reader = createScriptReader(camelContext, scriptResource);
             } else if (this.scriptText != null) {
                 reader = new StringReader(this.scriptText);
             }
@@ -451,7 +451,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
     }
 
     private boolean getCamelContextProperty(CamelContext camelContext, String propertyKey) {
-        String propertyValue =  camelContext.getProperty(propertyKey);
+        String propertyValue =  camelContext.getGlobalOption(propertyKey);
         if (propertyValue != null) {
             return camelContext.getTypeConverter().convertTo(boolean.class, propertyValue);
         } else {
@@ -469,7 +469,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
                 LOG.trace("Evaluate script for context: {} on exchange: {}", context, exchange);
                 result = engine.eval(scriptText, context);
             } else if (scriptResource != null) {
-                Reader reader = createScriptReader(exchange.getContext().getClassResolver(), scriptResource);
+                Reader reader = createScriptReader(exchange.getContext(), scriptResource);
                 try {
                     LOG.trace("Evaluate script for context: {} on exchange: {}", context, exchange);
                     result = engine.eval(reader, context);
@@ -530,8 +530,8 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         }
     }
 
-    protected static InputStreamReader createScriptReader(ClassResolver classResolver, String resource) throws IOException {
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(classResolver, resource);
+    protected static InputStreamReader createScriptReader(CamelContext camelContext, String resource) throws IOException {
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, resource);
         return new InputStreamReader(is);
     }
 

@@ -34,7 +34,7 @@ public class FileConsumerIdempotentKeyChangedIssue2Test extends ContextTestSuppo
 
         template.sendBodyAndHeader(endpoint, "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        context.startAllRoutes();
+        context.getRouteController().startAllRoutes();
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matches(5, TimeUnit.SECONDS);

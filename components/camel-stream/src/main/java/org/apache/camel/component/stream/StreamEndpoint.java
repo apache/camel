@@ -84,11 +84,6 @@ public class StreamEndpoint extends DefaultEndpoint {
         super(endpointUri, component);
     }
 
-    @Deprecated
-    public StreamEndpoint(String endpointUri) {
-        super(endpointUri);
-    }
-
     public Consumer createConsumer(Processor processor) throws Exception {
         StreamConsumer answer = new StreamConsumer(this, processor, getEndpointUri());
         if (isFileWatcher() && !"file".equals(getKind())) {

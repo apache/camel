@@ -391,19 +391,6 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     /**
-     * Sets the initial redelivery delay
-     *
-     * @param delay the initial redelivery delay
-     * @return the builder
-     * @deprecated will be removed in the near future. Instead use {@link #redeliveryDelay(String)}
-     */
-    @Deprecated
-    public OnExceptionDefinition redeliverDelay(long delay) {
-        getOrCreateRedeliveryPolicy().redeliveryDelay(delay);
-        return this;
-    }
-
-    /**
      * Sets the back off multiplier
      *
      * @param backOffMultiplier the back off multiplier
@@ -774,16 +761,6 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      */
     public OnExceptionDefinition delayPattern(String delayPattern) {
         getOrCreateRedeliveryPolicy().setDelayPattern(delayPattern);
-        return this;
-    }
-
-    /**
-     * @deprecated this method will be removed in Camel 3.0, please use {@link #useOriginalMessage()}
-     * @see #useOriginalMessage()
-     */
-    @Deprecated
-    public OnExceptionDefinition useOriginalBody() {
-        setUseOriginalMessagePolicy(Boolean.TRUE);
         return this;
     }
 

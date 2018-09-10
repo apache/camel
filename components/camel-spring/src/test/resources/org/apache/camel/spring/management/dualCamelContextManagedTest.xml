@@ -30,8 +30,8 @@
         <endpoint id="mock1" uri="mock:mock1"/>
 
         <route id="route1">
-            <from ref="fromFile"/>
-            <to ref="mock1"/>
+            <from uri="ref:fromFile"/>
+            <to uri="ref:mock1"/>
         </route>
 
     </camelContext>
@@ -42,8 +42,8 @@
         <endpoint id="mock2" uri="mock:mock2"/>
 
         <route id="route2">
-            <from ref="fromFile2"/>
-            <to ref="mock2"/>
+            <from uri="ref:fromFile2"/>
+            <to uri="ref:mock2"/>
         </route>
 
     </camelContext>

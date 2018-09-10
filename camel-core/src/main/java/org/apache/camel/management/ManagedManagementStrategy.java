@@ -59,11 +59,6 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
     public ManagedManagementStrategy() {
     }
 
-    @Deprecated
-    public ManagedManagementStrategy(ManagementAgent managementAgent) {
-        setManagementAgent(managementAgent);
-    }
-
     public ManagedManagementStrategy(CamelContext camelContext, ManagementAgent managementAgent) {
         setCamelContext(camelContext);
         setManagementAgent(managementAgent);

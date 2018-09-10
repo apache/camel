@@ -60,7 +60,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
     protected void onJobExecute(Action action, Route route) throws Exception {
         LOG.debug("Scheduled Event notification received. Performing action: {} on route: {}", action, route.getId());
 
-        ServiceStatus routeStatus = route.getRouteContext().getCamelContext().getRouteStatus(route.getId());
+        ServiceStatus routeStatus = route.getRouteContext().getCamelContext().getRouteController().getRouteStatus(route.getId());
         if (action == Action.START) {
             if (routeStatus == ServiceStatus.Stopped) {
                 startRoute(route);

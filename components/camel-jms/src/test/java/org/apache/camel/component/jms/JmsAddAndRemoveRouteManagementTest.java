@@ -67,7 +67,7 @@ public class JmsAddAndRemoveRouteManagementTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // now stop and remove that route
-        context.stopRoute("myNewRoute");
+        context.getRouteController().stopRoute("myNewRoute");
         context.removeRoute("myNewRoute");
 
         Set<ObjectName> after = mbeanServer.queryNames(new ObjectName("*:type=threadpools,*"), null);

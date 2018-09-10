@@ -70,55 +70,55 @@
     
     <route>
       <from uri="direct:basic-encryption" />
-      <marshal ref="basic" />
+      <marshal><custom ref="basic" /></marshal>
       <to uri="mock:encrypted" />
-      <unmarshal ref="basic" />
+      <unmarshal><custom ref="basic" /></unmarshal>
       <to uri="mock:unencrypted" />
     </route>
     
     <route>
       <from uri="direct:init-vector" />
-      <marshal ref="initvector" />
+      <marshal><custom ref="initvector" /></marshal>
       <to uri="mock:encrypted" />
-      <unmarshal ref="initvector" />
+      <unmarshal><custom ref="initvector" /></unmarshal>
       <to uri="mock:unencrypted" />
     </route>
     
     <route>
       <from uri="direct:inline" />
-      <marshal ref="inline" />
+      <marshal><custom ref="inline" /></marshal>
       <to uri="mock:encrypted" />
-      <unmarshal ref="inline-decrypt" />
+      <unmarshal><custom ref="inline-decrypt" /></unmarshal>
       <to uri="mock:unencrypted" />
     </route>
     
     <route>
       <from uri="direct:hmac" />
-      <marshal ref="hmac" />
+      <marshal><custom ref="hmac" /></marshal>
       <to uri="mock:encrypted" />
-      <unmarshal ref="hmac" />
+      <unmarshal><custom ref="hmac" /></unmarshal>
       <to uri="mock:unencrypted" />
     </route>
     
     <route>
       <from uri="direct:hmac-algorithm" />
-      <marshal ref="hmac-algorithm" />
+      <marshal><custom ref="hmac-algorithm" /></marshal>
       <to uri="mock:encrypted" />
-      <unmarshal ref="hmac-algorithm" />
+      <unmarshal><custom ref="hmac-algorithm" /></unmarshal>
       <to uri="mock:unencrypted" />
     </route>
     
     <route>
       <from uri="direct:hmac-sha-256-algorithm" />
-      <marshal ref="hmac-sha-256-algorithm" />
+      <marshal><custom ref="hmac-sha-256-algorithm" /></marshal>
       <to uri="mock:encrypted" />
-      <unmarshal ref="hmac-sha-256-algorithm" />
+      <unmarshal><custom ref="hmac-sha-256-algorithm" /></unmarshal>
       <to uri="mock:unencrypted" />
     </route>
     
     <route>
       <from uri="direct:key-in-header-encrypt" />
-      <marshal ref="nokey" />
+      <marshal><custom ref="nokey" /></marshal>
       <setHeader headerName="CamelCryptoKey">
         <constant />
       </setHeader>
@@ -127,7 +127,7 @@
     
     <route>
       <from uri="direct:key-in-header-decrypt" />
-      <unmarshal ref="nokey" />
+      <unmarshal><custom ref="nokey" /></unmarshal>
       <setHeader headerName="CamelCryptoKey">
         <constant />
       </setHeader>
@@ -136,25 +136,25 @@
     
     <route>
       <from uri="direct:3des-ecb-encryption" />
-      <marshal ref="tripledes-ecb-encryption" />
+      <marshal><custom ref="tripledes-ecb-encryption" /></marshal>
       <to uri="mock:encrypted" />
-      <unmarshal ref="tripledes-ecb-encryption" />
+      <unmarshal><custom ref="tripledes-ecb-encryption" /></unmarshal>
       <to uri="mock:unencrypted" />
     </route>
     
     <route>
       <from uri="direct:3des-cbc-encryption" />
-      <marshal ref="tripledes-cbc-encryption-encrypt" />
+      <marshal><custom ref="tripledes-cbc-encryption-encrypt" /></marshal>
       <to uri="mock:encrypted" />
-      <unmarshal ref="tripledes-cbc-encryption-decrypt" />
+      <unmarshal><custom ref="tripledes-cbc-encryption-decrypt" /></unmarshal>
       <to uri="mock:unencrypted" />
     </route>
     
     <route>
       <from uri="direct:aes-128-ecb-encryption" />
-      <marshal ref="aes-128-ecb-encryption" />
+      <marshal><custom ref="aes-128-ecb-encryption" /></marshal>
       <to uri="mock:encrypted" />
-      <unmarshal ref="aes-128-ecb-encryption" />
+      <unmarshal><custom ref="aes-128-ecb-encryption" /></unmarshal>
       <to uri="mock:unencrypted" />
     </route>
     

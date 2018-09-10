@@ -42,15 +42,15 @@ public class UndertowWsProducerRouteRestartTest extends BaseUndertowTest {
 
     @Test
     public void testWSSuspendResumeRoute() throws Exception {
-        context.suspendRoute(ROUTE_ID);
-        context.resumeRoute(ROUTE_ID);
+        context.getRouteController().resumeRoute(ROUTE_ID);
+        context.getRouteController().resumeRoute(ROUTE_ID);
         doTestWSHttpCall();
     }
 
     @Test
     public void testWSStopStartRoute() throws Exception {
-        context.stopRoute(ROUTE_ID);
-        context.startRoute(ROUTE_ID);
+        context.getRouteController().stopRoute(ROUTE_ID);
+        context.getRouteController().startRoute(ROUTE_ID);
         doTestWSHttpCall();
     }
 
@@ -58,7 +58,7 @@ public class UndertowWsProducerRouteRestartTest extends BaseUndertowTest {
     public void testWSRemoveAddRoute() throws Exception {
         context.removeRoute(ROUTE_ID);
         context.addRoutes(createRouteBuilder());
-        context.startRoute(ROUTE_ID);
+        context.getRouteController().startRoute(ROUTE_ID);
         doTestWSHttpCall();
     }
 

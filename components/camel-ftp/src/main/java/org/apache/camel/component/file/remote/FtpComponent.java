@@ -30,12 +30,10 @@ import org.apache.commons.net.ftp.FTPFile;
 public class FtpComponent extends RemoteFileComponent<FTPFile> {
 
     public FtpComponent() {
-        setEndpointClass(FtpEndpoint.class);
     }
 
     public FtpComponent(CamelContext context) {
         super(context);
-        setEndpointClass(FtpEndpoint.class);
     }
 
     @Override

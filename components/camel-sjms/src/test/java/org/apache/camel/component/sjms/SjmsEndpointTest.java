@@ -122,7 +122,7 @@ public class SjmsEndpointTest extends CamelTestSupport {
 
     @Test(expected = ResolveEndpointFailedException.class)
     public void testUnsupportedMessageExchangePattern() throws Exception {
-        context.getEndpoint("sjms:queue:test2?messageExchangePattern=" + ExchangePattern.OutOnly);
+        context.getEndpoint("sjms:queue:test2?messageExchangePattern=OutOnly");
     }
 
     @Test

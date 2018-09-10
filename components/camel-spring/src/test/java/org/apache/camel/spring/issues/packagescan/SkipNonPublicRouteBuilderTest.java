@@ -40,7 +40,7 @@ public class SkipNonPublicRouteBuilderTest extends SpringTestSupport {
                 from("direct:bar").routeId("bar").to("mock:bar");
             }
         });
-        context.startRoute("bar");
+        context.getRouteController().startRoute("bar");
         
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:cool").expectedMessageCount(1);

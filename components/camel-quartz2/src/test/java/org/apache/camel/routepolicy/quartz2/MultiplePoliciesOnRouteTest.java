@@ -81,7 +81,7 @@ public class MultiplePoliciesOnRouteTest extends CamelTestSupport {
         });
         context.start();
 
-        assertTrue(context.getRouteStatus("test") == ServiceStatus.Started);
+        assertTrue(context.getRouteController().getRouteStatus("test") == ServiceStatus.Started);
         for (int i = 0; i < size; i++) {
             template.sendBody(url, "Message " + i);
             Thread.sleep(3);

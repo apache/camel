@@ -50,7 +50,7 @@ public class RouteNoAutoStartupTest extends ContextTestSupport {
         mock.reset();
         mock.expectedMessageCount(1);
 
-        context.startRoute("myRoute");
+        context.getRouteController().startRoute("myRoute");
 
         assertMockEndpointsSatisfied();
     }

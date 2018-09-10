@@ -46,7 +46,7 @@ public class ZipFileMultipleFilesSplitterTest extends ZipSplitterRouteTest {
                 zipFile.setUsingIterator(true);
                 from("file:src/test/resources/org/apache/camel/dataformat/zipfile/data/?consumer.delay=1000&noop=true")
                         .unmarshal(zipFile)
-                        .split(body(Iterator.class))
+                        .split(bodyAs(Iterator.class))
                         .streaming()
                         .aggregationStrategy(updateHeader())
                         .convertBodyTo(String.class)

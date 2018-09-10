@@ -150,16 +150,6 @@ public class RecipientListProcessor extends MulticastProcessor {
         this.iter = iter;
     }
 
-    @Deprecated
-    public RecipientListProcessor(CamelContext camelContext, ProducerCache producerCache, Iterator<Object> iter, AggregationStrategy aggregationStrategy,
-                                  boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService,
-                                  boolean streaming, boolean stopOnException, long timeout, Processor onPrepare, boolean shareUnitOfWork) {
-        super(camelContext, null, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService,
-                streaming, stopOnException, timeout, onPrepare, shareUnitOfWork, false);
-        this.producerCache = producerCache;
-        this.iter = iter;
-    }
-
     public RecipientListProcessor(CamelContext camelContext, ProducerCache producerCache, Iterator<Object> iter, AggregationStrategy aggregationStrategy,
                                   boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService,
                                   boolean streaming, boolean stopOnException, long timeout, Processor onPrepare, boolean shareUnitOfWork, boolean parallelAggregate) {

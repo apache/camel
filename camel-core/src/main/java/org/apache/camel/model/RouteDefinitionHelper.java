@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
@@ -391,10 +392,14 @@ public final class RouteDefinitionHelper {
             // let the route inherit the error handler builder from camel context if none already set
 
             // must clone to avoid side effects while building routes using multiple RouteBuilders
-            ErrorHandlerBuilder builder = context.getErrorHandlerBuilder();
+            ErrorHandlerFactory builder = context.getErrorHandlerFactory();
             if (builder != null) {
-                builder = builder.cloneBuilder();
-                route.setErrorHandlerBuilderIfNull(builder);
+                if (builder instanceof ErrorHandlerBuilder) {
+                    builder = ((ErrorHandlerBuilder) builder).cloneBuilder();
+                    route.setErrorHandlerBuilderIfNull(builder);
+                } else {
+                    throw new UnsupportedOperationException("The ErrorHandlerFactory must implement ErrorHandlerBuilder");
+                }
             }
         }
 
@@ -517,9 +522,6 @@ public final class RouteDefinitionHelper {
                                 // its a ref: so lookup the endpoint to get its url
                                 String ref = uri.substring(4);
                                 uri = CamelContextHelper.getMandatoryEndpoint(context, ref).getEndpointUri();
-                            } else if (input.getRef() != null) {
-                                // lookup the endpoint to get its url
-                                uri = CamelContextHelper.getMandatoryEndpoint(context, input.getRef()).getEndpointUri();
                             }
                         }
                         if (EndpointHelper.matchEndpoint(context, uri, pattern)) {

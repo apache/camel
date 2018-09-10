@@ -50,11 +50,9 @@ public class DefaultMessage extends MessageSupport {
     private Map<String, DataHandler> attachments;
     private Map<String, Attachment> attachmentObjects;
 
-    /**
-     * @deprecated use {@link #DefaultMessage(CamelContext)}
-     */
-    @Deprecated
-    public DefaultMessage() {
+    public DefaultMessage(Exchange exchange) {
+        setExchange(exchange);
+        setCamelContext(exchange != null ? exchange.getContext() : null);
     }
 
     public DefaultMessage(CamelContext camelContext) {
@@ -391,10 +389,6 @@ public class DefaultMessage extends MessageSupport {
      */
     protected boolean hasPopulatedHeaders() {
         return headers != null;
-    }
-
-    public String createExchangeId() {
-        return null;
     }
 
     private static boolean isExcludePatternMatch(String key, String... excludePatterns) {

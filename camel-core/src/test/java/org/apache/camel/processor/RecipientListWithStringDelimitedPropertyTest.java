@@ -56,7 +56,7 @@ public class RecipientListWithStringDelimitedPropertyTest extends ContextTestSup
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:a").recipientList(property("myProperty"));
+                from("direct:a").recipientList(exchangeProperty("myProperty"));
                 // END SNIPPET: example
             }
         };

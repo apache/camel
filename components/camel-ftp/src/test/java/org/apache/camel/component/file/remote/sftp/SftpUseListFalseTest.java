@@ -39,7 +39,7 @@ public class SftpUseListFalseTest extends SftpServerTestSupport {
         mock.expectedHeaderReceived(Exchange.FILE_NAME, "report.txt");
         mock.expectedBodiesReceived(expected);
         
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
     }

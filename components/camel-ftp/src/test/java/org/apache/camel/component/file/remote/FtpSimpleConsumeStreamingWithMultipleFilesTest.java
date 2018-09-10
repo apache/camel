@@ -49,7 +49,7 @@ public class FtpSimpleConsumeStreamingWithMultipleFilesTest extends FtpServerTes
         mock.expectedMessageCount(2);
         mock.expectedBodiesReceivedInAnyOrder(expected, expected2);
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
 

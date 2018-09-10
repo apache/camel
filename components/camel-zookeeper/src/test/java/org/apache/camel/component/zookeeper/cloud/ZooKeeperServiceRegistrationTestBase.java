@@ -114,7 +114,7 @@ public abstract class ZooKeeperServiceRegistrationTestBase extends CamelTestSupp
         assertTrue(discovery.queryForInstances(SERVICE_NAME).isEmpty());
 
         // let start the route
-        context().startRoute(SERVICE_ID);
+        context().getRouteController().startRoute(SERVICE_ID);
 
         // check that service has been registered
         Collection<ServiceInstance<ZooKeeperServiceRegistry.MetaData>> services = discovery.queryForInstances(SERVICE_NAME);
@@ -133,7 +133,7 @@ public abstract class ZooKeeperServiceRegistrationTestBase extends CamelTestSupp
         );
 
         // let stop the route
-        context().stopRoute(SERVICE_ID);
+        context().getRouteController().stopRoute(SERVICE_ID);
 
         // the service should be removed once the route is stopped
         assertTrue(discovery.queryForInstances(SERVICE_NAME).isEmpty());

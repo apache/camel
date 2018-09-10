@@ -114,25 +114,25 @@ public class RoutePolicyCallbackTest extends ContextTestSupport {
         assertTrue(policy.done);
 
         assertFalse(policy.suspend);
-        context.suspendRoute("foo");
+        context.getRouteController().suspendRoute("foo");
         assertTrue(policy.suspend);
 
         assertFalse(policy.resume);
-        context.resumeRoute("foo");
+        context.getRouteController().resumeRoute("foo");
         assertTrue(policy.resume);
 
         assertFalse(policy.stop);
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
         assertTrue(policy.stop);
 
         // previously started, so force flag to be false
         policy.start = false;
         assertFalse(policy.start);
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
         assertTrue(policy.start);
 
         assertFalse(policy.remove);
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
         context.removeRoute("foo");
         assertTrue(policy.remove);
 

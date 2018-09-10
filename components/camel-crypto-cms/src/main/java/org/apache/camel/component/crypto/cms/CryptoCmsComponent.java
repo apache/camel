@@ -34,14 +34,14 @@ import org.apache.camel.component.crypto.cms.sig.SignedDataCreator;
 import org.apache.camel.component.crypto.cms.sig.SignedDataCreatorConfiguration;
 import org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration;
 import org.apache.camel.component.crypto.cms.sig.SignedDataVerifierFromHeader;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CryptoCmsComponent extends UriEndpointComponent {
+public class CryptoCmsComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(CryptoCmsComponent.class);
 
@@ -52,11 +52,10 @@ public class CryptoCmsComponent extends UriEndpointComponent {
     private EnvelopedDataDecryptorConfiguration envelopedDataDecryptorConfiguration;
 
     public CryptoCmsComponent() {
-        super(CryptoCmsEndpoint.class);
     }
 
     public CryptoCmsComponent(CamelContext context) {
-        super(context, CryptoCmsEndpoint.class);
+        super(context);
     }
 
     @Override

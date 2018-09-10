@@ -43,9 +43,9 @@ public class SedaPurgeWhenStoppingTest extends ContextTestSupport {
             template.sendBody("seda:foo", "Message " + i);
         }
 
-        context.startRoute("myRoute");
+        context.getRouteController().startRoute("myRoute");
         latch.await(2, TimeUnit.SECONDS);
-        context.stopRoute("myRoute");
+        context.getRouteController().stopRoute("myRoute");
         latch2.countDown();
 
         mock.setAssertPeriod(500);

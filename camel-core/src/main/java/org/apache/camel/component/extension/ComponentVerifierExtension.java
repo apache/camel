@@ -22,9 +22,15 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.Component;
-import org.apache.camel.component.extension.verifier.ComponentVerifierExtensionHelper;
+import org.apache.camel.component.extension.verifier.ComponentVerifierExtensionHelper.ErrorAttribute;
+import org.apache.camel.component.extension.verifier.ComponentVerifierExtensionHelper.ErrorCode;
+import org.apache.camel.component.extension.verifier.ComponentVerifierExtensionHelper.ExceptionErrorAttribute;
+import org.apache.camel.component.extension.verifier.ComponentVerifierExtensionHelper.GroupErrorAttribute;
+import org.apache.camel.component.extension.verifier.ComponentVerifierExtensionHelper.HttpErrorAttribute;
+import org.apache.camel.component.extension.verifier.ComponentVerifierExtensionHelper.StandardErrorCode;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
 import org.apache.camel.util.ObjectHelper;
+
 /**
  * Defines the interface used for validating component/endpoint parameters. The central method of this
  * interface is {@link #verify(ComponentVerifierExtension.Scope, Map)} which takes a scope and a set of parameters which should be verified.
@@ -49,7 +55,7 @@ public interface ComponentVerifierExtension extends ComponentExtension {
      * @param parameters the parameters to verify which are interpreted individually by each component verifier
      * @return the verification result
      */
-    ComponentVerifierExtension.Result verify(ComponentVerifierExtension.Scope scope, Map<String, Object> parameters);
+    Result verify(Scope scope, Map<String, Object> parameters);
 
     /**
      * The result of a verification
@@ -75,12 +81,12 @@ public interface ComponentVerifierExtension extends ComponentExtension {
         }
 
         /**
-         * Scope of the verification. This is the scope given to the call to {@link #verify(ComponentVerifierExtension.Scope, Map)}  and
+         * Scope of the verification. This is the scope given to the call to {@link #verify(Scope, Map)}  and
          * can be used for correlation.
          *
          * @return the scope against which the parameters have been validated.
          */
-        ComponentVerifierExtension.Scope getScope();
+        Scope getScope();
 
         /**
          * Result of the validation as status. This should be the first datum to check after a verification
@@ -88,7 +94,7 @@ public interface ComponentVerifierExtension extends ComponentExtension {
          *
          * @return the status
          */
-        ComponentVerifierExtension.Result.Status getStatus();
+        Status getStatus();
 
         /**
          * Collection of errors happened for the verification. This list is empty (but non null) if the verification
@@ -96,7 +102,7 @@ public interface ComponentVerifierExtension extends ComponentExtension {
          *
          * @return a list of errors. Can be empty when verification was successful
          */
-        List<ComponentVerifierExtension.VerificationError> getErrors();
+        List<VerificationError> getErrors();
     }
 
     /**
@@ -123,8 +129,8 @@ public interface ComponentVerifierExtension extends ComponentExtension {
          * @param scope the scope as string, which can be in any case
          * @return the scope enum represented by this string
          */
-        public static ComponentVerifierExtension.Scope fromString(String scope) {
-            for (ComponentVerifierExtension.Scope value : VALUES) {
+        public static Scope fromString(String scope) {
+            for (Scope value : VALUES) {
                 if (ObjectHelper.equal(scope, value.name(), true)) {
                     return value;
                 }
@@ -172,7 +178,7 @@ public interface ComponentVerifierExtension extends ComponentExtension {
          *
          * @return a number of key/value pair with additional information related to the verification.
          */
-        Map<ComponentVerifierExtension.VerificationError.Attribute, Object> getDetails();
+        Map<Attribute, Object> getDetails();
 
         /**
          * Get a single detail for a given attribute
@@ -180,8 +186,8 @@ public interface ComponentVerifierExtension extends ComponentExtension {
          * @param attribute the attribute to lookup
          * @return the detail value or null if no such attribute exists
          */
-        default Object getDetail(ComponentVerifierExtension.VerificationError.Attribute attribute) {
-            Map<ComponentVerifierExtension.VerificationError.Attribute, Object> details = getDetails();
+        default Object getDetail(Attribute attribute) {
+            Map<Attribute, Object> details = getDetails();
             if (details != null) {
                 return details.get(attribute);
             }
@@ -206,7 +212,7 @@ public interface ComponentVerifierExtension extends ComponentExtension {
          * @return error code
          */
         static Code asCode(String code) {
-            return new ComponentVerifierExtensionHelper.ErrorCode(code);
+            return new ErrorCode(code);
         }
 
         /**
@@ -218,7 +224,7 @@ public interface ComponentVerifierExtension extends ComponentExtension {
          * @return generated attribute
          */
         static Attribute asAttribute(String attribute) {
-            return new ComponentVerifierExtensionHelper.ErrorAttribute(attribute);
+            return new ErrorAttribute(attribute);
         }
 
         /**
@@ -253,56 +259,56 @@ public interface ComponentVerifierExtension extends ComponentExtension {
             /**
              * Authentication failed
              */
-            StandardCode AUTHENTICATION = new ComponentVerifierExtensionHelper.StandardErrorCode("AUTHENTICATION");
+            StandardCode AUTHENTICATION = new StandardErrorCode("AUTHENTICATION");
             /**
              * An exception occurred
              */
-            StandardCode EXCEPTION = new ComponentVerifierExtensionHelper.StandardErrorCode("EXCEPTION");
+            StandardCode EXCEPTION = new StandardErrorCode("EXCEPTION");
             /**
              * Internal error while performing the verification
              */
-            StandardCode INTERNAL = new ComponentVerifierExtensionHelper.StandardErrorCode("INTERNAL");
+            StandardCode INTERNAL = new StandardErrorCode("INTERNAL");
             /**
              * A mandatory parameter is missing
              */
-            StandardCode MISSING_PARAMETER = new ComponentVerifierExtensionHelper.StandardErrorCode("MISSING_PARAMETER");
+            StandardCode MISSING_PARAMETER = new StandardErrorCode("MISSING_PARAMETER");
             /**
              * A given parameter is not known to the component
              */
-            StandardCode UNKNOWN_PARAMETER = new ComponentVerifierExtensionHelper.StandardErrorCode("UNKNOWN_PARAMETER");
+            StandardCode UNKNOWN_PARAMETER = new StandardErrorCode("UNKNOWN_PARAMETER");
             /**
              * A given parameter is illegal
              */
-            StandardCode ILLEGAL_PARAMETER = new ComponentVerifierExtensionHelper.StandardErrorCode("ILLEGAL_PARAMETER");
+            StandardCode ILLEGAL_PARAMETER = new StandardErrorCode("ILLEGAL_PARAMETER");
             /**
-             * A combination of parameters is illegal. See {@link ComponentVerifierExtension.VerificationError#getParameterKeys()} for the set
+             * A combination of parameters is illegal. See {@link VerificationError#getParameterKeys()} for the set
              * of affected parameters
              */
-            StandardCode ILLEGAL_PARAMETER_GROUP_COMBINATION = new ComponentVerifierExtensionHelper.StandardErrorCode("ILLEGAL_PARAMETER_GROUP_COMBINATION");
+            StandardCode ILLEGAL_PARAMETER_GROUP_COMBINATION = new StandardErrorCode("ILLEGAL_PARAMETER_GROUP_COMBINATION");
             /**
              * A parameter <em>value</em> is not valid
              */
-            StandardCode ILLEGAL_PARAMETER_VALUE = new ComponentVerifierExtensionHelper.StandardErrorCode("ILLEGAL_PARAMETER_VALUE");
+            StandardCode ILLEGAL_PARAMETER_VALUE = new StandardErrorCode("ILLEGAL_PARAMETER_VALUE");
             /**
              * A group of parameters is not complete in order to be valid
              */
-            StandardCode INCOMPLETE_PARAMETER_GROUP = new ComponentVerifierExtensionHelper.StandardErrorCode("INCOMPLETE_PARAMETER_GROUP");
+            StandardCode INCOMPLETE_PARAMETER_GROUP = new StandardErrorCode("INCOMPLETE_PARAMETER_GROUP");
             /**
              * The verification is not supported
              */
-            StandardCode UNSUPPORTED = new ComponentVerifierExtensionHelper.StandardErrorCode("UNSUPPORTED");
+            StandardCode UNSUPPORTED = new StandardErrorCode("UNSUPPORTED");
             /**
-             * The requested {@link ComponentVerifierExtension.Scope} is not supported
+             * The requested {@link Scope} is not supported
              */
-            StandardCode UNSUPPORTED_SCOPE = new ComponentVerifierExtensionHelper.StandardErrorCode("UNSUPPORTED_SCOPE");
+            StandardCode UNSUPPORTED_SCOPE = new StandardErrorCode("UNSUPPORTED_SCOPE");
             /**
              * The requested {@link Component} is not supported
              */
-            StandardCode UNSUPPORTED_COMPONENT = new ComponentVerifierExtensionHelper.StandardErrorCode("UNSUPPORTED_COMPONENT");
+            StandardCode UNSUPPORTED_COMPONENT = new StandardErrorCode("UNSUPPORTED_COMPONENT");
             /**
-             * Generic error which is explained in more details with {@link ComponentVerifierExtension.VerificationError#getDetails()}
+             * Generic error which is explained in more details with {@link VerificationError#getDetails()}
              */
-            StandardCode GENERIC = new ComponentVerifierExtensionHelper.StandardErrorCode("GENERIC");
+            StandardCode GENERIC = new StandardErrorCode("GENERIC");
         }
 
         /**
@@ -342,11 +348,11 @@ public interface ComponentVerifierExtension extends ComponentExtension {
              * The exception object that has been thrown. Note that this can be a complex
              * object and can cause large content when e.g. serialized as JSON
              */
-            ExceptionAttribute EXCEPTION_INSTANCE = new ComponentVerifierExtensionHelper.ExceptionErrorAttribute("EXCEPTION_INSTANCE");
+            ExceptionAttribute EXCEPTION_INSTANCE = new ExceptionErrorAttribute("EXCEPTION_INSTANCE");
             /**
              * The exception class
              */
-            ExceptionAttribute EXCEPTION_CLASS = new ComponentVerifierExtensionHelper.ExceptionErrorAttribute("EXCEPTION_CLASS");
+            ExceptionAttribute EXCEPTION_CLASS = new ExceptionErrorAttribute("EXCEPTION_CLASS");
         }
 
         /**
@@ -356,16 +362,16 @@ public interface ComponentVerifierExtension extends ComponentExtension {
             /**
              * The erroneous HTTP code that occurred
              */
-            HttpAttribute HTTP_CODE = new ComponentVerifierExtensionHelper.HttpErrorAttribute("HTTP_CODE");
+            HttpAttribute HTTP_CODE = new HttpErrorAttribute("HTTP_CODE");
             /**
              * HTTP response's body
              */
-            HttpAttribute HTTP_TEXT = new ComponentVerifierExtensionHelper.HttpErrorAttribute("HTTP_TEXT");
+            HttpAttribute HTTP_TEXT = new HttpErrorAttribute("HTTP_TEXT");
             /**
              * If given as details, specifies that a redirect happened and the
              * content of this detail is the redirect URL
              */
-            HttpAttribute HTTP_REDIRECT = new ComponentVerifierExtensionHelper.HttpErrorAttribute("HTTP_REDIRECT");
+            HttpAttribute HTTP_REDIRECT = new HttpErrorAttribute("HTTP_REDIRECT");
         }
 
         /**
@@ -375,11 +381,11 @@ public interface ComponentVerifierExtension extends ComponentExtension {
             /**
              * Group name
              */
-            GroupAttribute GROUP_NAME = new ComponentVerifierExtensionHelper.GroupErrorAttribute("GROUP_NAME");
+            GroupAttribute GROUP_NAME = new GroupErrorAttribute("GROUP_NAME");
             /**
              * Options for the group
              */
-            GroupAttribute GROUP_OPTIONS = new ComponentVerifierExtensionHelper.GroupErrorAttribute("GROUP_OPTIONS");
+            GroupAttribute GROUP_OPTIONS = new GroupErrorAttribute("GROUP_OPTIONS");
         }
     }
 }

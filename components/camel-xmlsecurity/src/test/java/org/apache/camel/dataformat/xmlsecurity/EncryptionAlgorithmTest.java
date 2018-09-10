@@ -59,7 +59,7 @@ public class EncryptionAlgorithmTest extends CamelTestSupport {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        context.getProperties().put(XmlConverter.OUTPUT_PROPERTIES_PREFIX + OutputKeys.ENCODING, "UTF-8");
+        context.getGlobalOptions().put(XmlConverter.OUTPUT_PROPERTIES_PREFIX + OutputKeys.ENCODING, "UTF-8");
     }
     
     @Test

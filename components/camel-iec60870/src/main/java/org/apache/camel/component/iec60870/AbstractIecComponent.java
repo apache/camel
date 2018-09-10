@@ -40,13 +40,12 @@ public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> exten
 
     private T2 defaultConnectionOptions;
 
-    public AbstractIecComponent(final Class<T2> connectionOptionsClazz, final T2 defaultConnectionOptions, final Class<? extends Endpoint> endpointClass) {
+    public AbstractIecComponent(final Class<T2> connectionOptionsClazz, final T2 defaultConnectionOptions) {
         this.connectionOptionsClazz = connectionOptionsClazz;
         this.defaultConnectionOptions = defaultConnectionOptions;
     }
 
-    public AbstractIecComponent(final Class<T2> connectionOptionsClazz, final T2 defaultConnectionOptions, final CamelContext context,
-                                final Class<? extends Endpoint> endpointClass) {
+    public AbstractIecComponent(final Class<T2> connectionOptionsClazz, final T2 defaultConnectionOptions, final CamelContext context) {
         super(context);
         this.connectionOptionsClazz = connectionOptionsClazz;
         this.defaultConnectionOptions = defaultConnectionOptions;

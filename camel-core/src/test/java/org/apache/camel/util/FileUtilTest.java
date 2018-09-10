@@ -216,14 +216,14 @@ public class FileUtilTest extends Assert {
 
     @Test
     public void testDefaultTempFileSuffixAndPrefix() throws Exception {
-        File tmp = FileUtil.createTempFile("tmp-", ".tmp");
+        File tmp = FileUtil.createTempFile("tmp-", ".tmp", new File("target/tmp"));
         assertNotNull(tmp);
         assertTrue("Should be a file", tmp.isFile());
     }
 
     @Test
     public void testDefaultTempFile() throws Exception {
-        File tmp = FileUtil.createTempFile(null, null);
+        File tmp = FileUtil.createTempFile(null, null, new File("target/tmp"));
         assertNotNull(tmp);
         assertTrue("Should be a file", tmp.isFile());
     }
@@ -244,16 +244,6 @@ public class FileUtilTest extends Assert {
 
         assertFalse("File should not exist " + file, file.exists());
         assertTrue("A new file should be created " + file, FileUtil.createNewFile(file));
-    }
-
-    @Test
-    public void testShutdown() throws Exception {
-        File tmpFile = FileUtil.createTempFile(null, null);
-        File tmpDir = tmpFile.getParentFile();
-        assertTrue(tmpDir.exists());
-
-        FileUtil.shutdown();
-        assertFalse(tmpDir.exists());
     }
 
     @Test

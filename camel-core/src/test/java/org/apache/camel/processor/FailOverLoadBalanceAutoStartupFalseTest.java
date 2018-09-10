@@ -28,7 +28,7 @@ public class FailOverLoadBalanceAutoStartupFalseTest extends ContextTestSupport 
         getMockEndpoint("mock:y").expectedMessageCount(1);
         getMockEndpoint("mock:z").expectedMessageCount(1);
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         template.sendBody("direct:start", "Hello World");
 

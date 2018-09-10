@@ -33,7 +33,7 @@ import org.apache.camel.builder.NoErrorHandlerBuilder;
 @XmlEnum(String.class)
 public enum ErrorHandlerType {
 
-    DefaultErrorHandler, DeadLetterChannel, LoggingErrorHandler, NoErrorHandler;
+    DefaultErrorHandler, DeadLetterChannel, NoErrorHandler;
 
     /**
      * Get the type as class.

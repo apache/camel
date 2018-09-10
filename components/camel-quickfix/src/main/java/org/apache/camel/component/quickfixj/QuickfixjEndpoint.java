@@ -19,7 +19,6 @@ package org.apache.camel.component.quickfixj;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -59,12 +58,6 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     private SessionID sessionID;
     @UriParam
     private boolean lazyCreateEngine;
-
-    @Deprecated
-    public QuickfixjEndpoint(QuickfixjEngine engine, String uri, CamelContext context) {
-        super(uri, context);
-        this.engine = engine;
-    }
 
     public QuickfixjEndpoint(QuickfixjEngine engine, String uri, Component component) {
         super(uri, component);

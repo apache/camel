@@ -46,7 +46,6 @@ public class ManagedSetAndRemoveHeaderAndPropertiesTest extends ManagementTestSu
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=processors,*"), null);
         assertEquals(8, set.size());
-        Iterator<ObjectName> it = set.iterator();
 
         boolean found = false;
         boolean found2 = false;
@@ -54,9 +53,8 @@ public class ManagedSetAndRemoveHeaderAndPropertiesTest extends ManagementTestSu
         boolean found4 = false;
         boolean found5 = false;
         boolean found6 = false;
-        for (int i = 0; i < 8; i++) {
-            ObjectName on = it.next();
 
+        for (ObjectName on : set) {
             boolean registered = mbeanServer.isRegistered(on);
             assertEquals("Should be registered", true, registered);
 

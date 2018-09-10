@@ -22,7 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -35,16 +35,15 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 /**
  * Base class file component. To be extended.
  */
-public abstract class GenericFileComponent<T> extends UriEndpointComponent {
+public abstract class GenericFileComponent<T> extends DefaultComponent {
 
     protected Logger log = LoggerFactory.getLogger(getClass());
 
     public GenericFileComponent() {
-        super(GenericFileEndpoint.class);
     }
 
     public GenericFileComponent(CamelContext context) {
-        super(context, GenericFileEndpoint.class);
+        super(context);
     }
 
     protected GenericFileEndpoint<T> createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

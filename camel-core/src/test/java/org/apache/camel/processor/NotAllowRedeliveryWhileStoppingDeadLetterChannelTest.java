@@ -43,7 +43,7 @@ public class NotAllowRedeliveryWhileStoppingDeadLetterChannelTest extends Contex
 
         Thread.sleep(500);
 
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
 
         // we should reject the task and stop quickly
         assertTrue("Should stop quickly: " + watch.taken(), watch.taken() < 5000);

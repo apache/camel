@@ -36,8 +36,8 @@ public class JpaProducerRemoveTest extends AbstractJpaTest {
     @Test
     public void testRouteJpa() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        context.startRoute("foo");
-        context.startRoute("foo1");
+        context.getRouteController().startRoute("foo");
+        context.getRouteController().startRoute("foo1");
         JpaEndpoint jpa = context.getEndpoint("jpa://" + SendEmail.class.getName(), JpaEndpoint.class);
         EntityManagerFactory emf = jpa.getEntityManagerFactory();
 

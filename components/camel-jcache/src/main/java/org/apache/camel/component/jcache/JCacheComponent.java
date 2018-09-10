@@ -25,12 +25,12 @@ import javax.cache.configuration.Configuration;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
 /**
  * Represents the component that manages {@link JCacheEndpoint}.
  */
-public class JCacheComponent extends UriEndpointComponent {
+public class JCacheComponent extends DefaultComponent {
 
     private String cachingProvider;
     private Configuration cacheConfiguration;
@@ -38,11 +38,10 @@ public class JCacheComponent extends UriEndpointComponent {
     private String configurationUri;
 
     public JCacheComponent() {
-        super(JCacheEndpoint.class);
     }
 
     public JCacheComponent(CamelContext context) {
-        super(context, JCacheEndpoint.class);
+        super(context);
     }
 
     @Override

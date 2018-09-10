@@ -19,7 +19,6 @@ package org.apache.camel.util;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -36,13 +35,10 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
-import org.apache.camel.runtimecatalog.DefaultRuntimeCamelCatalog;
-import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.BrowsableEndpoint;
+import static org.apache.camel.util.StringHelper.after;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.util.StringHelper.after;
 
 /**
  * Some helper methods for working with {@link Endpoint} instances
@@ -146,17 +142,6 @@ public final class EndpointHelper {
 
         // and fallback to test with the uri as is
         return matchPattern(uri, pattern);
-    }
-
-    /**
-     * Matches the endpoint with the given pattern.
-     *
-     * @see #matchEndpoint(org.apache.camel.CamelContext, String, String)
-     * @deprecated use {@link #matchEndpoint(org.apache.camel.CamelContext, String, String)} instead.
-     */
-    @Deprecated
-    public static boolean matchEndpoint(String uri, String pattern) {
-        return matchEndpoint(null, uri, pattern);
     }
 
     /**
@@ -390,14 +375,6 @@ public final class EndpointHelper {
     }
 
     /**
-     * @deprecated use {@link #resolveParameter(org.apache.camel.CamelContext, String, Class)}
-     */
-    @Deprecated
-    public static <T> T resloveStringParameter(CamelContext context, String value, Class<T> type) {
-        return resolveParameter(context, value, type);
-    }
-
-    /**
      * Gets the route id for the given endpoint in which there is a consumer listening.
      *
      * @param endpoint the endpoint
@@ -511,23 +488,6 @@ public final class EndpointHelper {
             return ExchangePattern.asEnum(pattern);
         }
         return null;
-    }
-
-    /**
-     * Parses the endpoint uri and builds a map of documentation information for each option which is extracted
-     * from the component json documentation
-     *
-     * @param camelContext the Camel context
-     * @param uri          the endpoint uri
-     * @return a map for each option in the uri with the corresponding information from the json
-     * @throws Exception is thrown in case of error
-     * @deprecated use {@link org.apache.camel.runtimecatalog.RuntimeCamelCatalog#endpointProperties(String)}
-     */
-    @Deprecated
-    public static Map<String, Object> endpointProperties(CamelContext camelContext, String uri) throws Exception {
-        RuntimeCamelCatalog catalog = new DefaultRuntimeCamelCatalog(camelContext, false);
-        Map<String, String> options = catalog.endpointProperties(uri);
-        return new HashMap<>(options);
     }
 
 }

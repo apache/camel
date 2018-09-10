@@ -52,7 +52,7 @@ public class FileMarkerFileRecursiveFilterDeleteOldLockFilesIncludeTest extends 
         template.sendBodyAndHeader("file:target/oldlock/bar", "Davs World", Exchange.FILE_NAME, "davs.txt");
 
         // start the route
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
 

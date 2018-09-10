@@ -56,7 +56,7 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
 
         // we need to wait a bit for our slow CI server to make sure the entire file is written on disc
         Thread.sleep(500);
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
 

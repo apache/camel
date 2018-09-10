@@ -20,17 +20,16 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
 /**
  * The <a href="http://camel.apache.org/controlbus.html">Control Bus component</a> allows sending messages to a control-bus endpoint to control the lifecycle of routes.
  */
-public class ControlBusComponent extends UriEndpointComponent {
+public class ControlBusComponent extends DefaultComponent {
 
     private ExecutorService executorService;
 
     public ControlBusComponent() {
-        super(ControlBusEndpoint.class);
     }
 
     @Override

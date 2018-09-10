@@ -20,7 +20,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -34,17 +34,16 @@ import org.springframework.context.ConfigurableApplicationContext;
  * 
  * @version 
  */
-public class EventComponent extends UriEndpointComponent implements ApplicationContextAware {
+public class EventComponent extends DefaultComponent implements ApplicationContextAware {
     private static final Logger LOG = LoggerFactory.getLogger(EventComponent.class);
     private ApplicationContext applicationContext;
     private final Set<EventEndpoint> endpoints = new LinkedHashSet<>();
 
     public EventComponent() {
-        super(EventEndpoint.class);
     }
 
     public EventComponent(ApplicationContext applicationContext) {
-        super(EventEndpoint.class);
+        super();
         setApplicationContext(applicationContext);
     }
 

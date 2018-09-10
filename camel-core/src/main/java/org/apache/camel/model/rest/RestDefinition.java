@@ -303,16 +303,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return addVerb("head", uri);
     }
 
-    @Deprecated
-    public RestDefinition options() {
-        return addVerb("options", null);
-    }
-
-    @Deprecated
-    public RestDefinition options(String uri) {
-        return addVerb("options", uri);
-    }
-
     public RestDefinition verb(String verb) {
         return addVerb(verb, null);
     }
@@ -465,25 +455,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
-    /**
-     * @param classType the canonical class name for the array passed as input
-     *
-     * @deprecated as of 2.19.0. Replaced with {@link #type(Class)} with {@code []} appended to canonical class name,
-     * e.g. {@code type(MyClass[].class}
-     */
-    @Deprecated
-    public RestDefinition typeList(Class<?> classType) {
-        // add to last verb
-        if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
-        }
-
-        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        // list should end with [] to indicate array
-        verb.setType(classType.getCanonicalName() + "[]");
-        return this;
-    }
-
     public RestDefinition outType(Class<?> classType) {
         // add to last verb
         if (getVerbs().isEmpty()) {
@@ -492,25 +463,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
         verb.setOutType(classType.getCanonicalName());
-        return this;
-    }
-
-    /**
-     * @param classType the canonical class name for the array passed as output
-     *
-     * @deprecated as of 2.19.0. Replaced with {@link #outType(Class)} with {@code []} appended to canonical class name,
-     * e.g. {@code outType(MyClass[].class}
-     */
-    @Deprecated
-    public RestDefinition outTypeList(Class<?> classType) {
-        // add to last verb
-        if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
-        }
-
-        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        // list should end with [] to indicate array
-        verb.setOutType(classType.getCanonicalName() + "[]");
         return this;
     }
 
@@ -677,8 +629,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             answer = new PutVerbDefinition();
         } else if ("patch".equals(verb)) {
             answer = new PatchVerbDefinition();
-        } else if ("options".equals(verb)) {
-            answer = new OptionsVerbDefinition();
         } else {
             answer = new VerbDefinition();
             answer.setMethod(verb);

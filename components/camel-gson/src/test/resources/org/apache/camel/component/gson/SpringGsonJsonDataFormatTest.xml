@@ -36,23 +36,23 @@
 
         <route>
             <from uri="direct:inPojo"/>
-            <marshal ref="gson"/>
+            <marshal><custom ref="gson"/></marshal>
         </route>
 
         <route>
             <from uri="direct:backPojo"/>
-            <unmarshal ref="gson"/>
+            <unmarshal><custom ref="gson"/></unmarshal>
             <to uri="mock:reversePojo"/>
         </route>
 
         <route>
             <from uri="direct:inPretty"/>
-            <marshal ref="pretty"/>
+            <marshal><custom ref="pretty"/></marshal>
         </route>
 
         <route>
             <from uri="direct:backPretty"/>
-            <unmarshal ref="pretty"/>
+            <unmarshal><custom ref="pretty"/></unmarshal>
             <to uri="mock:reversePojo"/>
         </route>
 

@@ -53,7 +53,7 @@ public class MailDefaultDelayForMailConsumeTest extends CamelTestSupport {
         // poll next mail and that is should be done within the default delay (overrule to 1 sec) + 2 sec slack
         mock.assertIsSatisfied();
 
-        long delta = watch.stop();
+        long delta = watch.taken();
         assertTrue("Camel should not default poll the mailbox to often", delta > 1000 - 1000L);
     }
 

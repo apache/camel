@@ -41,7 +41,7 @@ public class PubNubSubscriberTest extends PubNubTestBase {
         stubFor(get(urlPathEqualTo("/v2/presence/sub-key/mySubscribeKey/channel/mychannel/heartbeat"))
             .willReturn(aResponse().withBody("{\"status\": 200, \"message\": \"OK\", \"service\": \"Presence\"}")));
 
-        context.startRoute("subroute");
+        context.getRouteController().startRoute("subroute");
         mockResult.expectedMessageCount(1);
         mockResult.expectedHeaderReceived(PubNubConstants.CHANNEL, "mychannel");
         assertMockEndpointsSatisfied();

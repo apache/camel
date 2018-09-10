@@ -48,7 +48,6 @@ public class HazelcastComponent extends HazelcastDefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(HazelcastComponent.class);
 
     public HazelcastComponent() {
-        super();
     }
 
     public HazelcastComponent(final CamelContext context) {

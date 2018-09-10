@@ -25,16 +25,6 @@ import java.util.Set;
 public interface PackageScanClassResolver {
 
     /**
-     * Sets the ClassLoader instances that should be used when scanning for
-     * classes. If none is set then the context classloader will be used.
-     *
-     * @param classLoaders loaders to use when scanning for classes
-     * @deprecated will be removed in Camel 3.0. Use {@link #addClassLoader(ClassLoader)} instead.
-     */
-    @Deprecated
-    void setClassLoaders(Set<ClassLoader> classLoaders);
-
-    /**
      * Gets the ClassLoader instances that should be used when scanning for classes.
      * <p/>
      * This implementation will return a new unmodifiable set containing the classloaders.

@@ -59,7 +59,7 @@ public class FileConsumerPollStrategyPolledMessagesTest extends ContextTestSuppo
         template.sendBodyAndHeader("file:target/pollstrategy/", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         // start route now files have been created
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);

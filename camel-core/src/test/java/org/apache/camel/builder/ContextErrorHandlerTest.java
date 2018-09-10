@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.builder;
+
 import java.util.List;
 
 import org.apache.camel.Channel;
@@ -40,7 +41,7 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
         redeliveryPolicy.setUseExponentialBackOff(true);
         DeadLetterChannelBuilder deadLetterChannelBuilder = new DeadLetterChannelBuilder("mock:error");
         deadLetterChannelBuilder.setRedeliveryPolicy(redeliveryPolicy);
-        context.setErrorHandlerBuilder(deadLetterChannelBuilder);
+        context.setErrorHandlerFactory(deadLetterChannelBuilder);
     }
 
     protected void startCamelContext() throws Exception {

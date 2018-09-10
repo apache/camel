@@ -47,7 +47,7 @@ public class JpaNonTXRollbackTest extends AbstractJpaTest {
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
         // start route
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
 

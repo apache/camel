@@ -70,7 +70,7 @@ public class DefaultEndpointRegistry extends AbstractMap<EndpointKey, Endpoint> 
         Endpoint answer = staticMap.get(o);
         if (answer == null) {
             answer = dynamicMap.get(o);
-            if (answer != null && (context.isSetupRoutes() || context.isStartingRoutes())) {
+            if (answer != null && (context.isSetupRoutes() || context.getRouteController().isStartingRoutes())) {
                 dynamicMap.remove(o);
                 staticMap.put((EndpointKey) o, answer);
             }
@@ -96,7 +96,7 @@ public class DefaultEndpointRegistry extends AbstractMap<EndpointKey, Endpoint> 
         }
 
         // we want endpoints to be static if they are part of setting up or starting routes
-        if (context.isSetupRoutes() || context.isStartingRoutes()) {
+        if (context.isSetupRoutes() || context.getRouteController().isStartingRoutes()) {
             answer = staticMap.put(key, endpoint);
         } else {
             answer = dynamicMap.put(key, endpoint);

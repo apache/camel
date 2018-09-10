@@ -22,7 +22,7 @@ import javax.sql.DataSource;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
@@ -34,7 +34,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * The <a href="http://camel.apache.org/sql-component.html">SQL Component</a> is for working with databases using JDBC queries.
  * 
  */
-public class SqlComponent extends UriEndpointComponent {
+public class SqlComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(SqlComponent.class);
 
@@ -43,19 +43,18 @@ public class SqlComponent extends UriEndpointComponent {
     private boolean usePlaceholder = true;
 
     public SqlComponent() {
-        super(SqlEndpoint.class);
     }
 
     public SqlComponent(Class<? extends Endpoint> endpointClass) {
-        super(endpointClass);
+        super();
     }
 
     public SqlComponent(CamelContext context) {
-        super(context, SqlEndpoint.class);
+        super(context);
     }
 
     public SqlComponent(CamelContext context, Class<? extends Endpoint> endpointClass) {
-        super(context, endpointClass);
+        super(context);
     }
 
     @Override

@@ -15,9 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.util;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -57,11 +59,11 @@ public class MessageHelperTest extends Assert {
         MessageHelper.resetStreamCache(message);
         
         // handle StreamCache
-        final ValueHolder<Boolean> reset = new ValueHolder<>(Boolean.FALSE);
+        final AtomicBoolean reset = new AtomicBoolean();
         message.setBody(new StreamCache() {
             @SuppressWarnings("deprecation")
             public void reset() {
-                reset.set(Boolean.TRUE);
+                reset.set(true);
             }
 
             public void writeTo(OutputStream os) throws IOException {

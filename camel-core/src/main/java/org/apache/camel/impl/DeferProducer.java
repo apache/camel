@@ -40,31 +40,6 @@ public class DeferProducer extends org.apache.camel.support.ServiceSupport imple
     }
 
     @Override
-    public Exchange createExchange() {
-        if (delegate == null) {
-            throw new IllegalStateException("Not started");
-        }
-        return delegate.createExchange();
-    }
-
-    @Override
-    public Exchange createExchange(ExchangePattern pattern) {
-        if (delegate == null) {
-            throw new IllegalStateException("Not started");
-        }
-        return delegate.createExchange(pattern);
-    }
-
-    @Override
-    @Deprecated
-    public Exchange createExchange(Exchange exchange) {
-        if (delegate == null) {
-            throw new IllegalStateException("Not started");
-        }
-        return delegate.createExchange(exchange);
-    }
-
-    @Override
     public void process(Exchange exchange) throws Exception {
         if (delegate == null) {
             throw new IllegalStateException("Not started");

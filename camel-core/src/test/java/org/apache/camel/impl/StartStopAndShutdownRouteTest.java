@@ -37,13 +37,13 @@ public class StartStopAndShutdownRouteTest extends ContextTestSupport {
         assertTrue(services > 0);
 
         // stop the route
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
 
         // there should still be the same number of services on the route
         assertEquals(services, myRoute.getServices().size());
 
         // shutting down the route, by stop and remove
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
         context.removeRoute("foo");
 
         // and now no more services as the route is shutdown

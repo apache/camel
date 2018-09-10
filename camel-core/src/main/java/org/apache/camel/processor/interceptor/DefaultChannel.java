@@ -260,10 +260,6 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
         // wrap the output with the configured interceptors
         for (InterceptStrategy strategy : interceptors) {
             next = target == nextProcessor ? null : nextProcessor;
-            // skip stream caching as it must be wrapped as outer most, which we do later
-            if (strategy instanceof StreamCaching) {
-                continue;
-            }
             // use the fine grained definition (eg the child if available). Its always possible to get back to the parent
             Processor wrapped = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, target, next);
             if (!(wrapped instanceof AsyncProcessor)) {

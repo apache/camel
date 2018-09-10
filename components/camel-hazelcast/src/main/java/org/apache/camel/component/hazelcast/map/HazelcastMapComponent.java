@@ -27,7 +27,6 @@ import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 public class HazelcastMapComponent extends HazelcastDefaultComponent {
 
     public HazelcastMapComponent() {
-        super();
     }
 
     public HazelcastMapComponent(final CamelContext context) {

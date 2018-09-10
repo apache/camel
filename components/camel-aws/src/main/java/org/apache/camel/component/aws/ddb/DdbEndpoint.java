@@ -33,7 +33,6 @@ import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import com.amazonaws.services.dynamodbv2.model.TableStatus;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -57,12 +56,6 @@ public class DdbEndpoint extends ScheduledPollEndpoint {
     private DdbConfiguration configuration;
 
     private AmazonDynamoDB ddbClient;
-
-    @Deprecated
-    public DdbEndpoint(String uri, CamelContext context, DdbConfiguration configuration) {
-        super(uri, context);
-        this.configuration = configuration;
-    }
 
     public DdbEndpoint(String uri, Component component, DdbConfiguration configuration) {
         super(uri, component);

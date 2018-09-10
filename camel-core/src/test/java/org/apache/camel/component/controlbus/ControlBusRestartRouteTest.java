@@ -31,11 +31,11 @@ public class ControlBusRestartRouteTest extends ContextTestSupport {
         assertEquals(1, myRoutePolicy.getStart());
         assertEquals(0, myRoutePolicy.getStop());
 
-        assertEquals("Started", context.getRouteStatus("foo").name());
+        assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
 
         template.sendBody("controlbus:route?routeId=foo&action=restart&restartDelay=0", null);
 
-        assertEquals("Started", context.getRouteStatus("foo").name());
+        assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
 
         assertEquals(2, myRoutePolicy.getStart());
         assertEquals(1, myRoutePolicy.getStop());

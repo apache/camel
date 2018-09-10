@@ -19,9 +19,7 @@ package org.apache.camel.component.twitter;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
-import org.apache.camel.VerifiableComponent;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
@@ -29,7 +27,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Base Twitter component
  */
-public abstract class AbstractTwitterComponent extends DefaultComponent implements VerifiableComponent {
+public abstract class AbstractTwitterComponent extends DefaultComponent {
     @Metadata(label = "security", secret = true)
     private String consumerKey;
     @Metadata(label = "security", secret = true)
@@ -169,8 +167,7 @@ public abstract class AbstractTwitterComponent extends DefaultComponent implemen
     /**
      * Get a verifier for the component.
      */
-    @Override
-    public ComponentVerifier getVerifier() {
+    public ComponentVerifierExtension getVerifier() {
         return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 }

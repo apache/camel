@@ -1491,7 +1491,7 @@ public class SimpleTest extends LanguageTestSupport {
     public void testCamelContextStartRoute() throws Exception {
         exchange.getIn().setBody(null);
 
-        assertExpression("${camelContext.startRoute('foo')}", null);
+        assertExpression("${camelContext.getRouteController().startRoute('foo')}", null);
     }
 
     @Test

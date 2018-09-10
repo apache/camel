@@ -57,11 +57,6 @@ public class SetExchangePatternTest extends ContextTestSupport {
     }
 
     @Test
-    public void testToWithRobustInOnlyParam() throws Exception {
-        assertMessageReceivedWithPattern("direct:testToWithRobustInOnlyParam", ExchangePattern.RobustInOnly);
-    }
-
-    @Test
     public void testSetExchangePatternInOnly() throws Exception {
         assertMessageReceivedWithPattern("direct:testSetExchangePatternInOnly", ExchangePattern.InOnly);
     }
@@ -118,7 +113,6 @@ public class SetExchangePatternTest extends ContextTestSupport {
             sendPattern = ExchangePattern.InOnly;
             break;
         case InOnly:
-        case RobustInOnly:
             sendPattern = ExchangePattern.InOut;
             break;
         default:
@@ -158,7 +152,6 @@ public class SetExchangePatternTest extends ContextTestSupport {
                 // Or we can pass the pattern as a parameter to the to() method
                 from("direct:testToWithInOnlyParam").to(ExchangePattern.InOnly, "mock:result");
                 from("direct:testToWithInOutParam").to(ExchangePattern.InOut, "mock:result");
-                from("direct:testToWithRobustInOnlyParam").to(ExchangePattern.RobustInOnly, "mock:result");
 
                 // Set the exchange pattern to InOut, then send it on
                 from("direct:testSetExchangePatternInOnly")

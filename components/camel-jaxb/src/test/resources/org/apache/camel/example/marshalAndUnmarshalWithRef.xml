@@ -32,12 +32,12 @@
 
     <route>
       <from uri="direct:start"/>
-      <marshal ref="myJaxb"/>
+      <marshal><custom ref="myJaxb"/></marshal>
       <to uri="direct:marshalled"/>
     </route>
     <route>
       <from uri="direct:marshalled"/>
-      <unmarshal ref="myJaxb"/>
+      <unmarshal><custom ref="myJaxb"/></unmarshal>
       <to uri="mock:result"/>
     </route>
 

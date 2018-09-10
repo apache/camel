@@ -69,19 +69,10 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
     private MessageCreatedStrategy messageCreatedStrategy;
 
     public JmsComponent() {
-        super(JmsEndpoint.class);
-    }
-
-    public JmsComponent(Class<? extends Endpoint> endpointClass) {
-        super(endpointClass);
     }
 
     public JmsComponent(CamelContext context) {
-        super(context, JmsEndpoint.class);
-    }
-
-    public JmsComponent(CamelContext context, Class<? extends Endpoint> endpointClass) {
-        super(context, endpointClass);
+        super(context);
     }
 
     public JmsComponent(JmsConfiguration configuration) {

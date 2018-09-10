@@ -30,14 +30,6 @@ import org.junit.Test;
 public class ObjectConverterTest extends Assert {
 
     @Test
-    public void testIsCollection() {
-        assertEquals(false, ObjectConverter.isCollection("String"));
-        assertEquals(false, ObjectConverter.isCollection(null));
-        assertEquals(true, ObjectConverter.isCollection(new ArrayList<>()));
-        assertEquals(true, ObjectConverter.isCollection(new String[]{"foo", "bar"}));
-    }
-
-    @Test
     public void testIterator() {
         Iterator<?> it = ObjectConverter.iterator("Claus,Jonathan");
         assertEquals("Claus", it.next());

@@ -42,7 +42,7 @@ public class FileConsumerSpringSchedulerTest extends SpringTestSupport {
 
         template.sendBodyAndHeader("file:target/file/spring", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
     }

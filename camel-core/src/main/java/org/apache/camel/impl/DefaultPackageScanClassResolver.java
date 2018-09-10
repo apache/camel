@@ -117,11 +117,6 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         return Collections.unmodifiableSet(new LinkedHashSet<>(classLoaders));
     }
 
-    public void setClassLoaders(Set<ClassLoader> classLoaders) {
-        // add all the class loaders
-        this.classLoaders.addAll(classLoaders);
-    }
-
     public Set<Class<?>> findAnnotated(Class<? extends Annotation> annotation, String... packageNames) {
         if (packageNames == null) {
             return Collections.emptySet();

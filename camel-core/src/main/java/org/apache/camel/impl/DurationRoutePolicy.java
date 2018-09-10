@@ -172,10 +172,10 @@ public class DurationRoutePolicy extends org.apache.camel.support.RoutePolicySup
                     camelContext.stop();
                 } else if (action == Action.STOP_ROUTE) {
                     log.info("Stopping route: {}{}", routeId, tail);
-                    camelContext.stopRoute(routeId);
+                    camelContext.getRouteController().stopRoute(routeId);
                 } else if (action == Action.SUSPEND_ROUTE) {
                     log.info("Suspending route: {}{}", routeId, tail);
-                    camelContext.suspendRoute(routeId);
+                    camelContext.getRouteController().suspendRoute(routeId);
                 } else if (action == Action.SUSPEND_ALL_ROUTES) {
                     log.info("Suspending all routes {}", tail);
                     camelContext.suspend();

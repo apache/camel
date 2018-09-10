@@ -131,15 +131,6 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return this;
     }
 
-    /**
-     * @deprecated will be removed in the near future. Use {@link #redeliveryDelay(long)} instead
-     */
-    @Deprecated
-    public DefaultErrorHandlerBuilder redeliverDelay(long delay) {
-        getRedeliveryPolicy().redeliveryDelay(delay);
-        return this;
-    }
-
     public DefaultErrorHandlerBuilder redeliveryDelay(long delay) {
         getRedeliveryPolicy().redeliveryDelay(delay);
         return this;
@@ -388,15 +379,6 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
      */
     public DefaultErrorHandlerBuilder deadLetterHandleNewException(boolean handleNewException) {
         setDeadLetterHandleNewException(handleNewException);
-        return this;
-    }
-
-    /**
-     * @deprecated use {@link #deadLetterHandleNewException(boolean)}} with value <tt>false</tt>
-     */
-    @Deprecated
-    public DefaultErrorHandlerBuilder checkException() {
-        setDeadLetterHandleNewException(false);
         return this;
     }
 

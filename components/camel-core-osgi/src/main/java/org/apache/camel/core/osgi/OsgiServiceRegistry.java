@@ -130,18 +130,6 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
         return new HashSet<>(map.values());
     }
 
-    public Object lookup(String name) {
-        return lookupByName(name);
-    }
-
-    public <T> T lookup(String name, Class<T> type) {
-        return lookupByNameAndType(name, type);
-    }
-
-    public <T> Map<String, T> lookupByType(Class<T> type) {
-        return findByTypeWithName(type);
-    }
-
     @Override
     public void onContextStop(CamelContext context) {
         // Unget the OSGi service

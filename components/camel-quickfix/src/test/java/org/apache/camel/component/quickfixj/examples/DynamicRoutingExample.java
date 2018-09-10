@@ -101,7 +101,7 @@ public class DynamicRoutingExample {
         
         LOG.info("Sending routed message");
         
-        Exchange exchange = producer.createExchange(ExchangePattern.InOnly);
+        Exchange exchange = producer.getEndpoint().createExchange(ExchangePattern.InOnly);
         exchange.getIn().setBody(email);
         producer.process(exchange);            
 

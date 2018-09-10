@@ -33,8 +33,7 @@ public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent 
         + " If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.")
     protected boolean allowJavaSerializedObject;
 
-    public HttpCommonComponent(Class<? extends HttpCommonEndpoint> endpointClass) {
-        super(endpointClass);
+    public HttpCommonComponent() {
     }
 
     /**

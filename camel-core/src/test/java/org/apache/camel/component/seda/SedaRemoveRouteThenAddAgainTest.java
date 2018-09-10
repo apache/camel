@@ -37,7 +37,7 @@ public class SedaRemoveRouteThenAddAgainTest extends ContextTestSupport {
         out.assertIsSatisfied();
 
         // now stop & remove the route
-        context.stopRoute("sedaToMock");
+        context.getRouteController().stopRoute("sedaToMock");
         context.removeRoute("sedaToMock");
 
         // and then add it back again

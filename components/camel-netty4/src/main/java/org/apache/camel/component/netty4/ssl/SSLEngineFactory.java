@@ -24,6 +24,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.TrustManagerFactory;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ResourceHelper;
@@ -35,12 +36,12 @@ public final class SSLEngineFactory {
     public SSLEngineFactory() {
     }
 
-    public SSLContext createSSLContext(ClassResolver classResolver, String keyStoreFormat, String securityProvider,
+    public SSLContext createSSLContext(CamelContext camelContext, String keyStoreFormat, String securityProvider,
                                        String keyStoreResource, String trustStoreResource, char[] passphrase) throws Exception {
         SSLContext answer;
         KeyStore ks = KeyStore.getInstance(keyStoreFormat);
 
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(classResolver, keyStoreResource);
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, keyStoreResource);
         try {
             ks.load(is, passphrase);
         } finally {
@@ -54,7 +55,7 @@ public final class SSLEngineFactory {
 
         if (trustStoreResource != null) {
             KeyStore ts = KeyStore.getInstance(keyStoreFormat);
-            is = ResourceHelper.resolveMandatoryResourceAsInputStream(classResolver, trustStoreResource);
+            is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, trustStoreResource);
             try {
                 ts.load(is, passphrase);
             } finally {

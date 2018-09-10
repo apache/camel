@@ -37,7 +37,7 @@ public class DumpModelAsXmlSplitNestedChoiceEndRouteTest extends ContextTestSupp
         assertNotNull(xml);
         log.info(xml);
 
-        Document doc = new XmlConverter().toDOMDocument(xml);
+        Document doc = new XmlConverter().toDOMDocument(xml, null);
         NodeList nodes = doc.getElementsByTagName("split");
         assertEquals(1, nodes.getLength());
         Element node = (Element)nodes.item(0);

@@ -19,12 +19,11 @@ package org.apache.camel.component.dummy;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
-public class DummyComponent extends UriEndpointComponent {
+public class DummyComponent extends DefaultComponent {
 
     public DummyComponent() {
-        super(DummyEndpoint.class);
     }
 
     @Override

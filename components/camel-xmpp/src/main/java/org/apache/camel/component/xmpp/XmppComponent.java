@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.jivesoftware.smack.ReconnectionManager;
@@ -32,14 +32,13 @@ import org.slf4j.LoggerFactory;
 /**
  * @version 
  */
-public class XmppComponent extends UriEndpointComponent {
+public class XmppComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(XmppComponent.class);
 
     // keep a cache of endpoints so they can be properly cleaned up
     private final Map<String, XmppEndpoint> endpointCache = new HashMap<>();
 
     public XmppComponent() {
-        super(XmppEndpoint.class);
     }
 
     @Override

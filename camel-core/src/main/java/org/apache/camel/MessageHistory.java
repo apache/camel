@@ -35,14 +35,6 @@ public interface MessageHistory {
 
     /**
      * Gets the timestamp at the point of this history.
-     *
-     * @deprecated use {@link #getTime()}
-     */
-    @Deprecated
-    Date getTimestamp();
-
-    /**
-     * Gets the timestamp at the point of this history.
      */
     long getTime();
 

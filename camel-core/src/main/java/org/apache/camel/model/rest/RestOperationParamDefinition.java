@@ -82,10 +82,6 @@ public class RestOperationParamDefinition {
     @XmlElement(name = "value")
     private List<String> allowableValues;
 
-    @XmlAttribute
-    @Metadata(defaultValue = "")
-    private String access;
-
     @XmlElement(name = "examples")
     private List<RestPropertyDefinition> examples;
 
@@ -211,26 +207,6 @@ public class RestOperationParamDefinition {
         this.allowableValues = allowableValues;
     }
 
-    /**
-     * Gets the Swagger Parameter paramAccess flag.
-     *
-     * @deprecated is not in use in swagger specification 2.0
-     */
-    @Deprecated
-    public String getAccess() {
-        return access != null ? access : "";
-    }
-
-    /**
-     * Sets the Swagger Parameter paramAccess flag.
-     *
-     * @deprecated is not in use in swagger specification 2.0
-     */
-    @Deprecated
-    public void setAccess(String access) {
-        this.access = access;
-    }
-
     public List<RestPropertyDefinition> getExamples() {
         return examples;
     }
@@ -331,18 +307,6 @@ public class RestOperationParamDefinition {
      */
     public RestOperationParamDefinition type(RestParamType type) {
         setType(type);
-        return this;
-    }
-
-    /**
-     * Parameter access. Use <tt>false</tt> or <tt>internal</tt> to indicate the parameter
-     * should be hidden for the public.
-     *
-     * @deprecated is not in use in swagger specification 2.0
-     */
-    @Deprecated
-    public RestOperationParamDefinition access(String paramAccess) {
-        setAccess(paramAccess);
         return this;
     }
 

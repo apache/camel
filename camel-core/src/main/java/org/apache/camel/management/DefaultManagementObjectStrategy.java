@@ -39,7 +39,6 @@ import org.apache.camel.management.mbean.ManagedBrowsableEndpoint;
 import org.apache.camel.management.mbean.ManagedCamelContext;
 import org.apache.camel.management.mbean.ManagedCamelHealth;
 import org.apache.camel.management.mbean.ManagedChoice;
-import org.apache.camel.management.mbean.ManagedCircuitBreakerLoadBalancer;
 import org.apache.camel.management.mbean.ManagedClaimCheck;
 import org.apache.camel.management.mbean.ManagedClusterService;
 import org.apache.camel.management.mbean.ManagedComponent;
@@ -151,7 +150,6 @@ import org.apache.camel.processor.UnmarshalProcessor;
 import org.apache.camel.processor.WireTapProcessor;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
-import org.apache.camel.processor.loadbalancer.CircuitBreakerLoadBalancer;
 import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
@@ -185,24 +183,16 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
 
     @SuppressWarnings({"deprecation", "unchecked"})
     public Object getManagedObjectForComponent(CamelContext context, Component component, String name) {
-        if (component instanceof org.apache.camel.spi.ManagementAware) {
-            return ((org.apache.camel.spi.ManagementAware<Component>) component).getManagedObject(component);
-        } else {
-            ManagedComponent mc = new ManagedComponent(name, component);
-            mc.init(context.getManagementStrategy());
-            return mc;
-        }
+        ManagedComponent mc = new ManagedComponent(name, component);
+        mc.init(context.getManagementStrategy());
+        return mc;
     }
 
     @SuppressWarnings({"deprecation", "unchecked"})
     public Object getManagedObjectForDataFormat(CamelContext context, DataFormat dataFormat) {
-        if (dataFormat instanceof org.apache.camel.spi.ManagementAware) {
-            return ((org.apache.camel.spi.ManagementAware<DataFormat>) dataFormat).getManagedObject(dataFormat);
-        } else {
-            ManagedDataFormat md = new ManagedDataFormat(context, dataFormat);
-            md.init(context.getManagementStrategy());
-            return md;
-        }
+        ManagedDataFormat md = new ManagedDataFormat(context, dataFormat);
+        md.init(context.getManagementStrategy());
+        return md;
     }
 
     @SuppressWarnings({"deprecation", "unchecked"})
@@ -212,9 +202,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             return null;
         }
 
-        if (endpoint instanceof org.apache.camel.spi.ManagementAware) {
-            return ((org.apache.camel.spi.ManagementAware<Endpoint>) endpoint).getManagedObject(endpoint);
-        } else if (endpoint instanceof BrowsableEndpoint) {
+        if (endpoint instanceof BrowsableEndpoint) {
             ManagedBrowsableEndpoint me = new ManagedBrowsableEndpoint((BrowsableEndpoint) endpoint);
             me.init(context.getManagementStrategy());
             return me;
@@ -343,8 +331,6 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedMarshal(context, (MarshalProcessor) target, (org.apache.camel.model.MarshalDefinition) definition);
             } else if (target instanceof UnmarshalProcessor) {
                 answer = new ManagedUnmarshal(context, (UnmarshalProcessor) target, (org.apache.camel.model.UnmarshalDefinition) definition);
-            } else if (target instanceof CircuitBreakerLoadBalancer) {
-                answer = new ManagedCircuitBreakerLoadBalancer(context, (CircuitBreakerLoadBalancer) target, (org.apache.camel.model.LoadBalanceDefinition) definition);
             } else if (target instanceof FailOverLoadBalancer) {
                 answer = new ManagedFailoverLoadBalancer(context, (FailOverLoadBalancer) target, (org.apache.camel.model.LoadBalanceDefinition) definition);
             } else if (target instanceof RandomLoadBalancer) {
@@ -427,8 +413,6 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedEnricher(context, (Enricher) target, (org.apache.camel.model.EnrichDefinition) definition);
             } else if (target instanceof PollEnricher) {
                 answer = new ManagedPollEnricher(context, (PollEnricher) target, (org.apache.camel.model.PollEnrichDefinition) definition);
-            } else if (target instanceof org.apache.camel.spi.ManagementAware) {
-                return ((org.apache.camel.spi.ManagementAware<Processor>) target).getManagedObject(processor);
             }
 
             // special for custom load balancer

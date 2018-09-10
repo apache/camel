@@ -24,7 +24,6 @@ import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
 
 public class DefaultMessageTest {
 
@@ -35,16 +34,6 @@ public class DefaultMessageTest {
         Map<String, Attachment> attachments = message.createAttachments();
 
         assertThat(attachments, instanceOf(LinkedHashMap.class));
-    }
-
-    @Test
-    public void testCamelContextIsNull() {
-        @SuppressWarnings("deprecation")
-        DefaultMessage message = new DefaultMessage();
-        String body = "something";
-        message.setBody(body);
-        assertEquals(body, message.getBody());
-        assertEquals(null, message.getCamelContext());
     }
 
 }

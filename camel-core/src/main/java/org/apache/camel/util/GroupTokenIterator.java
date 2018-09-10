@@ -47,30 +47,6 @@ public final class GroupTokenIterator implements Iterator<Object>, Closeable {
     private final AtomicBoolean hasSkipFirst;
     private boolean closed;
     private final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-    
-    /**
-     * Creates a new token based group iterator
-     *
-     * @param camelContext  the camel context
-     * @param it            the iterator to group
-     * @param token         then token used to separate between the parts, use <tt>null</tt> to not add the token
-     * @param group         number of parts to group together
-     * @throws IllegalArgumentException is thrown if group is not a positive number
-     * @deprecated  Please use GroupIterator(Exchange exchange, Iterator<?> it, String token, int group) instead
-     */
-    @Deprecated 
-    public GroupTokenIterator(CamelContext camelContext, Iterator<?> it, String token, int group) {
-        this.exchange = null;
-        this.camelContext = camelContext;
-        this.it = it;
-        this.token = token;
-        this.group = group;
-        if (group <= 0) {
-            throw new IllegalArgumentException("Group must be a positive number, was: " + group);
-        }
-        this.skipFirst = false;
-        this.hasSkipFirst = null;
-    }
 
     /**
      * Creates a new token based group iterator

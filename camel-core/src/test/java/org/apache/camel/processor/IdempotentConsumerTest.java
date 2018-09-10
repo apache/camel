@@ -106,7 +106,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
                 from("direct:start")
                     // instruct idempotent consumer to not skip duplicates as we will filter then our self
                     .idempotentConsumer(header("messageId")).messageIdRepository(repo).skipDuplicate(false)
-                    .filter(property(Exchange.DUPLICATE_MESSAGE).isEqualTo(true))
+                    .filter(exchangeProperty(Exchange.DUPLICATE_MESSAGE).isEqualTo(true))
                         // filter out duplicate messages by sending them to someplace else and then stop
                         .to("mock:duplicate")
                         .stop()

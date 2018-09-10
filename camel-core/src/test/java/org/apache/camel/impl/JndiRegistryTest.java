@@ -34,10 +34,10 @@ public class JndiRegistryTest extends Assert {
         jndi.bind("foo", new SimpleLanguage());
         jndi.bind("bar", "Hello bar");
 
-        assertEquals("Hello bar", jndi.lookup("bar"));
+        assertEquals("Hello bar", jndi.lookupByName("bar"));
         assertEquals("Hello bar", jndi.lookupByName("bar"));
         assertEquals("Hello bar", jndi.lookupByNameAndType("bar", String.class));
-        assertNull(jndi.lookup("unknown"));
+        assertNull(jndi.lookupByName("unknown"));
         assertNull(jndi.lookupByName("unknown"));
 
         try {
@@ -51,7 +51,7 @@ public class JndiRegistryTest extends Assert {
         assertNotNull(jndi.lookupByNameAndType("foo", SimpleLanguage.class));
         assertSame(jndi.lookupByNameAndType("foo", Language.class), jndi.lookupByNameAndType("foo", SimpleLanguage.class));
 
-        Map<String, ?> set = jndi.lookupByType(Language.class);
+        Map<String, ?> set = jndi.findByTypeWithName(Language.class);
         assertNotNull(set);
         assertEquals(1, set.size());
 
@@ -64,7 +64,7 @@ public class JndiRegistryTest extends Assert {
     public void testStandalone() throws Exception {
         JndiRegistry jndi = new JndiRegistry(true);
         jndi.bind("bar", "Hello bar");
-        assertEquals("Hello bar", jndi.lookup("bar"));
+        assertEquals("Hello bar", jndi.lookupByName("bar"));
     }
 
     @Test
@@ -74,7 +74,7 @@ public class JndiRegistryTest extends Assert {
 
         JndiRegistry jndi = new JndiRegistry(env);
         jndi.bind("bar", "Hello bar");
-        assertEquals("Hello bar", jndi.lookup("bar"));
+        assertEquals("Hello bar", jndi.lookupByName("bar"));
     }
 
 }

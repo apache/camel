@@ -590,28 +590,6 @@ public final class ExpressionBuilder {
      *
      * @param propertyName the name of the property the expression will return
      * @return an expression object which will return the property value
-     * @deprecated use {@link #exchangePropertyExpression(String)} instead
-     */
-    @Deprecated
-    public static Expression propertyExpression(final String propertyName) {
-        return new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                String text = simpleExpression(propertyName).evaluate(exchange, String.class);
-                return exchange.getProperty(text);
-            }
-
-            @Override
-            public String toString() {
-                return "exchangeProperty(" + propertyName + ")";
-            }
-        };
-    }
-
-    /**
-     * Returns an expression for the property value of exchange with the given name
-     *
-     * @param propertyName the name of the property the expression will return
-     * @return an expression object which will return the property value
      */
     public static Expression exchangePropertyExpression(final String propertyName) {
         return new ExpressionAdapter() {
@@ -641,17 +619,6 @@ public final class ExpressionBuilder {
                     return exchange.getProperty(text);
                 }
             });
-    }
-
-    /**
-     * Returns an expression for the properties of exchange
-     *
-     * @return an expression object which will return the properties
-     * @deprecated use {@link #exchangeExceptionExpression()} instead
-     */
-    @Deprecated
-    public static Expression propertiesExpression() {
-        return exchangeExceptionExpression();
     }
 
     /**

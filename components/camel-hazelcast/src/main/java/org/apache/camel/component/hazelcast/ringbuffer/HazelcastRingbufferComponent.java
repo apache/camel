@@ -27,7 +27,6 @@ import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 public class HazelcastRingbufferComponent extends HazelcastDefaultComponent {
 
     public HazelcastRingbufferComponent() {
-        super();
     }
 
     public HazelcastRingbufferComponent(final CamelContext context) {

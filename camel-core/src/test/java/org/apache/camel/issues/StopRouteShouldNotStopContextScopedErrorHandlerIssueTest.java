@@ -30,7 +30,7 @@ public class StopRouteShouldNotStopContextScopedErrorHandlerIssueTest extends Co
         getMockEndpoint("mock:error").expectedMessageCount(1);
 
         // stopping foo route, which should not stop context scoped error handler
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
 
         template.sendBody("direct:start", "Hello World");
 

@@ -41,18 +41,6 @@ public final class UnitOfWorkHelper {
     }
 
     /**
-     * Creates a new {@link UnitOfWork}.
-     *
-     * @param exchange the exchange
-     * @return the created unit of work (is not started)
-     * @deprecated use {@link org.apache.camel.CamelContext#getUnitOfWorkFactory()} instead.
-     */
-    @Deprecated
-    public static UnitOfWork createUoW(Exchange exchange) {
-        return exchange.getContext().getUnitOfWorkFactory().createUnitOfWork(exchange);
-    }
-
-    /**
      * Done and stop the {@link UnitOfWork}.
      *
      * @param uow the unit of work

@@ -23,10 +23,11 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
-import org.apache.camel.VerifiableComponent;
 import org.apache.camel.component.direct.DirectComponent;
+import org.apache.camel.component.extension.ComponentVerifierExtension;
+import org.apache.camel.component.extension.ComponentVerifierExtension.Result;
+import org.apache.camel.component.extension.ComponentVerifierExtension.Scope;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.impl.DefaultComponent;
@@ -79,32 +80,31 @@ public class ManagedComponentTest extends ManagementTestSupport {
         assertTrue(mbeanServer.isRegistered(on));
         assertTrue(invoke(mbeanServer, on, "isVerifySupported"));
 
-        ComponentVerifier.Result res;
+        ComponentVerifierExtension.Result res;
 
         // check lowercase
         res = invoke(mbeanServer, on, "verify", new Object[]{"connectivity", Collections.emptyMap()}, VERIFY_SIGNATURE);
-        assertEquals(ComponentVerifier.Result.Status.OK, res.getStatus());
-        assertEquals(ComponentVerifier.Scope.CONNECTIVITY, res.getScope());
+        assertEquals(Result.Status.OK, res.getStatus());
+        assertEquals(Scope.CONNECTIVITY, res.getScope());
 
         // check mixed case
         res = invoke(mbeanServer, on, "verify", new Object[]{"ConnEctivIty", Collections.emptyMap()}, VERIFY_SIGNATURE);
-        assertEquals(ComponentVerifier.Result.Status.OK, res.getStatus());
-        assertEquals(ComponentVerifier.Scope.CONNECTIVITY, res.getScope());
+        assertEquals(Result.Status.OK, res.getStatus());
+        assertEquals(Scope.CONNECTIVITY, res.getScope());
 
         // check uppercase
         res = invoke(mbeanServer, on, "verify", new Object[]{"PARAMETERS", Collections.emptyMap()}, VERIFY_SIGNATURE);
-        assertEquals(ComponentVerifier.Result.Status.OK, res.getStatus());
-        assertEquals(ComponentVerifier.Scope.PARAMETERS, res.getScope());
+        assertEquals(Result.Status.OK, res.getStatus());
+        assertEquals(Scope.PARAMETERS, res.getScope());
     }
 
     // ***********************************
     //
     // ***********************************
 
-    private static class MyVerifiableComponent extends DefaultComponent implements VerifiableComponent {
-        @Override
-        public ComponentVerifier getVerifier() {
-            return new DefaultComponentVerifierExtension("my-verifiable-component", getCamelContext()) {
+    private static class MyVerifiableComponent extends DefaultComponent {
+        public MyVerifiableComponent() {
+            registerExtension(() -> new DefaultComponentVerifierExtension("my-verifiable-component", getCamelContext()) {
                 @Override
                 protected Result verifyConnectivity(Map<String, Object> parameters) {
                     return ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.CONNECTIVITY).build();
@@ -113,7 +113,7 @@ public class ManagedComponentTest extends ManagementTestSupport {
                 protected Result verifyParameters(Map<String, Object> parameters) {
                     return ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS).build();
                 }
-            };
+            });
         }
 
         @Override

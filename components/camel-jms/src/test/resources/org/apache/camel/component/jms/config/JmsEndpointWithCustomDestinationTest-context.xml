@@ -27,10 +27,10 @@
         <jmxAgent id="agent" disabled="true"/>
         <route>
             <from uri="direct:start"/>
-            <to ref="customJmsEndpoint"/>
+            <to uri="ref:customJmsEndpoint"/>
         </route>
         <route>
-            <from ref="customJmsEndpoint"/>
+            <from uri="ref:customJmsEndpoint"/>
             <to uri="mock:result"/>
         </route>
     </camelContext>

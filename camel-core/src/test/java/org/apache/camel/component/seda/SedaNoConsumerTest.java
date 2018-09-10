@@ -132,7 +132,7 @@ public class SedaNoConsumerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        context.stopRoute("stopThisRoute");
+        context.getRouteController().stopRoute("stopThisRoute");
         TimeUnit.MILLISECONDS.sleep(100);
         try {
             template.sendBody("seda:foo?failIfNoConsumers=true", "Hello World");

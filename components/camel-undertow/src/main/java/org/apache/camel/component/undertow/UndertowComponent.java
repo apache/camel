@@ -29,13 +29,11 @@ import javax.net.ssl.SSLContext;
 
 import io.undertow.server.HttpHandler;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.SSLContextParametersAware;
-import org.apache.camel.VerifiableComponent;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
@@ -59,7 +57,7 @@ import org.slf4j.LoggerFactory;
  * Represents the component that manages {@link UndertowEndpoint}.
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
-public class UndertowComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, VerifiableComponent, SSLContextParametersAware {
+public class UndertowComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware {
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
 
     private final Map<UndertowHostKey, UndertowHost> undertowRegistry = new ConcurrentHashMap<>();
@@ -191,11 +189,11 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
 
         // if no explicit hostname set then resolve the hostname
         if (ObjectHelper.isEmpty(host)) {
-            if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
+            if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
                 host = "0.0.0.0";
-            } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+            } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
                 host = HostUtils.getLocalHostName();
-            } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
+            } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
                 host = HostUtils.getLocalIp();
             }
         }
@@ -396,8 +394,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         this.hostOptions = hostOptions;
     }
 
-    @Override
-    public ComponentVerifier getVerifier() {
+    public ComponentVerifierExtension getVerifier() {
         return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 

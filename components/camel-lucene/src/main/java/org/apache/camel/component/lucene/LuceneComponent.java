@@ -21,21 +21,21 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 
-public class LuceneComponent extends UriEndpointComponent {
+public class LuceneComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
     private LuceneConfiguration config;
     
     public LuceneComponent() {
-        super(LuceneEndpoint.class);
+        super();
         config = new LuceneConfiguration();
     }
 
     public LuceneComponent(CamelContext context) {
-        super(context, LuceneEndpoint.class);
+        super(context);
         config = new LuceneConfiguration();
     }
     

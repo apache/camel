@@ -52,7 +52,7 @@ public class DirectVmProducer extends DefaultAsyncProducer {
         final HeaderFilterStrategy headerFilterStrategy = endpoint.getHeaderFilterStrategy();
 
         // Only clone the Exchange if we actually need to filter out properties or headers.
-        final Exchange submitted = (!endpoint.isPropagateProperties() || headerFilterStrategy != null) ? exchange.copy(true) : exchange;
+        final Exchange submitted = (!endpoint.isPropagateProperties() || headerFilterStrategy != null) ? exchange.copy() : exchange;
 
         // Clear properties in the copy if we are not propagating them.
         if (!endpoint.isPropagateProperties()) {

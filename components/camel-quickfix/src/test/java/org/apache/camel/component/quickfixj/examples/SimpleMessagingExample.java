@@ -89,7 +89,7 @@ public class SimpleMessagingExample {
         Producer producer = context.getEndpoint(marketUri).createProducer();
         
         Email email = TestSupport.createEmailMessage("Example");
-        Exchange exchange = producer.createExchange(ExchangePattern.InOnly);
+        Exchange exchange = producer.getEndpoint().createExchange(ExchangePattern.InOnly);
         exchange.getIn().setBody(email);
         producer.process(exchange);            
 

@@ -72,6 +72,6 @@ public class FhirOsgiIT {
     @Test
     public void testRouteStatus() {
         assertNotNull(context);
-        assertEquals("Route status is incorrect!", ServiceStatus.Started, context.getRouteStatus("fhir-example-osgi"));
+        assertEquals("Route status is incorrect!", ServiceStatus.Started, context.getRouteController().getRouteStatus("fhir-example-osgi"));
     }
 }

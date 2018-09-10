@@ -53,7 +53,7 @@
 
    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route errorHandlerRef="noErrorHandler">
-      <from ref="routerEndpoint" />
+      <from uri="ref:routerEndpoint" />
       <enrich>
         <simple>ref:serviceEndpoint</simple> 
       </enrich>

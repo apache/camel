@@ -60,7 +60,7 @@ public class EndpointRegistryKeepRouteEndpointsRemoteRouteSharedEndpointTest ext
         assertTrue(context.hasEndpoint("log://private") != null);
 
         // now stop and remove the bar route
-        context.stopRoute("bar");
+        context.getRouteController().stopRoute("bar");
         context.removeRoute("bar");
 
         assertEquals(5, context.getEndpointRegistry().staticSize());

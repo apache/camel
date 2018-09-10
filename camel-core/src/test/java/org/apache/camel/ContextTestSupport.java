@@ -151,16 +151,6 @@ public abstract class ContextTestSupport extends TestSupport {
     }
 
     /**
-     * Whether or not type converters should be lazy loaded (notice core converters is always loaded)
-     *
-     * @return <tt>false</tt> by default.
-     */
-    @Deprecated
-    protected boolean isLazyLoadingTypeConverter() {
-        return false;
-    }
-
-    /**
      * Whether to load additional type converters by scanning the classpath.
      * This should only be enabled for tests that uses custom type converters.
      */
@@ -196,7 +186,6 @@ public abstract class ContextTestSupport extends TestSupport {
     @SuppressWarnings("deprecation")
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext(createRegistry());
-        context.setLazyLoadTypeConverters(isLazyLoadingTypeConverter());
         context.setLoadTypeConverters(isLoadTypeConverters());
         return context;
     }

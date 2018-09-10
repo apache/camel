@@ -46,7 +46,7 @@ public class FromFtpAsyncProcessTest extends FtpServerTestSupport {
         // the log file should log that all the ftp client work is done in the same thread (fully synchronous)
         // as the ftp client is not thread safe and must process fully synchronous
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
 

@@ -37,7 +37,7 @@ public class SedaConcurrentConsumersNPEIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         try {
-            context.startRoute("first");
+            context.getRouteController().startRoute("first");
             fail("Should have thrown exception");
         } catch (FailedToStartRouteException e) {
             assertEquals("Failed to start route first because of Multiple consumers for the same endpoint is not allowed:"
@@ -55,10 +55,10 @@ public class SedaConcurrentConsumersNPEIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // this should be okay
-        context.startRoute("third");
+        context.getRouteController().startRoute("third");
 
         try {
-            context.startRoute("first");
+            context.getRouteController().startRoute("first");
             fail("Should have thrown exception");
         } catch (FailedToStartRouteException e) {
             assertEquals("Failed to start route first because of Multiple consumers for the same endpoint is not allowed:"

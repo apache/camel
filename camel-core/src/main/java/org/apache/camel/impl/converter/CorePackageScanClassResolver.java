@@ -81,12 +81,6 @@ public class CorePackageScanClassResolver implements PackageScanClassResolver {
     }
 
     @Override
-    public void setClassLoaders(Set<ClassLoader> classLoaders) {
-        // add all the class loaders
-        this.classLoaders.addAll(classLoaders);
-    }
-
-    @Override
     public Set<ClassLoader> getClassLoaders() {
         // return a new set to avoid any concurrency issues in other runtimes such as OSGi
         return Collections.unmodifiableSet(new LinkedHashSet<>(classLoaders));

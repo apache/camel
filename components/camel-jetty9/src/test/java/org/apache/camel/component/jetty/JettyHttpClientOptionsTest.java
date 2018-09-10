@@ -19,13 +19,19 @@ package org.apache.camel.component.jetty;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http4.HttpProducer;
 import org.apache.camel.http.common.HttpCommonEndpoint;
+import org.apache.http.HttpConnection;
 import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.protocol.HttpCoreContext;
 import org.eclipse.jetty.client.HttpClient;
 import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Unit test for http client options.
@@ -35,13 +41,27 @@ public class JettyHttpClientOptionsTest extends BaseJettyTest {
     @Test
     public void testCustomHttpBinding() throws Exception {
         // assert jetty was configured with our timeout
-        HttpCommonEndpoint jettyEndpoint = context.getEndpoint("http://localhost:{{port}}/myapp/myservice?httpClient.soTimeout=5555", HttpCommonEndpoint.class);
+        HttpCommonEndpoint jettyEndpoint = context.getEndpoint("http://localhost:{{port}}/myapp/myservice?socketTimeout=5555", HttpCommonEndpoint.class);
         assertNotNull("Jetty endpoint should not be null ", jettyEndpoint);
+        AtomicInteger soTimeout = new AtomicInteger();
         HttpProducer producer = (HttpProducer)jettyEndpoint.createProducer();
-        int soTimeout = producer.getHttpClient().getConnectionManager().requestConnection(new HttpRoute(new HttpHost("localhost")), null)
-                .getConnection(5, TimeUnit.SECONDS).getSocketTimeout();
-        // producer.getHttpClient().getParams().getSoTimeout()
-        assertEquals("Get the wrong http client parameter", 5555, soTimeout);
+        HttpClientContext ctx = new HttpClientContext() {
+            @Override
+            public void setAttribute(String id, Object obj) {
+                if (obj instanceof HttpConnection) {
+                    HttpConnection con = (HttpConnection) obj;
+                    if (con.isOpen()) {
+                        int so = con.getSocketTimeout();
+                        if (so >= 0) {
+                            soTimeout.set(so);
+                        }
+                    }
+                }
+                super.setAttribute(id, obj);
+            }
+        };
+        HttpResponse response = producer.getHttpClient().execute(new HttpHost("localhost", getPort()), new HttpHead(), ctx);
+        assertEquals("Get the wrong http client parameter", 5555, soTimeout.get());
 
         // send and receive
         Object out = template.requestBody("http://localhost:{{port}}/myapp/myservice", "Hello World");

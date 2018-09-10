@@ -49,13 +49,6 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Route Uptime [milliseconds]")
     long getUptimeMillis();
 
-    /**
-     * @deprecated use {@link #getExchangesInflight()}
-     */
-    @ManagedAttribute(description = "Current number of inflight Exchanges")
-    @Deprecated
-    Integer getInflightExchanges();
-
     @ManagedAttribute(description = "Camel ID")
     String getCamelId();
 

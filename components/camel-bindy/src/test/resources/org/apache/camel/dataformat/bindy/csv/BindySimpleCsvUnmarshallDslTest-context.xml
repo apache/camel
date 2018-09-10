@@ -28,7 +28,7 @@
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
 			<from uri="direct:start" />
-			<unmarshal ref="csvBindyDataformat"/>
+			<unmarshal><custom ref="csvBindyDataformat"/></unmarshal>
 			<to uri="mock:result" />
 		</route>
 	</camelContext>

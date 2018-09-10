@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.util.Date;
-
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 
@@ -45,10 +43,6 @@ public class DefaultMessageHistory implements MessageHistory {
 
     public NamedNode getNode() {
         return node;
-    }
-
-    public Date getTimestamp() {
-        return new Date(timestamp);
     }
 
     @Override

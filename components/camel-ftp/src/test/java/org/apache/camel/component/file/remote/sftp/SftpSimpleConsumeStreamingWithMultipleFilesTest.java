@@ -46,7 +46,7 @@ public class SftpSimpleConsumeStreamingWithMultipleFilesTest extends SftpServerT
         mock.expectedMessageCount(2);
         mock.expectedBodiesReceivedInAnyOrder(expected, expected2);
         
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
 

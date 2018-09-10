@@ -43,7 +43,7 @@ public class ErrorHandlerBuilderRefTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.setErrorHandlerBuilder(errorHandlerBuilderRef);
+        context.setErrorHandlerFactory(errorHandlerBuilderRef);
         return context;
     }
     
@@ -52,7 +52,7 @@ public class ErrorHandlerBuilderRefTest extends ContextTestSupport {
         String uuid = UUID.randomUUID().toString();
         context.addRoutes(new TempRouteBuilder(uuid));
         checkObjectSize(2);
-        context.stopRoute(uuid);
+        context.getRouteController().stopRoute(uuid);
         context.removeRoute(uuid);
         checkObjectSize(1);
     }

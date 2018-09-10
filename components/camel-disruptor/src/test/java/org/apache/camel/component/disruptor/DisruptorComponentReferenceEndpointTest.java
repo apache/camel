@@ -46,14 +46,14 @@ public class DisruptorComponentReferenceEndpointTest extends CamelTestSupport {
         assertEquals(3, numberOfReferences(disruptor));
 
         // remove the 1st route
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
         context.removeRoute("foo");
 
         assertEquals(1, disruptor.getDisruptors().get(fooKey).getEndpointCount());
         assertEquals(2, numberOfReferences(disruptor));
 
         // remove the 2nd route
-        context.stopRoute("foo2");
+        context.getRouteController().stopRoute("foo2");
         context.removeRoute("foo2");
 
         // and there is no longer disruptors for the foo key

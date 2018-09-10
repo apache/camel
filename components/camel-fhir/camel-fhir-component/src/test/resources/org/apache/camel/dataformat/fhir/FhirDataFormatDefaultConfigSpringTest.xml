@@ -30,12 +30,12 @@
     </dataFormats>
     <route>
       <from uri="direct:marshalJson"/>
-      <marshal ref="fhirJson"/>
+      <marshal><custom ref="fhirJson"/></marshal>
       <to uri="mock:result"/>
     </route>
     <route>
       <from uri="direct:marshalXml"/>
-      <marshal ref="fhirXml"/>
+      <marshal><custom ref="fhirXml"/></marshal>
       <to uri="mock:result"/>
     </route>
   </camelContext>

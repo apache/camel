@@ -53,15 +53,12 @@ public class BeanInfoTest extends Assert {
         BeanInfo info = createBeanInfo(Foo.class);
 
         List<MethodInfo> operations = info.getMethods();
-        assertEquals(3, operations.size());
+        assertEquals(2, operations.size());
 
         long size = operations.stream().filter(m -> m.getMethod().getName().equals("inOnlyMethod")).count();
         assertEquals(1, size);
 
         size = operations.stream().filter(m -> m.getMethod().getName().equals("inOutMethod")).count();
-        assertEquals(1, size);
-
-        size = operations.stream().filter(m -> m.getMethod().getName().equals("robustInOnlyMethod")).count();
         assertEquals(1, size);
     }
 
@@ -71,7 +68,6 @@ public class BeanInfoTest extends Assert {
 
         assertMethodPattern(info, "inOutMethod", ExchangePattern.InOut);
         assertMethodPattern(info, "inOnlyMethod", ExchangePattern.InOnly);
-        assertMethodPattern(info, "robustInOnlyMethod", ExchangePattern.RobustInOnly);
     }
 
     @Test
@@ -86,7 +82,6 @@ public class BeanInfoTest extends Assert {
         BeanInfo info = createBeanInfo(MyOneWayInterfaceWithOverloadedMethod.class);
 
         assertMethodPattern(info, "inOnlyMethod", ExchangePattern.InOnly);
-        assertMethodPattern(info, "robustInOnlyMethod", ExchangePattern.RobustInOnly);
         assertMethodPattern(info, "inOutMethod", ExchangePattern.InOut);
     }
 
@@ -95,7 +90,6 @@ public class BeanInfoTest extends Assert {
         BeanInfo info = createBeanInfo(OverloadOnMethod.class);
 
         assertMethodPattern(info, "inOnlyMethod", ExchangePattern.InOnly);
-        assertMethodPattern(info, "robustInOnlyMethod", ExchangePattern.RobustInOnly);
     }
 
     @Test
@@ -103,7 +97,6 @@ public class BeanInfoTest extends Assert {
         BeanInfo info = createBeanInfo(OverloadOnBaseClass.class);
 
         assertMethodPattern(info, "inOnlyMethod", ExchangePattern.InOnly);
-        assertMethodPattern(info, "robustInOnlyMethod", ExchangePattern.RobustInOnly);
     }
 
     @Test
@@ -111,7 +104,6 @@ public class BeanInfoTest extends Assert {
         BeanInfo info = createBeanInfo(OverloadOnMethod.class);
 
         assertMethodPattern(info, "inOnlyMethod", ExchangePattern.InOnly);
-        assertMethodPattern(info, "robustInOnlyMethod", ExchangePattern.RobustInOnly);
     }
 
     @Test
@@ -119,7 +111,6 @@ public class BeanInfoTest extends Assert {
         BeanInfo info = createBeanInfo(OverloadOnInterface.class);
 
         assertMethodPattern(info, "inOnlyMethod", ExchangePattern.InOnly);
-        assertMethodPattern(info, "robustInOnlyMethod", ExchangePattern.RobustInOnly);
         assertMethodPattern(info, "inOutMethod", ExchangePattern.InOut);
     }
 
@@ -173,9 +164,6 @@ public class BeanInfoTest extends Assert {
 
         @Pattern(ExchangePattern.InOnly)
         void inOnlyMethod();
-
-        @Pattern(ExchangePattern.RobustInOnly)
-        void robustInOnlyMethod();
     }
 
     @InOnly
@@ -187,9 +175,6 @@ public class BeanInfoTest extends Assert {
     public interface MyOneWayInterfaceWithOverloadedMethod {
         void inOnlyMethod();
 
-        @Pattern(ExchangePattern.RobustInOnly)
-        void robustInOnlyMethod();
-
         @InOut
         Object inOutMethod();
     }
@@ -197,10 +182,6 @@ public class BeanInfoTest extends Assert {
     public static class OverloadOnMethod implements MyOneWayInterface {
 
         public void inOnlyMethod() {
-        }
-
-        @Pattern(ExchangePattern.RobustInOnly)
-        public void robustInOnlyMethod() {
         }
     }
 

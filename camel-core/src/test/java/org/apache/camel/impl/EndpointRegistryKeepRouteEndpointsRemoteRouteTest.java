@@ -58,7 +58,7 @@ public class EndpointRegistryKeepRouteEndpointsRemoteRouteTest extends ContextTe
         assertTrue(context.hasEndpoint("log://bar") != null);
 
         // now stop and remove the bar route
-        context.stopRoute("bar");
+        context.getRouteController().stopRoute("bar");
         context.removeRoute("bar");
 
         assertEquals(4, context.getEndpointRegistry().staticSize());

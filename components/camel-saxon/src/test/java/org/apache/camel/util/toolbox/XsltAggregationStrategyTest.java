@@ -35,7 +35,7 @@ public class XsltAggregationStrategyTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><item>ABC</item>");
 
-        context.startRoute("route1");
+        context.getRouteController().startRoute("route1");
 
         assertMockEndpointsSatisfied();
     }
@@ -46,7 +46,7 @@ public class XsltAggregationStrategyTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><item>ABC</item>");
 
-        context.startRoute("route2");
+        context.getRouteController().startRoute("route2");
 
         assertMockEndpointsSatisfied();
     }

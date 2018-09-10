@@ -35,10 +35,10 @@ public class SedaSuspendConsumerStopRouteTest extends ContextTestSupport {
         SedaEndpoint seda = context.getEndpoint("seda:start", SedaEndpoint.class);
         seda.getConsumers().iterator().next().suspend();
 
-        boolean stopped = context.stopRoute("foo", 2, TimeUnit.SECONDS, true);
+        boolean stopped = context.getRouteController().stopRoute("foo", 2, TimeUnit.SECONDS, true);
         assertTrue("Route should be stopped", stopped);
 
-        assertTrue("Route should be stopped", context.getRouteStatus("foo").isStopped());
+        assertTrue("Route should be stopped", context.getRouteController().getRouteStatus("foo").isStopped());
     }
 
     @Override

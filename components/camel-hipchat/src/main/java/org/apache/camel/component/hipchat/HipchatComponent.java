@@ -21,7 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,16 +34,15 @@ import org.slf4j.LoggerFactory;
  * at @see <a href="https://www.hipchat.com/account/api">Hipchat Auth Token</a>. The messages produced and consumed
  * would be from/to owner of the provided auth token.
  */
-public class HipchatComponent extends UriEndpointComponent {
+public class HipchatComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(HipchatComponent.class);
 
     public HipchatComponent() {
-        super(HipchatEndpoint.class);
     }
 
     public HipchatComponent(CamelContext context) {
-        super(context, HipchatEndpoint.class);
+        super(context);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

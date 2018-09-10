@@ -28,14 +28,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
-import org.apache.camel.processor.loadbalancer.CircuitBreakerLoadBalancer;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.RoutePolicySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Modeled after the {@link CircuitBreakerLoadBalancer} and {@link ThrottlingInflightRoutePolicy}
+ * Modeled after the circuit breaker {@link ThrottlingInflightRoutePolicy}
  * this {@link RoutePolicy} will stop consuming from an endpoint based on the type of exceptions that are
  * thrown and the threshold setting.
  *
@@ -135,7 +134,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     }
 
     /**
-     * uses similar approach as {@link CircuitBreakerLoadBalancer}
+     * uses similar approach as circuit breaker
      * if the exchange has an exception that we are watching
      * then we count that as a failure otherwise we ignore it
      */

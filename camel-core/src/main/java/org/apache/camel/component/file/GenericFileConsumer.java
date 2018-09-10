@@ -681,20 +681,6 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      */
     protected abstract boolean isMatched(GenericFile<T> file, String doneFileName, List<T> files);
 
-    /**
-     * Is the given file already in progress.
-     *
-     * @param file the file
-     * @return <tt>true</tt> if the file is already in progress
-     * @deprecated no longer in use, use {@link org.apache.camel.component.file.GenericFileEndpoint#getInProgressRepository()} instead.
-     */
-    @Deprecated
-    protected boolean isInProgress(GenericFile<T> file) {
-        String key = file.getAbsoluteFilePath();
-        // must use add, to have operation as atomic
-        return !endpoint.getInProgressRepository().add(key);
-    }
-
     protected String evaluateFileExpression() {
         if (fileExpressionResult == null && endpoint.getFileName() != null) {
             // create a dummy exchange as Exchange is needed for expression evaluation

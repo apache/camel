@@ -413,7 +413,7 @@ public class QuickfixjComponentTest {
         
         // FIX message to send
         Email email = new Email(new EmailThreadID("ID"), new EmailType(EmailType.NEW), new Subject("Test"));
-        Exchange exchange = producer.createExchange(ExchangePattern.InOnly);
+        Exchange exchange = producer.getEndpoint().createExchange(ExchangePattern.InOnly);
         exchange.getIn().setBody(email);
         
         producer.process(exchange);            

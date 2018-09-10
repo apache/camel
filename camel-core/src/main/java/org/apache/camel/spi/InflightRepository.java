@@ -65,15 +65,6 @@ public interface InflightRepository extends StaticService {
          * The id of the route where the exchange currently is being processed
          * <p/>
          * Is <tt>null</tt> if message history is disabled.
-         * @deprecated use {@link #getAtRouteId()}
-         */
-        @Deprecated
-        String getRouteId();
-
-        /**
-         * The id of the route where the exchange currently is being processed
-         * <p/>
-         * Is <tt>null</tt> if message history is disabled.
          */
         String getAtRouteId();
 
@@ -117,13 +108,6 @@ public interface InflightRepository extends StaticService {
      * @return number of exchanges currently in flight.
      */
     int size();
-
-    /**
-     * Will always return 0 due method is deprecated.
-     * @deprecated will be removed in a future Camel release.
-     */
-    @Deprecated
-    int size(Endpoint endpoint);
 
     /**
      * Adds the route from the in flight registry.

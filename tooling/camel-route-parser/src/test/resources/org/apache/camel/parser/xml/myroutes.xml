@@ -22,7 +22,7 @@
       <from uri="timer:foo?period=5000"/>
       <!-- generate random number message, using a 3 digit number -->
       <transform>
-        <method bean="myTransformer"/>
+        <method ref="myTransformer"/>
       </transform>
       <choice>
         <when>

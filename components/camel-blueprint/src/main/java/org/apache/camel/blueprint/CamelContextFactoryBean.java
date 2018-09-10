@@ -53,7 +53,6 @@ import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.PackageScanDefinition;
-import org.apache.camel.model.PropertiesDefinition;
 import org.apache.camel.model.RestContextRefDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
@@ -127,9 +126,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlAttribute
     private ShutdownRunningTask shutdownRunningTask;
     @XmlAttribute
-    @Deprecated
-    private Boolean lazyLoadTypeConverters;
-    @XmlAttribute
     private Boolean loadTypeConverters;
     @XmlAttribute
     private Boolean typeConverterStatisticsEnabled;
@@ -137,9 +133,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     private TypeConverterExists typeConverterExists;
     @XmlAttribute
     private LoggingLevel typeConverterExistsLoggingLevel;
-    @Deprecated
-    @XmlElement(name = "properties")
-    private PropertiesDefinition properties;
     @XmlElement(name = "globalOptions")
     private GlobalOptionsDefinition globalOptions;
     @XmlElement(name = "propertyPlaceholder", type = CamelPropertyPlaceholderDefinition.class)
@@ -435,17 +428,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         this.threadNamePattern = threadNamePattern;
     }
 
-    @Deprecated
-    public Boolean getLazyLoadTypeConverters() {
-        // use false by default
-        return lazyLoadTypeConverters != null ? lazyLoadTypeConverters : Boolean.FALSE;
-    }
-
-    @Deprecated
-    public void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters) {
-        this.lazyLoadTypeConverters = lazyLoadTypeConverters;
-    }
-
     @Override
     public Boolean getLoadTypeConverters() {
         return loadTypeConverters;
@@ -607,19 +589,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         this.errorHandlerRef = errorHandlerRef;
     }
 
-    @Deprecated
-    public PropertiesDefinition getProperties() {
-        return properties;
-    }
-
     @Override
     public GlobalOptionsDefinition getGlobalOptions() {
         return globalOptions;
-    }
-
-    @Deprecated
-    public void setProperties(PropertiesDefinition properties) {
-        this.properties = properties;
     }
 
     public void setGlobalOptions(GlobalOptionsDefinition globalOptions) {

@@ -96,7 +96,7 @@ public class SpringIntegrationConsumer  extends DefaultConsumer implements Messa
         // we received a message from spring integration
         // wrap that in a Camel Exchange and process it
         Exchange exchange = getEndpoint().createExchange(getEndpoint().isInOut() ? ExchangePattern.InOut : ExchangePattern.InOnly);
-        exchange.setIn(new SpringIntegrationMessage(siInMessage));
+        exchange.setIn(new SpringIntegrationMessage(exchange, siInMessage));
 
         // process the exchange
         try {

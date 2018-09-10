@@ -74,10 +74,6 @@ public class ManagedSendProcessor extends ManagedProcessor implements ManagedSen
         return destination;
     }
 
-    public void setDestination(String uri) {
-        // noop
-    }
-
     public String getMessageExchangePattern() {
         if (processor.getPattern() != null) {
             return processor.getPattern().name();

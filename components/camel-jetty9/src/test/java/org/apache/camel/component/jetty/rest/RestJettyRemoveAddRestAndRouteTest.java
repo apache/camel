@@ -38,7 +38,7 @@ public class RestJettyRemoveAddRestAndRouteTest extends BaseJettyTest {
 
     @Test
     public void testRemoveAddRoute() throws Exception {
-        context.stopRoute("issues");
+        context.getRouteController().stopRoute("issues");
         boolean removed = context.removeRoute("issues");
 
         assertTrue("Should have removed route", removed);

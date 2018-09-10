@@ -180,68 +180,6 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
 
     // Fluent API
     //-------------------------------------------------------------------------
-    /**
-     * Sets a reference to a bean to use
-     *
-     * @param ref  the bean's id in the registry
-     * @return the builder
-     * @deprecated not in use, will be removed in next Camel release
-     */
-    @Deprecated
-    public BeanDefinition ref(String ref) {
-        setRef(ref);
-        return this;
-    }
-    
-    /**
-     * Sets the method name on the bean to use
-     *
-     * @param method  the bean's method name which wants camel to call
-     * @return the builder
-     * @deprecated not in use, will be removed in next Camel release
-     */
-    @Deprecated
-    public BeanDefinition method(String method) {
-        setMethod(method);
-        return this;
-    }
-    
-    /**
-     * Sets an instance of the bean to use
-     *
-     * @param bean the instance of the bean
-     * @return the builder
-     * @deprecated not in use, will be removed in next Camel release
-     */
-    @Deprecated
-    public BeanDefinition bean(Object bean) {
-        setBean(bean);
-        return this;
-    }
-    
-    /**
-     * Sets the Class of the bean
-     *
-     * @param beanType the Class of the bean
-     * @return the builder
-     * @deprecated not in use, will be removed in next Camel release
-     */
-    @Deprecated
-    public BeanDefinition beanType(Class<?> beanType) {
-        setBeanType(beanType);
-        return this;
-    }
-
-    /**
-     * Caches the bean lookup, to avoid lookup up bean on every usage.
-     *
-     * @return the builder
-     */
-    @Deprecated
-    public BeanDefinition cache() {
-        setCache(true);
-        return this;
-    }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {

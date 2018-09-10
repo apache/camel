@@ -27,6 +27,7 @@ import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
@@ -48,7 +49,7 @@ public class OsgiClassResolver extends DefaultClassResolver {
     @Override
     public Class<?> resolveClass(String name) {
         LOG.trace("Resolve class {}", name);
-        name = ObjectHelper.normalizeClassName(name);
+        name = StringHelper.normalizeClassName(name);
         if (ObjectHelper.isEmpty(name)) {
             return null;
         }
@@ -77,7 +78,7 @@ public class OsgiClassResolver extends DefaultClassResolver {
 
     @Override
     public InputStream loadResourceAsStream(String uri) {
-        ObjectHelper.notEmpty(uri, "uri");
+        StringHelper.notEmpty(uri, "uri");
 
         String resolvedName = resolveUriPath(uri);
         URL url = loadResourceAsURL(resolvedName);
@@ -99,7 +100,7 @@ public class OsgiClassResolver extends DefaultClassResolver {
 
     @Override
     public URL loadResourceAsURL(String uri) {
-        ObjectHelper.notEmpty(uri, "uri");
+        StringHelper.notEmpty(uri, "uri");
         String resolvedName = resolveUriPath(uri);
         URL answer = bundleContext.getBundle().getResource(resolvedName);
 
@@ -112,7 +113,7 @@ public class OsgiClassResolver extends DefaultClassResolver {
 
     @Override
     public Enumeration<URL> loadResourcesAsURL(String uri) {
-        ObjectHelper.notEmpty(uri, "uri");
+        StringHelper.notEmpty(uri, "uri");
         try {
             String resolvedName = resolveUriPath(uri);
             return bundleContext.getBundle().getResources(resolvedName);
@@ -123,7 +124,7 @@ public class OsgiClassResolver extends DefaultClassResolver {
 
     @Override
     public Enumeration<URL> loadAllResourcesAsURL(String uri) {
-        ObjectHelper.notEmpty(uri, "uri");
+        StringHelper.notEmpty(uri, "uri");
         Vector<URL> answer = new Vector<>();
 
         try {
@@ -153,7 +154,7 @@ public class OsgiClassResolver extends DefaultClassResolver {
     }
 
     protected Class<?> doLoadClass(String name, Bundle loader) {
-        ObjectHelper.notEmpty(name, "name");
+        StringHelper.notEmpty(name, "name");
         Class<?> answer = null;
         // Try to use the camel context's bundle's classloader to load the class
         if (loader != null) {

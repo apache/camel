@@ -52,7 +52,7 @@
         <template id="camelTemplate"/>
 
         <route>
-            <from ref="myFTPEndpoint"/>
+            <from uri="ref:myFTPEndpoint"/>
             <to uri="mock:result"/>
         </route>
     </camelContext>

@@ -26,7 +26,6 @@ import java.util.Map;
 
 import javax.net.ssl.HostnameVerifier;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -134,12 +133,6 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private CookieHandler cookieHandler;
 
     public CxfRsEndpoint() {
-    }
-
-    @Deprecated
-    public CxfRsEndpoint(String endpointUri, CamelContext camelContext) {
-        super(endpointUri, camelContext);
-        setAddress(endpointUri);
     }
 
     public CxfRsEndpoint(String endpointUri, Component component) {

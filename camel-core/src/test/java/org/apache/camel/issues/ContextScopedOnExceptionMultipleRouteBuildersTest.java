@@ -51,7 +51,7 @@ public class ContextScopedOnExceptionMultipleRouteBuildersTest extends ContextTe
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.setErrorHandlerBuilder(new DeadLetterChannelBuilder("mock:dead"));
+        context.setErrorHandlerFactory(new DeadLetterChannelBuilder("mock:dead"));
         return context;
     }
 

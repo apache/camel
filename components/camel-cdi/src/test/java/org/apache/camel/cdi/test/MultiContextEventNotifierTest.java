@@ -190,7 +190,7 @@ public class MultiContextEventNotifierTest {
             }
         });
 
-        secondCamelContext.startAllRoutes();
+        secondCamelContext.getRouteController().startAllRoutes();
 
         assertThat("Events fired for any contexts are incorrect", anyEvents,
             everyItem(

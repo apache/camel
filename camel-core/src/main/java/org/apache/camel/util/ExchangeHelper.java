@@ -166,50 +166,6 @@ public final class ExchangeHelper {
     }
 
     /**
-     * Returns the mandatory inbound message body of the correct type or throws
-     * an exception if it is not present
-     *
-     * @param exchange the exchange
-     * @return the body, is never <tt>null</tt>
-     * @throws InvalidPayloadException Is thrown if the body being <tt>null</tt> or wrong class type
-     * @deprecated use {@link org.apache.camel.Message#getMandatoryBody()}
-     */
-    @Deprecated
-    public static Object getMandatoryInBody(Exchange exchange) throws InvalidPayloadException {
-        return exchange.getIn().getMandatoryBody();
-    }
-
-    /**
-     * Returns the mandatory inbound message body of the correct type or throws
-     * an exception if it is not present
-     * @deprecated use {@link org.apache.camel.Message#getMandatoryBody(Class)}
-     */
-    @Deprecated
-    public static <T> T getMandatoryInBody(Exchange exchange, Class<T> type) throws InvalidPayloadException {
-        return exchange.getIn().getMandatoryBody(type);
-    }
-
-    /**
-     * Returns the mandatory outbound message body of the correct type or throws
-     * an exception if it is not present
-     * @deprecated use {@link org.apache.camel.Message#getMandatoryBody()}
-     */
-    @Deprecated
-    public static Object getMandatoryOutBody(Exchange exchange) throws InvalidPayloadException {
-        return exchange.getOut().getMandatoryBody();
-    }
-
-    /**
-     * Returns the mandatory outbound message body of the correct type or throws
-     * an exception if it is not present
-     * @deprecated use {@link org.apache.camel.Message#getMandatoryBody(Class)}
-     */
-    @Deprecated
-    public static <T> T getMandatoryOutBody(Exchange exchange, Class<T> type) throws InvalidPayloadException {
-        return exchange.getOut().getMandatoryBody(type);
-    }
-
-    /**
      * Converts the value to the given expected type or throws an exception
      *
      * @return the converted value
@@ -285,7 +241,7 @@ public final class ExchangeHelper {
         String id = exchange.getExchangeId();
 
         // make sure to do a safe copy as the correlated copy can be routed independently of the source.
-        Exchange copy = exchange.copy(true);
+        Exchange copy = exchange.copy();
         // do not reuse message id on copy
         if (!useSameMessageId) {
             if (copy.hasOut()) {
@@ -837,14 +793,6 @@ public final class ExchangeHelper {
             return context.getTypeConverter().convertTo(type, exchange, answer);
         }
         return context.getTypeConverter().convertTo(type, result);
-    }
-
-    /**
-     * @deprecated use org.apache.camel.CamelExchangeException.createExceptionMessage instead
-     */
-    @Deprecated
-    public static String createExceptionMessage(String message, Exchange exchange, Throwable cause) {
-        return CamelExchangeException.createExceptionMessage(message, exchange, cause);
     }
 
     /**

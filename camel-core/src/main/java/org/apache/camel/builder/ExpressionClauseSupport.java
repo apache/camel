@@ -180,29 +180,9 @@ public class ExpressionClauseSupport<T> {
 
     /**
      * An expression of an exchange property of the given name
-     *
-     * @deprecated use {@link #exchangeProperty(String)} instead
-     */
-    @Deprecated
-    public T property(String name) {
-        return expression(new ExchangePropertyExpression(name));
-    }
-
-    /**
-     * An expression of an exchange property of the given name
      */
     public T exchangeProperty(String name) {
         return expression(new ExchangePropertyExpression(name));
-    }
-
-    /**
-     * An expression of the exchange properties
-     *
-     * @deprecated use {@link #exchangeProperties()} instead
-     */
-    @Deprecated
-    public T properties() {
-        return exchangeProperties();
     }
 
     /**

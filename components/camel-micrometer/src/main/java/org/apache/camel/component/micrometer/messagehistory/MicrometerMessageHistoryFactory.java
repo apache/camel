@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.micrometer.messagehistory;
 
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
@@ -98,12 +97,6 @@ public class MicrometerMessageHistoryFactory extends ServiceSupport implements C
      */
     public void setNamingStrategy(MicrometerMessageHistoryNamingStrategy namingStrategy) {
         this.namingStrategy = namingStrategy;
-    }
-
-    @Override
-    @Deprecated
-    public MessageHistory newMessageHistory(String routeId, NamedNode namedNode, Date date) {
-        return newMessageHistory(routeId, namedNode, date.getTime());
     }
 
     @Override

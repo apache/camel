@@ -38,7 +38,7 @@ public class TimerRepeatCountTest extends ContextTestSupport {
 
         // we should only get 3 messages as we have a repeat count limit at 3
 
-        context.startAllRoutes();
+        context.getRouteController().startAllRoutes();
 
         assertMockEndpointsSatisfied();
     }

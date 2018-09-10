@@ -54,8 +54,8 @@ public class AvroNettyConsumerTest extends AvroConsumerTestSupport {
             public void configure() throws Exception {
                 //In Only
                 from("avro:netty:localhost:" + avroPort + "?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol").choice()
-                        .when().simple("${in.headers." + AvroConstants.AVRO_MESSAGE_NAME + " == 'put'}").process(new PutProcessor(keyValue))
-                        .when().simple("${in.headers." + AvroConstants.AVRO_MESSAGE_NAME + " == 'get'}").process(new GetProcessor(keyValue));
+                        .when().simple("${in.headers." + AvroConstants.AVRO_MESSAGE_NAME + "} == 'put'").process(new PutProcessor(keyValue))
+                        .when().simple("${in.headers." + AvroConstants.AVRO_MESSAGE_NAME + "} == 'get'").process(new GetProcessor(keyValue));
 
                 from("avro:netty:localhost:" + avroPortMessageInRoute + "/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol")
                         .process(new PutProcessor(keyValue));

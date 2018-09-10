@@ -16,7 +16,6 @@
  */
 package org.apache.camel.api.management.mbean;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -50,10 +49,6 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "Camel Management StatisticsLevel")
     String getManagementStatisticsLevel();
 
-    @Deprecated
-    @ManagedAttribute(description = "Camel Properties")
-    Map<String, String> getProperties();
-
     @ManagedAttribute(description = "Camel Global Options")
     Map<String, String> getGlobalOptions();
 
@@ -69,10 +64,6 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "HeadersMapFactory class name")
     String getHeadersMapFactoryClassName();
 
-    @Deprecated
-    @ManagedOperation(description = "Gets the value of a Camel global option")
-    String getProperty(String key) throws Exception;
-
     /**
      * Gets the value of a CamelContext global option
      *
@@ -82,10 +73,6 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      */
     @ManagedOperation(description = "Gets the value of a Camel global option")
     String getGlobalOption(String key) throws Exception;
-
-    @Deprecated
-    @ManagedOperation(description = "Sets the value of a Camel global option")
-    void setProperty(String key, String value) throws Exception;
 
     /**
      * Sets the value of a CamelContext property name
@@ -102,13 +89,6 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
 
     @ManagedAttribute(description = "Tracing")
     void setTracing(Boolean tracing);
-
-    /**
-     * @deprecated use {@link #getExchangesInflight()}
-     */
-    @ManagedAttribute(description = "Current number of inflight Exchanges")
-    @Deprecated
-    Integer getInflightExchanges();
 
     @ManagedAttribute(description = "Total number of routes")
     Integer getTotalRoutes();
@@ -372,32 +352,6 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      */
     @ManagedOperation(description = "Reset counters")
     void reset(boolean includeRoutes) throws Exception;
-
-    /**
-     * Helper method for tooling which returns the completion list of the endpoint path
-     * from the given endpoint name, properties and current path expression.
-     * <p/>
-     * For example if using the file endpoint, this should complete a list of files (rather like bash completion)
-     * or for an ActiveMQ component this should complete the list of queues or topics.
-     *
-     * @param componentName  the component name
-     * @param endpointParameters  parameters of the endpoint
-     * @param completionText  the entered text which we want to have completion suggestions for
-     * @throws Exception is thrown if error occurred
-     */
-    @ManagedOperation(description = "Returns the list of available endpoint paths for the given component name, endpoint properties and completion text")
-    @Deprecated
-    List<String> completeEndpointPath(String componentName, Map<String, Object> endpointParameters, String completionText) throws Exception;
-
-    /**
-     * Returns the HTML documentation for the given camel component
-     *
-     * @param componentName  the component name
-     * @deprecated use camel-catalog instead
-     */
-    @ManagedOperation(description = "Returns the HTML documentation for the given camel component")
-    @Deprecated
-    String getComponentDocumentation(String componentName) throws IOException;
 
     @ManagedOperation(description = "Returns the JSON representation of all the static and dynamic endpoints defined in all the routes")
     String createRouteStaticEndpointJson();

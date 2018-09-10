@@ -108,38 +108,6 @@ public abstract class TestSupport extends TestCase {
     }
 
     /**
-     * Returns a predicate and value builder for the outbound body on an
-     * exchange
-     */
-    public static ValueBuilder outBody() {
-        return Builder.outBody();
-    }
-
-    /**
-     * Returns a predicate and value builder for the outbound message body as a
-     * specific type
-     */
-    public static <T> ValueBuilder outBodyAs(Class<T> type) {
-        return Builder.outBodyAs(type);
-    }
-
-    /**
-     * Returns a predicate and value builder for the fault body on an
-     * exchange
-     */
-    public static ValueBuilder faultBody() {
-        return Builder.faultBody();
-    }
-
-    /**
-     * Returns a predicate and value builder for the fault message body as a
-     * specific type
-     */
-    public static <T> ValueBuilder faultBodyAs(Class<T> type) {
-        return Builder.faultBodyAs(type);
-    }
-
-    /**
      * Returns a value builder for the given system property
      */
     public static ValueBuilder systemProperty(String name) {
@@ -194,10 +162,10 @@ public abstract class TestSupport extends TestCase {
 
         Object actual;
         if (expected == null) {
-            actual = ExchangeHelper.getMandatoryInBody(exchange);
+            actual = exchange.getIn().getMandatoryBody();
             assertEquals("in body of: " + exchange, expected, actual);
         } else {
-            actual = ExchangeHelper.getMandatoryInBody(exchange, expected.getClass());
+            actual = exchange.getIn().getMandatoryBody(expected.getClass());
         }
         assertEquals("in body of: " + exchange, expected, actual);
 
@@ -216,10 +184,10 @@ public abstract class TestSupport extends TestCase {
 
         Object actual;
         if (expected == null) {
-            actual = ExchangeHelper.getMandatoryOutBody(exchange);
+            actual = exchange.getOut().getMandatoryBody();
             assertEquals("output body of: " + exchange, expected, actual);
         } else {
-            actual = ExchangeHelper.getMandatoryOutBody(exchange, expected.getClass());
+            actual = exchange.getOut().getMandatoryBody(expected.getClass());
         }
         assertEquals("output body of: " + exchange, expected, actual);
 

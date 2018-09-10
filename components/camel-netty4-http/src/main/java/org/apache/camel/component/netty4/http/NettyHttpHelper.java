@@ -48,7 +48,7 @@ public final class NettyHttpHelper {
     public static void setCharsetFromContentType(String contentType, Exchange exchange) {
         String charset = getCharsetFromContentType(contentType);
         if (charset != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, IOConverter.normalizeCharset(charset));
+            exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(charset));
         }
     }
 

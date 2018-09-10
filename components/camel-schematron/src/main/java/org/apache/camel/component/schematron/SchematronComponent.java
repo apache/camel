@@ -19,15 +19,14 @@ package org.apache.camel.component.schematron;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
 /**
  * Represents the component that manages {@link SchematronEndpoint}.
  */
-public class SchematronComponent extends UriEndpointComponent {
+public class SchematronComponent extends DefaultComponent {
 
     public SchematronComponent() {
-        super(SchematronEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

@@ -19,7 +19,7 @@ package org.apache.camel.component.validator.jing;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
 /**
  * A component for validating XML payloads using the
@@ -27,10 +27,9 @@ import org.apache.camel.impl.UriEndpointComponent;
  *
  * @version 
  */
-public class JingComponent extends UriEndpointComponent {
+public class JingComponent extends DefaultComponent {
 
     public JingComponent() {
-        super(JingEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

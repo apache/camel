@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultMessage;
 
@@ -26,22 +27,12 @@ import org.apache.camel.impl.DefaultMessage;
 public class GenericFileMessage<T> extends DefaultMessage {
     private GenericFile<T> file;
 
-    /**
-     * @deprecated use {@link #GenericFileMessage(CamelContext)}
-     */
-    @Deprecated
-    public GenericFileMessage() {
-    }
-
     public GenericFileMessage(CamelContext camelContext) {
         super(camelContext);
     }
 
-    /**
-     * @deprecated use {@link #GenericFileMessage(CamelContext, GenericFile)}
-     */
-    @Deprecated
-    public GenericFileMessage(GenericFile<T> file) {
+    public GenericFileMessage(Exchange exchange, GenericFile<T> file) {
+        super(exchange);
         this.file = file;
     }
 

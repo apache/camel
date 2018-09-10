@@ -130,7 +130,7 @@ public class GenericFile<T> implements WrappedFile<T>  {
         Map<String, Object> headers;
 
         exchange.setProperty(FileComponent.FILE_EXCHANGE_FILE, this);
-        GenericFileMessage<T> msg = new GenericFileMessage<>(this);
+        GenericFileMessage<T> msg = new GenericFileMessage<>(exchange, this);
         if (exchange.hasOut()) {
             headers = exchange.getOut().hasHeaders() ? exchange.getOut().getHeaders() : null;
             exchange.setOut(msg);

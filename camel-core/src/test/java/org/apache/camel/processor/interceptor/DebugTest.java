@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.interceptor;
+
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -33,6 +34,7 @@ import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Condition;
 import org.junit.Before;
 import org.junit.Test;
+
 
 /**
  * @version 
@@ -73,7 +75,7 @@ public class DebugTest extends ContextTestSupport {
                 // match when sending to mocks
                 if (definition instanceof ToDefinition) {
                     ToDefinition to = (ToDefinition) definition;
-                    return to.getUriOrRef().startsWith("mock");
+                    return to.getUri().startsWith("mock");
                 }
                 return false;
             }

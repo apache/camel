@@ -122,19 +122,11 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
         )
     private DataFormatDefinition dataFormatType;
 
-    @XmlAttribute
-    @Deprecated
-    private String ref;
-
     public MarshalDefinition() {
     }
 
     public MarshalDefinition(DataFormatDefinition dataFormatType) {
         this.dataFormatType = dataFormatType;
-    }
-
-    public MarshalDefinition(String ref) {
-        this.ref = ref;
     }
 
     @Override
@@ -143,7 +135,7 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
     }
 
     protected String description() {
-        return dataFormatType != null ? dataFormatType.toString() : "ref:" + ref;
+        return dataFormatType != null ? dataFormatType.toString() : "";
     }
 
     @Override
@@ -154,20 +146,6 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
     @Override
     public String getLabel() {
         return "marshal[" + description() + "]";
-    }
-
-    public String getRef() {
-        return ref;
-    }
-
-    /**
-     * To refer to a custom data format to use as marshaller
-     *
-     * @deprecated use uri with ref:uri instead
-     */
-    @Deprecated
-    public void setRef(String ref) {
-        this.ref = ref;
     }
 
     public DataFormatDefinition getDataFormatType() {
@@ -183,7 +161,7 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) {
-        DataFormat dataFormat = DataFormatDefinition.getDataFormat(routeContext, getDataFormatType(), ref);
+        DataFormat dataFormat = DataFormatDefinition.getDataFormat(routeContext, getDataFormatType(), null);
         return new MarshalProcessor(dataFormat);
     }
 }

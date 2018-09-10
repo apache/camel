@@ -32,7 +32,7 @@ public class QuartzSuspendRouteTest extends BaseQuartzTest {
 
         assertMockEndpointsSatisfied();
 
-        context.suspendRoute("foo");
+        context.getRouteController().suspendRoute("foo");
 
         int size = mock.getReceivedCounter();
 
@@ -46,7 +46,7 @@ public class QuartzSuspendRouteTest extends BaseQuartzTest {
         resetMocks();
         mock.expectedMinimumMessageCount(1);
 
-        context.resumeRoute("foo");
+        context.getRouteController().resumeRoute("foo");
 
         assertMockEndpointsSatisfied();
     }

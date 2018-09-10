@@ -27,10 +27,10 @@ public class MyBatisBatchConsumerTest extends MyBatisTestSupport {
     public void testBatchConsumer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
-        mock.message(0).property(Exchange.BATCH_INDEX).isEqualTo(0);
-        mock.message(0).property(Exchange.BATCH_COMPLETE).isEqualTo(false);
-        mock.message(1).property(Exchange.BATCH_INDEX).isEqualTo(1);
-        mock.message(1).property(Exchange.BATCH_COMPLETE).isEqualTo(true);
+        mock.message(0).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(0);
+        mock.message(0).exchangeProperty(Exchange.BATCH_COMPLETE).isEqualTo(false);
+        mock.message(1).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(1);
+        mock.message(1).exchangeProperty(Exchange.BATCH_COMPLETE).isEqualTo(true);
         mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 2);
 
         assertMockEndpointsSatisfied();

@@ -35,18 +35,6 @@ import org.apache.camel.spi.Metadata;
 public class DescriptionDefinition {
     @XmlAttribute
     private String lang;
-    @XmlAttribute
-    @Deprecated
-    private Double layoutX;
-    @XmlAttribute
-    @Deprecated
-    private Double layoutY;
-    @XmlAttribute
-    @Deprecated
-    private Double layoutWidth;
-    @XmlAttribute
-    @Deprecated
-    private Double layoutHeight;
     @XmlValue
     private String text;
 
@@ -72,51 +60,4 @@ public class DescriptionDefinition {
         this.text = text;
     }
 
-    public Double getLayoutHeight() {
-        return layoutHeight;
-    }
-
-    /**
-     * Layout height
-     */
-    @Deprecated
-    public void setLayoutHeight(Double layoutHeight) {
-        this.layoutHeight = layoutHeight;
-    }
-
-    public Double getLayoutWidth() {
-        return layoutWidth;
-    }
-
-    /**
-     * Layout width
-     */
-    @Deprecated
-    public void setLayoutWidth(Double layoutWidth) {
-        this.layoutWidth = layoutWidth;
-    }
-
-    public Double getLayoutX() {
-        return layoutX;
-    }
-
-    /**
-     * Layout position X
-     */
-    @Deprecated
-    public void setLayoutX(Double layoutX) {
-        this.layoutX = layoutX;
-    }
-
-    public Double getLayoutY() {
-        return layoutY;
-    }
-
-    /**
-     * Layout position Y
-     */
-    @Deprecated
-    public void setLayoutY(Double layoutY) {
-        this.layoutY = layoutY;
-    }
 }

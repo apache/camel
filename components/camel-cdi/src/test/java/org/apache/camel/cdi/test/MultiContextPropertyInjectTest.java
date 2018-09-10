@@ -134,7 +134,7 @@ public class MultiContextPropertyInjectTest {
             }
         });
 
-        secondCamelContext.startAllRoutes();
+        secondCamelContext.getRouteController().startAllRoutes();
     }
 
     @Test

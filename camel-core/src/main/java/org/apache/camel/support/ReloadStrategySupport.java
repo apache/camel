@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.model.ModelCamelContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -145,7 +146,7 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
                     log.warn("Routes with no id's detected. Its recommended to assign id's to your routes so Camel can reload the routes correctly.");
                 }
                 // update the routes (add will remove and shutdown first)
-                camelContext.addRouteDefinitions(routes);
+                camelContext.adapt(ModelCamelContext.class).addRouteDefinitions(routes);
 
                 log.info("Reloaded routes: [{}] from XML resource: {}", csb, name);
             } catch (Exception e) {

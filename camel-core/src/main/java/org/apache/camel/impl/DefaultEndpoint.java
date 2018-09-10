@@ -24,7 +24,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
@@ -60,7 +59,6 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     private final String id = EndpointHelper.createEndpointId();
     private transient String endpointUriToString;
     private String endpointUri;
-    private EndpointConfiguration endpointConfiguration;
     private CamelContext camelContext;
     private Component component;
     @UriParam(label = "consumer", optionalPrefix = "consumer.", description = "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while"
@@ -100,35 +98,6 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     protected DefaultEndpoint(String endpointUri, Component component) {
         this.camelContext = component == null ? null : component.getCamelContext();
         this.component = component;
-        this.setEndpointUri(endpointUri);
-    }
-
-    /**
-     * Constructs a DefaultEndpoint instance which has <b>not</b> been created
-     * using a {@link Component}.
-     * <p/>
-     * <b>Note:</b> It is preferred to create endpoints using the associated
-     * component.
-     * 
-     * @param endpointUri the full URI used to create this endpoint
-     * @param camelContext the Camel Context in which this endpoint is operating
-     */
-    @Deprecated
-    protected DefaultEndpoint(String endpointUri, CamelContext camelContext) {
-        this(endpointUri);
-        this.camelContext = camelContext;
-    }
-
-    /**
-     * Constructs a partially-initialized DefaultEndpoint instance.
-     * <p/>
-     * <b>Note:</b> It is preferred to create endpoints using the associated
-     * component.
-     * 
-     * @param endpointUri the full URI used to create this endpoint
-     */
-    @Deprecated
-    protected DefaultEndpoint(String endpointUri) {
         this.setEndpointUri(endpointUri);
     }
 
@@ -195,23 +164,6 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         return endpointUri;
     }
 
-    public EndpointConfiguration getEndpointConfiguration() {
-        if (endpointConfiguration == null) {
-            endpointConfiguration = createEndpointConfiguration(getEndpointUri());
-        }
-        return endpointConfiguration;
-    }
-
-    /**
-     * Sets a custom {@link EndpointConfiguration}
-     *
-     * @param endpointConfiguration a custom endpoint configuration to be used.
-     */
-    @Deprecated
-    public void setEndpointConfiguration(EndpointConfiguration endpointConfiguration) {
-        this.endpointConfiguration = endpointConfiguration;
-    }
-
     public String getEndpointKey() {
         if (isLenientProperties()) {
             // only use the endpoint uri without parameters as the properties are lenient
@@ -255,10 +207,6 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         consumer.setBlockWhenFull(isPollingConsumerBlockWhenFull());
         consumer.setBlockTimeout(getPollingConsumerBlockTimeout());
         return consumer;
-    }
-
-    public Exchange createExchange(Exchange exchange) {
-        return exchange.copy();
     }
 
     public Exchange createExchange() {
@@ -424,27 +372,6 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      * A factory method to lazily create the endpointUri if none is specified
      */
     protected String createEndpointUri() {
-        return null;
-    }
-
-    /**
-     * A factory method to lazily create the endpoint configuration if none is specified
-     */
-    @Deprecated
-    protected EndpointConfiguration createEndpointConfiguration(String uri) {
-        // using this factory method to be backwards compatible with the old code
-        if (getComponent() != null) {
-            // prefer to use component endpoint configuration
-            try {
-                return getComponent().createConfiguration(uri);
-            } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
-            }
-        } else if (getCamelContext() != null) {
-            // fallback and use a mapped endpoint configuration
-            return new MappedEndpointConfiguration(getCamelContext(), uri);
-        }
-        // not configuration possible
         return null;
     }
 

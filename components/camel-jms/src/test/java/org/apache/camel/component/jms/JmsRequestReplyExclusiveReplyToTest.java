@@ -46,7 +46,7 @@ public class JmsRequestReplyExclusiveReplyToTest extends CamelTestSupport {
         assertEquals("Hello D", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Exclusive", "D"));
         assertEquals("Hello E", template.requestBody("activemq:queue:foo?replyTo=bar&replyToType=Exclusive", "E"));
 
-        long delta = watch.stop();
+        long delta = watch.taken();
         assertTrue("Should be faster than about 4 seconds, was: " + delta, delta < 4200);
     }
 

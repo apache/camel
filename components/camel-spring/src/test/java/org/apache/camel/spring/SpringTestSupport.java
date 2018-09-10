@@ -47,12 +47,6 @@ public abstract class SpringTestSupport extends ContextTestSupport {
     @SuppressWarnings("deprecation")
     @Override
     public void setUp() throws Exception {
-        if (isLazyLoadingTypeConverter()) {
-            System.setProperty(AbstractCamelContextFactoryBean.LAZY_LOAD_TYPE_CONVERTERS, "true");
-        } else {
-            System.setProperty(AbstractCamelContextFactoryBean.LAZY_LOAD_TYPE_CONVERTERS, "false");
-        }
-
         // we want SpringTestSupport to startup faster and not use JMX by default and should stop seda quicker
         System.setProperty("CamelSedaPollTimeout", "10");
         if (!this.useJmx()) {
@@ -150,7 +144,6 @@ public abstract class SpringTestSupport extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = SpringCamelContext.springCamelContext(applicationContext);
-        context.setLazyLoadTypeConverters(isLazyLoadingTypeConverter());
         return context;
     }
 

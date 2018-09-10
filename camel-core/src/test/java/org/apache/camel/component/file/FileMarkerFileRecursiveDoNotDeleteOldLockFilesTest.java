@@ -47,7 +47,7 @@ public class FileMarkerFileRecursiveDoNotDeleteOldLockFilesTest extends ContextT
         template.sendBodyAndHeader("file:target/oldlock", "New World", Exchange.FILE_NAME, "new.txt");
 
         // start the route
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
     }

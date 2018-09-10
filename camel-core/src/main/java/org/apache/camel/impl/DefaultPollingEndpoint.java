@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -33,16 +32,6 @@ public abstract class DefaultPollingEndpoint extends ScheduledPollEndpoint  {
 
     protected DefaultPollingEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
-    }
-
-    @Deprecated
-    protected DefaultPollingEndpoint(String endpointUri) {
-        super(endpointUri);
-    }
-
-    @Deprecated
-    protected DefaultPollingEndpoint(String endpointUri, CamelContext context) {
-        super(endpointUri, context);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {

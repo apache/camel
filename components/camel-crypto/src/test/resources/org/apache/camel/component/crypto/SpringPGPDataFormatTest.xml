@@ -35,9 +35,9 @@
 
     <route>
       <from uri="direct:inline"/>
-      <marshal ref="encrypt"/>
+      <marshal><custom ref="encrypt"/></marshal>
       <to uri="mock:encrypted"/>
-      <unmarshal ref="decrypt"/>
+      <unmarshal><custom ref="decrypt"/></unmarshal>
       <to uri="mock:unencrypted"/>
     </route>
     <!-- END SNIPPET: pgp-xml-basic -->
@@ -45,9 +45,9 @@
     <!-- START SNIPPET: pgp-xml-data-format-bean-with-keyring-bytearray -->
     <route>
       <from uri="direct:pgp-key-ring-byte-array"/>
-      <marshal ref="encryptBean"/>
+      <marshal><custom ref="encryptBean"/></marshal>
       <to uri="mock:encrypted"/>
-      <unmarshal ref="decryptBean"/>
+      <unmarshal><custom ref="decryptBean"/></unmarshal>
       <to uri="mock:unencrypted"/>
     </route>
   </camelContext>

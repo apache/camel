@@ -19,12 +19,11 @@ package org.beverage;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
-public class BeverageComponent extends UriEndpointComponent {
+public class BeverageComponent extends DefaultComponent {
 
     public BeverageComponent() {
-        super(BeverageEndpoint.class);
     }
 
     @Override

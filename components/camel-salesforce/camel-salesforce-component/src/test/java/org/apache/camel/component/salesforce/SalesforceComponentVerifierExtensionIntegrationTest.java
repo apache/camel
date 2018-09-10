@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Component;
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -116,9 +115,9 @@ public class SalesforceComponentVerifierExtensionIntegrationTest extends CamelTe
         ComponentVerifierExtension.Result result = getExtension().verify(ComponentVerifierExtension.Scope.CONNECTIVITY,
             parameters);
 
-        Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
+        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
 
-        Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
+        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         Assert.assertEquals(2, result.getErrors().size());
 
         // Exception
@@ -129,7 +128,7 @@ public class SalesforceComponentVerifierExtensionIntegrationTest extends CamelTe
         Assert.assertTrue(result.getErrors().get(0).getDetails().get(
             ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof SalesforceException);
         Assert.assertEquals(400,
-            result.getErrors().get(0).getDetails().get(ComponentVerifier.VerificationError.HttpAttribute.HTTP_CODE));
+            result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.HttpAttribute.HTTP_CODE));
 
         // Salesforce Error
         Assert.assertEquals("invalid_client_id", result.getErrors().get(1).getDetail("salesforce_code"));

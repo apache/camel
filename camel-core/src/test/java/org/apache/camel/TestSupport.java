@@ -89,16 +89,6 @@ public abstract class TestSupport extends Assert {
 
     /**
      * Returns a value builder for the given exchange property
-     *
-     * @deprecated use {@link #exchangeProperty(String)}
-     */
-    @Deprecated
-    public static ValueBuilder property(String name) {
-        return Builder.exchangeProperty(name);
-    }
-
-    /**
-     * Returns a value builder for the given exchange property
      */
     public static ValueBuilder exchangeProperty(String name) {
         return Builder.exchangeProperty(name);
@@ -117,47 +107,6 @@ public abstract class TestSupport extends Assert {
      */
     public static <T> ValueBuilder bodyAs(Class<T> type) {
         return Builder.bodyAs(type);
-    }
-
-    /**
-     * Returns a predicate and value builder for the outbound body on an
-     * exchange
-     *
-     * @deprecated use {@link #body()}
-     */
-    @Deprecated
-    public static ValueBuilder outBody() {
-        return Builder.outBody();
-    }
-
-    /**
-     * Returns a predicate and value builder for the outbound message body as a
-     * specific type
-     *
-     * @deprecated use {@link #bodyAs(Class)}
-     */
-    @Deprecated
-    public static <T> ValueBuilder outBodyAs(Class<T> type) {
-        return Builder.outBodyAs(type);
-    }
-
-    /**
-     * Returns a predicate and value builder for the fault body on an
-     * exchange
-     */
-    public static ValueBuilder faultBody() {
-        return Builder.faultBody();
-    }
-
-    /**
-     * Returns a predicate and value builder for the fault message body as a
-     * specific type
-     *
-     * @deprecated use {@link #bodyAs(Class)}
-     */
-    @Deprecated
-    public static <T> ValueBuilder faultBodyAs(Class<T> type) {
-        return Builder.faultBodyAs(type);
     }
 
     /**

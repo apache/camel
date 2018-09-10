@@ -23,6 +23,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Experimental;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
+import org.apache.camel.ServiceStatus;
 
 // TODO: Add javadoc
 
@@ -35,6 +36,25 @@ public interface RouteController extends CamelContextAware, Service {
      * @return the list of controlled routes
      */
     Collection<Route> getControlledRoutes();
+
+    /**
+     * Starts all the routes which currently is not started.
+     *
+     * @throws Exception is thrown if a route could not be started for whatever reason
+     */
+    void startAllRoutes() throws Exception;
+
+    /**
+     * Indicates whether current thread is starting route(s).
+     * <p/>
+     * This can be useful to know by {@link LifecycleStrategy} or the likes, in case
+     * they need to react differently.
+     *
+     * @return <tt>true</tt> if current thread is starting route(s), or <tt>false</tt> if not.
+     */
+    boolean isStartingRoutes();
+
+    ServiceStatus getRouteStatus(String routeId);
 
     void startRoute(String routeId) throws Exception;
 

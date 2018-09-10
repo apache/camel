@@ -161,7 +161,7 @@ message:
 
 [source,java]
 ----
-template.sendBody("controlbus:language:simple", "${camelContext.stopRoute('myRoute')}");
+template.sendBody("controlbus:language:simple", "${camelContext.getRouteController().stopRoute('myRoute')}");
 ----
 
 As this is a void operation, no result is returned. However, if you want

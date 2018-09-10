@@ -31,7 +31,6 @@ import com.amazonaws.services.sns.model.ListTopicsResult;
 import com.amazonaws.services.sns.model.SetTopicAttributesRequest;
 import com.amazonaws.services.sns.model.Topic;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -66,11 +65,6 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @UriParam
     private HeaderFilterStrategy headerFilterStrategy;
 
-    @Deprecated
-    public SnsEndpoint(String uri, CamelContext context, SnsConfiguration configuration) {
-        super(uri, context);
-        this.configuration = configuration;
-    }
     public SnsEndpoint(String uri, Component component, SnsConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;

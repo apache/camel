@@ -38,9 +38,6 @@ import org.apache.camel.util.ObjectHelper;
 public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputDefinition<Type> implements EndpointRequiredDefinition {
     @XmlAttribute @Metadata(required = "true")
     protected String uri;
-    @XmlAttribute
-    @Deprecated
-    protected String ref;
     @XmlTransient
     protected Endpoint endpoint;
 
@@ -59,7 +56,7 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
 
     public Endpoint resolveEndpoint(RouteContext context) {
         if (endpoint == null) {
-            return context.resolveEndpoint(getUri(), getRef());
+            return context.resolveEndpoint(getUri());
         } else {
             return endpoint;
         }
@@ -71,23 +68,6 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
             return uri;
         }
         return null;
-    }
-
-    // Properties
-    // -----------------------------------------------------------------------
-    public String getRef() {
-        return ref;
-    }
-
-    /**
-     * Sets the reference of the endpoint to send to.
-     *
-     * @param ref the reference of the endpoint
-     * @deprecated use uri with ref:uri instead
-     */
-    @Deprecated
-    public void setRef(String ref) {
-        this.ref = ref;
     }
 
     public String getUri() {
@@ -107,7 +87,7 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
      * Gets tne endpoint if an {@link Endpoint} instance was set.
      * <p/>
      * This implementation may return <tt>null</tt> which means you need to use
-     * {@link #getRef()} or {@link #getUri()} to get information about the endpoint.
+     * {@link #getUri()} to get information about the endpoint.
      *
      * @return the endpoint instance, or <tt>null</tt>
      */
@@ -127,21 +107,8 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
         return null;
     }
 
-    /**
-     * Returns the endpoint URI or the name of the reference to it
-     */
-    public String getUriOrRef() {
-        String uri = getUri();
-        if (ObjectHelper.isNotEmpty(uri)) {
-            return uri;
-        } else if (endpoint != null) {
-            return endpoint.getEndpointUri();
-        }
-        return getRef();
-    }
-
     @Override
     public String getLabel() {
-        return FromDefinition.description(getUri(), getRef(), getEndpoint());
+        return FromDefinition.description(getUri(), getEndpoint());
     }
 }

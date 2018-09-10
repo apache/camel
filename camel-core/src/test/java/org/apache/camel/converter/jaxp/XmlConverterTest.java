@@ -162,7 +162,7 @@ public class XmlConverterTest extends ContextTestSupport {
         XmlConverter conv = new XmlConverter();
 
         DOMSource source = conv.toDOMSource("<foo>bar</foo>");
-        DOMSource out = conv.toDOMSource(source);
+        DOMSource out = conv.toDOMSource(source, null);
         assertSame(source, out);
     }
 
@@ -183,7 +183,7 @@ public class XmlConverterTest extends ContextTestSupport {
         XmlConverter conv = new XmlConverter();
 
         SAXSource source = conv.toSAXSource("<foo>bar</foo>", null);
-        DOMSource out = conv.toDOMSource(source);
+        DOMSource out = conv.toDOMSource(source, null);
         assertNotSame(source, out);
 
         assertEquals("<foo>bar</foo>", conv.toString(out, null));
@@ -195,7 +195,7 @@ public class XmlConverterTest extends ContextTestSupport {
 
         // because of https://bugs.openjdk.java.net/show_bug.cgi?id=100228, we have to set the XML version explicitly
         StAXSource source = conv.toStAXSource("<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>", null);
-        DOMSource out = conv.toDOMSource(source);
+        DOMSource out = conv.toDOMSource(source, null);
         assertNotSame(source, out);
 
         assertEquals("<foo>bar</foo>", conv.toString(out, null));
@@ -214,7 +214,7 @@ public class XmlConverterTest extends ContextTestSupport {
             }
         };
 
-        DOMSource out = conv.toDOMSource(dummy);
+        DOMSource out = conv.toDOMSource(dummy, null);
         assertNull(out);
     }
 
@@ -425,7 +425,7 @@ public class XmlConverterTest extends ContextTestSupport {
         XmlConverter conv = new XmlConverter();
 
         InputStream is = context.getTypeConverter().convertTo(InputStream.class, "<foo>bar</foo>");
-        DOMSource out = conv.toDOMSource(is);
+        DOMSource out = conv.toDOMSource(is, null);
         assertNotNull(out);
         assertEquals("<foo>bar</foo>", context.getTypeConverter().convertTo(String.class, out));
     }
@@ -437,7 +437,7 @@ public class XmlConverterTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/xml", "<foo>bar</foo>", Exchange.FILE_NAME, "myxml.xml");
         File file = new File("target/xml/myxml.xml");
 
-        DOMSource out = conv.toDOMSource(file);
+        DOMSource out = conv.toDOMSource(file, null);
         assertNotNull(out);
         assertEquals("<foo>bar</foo>", context.getTypeConverter().convertTo(String.class, out));
     }
@@ -477,7 +477,7 @@ public class XmlConverterTest extends ContextTestSupport {
         XmlConverter conv = new XmlConverter();
         byte[] bytes = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>".getBytes();
 
-        Document out = conv.toDOMDocument(bytes);
+        Document out = conv.toDOMDocument(bytes, null);
         assertNotNull(out);
         assertEquals("<foo>bar</foo>", context.getTypeConverter().convertTo(String.class, out));
     }
@@ -487,7 +487,7 @@ public class XmlConverterTest extends ContextTestSupport {
         XmlConverter conv = new XmlConverter();
         InputStream is = context.getTypeConverter().convertTo(InputStream.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>bar</foo>");
 
-        Document out = conv.toDOMDocument(is);
+        Document out = conv.toDOMDocument(is, null);
         assertNotNull(out);
         assertEquals("<foo>bar</foo>", context.getTypeConverter().convertTo(String.class, out));
     }
@@ -517,7 +517,7 @@ public class XmlConverterTest extends ContextTestSupport {
         XmlConverter conv = new XmlConverter();
         File file = new File("src/test/resources/org/apache/camel/converter/stream/test.xml");
 
-        Document out = conv.toDOMDocument(file);
+        Document out = conv.toDOMDocument(file, null);
         assertNotNull(out);
         String s = context.getTypeConverter().convertTo(String.class, out);
         assertTrue(s.contains("<firstName>James</firstName>"));

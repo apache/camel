@@ -23,7 +23,7 @@ import java.util.Map;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.ModuleURIResolver;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ResourceHelper;
 
@@ -31,7 +31,7 @@ import org.apache.camel.util.ResourceHelper;
  * An <a href="http://camel.apache.org/xquery.html">XQuery Component</a>
  * for performing transforming messages
  */
-public class XQueryComponent extends UriEndpointComponent {
+public class XQueryComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
     private ModuleURIResolver moduleURIResolver = new XQueryModuleURIResolver(this);
@@ -41,7 +41,6 @@ public class XQueryComponent extends UriEndpointComponent {
     private Map<String, Object> configurationProperties = new HashMap<>();
 
     public XQueryComponent() {
-        super(XQueryEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

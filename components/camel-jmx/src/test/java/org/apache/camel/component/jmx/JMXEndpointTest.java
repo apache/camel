@@ -44,8 +44,6 @@ public class JMXEndpointTest {
     @SuppressWarnings("deprecation")
     public void setUp() throws Exception {
         context = new DefaultCamelContext();
-        // saves 5 seconds on this unit test
-        context.setLazyLoadTypeConverters(true);
     }
 
     @Test

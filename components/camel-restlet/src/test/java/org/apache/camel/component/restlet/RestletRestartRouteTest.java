@@ -32,8 +32,8 @@ public class RestletRestartRouteTest extends RestletTestSupport {
         assertEquals("123;Donald Duck", out);
 
         // restart foo
-        context.stopRoute("foo");
-        context.startRoute("foo");
+        context.getRouteController().stopRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         out = template.requestBodyAndHeader("direct:start", null, "id", 456, String.class);
         assertEquals("456;Donald Duck", out);
@@ -45,8 +45,8 @@ public class RestletRestartRouteTest extends RestletTestSupport {
         assertEquals("123;Donald Duck", out);
 
         // restart bar
-        context.stopRoute("bar");
-        context.startRoute("bar");
+        context.getRouteController().stopRoute("bar");
+        context.getRouteController().startRoute("bar");
 
         out = template.requestBodyAndHeader("direct:start", null, "id", 456, String.class);
         assertEquals("456;Donald Duck", out);

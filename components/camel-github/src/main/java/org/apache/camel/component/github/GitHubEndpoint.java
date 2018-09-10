@@ -34,7 +34,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * The github component is used for integrating Camel with github.
@@ -106,7 +106,7 @@ public class GitHubEndpoint extends DefaultEndpoint {
 
     public Consumer createConsumer(Processor processor) throws Exception {
         if (type == GitHubType.COMMIT) {
-            ObjectHelper.notEmpty(branchName, "branchName", this);
+            StringHelper.notEmpty(branchName, "branchName", this);
             return new CommitConsumer(this, processor, branchName);
         } else if (type == GitHubType.PULLREQUEST) {
             return new PullRequestConsumer(this, processor);

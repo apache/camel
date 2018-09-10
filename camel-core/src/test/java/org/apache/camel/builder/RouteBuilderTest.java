@@ -401,7 +401,7 @@ public class RouteBuilderTest extends TestSupport {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from("direct:a")
-                    .split(body(String.class).tokenize("\n"))
+                    .split(bodyAs(String.class).tokenize("\n"))
                         .to("direct:b");
             }
         };

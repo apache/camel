@@ -37,7 +37,7 @@ public class OnExceptionContinuedIssueTest extends ContextTestSupport {
         defaultErrorHandlerBuilder.redeliveryDelay(0); // run fast
         defaultErrorHandlerBuilder.maximumRedeliveries(2);
 
-        context.setErrorHandlerBuilder(defaultErrorHandlerBuilder);
+        context.setErrorHandlerFactory(defaultErrorHandlerBuilder);
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

@@ -34,11 +34,11 @@ public class NettyHttpRedeliveryTest extends BaseNettyTest {
 
         assertTrue(latch.await(5, TimeUnit.SECONDS));
 
-        context.startRoute("bar");
+        context.getRouteController().startRoute("bar");
 
         assertMockEndpointsSatisfied();
 
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
 
         assertEquals(0, context.getInflightRepository().size());
     }

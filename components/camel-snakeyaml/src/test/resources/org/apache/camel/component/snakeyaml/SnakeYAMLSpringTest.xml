@@ -43,34 +43,34 @@
 
         <route>
             <from uri="direct:in"/>
-            <marshal ref="yaml"/>
+            <marshal><custom ref="yaml"/></marshal>
         </route>
 
         <route>
             <from uri="direct:back"/>
-            <unmarshal ref="yaml"/>
+            <unmarshal><custom ref="yaml"/></unmarshal>
             <to uri="mock:reverse"/>
         </route>
 
         <route>
             <from uri="direct:inPojo"/>
-            <marshal ref="yaml-pojo"/>
+            <marshal><custom ref="yaml-pojo"/></marshal>
         </route>
 
         <route>
             <from uri="direct:backPojo"/>
-            <unmarshal ref="yaml-pojo"/>
+            <unmarshal><custom ref="yaml-pojo"/></unmarshal>
             <to uri="mock:reversePojo"/>
         </route>
 
         <route>
             <from uri="direct:inPojoWithPrettyFlow"/>
-            <marshal ref="yaml-pojo-pretty-flow"/>
+            <marshal><custom ref="yaml-pojo-pretty-flow"/></marshal>
         </route>
 
         <route>
             <from uri="direct:backPojoWithPrettyFlow"/>
-            <unmarshal ref="yaml-pojo-pretty-flow"/>
+            <unmarshal><custom ref="yaml-pojo-pretty-flow"/></unmarshal>
             <to uri="mock:reversePojoWithPrettyFlow"/>
         </route>
 

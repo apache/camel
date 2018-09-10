@@ -48,12 +48,12 @@ public class ExchangeBuilderTest extends Assert {
                 .withBody(BODY)
                 .withHeader(KEY, VALUE)
                 .withProperty(PROPERTY_KEY, PROPERTY_VALUE)
-                .withPattern(ExchangePattern.OutIn)
+                .withPattern(ExchangePattern.InOut)
                 .build();
 
         assertEquals(exchange.getIn().getBody(), BODY);
         assertEquals(exchange.getIn().getHeader(KEY), VALUE);
-        assertEquals(exchange.getPattern(), ExchangePattern.OutIn);
+        assertEquals(exchange.getPattern(), ExchangePattern.InOut);
         assertEquals(exchange.getProperty(PROPERTY_KEY), PROPERTY_VALUE);
     }
 

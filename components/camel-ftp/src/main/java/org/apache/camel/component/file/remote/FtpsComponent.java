@@ -39,12 +39,10 @@ public class FtpsComponent extends FtpComponent implements SSLContextParametersA
     private boolean useGlobalSslContextParameters;
 
     public FtpsComponent() {
-        setEndpointClass(FtpsEndpoint.class);
     }
 
     public FtpsComponent(CamelContext context) {
         super(context);
-        setEndpointClass(FtpsEndpoint.class);
     }
 
     @Override

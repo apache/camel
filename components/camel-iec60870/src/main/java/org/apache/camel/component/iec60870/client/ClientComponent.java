@@ -33,11 +33,11 @@ public class ClientComponent extends AbstractIecComponent<ClientConnectionMultip
     private static final Logger LOG = LoggerFactory.getLogger(ClientComponent.class);
 
     public ClientComponent(final CamelContext context) {
-        super(ClientOptions.class, new ClientOptions(), context, ClientEndpoint.class);
+        super(ClientOptions.class, new ClientOptions(), context);
     }
 
     public ClientComponent() {
-        super(ClientOptions.class, new ClientOptions(), ClientEndpoint.class);
+        super(ClientOptions.class, new ClientOptions());
     }
 
     @Override

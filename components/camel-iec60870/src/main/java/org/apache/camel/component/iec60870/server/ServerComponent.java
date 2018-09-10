@@ -34,11 +34,11 @@ public class ServerComponent extends AbstractIecComponent<ServerConnectionMultip
     private static final Logger LOG = LoggerFactory.getLogger(ServerComponent.class);
 
     public ServerComponent(final CamelContext context) {
-        super(ServerOptions.class, new ServerOptions(), context, ServerEndpoint.class);
+        super(ServerOptions.class, new ServerOptions(), context);
     }
 
     public ServerComponent() {
-        super(ServerOptions.class, new ServerOptions(), ServerEndpoint.class);
+        super(ServerOptions.class, new ServerOptions());
     }
 
     @Override

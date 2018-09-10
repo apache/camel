@@ -43,7 +43,7 @@ public class RouteStartupOrderSuspendResumeNoAutoStartupTest extends ContextTest
         context.resume();
 
         // route C should still be stopped after we have resumed
-        assertEquals(true, context.getRouteStatus("C").isStopped());
+        assertEquals(true, context.getRouteController().getRouteStatus("C").isStopped());
 
         // assert correct order
         DefaultCamelContext dcc = (DefaultCamelContext) context;
@@ -65,13 +65,13 @@ public class RouteStartupOrderSuspendResumeNoAutoStartupTest extends ContextTest
         assertMockEndpointsSatisfied();
 
         // start C
-        context.startRoute("C");
+        context.getRouteController().startRoute("C");
 
         context.suspend();
         context.resume();
 
         // route C should be started
-        assertEquals(true, context.getRouteStatus("C").isStarted());
+        assertEquals(true, context.getRouteController().getRouteStatus("C").isStarted());
 
         // assert correct order
         DefaultCamelContext dcc = (DefaultCamelContext) context;

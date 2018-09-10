@@ -59,7 +59,7 @@ public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
 
         createManyFiles(number);
 
-        context.startRoute("myRoute");
+        context.getRouteController().startRoute("myRoute");
 
         mock.setResultWaitTime(180 * 1000);
         mock.assertIsSatisfied();

@@ -47,12 +47,12 @@ public class ScheduledPollEndpointConfigureConsumerRestartTest extends ContextTe
 
         // restart route
         resetMocks();
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
 
         getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
 
         // start route
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
 

@@ -16,18 +16,17 @@
  */
 package org.apache.camel.model;
 
-import org.junit.Test;
-
 import java.util.List;
+
 import javax.xml.bind.JAXBException;
 
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.model.loadbalancer.CircuitBreakerLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
+import org.junit.Test;
 
 /**
  * @version 
@@ -152,28 +151,6 @@ public class XmlParseTest extends XmlTestSupport {
         assertChildTo(route, "mock:b", 1);
     }
 
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testParseSetOutHeaderXml() throws Exception {
-        RouteDefinition route = assertOneRoute("setOutHeader.xml");
-        assertFrom(route, "seda:a");
-        SetOutHeaderDefinition node = assertNthProcessorInstanceOf(SetOutHeaderDefinition.class, route, 0);
-        assertEquals("oldBodyValue", node.getHeaderName());
-        assertExpression(node.getExpression(), "simple", "body");
-        assertChildTo(route, "mock:b", 1);
-    }
-
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testParseSetOutHeaderToConstantXml() throws Exception {
-        RouteDefinition route = assertOneRoute("setOutHeaderToConstant.xml");
-        assertFrom(route, "seda:a");
-        SetOutHeaderDefinition node = assertNthProcessorInstanceOf(SetOutHeaderDefinition.class, route, 0);
-        assertEquals("theHeader", node.getHeaderName());
-        assertExpression(node.getExpression(), "constant", "a value");
-        assertChildTo(route, "mock:b", 1);
-    }
-
     @Test
     public void testParseConvertBodyXml() throws Exception {
         RouteDefinition route = assertOneRoute("convertBody.xml");
@@ -241,19 +218,6 @@ public class XmlParseTest extends XmlTestSupport {
         LoadBalanceDefinition loadBalance = assertOneProcessorInstanceOf(LoadBalanceDefinition.class, route);
         assertEquals("Here should have 3 output here", 3, loadBalance.getOutputs().size());
         assertTrue("The loadBalancer should be RoundRobinLoadBalancerDefinition", loadBalance.getLoadBalancerType() instanceof RoundRobinLoadBalancerDefinition);
-    }
-
-    @Test
-    public void testParseCircuitBreakerLoadBalance() throws Exception {
-        RouteDefinition route = assertOneRoute("routeWithCircuitBreakerLoadBalance.xml");
-        assertFrom(route, "direct:start");
-        LoadBalanceDefinition loadBalance = assertOneProcessorInstanceOf(LoadBalanceDefinition.class, route);
-        assertEquals("Should have 1 output", 1, loadBalance.getOutputs().size());
-        assertTrue("The loadBalancer should be CircuitBreakerLoadBalancerDefinition", loadBalance.getLoadBalancerType() instanceof CircuitBreakerLoadBalancerDefinition);
-        CircuitBreakerLoadBalancerDefinition strategy = (CircuitBreakerLoadBalancerDefinition)loadBalance.getLoadBalancerType();
-        assertEquals("Should have 1 exception", 1, strategy.getExceptions().size());
-        assertEquals("Should have threshold of 2", 2, strategy.getThreshold().intValue());
-        assertEquals("Should have HalfOpenAfter timeout of 1000L ", 1000L, strategy.getHalfOpenAfter().longValue());
     }
 
     @Test

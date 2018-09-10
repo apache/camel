@@ -30,12 +30,12 @@ public class RouteRemoveTest extends ContextTestSupport {
     @Test
     public void testStopRouteOnContext() throws Exception {
         assertEquals(ServiceStatus.Started, ((DefaultRoute) context.getRoute("foo")).getStatus());
-        assertEquals(ServiceStatus.Started, context.getRouteStatus("foo"));
+        assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo"));
         
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
         
         assertEquals(ServiceStatus.Stopped, ((DefaultRoute) context.getRoute("foo")).getStatus());
-        assertEquals(ServiceStatus.Stopped, context.getRouteStatus("foo"));
+        assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("foo"));
     }
     
 
@@ -48,7 +48,7 @@ public class RouteRemoveTest extends ContextTestSupport {
         
         assertMockEndpointsSatisfied();
 
-        assertEquals("Started", context.getRouteStatus("foo").name());
+        assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
         assertEquals(1, context.getRoutes().size());
 
         // must be stopped so we cant remove
@@ -56,14 +56,14 @@ public class RouteRemoveTest extends ContextTestSupport {
         assertFalse(removed);
 
         assertEquals(1, context.getRoutes().size());
-        assertEquals("Started", context.getRouteStatus("foo").name());
+        assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
 
         // remove route then
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
         removed = context.removeRoute("foo");
         assertTrue(removed);
         assertEquals(0, context.getRoutes().size());
-        assertNull(context.getRouteStatus("foo"));
+        assertNull(context.getRouteController().getRouteStatus("foo"));
     }
 
     @Override

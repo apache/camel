@@ -62,7 +62,7 @@ public class CustomCamelCamelConfigurationTest extends Assert {
                 public void afterApplicationStart(CamelContext camelContext) {
                     // lets start the route
                     try {
-                        camelContext.startRoute("foo");
+                        camelContext.getRouteController().startRoute("foo");
                     } catch (Exception e) {
                         // ignore
                     }
@@ -82,7 +82,7 @@ public class CustomCamelCamelConfigurationTest extends Assert {
         assertNotNull(custom);
 
         // should be started now from the custom camel configuration
-        assertTrue(camelContext.getRouteStatus("foo").isStarted());
+        assertTrue(camelContext.getRouteController().getRouteStatus("foo").isStarted());
     }
 
 }

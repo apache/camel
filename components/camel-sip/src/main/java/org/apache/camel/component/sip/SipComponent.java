@@ -20,12 +20,11 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
-public class SipComponent extends UriEndpointComponent {
+public class SipComponent extends DefaultComponent {
 
     public SipComponent() {
-        super(SipEndpoint.class);
     }
 
     @Override

@@ -43,7 +43,6 @@ import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.ClosedCorrelationKeyException;
-import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.AsPredicate;
@@ -110,9 +109,6 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private Boolean completionFromBatchConsumer;
     @XmlAttribute
     private Boolean completionOnNewCorrelationGroup;
-    @XmlAttribute
-    @Deprecated
-    private Boolean groupExchanges;
     @XmlAttribute
     private Boolean eagerCheckCompletion;
     @XmlAttribute
@@ -338,19 +334,6 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
             }
         }
 
-        if (groupExchanges != null && groupExchanges) {
-            if (strategy != null || strategyRef != null) {
-                throw new IllegalArgumentException("Options groupExchanges and AggregationStrategy cannot be enabled at the same time");
-            }
-            if (eagerCheckCompletion != null && !eagerCheckCompletion) {
-                throw new IllegalArgumentException("Option eagerCheckCompletion cannot be false when groupExchanges has been enabled");
-            }
-            // set eager check to enabled by default when using grouped exchanges
-            setEagerCheckCompletion(true);
-            // if grouped exchange is enabled then use special strategy for that
-            strategy = new GroupedExchangeAggregationStrategy();
-        }
-
         if (strategy == null) {
             throw new IllegalArgumentException("AggregationStrategy or AggregationStrategyRef must be set on " + this);
         }
@@ -534,14 +517,6 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     public void setCompletionSizeExpression(ExpressionSubElementDefinition completionSizeExpression) {
         this.completionSizeExpression = completionSizeExpression;
-    }
-
-    public Boolean getGroupExchanges() {
-        return groupExchanges;
-    }
-
-    public void setGroupExchanges(Boolean groupExchanges) {
-        this.groupExchanges = groupExchanges;
     }
 
     public Boolean getCompletionFromBatchConsumer() {
@@ -954,20 +929,6 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      */
     public AggregateDefinition aggregationRepositoryRef(String aggregationRepositoryRef) {
         setAggregationRepositoryRef(aggregationRepositoryRef);
-        return this;
-    }
-
-    /**
-     * Enables grouped exchanges, so the aggregator will group all aggregated exchanges into a single
-     * combined Exchange holding all the aggregated exchanges in a {@link java.util.List}.
-     *
-     * @deprecated use {@link GroupedExchangeAggregationStrategy} as aggregation strategy instead.
-     */
-    @Deprecated
-    public AggregateDefinition groupExchanges() {
-        setGroupExchanges(true);
-        // must use eager check when using grouped exchanges
-        setEagerCheckCompletion(true);
         return this;
     }
 

@@ -38,7 +38,6 @@ public class StompComponent extends HeaderFilterStrategyComponent implements SSL
     private boolean useGlobalSslContextParameters;
 
     public StompComponent() {
-        super(StompEndpoint.class);
     }
     
     // Implementation methods

@@ -54,7 +54,7 @@ public class StopRouteImpactsErrorHandlerTest extends ContextTestSupport {
         getMockEndpoint("mock:smtp").expectedMessageCount(1);
 
         // stopping a route after advice with causes problem with error handlers
-        context.stopRoute("pollRoute");
+        context.getRouteController().stopRoute("pollRoute");
 
         template.sendBody("direct:start", "Hello World");
 

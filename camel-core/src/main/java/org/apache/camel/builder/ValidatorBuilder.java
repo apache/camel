@@ -19,6 +19,7 @@ package org.apache.camel.builder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.validator.CustomValidatorDefinition;
 import org.apache.camel.model.validator.EndpointValidatorDefinition;
@@ -161,6 +162,6 @@ public class ValidatorBuilder {
         }
         
         validator.setType(type);
-        camelContext.getValidators().add(validator);
+        camelContext.adapt(ModelCamelContext.class).getValidators().add(validator);
     }
 }

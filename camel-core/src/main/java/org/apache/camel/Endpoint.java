@@ -39,14 +39,6 @@ public interface Endpoint extends IsSingleton, Service {
     String getEndpointUri();
 
     /**
-     * Returns the object representation of the endpoint configuration
-     *
-     * @return the endpoint configuration
-     */
-    @Deprecated
-    EndpointConfiguration getEndpointConfiguration();
-
-    /**
      * Returns a string key of this endpoint.
      * <p/>
      * This key is used by {@link org.apache.camel.spi.LifecycleStrategy} when registering endpoint.
@@ -75,17 +67,6 @@ public interface Endpoint extends IsSingleton, Service {
      * @return a new exchange
      */
     Exchange createExchange(ExchangePattern pattern);
-
-    /**
-     * Creates a new exchange for communicating with this endpoint using the
-     * given exchange to pre-populate the values of the headers and messages
-     *
-     * @param exchange given exchange to use for pre-populate
-     * @return a new exchange
-     * @deprecated will be removed in Camel 3.0
-     */
-    @Deprecated
-    Exchange createExchange(Exchange exchange);
 
     /**
      * Returns the context which created the endpoint

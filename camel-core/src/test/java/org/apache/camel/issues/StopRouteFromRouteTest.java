@@ -44,8 +44,8 @@ public class StopRouteFromRouteTest extends Assert {
         context.addRoutes(createMyRoutes());
         context.start();
 
-        assertTrue("Route myRoute should be started", context.getRouteStatus("myRoute").isStarted());
-        assertTrue("Route bar should be started", context.getRouteStatus("bar").isStarted());
+        assertTrue("Route myRoute should be started", context.getRouteController().getRouteStatus("myRoute").isStarted());
+        assertTrue("Route bar should be started", context.getRouteController().getRouteStatus("bar").isStarted());
 
         // setup mock expectations for unit test
         MockEndpoint start = context.getEndpoint("mock:start", MockEndpoint.class);
@@ -61,8 +61,8 @@ public class StopRouteFromRouteTest extends Assert {
         latch.await(5, TimeUnit.SECONDS);
 
         // the route should now be stopped
-        assertTrue("Route myRoute should be stopped", context.getRouteStatus("myRoute").isStopped());
-        assertTrue("Route bar should be started", context.getRouteStatus("bar").isStarted());
+        assertTrue("Route myRoute should be stopped", context.getRouteController().getRouteStatus("myRoute").isStopped());
+        assertTrue("Route bar should be started", context.getRouteController().getRouteStatus("bar").isStarted());
 
         // stop camel
         context.stop();
@@ -92,7 +92,7 @@ public class StopRouteFromRouteTest extends Assert {
                                     @Override
                                     public void run() {
                                         try {
-                                            exchange.getContext().stopRoute("myRoute");
+                                            exchange.getContext().getRouteController().stopRoute("myRoute");
                                         } catch (Exception e) {
                                             // ignore
                                         } finally {

@@ -28,7 +28,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.spi.InflightRepository;
@@ -71,11 +70,6 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     public int size() {
         return inflight.size();
-    }
-
-    @Deprecated
-    public int size(Endpoint endpoint) {
-        return 0;
     }
 
     @Override
@@ -249,11 +243,6 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         @Override
         public String getFromRouteId() {
             return exchange.getFromRouteId();
-        }
-
-        @Override
-        public String getRouteId() {
-            return getAtRouteId();
         }
 
         @Override

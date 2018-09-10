@@ -19,10 +19,8 @@ package org.apache.camel.component.servicenow;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
-import org.apache.camel.VerifiableComponent;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
@@ -34,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
  * Represents the component that manages {@link ServiceNowEndpoint}.
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
-public class ServiceNowComponent extends DefaultComponent implements VerifiableComponent, SSLContextParametersAware {
+public class ServiceNowComponent extends DefaultComponent implements SSLContextParametersAware {
     @Metadata(label = "advanced")
     private String instanceName;
     @Metadata(label = "advanced")
@@ -217,8 +215,7 @@ public class ServiceNowComponent extends DefaultComponent implements VerifiableC
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
-    @Override
-    public ComponentVerifier getVerifier() {
+    public ComponentVerifierExtension getVerifier() {
         return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 

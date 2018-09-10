@@ -31,7 +31,7 @@ public class SimpleShutdownGracefulNoAtuoStartedTest extends ContextTestSupport 
 
     @Test
     public void testShutdownGraceful() throws Exception {
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         template.sendBody("seda:foo", "Hello World");

@@ -118,7 +118,7 @@ reference it from your route.
         </dataFormats>
         <route>
             <from uri="direct:in"/>
-            <marshal ref="avro"/>
+            <marshal><custom ref="avro"/></marshal>
             <to uri="log:out"/>
         </route>
     </camelContext>

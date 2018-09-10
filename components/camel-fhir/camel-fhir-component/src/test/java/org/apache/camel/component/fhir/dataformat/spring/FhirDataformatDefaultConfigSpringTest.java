@@ -19,6 +19,7 @@ package org.apache.camel.component.fhir.dataformat.spring;
 import ca.uhn.fhir.context.FhirVersionEnum;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.fhir.FhirDataFormat;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.dataformat.FhirDataformat;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Before;
@@ -72,7 +73,7 @@ public class FhirDataformatDefaultConfigSpringTest extends CamelSpringTestSuppor
 
     private FhirDataFormat getDataformat(String name) {
         CamelContext camelContext = context();
-        return (FhirDataFormat) ((FhirDataformat) camelContext.getDataFormats().get(name)).getDataFormat();
+        return (FhirDataFormat) ((FhirDataformat) camelContext.adapt(ModelCamelContext.class).getDataFormats().get(name)).getDataFormat();
     }
 
     @Override

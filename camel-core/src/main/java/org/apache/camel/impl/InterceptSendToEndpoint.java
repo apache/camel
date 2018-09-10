@@ -21,7 +21,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
@@ -73,10 +72,6 @@ public class InterceptSendToEndpoint implements Endpoint, ShutdownableService {
         return delegate.getEndpointUri();
     }
 
-    public EndpointConfiguration getEndpointConfiguration() {
-        return delegate.getEndpointConfiguration();
-    }
-
     public String getEndpointKey() {
         return delegate.getEndpointKey();
     }
@@ -87,11 +82,6 @@ public class InterceptSendToEndpoint implements Endpoint, ShutdownableService {
 
     public Exchange createExchange(ExchangePattern pattern) {
         return delegate.createExchange(pattern);
-    }
-
-    @Deprecated
-    public Exchange createExchange(Exchange exchange) {
-        return delegate.createExchange(exchange);
     }
 
     public CamelContext getCamelContext() {

@@ -33,6 +33,7 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RouteError;
@@ -114,7 +115,7 @@ public class CamelRoutesEndpoint {
             throw new IllegalArgumentException("Read only: route dump is not permitted in read-only mode");
         }
 
-        RouteDefinition route = camelContext.getRouteDefinition(id);
+        RouteDefinition route = camelContext.adapt(ModelCamelContext.class).getRouteDefinition(id);
         if (route != null) {
             try {
                 return ModelHelper.dumpModelAsXml(camelContext, route);

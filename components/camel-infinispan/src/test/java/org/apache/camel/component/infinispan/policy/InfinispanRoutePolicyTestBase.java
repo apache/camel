@@ -18,6 +18,7 @@ package org.apache.camel.component.infinispan.policy;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.util.ServiceHelper;
 import org.infinispan.commons.api.BasicCacheContainer;
@@ -54,13 +55,13 @@ abstract class InfinispanRoutePolicyTestBase {
             context = new DefaultCamelContext();
             context.start();
 
-            context.addRouteDefinition(RouteDefinition.fromUri("direct:r1").routePolicy(policy1).to("mock:p1"));
+            context.adapt(ModelCamelContext.class).addRouteDefinition(RouteDefinition.fromUri("direct:r1").routePolicy(policy1).to("mock:p1"));
 
             for (int i = 0; i < 10 && !policy1.isLeader(); i++) {
                 Thread.sleep(250);
             }
 
-            context.addRouteDefinition(RouteDefinition.fromUri("direct:r2").routePolicy(policy2).to("mock:p2"));
+            context.adapt(ModelCamelContext.class).addRouteDefinition(RouteDefinition.fromUri("direct:r2").routePolicy(policy2).to("mock:p2"));
 
             Assert.assertTrue(policy1.isLeader());
             Assert.assertFalse(policy2.isLeader());

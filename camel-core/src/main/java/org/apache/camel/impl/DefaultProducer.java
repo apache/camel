@@ -18,7 +18,6 @@ package org.apache.camel.impl;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.URISupport;
@@ -53,15 +52,6 @@ public abstract class DefaultProducer extends ServiceSupport implements Producer
 
     public Exchange createExchange() {
         return endpoint.createExchange();
-    }
-
-    public Exchange createExchange(ExchangePattern pattern) {
-        return endpoint.createExchange(pattern);
-    }
-
-    @Deprecated
-    public Exchange createExchange(Exchange exchange) {
-        return endpoint.createExchange(exchange);
     }
 
     /**

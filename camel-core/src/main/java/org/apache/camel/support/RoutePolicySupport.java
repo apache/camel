@@ -158,33 +158,33 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
     }
 
     public void startRoute(Route route) throws Exception {
-        route.getRouteContext().getCamelContext().startRoute(route.getId());
+        route.getRouteContext().getCamelContext().getRouteController().startRoute(route.getId());
     }
 
     public void resumeRoute(Route route) throws Exception {
-        route.getRouteContext().getCamelContext().resumeRoute(route.getId());
+        route.getRouteContext().getCamelContext().getRouteController().resumeRoute(route.getId());
     }
 
     public void suspendRoute(Route route) throws Exception {
-        route.getRouteContext().getCamelContext().suspendRoute(route.getId());
+        route.getRouteContext().getCamelContext().getRouteController().suspendRoute(route.getId());
     }
 
     public void suspendRoute(Route route, long timeout, TimeUnit timeUnit) throws Exception {
-        route.getRouteContext().getCamelContext().suspendRoute(route.getId(), timeout, timeUnit);
+        route.getRouteContext().getCamelContext().getRouteController().suspendRoute(route.getId(), timeout, timeUnit);
     }
 
     /**
      * @see #stopRouteAsync(Route)
      */
     public void stopRoute(Route route) throws Exception {
-        route.getRouteContext().getCamelContext().stopRoute(route.getId());
+        route.getRouteContext().getCamelContext().getRouteController().stopRoute(route.getId());
     }
 
     /**
      * @see #stopRouteAsync(Route)
      */
     public void stopRoute(Route route, long timeout, TimeUnit timeUnit) throws Exception {
-        route.getRouteContext().getCamelContext().stopRoute(route.getId(), timeout, timeUnit);
+        route.getRouteContext().getCamelContext().getRouteController().stopRoute(route.getId(), timeout, timeUnit);
     }
 
     /**
@@ -198,7 +198,7 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
         String threadId = route.getRouteContext().getCamelContext().getExecutorServiceManager().resolveThreadName("StopRouteAsync");
         Runnable task = () -> {
             try {
-                route.getRouteContext().getCamelContext().stopRoute(route.getId());
+                route.getRouteContext().getCamelContext().getRouteController().stopRoute(route.getId());
             } catch (Exception e) {
                 handleException(e);
             }

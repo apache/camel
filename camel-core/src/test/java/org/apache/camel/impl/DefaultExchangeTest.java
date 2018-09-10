@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import java.io.IOException;
 import java.net.ConnectException;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.InvalidPayloadException;
@@ -222,7 +223,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
 
     @Test
     public void testInType() throws Exception {
-        exchange.setIn(new MyMessage());
+        exchange.setIn(new MyMessage(context));
 
         MyMessage my = exchange.getIn(MyMessage.class);
         assertNotNull(my);
@@ -230,7 +231,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
 
     @Test
     public void testOutType() throws Exception {
-        exchange.setOut(new MyMessage());
+        exchange.setOut(new MyMessage(context));
 
         MyMessage my = exchange.getOut(MyMessage.class);
         assertNotNull(my);
@@ -239,7 +240,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     @Test
     public void testCopy() {
         DefaultExchange sourceExchange = new DefaultExchange(context);
-        MyMessage sourceIn = new MyMessage();
+        MyMessage sourceIn = new MyMessage(context);
         sourceExchange.setIn(sourceIn);
         Exchange destExchange = sourceExchange.copy();
         Message destIn = destExchange.getIn();
@@ -249,22 +250,17 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     }
 
     @Test
-    public void testFaultCopy() {
-        testFaultCopy(false);
-    }
-
-    @Test
     public void testFaultSafeCopy() {
-        testFaultCopy(true);
+        testFaultCopy();
     }
 
-    private void testFaultCopy(boolean safe) {
+    private void testFaultCopy() {
         DefaultExchange sourceExchange = new DefaultExchange(context);
-        MyMessage source = new MyMessage();
+        MyMessage source = new MyMessage(context);
         source.setFault(true);
         sourceExchange.setIn(source);
         sourceExchange.setOut(source);
-        Exchange destExchange = sourceExchange.copy(safe);
+        Exchange destExchange = sourceExchange.copy();
         assertEquals("Fault property was not copied to IN message",
                 sourceExchange.getIn().isFault(), destExchange.getIn().isFault());
         assertEquals("Fault property was not copied to OUT message",
@@ -272,9 +268,13 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     }
 
     public static class MyMessage extends DefaultMessage {
+        public MyMessage(CamelContext camelContext) {
+            super(camelContext);
+        }
+
         @Override
         public MyMessage newInstance() {
-            return new MyMessage();
+            return new MyMessage(getCamelContext());
         }
     }
 

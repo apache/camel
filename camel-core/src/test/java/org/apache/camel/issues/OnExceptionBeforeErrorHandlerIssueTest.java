@@ -29,7 +29,7 @@ public class OnExceptionBeforeErrorHandlerIssueTest extends ContextTestSupport {
 
     @Test
     public void testOk() throws Exception {
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:dead").expectedMessageCount(0);
@@ -42,7 +42,7 @@ public class OnExceptionBeforeErrorHandlerIssueTest extends ContextTestSupport {
 
     @Test
     public void testKabom() throws Exception {
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:dead").expectedMessageCount(1);
@@ -55,7 +55,7 @@ public class OnExceptionBeforeErrorHandlerIssueTest extends ContextTestSupport {
 
     @Test
     public void testIllegal() throws Exception {
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         getMockEndpoint("mock:error").expectedMessageCount(1);
         getMockEndpoint("mock:dead").expectedMessageCount(0);

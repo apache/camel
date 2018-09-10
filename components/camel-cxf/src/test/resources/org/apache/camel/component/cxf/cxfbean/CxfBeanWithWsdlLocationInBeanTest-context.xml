@@ -31,7 +31,7 @@
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <endpoint id="ep1" uri="jetty:http://localhost:${CxfBeanWithWsdlLocationInBeanTest.1}?matchOnUriPrefix=true" />
     <route>
-      <from ref="ep1" />
+      <from uri="ref:ep1" />
       <to uri="cxfbean:jaxwsBean" />
     </route>
   </camelContext>

@@ -36,9 +36,8 @@ public class HdfsEndpoint extends ScheduledPollEndpoint {
     @UriParam
     private final HdfsConfiguration config;
 
-    @SuppressWarnings("deprecation")
-    public HdfsEndpoint(String endpointUri, CamelContext context) throws URISyntaxException {
-        super(endpointUri, context);
+    public HdfsEndpoint(String endpointUri, HdfsComponent component) throws URISyntaxException {
+        super(endpointUri, component);
         this.config = new HdfsConfiguration();
         this.config.parseURI(new URI(endpointUri));
     }

@@ -47,9 +47,6 @@ import org.apache.camel.util.OgnlHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MethodCallExpression extends ExpressionDefinition {
     @XmlAttribute
-    @Deprecated
-    private String bean;
-    @XmlAttribute
     private String ref;
     @XmlAttribute
     private String method;
@@ -95,17 +92,6 @@ public class MethodCallExpression extends ExpressionDefinition {
 
     public String getLanguage() {
         return "bean";
-    }
-
-    public String getBean() {
-        return bean;
-    }
-
-    /**
-     * Either a reference or a class name of the bean to use
-     */
-    public void setBean(String bean) {
-        this.bean = bean;
     }
 
     public String getRef() {
@@ -256,9 +242,7 @@ public class MethodCallExpression extends ExpressionDefinition {
     }
 
     protected String beanName() {
-        if (bean != null) {
-            return bean;
-        } else if (ref != null) {
+        if (ref != null) {
             return ref;
         } else if (instance != null) {
             return ObjectHelper.className(instance);
@@ -268,7 +252,7 @@ public class MethodCallExpression extends ExpressionDefinition {
 
     @Override
     public String toString() {
-        boolean isRef = bean != null || ref != null;
+        boolean isRef = ref != null;
         return "bean[" + (isRef ? "ref:" : "") + beanName() + (method != null ? " method:" + method : "") + "]";
     }
 }

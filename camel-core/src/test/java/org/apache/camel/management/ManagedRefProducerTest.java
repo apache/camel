@@ -26,6 +26,7 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
@@ -42,7 +43,7 @@ public class ManagedRefProducerTest extends ManagementTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext((Registry) registry);
-        registry.put("foo", new MockEndpoint("mock://foo"));
+        registry.put("foo", new MockEndpoint("mock://foo", new MockComponent(context)));
         return context;
     }
 
@@ -63,11 +64,8 @@ public class ManagedRefProducerTest extends ManagementTestSupport {
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=producers,*"), null);
         assertEquals(2, set.size());
-        Iterator<ObjectName> it = set.iterator();
 
-        for (int i = 0; i < 2; i++) {
-            ObjectName on = it.next();
-
+        for (ObjectName on : set) {
             boolean registered = mbeanServer.isRegistered(on);
             assertEquals("Should be registered", true, registered);
 
@@ -81,11 +79,8 @@ public class ManagedRefProducerTest extends ManagementTestSupport {
 
         set = mbeanServer.queryNames(new ObjectName("*:type=endpoints,*"), null);
         assertEquals(4, set.size());
-        it = set.iterator();
 
-        for (int i = 0; i < 4; i++) {
-            ObjectName on = it.next();
-
+        for (ObjectName on : set) {
             boolean registered = mbeanServer.isRegistered(on);
             assertEquals("Should be registered", true, registered);
 

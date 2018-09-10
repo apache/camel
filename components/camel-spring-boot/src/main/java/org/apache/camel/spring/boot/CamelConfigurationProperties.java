@@ -306,7 +306,7 @@ public class CamelConfigurationProperties {
      * Note: When setting auto startup false on CamelContext then that takes precedence
      * and no routes is started. You would need to start CamelContext explicit using
      * the org.apache.camel.CamelContext.start() method, to start the context, and then
-     * you would need to start the routes manually using CamelContext.startRoute(String).
+     * you would need to start the routes manually using Camelcontext.getRouteController().startRoute(String).
      *
      * Default is true to always start up.
      */

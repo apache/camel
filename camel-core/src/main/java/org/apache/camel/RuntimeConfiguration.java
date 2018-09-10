@@ -133,7 +133,7 @@ public interface RuntimeConfiguration {
      * <b>Note:</b> When setting auto startup <tt>false</tt> on {@link CamelContext} then that takes precedence
      * and <i>no</i> routes is started. You would need to start {@link CamelContext} explicit using
      * the {@link org.apache.camel.CamelContext#start()} method, to start the context, and then
-     * you would need to start the routes manually using {@link CamelContext#startRoute(String)}.
+     * you would need to start the routes manually using {@link org.apache.camel.spi.RouteController#startRoute(String)}.
      * <p/>
      * Default is <tt>true</tt> to always start up.
      *

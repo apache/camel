@@ -101,7 +101,7 @@ public class MultiContextEventEndpointTest {
     @Test
     @InSequence(1)
     public void configureCamelContexts(@ContextName("second") CamelContext secondContext) throws Exception {
-        secondContext.startAllRoutes();
+        secondContext.getRouteController().startAllRoutes();
     }
 
     @Test

@@ -19,7 +19,7 @@ package org.apache.camel.component.dataformat;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.StringHelper;
@@ -29,10 +29,9 @@ import org.apache.camel.util.StringHelper;
  *
  * @version
  */
-public class DataFormatComponent extends UriEndpointComponent {
+public class DataFormatComponent extends DefaultComponent {
 
     public DataFormatComponent() {
-        super(DataFormatEndpoint.class);
     }
 
     @Override

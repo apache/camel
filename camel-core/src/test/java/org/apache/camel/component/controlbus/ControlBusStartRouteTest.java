@@ -29,7 +29,7 @@ public class ControlBusStartRouteTest extends ContextTestSupport {
 
     @Test
     public void testControlBusStartStop() throws Exception {
-        assertEquals("Stopped", context.getRouteStatus("foo").name());
+        assertEquals("Stopped", context.getRouteController().getRouteStatus("foo").name());
 
         // store a pending message
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
@@ -43,12 +43,12 @@ public class ControlBusStartRouteTest extends ContextTestSupport {
         // now stop the route, using a header
         template.sendBody("controlbus:route?routeId=foo&action=stop", null);
 
-        assertEquals("Stopped", context.getRouteStatus("foo").name());
+        assertEquals("Stopped", context.getRouteController().getRouteStatus("foo").name());
     }
 
     @Test
     public void testControlBusSuspendResume() throws Exception {
-        assertEquals("Stopped", context.getRouteStatus("foo").name());
+        assertEquals("Stopped", context.getRouteController().getRouteStatus("foo").name());
 
         // store a pending message
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
@@ -62,22 +62,22 @@ public class ControlBusStartRouteTest extends ContextTestSupport {
         // now suspend the route, using a header
         template.sendBody("controlbus:route?routeId=foo&action=suspend", null);
 
-        assertEquals("Suspended", context.getRouteStatus("foo").name());
+        assertEquals("Suspended", context.getRouteController().getRouteStatus("foo").name());
 
         // now resume the route, using a header
         template.sendBody("controlbus:route?routeId=foo&action=resume", null);
 
-        assertEquals("Started", context.getRouteStatus("foo").name());
+        assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
     }
 
     @Test
     public void testControlBusStatus() throws Exception {
-        assertEquals("Stopped", context.getRouteStatus("foo").name());
+        assertEquals("Stopped", context.getRouteController().getRouteStatus("foo").name());
 
         String status = template.requestBody("controlbus:route?routeId=foo&action=status", null, String.class);
         assertEquals("Stopped", status);
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         status = template.requestBody("controlbus:route?routeId=foo&action=status", null, String.class);
         assertEquals("Started", status);
@@ -85,7 +85,7 @@ public class ControlBusStartRouteTest extends ContextTestSupport {
 
     @Test
     public void testControlBusCurrentRouteStatus() throws Exception {
-        assertTrue(context.getRouteStatus("current").isStarted());
+        assertTrue(context.getRouteController().getRouteStatus("current").isStarted());
 
         MockEndpoint mock = getMockEndpoint("mock:current");
         mock.expectedMessageCount(1);
@@ -98,12 +98,12 @@ public class ControlBusStartRouteTest extends ContextTestSupport {
 
     @Test
     public void testControlBusStatusLevelWarn() throws Exception {
-        assertEquals("Stopped", context.getRouteStatus("foo").name());
+        assertEquals("Stopped", context.getRouteController().getRouteStatus("foo").name());
 
         String status = template.requestBody("controlbus:route?routeId=foo&action=status&loggingLevel=WARN", null, String.class);
         assertEquals("Stopped", status);
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         status = template.requestBody("controlbus:route?routeId=foo&action=status&loggingLevel=WARN", null, String.class);
         assertEquals("Started", status);

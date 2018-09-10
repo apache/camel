@@ -28,8 +28,8 @@ public class JacksonConversionsPojoTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         // enable jackson type converter by setting this property on CamelContext
-        context.getProperties().put(JacksonConstants.ENABLE_TYPE_CONVERTER, "true");
-        context.getProperties().put(JacksonConstants.TYPE_CONVERTER_TO_POJO, "true");
+        context.getGlobalOptions().put(JacksonConstants.ENABLE_TYPE_CONVERTER, "true");
+        context.getGlobalOptions().put(JacksonConstants.TYPE_CONVERTER_TO_POJO, "true");
         return context;
     }
 

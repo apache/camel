@@ -26,6 +26,7 @@ import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.Topic;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.ExchangeHelper;
@@ -44,12 +45,8 @@ public class JmsMessage extends DefaultMessage {
     private Session jmsSession;
     private JmsBinding binding;
 
-    @Deprecated
-    public JmsMessage(Message jmsMessage, JmsBinding binding) {
-        this(jmsMessage, null, binding);
-    }
-
-    public JmsMessage(Message jmsMessage, Session jmsSession, JmsBinding binding) {
+    public JmsMessage(Exchange exchange, Message jmsMessage, Session jmsSession, JmsBinding binding) {
+        super(exchange);
         setJmsMessage(jmsMessage);
         setJmsSession(jmsSession);
         setBinding(binding);
@@ -197,7 +194,7 @@ public class JmsMessage extends DefaultMessage {
 
     @Override
     public JmsMessage newInstance() {
-        JmsMessage answer = new JmsMessage(null, null, binding);
+        JmsMessage answer = new JmsMessage(null, null, null, binding);
         answer.setCamelContext(getCamelContext());
         return answer;
     }

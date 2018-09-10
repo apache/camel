@@ -42,9 +42,9 @@ public class RouteSedaStopStartTest extends ContextTestSupport {
         // now suspend and dont expect a message to be routed
         resetMocks();
         mock.expectedMessageCount(0);
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
 
-        assertEquals("Stopped", context.getRouteStatus("foo").name());
+        assertEquals("Stopped", context.getRouteController().getRouteStatus("foo").name());
         Route route = context.getRoute("foo");
         if (route instanceof StatefulService) {
             assertEquals("Stopped", ((StatefulService) route).getStatus().name());
@@ -58,10 +58,10 @@ public class RouteSedaStopStartTest extends ContextTestSupport {
         // now resume and expect the previous message to be routed
         resetMocks();
         mock.expectedBodiesReceived("B");
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
         assertMockEndpointsSatisfied();
 
-        assertEquals("Started", context.getRouteStatus("foo").name());
+        assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
         route = context.getRoute("foo");
         if (route instanceof StatefulService) {
             assertEquals("Started", ((StatefulService) route).getStatus().name());

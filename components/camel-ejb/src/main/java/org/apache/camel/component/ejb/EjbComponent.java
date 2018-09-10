@@ -40,7 +40,6 @@ public class EjbComponent extends BeanComponent {
     private Properties properties;
 
     public EjbComponent() {
-        super(EjbEndpoint.class);
     }
 
     @Override

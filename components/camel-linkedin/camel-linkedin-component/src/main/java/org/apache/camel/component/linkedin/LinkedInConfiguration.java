@@ -27,6 +27,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
@@ -217,12 +218,12 @@ public class LinkedInConfiguration {
     }
 
     public void validate() throws IllegalArgumentException {
-        ObjectHelper.notEmpty(userName, "userName");
+        StringHelper.notEmpty(userName, "userName");
         if (ObjectHelper.isEmpty(userPassword) && secureStorage == null) {
             throw new IllegalArgumentException("Property userPassword or secureStorage is required");
         }
-        ObjectHelper.notEmpty(clientId, "clientId");
-        ObjectHelper.notEmpty(clientSecret, "clientSecret");
-        ObjectHelper.notEmpty(redirectUri, "redirectUri");
+        StringHelper.notEmpty(clientId, "clientId");
+        StringHelper.notEmpty(clientSecret, "clientSecret");
+        StringHelper.notEmpty(redirectUri, "redirectUri");
     }
 }

@@ -30,7 +30,6 @@ import org.apache.camel.util.URISupport;
 public class AtomComponent extends FeedComponent {
 
     public AtomComponent() {
-        super(AtomEndpoint.class);
     }
 
     @Override

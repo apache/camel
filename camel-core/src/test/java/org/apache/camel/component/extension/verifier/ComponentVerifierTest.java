@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.extension.verifier;
 
-import org.apache.camel.ComponentVerifier;
+import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError;
 import org.junit.Assert;
 import org.junit.Test;
+
 
 public class ComponentVerifierTest extends Assert {
 
@@ -60,10 +61,10 @@ public class ComponentVerifierTest extends Assert {
 
     @Test
     public void testScopeFromString() {
-        Assert.assertEquals(ComponentVerifier.Scope.PARAMETERS, ComponentVerifier.Scope.fromString("PaRaMeTeRS"));
+        Assert.assertEquals(ComponentVerifierExtension.Scope.PARAMETERS, ComponentVerifierExtension.Scope.fromString("PaRaMeTeRS"));
 
         try {
-            ComponentVerifier.Scope.fromString("unknown");
+            ComponentVerifierExtension.Scope.fromString("unknown");
             fail();
         } catch (IllegalArgumentException exp) {
         }

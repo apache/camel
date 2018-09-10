@@ -17,6 +17,8 @@
 package org.apache.camel.component.schematron;
 
 
+import java.nio.charset.Charset;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -70,17 +72,4 @@ public class SchematronEndpointTest extends CamelTestSupport {
         assertNotNull(report);
     }
 
-    @Test(expected = SchematronValidationException.class)
-    public void testThrowSchematronValidationException() throws Exception {
-        String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"));
-        Endpoint endpoint = context().getEndpoint("schematron://sch/schematron-1.sch?abort=true");
-        Producer producer = endpoint.createProducer();
-        Exchange exchange = new DefaultExchange(context, ExchangePattern.OutIn);
-
-        exchange.getIn().setBody(payload);
-
-        // invoke the component.
-        producer.process(exchange);
-
-    }
 }

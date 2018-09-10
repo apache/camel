@@ -18,23 +18,17 @@ package org.apache.camel.component.google.pubsub;
 
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
 /**
  * Represents the component that manages {@link GooglePubsubEndpoint}.
  */
-public class GooglePubsubComponent extends UriEndpointComponent {
+public class GooglePubsubComponent extends DefaultComponent {
 
     private GooglePubsubConnectionFactory connectionFactory;
 
     public GooglePubsubComponent() {
-        super(GooglePubsubEndpoint.class);
-    }
-
-    public GooglePubsubComponent(CamelContext context) {
-        super(context, GooglePubsubEndpoint.class);
     }
 
     @Override

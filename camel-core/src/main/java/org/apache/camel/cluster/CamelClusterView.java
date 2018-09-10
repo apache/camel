@@ -37,17 +37,6 @@ public interface CamelClusterView extends Service, CamelContextAware {
     String getNamespace();
 
     /**
-     * Provides the master member if elected.
-     *
-     * @return the master member.
-     * @deprecated use {@link #getLeader()}
-     */
-    @Deprecated
-    default Optional<CamelClusterMember> getMaster() {
-        return getLeader();
-    }
-
-    /**
      * Provides the leader member if elected.
      *
      * @return the leader member.

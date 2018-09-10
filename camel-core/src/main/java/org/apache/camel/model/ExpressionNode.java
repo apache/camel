@@ -70,13 +70,7 @@ public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode>
 
     public void setExpression(ExpressionDefinition expression) {
         // favour using the helper to set the expression as it can unwrap some unwanted builders when using Java DSL
-        if (expression instanceof Expression) {
-            this.expression = ExpressionNodeHelper.toExpressionDefinition((Expression) expression);
-        } else if (expression instanceof Predicate) {
-            this.expression = ExpressionNodeHelper.toExpressionDefinition((Predicate) expression);
-        } else {
-            this.expression = expression;
-        }
+        this.expression = expression;
     }
 
     @Override

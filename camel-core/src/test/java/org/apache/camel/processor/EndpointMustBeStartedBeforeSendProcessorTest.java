@@ -103,11 +103,11 @@ public class EndpointMustBeStartedBeforeSendProcessorTest extends ContextTestSup
         assertEquals("EndpointProducerConsumer", order);
         order = "";
 
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
         assertEquals("StopConsumerStopProducer", order);
 
         order = "";
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
         assertEquals("ProducerConsumer", order);
 
         order = "";

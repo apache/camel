@@ -71,14 +71,6 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         }
     }
 
-    /**
-     * @deprecated use {@link #getCamelContext()}
-     */
-    @Deprecated
-    public CamelContext getContext() {
-        return getCamelContext();
-    }
-
     public CamelContext getCamelContext() {
         return camelContext;
     }

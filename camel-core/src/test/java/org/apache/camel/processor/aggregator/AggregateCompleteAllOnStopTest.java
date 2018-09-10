@@ -39,7 +39,7 @@ public class AggregateCompleteAllOnStopTest extends ContextTestSupport {
         template.sendBodyAndHeader("seda:start", "B", "id", "foo");
         template.sendBodyAndHeader("seda:start", "C", "id", "foo");
 
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
 
         assertMockEndpointsSatisfied();
     }

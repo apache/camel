@@ -59,7 +59,7 @@ public class RabbitMQSupendResumeIntTest extends AbstractRabbitMQIntTest {
 
         assertMockEndpointsSatisfied();
 
-        context.suspendRoute("consumer");
+        context.getRouteController().resumeRoute("consumer");
 
         // sleep a bit to ensure its properly suspended
         Thread.sleep(2000);
@@ -75,7 +75,7 @@ public class RabbitMQSupendResumeIntTest extends AbstractRabbitMQIntTest {
         resultEndpoint.expectedBodiesReceived("Hello2");
         resultEndpoint.expectedMessageCount(1);
 
-        context.resumeRoute("consumer");
+        context.getRouteController().resumeRoute("consumer");
 
         assertMockEndpointsSatisfied();
     }

@@ -23,6 +23,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 
 import org.apache.camel.Attachment;
+import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.ExchangeHelper;
@@ -40,14 +41,8 @@ public class MailMessage extends DefaultMessage {
     private Message mailMessage;
     private boolean mapMailMessage;
 
-    public MailMessage() {
-    }
-
-    public MailMessage(Message message) {
-        this(message, true);
-    }
-
-    public MailMessage(Message message, boolean mapMailMessage) {
+    public MailMessage(Exchange exchange, Message message, boolean mapMailMessage) {
+        super(exchange);
         this.originalMailMessage = this.mailMessage = message;
         this.mapMailMessage = mapMailMessage;
     }
@@ -95,7 +90,7 @@ public class MailMessage extends DefaultMessage {
 
     @Override
     public MailMessage newInstance() {
-        MailMessage answer = new MailMessage(null, this.mapMailMessage);
+        MailMessage answer = new MailMessage(null, null, this.mapMailMessage);
         answer.setCamelContext(getCamelContext());
         return answer;
     }

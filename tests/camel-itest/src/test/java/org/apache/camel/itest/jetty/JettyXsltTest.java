@@ -70,7 +70,7 @@ public class JettyXsltTest extends CamelTestSupport {
                             ObjectHelper.notNull(name, "name");
 
                             name = "org/apache/camel/itest/jetty/" + name;
-                            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext().getClassResolver(), name);
+                            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), name);
                             String xml = exchange.getContext().getTypeConverter().convertTo(String.class, is);
 
                             exchange.getOut().setBody(xml);

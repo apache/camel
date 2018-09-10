@@ -31,7 +31,7 @@ import org.apache.camel.util.AsyncProcessorHelper;
 /**
  * A processor that sorts the expression using a comparator
  */
-public class SortProcessor<T> extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
+public class SortProcessor<T> extends ServiceSupport implements AsyncProcessor, IdAware, org.apache.camel.Traceable {
 
     private String id;
     private final Expression expression;

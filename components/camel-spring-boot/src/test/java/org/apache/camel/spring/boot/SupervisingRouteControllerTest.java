@@ -83,8 +83,8 @@ public class SupervisingRouteControllerTest {
         Assert.assertNull(context.getRoute("timer-unmanaged").getRouteContext().getRouteController());
         Assert.assertNull(context.getRoute("timer-no-autostartup").getRouteContext().getRouteController());
 
-        Assert.assertEquals(ServiceStatus.Stopped, context.getRouteStatus("foo"));
-        Assert.assertEquals(ServiceStatus.Stopped, context.getRouteStatus("bar"));
+        Assert.assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("foo"));
+        Assert.assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("bar"));
     }
 
     // *************************************

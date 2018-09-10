@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrClient;
@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents the component that manages {@link SolrEndpoint}.
  */
-public class SolrComponent extends UriEndpointComponent {
+public class SolrComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(SolrComponent.class);
     private final Map<SolrEndpoint, SolrServerReference> servers = new HashMap<>();
@@ -79,7 +79,6 @@ public class SolrComponent extends UriEndpointComponent {
     }
 
     public SolrComponent() {
-        super(SolrEndpoint.class);
     }
 
     @Override

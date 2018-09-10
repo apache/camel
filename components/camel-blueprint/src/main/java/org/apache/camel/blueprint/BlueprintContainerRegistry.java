@@ -81,21 +81,6 @@ public class BlueprintContainerRegistry implements Registry {
         return new HashSet<>(map.values());
     }
 
-    @Override
-    public Object lookup(String name) {
-        return lookupByName(name);
-    }
-
-    @Override
-    public <T> T lookup(String name, Class<T> type) {
-        return lookupByNameAndType(name, type);
-    }
-
-    @Override
-    public <T> Map<String, T> lookupByType(Class<T> type) {
-        return findByTypeWithName(type);
-    }
-
     public static <T> Map<String, T> lookupByType(BlueprintContainer blueprintContainer, Class<T> type) {
         return lookupByType(blueprintContainer, type, true);
     }

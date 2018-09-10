@@ -42,7 +42,7 @@ public class DisruptorVmInOutChainedTimeoutTest extends AbstractVmTestSupport {
             assertEquals(200, cause.getTimeout());
         }
 
-        long delta = watch.stop();
+        long delta = watch.taken();
 
         assertTrue("Should be faster than 1 sec, was: " + delta, delta < 1100);
     }

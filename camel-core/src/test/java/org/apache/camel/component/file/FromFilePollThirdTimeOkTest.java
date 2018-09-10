@@ -42,7 +42,7 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(3).create();
 
         template.sendBodyAndHeader("file://target/deletefile", body, Exchange.FILE_NAME, "hello.txt");
-        context.startRoute("FromFilePollThirdTimeOkTest");
+        context.getRouteController().startRoute("FromFilePollThirdTimeOkTest");
 
         getMockEndpoint("mock:result").expectedBodiesReceived(body);
 

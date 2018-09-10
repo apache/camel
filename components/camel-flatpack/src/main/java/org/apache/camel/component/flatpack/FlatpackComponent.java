@@ -19,7 +19,7 @@ package org.apache.camel.component.flatpack;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
 /**
  * A <a href="http://flatpack.sourceforge.net/">Flatpack Component</a>
@@ -27,13 +27,12 @@ import org.apache.camel.impl.UriEndpointComponent;
  *
  * @version 
  */
-public class FlatpackComponent extends UriEndpointComponent {
+public class FlatpackComponent extends DefaultComponent {
 
     public static final String HEADER_ID = "header";
     public static final String TRAILER_ID = "trailer";
 
     public FlatpackComponent() {
-        super(FlatpackEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

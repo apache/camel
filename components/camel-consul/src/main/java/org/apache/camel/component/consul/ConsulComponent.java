@@ -48,7 +48,6 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
     private boolean useGlobalSslContextParameters;
     
     public ConsulComponent() {
-        super();
     }
 
     public ConsulComponent(CamelContext context) {

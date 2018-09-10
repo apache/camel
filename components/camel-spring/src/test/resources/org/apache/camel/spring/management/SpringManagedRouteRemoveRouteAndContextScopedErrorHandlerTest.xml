@@ -28,7 +28,7 @@
     <jmxAgent id="agent"/>
 
     <errorHandler id="dead" deadLetterUri="mock:dead" type="DeadLetterChannel"/>
-    <errorHandler id="logger" logName="global" type="LoggingErrorHandler"/>
+    <errorHandler id="logger" deadLetterUri="log:global" type="DeadLetterChannel"/>
 
     <route id="bar">
       <from uri="seda:bar"/>

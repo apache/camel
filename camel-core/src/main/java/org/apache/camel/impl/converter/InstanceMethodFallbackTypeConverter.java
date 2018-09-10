@@ -37,11 +37,6 @@ public class InstanceMethodFallbackTypeConverter extends TypeConverterSupport {
     private final TypeConverterRegistry registry;
     private final boolean allowNull;
 
-    @Deprecated
-    public InstanceMethodFallbackTypeConverter(CachingInjector<?> injector, Method method, TypeConverterRegistry registry) {
-        this(injector, method, registry, false);
-    }
-
     public InstanceMethodFallbackTypeConverter(CachingInjector<?> injector, Method method, TypeConverterRegistry registry, boolean allowNull) {
         this.injector = injector;
         this.method = method;

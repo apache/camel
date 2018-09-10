@@ -116,7 +116,7 @@ public class MultiCamelContextTest {
             }
         });
 
-        secondCamelContext.startAllRoutes();
+        secondCamelContext.getRouteController().startAllRoutes();
     }
 
     @Test

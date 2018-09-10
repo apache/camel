@@ -59,18 +59,16 @@
                    xmlns:person="http://camel.apache.org/wsdl-first">
    </cxf:cxfEndpoint>
    
-   <bean id="processor" class="org.apache.camel.processor.CamelLogger"/>
-
    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
       <route>
          <from uri="cxf:bean:routerEndpoint?dataFormat=MESSAGE" />
          <to uri="cxf:bean:serviceEndpoint?dataFormat=MESSAGE" />
-         <process ref="processor"/>
+         <to uri="log:camelLogger" />
       </route>
             <route>
          <from uri="cxf:bean:routerEndpoint2?dataFormat=PAYLOAD" />
          <to uri="cxf:bean:serviceEndpoint2?dataFormat=PAYLOAD" />
-         <process ref="processor"/>
+               <to uri="log:camelLogger" />
       </route>
     </camelContext>
 </beans>

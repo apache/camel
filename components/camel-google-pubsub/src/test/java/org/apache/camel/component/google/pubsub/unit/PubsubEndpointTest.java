@@ -17,7 +17,6 @@
 package org.apache.camel.component.google.pubsub.unit;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
@@ -54,7 +53,6 @@ public class PubsubEndpointTest extends PubsubTestSupport {
         GooglePubsubEndpoint pubsubEndpoint = (GooglePubsubEndpoint) endpoint;
 
         assertEquals(ExchangePattern.InOnly, pubsubEndpoint.createExchange().getPattern());
-        assertEquals("google-pubsub", pubsubEndpoint.getEndpointConfiguration().getParameter(EndpointConfiguration.URI_SCHEME));
         assertEquals("google-pubsub://" + PROJECT_ID + ":" + SUBSCRIPTION_URI, pubsubEndpoint.getEndpointUri());
 
         assertEquals(PROJECT_ID, pubsubEndpoint.getProjectId());

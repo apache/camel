@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.interceptor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,7 @@ import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Condition;
 import org.junit.Before;
 import org.junit.Test;
+
 
 /**
  * @version 

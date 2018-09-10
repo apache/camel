@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.PollingConsumer;
@@ -98,16 +97,6 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
 
     protected ScheduledPollEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
-    }
-
-    @Deprecated
-    protected ScheduledPollEndpoint(String endpointUri, CamelContext context) {
-        super(endpointUri, context);
-    }
-
-    @Deprecated
-    protected ScheduledPollEndpoint(String endpointUri) {
-        super(endpointUri);
     }
 
     protected ScheduledPollEndpoint() {

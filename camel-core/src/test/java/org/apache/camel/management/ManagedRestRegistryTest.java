@@ -73,7 +73,7 @@ public class ManagedRestRegistryTest extends ManagementTestSupport {
 
         // remove all routes
         for (Route route : context.getRoutes()) {
-            context.stopRoute(route.getId());
+            context.getRouteController().stopRoute(route.getId());
             context.removeRoute(route.getId());
         }
 

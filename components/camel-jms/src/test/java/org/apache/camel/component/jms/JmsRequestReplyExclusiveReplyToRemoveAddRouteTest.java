@@ -35,7 +35,7 @@ public class JmsRequestReplyExclusiveReplyToRemoveAddRouteTest extends CamelTest
         assertEquals("Hello A", template.requestBody("direct:start", "A"));
 
         // stop and remove route
-        context.stopRoute("start");
+        context.getRouteController().stopRoute("start");
         context.removeRoute("start");
 
         // add new route using same jms endpoint uri

@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -55,8 +56,7 @@ public class ReduceStacksNeededDuringRoutingSendProcessorTest extends ContextTes
             @Override
             public void configure() throws Exception {
                 // context.setTracing(true);
-                MyEndpoint my = new MyEndpoint();
-                my.setCamelContext(getContext());
+                MyEndpoint my = new MyEndpoint("myendpoint:foo", getContext());
 
                 from("seda:start")
                         .to("log:foo")
@@ -70,8 +70,9 @@ public class ReduceStacksNeededDuringRoutingSendProcessorTest extends ContextTes
 
     public static final class MyEndpoint extends DefaultEndpoint {
 
-        public MyEndpoint() {
-            super("myendpoint:foo");
+        public MyEndpoint(String uri, CamelContext context) {
+            super("myendpoint:foo", null);
+            setCamelContext(context);
         }
 
         @Override

@@ -58,7 +58,7 @@ public class FileConsumerBatchTest extends ContextTestSupport {
         mock.message(1).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(1);
 
         // start routes
-        context.startAllRoutes();
+        context.getRouteController().startAllRoutes();
 
         assertMockEndpointsSatisfied();
     }

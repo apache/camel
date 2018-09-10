@@ -16,9 +16,6 @@
  */
 package org.apache.camel.itest.doc;
 
-import org.apache.camel.ComponentConfiguration;
-import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.component.mock.MockComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -27,22 +24,6 @@ public class MockComponentConfigurationAndDocumentationTest extends CamelTestSup
     @Override
     public boolean isUseRouteBuilder() {
         return false;
-    }
-
-    @Test
-    public void testComponentConfiguration() throws Exception {
-        MockComponent comp = context.getComponent("mock", MockComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("mock:foo?retainFirst=10");
-
-        assertEquals("10", conf.getParameter("retainFirst"));
-
-        ComponentConfiguration compConf = comp.createComponentConfiguration();
-        String json = compConf.createParameterJsonSchema();
-        assertNotNull(json);
-
-        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"displayName\": \"Name\", \"group\": \"producer\", \"required\": true"));
-        assertTrue(json.contains("\"expectedCount\": { \"kind\": \"parameter\", \"displayName\": \"Expected Count\", \"group\": \"producer\", \"label\": \"producer\""));
-        assertTrue(json.contains("\"retainFirst\": { \"kind\": \"parameter\", \"displayName\": \"Retain First\", \"group\": \"producer\", \"label\": \"producer\""));
     }
 
     @Test

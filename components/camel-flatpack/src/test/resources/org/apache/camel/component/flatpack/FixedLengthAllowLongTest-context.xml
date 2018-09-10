@@ -49,7 +49,7 @@
 
         <route>
             <from uri="direct:df"/>
-            <unmarshal ref="df"/>
+            <unmarshal><custom ref="df"/></unmarshal>
             <to uri="mock:results-df"/>
         </route>
 

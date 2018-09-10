@@ -31,7 +31,7 @@
             <from uri="direct:start"/>
             <to uri="log:foo"/>
             <split>
-                <method bean="cool" method="split"/>
+                <method ref="cool" method="split"/>
                 <transform><simple>Hello ${body}</simple></transform>
                 <to uri="mock:split"/>
             </split>

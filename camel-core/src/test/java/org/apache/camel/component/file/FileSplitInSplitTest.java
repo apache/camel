@@ -55,7 +55,7 @@ public class FileSplitInSplitTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
         
         assertMockEndpointsSatisfied();
 
