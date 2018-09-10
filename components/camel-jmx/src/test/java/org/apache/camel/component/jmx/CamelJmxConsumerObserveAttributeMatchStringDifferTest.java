@@ -19,6 +19,7 @@ package org.apache.camel.component.jmx;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.management.ManagedCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
