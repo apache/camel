@@ -16,6 +16,19 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
+import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
+import org.apache.camel.dataformat.bindy.BindyCsvFactory;
+import org.apache.camel.dataformat.bindy.FormatFactory;
+import org.apache.camel.dataformat.bindy.WrappedException;
+import org.apache.camel.dataformat.bindy.util.ConverterUtils;
+import org.apache.camel.spi.DataFormat;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,19 +45,6 @@ import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
-import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
-import org.apache.camel.dataformat.bindy.BindyCsvFactory;
-import org.apache.camel.dataformat.bindy.FormatFactory;
-import org.apache.camel.dataformat.bindy.WrappedException;
-import org.apache.camel.dataformat.bindy.util.ConverterUtils;
-import org.apache.camel.spi.DataFormat;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> (
