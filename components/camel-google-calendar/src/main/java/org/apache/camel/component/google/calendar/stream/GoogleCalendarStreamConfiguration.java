@@ -67,7 +67,7 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     private boolean consumeFromNow = true;
     
     @UriParam(defaultValue = "false")
-    private boolean considerLastUpdate = false;
+    private boolean considerLastUpdate;
 
     public String getClientId() {
         return clientId;
