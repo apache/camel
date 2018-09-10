@@ -112,7 +112,7 @@ public class ExpressionClauseSupport<T> {
      */
     public T body() {
         // reuse simple as this allows the model to represent this as a known JAXB type
-        return expression(new SimpleExpression("body"));
+        return expression(new SimpleExpression("${body}"));
     }
 
     /**

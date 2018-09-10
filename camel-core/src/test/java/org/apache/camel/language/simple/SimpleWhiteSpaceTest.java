@@ -29,31 +29,31 @@ public class SimpleWhiteSpaceTest extends LanguageTestSupport {
     @Test
     public void testExpressionWithSpace() {
         exchange.getIn().setBody("some text");
-        assertPredicate("${in.body} contains 'some' and ${in.body} contains 'text'", true);
+        assertPredicate("${in.body} contains 'some' && ${in.body} contains 'text'", true);
     }
 
     @Test
     public void testExpressionWithTabs() {
         exchange.getIn().setBody("some text");
-        assertPredicate("${in.body} contains 'some' and\t${in.body} contains 'text'", true);
+        assertPredicate("${in.body} contains 'some' &&\t${in.body} contains 'text'", true);
     }
 
     @Test
     public void testUnixMultiLineExpression() {
         exchange.getIn().setBody("some text");
-        assertPredicate("${in.body} contains 'some' and\n${in.body} contains 'text'", true);
+        assertPredicate("${in.body} contains 'some' &&\n${in.body} contains 'text'", true);
     }
 
     @Test
     public void testWindowsMultiLineExpression() {
         exchange.getIn().setBody("some text");
-        assertPredicate("${in.body} contains 'some' and\r\n${in.body} contains 'text'", true);
+        assertPredicate("${in.body} contains 'some' &&\r\n${in.body} contains 'text'", true);
     }
 
     @Test
     public void testMacMultiLineExpression() {
         exchange.getIn().setBody("some text");
-        assertPredicate("${in.body} contains 'some' and\r${in.body} contains 'text'", true);
+        assertPredicate("${in.body} contains 'some' &&\r${in.body} contains 'text'", true);
     }
 
     @Test
