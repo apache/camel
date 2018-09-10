@@ -20,7 +20,6 @@ Base64DataFormat
 BeanioDataFormat
 BindyDataFormat
 BindyType
-CastorDataFormat
 CryptoDataFormat
 CsvDataFormat
 CustomDataFormat
@@ -29,7 +28,6 @@ FhirJsonDataFormat
 FhirXmlDataFormat
 FlatpackDataFormat
 GzipDataFormat
-HessianDataFormat
 HL7DataFormat
 IcalDataFormat
 JaxbDataFormat
@@ -51,7 +49,6 @@ UniVocityCsvDataFormat
 UniVocityFixedWidthDataFormat
 UniVocityHeader
 UniVocityTsvDataFormat
-XMLBeansDataFormat
 XMLSecurityDataFormat
 XStreamDataFormat
 YAMLDataFormat

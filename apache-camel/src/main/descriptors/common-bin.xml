@@ -56,7 +56,6 @@
         <include>org.apache.camel:camel-cache</include>
         <include>org.apache.camel:camel-caffeine</include>
         <include>org.apache.camel:camel-cassandraql</include>
-        <include>org.apache.camel:camel-castor</include>
         <include>org.apache.camel:camel-cdi</include>
         <include>org.apache.camel:camel-chronicle</include>
         <include>org.apache.camel:camel-chunk</include>
@@ -123,7 +122,6 @@
         <include>org.apache.camel:camel-hdfs</include>
         <include>org.apache.camel:camel-hdfs2</include>
         <include>org.apache.camel:camel-headersmap</include>
-        <include>org.apache.camel:camel-hessian</include>
         <include>org.apache.camel:camel-hipchat</include>
         <include>org.apache.camel:camel-http</include>
         <include>org.apache.camel:camel-http-common</include>
@@ -157,13 +155,11 @@
         <include>org.apache.camel:camel-jmx</include>
         <include>org.apache.camel:camel-jolt</include>
         <include>org.apache.camel:camel-johnzon</include>
-        <include>org.apache.camel:camel-josql</include>
         <include>org.apache.camel:camel-jpa</include>
         <include>org.apache.camel:camel-jsch</include>
         <include>org.apache.camel:camel-json-validator</include>
         <include>org.apache.camel:camel-jsonpath</include>
         <include>org.apache.camel:camel-jt400</include>
-        <include>org.apache.camel:camel-juel</include>
         <include>org.apache.camel:camel-jxpath</include>
         <include>org.apache.camel:camel-kafka</include>
         <include>org.apache.camel:camel-kestrel</include>
@@ -300,9 +296,7 @@
         <include>org.apache.camel:camel-web3j</include>
         <include>org.apache.camel:camel-websocket</include>
         <include>org.apache.camel:camel-wordpress</include>
-        <include>org.apache.camel:camel-xmlbeans</include>
         <include>org.apache.camel:camel-xchange</include>
-        <include>org.apache.camel:camel-xmljson</include>
         <include>org.apache.camel:camel-xmlrpc</include>
         <include>org.apache.camel:camel-xmlsecurity</include>
         <include>org.apache.camel:camel-xmpp</include>
@@ -382,8 +376,6 @@
         <include>org.apache.camel:camel-cache-starter</include>
         <include>org.apache.camel:camel-caffeine-starter</include>
         <include>org.apache.camel:camel-cassandraql-starter</include>
-        <include>org.apache.camel:camel-castor-starter</include>
-        <include>org.apache.camel:camel-chronicle-starter</include>
         <include>org.apache.camel:camel-chunk-starter</include>
         <include>org.apache.camel:camel-cmis-starter</include>
         <include>org.apache.camel:camel-cm-sms-starter</include>
@@ -445,7 +437,6 @@
         <include>org.apache.camel:camel-hdfs2-starter</include>
         <include>org.apache.camel:camel-headersmap-starter</include>
         <include>org.apache.camel:camel-hessian-starter</include>
-        <include>org.apache.camel:camel-hipchat-starter</include>
         <include>org.apache.camel:camel-hl7-starter</include>
         <include>org.apache.camel:camel-http4-starter</include>
         <include>org.apache.camel:camel-http-common-starter</include>
@@ -479,14 +470,11 @@
         <include>org.apache.camel:camel-jmx-starter</include>
         <include>org.apache.camel:camel-johnzon-starter</include>
         <include>org.apache.camel:camel-jolt-starter</include>
-        <include>org.apache.camel:camel-josql-starter</include>
         <include>org.apache.camel:camel-jpa-starter</include>
         <include>org.apache.camel:camel-jsch-starter</include>
         <include>org.apache.camel:camel-json-validator-starter</include>
         <include>org.apache.camel:camel-jsonpath-starter</include>
         <include>org.apache.camel:camel-jt400-starter</include>
-        <include>org.apache.camel:camel-juel-starter</include>
-        <include>org.apache.camel:camel-jxpath-starter</include>
         <include>org.apache.camel:camel-kafka-starter</include>
         <include>org.apache.camel:camel-kestrel-starter</include>
         <include>org.apache.camel:camel-krati-starter</include>
@@ -607,10 +595,7 @@
         <include>org.apache.camel:camel-web3j-starter</include>
         <include>org.apache.camel:camel-websocket-starter</include>
         <include>org.apache.camel:camel-wordpress-starter</include>
-        <include>org.apache.camel:camel-xmlbeans-starter</include>
         <include>org.apache.camel:camel-xchange-starter</include>
-        <include>org.apache.camel:camel-xmljson-starter</include>
-        <include>org.apache.camel:camel-xmlrpc-starter</include>
         <include>org.apache.camel:camel-xmlsecurity-starter</include>
         <include>org.apache.camel:camel-xmpp-starter</include>
         <include>org.apache.camel:camel-xstream-starter</include>

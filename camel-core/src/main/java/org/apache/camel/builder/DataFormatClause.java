@@ -31,14 +31,12 @@ import org.apache.camel.model.dataformat.BeanioDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.model.dataformat.BoonDataFormat;
-import org.apache.camel.model.dataformat.CastorDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.model.dataformat.FhirJsonDataFormat;
 import org.apache.camel.model.dataformat.FhirXmlDataFormat;
 import org.apache.camel.model.dataformat.GzipDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
-import org.apache.camel.model.dataformat.HessianDataFormat;
 import org.apache.camel.model.dataformat.IcalDataFormat;
 import org.apache.camel.model.dataformat.JacksonXMLDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
@@ -57,10 +55,8 @@ import org.apache.camel.model.dataformat.SyslogDataFormat;
 import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
 import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
-import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
-import org.apache.camel.model.dataformat.XmlJsonDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.YAMLLibrary;
 import org.apache.camel.model.dataformat.ZipDataFormat;
@@ -236,49 +232,11 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
-     * Uses the Castor data format
-     */
-    public T castor() {
-        return dataFormat(new CastorDataFormat());
-    }
-
-    /**
-     * Uses the Castor data format
-     *
-     * @param mappingFile name of mapping file to locate in classpath
-     */
-    public T castor(String mappingFile) {
-        CastorDataFormat castor = new CastorDataFormat();
-        castor.setMappingFile(mappingFile);
-        return dataFormat(castor);
-    }
-
-    /**
-     * Uses the Castor data format
-     *
-     * @param mappingFile name of mapping file to locate in classpath
-     * @param validation  whether validation is enabled or not
-     */
-    public T castor(String mappingFile, boolean validation) {
-        CastorDataFormat castor = new CastorDataFormat();
-        castor.setMappingFile(mappingFile);
-        castor.setValidation(validation);
-        return dataFormat(castor);
-    }
-
-    /**
      * Uses the GZIP deflater data format
      */
     public T gzip() {
         GzipDataFormat gzdf = new GzipDataFormat();
         return dataFormat(gzdf);
-    }
-
-    /**
-     * Uses the Hessian data format
-     */
-    public T hessian() {
-        return dataFormat(new HessianDataFormat());
     }
 
     /**
@@ -1187,29 +1145,6 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         return dataFormat(tfdf);
     }
 
-    /**
-     * Uses the xmlBeans data format
-     */
-    public T xmlBeans() {
-        return dataFormat(new XMLBeansDataFormat());
-    }
-
-    /**
-     * Uses the xmljson dataformat, based on json-lib
-     */
-    @Deprecated
-    public T xmljson() {
-        return dataFormat(new XmlJsonDataFormat());
-    }
-    
-    /**
-     * Uses the xmljson dataformat, based on json-lib, initializing custom options with a Map
-     */
-    @Deprecated
-    public T xmljson(Map<String, String> options) {
-        return dataFormat(new XmlJsonDataFormat(options));
-    }
-    
     /**
      * Uses the ZIP deflater data format
      */

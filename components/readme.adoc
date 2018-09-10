@@ -922,7 +922,7 @@ Data Formats
 ^^^^^^^^^^^^
 
 // dataformats: START
-Number of Data Formats: 48 in 39 JAR artifacts (4 deprecated)
+Number of Data Formats: 47 in 38 JAR artifacts (3 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -945,8 +945,6 @@ Number of Data Formats: 48 in 39 JAR artifacts (4 deprecated)
 | link:camel-bindy/src/main/docs/bindy-dataformat.adoc[Bindy Key Value Pair] (camel-bindy) | 2.0 | The Bindy data format is used for working with flat payloads (such as CSV, delimited, fixed length formats, or FIX messages).
 
 | link:camel-boon/src/main/docs/boon-dataformat.adoc[Boon] (camel-boon) | 2.16 | Boon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
-
-| link:camel-castor/src/main/docs/castor-dataformat.adoc[Castor] (camel-castor) | 2.1 | *deprecated* Castor data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
 
 | link:camel-crypto/src/main/docs/crypto-dataformat.adoc[Crypto (Java Cryptographic Extension)] (camel-crypto) | 2.3 | Crypto data format is used for encrypting and decrypting of messages using Java Cryptographic Extension.
 
@@ -1031,7 +1029,7 @@ Expression Languages
 ^^^^^^^^^^^^^^^^^^^^
 
 // languages: START
-Number of Languages: 24 in 12 JAR artifacts (6 deprecated)
+Number of Languages: 20 in 11 JAR artifacts (2 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -1040,8 +1038,6 @@ Number of Languages: 24 in 12 JAR artifacts (6 deprecated)
 | link:../camel-core/src/main/docs/bean-language.adoc[Bean method] (camel-core) | 1.3 | To use a Java bean (aka method call) in Camel expressions or predicates.
 
 | link:../camel-core/src/main/docs/constant-language.adoc[Constant] (camel-core) | 1.5 | To use a constant value in Camel expressions or predicates.
-
-| link:camel-juel/src/main/docs/el-language.adoc[EL] (camel-juel) | 1.1 | *deprecated* To use EL scripts in Camel expressions or predicates.
 
 | link:../camel-core/src/main/docs/exchangeProperty-language.adoc[ExchangeProperty] (camel-core) | 2.0 | To use a Camel Exchange property in expressions or predicates.
 
@@ -1063,13 +1059,7 @@ Number of Languages: 24 in 12 JAR artifacts (6 deprecated)
 
 | link:camel-ognl/src/main/docs/ognl-language.adoc[OGNL] (camel-ognl) | 1.1 | To use OGNL scripts in Camel expressions or predicates.
 
-| link:camel-script/src/main/docs/php-language.adoc[PHP] (camel-script) | 1.0 | *deprecated* To use PHP scripts in Camel expressions or predicates.
-
-| link:camel-script/src/main/docs/python-language.adoc[Python] (camel-script) | 1.0 | *deprecated* To use Python scripts in Camel expressions or predicates.
-
 | link:../camel-core/src/main/docs/ref-language.adoc[Ref] (camel-core) | 2.8 | Reference to an existing Camel expression or predicate, which is looked up from the Camel registry.
-
-| link:camel-script/src/main/docs/ruby-language.adoc[Ruby] (camel-script) | 1.0 | *deprecated* To use Ruby scripts in Camel expressions or predicates.
 
 | link:../camel-core/src/main/docs/simple-language.adoc[Simple] (camel-core) | 1.1 | To use Camels built-in Simple language in Camel expressions or predicates.
 

@@ -97,7 +97,6 @@
     <module>camel-cache</module>
     <module>camel-caffeine</module>
     <module>camel-cassandraql</module>
-    <module>camel-castor</module>
     <module>camel-cdi</module>
     <module>camel-chronicle</module>
     <module>camel-chunk</module>
@@ -159,7 +158,6 @@
     <module>camel-hdfs</module>
     <module>camel-hdfs2</module>
     <module>camel-headersmap</module>
-    <module>camel-hessian</module>
     <module>camel-hipchat</module>
     <module>camel-hl7</module>
     <module>camel-ibatis</module>
@@ -188,13 +186,10 @@
     <module>camel-jmx</module>
     <module>camel-jolt</module>
     <module>camel-johnzon</module>
-    <module>camel-josql</module>
     <module>camel-jpa</module>
     <module>camel-jsonpath</module>
     <module>camel-jsch</module>
     <module>camel-jt400</module>
-    <module>camel-juel</module>
-    <module>camel-jxpath</module>
     <module>camel-kafka</module>
     <module>camel-kestrel</module>
     <module>camel-krati</module>
@@ -254,7 +249,6 @@
     <module>camel-rmi</module>
     <module>camel-routebox</module>
     <module>camel-rss</module>
-    <module>camel-ruby</module>
     <module>camel-rx</module>
     <module>camel-rxjava2</module>
     <module>camel-sap-netweaver</module>
@@ -316,8 +310,6 @@
     <module>camel-websocket</module>
     <module>camel-wordpress</module>
     <module>camel-xchange</module>
-    <module>camel-xmlbeans</module>
-    <module>camel-xmljson</module>
     <module>camel-xmlrpc</module>
     <module>camel-xmlsecurity</module>
     <module>camel-xmpp</module>
