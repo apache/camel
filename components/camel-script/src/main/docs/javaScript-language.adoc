@@ -39,7 +39,7 @@ The JavaScript language supports 1 options, which are listed below.
 === Spring Boot Auto-Configuration
 
 
-The component supports 8 options, which are listed below.
+The component supports 2 options, which are listed below.
 
 
 
@@ -48,12 +48,6 @@ The component supports 8 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.language.javascript.enabled* | Enable javascript language | true | Boolean
 | *camel.language.javascript.trim* | Whether to trim the value to remove leading and trailing whitespaces and line breaks | true | Boolean
-| *camel.language.php.enabled* | Enable php language | true | Boolean
-| *camel.language.php.trim* | Whether to trim the value to remove leading and trailing whitespaces and line breaks | true | Boolean
-| *camel.language.python.enabled* | Enable python language | true | Boolean
-| *camel.language.python.trim* | Whether to trim the value to remove leading and trailing whitespaces and line breaks | true | Boolean
-| *camel.language.ruby.enabled* | Enable ruby language | true | Boolean
-| *camel.language.ruby.trim* | Whether to trim the value to remove leading and trailing whitespaces and line breaks | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 

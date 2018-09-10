@@ -16,8 +16,9 @@
  */
 package org.apache.camel.model;
 
-import java.util.List;
+import org.junit.Test;
 
+import java.util.List;
 import javax.xml.bind.JAXBException;
 
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -27,7 +28,6 @@ import org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
-import org.junit.Test;
 
 /**
  * @version 
@@ -66,11 +66,11 @@ public class XmlParseTest extends XmlTestSupport {
     }
 
     @Test
-    public void testParseProcessorWithElFilterXml() throws Exception {
-        RouteDefinition route = assertOneRoute("processorWithElFilter.xml");
+    public void testParseProcessorWithSimpleFilterXml() throws Exception {
+        RouteDefinition route = assertOneRoute("processorWithSimpleFilter.xml");
         assertFrom(route, "seda:a");
         FilterDefinition filter = assertOneProcessorInstanceOf(FilterDefinition.class, route);
-        assertExpression(filter.getExpression(), "el", "$in.header.foo == 'bar'");
+        assertExpression(filter.getExpression(), "simple", "${in.header.foo} == 'bar'");
     }
 
     @Test
@@ -315,12 +315,6 @@ public class XmlParseTest extends XmlTestSupport {
     }
 
     @Test
-    public void testParseXMLBeansDataFormat() throws Exception {
-        RouteDefinition route = assertOneRoute("routeWithXMLBeansDataFormat.xml");
-        assertFrom(route, "seda:a");
-    }
-
-    @Test
     public void testParseXMLSecurityDataFormat() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithXMLSecurityDataFormat.xml");
         assertFrom(route, "seda:a");
@@ -371,12 +365,6 @@ public class XmlParseTest extends XmlTestSupport {
     @Test
     public void testParseBindyDataFormat() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithBindyDataFormat.xml");
-        assertFrom(route, "seda:a");
-    }
-
-    @Test
-    public void testParseCastorDataFormat() throws Exception {
-        RouteDefinition route = assertOneRoute("routeWithCastorDataFormat.xml");
         assertFrom(route, "seda:a");
     }
 

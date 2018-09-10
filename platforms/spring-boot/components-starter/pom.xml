@@ -130,7 +130,6 @@
     <module>camel-cache-starter</module>
     <module>camel-caffeine-starter</module>
     <module>camel-cassandraql-starter</module>
-    <module>camel-castor-starter</module>
     <module>camel-chronicle-starter</module>
     <module>camel-chunk-starter</module>
     <module>camel-cm-sms-starter</module>
@@ -192,7 +191,6 @@
     <module>camel-hdfs-starter</module>
     <module>camel-hdfs2-starter</module>
     <module>camel-headersmap-starter</module>
-    <module>camel-hessian-starter</module>
     <module>camel-hipchat-starter</module>
     <module>camel-hl7-starter</module>
     <module>camel-http-common-starter</module>
@@ -227,14 +225,11 @@
     <module>camel-jmx-starter</module>
     <module>camel-johnzon-starter</module>
     <module>camel-jolt-starter</module>
-    <module>camel-josql-starter</module>
     <module>camel-jpa-starter</module>
     <module>camel-jsch-starter</module>
     <module>camel-json-validator-starter</module>
     <module>camel-jsonpath-starter</module>
     <module>camel-jt400-starter</module>
-    <module>camel-juel-starter</module>
-    <module>camel-jxpath-starter</module>
     <module>camel-kafka-starter</module>
     <module>camel-kestrel-starter</module>
     <module>camel-krati-starter</module>
@@ -293,7 +288,6 @@
     <module>camel-rmi-starter</module>
     <module>camel-routebox-starter</module>
     <module>camel-rss-starter</module>
-    <module>camel-ruby-starter</module>
     <module>camel-rx-starter</module>
     <module>camel-rxjava2-starter</module>
     <module>camel-salesforce-starter</module>
@@ -355,8 +349,6 @@
     <module>camel-websocket-starter</module>
     <module>camel-wordpress-starter</module>
     <module>camel-xchange-starter</module>
-    <module>camel-xmlbeans-starter</module>
-    <module>camel-xmljson-starter</module>
     <module>camel-xmlrpc-starter</module>
     <module>camel-xmlsecurity-starter</module>
     <module>camel-xmpp-starter</module>

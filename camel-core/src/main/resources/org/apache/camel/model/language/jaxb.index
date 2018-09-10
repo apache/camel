@@ -15,25 +15,19 @@
 ## limitations under the License.
 ## ------------------------------------------------------------------------
 ConstantExpression
-ELExpression
 ExchangePropertyExpression
 ExpressionDefinition
 GroovyExpression
 HeaderExpression
 JavaScriptExpression
 JsonPathExpression
-JXPathExpression
 LanguageExpression
 MethodCallExpression
 MvelExpression
 OgnlExpression
-PhpExpression
-PythonExpression
 RefExpression
-RubyExpression
 SimpleExpression
 SpELExpression
-SqlExpression
 TerserExpression
 TokenizerExpression
 XMLTokenizerExpression

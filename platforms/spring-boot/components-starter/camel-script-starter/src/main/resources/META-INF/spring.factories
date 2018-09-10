@@ -15,10 +15,6 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.builder.script.springboot.RubyLanguageAutoConfiguration,\
-org.apache.camel.builder.script.springboot.JavaScriptLanguageAutoConfiguration,\
-org.apache.camel.builder.script.springboot.PhpLanguageAutoConfiguration,\
-org.apache.camel.builder.script.springboot.PythonLanguageAutoConfiguration
-
+org.apache.camel.builder.script.springboot.JavaScriptLanguageAutoConfiguration
 
 

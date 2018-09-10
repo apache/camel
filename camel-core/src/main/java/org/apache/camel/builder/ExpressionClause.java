@@ -425,18 +425,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     }
 
     /**
-     * Evaluates the <a href="http://camel.apache.org/el.html">EL
-     * Language from JSP and JSF</a> using the <a
-     * href="http://camel.apache.org/juel.html">JUEL library</a>
-     * 
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
-     */
-    public T el(String text) {
-        return delegate.el(text);
-    }
-
-    /**
      * Evaluates a <a href="http://camel.apache.org/groovy.html">Groovy
      * expression</a>
      * 
@@ -566,27 +554,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     }
 
     /**
-     * Evaluates a <a href="http://commons.apache.org/jxpath/">JXPath expression</a>
-     * 
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
-     */
-    public T jxpath(String text) {
-        return delegate.jxpath(text);
-    }
-
-    /**
-     * Evaluates a <a href="http://commons.apache.org/jxpath/">JXPath expression</a>
-     *
-     * @param text the expression to be evaluated
-     * @param lenient to configure whether lenient is in use or not
-     * @return the builder to continue processing the DSL
-     */
-    public T jxpath(String text, boolean lenient) {
-        return delegate.jxpath(text, lenient);
-    }
-
-    /**
      * Evaluates an <a href="http://camel.apache.org/ognl.html">OGNL
      * expression</a>
      * 
@@ -609,28 +576,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     }
 
     /**
-     * Evaluates a <a href="http://camel.apache.org/php.html">PHP
-     * expression</a>
-     * 
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
-     */
-    public T php(String text) {
-        return delegate.php(text);
-    }
-
-    /**
-     * Evaluates a <a href="http://camel.apache.org/python.html">Python
-     * expression</a>
-     * 
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
-     */
-    public T python(String text) {
-        return delegate.python(text);
-    }
-
-    /**
      * Evaluates a <a href="http://camel.apache.org/ref-language.html">Ref
      * expression</a>
      * 
@@ -639,28 +584,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      */
     public T ref(String ref) {
         return delegate.ref(ref);
-    }
-
-    /**
-     * Evaluates a <a href="http://camel.apache.org/ruby.html">Ruby
-     * expression</a>
-     *
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
-     */
-    public T ruby(String text) {
-        return delegate.ruby(text);
-    }
-
-    /**
-     * Evaluates an <a href="http://camel.apache.org/sql.html">SQL
-     * expression</a>
-     * 
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
-     */
-    public T sql(String text) {
-        return delegate.sql(text);
     }
 
     /**

@@ -17,4 +17,12 @@
     limitations under the License.
 
 -->
-<hello>fooResponse</hello>
+<routes id="camel" xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="seda:a"/>
+    <filter>
+      <simple>${in.header.foo} == 'bar'</simple>
+      <process ref="myProcessor"/>
+    </filter>
+  </route>
+</routes>
