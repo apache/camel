@@ -207,7 +207,7 @@ however, a
 different http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/AWSCredentialsProvider.html[AWSCredentialsProvider]
 can be specified when calling createClient(...).
 
-#### Message headers used by the Kinesis producer to write to Kinesis.  The producer expects that the message body is a `ByteBuffer`.
+#### Message headers used by the Kinesis producer to write to Kinesis.  The producer expects that the message body is a `byte[]`.
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
