@@ -64,13 +64,16 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
 
     @Override
     protected int poll() throws Exception {
-        Date date = new Date();
-        com.google.api.services.calendar.Calendar.Events.List request = getClient().events().list(calendarId).setOrderBy("updated").setTimeMin(new DateTime(date));
+        com.google.api.services.calendar.Calendar.Events.List request = getClient().events().list(calendarId).setOrderBy("updated");
         if (ObjectHelper.isNotEmpty(getConfiguration().getQuery())) {
             request.setQ(getConfiguration().getQuery());
         }
         if (ObjectHelper.isNotEmpty(getConfiguration().getMaxResults())) {
             request.setMaxResults(getConfiguration().getMaxResults());
+        }
+        if (getConfiguration().isConsumeFromNow()) {
+            Date date = new Date();
+            request.setTimeMin(new DateTime(date));
         }
 
         Queue<Exchange> answer = new LinkedList<>();

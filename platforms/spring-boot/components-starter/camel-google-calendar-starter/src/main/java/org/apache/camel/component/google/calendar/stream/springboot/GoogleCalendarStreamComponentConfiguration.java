@@ -126,9 +126,13 @@ public class GoogleCalendarStreamComponentConfiguration
          */
         private Integer maxResults = 10;
         /**
-         * Calendar Summary name to use
+         * Calendar Summary Name to use
          */
         private String calendarSummaryName = "primary";
+        /**
+         * Consume events in the selected calendar from now on
+         */
+        private Boolean consumeFromNow = true;
 
         public String getClientId() {
             return clientId;
@@ -208,6 +212,14 @@ public class GoogleCalendarStreamComponentConfiguration
 
         public void setCalendarSummaryName(String calendarSummaryName) {
             this.calendarSummaryName = calendarSummaryName;
+        }
+
+        public Boolean getConsumeFromNow() {
+            return consumeFromNow;
+        }
+
+        public void setConsumeFromNow(Boolean consumeFromNow) {
+            this.consumeFromNow = consumeFromNow;
         }
     }
 }

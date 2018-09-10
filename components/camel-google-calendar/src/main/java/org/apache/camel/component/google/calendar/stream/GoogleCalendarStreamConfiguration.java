@@ -62,6 +62,9 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     
     @UriParam(defaultValue = "primary")
     private String calendarSummaryName = "primary";
+    
+    @UriParam(defaultValue = "true")
+    private boolean consumeFromNow = true;
 
     public String getClientId() {
         return clientId;
@@ -172,11 +175,22 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     }
 
     /**
-     * Calendar Summary name to use
+     * Calendar Summary Name to use
      */
     public void setCalendarSummaryName(String calendarSummaryName) {
         this.calendarSummaryName = calendarSummaryName;
     } 
+    
+    public boolean isConsumeFromNow() {
+        return consumeFromNow;
+    }
+    
+    /**
+     * Consume events in the selected calendar from now on
+     */
+    public void setConsumeFromNow(boolean consumeFromNow) {
+        this.consumeFromNow = consumeFromNow;
+    }
 
     // *************************************************
     //
