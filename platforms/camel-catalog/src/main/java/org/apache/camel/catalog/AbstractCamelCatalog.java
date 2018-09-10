@@ -1074,6 +1074,7 @@ public abstract class AbstractCamelCatalog {
         return tokens.toArray(new String[tokens.size()]);
     }
 
+<<<<<<< HEAD
     private LanguageValidationResult doValidateSimple(ClassLoader classLoader, String simple, boolean predicate) {
         if (classLoader == null) {
             classLoader = getClass().getClassLoader();
@@ -1164,6 +1165,8 @@ public abstract class AbstractCamelCatalog {
         return answer;
     }
 
+=======
+>>>>>>> 79866dfb308... [CAMEL-12818] Remove deprecated stuff
     public LanguageValidationResult validateLanguagePredicate(ClassLoader classLoader, String language, String text) {
         if ("simple".equals(language)) {
             return doValidateSimple(classLoader, text, true);
@@ -1207,10 +1210,10 @@ public abstract class AbstractCamelCatalog {
         }
 
         Object instance = null;
-        Class clazz = null;
+        Class<?> clazz = null;
         try {
             clazz = classLoader.loadClass(className);
-            instance = clazz.newInstance();
+            instance = clazz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             // ignore
         }
