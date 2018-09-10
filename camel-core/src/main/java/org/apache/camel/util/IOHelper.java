@@ -142,30 +142,6 @@ public final class IOHelper {
         return (writer instanceof BufferedWriter) ? (BufferedWriter)writer : new BufferedWriter(writer);
     }
 
-    /**
-     * A factory method which creates an {@link IOException} from the given
-     * exception and message
-     *
-     * @deprecated IOException support nested exception in Java 1.6. Will be removed in Camel 3.0
-     */
-    @Deprecated
-    public static IOException createIOException(Throwable cause) {
-        return createIOException(cause.getMessage(), cause);
-    }
-
-    /**
-     * A factory method which creates an {@link IOException} from the given
-     * exception and message
-     *
-     * @deprecated IOException support nested exception in Java 1.6. Will be removed in Camel 3.0
-     */
-    @Deprecated
-    public static IOException createIOException(String message, Throwable cause) {
-        IOException answer = new IOException(message);
-        answer.initCause(cause);
-        return answer;
-    }
-
     public static int copy(InputStream input, OutputStream output) throws IOException {
         return copy(input, output, DEFAULT_BUFFER_SIZE);
     }

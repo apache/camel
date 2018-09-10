@@ -36,8 +36,8 @@ public class RoutePolicyTest extends ContextTestSupport {
     @Test
     public void testStartCalledWhenRouteStarts() throws Exception {
         assertEquals(1, routePolicy.getStartCount());
-        context.stopRoute("foo");
-        context.startRoute("foo");
+        context.getRouteController().stopRoute("foo");
+        context.getRouteController().startRoute("foo");
         assertEquals(2, routePolicy.getStartCount());
     }
 
@@ -52,29 +52,29 @@ public class RoutePolicyTest extends ContextTestSupport {
     @Test
     public void testStopCalledWhenRouteStops() throws Exception {
         assertEquals(0, routePolicy.getStopCount());
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
         assertEquals(1, routePolicy.getStopCount());
     }
 
     @Test
     public void testSuspendCalledWhenRouteSuspends() throws Exception {
         assertEquals(0, routePolicy.getSuspendCount());
-        context.suspendRoute("foo");
+        context.getRouteController().suspendRoute("foo");
         assertEquals(1, routePolicy.getSuspendCount());
     }
 
     @Test
     public void testResumeCalledWhenRouteResumes() throws Exception {
         assertEquals(0, routePolicy.getResumeCount());
-        context.suspendRoute("foo");
-        context.resumeRoute("foo");
+        context.getRouteController().suspendRoute("foo");
+        context.getRouteController().resumeRoute("foo");
         assertEquals(1, routePolicy.getResumeCount());
     }
 
     @Test
     public void testRemoveCalledWhenRouteIsRemovedById() throws Exception {
         assertEquals(0, routePolicy.getRemoveCount());
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
         assertEquals(0, routePolicy.getRemoveCount());
 
         context.removeRoute("foo");

@@ -21,16 +21,15 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.bonita.util.BonitaOperation;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
-public class BonitaComponent extends UriEndpointComponent {
+public class BonitaComponent extends DefaultComponent {
 
     public BonitaComponent() {
-        super(BonitaEndpoint.class);
     }
 
     public BonitaComponent(CamelContext context) {
-        super(context, BonitaEndpoint.class);
+        super(context);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

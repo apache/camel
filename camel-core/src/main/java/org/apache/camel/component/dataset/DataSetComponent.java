@@ -19,7 +19,7 @@ package org.apache.camel.component.dataset;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.CamelContextHelper;
 
 /**
@@ -27,10 +27,9 @@ import org.apache.camel.util.CamelContextHelper;
  *
  * @version 
  */
-public class DataSetComponent extends UriEndpointComponent {
+public class DataSetComponent extends DefaultComponent {
 
     public DataSetComponent() {
-        super(DataSetEndpoint.class);
     }
 
     @Override

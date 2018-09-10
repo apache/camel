@@ -42,6 +42,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +82,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
 
         this.sjmsBatchEndpoint = ObjectHelper.notNull(sjmsBatchEndpoint, "batchJmsEndpoint");
 
-        destinationName = ObjectHelper.notEmpty(sjmsBatchEndpoint.getDestinationName(), "destinationName");
+        destinationName = StringHelper.notEmpty(sjmsBatchEndpoint.getDestinationName(), "destinationName");
 
         completionSize = sjmsBatchEndpoint.getCompletionSize();
         completionInterval = sjmsBatchEndpoint.getCompletionInterval();

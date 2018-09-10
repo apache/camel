@@ -63,7 +63,7 @@ public class DirectVmProducerBlockingTest extends ContextTestSupport {
 
     @Test
     public void testProducerBlocksResumeTest() throws Exception {
-        context.suspendRoute("foo");
+        context.getRouteController().suspendRoute("foo");
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(new Runnable() {
@@ -72,7 +72,7 @@ public class DirectVmProducerBlockingTest extends ContextTestSupport {
                 try {
                     Thread.sleep(200);
                     log.info("Resuming consumer");
-                    context.resumeRoute("foo");
+                    context.getRouteController().resumeRoute("foo");
                 } catch (Exception e) {
                     // ignore
                 }

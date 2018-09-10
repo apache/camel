@@ -112,7 +112,7 @@ public class DefaultValidatorRegistry extends AbstractMap<ValidatorKey, Validato
         }
 
         // we want validators to be static if they are part of setting up or starting routes
-        if (context.isSetupRoutes() || context.isStartingRoutes()) {
+        if (context.isSetupRoutes() || context.getRouteController().isStartingRoutes()) {
             answer = staticMap.put(key, validator);
         } else {
             answer = dynamicMap.put(key, validator);

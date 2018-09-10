@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.lucene;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -38,18 +37,8 @@ public class LuceneEndpoint extends DefaultEndpoint {
     public LuceneEndpoint() {
     }
 
-    @SuppressWarnings("deprecation")
-    public LuceneEndpoint(String endpointUri, CamelContext camelContext) {
-        super(endpointUri, camelContext);
-    }
-
     public LuceneEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
-    }
-
-    @SuppressWarnings("deprecation")
-    public LuceneEndpoint(String endpointUri) {
-        super(endpointUri);
     }
 
     public LuceneEndpoint(String endpointUri, LuceneComponent component, LuceneConfiguration config) throws Exception {

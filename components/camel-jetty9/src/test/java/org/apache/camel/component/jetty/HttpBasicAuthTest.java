@@ -68,7 +68,7 @@ public class HttpBasicAuthTest extends BaseJettyTest {
     }
 
     @Test
-    public void testHttpBaiscAuth() throws Exception {
+    public void testHttpBasicAuth() throws Exception {
         String out = template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authUsername=donald&authPassword=duck", "Hello World", String.class);
         assertEquals("Bye World", out);
     }

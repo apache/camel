@@ -17,7 +17,7 @@ single correlation key into a single message exchange.
 === Aggregator options
 
 // eip options: START
-The Aggregate EIP supports 25 options which are listed below:
+The Aggregate EIP supports 24 options which are listed below:
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -39,7 +39,6 @@ The Aggregate EIP supports 25 options which are listed below:
 | *completionTimeoutChecker Interval* | Interval in millis that is used by the background task that checks for timeouts (org.apache.camel.TimeoutMap). By default the timeout checker runs every second. The timeout is an approximation and there is no guarantee that the a timeout is triggered exactly after the timeout value. It is not recommended to use very low timeout values or checker intervals. | 1000 | Long
 | *completionFromBatchConsumer* | Enables the batch completion mode where we aggregate from a org.apache.camel.BatchConsumer and aggregate the total number of exchanges the org.apache.camel.BatchConsumer has reported as total by checking the exchange property org.apache.camel.Exchange#BATCH_COMPLETE when its complete. | false | Boolean
 | *completionOnNewCorrelation Group* | Enables completion on all previous groups when a new incoming correlation group. This can for example be used to complete groups with same correlation keys when they are in consecutive order. Notice when this is enabled then only 1 correlation group can be in progress as when a new correlation group starts, then the previous groups is forced completed. | false | Boolean
-| *groupExchanges* | *Deprecated* Enables grouped exchanges, so the aggregator will group all aggregated exchanges into a single combined Exchange holding all the aggregated exchanges in a java.util.List. | false | Boolean
 | *eagerCheckCompletion* | Use eager completion checking which means that the completionPredicate will use the incoming Exchange. As opposed to without eager completion checking the completionPredicate will use the aggregated Exchange. | false | Boolean
 | *ignoreInvalidCorrelation Keys* | If a correlation key cannot be successfully evaluated it will be ignored by logging a DEBUG and then just ignore the incoming Exchange. | false | Boolean
 | *closeCorrelationKeyOn Completion* | Closes a correlation key when its complete. Any late received exchanges which has a correlation key that has been closed, it will be defined and a ClosedCorrelationKeyException is thrown. |  | Integer

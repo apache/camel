@@ -38,7 +38,7 @@ public class FileConsumerSharedThreadPollStopRouteTest extends FileConsumerShare
         assertMockEndpointsSatisfied();
 
         // now stop a
-        context.stopRoute("a");
+        context.getRouteController().stopRoute("a");
 
         resetMocks();
         mock.expectedBodiesReceived("Bye World 2");
@@ -53,7 +53,7 @@ public class FileConsumerSharedThreadPollStopRouteTest extends FileConsumerShare
         // now start a, which should pickup the file
         resetMocks();
         mock.expectedBodiesReceived("Hello World 2");
-        context.startRoute("a");
+        context.getRouteController().startRoute("a");
 
         assertMockEndpointsSatisfied();
     }

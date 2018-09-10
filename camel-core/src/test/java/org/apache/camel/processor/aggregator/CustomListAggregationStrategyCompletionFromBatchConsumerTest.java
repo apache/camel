@@ -40,7 +40,7 @@ public class CustomListAggregationStrategyCompletionFromBatchConsumerTest extend
         template.sendBodyAndHeader("file:target/batch", "150", Exchange.FILE_NAME, "2.txt");
         template.sendBodyAndHeader("file:target/batch", "130", Exchange.FILE_NAME, "3.txt");
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
 

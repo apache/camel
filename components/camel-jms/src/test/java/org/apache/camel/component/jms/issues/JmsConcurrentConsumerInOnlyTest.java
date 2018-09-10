@@ -43,7 +43,7 @@ public class JmsConcurrentConsumerInOnlyTest extends CamelTestSupport {
         // start route and process the messages
         getMockEndpoint("mock:foo").expectedMessageCount(size);
 
-        context.startAllRoutes();
+        context.getRouteController().startAllRoutes();
 
         assertMockEndpointsSatisfied();
     }

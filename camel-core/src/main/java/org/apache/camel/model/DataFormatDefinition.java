@@ -76,7 +76,7 @@ public class DataFormatDefinition extends IdentifiedType implements OtherAttribu
             ObjectHelper.notNull(ref, "ref or type");
 
             // try to let resolver see if it can resolve it, its not always possible
-            type = routeContext.getCamelContext().resolveDataFormatDefinition(ref);
+            type = routeContext.getCamelContext().adapt(ModelCamelContext.class).resolveDataFormatDefinition(ref);
 
             if (type != null) {
                 return type.getDataFormat(routeContext);
@@ -140,27 +140,8 @@ public class DataFormatDefinition extends IdentifiedType implements OtherAttribu
 
     /**
      * Allows derived classes to customize the data format
-     *
-     * @deprecated use {@link #configureDataFormat(org.apache.camel.spi.DataFormat, org.apache.camel.CamelContext)}
-     */
-    @Deprecated
-    protected void configureDataFormat(DataFormat dataFormat) {
-    }
-
-    /**
-     * Allows derived classes to customize the data format
      */
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-    }
-
-    /**
-     * Sets a named property on the data format instance using introspection
-     *
-     * @deprecated use {@link #setProperty(org.apache.camel.CamelContext, Object, String, Object)}
-     */
-    @Deprecated
-    protected void setProperty(Object bean, String name, Object value) {
-        setProperty(null, bean, name, value);
     }
 
     /**

@@ -161,7 +161,6 @@ public class SimpleBeanFixture {
      */
     @SuppressWarnings("deprecation")
     protected void initContext() throws Exception {
-        mContext.setLazyLoadTypeConverters(true);
         final MockEndpoint mock = mContext.getEndpoint("mock:sink", MockEndpoint.class);
         mock.setExpectedMessageCount(1);
         mMockEndpoint = new MockEndpointFixture(mock);

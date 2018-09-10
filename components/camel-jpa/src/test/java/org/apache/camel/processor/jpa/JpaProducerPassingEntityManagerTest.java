@@ -37,7 +37,7 @@ public class JpaProducerPassingEntityManagerTest extends AbstractJpaTest {
     @Test
     public void testRouteJpa() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
         JpaEndpoint jpa = context.getEndpoint("jpa://" + SendEmail.class.getName(), JpaEndpoint.class);
         EntityManagerFactory emf = jpa.getEntityManagerFactory();
 

@@ -97,7 +97,7 @@ You could, of course, have used the `ref` attribute instead:
 
 [source,xml]
 ----
-<to ref="endpoint2"/>
+<to uri="ref:endpoint2"/>
 ----
 
 Which is the more common way to write it.

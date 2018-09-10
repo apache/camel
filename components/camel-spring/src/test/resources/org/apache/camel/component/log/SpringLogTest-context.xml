@@ -36,7 +36,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
-            <to ref="log"/>
+            <to uri="ref:log"/>
             <to uri="mock:result"/>
         </route>
     </camelContext>

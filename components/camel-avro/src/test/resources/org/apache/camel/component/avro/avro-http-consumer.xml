@@ -30,11 +30,11 @@
             <from uri="avro:http:localhost:{{avroport}}?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"/>
             <choice>
                 <when>
-                    <el>${in.headers.CamelAvroMessageName == 'put'}</el>
+                    <simple>${in.headers.CamelAvroMessageName} == 'put'</simple>
                     <process ref="putProcessor"/>
                 </when>
                 <when>
-                    <el>${in.headers.CamelAvroMessageName == 'get'}</el>
+                    <simple>${in.headers.CamelAvroMessageName} == 'get'</simple>
                     <process ref="getProcessor"/>
                 </when>
             </choice>

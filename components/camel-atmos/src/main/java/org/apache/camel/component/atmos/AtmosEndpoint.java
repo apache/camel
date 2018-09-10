@@ -54,10 +54,6 @@ public class AtmosEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
-    public AtmosEndpoint(String endpointUri) {
-        super(endpointUri);
-    }
-
     public AtmosConfiguration getConfiguration() {
         return configuration;
     }

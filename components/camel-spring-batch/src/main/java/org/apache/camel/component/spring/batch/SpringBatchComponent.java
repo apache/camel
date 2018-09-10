@@ -19,11 +19,11 @@ package org.apache.camel.component.spring.batch;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
 
-public class SpringBatchComponent extends UriEndpointComponent {
+public class SpringBatchComponent extends DefaultComponent {
 
     private static final String DEFAULT_JOB_LAUNCHER_REF_NAME = "jobLauncher";
 
@@ -34,7 +34,6 @@ public class SpringBatchComponent extends UriEndpointComponent {
     private JobRegistry jobRegistry;
 
     public SpringBatchComponent() {
-        super(SpringBatchEndpoint.class);
     }
 
     @Override

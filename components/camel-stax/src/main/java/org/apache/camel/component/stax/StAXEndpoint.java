@@ -18,7 +18,7 @@ package org.apache.camel.component.stax;
 
 import org.xml.sax.ContentHandler;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.spi.Metadata;
@@ -35,8 +35,8 @@ public class StAXEndpoint extends ProcessorEndpoint {
     @UriPath @Metadata(required = "true")
     private String contentHandlerClass;
 
-    public StAXEndpoint(String endpointUri, CamelContext context) {
-        super(endpointUri, context, null);
+    public StAXEndpoint(String endpointUri, Component component) {
+        super(endpointUri, component);
     }
 
     public String getContentHandlerClass() {

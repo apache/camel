@@ -15,10 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
+
 import org.apache.camel.CamelContext;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
 
 public class DefaultUnitOfWorkTest extends Assert {
     

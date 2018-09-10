@@ -23,16 +23,15 @@ import com.microsoft.azure.storage.StorageCredentialsAnonymous;
 import com.microsoft.azure.storage.blob.CloudBlob;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
-public class BlobServiceComponent extends UriEndpointComponent {
+public class BlobServiceComponent extends DefaultComponent {
     
     public BlobServiceComponent() {
-        super(BlobServiceEndpoint.class);
     }
 
     public BlobServiceComponent(CamelContext context) {
-        super(context, BlobServiceEndpoint.class);
+        super(context);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

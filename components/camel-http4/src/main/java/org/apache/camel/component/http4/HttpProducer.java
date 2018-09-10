@@ -549,9 +549,7 @@ public class HttpProducer extends DefaultProducer {
                             }
                         }
                         StringEntity entity = new StringEntity((String) data, charset);
-                        if (contentType != null) {
-                            entity.setContentType(contentType.toString());
-                        }
+                        entity.setContentType(contentType != null ? contentType.toString() : null);
                         answer = entity;
                     }
 

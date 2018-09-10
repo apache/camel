@@ -50,7 +50,7 @@ public final class SchematronProcessorFactory {
      * @param rules the given schematron rules
      * @return an instance of SchematronEngine
      */
-    public static SchematronProcessor newScehamtronEngine(final Templates rules) {
+    public static SchematronProcessor newSchematronEngine(final Templates rules) {
         try {
             return new SchematronProcessor(getXMLReader(), rules);
         } catch (Exception e) {

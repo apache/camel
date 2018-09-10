@@ -52,8 +52,8 @@ public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
 
         // cater for slow boxes
         await().atMost(5, TimeUnit.SECONDS).until(() -> {
-            Integer num = (Integer) mbeanServer.getAttribute(on, "InflightExchanges");
-            return num == 1;
+            Long num = (Long) mbeanServer.getAttribute(on, "ExchangesInflight");
+            return num == 1L;
         });
 
         assertMockEndpointsSatisfied();
@@ -92,8 +92,8 @@ public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
         assertNull(lastFailed);
         assertNull(firstFailed);
 
-        Integer inFlight = (Integer) mbeanServer.getAttribute(on, "InflightExchanges");
-        assertEquals(0, inFlight.longValue());
+        Long inFlight = (Long) mbeanServer.getAttribute(on, "ExchangesInflight");
+        assertEquals(0L, inFlight.longValue());
     }
 
     @Override

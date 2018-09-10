@@ -25,7 +25,6 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClientBuilder;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -44,12 +43,6 @@ public class CwEndpoint extends DefaultEndpoint {
     @UriParam
     private CwConfiguration configuration;
     private AmazonCloudWatch cloudWatchClient;
-
-    @Deprecated
-    public CwEndpoint(String uri, CamelContext context, CwConfiguration configuration) {
-        super(uri, context);
-        this.configuration = configuration;
-    }
 
     public CwEndpoint(String uri, Component component, CwConfiguration configuration) {
         super(uri, component);

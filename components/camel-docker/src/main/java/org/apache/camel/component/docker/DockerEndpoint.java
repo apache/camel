@@ -46,10 +46,6 @@ public class DockerEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
-    public DockerEndpoint(String endpointUri) {
-        super(endpointUri);
-    }
-
     @Override
     public Producer createProducer() throws Exception {
         DockerOperation operation = configuration.getOperation();

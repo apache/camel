@@ -56,7 +56,7 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
         context.getShutdownStrategy().setTimeout(30);
 
         // start route
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMinimumMessageCount(1);

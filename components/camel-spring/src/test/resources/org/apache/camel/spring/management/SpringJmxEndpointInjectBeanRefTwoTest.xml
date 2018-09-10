@@ -38,7 +38,7 @@
     </route>
 
     <route>
-      <from ref="foo"/>
+      <from uri="ref:foo"/>
       <to uri="mock:result"/>
     </route>
 

@@ -43,11 +43,10 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
     private boolean useGlobalSslContextParameters;
 
     public CxfComponent() {
-        super(CxfEndpoint.class);
     }
 
     public CxfComponent(CamelContext context) {
-        super(context, CxfEndpoint.class);
+        super(context);
     }
 
     /**

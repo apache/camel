@@ -72,7 +72,7 @@ public class ConsumerCompletionTest extends BeanstalkMockTestSupport {
         result.expectedHeaderReceived(Headers.JOB_ID, jobId);
         result.message(0).header(Headers.JOB_ID).isEqualTo(jobId);
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         result.assertIsSatisfied();
 
@@ -103,7 +103,7 @@ public class ConsumerCompletionTest extends BeanstalkMockTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(0);
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertTrue(notify.matches(5, TimeUnit.SECONDS));
 
@@ -136,7 +136,7 @@ public class ConsumerCompletionTest extends BeanstalkMockTestSupport {
         result.expectedHeaderReceived(Headers.JOB_ID, jobId);
         result.message(0).header(Headers.JOB_ID).isEqualTo(jobId);
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         result.assertIsSatisfied();
 

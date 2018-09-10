@@ -26,7 +26,6 @@ public final class AtomixQueueComponent extends AbstractAtomixClientComponent<At
     private AtomixQueueConfiguration configuration = new AtomixQueueConfiguration();
 
     public AtomixQueueComponent() {
-        super();
     }
 
     public AtomixQueueComponent(CamelContext camelContext) {

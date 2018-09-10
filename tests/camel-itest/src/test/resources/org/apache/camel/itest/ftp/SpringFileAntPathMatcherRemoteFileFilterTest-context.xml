@@ -33,7 +33,7 @@
         <endpoint id="myFTPEndpoint" uri="ftp://admin@localhost:${SpringFileAntPathMatcherRemoteFileFilterTest.ftpPort}/antpath?password=admin&amp;recursive=true&amp;delay=10000&amp;initialDelay=2000&amp;filter=#myAntFilter"/>
 
         <route>
-            <from ref="myFTPEndpoint"/>
+            <from uri="ref:myFTPEndpoint"/>
             <to uri="mock:result"/>
         </route>
     </camelContext>

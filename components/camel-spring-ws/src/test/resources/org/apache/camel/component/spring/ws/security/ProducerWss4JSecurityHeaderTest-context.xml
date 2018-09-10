@@ -34,7 +34,7 @@
     <route>
       <from uri="direct:testHeader"/>
       <to uri="spring-ws:uri:http://localhost:8080/simple-server-test/soap/calc?webServiceTemplate=#webServiceTemplate&amp;endpointMapping=#endpointMapping"/>
-      <unmarshal ref="jaxb"/>
+      <unmarshal><custom ref="jaxb"/></unmarshal>
     </route>
   </camelContext>
 

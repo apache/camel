@@ -45,19 +45,6 @@ public class SynchronousDelegateProducer implements Producer {
         return producer.getEndpoint();
     }
 
-    public Exchange createExchange() {
-        return producer.createExchange();
-    }
-
-    public Exchange createExchange(ExchangePattern pattern) {
-        return producer.createExchange(pattern);
-    }
-
-    @Deprecated
-    public Exchange createExchange(Exchange exchange) {
-        return producer.createExchange(exchange);
-    }
-
     public void process(Exchange exchange) throws Exception {
         producer.process(exchange);
     }

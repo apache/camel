@@ -47,14 +47,14 @@ public class SedaComponentReferenceEndpointTest extends ContextTestSupport {
         assertEquals(3, numberOfReferences(seda));
 
         // remove the 1st route
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
         context.removeRoute("foo");
 
         assertEquals(1, seda.getQueues().get(key).getCount());
         assertEquals(2, numberOfReferences(seda));
 
         // remove the 2nd route
-        context.stopRoute("foo2");
+        context.getRouteController().stopRoute("foo2");
         context.removeRoute("foo2");
 
         // and there is no longer queues for the foo key

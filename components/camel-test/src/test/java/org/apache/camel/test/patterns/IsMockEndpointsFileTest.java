@@ -63,7 +63,7 @@ public class IsMockEndpointsFileTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("file:target/input")
                     .choice()
-                        .when(body(String.class).contains("Camel")).to("file:target/messages/camel")
+                        .when(bodyAs(String.class).contains("Camel")).to("file:target/messages/camel")
                         .otherwise().to("file:target/messages/others");
             }
         };

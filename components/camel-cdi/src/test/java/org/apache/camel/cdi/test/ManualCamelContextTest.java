@@ -81,7 +81,7 @@ public class ManualCamelContextTest {
     @InSequence(1)
     public void verifyContext(CamelContext context) {
         assertThat("Number of routes is incorrect!", context.getRoutes().size(), is(equalTo(1)));
-        assertThat("Configured route is incorrect!", context.getRouteStatus("simple"), is(equalTo(ServiceStatus.Started)));
+        assertThat("Configured route is incorrect!", context.getRouteController().getRouteStatus("simple"), is(equalTo(ServiceStatus.Started)));
     }
 
     @Test
@@ -90,7 +90,7 @@ public class ManualCamelContextTest {
         context.addRoutes(builder);
 
         assertThat("Number of routes is incorrect!", context.getRoutes().size(), is(equalTo(2)));
-        assertThat("Configured route is incorrect!", context.getRouteStatus("manual"), is(equalTo(ServiceStatus.Started)));
+        assertThat("Configured route is incorrect!", context.getRouteController().getRouteStatus("manual"), is(equalTo(ServiceStatus.Started)));
     }
 
     @Test

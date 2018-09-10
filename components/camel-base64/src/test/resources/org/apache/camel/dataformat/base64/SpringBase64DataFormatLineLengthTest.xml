@@ -31,13 +31,13 @@
 
         <route>
             <from uri="direct:startEncode" />
-            <marshal ref="base64" />
+            <marshal><custom ref="base64" /></marshal>
             <to uri="mock:result" />
         </route>
 
         <route>
             <from uri="direct:startDecode" />
-            <unmarshal ref="base64" />
+            <unmarshal><custom ref="base64" /></unmarshal>
             <to uri="mock:result" />
         </route>
 

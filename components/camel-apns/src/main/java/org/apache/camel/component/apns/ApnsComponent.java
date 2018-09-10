@@ -20,19 +20,18 @@ import java.util.Map;
 
 import com.notnoop.apns.ApnsService;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 
 /**
  * For sending notifications to Apple iOS devices
  */
-public class ApnsComponent extends UriEndpointComponent {
+public class ApnsComponent extends DefaultComponent {
 
     @Metadata(required = "true")
     private ApnsService apnsService;
 
     public ApnsComponent() {
-        super(ApnsEndpoint.class);
     }
 
     public ApnsComponent(ApnsService apnsService) {

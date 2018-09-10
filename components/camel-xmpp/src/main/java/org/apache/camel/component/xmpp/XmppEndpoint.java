@@ -107,11 +107,6 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         super(uri, component);
     }
 
-    @Deprecated
-    public XmppEndpoint(String endpointUri) {
-        super(endpointUri);
-    }
-
     public Producer createProducer() throws Exception {
         if (room != null) {
             return createGroupChatProducer();
@@ -154,7 +149,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public Exchange createExchange(Stanza packet) {
         Exchange exchange = super.createExchange();
         exchange.setProperty(Exchange.BINDING, getBinding());
-        exchange.setIn(new XmppMessage(packet));
+        exchange.setIn(new XmppMessage(exchange, packet));
         return exchange;
     }
 

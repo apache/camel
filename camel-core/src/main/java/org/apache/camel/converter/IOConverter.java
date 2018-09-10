@@ -96,14 +96,6 @@ public final class IOConverter {
         }
     }
 
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public static BufferedReader toReader(File file) throws IOException {
-        return toReader(file, (String) null);
-    }
-
     @Converter
     public static BufferedReader toReader(File file, Exchange exchange) throws IOException {
         return toReader(file, IOHelper.getCharsetName(exchange));
@@ -124,15 +116,6 @@ public final class IOConverter {
         return IOHelper.buffered(new FileOutputStream(file));
     }
 
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public static BufferedWriter toWriter(File file) throws IOException {
-        FileOutputStream os = new FileOutputStream(file, false);
-        return toWriter(os, IOHelper.getCharsetName(null, true));
-    }
-    
     @Converter
     public static BufferedWriter toWriter(File file, Exchange exchange) throws IOException {
         FileOutputStream os = new FileOutputStream(file, false);
@@ -147,14 +130,6 @@ public final class IOConverter {
         return IOHelper.buffered(new EncodingFileWriter(os, charset));
     }
 
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public static Reader toReader(InputStream in) throws IOException {
-        return toReader(in, null);
-    }
-
     @Converter
     public static Reader toReader(InputStream in, Exchange exchange) throws IOException {
         return IOHelper.buffered(new InputStreamReader(in, IOHelper.getCharsetName(exchange)));
@@ -165,14 +140,6 @@ public final class IOConverter {
         return toReader(new ByteArrayInputStream(data), exchange);
     }
 
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public static Writer toWriter(OutputStream out) throws IOException {
-        return toWriter(out, null);
-    }
-    
     @Converter
     public static Writer toWriter(OutputStream out, Exchange exchange) throws IOException {
         return IOHelper.buffered(new OutputStreamWriter(out, IOHelper.getCharsetName(exchange)));
@@ -185,14 +152,6 @@ public final class IOConverter {
         return new StringReader(text);
     }
 
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public static InputStream toInputStream(String text) throws IOException {
-        return toInputStream(text, null);
-    }
-    
     @Converter
     public static InputStream toInputStream(String text, Exchange exchange) throws IOException {
         return toInputStream(text.getBytes(IOHelper.getCharsetName(exchange)));
@@ -207,41 +166,17 @@ public final class IOConverter {
     public static InputStream toInputStream(StringBuilder builder, Exchange exchange) throws IOException {
         return toInputStream(builder.toString(), exchange);
     }
-    
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public static InputStream toInputStream(BufferedReader buffer) throws IOException {
-        return toInputStream(buffer, null);
-    }
-    
+
     @Converter
     public static InputStream toInputStream(BufferedReader buffer, Exchange exchange) throws IOException {
         return toInputStream(toString(buffer), exchange);
     }
 
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public static String toString(byte[] data) throws IOException {
-        return toString(data, null);
-    }
-    
     @Converter
     public static String toString(byte[] data, Exchange exchange) throws IOException {
         return new String(data, IOHelper.getCharsetName(exchange));
     }
 
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public static String toString(File file) throws IOException {
-        return toString(file, null);
-    }
-    
     @Converter
     public static String toString(File file, Exchange exchange) throws IOException {
         return toString(toReader(file, exchange));
@@ -256,26 +191,10 @@ public final class IOConverter {
             IOHelper.close(is, "file", LOG);
         }
     }
-    
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public static byte[] toByteArray(Reader reader) throws IOException {
-        return toByteArray(reader, null);
-    }
-    
+
     @Converter
     public static byte[] toByteArray(Reader reader, Exchange exchange) throws IOException {
         return toByteArray(IOHelper.buffered(reader), exchange);
-    }
-
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public static String toString(URL url) throws IOException {
-        return toString(url, null);
     }
 
     @Converter
@@ -309,40 +228,16 @@ public final class IOConverter {
 
         return sb.toString();
     }
-    
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public static byte[] toByteArray(BufferedReader reader) throws IOException {
-        return toByteArray(reader, null);
-    }
-    
+
     @Converter
     public static byte[] toByteArray(BufferedReader reader, Exchange exchange) throws IOException {
         String s = toString(reader);
         return toByteArray(s, exchange);
     }
 
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public static byte[] toByteArray(String value) throws IOException {
-        return toByteArray(value, null);
-    }
-
     @Converter
     public static byte[] toByteArray(String value, Exchange exchange) throws IOException {
         return value.getBytes(IOHelper.getCharsetName(exchange));
-    }
-
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public static String toString(InputStream in) throws IOException {
-        return toString(in, null);
     }
 
     @Converter
@@ -414,14 +309,6 @@ public final class IOConverter {
         return ByteBuffer.wrap(os.toByteArray());
     }
 
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public static String toString(ByteArrayOutputStream os) throws IOException {
-        return toString(os, null);
-    }
-
     @Converter
     public static String toString(ByteArrayOutputStream os, Exchange exchange) throws IOException {
         return os.toString(IOHelper.getCharsetName(exchange));
@@ -459,23 +346,6 @@ public final class IOConverter {
             IOHelper.close(reader);
         }
         return prop;
-    }
-
-    /**
-     * Gets the charset name if set as header or property {@link Exchange#CHARSET_NAME}.
-     *
-     * @param exchange  the exchange
-     * @param useDefault should we fallback and use JVM default charset if no property existed?
-     * @return the charset, or <tt>null</tt> if no found
-     */
-    @Deprecated
-    public static String getCharsetName(Exchange exchange, boolean useDefault) {
-        return IOHelper.getCharsetName(exchange, useDefault);
-    }
-    
-    @Deprecated
-    public static String getCharsetName(Exchange exchange) {
-        return getCharsetName(exchange, true);
     }
 
     /**
@@ -577,19 +447,6 @@ public final class IOConverter {
                 out.close();
             }
         }
-    }
-    
-    /**
-     * This method will take off the quotes and double quotes of the charset
-     */
-    @Deprecated
-    public static String normalizeCharset(String charset) {
-        return IOHelper.normalizeCharset(charset);
-    }
-    
-    @Deprecated
-    public static void validateCharset(String charset) throws UnsupportedCharsetException {
-        IOHelper.validateCharset(charset);
     }
 
 }

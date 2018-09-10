@@ -93,13 +93,6 @@ public class MllpEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public Exchange createExchange(Exchange exchange) {
-        Exchange mllpExchange = super.createExchange(exchange);
-        setExchangeProperties(mllpExchange);
-        return mllpExchange;
-    }
-
-    @Override
     public Exchange createExchange(ExchangePattern exchangePattern) {
         Exchange mllpExchange = super.createExchange(exchangePattern);
         setExchangeProperties(mllpExchange);

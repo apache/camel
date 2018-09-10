@@ -148,7 +148,7 @@ public class DefaultTransformerRegistry extends AbstractMap<TransformerKey, Tran
         }
 
         // we want transformers to be static if they are part of setting up or starting routes
-        if (context.isSetupRoutes() || context.isStartingRoutes()) {
+        if (context.isSetupRoutes() || context.getRouteController().isStartingRoutes()) {
             answer = staticMap.put(key, transformer);
         } else {
             answer = dynamicMap.put(key, transformer);

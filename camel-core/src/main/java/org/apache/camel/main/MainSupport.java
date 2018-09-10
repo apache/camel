@@ -32,6 +32,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultModelJAXBContextFactory;
 import org.apache.camel.impl.FileWatcherReloadStrategy;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ModelJAXBContextFactory;
@@ -192,10 +193,7 @@ public abstract class MainSupport extends ServiceSupport {
 
     /**
      * Hangup support is enabled by default.
-     *
-     * @deprecated is enabled by default now, so no longer need to call this method.
      */
-    @Deprecated
     public void enableHangupSupport() {
         hangupInterceptorEnabled = true;
     }
@@ -525,7 +523,7 @@ public abstract class MainSupport extends ServiceSupport {
     public List<RouteDefinition> getRouteDefinitions() {
         List<RouteDefinition> answer = new ArrayList<>();
         for (CamelContext camelContext : camelContexts) {
-            answer.addAll(camelContext.getRouteDefinitions());
+            answer.addAll(camelContext.adapt(ModelCamelContext.class).getRouteDefinitions());
         }
         return answer;
     }

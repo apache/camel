@@ -27,15 +27,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
  * Catches exceptions as part of a try, catch, finally block
@@ -182,48 +179,6 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
      */
     public CatchDefinition onWhen(@AsPredicate Predicate predicate) {
         setOnWhen(new WhenDefinition(predicate));
-        return this;
-    }
-
-    /**
-     * Sets whether the exchange should be marked as handled or not.
-     *
-     * @param handled  handled or not
-     * @return the builder
-     * @deprecated will be removed in Camel 3.0. Instead of using handled(false) you can re-throw the exception
-     * from a {@link Processor} or use the {@link ProcessorDefinition#throwException(Exception)}
-     */
-    @Deprecated
-    public CatchDefinition handled(boolean handled) {
-        Expression expression = ExpressionBuilder.constantExpression(Boolean.toString(handled));
-        return handled(expression);
-    }
-
-    /**
-     * Sets whether the exchange should be marked as handled or not.
-     *
-     * @param handled  predicate that determines true or false
-     * @return the builder
-     * @deprecated will be removed in Camel 3.0. Instead of using handled(false) you can re-throw the exception
-     * from a {@link Processor} or use the {@link ProcessorDefinition#throwException(Exception)}
-     */
-    @Deprecated
-    public CatchDefinition handled(@AsPredicate Predicate handled) {
-        setHandledPolicy(handled);
-        return this;
-    }
-
-    /**
-     * Sets whether the exchange should be marked as handled or not.
-     *
-     * @param handled  expression that determines true or false
-     * @return the builder
-     * @deprecated will be removed in Camel 3.0. Instead of using handled(false) you can re-throw the exception
-     * from a {@link Processor} or use the {@link ProcessorDefinition#throwException(Exception)}
-     */
-    @Deprecated
-    public CatchDefinition handled(@AsPredicate Expression handled) {
-        setHandledPolicy(ExpressionToPredicateAdapter.toPredicate(handled));
         return this;
     }
 

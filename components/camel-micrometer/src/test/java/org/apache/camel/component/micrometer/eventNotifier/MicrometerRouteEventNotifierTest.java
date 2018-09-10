@@ -45,7 +45,7 @@ public class MicrometerRouteEventNotifierTest extends AbstractMicrometerEventNot
         context.addRoutes(new TestRoute());
         assertEquals(1.0d, added.value(), 0.0001d);
         assertEquals(1.0d, running.value(), 0.0001d);
-        context.stopRoute(ROUTE_ID);
+        context.getRouteController().stopRoute(ROUTE_ID);
         assertEquals(1.0d, added.value(), 0.0001d);
         assertEquals(0.0d, running.value(), 0.0001d);
         context.removeRoute(ROUTE_ID);

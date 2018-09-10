@@ -38,7 +38,6 @@ public class EtcdComponent extends DefaultComponent implements SSLContextParamet
     private boolean useGlobalSslContextParameters;
 
     public EtcdComponent() {
-        super();
     }
 
     public EtcdComponent(CamelContext context) {

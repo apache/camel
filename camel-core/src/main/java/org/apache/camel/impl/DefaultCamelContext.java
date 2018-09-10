@@ -93,7 +93,6 @@ import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.converter.BaseTypeConverterRegistry;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.camel.impl.converter.LazyLoadingTypeConverter;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
@@ -119,16 +118,13 @@ import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.Debug;
-import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.HandleFault;
-import org.apache.camel.processor.interceptor.StreamCaching;
 import org.apache.camel.runtimecatalog.DefaultRuntimeCamelCatalog;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentResolver;
-import org.apache.camel.spi.Container;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DataType;
@@ -255,7 +251,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private Boolean streamCache = Boolean.FALSE;
     private Boolean handleFault = Boolean.FALSE;
     private Boolean disableJMX = Boolean.FALSE;
-    private Boolean lazyLoadTypeConverters = Boolean.FALSE;
     private Boolean loadTypeConverters = Boolean.TRUE;
     private Boolean typeConverterStatisticsEnabled = Boolean.FALSE;
     private Boolean useMDCLogging = Boolean.FALSE;
@@ -618,7 +613,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             strategy.onEndpointAdd(endpoint);
         }
         addEndpointToRegistry(uri, endpoint);
-        if (oldEndpoint != null) {
+        if (oldEndpoint != null && oldEndpoint != endpoint) {
             stopServices(oldEndpoint);
         }
 
@@ -997,11 +992,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return null;
     }
 
-    @Deprecated
-    public void setRoutes(List<Route> routes) {
-        throw new UnsupportedOperationException("Overriding existing routes is not supported yet, use addRouteCollection instead");
-    }
-
     void removeRouteCollection(Collection<Route> routes) {
         synchronized (this.routes) {
             this.routes.removeAll(routes);
@@ -1309,8 +1299,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         DefaultRouteError.reset(this, routeId);
 
         // remove the route from ErrorHandlerBuilder if possible
-        if (getErrorHandlerBuilder() instanceof ErrorHandlerBuilderSupport) {
-            ErrorHandlerBuilderSupport builder = (ErrorHandlerBuilderSupport)getErrorHandlerBuilder();
+        if (getErrorHandlerFactory() instanceof ErrorHandlerBuilderSupport) {
+            ErrorHandlerBuilderSupport builder = (ErrorHandlerBuilderSupport) getErrorHandlerFactory();
             builder.removeOnExceptionList(routeId);
         }
 
@@ -1606,10 +1596,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public Map<String, Properties> findEips() throws LoadPropertiesException, IOException {
         return CamelContextHelper.findEips(this);
-    }
-
-    public String getComponentDocumentation(String componentName) throws IOException {
-        return null;
     }
 
     public String getComponentParameterJsonSchema(String componentName) throws IOException {
@@ -2249,7 +2235,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             Map<String, String[]> uriOptions = new LinkedHashMap<>();
 
             // insert values from uri
-            Map<String, Object> options = EndpointHelper.endpointProperties(this, uri);
+            Map<String, Object> options = new HashMap<>(getRuntimeCamelCatalog().endpointProperties(uri));
 
             // extract consumer. prefix options
             Map<String, Object> consumerOptions = IntrospectionSupport.extractProperties(options, "consumer.");
@@ -2843,10 +2829,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         if (interceptStrategy instanceof HandleFault) {
             setHandleFault(true);
-        } else if (interceptStrategy instanceof StreamCaching) {
-            setStreamCaching(true);
-        } else if (interceptStrategy instanceof Delayer) {
-            setDelayer(((Delayer)interceptStrategy).getDelay());
         }
     }
 
@@ -2977,12 +2959,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return answer;
     }
 
-    public ErrorHandlerBuilder getErrorHandlerBuilder() {
+    public ErrorHandlerBuilder getErrorHandlerFactory() {
         return (ErrorHandlerBuilder)errorHandlerBuilder;
     }
 
-    public void setErrorHandlerBuilder(ErrorHandlerFactory errorHandlerBuilder) {
-        this.errorHandlerBuilder = errorHandlerBuilder;
+    public void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory) {
+        this.errorHandlerBuilder = errorHandlerFactory;
     }
 
     public ScheduledExecutorService getErrorHandlerExecutorService() {
@@ -3082,7 +3064,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
         }
 
-        watch.stop();
+        watch.taken();
         if (log.isInfoEnabled()) {
             log.info("Apache Camel {} (CamelContext: {}) is suspended in {}", getVersion(), getName(), TimeUtils.printDuration(watch.taken()));
         }
@@ -3132,11 +3114,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             startDate = new Date();
             stopWatch.restart();
             log.info("Apache Camel {} (CamelContext: {}) is starting", getVersion(), getName());
-
-            // Note: This is done on context start as we want to avoid doing it during object construction
-            // where we could be dealing with CDI proxied camel contexts which may never be started (CAMEL-9657)
-            // [TODO] Remove in 3.0
-            Container.Instance.manage(this);
 
             // Start the route controller
             ServiceHelper.startServices(this.routeController);
@@ -3595,9 +3572,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // and clear start date
         startDate = null;
-
-        // [TODO] Remove in 3.0
-        Container.Instance.unmanage(this);
     }
 
     /**
@@ -4115,11 +4089,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
      */
     protected TypeConverter createTypeConverter() {
         BaseTypeConverterRegistry answer;
-        if (isLazyLoadTypeConverters()) {
-            answer = new LazyLoadingTypeConverter(packageScanClassResolver, getInjector(), getDefaultFactoryFinder());
-        } else {
-            answer = new DefaultTypeConverter(packageScanClassResolver, getInjector(), getDefaultFactoryFinder(), isLoadTypeConverters());
-        }
+        answer = new DefaultTypeConverter(packageScanClassResolver, getInjector(), getDefaultFactoryFinder(), isLoadTypeConverters());
         answer.setCamelContext(this);
         setTypeConverterRegistry(answer);
         return answer;
@@ -4223,22 +4193,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return dataFormats;
     }
 
-    @Deprecated
-    public Map<String, String> getProperties() {
-        return getGlobalOptions();
-    }
-
     @Override
     public Map<String, String> getGlobalOptions() {
         return globalOptions;
     }
 
-    @Deprecated
-    public void setProperties(Map<String, String> properties) {
-        this.setGlobalOptions(properties);
-    }
-
-    @Override
     public void setGlobalOptions(Map<String, String> globalOptions) {
         this.globalOptions = globalOptions;
     }
@@ -4388,16 +4347,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return autoStartup != null && autoStartup;
     }
 
-    @Deprecated
-    public Boolean isLazyLoadTypeConverters() {
-        return lazyLoadTypeConverters != null && lazyLoadTypeConverters;
-    }
-
-    @Deprecated
-    public void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters) {
-        this.lazyLoadTypeConverters = lazyLoadTypeConverters;
-    }
-
     public Boolean isLoadTypeConverters() {
         return loadTypeConverters != null && loadTypeConverters;
     }
@@ -4498,14 +4447,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
     }
 
-    /**
-     * @deprecated use {@link org.apache.camel.util.CamelContextHelper#lookupPropertiesComponent(org.apache.camel.CamelContext, boolean)}
-     */
-    @Deprecated
-    protected Component lookupPropertiesComponent() {
-        return CamelContextHelper.lookupPropertiesComponent(this, false);
-    }
-
     public ShutdownStrategy getShutdownStrategy() {
         return shutdownStrategy;
     }
@@ -4540,13 +4481,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public ExecutorServiceManager getExecutorServiceManager() {
         return this.executorServiceManager;
-    }
-
-    @Deprecated
-    public org.apache.camel.spi.ExecutorServiceStrategy getExecutorServiceStrategy() {
-        // its okay to create a new instance as its stateless, and just delegate
-        // ExecutorServiceManager which is the new API
-        return new DefaultExecutorServiceStrategy(this);
     }
 
     public void setExecutorServiceManager(ExecutorServiceManager executorServiceManager) {
@@ -4602,12 +4536,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public void setRestRegistry(RestRegistry restRegistry) {
         this.restRegistry = restRegistry;
-    }
-
-    @Deprecated
-    @Override
-    public String getProperty(String key) {
-        return getGlobalOption(key);
     }
 
     @Override

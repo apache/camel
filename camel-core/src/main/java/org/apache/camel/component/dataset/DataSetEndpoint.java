@@ -64,13 +64,6 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     @UriParam(enums = "strict,lenient,off", defaultValue = "lenient")
     private String dataSetIndex = "lenient";
 
-    @Deprecated
-    public DataSetEndpoint() {
-        this.log = LoggerFactory.getLogger(DataSetEndpoint.class);
-        // optimize as we dont need to copy the exchange
-        setCopyOnExchange(false);
-    }
-
     public DataSetEndpoint(String endpointUri, Component component, DataSet dataSet) {
         super(endpointUri, component);
         this.dataSet = dataSet;

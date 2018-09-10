@@ -25,7 +25,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import spark.route.HttpMethod;
 
 /**
@@ -125,8 +125,8 @@ public class SparkEndpoint extends DefaultEndpoint {
     protected void doStart() throws Exception {
         super.doStart();
 
-        ObjectHelper.notEmpty(verb, "verb", this);
-        ObjectHelper.notEmpty(path, "path", this);
+        StringHelper.notEmpty(verb, "verb", this);
+        StringHelper.notEmpty(path, "path", this);
 
         // verb must be supported by Spark and lets convert to the actual name
         HttpMethod method = getCamelContext().getTypeConverter().mandatoryConvertTo(HttpMethod.class, verb);

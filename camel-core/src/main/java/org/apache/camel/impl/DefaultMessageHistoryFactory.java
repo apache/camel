@@ -16,18 +16,11 @@
  */
 package org.apache.camel.impl;
 
-import java.util.Date;
-
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.spi.MessageHistoryFactory;
 
 public class DefaultMessageHistoryFactory implements MessageHistoryFactory {
-
-    @Override
-    public MessageHistory newMessageHistory(String routeId, NamedNode node, Date timestamp) {
-        return new DefaultMessageHistory(routeId, node, timestamp.getTime());
-    }
 
     @Override
     public MessageHistory newMessageHistory(String routeId, NamedNode node, long timestamp) {

@@ -23,7 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.SSLContextParametersAware;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.mina.core.filterchain.IoFilter;
@@ -33,7 +33,7 @@ import org.apache.mina.core.filterchain.IoFilter;
  *
  * @version 
  */
-public class Mina2Component extends UriEndpointComponent implements SSLContextParametersAware {
+public class Mina2Component extends DefaultComponent implements SSLContextParametersAware {
 
     @Metadata(label = "advanced")
     private Mina2Configuration configuration;
@@ -41,11 +41,11 @@ public class Mina2Component extends UriEndpointComponent implements SSLContextPa
     private boolean useGlobalSslContextParameters;
 
     public Mina2Component() {
-        super(Mina2Endpoint.class);
+        super();
     }
 
     public Mina2Component(CamelContext context) {
-        super(context, Mina2Endpoint.class);
+        super(context);
     }
 
     @Override

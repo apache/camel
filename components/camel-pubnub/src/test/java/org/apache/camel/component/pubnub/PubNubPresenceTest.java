@@ -47,7 +47,7 @@ public class PubNubPresenceTest extends PubNubTestBase {
                           + "\"d\":{\"action\": \"join\", \"timestamp\": 1463753674, \"uuid\": \"24c9bb19-1fcd-4c40-a6f1-522a8a1329ef\", \"occupancy\": 3},\"b\":\"mychannel-pnpres\"},"
                           + "{\"a\":\"4\",\"f\":512,\"p\":{\"t\":\"14637536741726901\",\"r\":1},\"k\":\"demo-36\",\"c\":\"mychannel-pnpres\",\"d\":{\"action\": \"state-change\", "
                           + "\"timestamp\": 1463753674, \"data\": {\"state\": \"cool\"}, \"uuid\": \"24c9bb19-1fcd-4c40-a6f1-522a8a1329ef\", \"occupancy\": 3},\"b\":\"mychannel-pnpres\"}]}")));
-        context.startRoute("presence-route");
+        context.getRouteController().startRoute("presence-route");
         mockResult.expectedMinimumMessageCount(1);
         mockResult.expectedHeaderReceived(PubNubConstants.CHANNEL, "mychannel");
         assertMockEndpointsSatisfied();
@@ -66,7 +66,7 @@ public class PubNubPresenceTest extends PubNubTestBase {
                 .withBody("{\"t\":{\"t\":\"14901247588021627\",\"r\":2},\"m\":[{\"a\":\"4\",\"f\":0,\"p\":{\"t\":\"14901247587675704\",\"r\":1},\"k\":\"demo-36\",\"c\":\"mychannel-pnpres\","
                           + "\"d\":{\"action\": \"interval\", \"timestamp\": 1490124758, \"occupancy\": 2, \"here_now_refresh\": true, "
                           + "\"join\": [\"2220E216-5A30-49AD-A89C-1E0B5AE26AD7\", \"4262AE3F-3202-4487-BEE0-1A0D91307DEB\"]},\"b\":\"mychannel-pnpres\"}]}")));
-        context.startRoute("presence-route");
+        context.getRouteController().startRoute("presence-route");
         mockResult.expectedMinimumMessageCount(1);
         assertMockEndpointsSatisfied();
         PNPresenceEventResult presence = mockResult.getReceivedExchanges().get(0).getIn().getBody(PNPresenceEventResult.class);

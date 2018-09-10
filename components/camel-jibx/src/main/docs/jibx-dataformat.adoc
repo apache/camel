@@ -78,14 +78,14 @@ JiBX data format is also supported by Camel Spring DSL.
   <!-- Marshal message to XML -->
   <route>
     <from uri="direct:marshal"/>
-    <marshal ref="jibx"/>
+    <marshal><custom ref="jibx"/></marshal>
     <to uri="mock:result"/>
   </route>
 
   <!-- Unmarshal message from XML -->
   <route>
     <from uri="direct:unmarshal"/>
-    <unmarshal ref="jibx"/>
+    <unmarshal><custom ref="jibx"/></unmarshal>
     <to uri="mock:result"/>
   </route>
 

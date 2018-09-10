@@ -40,15 +40,6 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultStreamCachingStrategy extends org.apache.camel.support.ServiceSupport implements CamelContextAware, StreamCachingStrategy {
 
-    @Deprecated
-    public static final String THRESHOLD = "CamelCachedOutputStreamThreshold";
-    @Deprecated
-    public static final String BUFFER_SIZE = "CamelCachedOutputStreamBufferSize";
-    @Deprecated
-    public static final String TEMP_DIR = "CamelCachedOutputStreamOutputDirectory";
-    @Deprecated
-    public static final String CIPHER_TRANSFORMATION = "CamelCachedOutputStreamCipherTransformation";
-
     private static final Logger LOG = LoggerFactory.getLogger(DefaultStreamCachingStrategy.class);
 
     private CamelContext camelContext;
@@ -233,32 +224,6 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
         if (!enabled) {
             LOG.debug("StreamCaching is not enabled");
             return;
-        }
-
-        String bufferSize = camelContext.getGlobalOption(BUFFER_SIZE);
-        String hold = camelContext.getGlobalOption(THRESHOLD);
-        String chiper = camelContext.getGlobalOption(CIPHER_TRANSFORMATION);
-        String dir = camelContext.getGlobalOption(TEMP_DIR);
-
-        boolean warn = false;
-        if (bufferSize != null) {
-            warn = true;
-            this.bufferSize = camelContext.getTypeConverter().convertTo(Integer.class, bufferSize);
-        }
-        if (hold != null) {
-            warn = true;
-            this.spoolThreshold = camelContext.getTypeConverter().convertTo(Long.class, hold);
-        }
-        if (chiper != null) {
-            warn = true;
-            this.spoolChiper = chiper;
-        }
-        if (dir != null) {
-            warn = true;
-            this.spoolDirectory = camelContext.getTypeConverter().convertTo(File.class, dir);
-        }
-        if (warn) {
-            LOG.warn("Configuring of StreamCaching using CamelContext properties is deprecated - use StreamCachingStrategy instead.");
         }
 
         if (spoolUsedHeapMemoryThreshold > 99) {

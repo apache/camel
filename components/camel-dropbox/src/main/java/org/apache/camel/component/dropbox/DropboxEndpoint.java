@@ -55,10 +55,6 @@ public class DropboxEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
-    public DropboxEndpoint(String endpointUri) {
-        super(endpointUri);
-    }
-
     /**
      * Create one of the camel producer available based on the configuration
      * @return the camel producer

@@ -35,11 +35,6 @@ public class StaticMethodFallbackTypeConverter extends TypeConverterSupport {
     private final TypeConverterRegistry registry;
     private final boolean allowNull;
 
-    @Deprecated
-    public StaticMethodFallbackTypeConverter(Method method, TypeConverterRegistry registry) {
-        this(method, registry, false);
-    }
-
     public StaticMethodFallbackTypeConverter(Method method, TypeConverterRegistry registry, boolean allowNull) {
         this.method = method;
         this.useExchange = method.getParameterCount() == 4;

@@ -48,7 +48,7 @@ public class RemoveRouteDefinitionTest extends ManagementTestSupport {
         ObjectName on = set.iterator().next();
         
         boolean registered = mbeanServer.isRegistered(on);
-        assertEquals("Should be registered", true, registered);
+        assertTrue("Should be registered", registered);
         
         RouteDefinition definition = context.getRouteDefinition("route1");
         List<RouteDefinition> routeDefinitions = new ArrayList<>();

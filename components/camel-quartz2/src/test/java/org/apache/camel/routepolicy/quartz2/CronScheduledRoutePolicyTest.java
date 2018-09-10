@@ -68,12 +68,12 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
             }
         });
         context.start();
-        context.stopRoute("test1", 1000, TimeUnit.MILLISECONDS);
-        context.stopRoute("test2", 1000, TimeUnit.MILLISECONDS);
+        context.getRouteController().stopRoute("test1", 1000, TimeUnit.MILLISECONDS);
+        context.getRouteController().stopRoute("test2", 1000, TimeUnit.MILLISECONDS);
 
         Thread.sleep(5000);
-        assertTrue(context.getRouteStatus("test1") == ServiceStatus.Started);
-        assertTrue(context.getRouteStatus("test2") == ServiceStatus.Started);
+        assertTrue(context.getRouteController().getRouteStatus("test1") == ServiceStatus.Started);
+        assertTrue(context.getRouteController().getRouteStatus("test2") == ServiceStatus.Started);
         template.sendBody("direct:start1", "Ready or not, Here, I come");
         template.sendBody("direct:start2", "Ready or not, Here, I come");
 
@@ -107,8 +107,8 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
 
         Thread.sleep(5000);
 
-        assertTrue(context.getRouteStatus("test1") == ServiceStatus.Stopped);
-        assertTrue(context.getRouteStatus("test2") == ServiceStatus.Stopped);
+        assertTrue(context.getRouteController().getRouteStatus("test1") == ServiceStatus.Stopped);
+        assertTrue(context.getRouteController().getRouteStatus("test2") == ServiceStatus.Stopped);
     }
 
     @Test
@@ -131,10 +131,10 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
             }
         });
         context.start();
-        context.stopRoute("test", 1000, TimeUnit.MILLISECONDS);
+        context.getRouteController().stopRoute("test", 1000, TimeUnit.MILLISECONDS);
         
         Thread.sleep(5000);
-        assertTrue(context.getRouteStatus("test") == ServiceStatus.Started);
+        assertTrue(context.getRouteController().getRouteStatus("test") == ServiceStatus.Started);
         template.sendBody("direct:start", "Ready or not, Here, I come");
 
         context.getComponent("quartz2", QuartzComponent.class).stop();
@@ -161,7 +161,7 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
         context.start();
         
         Thread.sleep(5000);
-        assertTrue(context.getRouteStatus("test") == ServiceStatus.Stopped);
+        assertTrue(context.getRouteController().getRouteStatus("test") == ServiceStatus.Stopped);
     }
 
     @Test
@@ -207,13 +207,13 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
 
         startedLatch.await(5000, TimeUnit.SECONDS);
 
-        ServiceStatus startedStatus = context.getRouteStatus("test");
+        ServiceStatus startedStatus = context.getRouteController().getRouteStatus("test");
         assertTrue(startedStatus == ServiceStatus.Started || startedStatus == ServiceStatus.Starting);
         template.sendBody("direct:start", "Ready or not, Here, I come");
 
         stoppedLatch.await(5000, TimeUnit.SECONDS);
 
-        ServiceStatus stoppedStatus = context.getRouteStatus("test");
+        ServiceStatus stoppedStatus = context.getRouteController().getRouteStatus("test");
         assertTrue(stoppedStatus == ServiceStatus.Stopped || stoppedStatus == ServiceStatus.Stopping);
 
         success.assertIsSatisfied();
@@ -242,7 +242,7 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
         
         Thread.sleep(5000);
 
-        assertTrue(context.getRouteStatus("test") == ServiceStatus.Stopped);
+        assertTrue(context.getRouteController().getRouteStatus("test") == ServiceStatus.Stopped);
         assertTrue("Should have called onStart", myPolicy.isStart());
         assertTrue("Should have called onStop", myPolicy.isStop());
     }
@@ -296,7 +296,7 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
         ServiceHelper.suspendService(context.getRoute("test").getConsumer());
 
         Thread.sleep(5000);
-        assertTrue(context.getRouteStatus("test") == ServiceStatus.Started);
+        assertTrue(context.getRouteController().getRouteStatus("test") == ServiceStatus.Started);
 
         template.sendBody("direct:start", "Ready or not, Here, I come");
 

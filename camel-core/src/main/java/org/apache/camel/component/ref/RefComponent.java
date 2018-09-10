@@ -19,17 +19,16 @@ package org.apache.camel.component.ref;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
 /**
  * The <a href="http://camel.apache.org/ref.html">Ref Component</a> is for lookup of existing endpoints bound in the {@link org.apache.camel.spi.Registry}.
  * <p/>
  * This component uses the <tt>ref:</tt> notation instead of the mostly common <tt>uri:</tt> notation. 
  */
-public class RefComponent extends UriEndpointComponent {
+public class RefComponent extends DefaultComponent {
 
     public RefComponent() {
-        super(RefEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

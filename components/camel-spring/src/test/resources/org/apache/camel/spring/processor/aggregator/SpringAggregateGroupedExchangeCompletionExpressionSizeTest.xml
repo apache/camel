@@ -27,7 +27,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
-            <aggregate groupExchanges="true">
+            <aggregate strategyRef="aggregatorStrategy" eagerCheckCompletion="true">
                 <correlationExpression>
                     <constant>true</constant>
                 </correlationExpression>
@@ -38,5 +38,7 @@
             </aggregate>
         </route>
     </camelContext>
+
+    <bean id="aggregatorStrategy" class="org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy"/>
 
 </beans>

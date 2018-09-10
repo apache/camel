@@ -20,14 +20,7 @@ package org.apache.camel.util;
  * Holder object for a given value.
  */
 public class ValueHolder<V> {
-    private V value;
-
-    /**
-     * @deprecated should be immutable, will be removed in Camel 3.0
-     */
-    @Deprecated
-    public ValueHolder() {
-    }
+    private final V value;
 
     public ValueHolder(V val) {
         value = val;
@@ -35,14 +28,6 @@ public class ValueHolder<V> {
 
     public V get() {
         return value;
-    }
-
-    /**
-     * @deprecated should be immutable, will be removed in Camel 3.0
-     */
-    @Deprecated
-    public void set(V val) {
-        value = val;
     }
 
     @Override

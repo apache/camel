@@ -45,10 +45,6 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
     @XmlAttribute
     private Boolean deadLetterHandleNewException;
     @XmlAttribute
-    private LoggingLevel level;
-    @XmlAttribute
-    private String logName;
-    @XmlAttribute
     private Boolean useOriginalMessage;
     @XmlAttribute
     private String onRedeliveryRef;

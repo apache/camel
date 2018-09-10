@@ -35,23 +35,23 @@ public class RoutePolicySupportTest extends ContextTestSupport {
     public void testLifecycleCallbacks() throws Exception {
         Route route = context.getRoute("foo");
         
-        assertEquals(ServiceStatus.Stopped, context.getRouteStatus("foo"));
+        assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("foo"));
         
         policy.startRoute(route);
         
-        assertEquals(ServiceStatus.Started, context.getRouteStatus("foo"));
+        assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo"));
         
         policy.suspendRoute(route);
         
-        assertEquals(ServiceStatus.Suspended, context.getRouteStatus("foo"));
+        assertEquals(ServiceStatus.Suspended, context.getRouteController().getRouteStatus("foo"));
         
         policy.resumeRoute(route);
         
-        assertEquals(ServiceStatus.Started, context.getRouteStatus("foo"));
+        assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo"));
         
         policy.stopRoute(route);
         
-        assertEquals(ServiceStatus.Stopped, context.getRouteStatus("foo"));
+        assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("foo"));
     }
     
     @Override

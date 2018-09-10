@@ -150,7 +150,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
     public String getState() {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
-        ServiceStatus status = context.getRouteStatus(route.getId());
+        ServiceStatus status = context.getRouteController().getRouteStatus(route.getId());
         // if no status exists then its stopped
         if (status == null) {
             status = ServiceStatus.Stopped;
@@ -282,7 +282,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             throw new IllegalArgumentException("CamelContext is not started");
         }
         String routeId = getRouteId();
-        context.stopRoute(routeId);
+        context.getRouteController().stopRoute(routeId);
         context.removeRoute(routeId);
     }
 
@@ -291,7 +291,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             throw new IllegalArgumentException("CamelContext is not started");
         }
         String routeId = getRouteId();
-        context.stopRoute(routeId, timeout, TimeUnit.SECONDS);
+        context.getRouteController().stopRoute(routeId, timeout, TimeUnit.SECONDS);
         context.removeRoute(routeId);
     }
 

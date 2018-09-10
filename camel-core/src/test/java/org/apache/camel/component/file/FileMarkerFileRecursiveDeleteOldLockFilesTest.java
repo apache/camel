@@ -48,7 +48,7 @@ public class FileMarkerFileRecursiveDeleteOldLockFilesTest extends ContextTestSu
         template.sendBodyAndHeader("file:target/oldlock/foo", "Hi World", Exchange.FILE_NAME, "hi.txt");
 
         // start the route
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
     }

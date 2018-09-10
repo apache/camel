@@ -71,10 +71,6 @@ public class SchematronEndpoint extends DefaultEndpoint {
         this.path = path;
     }
 
-    public SchematronEndpoint(String endpointUri) {
-        super(endpointUri);
-    }
-
     public Producer createProducer() throws Exception {
         return new SchematronProducer(this);
     }

@@ -79,11 +79,6 @@ public class UseOriginalAggregationStrategy implements AggregationStrategy {
         return original;
     }
 
-    @Deprecated
-    public void setOriginal(Exchange original) {
-        throw new UnsupportedOperationException("This method is deprecated");
-    }
-
     @Override
     public String toString() {
         return "UseOriginalAggregationStrategy";

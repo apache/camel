@@ -69,7 +69,7 @@ image:lifecycle.data/service_lifecycle.png[image]
 Camel supports suspension. It's encouraged that consumers support
 suspension which allows to suspend/resume routes.
 
-The `org.apache.camel.impl.ServiceSupport` is a good base class to
+The `org.apache.camel.support.ServiceSupport` is a good base class to
 extend for custom services as it offers the basic functionally to keep
 track of state. You implement your custom logic in the `doStart`,
 `doStop`, `doSuspend`, `doResume` methods.

@@ -52,11 +52,11 @@ public class ManagedUnregisterCamelContextTest extends ManagementTestSupport {
         String version = (String) mbeanServer.getAttribute(on, "CamelVersion");
         assertNotNull(version);
 
-        Map<?, ?> properties = (Map<?, ?>) mbeanServer.getAttribute(on, "Properties");
+        Map<?, ?> properties = (Map<?, ?>) mbeanServer.getAttribute(on, "GlobalOptions");
         assertNull(properties);
 
-        Integer num = (Integer) mbeanServer.getAttribute(on, "InflightExchanges");
-        assertEquals(0, num.intValue());
+        Long num = (Long) mbeanServer.getAttribute(on, "ExchangesInflight");
+        assertEquals(0L, num.longValue());
 
         context.stop();
 

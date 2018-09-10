@@ -30,9 +30,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType
 @XmlEnum
 public enum ExchangePattern {
-    InOnly, RobustInOnly, InOut, InOptionalOut, OutOnly, RobustOutOnly, OutIn, OutOptionalIn;
-
-    // TODO: We should deprecate and only support InOnly, InOut, and InOptionalOut
+    InOnly, InOut, InOptionalOut;
 
     protected static final Map<String, ExchangePattern> MAP = new HashMap<>();
 
@@ -47,16 +45,6 @@ public enum ExchangePattern {
             return "http://www.w3.org/ns/wsdl/in-opt-out";
         case InOut:
             return "http://www.w3.org/ns/wsdl/in-out";
-        case OutIn:
-            return "http://www.w3.org/ns/wsdl/out-in";
-        case OutOnly:
-            return "http://www.w3.org/ns/wsdl/out-only";
-        case OutOptionalIn:
-            return "http://www.w3.org/ns/wsdl/out-opt-in";
-        case RobustInOnly:
-            return "http://www.w3.org/ns/wsdl/robust-in-only";
-        case RobustOutOnly:
-            return "http://www.w3.org/ns/wsdl/robust-out-only";
         default:
             throw new IllegalArgumentException("Unknown message exchange pattern: " + this);
         }
@@ -66,13 +54,7 @@ public enum ExchangePattern {
      * Return true if there can be an IN message
      */
     public boolean isInCapable() {
-        switch (this) {
-        case OutOnly:
-        case RobustOutOnly:
-            return false;
-        default:
-            return true;
-        }
+        return true;
     }
 
     /**
@@ -81,7 +63,6 @@ public enum ExchangePattern {
     public boolean isOutCapable() {
         switch (this) {
         case InOnly:
-        case RobustInOnly:
             return false;
         default:
             return true;
@@ -94,7 +75,6 @@ public enum ExchangePattern {
     public boolean isFaultCapable() {
         switch (this) {
         case InOnly:
-        case OutOnly:
             return false;
         default:
             return true;

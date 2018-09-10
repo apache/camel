@@ -57,7 +57,7 @@ public class ManagedSedaEndpointTest extends ManagementTestSupport {
         assertEquals(true, singleton.booleanValue());
 
         // stop route
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
 
         // send a message to queue
         template.sendBody("seda:start", "Hi World");

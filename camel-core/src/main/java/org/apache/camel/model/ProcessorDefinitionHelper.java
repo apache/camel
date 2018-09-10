@@ -654,24 +654,6 @@ public final class ProcessorDefinitionHelper {
      * Inspects the given definition and resolves any property placeholders from its properties.
      * <p/>
      * This implementation will check all the getter/setter pairs on this instance and for all the values
-     * (which is a String type) will be property placeholder resolved.
-     *
-     * @param routeContext the route context
-     * @param definition   the definition
-     * @throws Exception is thrown if property placeholders was used and there was an error resolving them
-     * @see org.apache.camel.CamelContext#resolvePropertyPlaceholders(String)
-     * @see org.apache.camel.component.properties.PropertiesComponent
-     * @deprecated use {@link #resolvePropertyPlaceholders(org.apache.camel.CamelContext, Object)}
-     */
-    @Deprecated
-    public static void resolvePropertyPlaceholders(RouteContext routeContext, Object definition) throws Exception {
-        resolvePropertyPlaceholders(routeContext.getCamelContext(), definition);
-    }
-
-    /**
-     * Inspects the given definition and resolves any property placeholders from its properties.
-     * <p/>
-     * This implementation will check all the getter/setter pairs on this instance and for all the values
      * (which is a String type) will be property placeholder resolved. The definition should implement {@link OtherAttributesAware}
      *
      * @param camelContext the Camel context

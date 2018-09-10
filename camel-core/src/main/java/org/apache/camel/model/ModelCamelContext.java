@@ -22,8 +22,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.model.transformer.TransformerDefinition;
+import org.apache.camel.model.validator.ValidatorDefinition;
 
 /**
  * Model level interface for the {@link CamelContext}
@@ -121,26 +124,6 @@ public interface ModelCamelContext extends CamelContext {
     void addRestDefinitions(Collection<RestDefinition> restDefinitions) throws Exception;
 
     /**
-     * Starts the given route if it has been previously stopped
-     *
-     * @param route the route to start
-     * @throws Exception is thrown if the route could not be started for whatever reason
-     * @deprecated favor using {@link CamelContext#startRoute(String)}
-     */
-    @Deprecated
-    void startRoute(RouteDefinition route) throws Exception;
-    
-    /**
-     * Stops the given route.
-     *
-     * @param route the route to stop
-     * @throws Exception is thrown if the route could not be stopped for whatever reason
-     * @deprecated favor using {@link CamelContext#stopRoute(String)}
-     */
-    @Deprecated
-    void stopRoute(RouteDefinition route) throws Exception;
-
-    /**
      * Sets the data formats that can be referenced in the routes.
      *
      * @param dataFormats the data formats
@@ -161,5 +144,113 @@ public interface ModelCamelContext extends CamelContext {
      * @return the resolved data format definition, or <tt>null</tt> if not found
      */
     DataFormatDefinition resolveDataFormatDefinition(String name);
-    
+
+    /**
+     * Gets the processor definition from any of the routes which with the given id
+     *
+     * @param id id of the processor definition
+     * @return the processor definition or <tt>null</tt> if not found
+     */
+    ProcessorDefinition getProcessorDefinition(String id);
+
+    /**
+     * Gets the processor definition from any of the routes which with the given id
+     *
+     * @param id id of the processor definition
+     * @param type the processor definition type
+     * @return the processor definition or <tt>null</tt> if not found
+     * @throws java.lang.ClassCastException is thrown if the type is not correct type
+     */
+    <T extends ProcessorDefinition> T getProcessorDefinition(String id, Class<T> type);
+
+    /**
+     * Sets the validators that can be referenced in the routes.
+     *
+     * @param validators the validators
+     */
+    void setValidators(List<ValidatorDefinition> validators);
+
+    /**
+     * Gets the Hystrix configuration by the given name. If no name is given
+     * the default configuration is returned, see <tt>setHystrixConfiguration</tt>
+     *
+     * @param id id of the configuration, or <tt>null</tt> to return the default configuration
+     * @return the configuration, or <tt>null</tt> if no configuration has been registered
+     */
+    HystrixConfigurationDefinition getHystrixConfiguration(String id);
+
+    /**
+     * Sets the default Hystrix configuration
+     *
+     * @param configuration the configuration
+     */
+    void setHystrixConfiguration(HystrixConfigurationDefinition configuration);
+
+    /**
+     * Sets the Hystrix configurations
+     *
+     * @param configurations the configuration list
+     */
+    void setHystrixConfigurations(List<HystrixConfigurationDefinition> configurations);
+
+    /**
+     * Adds the Hystrix configuration
+     *
+     * @param id name of the configuration
+     * @param configuration the configuration
+     */
+    void addHystrixConfiguration(String id, HystrixConfigurationDefinition configuration);
+
+    /**
+     * Gets the validators that can be referenced in the routes.
+     *
+     * @return the validators available
+     */
+    List<ValidatorDefinition> getValidators();
+
+    /**
+     * Sets the transformers that can be referenced in the routes.
+     *
+     * @param transformers the transformers
+     */
+    void setTransformers(List<TransformerDefinition> transformers);
+
+    /**
+     * Gets the transformers that can be referenced in the routes.
+     *
+     * @return the transformers available
+     */
+    List<TransformerDefinition> getTransformers();
+
+    /**
+     * Gets the service call configuration by the given name. If no name is given
+     * the default configuration is returned, see <tt>setServiceCallConfiguration</tt>
+     *
+     * @param serviceName name of service, or <tt>null</tt> to return the default configuration
+     * @return the configuration, or <tt>null</tt> if no configuration has been registered
+     */
+    ServiceCallConfigurationDefinition getServiceCallConfiguration(String serviceName);
+
+    /**
+     * Sets the default service call configuration
+     *
+     * @param configuration the configuration
+     */
+    void setServiceCallConfiguration(ServiceCallConfigurationDefinition configuration);
+
+    /**
+     * Sets the service call configurations
+     *
+     * @param configurations the configuration list
+     */
+    void setServiceCallConfigurations(List<ServiceCallConfigurationDefinition> configurations);
+
+    /**
+     * Adds the service call configuration
+     *
+     * @param serviceName name of the service
+     * @param configuration the configuration
+     */
+    void addServiceCallConfiguration(String serviceName, ServiceCallConfigurationDefinition configuration);
+
 }

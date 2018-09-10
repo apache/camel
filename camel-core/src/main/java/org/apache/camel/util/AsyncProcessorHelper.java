@@ -22,72 +22,14 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
-import org.apache.camel.spi.UnitOfWork;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Helper methods for {@link AsyncProcessor} objects.
  */
 public final class AsyncProcessorHelper {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AsyncProcessorHelper.class);
-
     private AsyncProcessorHelper() {
         // utility class
-    }
-
-    /**
-     * Calls the async version of the processor's process method.
-     * <p/>
-     * This implementation supports transacted {@link Exchange}s which ensure those are run in a synchronous fashion.
-     * See more details at {@link org.apache.camel.AsyncProcessor}.
-     *
-     * @param processor the processor
-     * @param exchange  the exchange
-     * @param callback  the callback
-     * @return <tt>true</tt> to continue execute synchronously, <tt>false</tt> to continue being executed asynchronously
-     * @deprecated should no longer be needed, instead invoke the process method on the {@link AsyncProcessor} directly,
-     * instead of using this method.
-     */
-    @Deprecated
-    public static boolean process(final AsyncProcessor processor, final Exchange exchange, final AsyncCallback callback) {
-        boolean sync;
-
-        if (exchange.isTransacted()) {
-            // must be synchronized for transacted exchanges
-            LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
-            try {
-                process(processor, exchange);
-            } catch (Throwable e) {
-                exchange.setException(e);
-            }
-            callback.done(true);
-            sync = true;
-        } else {
-            final UnitOfWork uow = exchange.getUnitOfWork();
-
-            // allow unit of work to wrap callback in case it need to do some special work
-            // for example the MDCUnitOfWork
-            AsyncCallback async = callback;
-            if (uow != null) {
-                async = uow.beforeProcess(processor, exchange, callback);
-            }
-
-            // we support asynchronous routing so invoke it
-            sync = processor.process(exchange, async);
-
-            // execute any after processor work (in current thread, not in the callback)
-            if (uow != null) {
-                uow.afterProcess(processor, exchange, callback, sync);
-            }
-        }
-
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Exchange processed and is continued routed {} for exchangeId: {} -> {}",
-                    new Object[]{sync ? "synchronously" : "asynchronously", exchange.getExchangeId(), exchange});
-        }
-        return sync;
     }
 
     /**

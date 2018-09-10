@@ -393,14 +393,6 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     // Properties
     // -----------------------------------------------------------------------
 
-    /**
-     * @deprecated use {@link #getCamelContext()}
-     */
-    @Deprecated
-    public CamelContext getContext() {
-        return getCamelContext();
-    }
-
     public CamelContext getCamelContext() {
         return camelContext;
     }
@@ -418,14 +410,6 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
      */
     public void setDefaultEndpointUri(String endpointUri) {
         setDefaultEndpoint(getCamelContext().getEndpoint(endpointUri));
-    }
-
-    /**
-     * @deprecated use {@link CamelContext#getEndpoint(String, Class)}
-     */
-    @Deprecated
-    public <T extends Endpoint> T getResolvedEndpoint(String endpointUri, Class<T> expectedClass) {
-        return camelContext.getEndpoint(endpointUri, expectedClass);
     }
 
     // Implementation methods

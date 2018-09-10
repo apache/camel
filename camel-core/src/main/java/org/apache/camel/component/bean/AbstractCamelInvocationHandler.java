@@ -289,9 +289,12 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
         // re-create it (its a shared static instance)
         if (executorService == null || executorService.isTerminated() || executorService.isShutdown()) {
             // try to lookup a pool first based on id/profile
-            executorService = context.getExecutorServiceStrategy().lookup(CamelInvocationHandler.class, "CamelInvocationHandler", "CamelInvocationHandler");
+            executorService = context.getRegistry().lookupByNameAndType("CamelInvocationHandler", ExecutorService.class);
             if (executorService == null) {
-                executorService = context.getExecutorServiceStrategy().newDefaultThreadPool(CamelInvocationHandler.class, "CamelInvocationHandler");
+                executorService = context.getExecutorServiceManager().newThreadPool(CamelInvocationHandler.class, "CamelInvocationHandler", "CamelInvocationHandler");
+            }
+            if (executorService == null) {
+                executorService = context.getExecutorServiceManager().newDefaultThreadPool(CamelInvocationHandler.class, "CamelInvocationHandler");
             }
         }
         return executorService;

@@ -173,7 +173,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
 
     /**
      * Returns endpoint configuration object.
-     * One of the generated *EndpointConfiguration classes that extends component configuration class.
+     * One of the generated EndpointConfiguration classes that extends component configuration class.
      *
      * @return endpoint configuration object
      */

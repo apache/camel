@@ -170,7 +170,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      */
     public ServiceStatus getStatus(CamelContext camelContext) {
         if (camelContext != null) {
-            ServiceStatus answer = camelContext.getRouteStatus(this.getId());
+            ServiceStatus answer = camelContext.getRouteController().getRouteStatus(this.getId());
             if (answer == null) {
                 answer = ServiceStatus.Stopped;
             }
@@ -201,7 +201,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         List<RouteContext> answer = new ArrayList<>();
 
         @SuppressWarnings("deprecation")
-        ErrorHandlerFactory handler = camelContext.getErrorHandlerBuilder();
+        ErrorHandlerFactory handler = camelContext.getErrorHandlerFactory();
         if (handler != null) {
             setErrorHandlerBuilderIfNull(handler);
         }
@@ -281,8 +281,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         // we can not advice with error handlers (if you added a new error handler in the route builder)
         // we must check the error handler on builder is not the same as on camel context, as that would be the default
         // context scoped error handler, in case no error handlers was configured
-        if (builder.getRouteCollection().getErrorHandlerBuilder() != null
-                && camelContext.getErrorHandlerBuilder() != builder.getRouteCollection().getErrorHandlerBuilder()) {
+        if (builder.getRouteCollection().getErrorHandlerFactory() != null
+                && camelContext.getErrorHandlerFactory() != builder.getRouteCollection().getErrorHandlerFactory()) {
             throw new IllegalArgumentException("You can not advice with error handlers. Remove the error handlers from the route builder.");
         }
 
@@ -1167,7 +1167,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         // the XML DSL will configure error handlers using refs, so we need this additional test
         if (errorHandlerRef != null) {
             ErrorHandlerFactory routeScoped = getErrorHandlerBuilder();
-            ErrorHandlerFactory contextScoped = context.getErrorHandlerBuilder();
+            ErrorHandlerFactory contextScoped = context.getErrorHandlerFactory();
             return routeScoped != null && contextScoped != null && routeScoped == contextScoped;
         }
 

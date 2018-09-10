@@ -52,19 +52,6 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
         return producer.getEndpoint();
     }
 
-    public Exchange createExchange() {
-        return producer.createExchange();
-    }
-
-    public Exchange createExchange(ExchangePattern pattern) {
-        return producer.createExchange(pattern);
-    }
-
-    @Deprecated
-    public Exchange createExchange(Exchange exchange) {
-        return producer.createExchange(exchange);
-    }
-
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // process the detour so we do the detour routing

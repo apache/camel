@@ -19,6 +19,7 @@ package org.apache.camel.management.mbean;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeDataSupport;
@@ -27,14 +28,13 @@ import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
 import org.apache.camel.Component;
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
-import org.apache.camel.VerifiableComponent;
 import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedComponentMBean;
+import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
 import org.apache.camel.spi.ManagementStrategy;
@@ -142,21 +142,21 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
 
     @Override
     public boolean isVerifySupported() {
-        return component instanceof VerifiableComponent;
+        return component.getExtension(ComponentVerifierExtension.class).isPresent();
     }
 
     @Override
-    public ComponentVerifier.Result verify(String scope, Map<String, String> options) {
+    public ComponentVerifierExtension.Result verify(String scope, Map<String, String> options) {
         try {
-            ComponentVerifier.Scope scopeEnum = ComponentVerifier.Scope.fromString(scope);
-
-            if (component instanceof VerifiableComponent) {
-                return ((VerifiableComponent) component).getVerifier().verify(scopeEnum, CastUtils.cast(options));
+            ComponentVerifierExtension.Scope scopeEnum = ComponentVerifierExtension.Scope.fromString(scope);
+            Optional<ComponentVerifierExtension> verifier = component.getExtension(ComponentVerifierExtension.class);
+            if (verifier.isPresent()) {
+                return verifier.get().verify(scopeEnum, CastUtils.cast(options));
             } else {
                 return ResultBuilder.unsupported().build();
             }
         } catch (IllegalArgumentException e) {
-            return ResultBuilder.withStatus(ComponentVerifier.Result.Status.UNSUPPORTED)
+            return ResultBuilder.withStatus(ComponentVerifierExtension.Result.Status.UNSUPPORTED)
                 .error(ResultErrorBuilder.withUnsupportedScope(scope).build())
                 .build();
         }

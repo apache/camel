@@ -32,7 +32,7 @@
         <endpoint id="myFileEndpoint" uri="file://target/antpathmatcher?initialDelay=0&amp;delay=10&amp;recursive=true&amp;filter=#myAntFilter"/>
 
         <route>
-            <from ref="myFileEndpoint"/>
+            <from uri="ref:myFileEndpoint"/>
             <to uri="mock:result"/>
         </route>
     </camelContext>

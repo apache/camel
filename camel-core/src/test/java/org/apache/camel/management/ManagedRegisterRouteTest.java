@@ -60,16 +60,16 @@ public class ManagedRegisterRouteTest extends ManagementTestSupport {
         String desc = (String) mbeanServer.getAttribute(on, "Description");
         assertEquals("my cool route", desc);
 
-        Integer val = (Integer) mbeanServer.getAttribute(on, "InflightExchanges");
+        Long val = (Long) mbeanServer.getAttribute(on, "ExchangesInflight");
         // the route has no inflight exchanges
-        assertEquals(0, val.intValue());
+        assertEquals(0L, val.longValue());
 
         // should be started
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Should be started", ServiceStatus.Started.name(), state);
 
         // stop the route
-        context.stopRoute(context.getRouteDefinitions().get(0));
+        context.getRouteController().stopRoute(context.getRouteDefinitions().get(0).getId());
 
         registered = mbeanServer.isRegistered(on);
         assertEquals("Should be registered", true, registered);

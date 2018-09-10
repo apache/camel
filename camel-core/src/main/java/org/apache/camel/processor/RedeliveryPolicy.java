@@ -269,16 +269,6 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
 
     /**
      * Sets the initial redelivery delay in milliseconds
-     *
-     * @deprecated will be removed in the near future. Instead use {@link #redeliveryDelay(long)} instead
-     */
-    @Deprecated
-    public RedeliveryPolicy redeliverDelay(long delay) {
-        return redeliveryDelay(delay);
-    }
-
-    /**
-     * Sets the initial redelivery delay in milliseconds
      */
     public RedeliveryPolicy redeliveryDelay(long delay) {
         setRedeliveryDelay(delay);
@@ -477,22 +467,6 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     // Properties
     // -------------------------------------------------------------------------
 
-    /**
-     * @deprecated will be removed in the near future. Instead use {@link #getRedeliveryDelay()}
-     */
-    @Deprecated
-    public long getRedeliverDelay() {
-        return getRedeliveryDelay();
-    }
-
-    /**
-     * @deprecated will be removed in the near future. Instead use {@link #setRedeliveryDelay(long)}
-     */
-    @Deprecated
-    public void setRedeliverDelay(long redeliveryDelay) {
-        setRedeliveryDelay(redeliveryDelay);
-    }
-    
     public long getRedeliveryDelay() {
         return redeliveryDelay;
     }

@@ -22,15 +22,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
 /**
  * @version 
  */
-public class RmiComponent extends UriEndpointComponent {
+public class RmiComponent extends DefaultComponent {
 
     public RmiComponent() {
-        super(RmiEndpoint.class);
     }
 
     @Override

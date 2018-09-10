@@ -34,30 +34,6 @@ public class AckExpression extends ExpressionAdapter {
         this((AcknowledgmentCode)null, null, ErrorCode.APPLICATION_INTERNAL_ERROR);
     }
 
-    /**
-     * @deprecated use {@link #AckExpression(ca.uhn.hl7v2.AcknowledgmentCode)}
-     */
-    @Deprecated
-    public AckExpression(AckCode acknowledgementCode) {
-        this(acknowledgementCode.toAcknowledgmentCode());
-    }
-
-    /**
-     * @deprecated Use {@link #AckExpression(AcknowledgmentCode, String, ErrorCode)}
-     */
-    @Deprecated
-    public AckExpression(AckCode acknowledgementCode, String errorMessage, int errorCode) {
-        this(acknowledgementCode, errorMessage, ErrorCode.errorCodeFor(errorCode));
-    }
-
-    /**
-     * @deprecated Use {@link #AckExpression(AcknowledgmentCode, String, ErrorCode)}
-     */
-    @Deprecated
-    public AckExpression(AckCode acknowledgementCode, String errorMessage, ErrorCode errorCode) {
-        this(acknowledgementCode.toAcknowledgmentCode(), errorMessage, errorCode);
-    }
-
     public AckExpression(AcknowledgmentCode acknowledgementCode) {
         this(acknowledgementCode, null, ErrorCode.APPLICATION_INTERNAL_ERROR);
     }

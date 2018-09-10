@@ -940,7 +940,9 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * Uses the XML Security data format
      */
     public T secureXML(String secureTag, boolean secureTagContents) {
-        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat(secureTag, secureTagContents);
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
+        xsdf.setSecureTag(secureTag);
+        xsdf.setSecureTagContents(secureTagContents);
         return dataFormat(xsdf);
     }
     
@@ -948,7 +950,10 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * Uses the XML Security data format
      */
     public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents) {
-        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat(secureTag, namespaces, secureTagContents);
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
+        xsdf.setSecureTag(secureTag);
+        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setNamespaces(namespaces);
         return dataFormat(xsdf);
     }
 
@@ -956,7 +961,10 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * Uses the XML Security data format
      */
     public T secureXML(String secureTag, boolean secureTagContents, String passPhrase) {
-        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat(secureTag, secureTagContents, passPhrase);
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
+        xsdf.setSecureTag(secureTag);
+        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setPassPhrase(passPhrase);
         return dataFormat(xsdf);
     }
     
@@ -964,7 +972,11 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * Uses the XML Security data format
      */
     public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String passPhrase) {
-        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat(secureTag, namespaces, secureTagContents, passPhrase);
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
+        xsdf.setSecureTag(secureTag);
+        xsdf.setNamespaces(namespaces);
+        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setPassPhrase(passPhrase);
         return dataFormat(xsdf);
     }
     
@@ -972,7 +984,11 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * Uses the XML Security data format
      */
     public T secureXML(String secureTag, boolean secureTagContents, String passPhrase, String xmlCipherAlgorithm) {
-        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat(secureTag, secureTagContents, passPhrase, xmlCipherAlgorithm);
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
+        xsdf.setSecureTag(secureTag);
+        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setPassPhrase(passPhrase);
+        xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         return dataFormat(xsdf);
     }
     
@@ -981,7 +997,12 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * Uses the XML Security data format
      */
     public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String passPhrase, String xmlCipherAlgorithm) {
-        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat(secureTag, namespaces, secureTagContents, passPhrase, xmlCipherAlgorithm);
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
+        xsdf.setSecureTag(secureTag);
+        xsdf.setNamespaces(namespaces);
+        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setPassPhrase(passPhrase);
+        xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         return dataFormat(xsdf);
     }
     
@@ -1034,25 +1055,19 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         return dataFormat(xsdf);
     }
-    
-    /**
-     * @deprecated Use {@link #secureXML(String, Map, boolean, String, String, String, String)} instead.
-     * Uses the XML Security data format
-     */
-    @Deprecated
-    public T secureXML(String secureTag, boolean secureTagContents, String recipientKeyAlias, String xmlCipherAlgorithm, 
-            String keyCipherAlgorithm) {
-        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat(secureTag, secureTagContents, recipientKeyAlias, xmlCipherAlgorithm, keyCipherAlgorithm);
-        return dataFormat(xsdf);
-    }
-    
+
     /**
      * Uses the XML Security data format
      */
     public T secureXML(String secureTag, boolean secureTagContents, String recipientKeyAlias, String xmlCipherAlgorithm, 
             String keyCipherAlgorithm, String keyOrTrustStoreParametersId) {
-        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat(secureTag, secureTagContents, recipientKeyAlias, xmlCipherAlgorithm, 
-            keyCipherAlgorithm, keyOrTrustStoreParametersId);
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
+        xsdf.setSecureTag(secureTag);
+        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setRecipientKeyAlias(recipientKeyAlias);
+        xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
+        xsdf.setKeyOrTrustStoreParametersId(keyOrTrustStoreParametersId);
         return dataFormat(xsdf);
     }
     
@@ -1061,8 +1076,14 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T secureXML(String secureTag, boolean secureTagContents, String recipientKeyAlias, String xmlCipherAlgorithm, 
             String keyCipherAlgorithm, String keyOrTrustStoreParametersId, String keyPassword) {
-        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat(secureTag, secureTagContents, recipientKeyAlias, xmlCipherAlgorithm, 
-            keyCipherAlgorithm, keyOrTrustStoreParametersId, keyPassword);
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
+        xsdf.setSecureTag(secureTag);
+        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setRecipientKeyAlias(recipientKeyAlias);
+        xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
+        xsdf.setKeyOrTrustStoreParametersId(keyOrTrustStoreParametersId);
+        xsdf.setKeyPassword(keyPassword);
         return dataFormat(xsdf);
     }    
     
@@ -1071,8 +1092,13 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T secureXML(String secureTag, boolean secureTagContents, String recipientKeyAlias, String xmlCipherAlgorithm, 
             String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters) {
-        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat(secureTag, secureTagContents, recipientKeyAlias, xmlCipherAlgorithm, 
-            keyCipherAlgorithm, keyOrTrustStoreParameters);
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
+        xsdf.setSecureTag(secureTag);
+        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setRecipientKeyAlias(recipientKeyAlias);
+        xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
+        xsdf.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
         return dataFormat(xsdf);
     }
     
@@ -1081,8 +1107,14 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T secureXML(String secureTag, boolean secureTagContents, String recipientKeyAlias, String xmlCipherAlgorithm, 
             String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters, String keyPassword) {
-        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat(secureTag, secureTagContents, recipientKeyAlias, xmlCipherAlgorithm, 
-            keyCipherAlgorithm, keyOrTrustStoreParameters, keyPassword);
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
+        xsdf.setSecureTag(secureTag);
+        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setRecipientKeyAlias(recipientKeyAlias);
+        xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
+        xsdf.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
+        xsdf.setKeyPassword(keyPassword);
         return dataFormat(xsdf);
     }    
     
@@ -1091,8 +1123,13 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias, 
             String xmlCipherAlgorithm, String keyCipherAlgorithm, String keyOrTrustStoreParametersId) {
-        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat(secureTag, namespaces, secureTagContents, recipientKeyAlias, xmlCipherAlgorithm, 
-                keyCipherAlgorithm, keyOrTrustStoreParametersId);
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
+        xsdf.setSecureTag(secureTag);
+        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setRecipientKeyAlias(recipientKeyAlias);
+        xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
+        xsdf.setKeyOrTrustStoreParametersId(keyOrTrustStoreParametersId);
         return dataFormat(xsdf);
     }
     
@@ -1101,8 +1138,14 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias, 
             String xmlCipherAlgorithm, String keyCipherAlgorithm, String keyOrTrustStoreParametersId, String keyPassword) {
-        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat(secureTag, namespaces, secureTagContents, recipientKeyAlias, xmlCipherAlgorithm, 
-                keyCipherAlgorithm, keyOrTrustStoreParametersId, keyPassword);
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
+        xsdf.setSecureTag(secureTag);
+        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setRecipientKeyAlias(recipientKeyAlias);
+        xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
+        xsdf.setKeyOrTrustStoreParametersId(keyOrTrustStoreParametersId);
+        xsdf.setKeyPassword(keyPassword);
         return dataFormat(xsdf);
     }    
     
@@ -1111,8 +1154,14 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias, 
             String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters) {
-        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat(secureTag, namespaces, secureTagContents, recipientKeyAlias, xmlCipherAlgorithm, 
-                keyCipherAlgorithm, keyOrTrustStoreParameters);
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
+        xsdf.setSecureTag(secureTag);
+        xsdf.setNamespaces(namespaces);
+        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setRecipientKeyAlias(recipientKeyAlias);
+        xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
+        xsdf.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
         return dataFormat(xsdf);
     }
     
@@ -1121,8 +1170,15 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias, 
             String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters, String keyPassword) {
-        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat(secureTag, namespaces, secureTagContents, recipientKeyAlias, xmlCipherAlgorithm, 
-                keyCipherAlgorithm, keyOrTrustStoreParameters, keyPassword);
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
+        xsdf.setSecureTag(secureTag);
+        xsdf.setNamespaces(namespaces);
+        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setRecipientKeyAlias(recipientKeyAlias);
+        xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
+        xsdf.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
+        xsdf.setKeyPassword(keyPassword);
         return dataFormat(xsdf);
     }   
     
@@ -1132,8 +1188,16 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias, 
             String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters, String keyPassword,
             String digestAlgorithm) {
-        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat(secureTag, namespaces, secureTagContents, recipientKeyAlias, xmlCipherAlgorithm, 
-                keyCipherAlgorithm, keyOrTrustStoreParameters, keyPassword, digestAlgorithm);
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
+        xsdf.setSecureTag(secureTag);
+        xsdf.setNamespaces(namespaces);
+        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setRecipientKeyAlias(recipientKeyAlias);
+        xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        xsdf.setKeyCipherAlgorithm(keyCipherAlgorithm);
+        xsdf.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
+        xsdf.setDigestAlgorithm(digestAlgorithm);
+        xsdf.setKeyPassword(keyPassword);
         return dataFormat(xsdf);
     }
 

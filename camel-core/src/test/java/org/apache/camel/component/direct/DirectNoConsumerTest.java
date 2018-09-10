@@ -112,7 +112,7 @@ public class DirectNoConsumerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        context.stopRoute("stopThisRoute");
+        context.getRouteController().stopRoute("stopThisRoute");
         TimeUnit.MILLISECONDS.sleep(100);
         try {
             template.sendBody("direct:foo", "Hello World");

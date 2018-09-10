@@ -43,7 +43,7 @@ public class XsltRouteTest extends ContextTestSupport {
     @Test
     public void testSendDomMessage() throws Exception {
         XmlConverter  converter = new XmlConverter();
-        Document body = converter.toDOMDocument("<mail><subject>Hey</subject><body>Hello world!</body></mail>");
+        Document body = converter.toDOMDocument("<mail><subject>Hey</subject><body>Hello world!</body></mail>", null);
         sendMessageAndHaveItTransformed(body);
     }
     

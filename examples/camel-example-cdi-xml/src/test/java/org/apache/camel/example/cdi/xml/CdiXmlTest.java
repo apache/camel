@@ -95,6 +95,6 @@ public class CdiXmlTest {
     public void verifyRescue(CamelContext context) {
         Awaitility.await("Neo is still in the matrix!")
             .atMost(5, TimeUnit.SECONDS)
-            .until(() -> ServiceStatus.Stopped.equals(context.getRouteStatus("terminal")));
+            .until(() -> ServiceStatus.Stopped.equals(context.getRouteController().getRouteStatus("terminal")));
     }
 }

@@ -38,6 +38,7 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -90,7 +91,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             answer.put("applicationContextClassLoader", context.getApplicationContextClassLoader().toString());
             answer.put("headersMapFactory", context.getHeadersMapFactory().toString());
 
-            for (Map.Entry<String, String> entry : context.getProperties().entrySet()) {
+            for (Map.Entry<String, String> entry : context.getGlobalOptions().entrySet()) {
                 answer.put("property." + entry.getKey(), entry.getValue());
             }
 
@@ -98,7 +99,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             long inactiveRoutes = 0;
             List<Route> routeList = context.getRoutes();
             for (Route route : routeList) {
-                if (context.getRouteStatus(route.getId()).isStarted()) {
+                if (context.getRouteController().getRouteStatus(route.getId()).isStarted()) {
                     activeRoutes++;
                 } else {
                     inactiveRoutes++;
@@ -342,28 +343,28 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
     public void startRoute(String camelContextName, String routeId) throws Exception {
         CamelContext context = getLocalCamelContext(camelContextName);
         if (context != null) {
-            context.startRoute(routeId);
+            context.getRouteController().startRoute(routeId);
         }
     }
 
     public void stopRoute(String camelContextName, String routeId) throws Exception {
         CamelContext context = getLocalCamelContext(camelContextName);
         if (context != null) {
-            context.stopRoute(routeId);
+            context.getRouteController().stopRoute(routeId);
         }
     }
 
     public void suspendRoute(String camelContextName, String routeId) throws Exception {
         CamelContext context = getLocalCamelContext(camelContextName);
         if (context != null) {
-            context.suspendRoute(routeId);
+            context.getRouteController().suspendRoute(routeId);
         }
     }
 
     public void resumeRoute(String camelContextName, String routeId) throws Exception {
         CamelContext context = getLocalCamelContext(camelContextName);
         if (context != null) {
-            context.resumeRoute(routeId);
+            context.getRouteController().resumeRoute(routeId);
         }
     }
 
@@ -372,7 +373,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         if (context == null) {
             return null;
         }
-        RouteDefinition route = context.getRouteDefinition(routeId);
+        RouteDefinition route = context.adapt(ModelCamelContext.class).getRouteDefinition(routeId);
         if (route == null) {
             return null;
         }
@@ -412,7 +413,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             return null;
         }
 
-        List<RestDefinition> rests = context.getRestDefinitions();
+        List<RestDefinition> rests = context.adapt(ModelCamelContext.class).getRestDefinitions();
         if (rests == null || rests.isEmpty()) {
             return null;
         }
@@ -688,7 +689,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
     private static String getRouteState(Route route) {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
 
-        ServiceStatus status = route.getRouteContext().getCamelContext().getRouteStatus(route.getId());
+        ServiceStatus status = route.getRouteContext().getCamelContext().getRouteController().getRouteStatus(route.getId());
         if (status != null) {
             return status.name();
         }

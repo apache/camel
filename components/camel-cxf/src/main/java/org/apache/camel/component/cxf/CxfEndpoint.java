@@ -217,20 +217,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         setExchangePattern(ExchangePattern.InOut);
     }
 
-    @Deprecated
-    public CxfEndpoint(String remaining, CamelContext context) {
-        super(remaining, context);
-        setAddress(remaining);
-        setExchangePattern(ExchangePattern.InOut);
-    }
-
-    @Deprecated
-    public CxfEndpoint(String remaining) {
-        super(remaining);
-        setAddress(remaining);
-        setExchangePattern(ExchangePattern.InOut);
-    }
-
     public CxfEndpoint copy() {
         try {
             return (CxfEndpoint)this.clone();

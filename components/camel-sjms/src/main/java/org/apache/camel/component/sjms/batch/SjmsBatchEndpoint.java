@@ -136,7 +136,7 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
 
     public Exchange createExchange(Message message, Session session) {
         Exchange exchange = createExchange(getExchangePattern());
-        exchange.setIn(new SjmsMessage(message, session, getBinding()));
+        exchange.setIn(new SjmsMessage(exchange, message, session, getBinding()));
         return exchange;
     }
 

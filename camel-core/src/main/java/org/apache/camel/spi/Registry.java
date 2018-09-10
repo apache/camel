@@ -61,39 +61,4 @@ public interface Registry {
      */
     <T> Set<T> findByType(Class<T> type);
 
-    /**
-     * Looks up a service in the registry based purely on name,
-     * returning the service or <tt>null</tt> if it could not be found.
-     *
-     * @param name the name of the service
-     * @return the service from the registry or <tt>null</tt> if it could not be found
-     * @deprecated use {@link #lookupByName(String)}
-     */
-    @Deprecated
-    Object lookup(String name);
-
-    /**
-     * Looks up a service in the registry, returning the service or <tt>null</tt> if it could not be found.                                            cha
-     *
-     * @param name the name of the service
-     * @param type the type of the required service
-     * @return the service from the registry or <tt>null</tt> if it could not be found
-     * @deprecated use {@link #lookupByNameAndType(String, Class)}
-     */
-    @Deprecated
-    <T> T lookup(String name, Class<T> type);
-
-    /**
-     * Looks up services in the registry by their type.
-     * <p/>
-     * <b>Note:</b> Not all registry implementations support this feature,
-     * such as the {@link org.apache.camel.impl.JndiRegistry}.
-     *
-     * @param type  the type of the registered services
-     * @return the types found, with their id as the key. Returns an empty Map if none found.
-     * @deprecated use {@link #findByTypeWithName(Class)}
-     */
-    @Deprecated
-    <T> Map<String, T> lookupByType(Class<T> type);
-
 }

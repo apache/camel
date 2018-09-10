@@ -97,38 +97,27 @@ public final class DefaultExchange implements Exchange {
     }
 
     public Exchange copy() {
-        // to be backwards compatible as today
-        return copy(false);
-    }
-
-    public Exchange copy(boolean safeCopy) {
         DefaultExchange exchange = new DefaultExchange(this);
 
-        if (safeCopy) {
-            exchange.getIn().setBody(getIn().getBody());
-            exchange.getIn().setFault(getIn().isFault());
-            if (getIn().hasHeaders()) {
-                exchange.getIn().setHeaders(safeCopyHeaders(getIn().getHeaders()));
-                // just copy the attachments here
-                exchange.getIn().copyAttachments(getIn());
-            }
-            if (hasOut()) {
-                exchange.getOut().setBody(getOut().getBody());
-                exchange.getOut().setFault(getOut().isFault());
-                if (getOut().hasHeaders()) {
-                    exchange.getOut().setHeaders(safeCopyHeaders(getOut().getHeaders()));
-                }
-                // Just copy the attachments here
-                exchange.getOut().copyAttachments(getOut());
-            }
-        } else {
-            // old way of doing copy which is @deprecated
-            // TODO: remove this in Camel 3.0, and always do a safe copy
-            exchange.setIn(getIn().copy());
-            if (hasOut()) {
-                exchange.setOut(getOut().copy());
-            }
+        exchange.setIn(getIn().copy());
+        exchange.getIn().setBody(getIn().getBody());
+        exchange.getIn().setFault(getIn().isFault());
+        if (getIn().hasHeaders()) {
+            exchange.getIn().setHeaders(safeCopyHeaders(getIn().getHeaders()));
+            // just copy the attachments here
+            exchange.getIn().copyAttachments(getIn());
         }
+        if (hasOut()) {
+            exchange.setOut(getOut().copy());
+            exchange.getOut().setBody(getOut().getBody());
+            exchange.getOut().setFault(getOut().isFault());
+            if (getOut().hasHeaders()) {
+                exchange.getOut().setHeaders(safeCopyHeaders(getOut().getHeaders()));
+            }
+            // Just copy the attachments here
+            exchange.getOut().copyAttachments(getOut());
+        }
+
         exchange.setException(getException());
 
         // copy properties after body as body may trigger lazy init
@@ -547,16 +536,8 @@ public final class DefaultExchange implements Exchange {
         }
     }
 
-    @SuppressWarnings("deprecation")
     protected String createExchangeId() {
-        String answer = null;
-        if (in != null) {
-            answer = in.createExchangeId();
-        }
-        if (answer == null) {
-            answer = context.getUuidGenerator().generateUuid();
-        }
-        return answer;
+        return context.getUuidGenerator().generateUuid();
     }
 
     protected Map<String, Object> createProperties() {

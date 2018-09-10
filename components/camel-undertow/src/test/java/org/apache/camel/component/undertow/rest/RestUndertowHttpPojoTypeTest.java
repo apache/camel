@@ -26,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.undertow.BaseUndertowTest;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
@@ -39,7 +40,7 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
         // Wasn't clear if there's a way to put this test into camel-core just to test the model
         // perhaps without starting the Camel Context?
 
-        List<RestDefinition> restDefinitions = context().getRestDefinitions();
+        List<RestDefinition> restDefinitions = context().adapt(ModelCamelContext.class).getRestDefinitions();
         assertNotNull(restDefinitions);
         assertTrue(restDefinitions.size() > 0);
 
@@ -296,7 +297,7 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
                                 exchange.getOut().setBody(new UserPojo[] {user1, user2});
                             }
                         }).endRest()
-                    .get("/users/list").id("getUsersList").outTypeList(UserPojo.class)
+                    .get("/users/list").id("getUsersList").outType(UserPojo[].class)
                         .route().process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
@@ -325,7 +326,7 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
                         .to("mock:putUser")
                     .put("/users").id("putUsers").type(UserPojo[].class)
                         .to("mock:putUsers")
-                    .put("/users/list").id("putUsersList").typeList(UserPojo.class)
+                    .put("/users/list").id("putUsersList").type(UserPojo[].class)
                         .to("mock:putUsersList");
             }
         };

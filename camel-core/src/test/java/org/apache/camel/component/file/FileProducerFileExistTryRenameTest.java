@@ -48,7 +48,7 @@ public class FileProducerFileExistTryRenameTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/file", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file://target/file?fileExist=TryRename&tempPrefix=tmp", "Bye World", Exchange.FILE_NAME, "hello.txt");
 
-        context.startAllRoutes();
+        context.getRouteController().startAllRoutes();
 
         assertMockEndpointsSatisfied();
     }

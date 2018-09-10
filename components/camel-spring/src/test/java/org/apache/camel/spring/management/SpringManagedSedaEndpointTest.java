@@ -65,7 +65,7 @@ public class SpringManagedSedaEndpointTest extends SpringTestSupport {
         assertEquals(0, size.intValue());
 
         // stop route
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
 
         // send a message to queue
         template.sendBody("seda:start", "Hi World");

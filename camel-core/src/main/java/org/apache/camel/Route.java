@@ -27,8 +27,8 @@ import org.apache.camel.spi.RouteContext;
  * from a specific {@link org.apache.camel.Endpoint} within a {@link org.apache.camel.CamelContext}.
  * <p/>
  * Use the API from {@link org.apache.camel.CamelContext} to control the lifecycle of a route,
- * such as starting and stopping using the {@link org.apache.camel.CamelContext#startRoute(String)}
- * and {@link org.apache.camel.CamelContext#stopRoute(String)} methods.
+ * such as starting and stopping using the {@link org.apache.camel.spi.RouteController#startRoute(String)}
+ * and {@link org.apache.camel.spi.RouteController#stopRoute(String)} methods.
  */
 public interface Route extends EndpointAware {
 

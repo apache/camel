@@ -442,52 +442,6 @@ public interface CamelCatalog {
     EndpointValidationResult validateEndpointProperties(String uri, boolean ignoreLenientProperties, boolean consumerOnly, boolean producerOnly);
 
     /**
-     * Parses and validates the simple expression.
-     * <p/>
-     * <b>Important:</b> This requires having <tt>camel-core</tt> on the classpath
-     *
-     * @param simple  the simple expression
-     * @return validation result
-     * @deprecated use {@link #validateSimpleExpression(ClassLoader, String)}
-     */
-    @Deprecated
-    SimpleValidationResult validateSimpleExpression(String simple);
-
-    /**
-     * Parses and validates the simple expression.
-     * <p/>
-     * <b>Important:</b> This requires having <tt>camel-core</tt> on the classpath
-     *
-     * @param classLoader a custom classloader to use for loading the language from the classpath, or <tt>null</tt> for using default classloader
-     * @param simple  the simple expression
-     * @return validation result
-     */
-    SimpleValidationResult validateSimpleExpression(ClassLoader classLoader, String simple);
-
-    /**
-     * Parses and validates the simple predicate
-     * <p/>
-     * <b>Important:</b> This requires having <tt>camel-core</tt> on the classpath
-     *
-     * @param simple  the simple predicate
-     * @return validation result
-     * @deprecated use {@link #validateSimplePredicate(ClassLoader, String)}
-     */
-    @Deprecated
-    SimpleValidationResult validateSimplePredicate(String simple);
-
-    /**
-     * Parses and validates the simple predicate
-     * <p/>
-     * <b>Important:</b> This requires having <tt>camel-core</tt> on the classpath
-     *
-     * @param classLoader a custom classloader to use for loading the language from the classpath, or <tt>null</tt> for using default classloader
-     * @param simple  the simple predicate
-     * @return validation result
-     */
-    SimpleValidationResult validateSimplePredicate(ClassLoader classLoader, String simple);
-
-    /**
      * Parses and validates the language as a predicate
      * <p/>
      * <b>Important:</b> This requires having <tt>camel-core</tt> and the language dependencies on the classpath

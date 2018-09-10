@@ -15,7 +15,6 @@
 ## limitations under the License.
 ## ------------------------------------------------------------------------
 AggregateDefinition
-AOPDefinition
 BeanDefinition
 CatchDefinition
 ChoiceDefinition
@@ -62,7 +61,6 @@ PipelineDefinition
 PolicyDefinition
 PollEnrichDefinition
 ProcessDefinition
-PropertiesDefinition
 PropertyDefinition
 RecipientListDefinition
 RedeliveryPolicyDefinition
@@ -85,7 +83,6 @@ SetBodyDefinition
 SetExchangePatternDefinition
 SetFaultBodyDefinition
 SetHeaderDefinition
-SetOutHeaderDefinition
 SetPropertyDefinition
 SortDefinition
 SplitDefinition

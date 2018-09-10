@@ -42,7 +42,7 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         assertTrue(context.hasEndpoint("mock://stop") != null);
 
         // stop and remove bar route
-        context.stopRoute("bar");
+        context.getRouteController().stopRoute("bar");
         context.removeRoute("bar");
 
         assertTrue(context.hasEndpoint("seda://foo") != null);
@@ -57,7 +57,7 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         assertTrue("Should be stopped", ((ServiceSupport) log).isStopped());
 
         // stop and remove baz route
-        context.stopRoute("baz");
+        context.getRouteController().stopRoute("baz");
         context.removeRoute("baz");
 
         assertTrue(context.hasEndpoint("seda://foo") != null);
@@ -68,7 +68,7 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         assertFalse(context.hasEndpoint("seda://stop") != null);
         assertFalse(context.hasEndpoint("mock://stop") != null);
         // stop and remove foo route
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
         context.removeRoute("foo");
 
         assertFalse(context.hasEndpoint("seda://foo") != null);
@@ -101,7 +101,7 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         assertTrue(context.hasEndpoint("mock://stop") != null);
 
         // stop and remove bar route
-        context.stopRoute("bar");
+        context.getRouteController().stopRoute("bar");
         context.removeRoute("bar");
 
         assertTrue("Should be started", ((ServiceSupport) seda).isStarted());
@@ -116,7 +116,7 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         assertTrue(context.hasEndpoint("mock://stop") != null);
 
         // stop and remove baz route
-        context.stopRoute("baz");
+        context.getRouteController().stopRoute("baz");
         context.removeRoute("baz");
 
         assertTrue(context.hasEndpoint("seda://foo") != null);

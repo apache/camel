@@ -26,6 +26,7 @@ import org.apache.camel.ValidationException;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.validator.CustomValidatorDefinition;
 import org.apache.camel.model.validator.EndpointValidatorDefinition;
@@ -75,15 +76,15 @@ public class ValidatorListCommandTest {
         EndpointValidatorDefinition evd = new EndpointValidatorDefinition();
         evd.setType("xml:foo");
         evd.setUri("direct:validator");
-        context.getValidators().add(evd);
+        context.adapt(ModelCamelContext.class).getValidators().add(evd);
         PredicateValidatorDefinition pvd = new PredicateValidatorDefinition();
         pvd.setType(this.getClass());
         pvd.setExpression(new ExpressionDefinition(ExpressionBuilder.bodyExpression()));
-        context.getValidators().add(pvd);
+        context.adapt(ModelCamelContext.class).getValidators().add(pvd);
         CustomValidatorDefinition cvd = new CustomValidatorDefinition();
         cvd.setType("custom");
         cvd.setClassName(MyValidator.class.getName());
-        context.getValidators().add(cvd);
+        context.adapt(ModelCamelContext.class).getValidators().add(cvd);
         context.setNameStrategy(new ExplicitCamelContextNameStrategy("foobar"));
         context.start();
 

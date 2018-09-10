@@ -45,10 +45,10 @@ public abstract class SpringScheduledRoutePolicyTest extends TestSupport {
         MockEndpoint mock = context.getEndpoint("mock:success", MockEndpoint.class);
         mock.expectedMinimumMessageCount(1);
         
-        context.stopRoute("testRoute", 1000, TimeUnit.MILLISECONDS);
+        context.getRouteController().stopRoute("testRoute", 1000, TimeUnit.MILLISECONDS);
         
         Thread.sleep(4000);
-        assertTrue(context.getRouteStatus("testRoute") == ServiceStatus.Started);
+        assertTrue(context.getRouteController().getRouteStatus("testRoute") == ServiceStatus.Started);
         context.createProducerTemplate().sendBody("direct:start", "Ready or not, Here, I come");
 
         context.stop();
@@ -62,7 +62,7 @@ public abstract class SpringScheduledRoutePolicyTest extends TestSupport {
         CamelContext context = startRouteWithPolicy("stopPolicy");
         
         Thread.sleep(4000);
-        assertTrue(context.getRouteStatus("testRoute") == ServiceStatus.Stopped);
+        assertTrue(context.getRouteController().getRouteStatus("testRoute") == ServiceStatus.Stopped);
         try {
             context.createProducerTemplate().sendBody("direct:start", "Ready or not, Here, I come");
         } catch (CamelExecutionException e) {

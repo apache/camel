@@ -21,7 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.processor.DefaultExchangeFormatter;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Metadata;
@@ -35,14 +35,13 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class LogComponent extends UriEndpointComponent {
+public class LogComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(LogComponent.class);
 
     @Metadata(label = "advanced")
     private ExchangeFormatter exchangeFormatter;
 
     public LogComponent() {
-        super(LogEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

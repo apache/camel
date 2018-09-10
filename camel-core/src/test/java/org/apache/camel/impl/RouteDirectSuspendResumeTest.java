@@ -41,10 +41,10 @@ public class RouteDirectSuspendResumeTest extends ContextTestSupport {
         // now suspend and dont expect a message to be routed
         resetMocks();
         mock.expectedMessageCount(0);
-        context.suspendRoute("foo");
+        context.getRouteController().suspendRoute("foo");
 
         // direct consumer supports suspension
-        assertEquals("Suspended", context.getRouteStatus("foo").name());
+        assertEquals("Suspended", context.getRouteController().getRouteStatus("foo").name());
 
         try {
             template.sendBody("direct:foo", "B");
@@ -58,13 +58,13 @@ public class RouteDirectSuspendResumeTest extends ContextTestSupport {
         // now resume and expect the previous message to be routed
         resetMocks();
         mock.expectedBodiesReceived("B");
-        context.resumeRoute("foo");
+        context.getRouteController().resumeRoute("foo");
 
         template.sendBody("direct:foo", "B");
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Started", context.getRouteStatus("foo").name());
+        assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
     }
 
     @Override

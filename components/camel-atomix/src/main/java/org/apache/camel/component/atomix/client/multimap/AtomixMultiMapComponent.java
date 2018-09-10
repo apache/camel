@@ -26,7 +26,6 @@ public final class AtomixMultiMapComponent extends AbstractAtomixClientComponent
     private AtomixMultiMapConfiguration configuration = new AtomixMultiMapConfiguration();
 
     public AtomixMultiMapComponent() {
-        super();
     }
 
     public AtomixMultiMapComponent(CamelContext camelContext) {

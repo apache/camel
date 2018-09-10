@@ -246,10 +246,6 @@ classes from being resolved. Typically this is used at test time to
 exclude certain routes, which might otherwise be just noisy, from being
 discovered and initialized. |Not enabled and no routes are excluded |No routes are excluded
 
-|org.apache.camel.test.spring.LazyLoadTypeConverters (Deprecated) |Class |Indicates if the CamelContexts that are bootstrapped during the test
-through the use of Spring Test loaded application contexts should use
-lazy loading of type converters. |Type converters are not lazy loaded |Type converters are not lazy loaded
-
 |org.apache.camel.test.spring.MockEndpoints |Class |Triggers the auto-mocking of endpoints whose URIs match the provided
 filter.  The default filter is "*" which matches all endpoints.
  See org.apache.camel.impl.InterceptSendToMockEndpointStrategy for more

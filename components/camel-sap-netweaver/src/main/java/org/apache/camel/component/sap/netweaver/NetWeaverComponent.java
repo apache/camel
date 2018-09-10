@@ -19,12 +19,11 @@ package org.apache.camel.component.sap.netweaver;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
-public class NetWeaverComponent extends UriEndpointComponent {
+public class NetWeaverComponent extends DefaultComponent {
 
     public NetWeaverComponent() {
-        super(NetWeaverEndpoint.class);
     }
 
     @Override

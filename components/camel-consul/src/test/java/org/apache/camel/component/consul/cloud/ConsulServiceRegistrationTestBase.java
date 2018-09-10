@@ -66,7 +66,7 @@ public abstract class ConsulServiceRegistrationTestBase extends ConsulTestSuppor
         assertTrue(catalog.getService(SERVICE_NAME).getResponse().isEmpty());
 
         // let start the route
-        context().startRoute(SERVICE_ID);
+        context().getRouteController().startRoute(SERVICE_ID);
 
         // check that service has been registered
         List<CatalogService> services = catalog.getService(SERVICE_NAME).getResponse();
@@ -88,7 +88,7 @@ public abstract class ConsulServiceRegistrationTestBase extends ConsulTestSuppor
         assertEquals("localhost", checks.get(0).getService().getAddress());
 
         // let stop the route
-        context().stopRoute(SERVICE_ID);
+        context().getRouteController().stopRoute(SERVICE_ID);
 
         // the service should be removed once the route is stopped
         assertTrue(catalog.getService(SERVICE_NAME).getResponse().isEmpty());

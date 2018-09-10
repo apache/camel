@@ -106,7 +106,7 @@ public class TradeExecutorExample {
         LOG.info("Sending order");
         
         NewOrderSingle order = createNewOrderMessage();
-        Exchange exchange = producer.createExchange(ExchangePattern.InOnly);
+        Exchange exchange = producer.getEndpoint().createExchange(ExchangePattern.InOnly);
         exchange.getIn().setBody(order);
         producer.process(exchange);            
 

@@ -52,7 +52,7 @@ public class SchematronProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         String payload = exchange.getIn().getBody(String.class);
         logger.debug("Applying schematron validation on payload: {}", payload);
-        String report = SchematronProcessorFactory.newScehamtronEngine(endpoint.getRules()).validate(payload);
+        String report = SchematronProcessorFactory.newSchematronEngine(endpoint.getRules()).validate(payload);
         logger.debug("Schematron validation report \n {}", report);
         String status = getValidationStatus(report);
         logger.info("Schematron validation status : {}", status);

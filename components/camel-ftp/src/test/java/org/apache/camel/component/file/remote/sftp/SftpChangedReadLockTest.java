@@ -54,7 +54,7 @@ public class SftpChangedReadLockTest extends SftpServerTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedFileExists("target/changed/out/slowfile.dat");
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         writeSlowFile();
 

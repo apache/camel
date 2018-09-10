@@ -522,19 +522,8 @@ public interface Exchange {
     /**
      * Creates a copy of the current message exchange so that it can be
      * forwarded to another destination
-     * <p/>
-     * Notice this operation invokes <tt>copy(false)</tt>
      */
     Exchange copy();
-
-    /**
-     * Creates a copy of the current message exchange so that it can be
-     * forwarded to another destination
-     *
-     * @param safeCopy whether to copy exchange properties and message headers safely to a new map instance,
-     *                 or allow sharing the same map instances in the returned copy.
-     */
-    Exchange copy(boolean safeCopy);
 
     /**
      * Returns the endpoint which originated this message exchange if a consumer on an endpoint

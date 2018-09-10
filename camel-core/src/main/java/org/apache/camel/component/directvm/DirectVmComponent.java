@@ -24,14 +24,14 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 
 /**
  * The <a href="http://camel.apache.org/direct-vm.html">Direct VM Component</a> manages {@link DirectVmEndpoint} and holds the list of named direct-vm endpoints.
  */
-public class DirectVmComponent extends UriEndpointComponent {
+public class DirectVmComponent extends DefaultComponent {
 
     private static final AtomicInteger START_COUNTER = new AtomicInteger();
 
@@ -49,7 +49,6 @@ public class DirectVmComponent extends UriEndpointComponent {
     private boolean propagateProperties = true;
 
     public DirectVmComponent() {
-        super(DirectVmEndpoint.class);
     }
 
     /**

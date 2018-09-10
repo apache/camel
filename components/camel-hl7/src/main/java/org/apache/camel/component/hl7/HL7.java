@@ -40,14 +40,6 @@ public final class HL7 {
         return new ValueBuilder(new AckExpression());
     }
 
-    /**
-     * @deprecated Use {@link #ack(ca.uhn.hl7v2.AcknowledgmentCode)}
-     */
-    @Deprecated
-    public static ValueBuilder ack(AckCode code) {
-        return new ValueBuilder(new AckExpression(code));
-    }
-
     public static ValueBuilder ack(AcknowledgmentCode code) {
         return new ValueBuilder(new AckExpression(code));
     }
@@ -62,22 +54,6 @@ public final class HL7 {
             }
 
         });
-    }
-
-    /**
-     * @deprecated Use {@link #ack(ca.uhn.hl7v2.AcknowledgmentCode, String, ErrorCode)}
-     */
-    @Deprecated
-    public static ValueBuilder ack(AckCode code, String errorMessage, int errorCode) {
-        return ack(code.toAcknowledgmentCode(), errorMessage, ErrorCode.errorCodeFor(errorCode));
-    }
-
-    /**
-     * @deprecated Use {@link #ack(ca.uhn.hl7v2.AcknowledgmentCode, String, ErrorCode)}
-     */
-    @Deprecated
-    public static ValueBuilder ack(AckCode code, String errorMessage, ErrorCode errorCode) {
-        return ack(code.toAcknowledgmentCode(), errorMessage, errorCode);
     }
 
     public static ValueBuilder ack(AcknowledgmentCode code, String errorMessage, ErrorCode errorCode) {

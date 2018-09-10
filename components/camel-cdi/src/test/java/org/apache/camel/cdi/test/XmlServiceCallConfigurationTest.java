@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.cdi.CdiCamelExtension;
 import org.apache.camel.cdi.ImportResource;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -59,7 +60,7 @@ public class XmlServiceCallConfigurationTest {
 
     @Test
     public void testServiceDiscoveryConfiguration() {
-        ServiceCallConfigurationDefinition conf1 = context.getServiceCallConfiguration("conf1");
+        ServiceCallConfigurationDefinition conf1 = context.adapt(ModelCamelContext.class).getServiceCallConfiguration("conf1");
         assertNotNull("No ServiceCallConfiguration (1)", conf1);
         assertNotNull("No ServiceDiscoveryConfiguration (1)", conf1.getServiceDiscoveryConfiguration());
 
@@ -67,7 +68,7 @@ public class XmlServiceCallConfigurationTest {
         assertEquals(1, discovery1.getServers().size());
         assertEquals("localhost:9091", discovery1.getServers().get(0));
 
-        ServiceCallConfigurationDefinition conf2 = context.getServiceCallConfiguration("conf2");
+        ServiceCallConfigurationDefinition conf2 = context.adapt(ModelCamelContext.class).getServiceCallConfiguration("conf2");
         assertNotNull("No ServiceCallConfiguration (2)", conf2);
         assertNotNull("No ServiceDiscoveryConfiguration (2)", conf2.getServiceDiscoveryConfiguration());
 

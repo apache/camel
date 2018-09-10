@@ -64,17 +64,17 @@
       <from uri="jms:queue:inbox?concurrentConsumers=100"/>
       <transacted/>
       <to uri="log:+++JMS +++?groupSize=100"/>
-      <to ref="foo"/>
+      <to uri="ref:foo"/>
     </route>
 
     <route routePolicyRef="myPolicy">
       <from uri="file://target/inbox?delete=true&amp;maxMessagesPerPoll=50"/>
       <to uri="log:+++FILE+++?groupSize=100"/>
-      <to ref="foo"/>
+      <to uri="ref:foo"/>
     </route>
 
     <route>
-      <from ref="foo"/>
+      <from uri="ref:foo"/>
       <delay>
         <constant>100</constant>
       </delay>

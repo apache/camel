@@ -105,7 +105,7 @@ public final class CdiEventEndpoint<T> extends DefaultEndpoint {
     private final BeanManager manager;
 
     CdiEventEndpoint(String endpointUri, Type type, Set<Annotation> qualifiers, BeanManager manager) {
-        super(endpointUri);
+        super(endpointUri, null);
         this.type = type;
         this.qualifiers = qualifiers;
         this.manager = manager;

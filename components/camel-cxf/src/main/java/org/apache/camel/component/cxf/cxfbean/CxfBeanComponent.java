@@ -36,7 +36,6 @@ public class CxfBeanComponent extends HeaderFilterStrategyComponent {
     private Map<String, CxfBeanEndpoint> endpoints = new HashMap<>();
 
     public CxfBeanComponent() {
-        super(CxfBeanEndpoint.class);
     }
 
     @Override

@@ -30,7 +30,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -144,7 +144,7 @@ public class IrcConfiguration implements Cloneable {
         }
 
         if (uriStr.contains("?")) {
-            uriStr = ObjectHelper.before(uriStr, "?");
+            uriStr = StringHelper.before(uriStr, "?");
         }
 
         URI uri = new URI(uriStr);

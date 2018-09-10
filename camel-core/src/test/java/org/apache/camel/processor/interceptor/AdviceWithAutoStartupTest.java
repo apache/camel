@@ -28,8 +28,8 @@ public class AdviceWithAutoStartupTest extends ContextTestSupport {
 
     @Test
     public void testAdvised() throws Exception {
-        assertFalse(context.getRouteStatus("foo").isStarted());
-        assertFalse(context.getRouteStatus("bar").isStarted());
+        assertFalse(context.getRouteController().getRouteStatus("foo").isStarted());
+        assertFalse(context.getRouteController().getRouteStatus("bar").isStarted());
 
         context.getRouteDefinition("bar").adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
@@ -38,14 +38,14 @@ public class AdviceWithAutoStartupTest extends ContextTestSupport {
             }
         });
 
-        assertFalse(context.getRouteStatus("foo").isStarted());
-        assertFalse(context.getRouteStatus("bar").isStarted());
+        assertFalse(context.getRouteController().getRouteStatus("foo").isStarted());
+        assertFalse(context.getRouteController().getRouteStatus("bar").isStarted());
 
-        context.startRoute("foo");
-        context.startRoute("bar");
+        context.getRouteController().startRoute("foo");
+        context.getRouteController().startRoute("bar");
 
-        assertTrue(context.getRouteStatus("foo").isStarted());
-        assertTrue(context.getRouteStatus("bar").isStarted());
+        assertTrue(context.getRouteController().getRouteStatus("foo").isStarted());
+        assertTrue(context.getRouteController().getRouteStatus("bar").isStarted());
 
         getMockEndpoint("mock:newBar").expectedMessageCount(1);
 

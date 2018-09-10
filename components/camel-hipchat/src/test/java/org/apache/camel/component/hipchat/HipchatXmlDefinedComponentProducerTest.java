@@ -20,6 +20,7 @@ import java.io.InputStream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -58,7 +59,7 @@ public class HipchatXmlDefinedComponentProducerTest extends CamelTestSupport {
         // This test is all about ensuring the endpoint is configured correctly when using the XML DSL so this
         try (InputStream routes = getClass().getResourceAsStream("HipchatXmlDefinedComponentProducerTest-route.xml")) {
             RoutesDefinition routesDefinition = ModelHelper.loadRoutesDefinition(context, routes);
-            context.addRouteDefinition(routesDefinition.getRoutes().get(0));
+            context.adapt(ModelCamelContext.class).addRouteDefinition(routesDefinition.getRoutes().get(0));
         }
 
         return context;

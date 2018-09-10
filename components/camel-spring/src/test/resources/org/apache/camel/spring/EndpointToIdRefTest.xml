@@ -30,7 +30,7 @@
 
     <route>
       <from uri="direct:start"/>
-      <to id="foo" ref="result"/>
+      <to id="foo" uri="ref:result"/>
     </route>
 
   </camelContext>

@@ -32,7 +32,6 @@ import javax.management.modelmbean.ModelMBeanInfoSupport;
 import javax.management.modelmbean.ModelMBeanNotificationInfo;
 import javax.management.modelmbean.ModelMBeanOperationInfo;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Service;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedNotification;
@@ -62,10 +61,6 @@ public class MBeanInfoAssembler implements Service {
     private Map<Class<?>, MBeanAttributesAndOperations> cache;
 
     public MBeanInfoAssembler() {
-    }
-
-    @Deprecated
-    public MBeanInfoAssembler(CamelContext camelContext) {
     }
 
     @Override

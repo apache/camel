@@ -35,29 +35,29 @@
 
         <route>
             <from uri="direct:in"/>
-            <marshal ref="json"/>
+            <marshal><custom ref="json"/></marshal>
             <to uri="mock:result"/>
         </route>
 
         <route>
             <from uri="direct:marshal"/>
-            <marshal ref="json"/>
+            <marshal><custom ref="json"/></marshal>
         </route>
 
         <route>
             <from uri="direct:reverse"/>
-            <unmarshal ref="json"/>
+            <unmarshal><custom ref="json"/></unmarshal>
             <to uri="mock:reverse"/>
         </route>
 
         <route>
             <from uri="direct:inPretty"/>
-            <marshal ref="pretty"/>
+            <marshal><custom ref="pretty"/></marshal>
         </route>
 
         <route>
             <from uri="direct:backPretty"/>
-            <unmarshal ref="pretty"/>
+            <unmarshal><custom ref="pretty"/></unmarshal>
             <to uri="mock:reverse"/>
         </route>
 

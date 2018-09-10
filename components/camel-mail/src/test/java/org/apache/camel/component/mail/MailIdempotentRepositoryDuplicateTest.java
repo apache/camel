@@ -61,7 +61,7 @@ public class MailIdempotentRepositoryDuplicateTest extends CamelTestSupport {
         // no 3 is already in the idempotent repo
         mock.expectedBodiesReceived("Message 0", "Message 1", "Message 2", "Message 4");
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
 

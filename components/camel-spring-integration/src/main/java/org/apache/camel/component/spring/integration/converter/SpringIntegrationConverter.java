@@ -61,7 +61,7 @@ public final class SpringIntegrationConverter {
 
     @Converter
     public static org.apache.camel.Message toCamelMessage(final org.springframework.messaging.Message<?> springMessage) throws Exception {
-        return new SpringIntegrationMessage(springMessage);
+        return new SpringIntegrationMessage(null, springMessage);
     }
 
 }

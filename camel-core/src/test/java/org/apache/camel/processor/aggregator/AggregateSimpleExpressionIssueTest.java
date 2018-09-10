@@ -81,7 +81,7 @@ public class AggregateSimpleExpressionIssueTest extends ContextTestSupport {
 
         // start the route
         StopWatch watch = new StopWatch();
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         LOG.info("Waiting to process all the files");
         boolean matches = notify.matches(3, TimeUnit.MINUTES);

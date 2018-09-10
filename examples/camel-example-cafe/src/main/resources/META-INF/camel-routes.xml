@@ -31,7 +31,7 @@
     <route>
       <from uri="direct:cafe"/>
       <split>
-        <method bean="orderSplitter"/>
+        <method ref="orderSplitter"/>
         <to uri="direct:drink"/>
       </split>
     </route>
@@ -39,7 +39,7 @@
     <route>
       <from uri="direct:drink"/>
       <recipientList>
-        <method bean="drinkRouter"/>
+        <method ref="drinkRouter"/>
       </recipientList>
     </route>
 
@@ -59,7 +59,7 @@
       <from uri="direct:deliveries"/>
       <aggregate strategyRef="aggregatorStrategy" completionTimeout="5000">
         <correlationExpression>
-          <method bean="waiter" method="checkOrder"/>
+          <method ref="waiter" method="checkOrder"/>
         </correlationExpression>
         <to uri="bean:waiter?method=prepareDelivery"/>
         <to uri="bean:waiter?method=deliverCafes"/>

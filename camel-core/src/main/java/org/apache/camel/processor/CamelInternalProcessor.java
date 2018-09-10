@@ -400,38 +400,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     }
 
     /**
-     * Advice to inject the current {@link RouteContext} into the {@link UnitOfWork} on the {@link Exchange}
-     *
-     * @deprecated this logic has been merged into {@link org.apache.camel.processor.CamelInternalProcessor.UnitOfWorkProcessorAdvice}
-     */
-    @Deprecated
-    public static class RouteContextAdvice implements CamelInternalProcessorAdvice<UnitOfWork> {
-
-        private final RouteContext routeContext;
-
-        public RouteContextAdvice(RouteContext routeContext) {
-            this.routeContext = routeContext;
-        }
-
-        @Override
-        public UnitOfWork before(Exchange exchange) throws Exception {
-            // push the current route context
-            final UnitOfWork unitOfWork = exchange.getUnitOfWork();
-            if (unitOfWork != null) {
-                unitOfWork.pushRouteContext(routeContext);
-            }
-            return unitOfWork;
-        }
-
-        @Override
-        public void after(Exchange exchange, UnitOfWork unitOfWork) throws Exception {
-            if (unitOfWork != null) {
-                unitOfWork.popRouteContext();
-            }
-        }
-    }
-
-    /**
      * Advice to keep the {@link InflightRepository} up to date.
      */
     public static class RouteInflightRepositoryAdvice implements CamelInternalProcessorAdvice {

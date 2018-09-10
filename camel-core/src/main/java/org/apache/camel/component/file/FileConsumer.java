@@ -180,19 +180,6 @@ public class FileConsumer extends GenericFileConsumer<File> {
      *
      * @param endpointPath the starting directory the endpoint was configured with
      * @param file the source file
-     * @return wrapped as a GenericFile
-     * @deprecated use {@link #asGenericFile(String, File, String, boolean)}
-     */
-    @Deprecated
-    public static GenericFile<File> asGenericFile(String endpointPath, File file, String charset) {
-        return asGenericFile(endpointPath, file, charset, false);
-    }
-
-    /**
-     * Creates a new GenericFile<File> based on the given file.
-     *
-     * @param endpointPath the starting directory the endpoint was configured with
-     * @param file the source file
      * @param probeContentType whether to probe the content type of the file or not
      * @return wrapped as a GenericFile
      */

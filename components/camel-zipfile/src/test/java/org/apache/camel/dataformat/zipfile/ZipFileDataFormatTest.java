@@ -276,7 +276,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
                 from("direct:zip").marshal(zip).to("mock:zip");
                 from("direct:unzip").unmarshal(zip).to("mock:unzip");
                 from("direct:unzipWithEmptyDirectory").unmarshal(zip)
-                                        .split(body(Iterator.class))
+                                        .split(bodyAs(Iterator.class))
                                         .streaming()
                                         //.to("file:hello_out?autoCreate=true")
                                         .process(new Processor() {

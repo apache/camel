@@ -21,6 +21,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
 import org.junit.Test;
 
+
 public class CamelContextDisableJmxTest extends Assert {
 
     @Test

@@ -50,16 +50,6 @@ public class EventEndpoint extends DefaultEndpoint implements ApplicationContext
         this.name = name;
     }
 
-    /**
-     * <b>Note:</b> It is preferred to create endpoints using the associated
-     * component.
-     * @deprecated
-     */
-    @Deprecated
-    public EventEndpoint(String endpointUri) {
-        super(endpointUri);
-    }
-
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }

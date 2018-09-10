@@ -44,8 +44,6 @@ import org.apache.camel.Header;
 import org.apache.camel.Headers;
 import org.apache.camel.Message;
 import org.apache.camel.OutHeaders;
-import org.apache.camel.Properties;
-import org.apache.camel.Property;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.language.LanguageAnnotation;
@@ -964,14 +962,9 @@ public class BeanInfo {
             return ExpressionBuilder.attachmentObjectsExpression();
         } else if (annotation instanceof Attachments) {
             return ExpressionBuilder.attachmentsExpression();
-        } else if (annotation instanceof Property) {
-            Property propertyAnnotation = (Property)annotation;
-            return ExpressionBuilder.exchangePropertyExpression(propertyAnnotation.value());
         } else if (annotation instanceof ExchangeProperty) {
             ExchangeProperty propertyAnnotation = (ExchangeProperty)annotation;
             return ExpressionBuilder.exchangePropertyExpression(propertyAnnotation.value());
-        } else if (annotation instanceof Properties) {
-            return ExpressionBuilder.exchangePropertiesExpression();
         } else if (annotation instanceof ExchangeProperties) {
             return ExpressionBuilder.exchangePropertiesExpression();
         } else if (annotation instanceof Header) {

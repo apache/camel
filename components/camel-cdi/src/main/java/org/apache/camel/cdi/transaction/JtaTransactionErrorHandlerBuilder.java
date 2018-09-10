@@ -119,7 +119,7 @@ public class JtaTransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilde
         ObjectHelper.notNull(transactionPolicy, "transactionPolicy", this);
 
         final CamelContext camelContext = routeContext.getCamelContext();
-        final Map<String, String> properties = camelContext.getProperties();
+        final Map<String, String> properties = camelContext.getGlobalOptions();
         if ((properties != null) && properties.containsKey(ROLLBACK_LOGGING_LEVEL_PROPERTY)) {
             rollbackLoggingLevel = LoggingLevel.valueOf(properties.get(ROLLBACK_LOGGING_LEVEL_PROPERTY));
         }

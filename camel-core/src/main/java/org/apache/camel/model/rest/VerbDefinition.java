@@ -445,8 +445,6 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
             return "delete";
         } else if (this instanceof HeadVerbDefinition) {
             return "head";
-        } else if (this instanceof OptionsVerbDefinition) {
-            return "options";
         } else {
             return method;
         }

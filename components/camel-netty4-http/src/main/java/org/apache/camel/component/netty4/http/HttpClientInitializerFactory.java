@@ -146,7 +146,7 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
             SSLEngineFactory sslEngineFactory;
             if (configuration.getKeyStoreFile() != null || configuration.getTrustStoreFile() != null) {
                 sslEngineFactory = new SSLEngineFactory();
-                answer = sslEngineFactory.createSSLContext(producer.getContext().getClassResolver(),
+                answer = sslEngineFactory.createSSLContext(producer.getContext(),
                         configuration.getKeyStoreFormat(),
                         configuration.getSecurityProvider(),
                         "file:" + configuration.getKeyStoreFile().getPath(),
@@ -154,7 +154,7 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
                         configuration.getPassphrase().toCharArray());
             } else {
                 sslEngineFactory = new SSLEngineFactory();
-                answer = sslEngineFactory.createSSLContext(producer.getContext().getClassResolver(),
+                answer = sslEngineFactory.createSSLContext(producer.getContext(),
                         configuration.getKeyStoreFormat(),
                         configuration.getSecurityProvider(),
                         configuration.getKeyStoreResource(),

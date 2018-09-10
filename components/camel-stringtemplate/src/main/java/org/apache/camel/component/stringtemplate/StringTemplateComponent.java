@@ -19,16 +19,15 @@ package org.apache.camel.component.stringtemplate;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ResourceHelper;
 
 /**
  * @version 
  */
-public class StringTemplateComponent extends UriEndpointComponent {
+public class StringTemplateComponent extends DefaultComponent {
 
     public StringTemplateComponent() {
-        super(StringTemplateEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

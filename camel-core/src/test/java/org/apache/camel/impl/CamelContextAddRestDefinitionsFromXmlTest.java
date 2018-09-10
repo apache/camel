@@ -85,7 +85,7 @@ public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSuppor
 
         assertEquals(2, context.getRoutes().size());
 
-        assertTrue("Route should be started", context.getRouteStatus("route1").isStarted());
+        assertTrue("Route should be started", context.getRouteController().getRouteStatus("route1").isStarted());
 
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
         template.sendBody("seda:get-say-hello-bar", "Hello World");

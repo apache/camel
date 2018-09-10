@@ -26,12 +26,12 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:marshalJson"/>
-      <unmarshal ref="fhirJson"/>
+      <unmarshal><custom ref="fhirJson"/></unmarshal>
       <to uri="mock:result"/>
     </route>
     <route>
       <from uri="direct:marshalXml"/>
-      <marshal ref="fhirXml"/>
+      <marshal><custom ref="fhirXml"/></marshal>
       <to uri="mock:result"/>
     </route>
   </camelContext>

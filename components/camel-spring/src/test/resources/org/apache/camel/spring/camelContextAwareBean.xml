@@ -26,9 +26,9 @@
     ">
 
   <camelContext id="camel1" xmlns="http://camel.apache.org/schema/spring">
-    <properties>
-       <property key="org.apache.camel.test" value="this is a test first"/>
-    </properties>
+    <globalOptions>
+       <globalOption key="org.apache.camel.test" value="this is a test first"/>
+    </globalOptions>
     <template id="producer1"/>
   </camelContext>
   

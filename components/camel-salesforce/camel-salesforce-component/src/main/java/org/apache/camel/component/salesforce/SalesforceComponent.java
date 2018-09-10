@@ -26,12 +26,9 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.VerifiableComponent;
-import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.internal.OperationName;
@@ -65,7 +62,7 @@ import static org.apache.camel.component.salesforce.SalesforceLoginConfig.DEFAUL
  * Represents the component that manages {@link SalesforceEndpoint}.
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
-public class SalesforceComponent extends DefaultComponent implements VerifiableComponent, SSLContextParametersAware {
+public class SalesforceComponent extends DefaultComponent implements SSLContextParametersAware {
 
     public static final String HTTP_PROXY_HOST = "httpProxyHost";
     public static final String HTTP_PROXY_PORT = "httpProxyPort";
@@ -650,12 +647,6 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
 
     public Map<String, Class<?>> getClassMap() {
         return classMap;
-    }
-
-    @Override
-    public ComponentVerifier getVerifier() {
-        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class)
-            .orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 
     public RestClient createRestClientFor(final SalesforceEndpoint endpoint) throws SalesforceException {

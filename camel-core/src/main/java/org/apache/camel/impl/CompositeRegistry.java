@@ -107,15 +107,4 @@ public class CompositeRegistry implements Registry {
         return answer;
     }
 
-    public Object lookup(String name) {
-        return lookupByName(name);
-    }
-
-    public <T> T lookup(String name, Class<T> type) {
-        return lookupByNameAndType(name, type);
-    }
-
-    public <T> Map<String, T> lookupByType(Class<T> type) {
-        return findByTypeWithName(type);
-    }
 }

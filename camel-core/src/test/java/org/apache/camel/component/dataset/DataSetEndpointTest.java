@@ -37,10 +37,8 @@ public class DataSetEndpointTest extends ContextTestSupport {
     @Test
     public void testDataSetEndpoint() throws Exception {
         @SuppressWarnings("deprecation")
-        final DataSetEndpoint endpoint = new DataSetEndpoint();
+        final DataSetEndpoint endpoint = new DataSetEndpoint("dataset://foo", null, new SimpleDataSet(2));
         endpoint.setCamelContext(context);
-        endpoint.setEndpointUriIfNotSpecified("dataset://foo");
-        endpoint.setDataSet(new SimpleDataSet(2));
         endpoint.setInitialDelay(0);
 
         assertEquals(0, endpoint.getPreloadSize());

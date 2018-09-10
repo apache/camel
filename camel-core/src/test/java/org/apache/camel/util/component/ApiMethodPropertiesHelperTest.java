@@ -19,6 +19,7 @@ package org.apache.camel.util.component;
 import java.util.HashMap;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.mock.MockComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
@@ -49,8 +50,7 @@ public class ApiMethodPropertiesHelperTest {
     @Test
     public void testGetExchangeProperties() throws Exception {
         final CamelContext camelContext = new DefaultCamelContext();
-        MockEndpoint mock = new MockEndpoint();
-        mock.setCamelContext(camelContext);
+        MockEndpoint mock = new MockEndpoint(null, new MockComponent(camelContext));
 
         final HashMap<String, Object> properties = new HashMap<>();
         final DefaultExchange exchange = new DefaultExchange(mock);

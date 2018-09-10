@@ -26,7 +26,6 @@ public final class AtomixMapComponent extends AbstractAtomixClientComponent<Atom
     private AtomixMapConfiguration configuration = new AtomixMapConfiguration();
 
     public AtomixMapComponent() {
-        super();
     }
 
     public AtomixMapComponent(CamelContext camelContext) {

@@ -109,7 +109,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         scp.setCipherSuites(csp);
         scp.setSecureSocketProtocols(sspp);
 
-        SSLContext context = scp.createSSLContext();
+        SSLContext context = scp.createSSLContext(null);
         SSLServerSocket serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
         assertTrue(serverSocket.getNeedClientAuth());
         context.getSocketFactory().createSocket();
@@ -128,7 +128,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         SSLContextServerParameters scsp = new SSLContextServerParameters();
 
         scp.setServerParameters(scsp);
-        SSLContext context = scp.createSSLContext();
+        SSLContext context = scp.createSSLContext(null);
 
 
         SSLEngine engine = context.createSSLEngine();
@@ -141,7 +141,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
         // ClientAuthentication - NONE
         scsp.setClientAuthentication(ClientAuthentication.NONE.name());
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
 
@@ -152,7 +152,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
         // ClientAuthentication - WANT
         scsp.setClientAuthentication(ClientAuthentication.WANT.name());
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
 
@@ -163,7 +163,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
         // ClientAuthentication - REQUIRE
         scsp.setClientAuthentication(ClientAuthentication.REQUIRE.name());
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
 
@@ -186,7 +186,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         SSLContextServerParameters scsp = new SSLContextServerParameters();
 
         scp.setServerParameters(scsp);
-        SSLContext context = scp.createSSLContext();
+        SSLContext context = scp.createSSLContext(null);
 
         SSLEngine engine = context.createSSLEngine();
         SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket();
@@ -204,7 +204,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
         // No csp or filter on server params passes through shared config
         scp.setCipherSuites(new CipherSuitesParameters());
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -217,7 +217,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         scp.setCipherSuites(null);
         CipherSuitesParameters csp = new CipherSuitesParameters();
         scsp.setCipherSuites(csp);
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -231,7 +231,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         filter.getExclude().add(".*");
         scsp.setCipherSuites(null);
         scsp.setCipherSuitesFilter(filter);
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -244,7 +244,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         filter.getInclude().add(".*");
         filter.getExclude().clear();
         scsp.setCipherSuites(csp);
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -256,7 +256,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         // Sspp on server params
         SecureSocketProtocolsParameters sspp = new SecureSocketProtocolsParameters();
         scsp.setSecureSocketProtocols(sspp);
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -282,7 +282,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         filter.getInclude().add(".*");
         filter.getExclude().clear();
         scsp.setSecureSocketProtocols(sspp);
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -293,7 +293,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
         // Server session timeout only affects server session configuration
         scsp.setSessionTimeout("12345");
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -326,7 +326,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         SSLContextClientParameters sccp = new SSLContextClientParameters();
 
         scp.setClientParameters(sccp);
-        SSLContext context = scp.createSSLContext();
+        SSLContext context = scp.createSSLContext(null);
 
         SSLEngine engine = context.createSSLEngine();
         SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket();
@@ -342,7 +342,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
         // No csp or filter on client params passes through shared config
         scp.setCipherSuites(new CipherSuitesParameters());
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -353,7 +353,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         scp.setCipherSuites(null);
         CipherSuitesParameters csp = new CipherSuitesParameters();
         sccp.setCipherSuites(csp);
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -367,7 +367,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         filter.getExclude().add(".*");
         sccp.setCipherSuites(null);
         sccp.setCipherSuitesFilter(filter);
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -380,7 +380,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         filter.getInclude().add(".*");
         filter.getExclude().clear();
         sccp.setCipherSuites(csp);
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -392,7 +392,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         // Sspp on client params
         SecureSocketProtocolsParameters sspp = new SecureSocketProtocolsParameters();
         sccp.setSecureSocketProtocols(sspp);
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -418,7 +418,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         filter.getInclude().add(".*");
         filter.getExclude().clear();
         sccp.setSecureSocketProtocols(sspp);
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -429,7 +429,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
         // Client session timeout only affects client session configuration
         sccp.setSessionTimeout("12345");
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -449,7 +449,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         // default
         SSLContextParameters scp = new SSLContextParameters();
 
-        SSLContext context = scp.createSSLContext();
+        SSLContext context = scp.createSSLContext(null);
 
         SSLEngine engine = context.createSSLEngine();
         SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket();
@@ -464,7 +464,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
         CipherSuitesParameters csp = new CipherSuitesParameters();
         scp.setCipherSuites(csp);
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -476,7 +476,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         // explicit csp
 
         csp.setCipherSuite(Collections.singletonList(controlEngine.getEnabledCipherSuites()[0]));
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -493,7 +493,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         FilterParameters filter = new FilterParameters();
         filter.getInclude().add(".*");
         scp.setCipherSuitesFilter(filter);
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -517,7 +517,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         // default
         SSLContextParameters scp = new SSLContextParameters();
 
-        SSLContext context = scp.createSSLContext();
+        SSLContext context = scp.createSSLContext(null);
 
         CipherSuitesParameters csp = new CipherSuitesParameters();
         scp.setCipherSuites(csp);
@@ -534,7 +534,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         // empty filter
         FilterParameters filter = new FilterParameters();
         scp.setCipherSuitesFilter(filter);
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -545,7 +545,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
         // explicit filter
         filter.getInclude().add(".*");
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -556,7 +556,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
         // explicit filter with excludes (excludes overrides)
         filter.getExclude().add(".*");
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -571,7 +571,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         filter.getExclude().clear();
         csp.setCipherSuite(Collections.singletonList("TLS_RSA_WITH_AES_128_CBC_SHA"));
         filter.getInclude().add("TLS.*");
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -595,7 +595,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         // default
         SSLContextParameters scp = new SSLContextParameters();
 
-        SSLContext context = scp.createSSLContext();
+        SSLContext context = scp.createSSLContext(null);
 
         SSLEngine engine = context.createSSLEngine();
         SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket();
@@ -611,7 +611,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
         SecureSocketProtocolsParameters sspp = new SecureSocketProtocolsParameters();
         scp.setSecureSocketProtocols(sspp);
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -623,7 +623,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         // explicit sspp
 
         sspp.setSecureSocketProtocol(Collections.singletonList("TLSv1"));
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -640,7 +640,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         FilterParameters filter = new FilterParameters();
         filter.getInclude().add(".*");
         scp.setSecureSocketProtocolsFilter(filter);
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -667,7 +667,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         // default
         SSLContextParameters scp = new SSLContextParameters();
 
-        SSLContext context = scp.createSSLContext();
+        SSLContext context = scp.createSSLContext(null);
 
         SSLEngine engine = context.createSSLEngine();
         SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket();
@@ -682,7 +682,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
         FilterParameters filter = new FilterParameters();
         scp.setSecureSocketProtocolsFilter(filter);
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -694,7 +694,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         // explicit filter
 
         filter.getInclude().add(".*");
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -705,7 +705,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
 
         // explicit filter with excludes (excludes overrides)
         filter.getExclude().add(".*");
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -718,7 +718,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         filter.getInclude().clear();
         filter.getExclude().clear();
         filter.getInclude().add("TLS.*");
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -739,14 +739,14 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         SSLContextParameters scp = new SSLContextParameters();
         scp.setSessionTimeout("60");
 
-        SSLContext context = scp.createSSLContext();
+        SSLContext context = scp.createSSLContext(null);
 
         assertEquals(60, context.getClientSessionContext().getSessionTimeout());
         assertEquals(60, context.getServerSessionContext().getSessionTimeout());
 
         scp.setSessionTimeout("0");
 
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
 
         assertEquals(0, context.getClientSessionContext().getSessionTimeout());
         assertEquals(0, context.getServerSessionContext().getSessionTimeout());
@@ -757,7 +757,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
     public void testDefaultSecureSocketProtocol() throws Exception {
         SSLContextParameters scp = new SSLContextParameters();
 
-        SSLContext context = scp.createSSLContext();
+        SSLContext context = scp.createSSLContext(null);
 
         assertEquals("TLS", context.getProtocol());
 
@@ -776,7 +776,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         SSLContextParameters scp = new SSLContextParameters();
         scp.setSecureSocketProtocol("SSLv3");
 
-        SSLContext context = scp.createSSLContext();
+        SSLContext context = scp.createSSLContext(null);
 
         assertEquals("SSLv3", context.getProtocol());
 
@@ -794,7 +794,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         protocols.setSecureSocketProtocol(Collections.singletonList("SSLv3"));
         scp.setSecureSocketProtocols(protocols);
 
-        context = scp.createSSLContext();
+        context = scp.createSSLContext(null);
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -810,9 +810,9 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
     @Test
     public void testProvider() throws Exception {
         SSLContextParameters scp = new SSLContextParameters();
-        scp.createSSLContext();
+        scp.createSSLContext(null);
 
-        SSLContext context = scp.createSSLContext();
+        SSLContext context = scp.createSSLContext(null);
 
         SSLContext defaultContext = SSLContext.getDefault();
 

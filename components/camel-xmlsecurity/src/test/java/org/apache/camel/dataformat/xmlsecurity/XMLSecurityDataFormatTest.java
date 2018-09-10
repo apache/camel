@@ -58,7 +58,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        context.getProperties().put(XmlConverter.OUTPUT_PROPERTIES_PREFIX + OutputKeys.ENCODING, "UTF-8");
+        context.getGlobalOptions().put(XmlConverter.OUTPUT_PROPERTIES_PREFIX + OutputKeys.ENCODING, "UTF-8");
     }
     
     
@@ -198,7 +198,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
         tsParameters.setPassword("password");
         tsParameters.setResource("sender.ts");
         
-        Map<String, String> contextProps = context.getProperties();
+        Map<String, String> contextProps = context.getGlobalOptions();
         contextProps.put(XMLSecurityDataFormat.XML_ENC_TRUST_STORE_PASSWORD, "password");
  
         context.addRoutes(new RouteBuilder() {

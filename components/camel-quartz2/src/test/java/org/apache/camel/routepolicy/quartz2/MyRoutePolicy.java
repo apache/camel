@@ -17,12 +17,11 @@
 package org.apache.camel.routepolicy.quartz2;
 
 import org.apache.camel.Route;
-import org.apache.camel.impl.RoutePolicySupport;
 
 /**
  *
  */
-public class MyRoutePolicy extends RoutePolicySupport {
+public class MyRoutePolicy extends org.apache.camel.support.RoutePolicySupport {
     
     private boolean start;
     private boolean stop;

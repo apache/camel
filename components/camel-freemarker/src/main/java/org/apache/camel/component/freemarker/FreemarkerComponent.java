@@ -23,7 +23,7 @@ import freemarker.cache.NullCacheStorage;
 import freemarker.cache.URLTemplateLoader;
 import freemarker.template.Configuration;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
@@ -31,14 +31,13 @@ import org.apache.camel.util.ResourceHelper;
 /**
  * Freemarker component.
  */
-public class FreemarkerComponent extends UriEndpointComponent {
+public class FreemarkerComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
     private Configuration configuration;
     private Configuration noCacheConfiguration;
 
     public FreemarkerComponent() {
-        super(FreemarkerEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

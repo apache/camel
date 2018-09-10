@@ -33,7 +33,6 @@ import org.apache.camel.component.vm.VmComponent;
 public class StubComponent extends VmComponent {
 
     public StubComponent() {
-        super(StubEndpoint.class);
     }
 
     @Override

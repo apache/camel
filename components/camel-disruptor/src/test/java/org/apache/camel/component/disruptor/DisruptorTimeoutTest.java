@@ -68,7 +68,7 @@ public class DisruptorTimeoutTest extends CamelTestSupport {
 
     @Test
     public void testDisruptorTimeoutWithStoppedRoute() throws Exception {
-        context.stopRoute("disruptor");
+        context.getRouteController().stopRoute("disruptor");
         timeout = 500;
         testDisruptorTimeout();
     }

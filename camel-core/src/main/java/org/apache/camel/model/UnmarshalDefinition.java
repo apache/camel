@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -122,19 +121,11 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
     private DataFormatDefinition dataFormatType;
     // cannot use @XmlElementRef as it doesn't allow optional properties
 
-    @XmlAttribute
-    @Deprecated
-    private String ref;
-
     public UnmarshalDefinition() {
     }
 
     public UnmarshalDefinition(DataFormatDefinition dataFormatType) {
         this.dataFormatType = dataFormatType;
-    }
-
-    public UnmarshalDefinition(String ref) {
-        this.ref = ref;
     }
 
     @Override
@@ -146,7 +137,7 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
         if (dataFormatType != null) {
             return dataFormatType.toString();
         } else {
-            return "ref:" + ref;
+            return "";
         }
     }
 
@@ -158,20 +149,6 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
     @Override
     public String getLabel() {
         return "unmarshal[" + description() + "]";
-    }
-
-    public String getRef() {
-        return ref;
-    }
-
-    /**
-     * To refer to a custom data format to use as unmarshaller
-     *
-     * @deprecated use custom dataformat instead
-     */
-    @Deprecated
-    public void setRef(String ref) {
-        this.ref = ref;
     }
 
     public DataFormatDefinition getDataFormatType() {
@@ -187,7 +164,7 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
 
     @Override
     public Processor createProcessor(RouteContext routeContext) {
-        DataFormat dataFormat = DataFormatDefinition.getDataFormat(routeContext, getDataFormatType(), ref);
+        DataFormat dataFormat = DataFormatDefinition.getDataFormat(routeContext, getDataFormatType(), null);
         return new UnmarshalProcessor(dataFormat);
     }
 }

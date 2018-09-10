@@ -247,7 +247,7 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
         Exchange exchange = endpoint.createExchange();
         JmsBinding binding = getBinding();
         exchange.setProperty(Exchange.BINDING, binding);
-        exchange.setIn(new JmsMessage(message, session, binding));
+        exchange.setIn(new JmsMessage(exchange, message, session, binding));
 
         // lets set to an InOut if we have some kind of reply-to destination
         if (replyDestination != null && !disableReplyTo) {

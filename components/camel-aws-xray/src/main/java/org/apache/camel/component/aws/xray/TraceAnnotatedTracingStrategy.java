@@ -49,12 +49,12 @@ public class TraceAnnotatedTracingStrategy implements InterceptStrategy {
         String shortName = processorDefinition.getShortName();
 
         if (processorDefinition instanceof BeanDefinition) {
-            BeanProcessor beanProcessor = (BeanProcessor) nextTarget;
+            BeanProcessor beanProcessor = (BeanProcessor) target;
             if (null != beanProcessor && null != beanProcessor.getBean()) {
                 processorClass = beanProcessor.getBean().getClass();
             }
         } else if (processorDefinition instanceof ProcessDefinition) {
-            DelegateSyncProcessor syncProcessor = (DelegateSyncProcessor) nextTarget;
+            DelegateSyncProcessor syncProcessor = (DelegateSyncProcessor) target;
             if (null != syncProcessor && null != syncProcessor.getProcessor()) {
                 processorClass = syncProcessor.getProcessor().getClass();
             }

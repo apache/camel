@@ -91,7 +91,7 @@ public class SchematronProcessorTest {
         TransformerFactory factory = new TransformerFactoryImpl();
         factory.setURIResolver(new ClassPathURIResolver(Constants.SCHEMATRON_TEMPLATES_ROOT_DIR, clientResolver));
         Templates rules = TemplatesFactory.newInstance().getTemplates(ClassLoader.getSystemResourceAsStream(schematron), factory);
-        return SchematronProcessorFactory.newScehamtronEngine(rules);
+        return SchematronProcessorFactory.newSchematronEngine(rules);
     }
 
     class ClientUriResolver implements URIResolver {

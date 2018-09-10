@@ -18,8 +18,11 @@ package org.apache.camel.component.spring.integration;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultMessage;
+import org.springframework.messaging.Message;
 
 /**
  * The Message {@link DefaultMessage} implementation
@@ -30,10 +33,17 @@ import org.apache.camel.impl.DefaultMessage;
 public class SpringIntegrationMessage extends DefaultMessage {
     private org.springframework.messaging.Message<?> siMessage;
 
-    public SpringIntegrationMessage() {
+    public SpringIntegrationMessage(CamelContext camelContext) {
+        super(camelContext);
     }
 
-    public SpringIntegrationMessage(org.springframework.messaging.Message<?> message) {
+    public SpringIntegrationMessage(Exchange exchange, Message<?> message) {
+        super(exchange);
+        this.siMessage = message;
+    }
+
+    public SpringIntegrationMessage(CamelContext camelContext, Message<?> message) {
+        super(camelContext);
         this.siMessage = message;
     }
 
@@ -100,8 +110,7 @@ public class SpringIntegrationMessage extends DefaultMessage {
     @Override
     public SpringIntegrationMessage newInstance() {
         // create new empty message
-        SpringIntegrationMessage answer = new SpringIntegrationMessage();
-        answer.setCamelContext(getCamelContext());
+        SpringIntegrationMessage answer = new SpringIntegrationMessage(getCamelContext());
         return answer;
     }
 

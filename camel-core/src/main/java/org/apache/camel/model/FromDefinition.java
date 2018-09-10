@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Act as a message source as input to a route
@@ -38,9 +37,6 @@ import org.apache.camel.util.ObjectHelper;
 public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition> implements EndpointRequiredDefinition {
     @XmlAttribute @Metadata(required = "true")
     private String uri;
-    @XmlAttribute
-    @Deprecated
-    private String ref;
     @XmlTransient
     private Endpoint endpoint;
 
@@ -67,12 +63,12 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
 
     @Override
     public String getLabel() {
-        return description(getUri(), getRef(), getEndpoint());
+        return description(getUri(), getEndpoint());
     }
 
     public Endpoint resolveEndpoint(RouteContext context) {
         if (endpoint == null) {
-            return context.resolveEndpoint(getUri(), getRef());
+            return context.resolveEndpoint(getUri());
         } else {
             return endpoint;
         }
@@ -106,28 +102,11 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
         this.uri = uri;
     }
 
-    public String getRef() {
-        return ref;
-    }
-
-    /**
-     * Sets the name of the endpoint within the registry (such as the Spring
-     * ApplicationContext or JNDI) to use
-     *
-     * @param ref the reference name to use
-     * @deprecated use uri with ref:uri instead
-     */
-    @Deprecated
-    public void setRef(String ref) {
-        clear();
-        this.ref = ref;
-    }
-
     /**
      * Gets tne endpoint if an {@link Endpoint} instance was set.
      * <p/>
      * This implementation may return <tt>null</tt> which means you need to use
-     * {@link #getRef()} or {@link #getUri()} to get information about the endpoint.
+     * {@link #getUri()} to get information about the endpoint.
      *
      * @return the endpoint instance, or <tt>null</tt>
      */
@@ -143,24 +122,10 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
         }
     }
 
-    /**
-     * Returns the endpoint URI or the name of the reference to it
-     */
-    public Object getUriOrRef() {
-        if (ObjectHelper.isNotEmpty(uri)) {
-            return uri;
-        } else if (endpoint != null) {
-            return endpoint.getEndpointUri();
-        }
-        return ref;
-    }
-
     // Implementation methods
     // -----------------------------------------------------------------------
-    protected static String description(String uri, String ref, Endpoint endpoint) {
-        if (ref != null) {
-            return "ref:" + ref;
-        } else if (endpoint != null) {
+    protected static String description(String uri, Endpoint endpoint) {
+        if (endpoint != null) {
             return endpoint.getEndpointUri();
         } else if (uri != null) {
             return uri;
@@ -171,7 +136,6 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
 
     protected void clear() {
         this.endpoint = null;
-        this.ref = null;
         this.uri = null;
     }
 

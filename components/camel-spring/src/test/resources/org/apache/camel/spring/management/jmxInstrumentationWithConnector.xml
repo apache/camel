@@ -42,8 +42,8 @@
         <endpoint id="endpoint2" uri="mock:end"/>
 
         <route>
-            <from ref="endpoint1"/>
-            <to ref="endpoint2"/>
+            <from uri="ref:endpoint1"/>
+            <to uri="ref:endpoint2"/>
         </route>
     </camelContext>
 

@@ -26,12 +26,12 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:unmarshalErrorHandlerStrict"/>
-      <unmarshal ref="strict"/>
+      <unmarshal><custom ref="strict"/></unmarshal>
       <to uri="mock:errorIsThrown"/>
     </route>
     <route>
       <from uri="direct:unmarshalErrorHandlerLenient"/>
-      <unmarshal ref="lenient"/>
+      <unmarshal><custom ref="lenient"/></unmarshal>
       <to uri="mock:result"/>
     </route>
   </camelContext>

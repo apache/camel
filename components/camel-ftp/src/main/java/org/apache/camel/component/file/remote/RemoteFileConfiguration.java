@@ -23,6 +23,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Configuration of the FTP server
@@ -105,8 +106,8 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
         String username = uri.getUserInfo();
         String pw = null;
         if (username != null && username.contains(":")) {
-            pw = ObjectHelper.after(username, ":");
-            username = ObjectHelper.before(username, ":");
+            pw = StringHelper.after(username, ":");
+            username = StringHelper.before(username, ":");
         }
         if (username != null) {
             setUsername(username);

@@ -154,20 +154,7 @@ public class StaxConverter {
             returnXMLOutputFactory(factory);
         }
     }
-    
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public XMLStreamReader createXMLStreamReader(InputStream in) throws XMLStreamException {
-        XMLInputFactory factory = getInputFactory();
-        try {
-            return factory.createXMLStreamReader(IOHelper.buffered(in));
-        } finally {
-            returnXMLInputFactory(factory);
-        }
-    }
-    
+
     @Converter
     public XMLStreamReader createXMLStreamReader(InputStream in, Exchange exchange) throws XMLStreamException {
         XMLInputFactory factory = getInputFactory();
@@ -218,19 +205,6 @@ public class StaxConverter {
         XMLInputFactory factory = getInputFactory();
         try {
             return factory.createXMLStreamReader(new StringReader(string));
-        } finally {
-            returnXMLInputFactory(factory);
-        }
-    }
-    
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public XMLEventReader createXMLEventReader(InputStream in) throws XMLStreamException {
-        XMLInputFactory factory = getInputFactory();
-        try {
-            return factory.createXMLEventReader(IOHelper.buffered(in));
         } finally {
             returnXMLInputFactory(factory);
         }

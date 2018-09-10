@@ -26,25 +26,24 @@ import javax.validation.ValidatorFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link CMEndpoint}s.
  */
-public class CMComponent extends UriEndpointComponent {
+public class CMComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(CMComponent.class);
 
     private Validator validator;
 
     public CMComponent() {
-        super(CMEndpoint.class);
     }
 
     public CMComponent(final CamelContext context) {
-        super(context, CMEndpoint.class);
+        super(context);
     }
 
     @Override

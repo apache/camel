@@ -230,14 +230,6 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     }
 
     /**
-     * @deprecated will be removed in Camel 3.0 Instead use {@link #newExchangeBody(org.apache.camel.Expression)}
-     */
-    @Deprecated
-    public WireTapDefinition<Type> newExchange(Expression expression) {
-        return newExchangeBody(expression);
-    }
-
-    /**
      * Sends a <i>new</i> Exchange, instead of tapping an existing, using {@link ExchangePattern#InOnly}
      *
      * @param expression expression that creates the new body to send
@@ -276,7 +268,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
     /**
      * Sets a header on the <i>new</i> Exchange, instead of tapping an existing, using {@link ExchangePattern#InOnly}.
      * <p/>
-     * Use this together with the {@link #newExchange(org.apache.camel.Expression)} or {@link #newExchange(org.apache.camel.Processor)}
+     * Use this together with the {@link #newExchangeBody(org.apache.camel.Expression)} or {@link #newExchange(org.apache.camel.Processor)}
      * methods.
      *
      * @param headerName  the header name

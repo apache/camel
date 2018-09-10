@@ -44,7 +44,7 @@ public class FtpSimpleConsumeDirectoryParseWithAbsoluteDepthNoStepwiseTest exten
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
     }

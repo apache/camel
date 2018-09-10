@@ -221,7 +221,7 @@ public class InOutProducer extends SjmsProducer {
             } else if (responseObject instanceof Message) {
                 Message message = (Message) responseObject;
 
-                SjmsMessage response = new SjmsMessage(message, consumer.getSession(), getEndpoint().getBinding());
+                SjmsMessage response = new SjmsMessage(exchange, message, consumer.getSession(), getEndpoint().getBinding());
                 // the JmsBinding is designed to be "pull-based": it will populate the Camel message on demand
                 // therefore, we link Exchange and OUT message before continuing, so that the JmsBinding has full access
                 // to everything it may need, and can populate headers, properties, etc. accordingly (solves CAMEL-6218).

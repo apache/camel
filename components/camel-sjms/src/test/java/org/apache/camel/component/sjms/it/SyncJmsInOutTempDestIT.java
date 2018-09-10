@@ -47,7 +47,7 @@ public class SyncJmsInOutTempDestIT extends JmsTestSupport {
         // just in case we run on slow boxes
         assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
 
-        log.info("Took " + watch.stop() + " ms. to process 100 messages request/reply over JMS");
+        log.info("Took " + watch.taken() + " ms. to process 100 messages request/reply over JMS");
     }
 
     @Override

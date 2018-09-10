@@ -41,8 +41,8 @@ public class ManagedMarshal extends ManagedProcessor implements ManagedMarshalMB
 
     @Override
     public String getDataFormatName() {
-        String name = getDefinition().getRef();
-        if (name == null && getDefinition().getDataFormatType() != null) {
+        String name = null;
+        if (getDefinition().getDataFormatType() != null) {
             name = getDefinition().getDataFormatType().getDataFormatName();
         }
         return name;

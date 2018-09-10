@@ -145,7 +145,7 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
             SSLEngineFactory sslEngineFactory;
             if (configuration.getKeyStoreFile() != null || configuration.getTrustStoreFile() != null) {
                 sslEngineFactory = new SSLEngineFactory();
-                answer = sslEngineFactory.createSSLContext(camelContext.getClassResolver(),
+                answer = sslEngineFactory.createSSLContext(camelContext,
                         configuration.getKeyStoreFormat(),
                         configuration.getSecurityProvider(),
                         "file:" + configuration.getKeyStoreFile().getPath(),
@@ -153,7 +153,7 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
                         configuration.getPassphrase().toCharArray());
             } else {
                 sslEngineFactory = new SSLEngineFactory();
-                answer = sslEngineFactory.createSSLContext(camelContext.getClassResolver(),
+                answer = sslEngineFactory.createSSLContext(camelContext,
                         configuration.getKeyStoreFormat(),
                         configuration.getSecurityProvider(),
                         configuration.getKeyStoreResource(),

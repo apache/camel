@@ -28,7 +28,7 @@ import org.apache.camel.component.file.GenericFilePollingConsumer;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Remote file endpoint.
@@ -151,8 +151,8 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
      */
     protected void afterPropertiesSet() throws Exception {
         RemoteFileConfiguration config = getConfiguration();
-        ObjectHelper.notEmpty(config.getHost(), "host");
-        ObjectHelper.notEmpty(config.getProtocol(), "protocol");
+        StringHelper.notEmpty(config.getHost(), "host");
+        StringHelper.notEmpty(config.getProtocol(), "protocol");
     }
 
     @Override

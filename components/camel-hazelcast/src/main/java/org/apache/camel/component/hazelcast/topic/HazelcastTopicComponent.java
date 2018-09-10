@@ -27,7 +27,6 @@ import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 public class HazelcastTopicComponent extends HazelcastDefaultComponent {
 
     public HazelcastTopicComponent() {
-        super();
     }
 
     public HazelcastTopicComponent(final CamelContext context) {

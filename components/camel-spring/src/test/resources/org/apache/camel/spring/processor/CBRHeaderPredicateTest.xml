@@ -31,7 +31,7 @@
             <from uri="direct:start"/>
             <choice>
                 <when>
-                    <method bean="cbrBean" method="checkHeader"/>
+                    <method ref="cbrBean" method="checkHeader"/>
                     <to uri="mock:foo"/>
                 </when>
                 <otherwise>

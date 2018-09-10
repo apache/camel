@@ -93,13 +93,6 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
         this.id = id;
     }
 
-    /**
-     * @deprecated not longer supported.
-     */
-    @Deprecated
-    public void setDestination(Endpoint destination) {
-    }
-
     public String getTraceLabel() {
         if (traceLabelToString == null) {
             traceLabelToString = URISupport.sanitizeUri(destination.getEndpointUri());

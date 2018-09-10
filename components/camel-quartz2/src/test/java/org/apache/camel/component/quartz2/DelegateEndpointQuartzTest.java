@@ -87,7 +87,7 @@ public class DelegateEndpointQuartzTest extends CamelTestSupport {
         private final Endpoint childEndpoint;
         
         MyEndpoint(String uri, Endpoint childEndpoint) {
-            super(uri);
+            super(uri, null);
             this.childEndpoint = childEndpoint;
         }
 

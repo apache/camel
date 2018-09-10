@@ -26,12 +26,10 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HostnameVerifier;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.SSLContextParametersAware;
-import org.apache.camel.VerifiableComponent;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonComponent;
@@ -74,7 +72,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
-public class HttpComponent extends HttpCommonComponent implements RestProducerFactory, VerifiableComponent, SSLContextParametersAware {
+public class HttpComponent extends HttpCommonComponent implements RestProducerFactory, SSLContextParametersAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpComponent.class);
 
@@ -131,7 +129,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     public HttpComponent(Class<? extends HttpEndpoint> endpointClass) {
-        super(endpointClass);
+        super();
 
         registerExtension(HttpComponentVerifierExtension::new);
     }
@@ -167,6 +165,10 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             String authHost = getParameter(parameters, "authHost", String.class);
             
             return CompositeHttpConfigurer.combineConfigurers(configurer, new BasicAuthenticationHttpClientConfigurer(authUsername, authPassword, authDomain, authHost));
+        } else if (this.httpConfiguration != null) {
+            if ("basic".equalsIgnoreCase(this.httpConfiguration.getAuthMethod())) {
+                return CompositeHttpConfigurer.combineConfigurers(configurer, new BasicAuthenticationHttpClientConfigurer(this.httpConfiguration.getAuthUsername(), this.httpConfiguration.getAuthPassword(), this.httpConfiguration.getAuthDomain(), this.httpConfiguration.getAuthHost()));
+            }
         }
         
         return configurer;
@@ -202,6 +204,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Map<String, Object> httpClientParameters = new HashMap<>(parameters);
         final Map<String, Object> httpClientOptions = new HashMap<>();
+        httpClientOptions.put("contentCompressionEnabled", "false");
 
         // timeout values can be configured on both component and endpoint level, where endpoint take priority
         int val = getAndRemoveParameter(parameters, "connectionRequestTimeout", int.class, connectionRequestTimeout);
@@ -669,8 +672,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         super.doStop();
     }
 
-    @Override
-    public ComponentVerifier getVerifier() {
+    public ComponentVerifierExtension getVerifier() {
         return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 }

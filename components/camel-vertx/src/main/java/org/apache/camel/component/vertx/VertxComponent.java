@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.vertx;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -28,10 +27,8 @@ import io.vertx.core.VertxOptions;
 import io.vertx.core.impl.VertxFactoryImpl;
 import io.vertx.core.spi.VertxFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.spi.EndpointCompleter;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -40,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A Camel Component for <a href="http://vertx.io/">vert.x</a>
  */
-public class VertxComponent extends UriEndpointComponent implements EndpointCompleter {
+public class VertxComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(VertxComponent.class);
 
     private volatile boolean createdVertx;
@@ -55,11 +52,10 @@ public class VertxComponent extends UriEndpointComponent implements EndpointComp
     private VertxOptions vertxOptions;
 
     public VertxComponent() {
-        super(VertxEndpoint.class);
     }
 
     public VertxComponent(CamelContext context) {
-        super(context, VertxEndpoint.class);
+        super(context);
     }
 
     public VertxFactory getVertxFactory() {
@@ -134,11 +130,6 @@ public class VertxComponent extends UriEndpointComponent implements EndpointComp
         VertxEndpoint endpoint = new VertxEndpoint(uri, this, remaining);
         setProperties(endpoint, parameters);
         return endpoint;
-    }
-
-    public List<String> completeEndpointPath(ComponentConfiguration componentConfiguration, String text) {
-        // TODO is there any way to find out the list of endpoint names in vertx?
-        return null;
     }
 
     @Override

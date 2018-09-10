@@ -61,13 +61,13 @@ public class ManagedCamelContextPropertiesTest extends ManagementTestSupport {
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
 
-        mbeanServer.invoke(on, "setProperty", new String[]{Exchange.LOG_DEBUG_BODY_MAX_CHARS, "-1"}, new String[]{"java.lang.String", "java.lang.String"});
-        mbeanServer.invoke(on, "setProperty", new String[]{Exchange.LOG_DEBUG_BODY_STREAMS, "true"}, new String[]{"java.lang.String", "java.lang.String"});
+        mbeanServer.invoke(on, "setGlobalOption", new String[]{Exchange.LOG_DEBUG_BODY_MAX_CHARS, "-1"}, new String[]{"java.lang.String", "java.lang.String"});
+        mbeanServer.invoke(on, "setGlobalOption", new String[]{Exchange.LOG_DEBUG_BODY_STREAMS, "true"}, new String[]{"java.lang.String", "java.lang.String"});
 
-        Object invoke = mbeanServer.invoke(on, "getProperty", new String[]{Exchange.LOG_DEBUG_BODY_MAX_CHARS}, new String[]{"java.lang.String"});
+        Object invoke = mbeanServer.invoke(on, "getGlobalOption", new String[]{Exchange.LOG_DEBUG_BODY_MAX_CHARS}, new String[]{"java.lang.String"});
         assertEquals("-1", invoke);
 
-        invoke = mbeanServer.invoke(on, "getProperty", new String[]{Exchange.LOG_DEBUG_BODY_STREAMS}, new String[]{"java.lang.String"});
+        invoke = mbeanServer.invoke(on, "getGlobalOption", new String[]{Exchange.LOG_DEBUG_BODY_STREAMS}, new String[]{"java.lang.String"});
         assertEquals("true", invoke);
     }
 

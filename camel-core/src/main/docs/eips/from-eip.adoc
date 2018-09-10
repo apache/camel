@@ -5,13 +5,12 @@ Starting point for a Camel route that starts a route with a given endpoint. The 
 === Options
 
 // eip options: START
-The From EIP supports 2 options which are listed below:
+The From EIP supports 1 options which are listed below:
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *uri* | *Required* Sets the URI of the endpoint to use |  | String
-| *ref* | *Deprecated* Sets the name of the endpoint within the registry (such as the Spring ApplicationContext or JNDI) to use |  | String
 |===
 // eip options: END
 

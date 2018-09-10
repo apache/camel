@@ -96,7 +96,7 @@ And then you can refer to this id in the route:
 -------------------------------------
        <route>
             <from uri="direct:back"/>
-            <unmarshal ref="jack"/>
+            <unmarshal><custom ref="jack"/></unmarshal>
             <to uri="mock:reverse"/>
         </route>
 -------------------------------------
@@ -223,12 +223,12 @@ And use it in Camel routes by referring to its bean id as shown:
 
         <route>
             <from uri="direct:inPojo"/>
-            <marshal ref="gson"/>
+            <marshal><custom ref="gson"/></marshal>
         </route>
 
         <route>
             <from uri="direct:backPojo"/>
-            <unmarshal ref="gson"/>
+            <unmarshal><custom ref="gson"/></unmarshal>
         </route>
 
     </camelContext>

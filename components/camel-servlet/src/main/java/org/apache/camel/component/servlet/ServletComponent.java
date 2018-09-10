@@ -35,7 +35,7 @@ import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
@@ -59,11 +59,10 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
     private String fileNameExtWhitelist;
 
     public ServletComponent() {
-        super(ServletEndpoint.class);
     }
 
     public ServletComponent(Class<? extends ServletEndpoint> endpointClass) {
-        super(endpointClass);
+        super();
     }
 
     @Override
@@ -84,8 +83,8 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         if (lenientContextPath()) {
             // the uri must have a leading slash for the context-path matching to work with servlet, and it can be something people
             // forget to add and then the servlet consumer cannot match the context-path as would have been expected
-            String scheme = ObjectHelper.before(uri, ":");
-            String after = ObjectHelper.after(uri, ":");
+            String scheme = StringHelper.before(uri, ":");
+            String after = StringHelper.after(uri, ":");
             // rebuild uri to have exactly one leading slash
             while (after.startsWith("/")) {
                 after = after.substring(1);

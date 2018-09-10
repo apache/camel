@@ -32,11 +32,9 @@ import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
@@ -604,68 +602,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     Collection<RestConfiguration> getRestConfigurations();
 
     /**
-     * Gets the service call configuration by the given name. If no name is given
-     * the default configuration is returned, see <tt>setServiceCallConfiguration</tt>
-     *
-     * @param serviceName name of service, or <tt>null</tt> to return the default configuration
-     * @return the configuration, or <tt>null</tt> if no configuration has been registered
-     */
-    ServiceCallConfigurationDefinition getServiceCallConfiguration(String serviceName);
-
-    /**
-     * Sets the default service call configuration
-     *
-     * @param configuration the configuration
-     */
-    void setServiceCallConfiguration(ServiceCallConfigurationDefinition configuration);
-
-    /**
-     * Sets the service call configurations
-     *
-     * @param configurations the configuration list
-     */
-    void setServiceCallConfigurations(List<ServiceCallConfigurationDefinition> configurations);
-
-    /**
-     * Adds the service call configuration
-     *
-     * @param serviceName name of the service
-     * @param configuration the configuration
-     */
-    void addServiceCallConfiguration(String serviceName, ServiceCallConfigurationDefinition configuration);
-
-    /**
-     * Gets the Hystrix configuration by the given name. If no name is given
-     * the default configuration is returned, see <tt>setHystrixConfiguration</tt>
-     *
-     * @param id id of the configuration, or <tt>null</tt> to return the default configuration
-     * @return the configuration, or <tt>null</tt> if no configuration has been registered
-     */
-    HystrixConfigurationDefinition getHystrixConfiguration(String id);
-
-    /**
-     * Sets the default Hystrix configuration
-     *
-     * @param configuration the configuration
-     */
-    void setHystrixConfiguration(HystrixConfigurationDefinition configuration);
-
-    /**
-     * Sets the Hystrix configurations
-     *
-     * @param configurations the configuration list
-     */
-    void setHystrixConfigurations(List<HystrixConfigurationDefinition> configurations);
-
-    /**
-     * Adds the Hystrix configuration
-     *
-     * @param id name of the configuration
-     * @param configuration the configuration
-     */
-    void addHystrixConfiguration(String id, HystrixConfigurationDefinition configuration);
-
-    /**
      * Returns the order in which the route inputs was started.
      * <p/>
      * The order may not be according to the startupOrder defined on the route.
@@ -831,13 +767,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void startRoute(RouteDefinition route) throws Exception;
 
     /**
-     * Starts all the routes which currently is not started.
-     *
-     * @throws Exception is thrown if a route could not be started for whatever reason
-     */
-    void startAllRoutes() throws Exception;
-
-    /**
      * Starts the given route if it has been previously stopped
      *
      * @param routeId the route id
@@ -983,16 +912,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the status for the route
      */
     ServiceStatus getRouteStatus(String routeId);
-
-    /**
-     * Indicates whether current thread is starting route(s).
-     * <p/>
-     * This can be useful to know by {@link LifecycleStrategy} or the likes, in case
-     * they need to react differently.
-     *
-     * @return <tt>true</tt> if current thread is starting route(s), or <tt>false</tt> if not.
-     */
-    boolean isStartingRoutes();
 
     /**
      * Indicates whether current thread is setting up route(s) as part of starting Camel from spring/blueprint.
@@ -1230,37 +1149,21 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Gets the default error handler builder which is inherited by the routes
      *
      * @return the builder
-     * @deprecated The return type will be switched to {@link ErrorHandlerFactory} in Camel 3.0
      */
-    @Deprecated
-    ErrorHandlerBuilder getErrorHandlerBuilder();
+    ErrorHandlerFactory getErrorHandlerFactory();
 
     /**
      * Sets the default error handler builder which is inherited by the routes
      *
-     * @param errorHandlerBuilder the builder
+     * @param errorHandlerFactory the builder
      */
-    void setErrorHandlerBuilder(ErrorHandlerFactory errorHandlerBuilder);
+    void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory);
 
     /**
      * Gets the default shared thread pool for error handlers which
      * leverages this for asynchronous redelivery tasks.
      */
     ScheduledExecutorService getErrorHandlerExecutorService();
-
-    /**
-     * Sets the data formats that can be referenced in the routes.
-     *
-     * @param dataFormats the data formats
-     */
-    void setDataFormats(Map<String, DataFormatDefinition> dataFormats);
-
-    /**
-     * Gets the data formats that can be referenced in the routes.
-     *
-     * @return the data formats available
-     */
-    Map<String, DataFormatDefinition> getDataFormats();
 
     /**
      * Resolve a data format given its name
@@ -1366,12 +1269,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     ValidatorRegistry<? extends ValueHolder<String>> getValidatorRegistry();
 
     /**
-     * @deprecated use {@link #setGlobalOptions(Map) setGlobalOptions(Map<String,String>) instead}.
-     */
-    @Deprecated
-    void setProperties(Map<String, String> properties);
-
-    /**
      * Sets global options that can be referenced in the camel context
      * <p/>
      * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
@@ -1384,12 +1281,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void setGlobalOptions(Map<String, String> globalOptions);
 
     /**
-     * @deprecated use {@link #getGlobalOptions()} instead.
-     */
-    @Deprecated
-    Map<String, String> getProperties();
-
-    /**
      * Gets global options that can be referenced in the camel context.
      * <p/>
      * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
@@ -1400,12 +1291,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return global options for this context
      */
     Map<String, String> getGlobalOptions();
-
-    /**
-     * @deprecated use {@link #getGlobalOption(String)} instead.
-     */
-    @Deprecated
-    String getProperty(String key);
 
     /**
      * Gets the global option value that can be referenced in the camel context
@@ -1633,15 +1518,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     ExecutorServiceManager getExecutorServiceManager();
 
     /**
-     * Gets the current {@link org.apache.camel.spi.ExecutorServiceStrategy}
-     *
-     * @return the manager
-     * @deprecated use {@link #getExecutorServiceManager()}
-     */
-    @Deprecated
-    org.apache.camel.spi.ExecutorServiceStrategy getExecutorServiceStrategy();
-
-    /**
      * Sets a custom {@link org.apache.camel.spi.ExecutorServiceManager}
      *
      * @param executorServiceManager the custom manager
@@ -1703,24 +1579,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param uuidGenerator the UUID Generator
      */
     void setUuidGenerator(UuidGenerator uuidGenerator);
-
-    /**
-     * Whether or not type converters should be loaded lazy
-     *
-     * @return <tt>true</tt> to load lazy, <tt>false</tt> to load on startup
-     * @deprecated this option is no longer supported, will be removed in a future Camel release.
-     */
-    @Deprecated
-    Boolean isLazyLoadTypeConverters();
-
-    /**
-     * Sets whether type converters should be loaded lazy
-     *
-     * @param lazyLoadTypeConverters <tt>true</tt> to load lazy, <tt>false</tt> to load on startup
-     * @deprecated this option is no longer supported, will be removed in a future Camel release.
-     */
-    @Deprecated
-    void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters);
 
     /**
      * Sets whether to load custom type converters by scanning classpath.
@@ -1842,15 +1700,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @throws IOException is thrown if error during classpath discovery of the EIPs
      */
     Map<String, Properties> findEips() throws LoadPropertiesException, IOException;
-
-    /**
-     * Returns the HTML documentation for the given Camel component
-     *
-     * @return the HTML or <tt>null</tt> if the component is <b>not</b> built with HTML document included.
-     * @deprecated use camel-catalog instead
-     */
-    @Deprecated
-    String getComponentDocumentation(String componentName) throws IOException;
 
     /**
      * Returns the JSON schema representation of the component and endpoint parameters for the given component name.
@@ -2067,4 +1916,5 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Sets a {@link HealthCheckRegistry}.
      */
     void setHealthCheckRegistry(HealthCheckRegistry healthCheckRegistry);
+
 }

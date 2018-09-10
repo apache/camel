@@ -47,7 +47,7 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
     
     @Test
     public void testThreadPoolTaskExecutor() throws Exception {
-        context.startRoute("threadPool");
+        context.getRouteController().startRoute("threadPool");
         Long beforeThreadCount = currentThreadCount();
         getMockEndpoint("mock:result.threadPool").expectedMessageCount(1000);
         doSendMessages("foo.threadPool", 500, 5, DefaultTaskExecutorType.ThreadPool);
@@ -62,7 +62,7 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
 
     @Test
     public void testSimpleAsyncTaskExecutor() throws Exception {
-        context.startRoute("simpleAsync");
+        context.getRouteController().startRoute("simpleAsync");
         Long beforeThreadCount = currentThreadCount();
         getMockEndpoint("mock:result.simpleAsync").expectedMessageCount(1000);
         doSendMessages("foo.simpleAsync", 500, 5, DefaultTaskExecutorType.SimpleAsync);
@@ -77,7 +77,7 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
 
     @Test
     public void testDefaultTaskExecutor() throws Exception {
-        context.startRoute("default");
+        context.getRouteController().startRoute("default");
         Long beforeThreadCount = currentThreadCount();
         getMockEndpoint("mock:result.default").expectedMessageCount(1000);
         doSendMessages("foo.default", 500, 5, null);
@@ -94,7 +94,7 @@ public class JmsDefaultTaskExecutorTypeTest extends CamelTestSupport {
     public void testDefaultTaskExecutorThreadPoolAtComponentConfig() throws Exception {
         // the default behaviour changes in this test, see createCamelContext method below
         // the behaviour is the same as with testThreadPoolTaskExecutor test method above
-        context.startRoute("default");
+        context.getRouteController().startRoute("default");
         Long beforeThreadCount = currentThreadCount();
         getMockEndpoint("mock:result.default").expectedMessageCount(1000);
         doSendMessages("foo.default", 500, 5, DefaultTaskExecutorType.ThreadPool);

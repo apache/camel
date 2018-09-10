@@ -19,19 +19,18 @@ package org.apache.camel.component.eventadmin;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.osgi.framework.BundleContext;
 
 /**
  * OSGi EventAdmin component.
  */
-public class EventAdminComponent extends UriEndpointComponent {
+public class EventAdminComponent extends DefaultComponent {
 
     private BundleContext bundleContext;
 
     public EventAdminComponent() {
-        super(EventAdminEndpoint.class);
     }
 
     public BundleContext getBundleContext() {

@@ -29,7 +29,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.model.loadbalancer.CircuitBreakerLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition;
@@ -57,8 +56,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
             @XmlElement(required = false, name = "roundRobin", type = RoundRobinLoadBalancerDefinition.class),
             @XmlElement(required = false, name = "sticky", type = StickyLoadBalancerDefinition.class),
             @XmlElement(required = false, name = "topic", type = TopicLoadBalancerDefinition.class),
-            @XmlElement(required = false, name = "weighted", type = WeightedLoadBalancerDefinition.class),
-            @XmlElement(required = false, name = "circuitBreaker", type = CircuitBreakerLoadBalancerDefinition.class)}
+            @XmlElement(required = false, name = "weighted", type = WeightedLoadBalancerDefinition.class)}
         )
     private LoadBalancerDefinition loadBalancerType;
     @XmlElementRef
@@ -229,25 +227,6 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
         return weighted(roundRobin, distributionRatio, ",");
     }
 
-    /**
-     * Uses circuitBreaker load balancer
-     *
-     * @param threshold         number of errors before failure.
-     * @param halfOpenAfter     time interval in milliseconds for half open state.
-     * @param exceptions        exception classes which we want to break if one of them was thrown
-     * @return the builder
-     * @deprecated use Hystrix EIP instead which is the popular Netflix implementation of circuit breaker
-     */
-    @Deprecated
-    public LoadBalanceDefinition circuitBreaker(int threshold, long halfOpenAfter, Class<?>... exceptions) {
-        CircuitBreakerLoadBalancerDefinition def = new CircuitBreakerLoadBalancerDefinition();
-        def.setExceptionTypes(Arrays.asList(exceptions));
-        def.setThreshold(threshold);
-        def.setHalfOpenAfter(halfOpenAfter);
-        setLoadBalancerType(def);
-        return this;
-    }
-    
     /**
      * Uses weighted load balancer
      *

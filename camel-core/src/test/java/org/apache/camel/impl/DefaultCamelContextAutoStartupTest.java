@@ -47,7 +47,7 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
         assertEquals(true, camel.getRouteStatus("foo").isStopped());
 
         // now start all routes
-        camel.startAllRoutes();
+        camel.getRouteController().startAllRoutes();
 
         assertEquals(true, camel.getRouteStatus("foo").isStarted());
 
@@ -146,7 +146,7 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
         assertEquals(false, camel.getRouteStatus("foo").isStarted());
 
         // now start all the routes
-        camel.startAllRoutes();
+        camel.getRouteController().startAllRoutes();
 
         assertEquals(true, camel.getRouteStatus("foo").isStarted());
 

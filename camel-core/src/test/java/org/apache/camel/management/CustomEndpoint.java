@@ -20,7 +20,6 @@ import org.apache.camel.Component;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spi.ManagementAware;
 
 /**
  * CustomEndpoint is used to test {@link org.apache.camel.management.JmxInstrumentationCustomMBeanTest}
@@ -29,14 +28,10 @@ import org.apache.camel.spi.ManagementAware;
 @SuppressWarnings("deprecation")
 // START SNIPPET: e1
 @ManagedResource(description = "Our custom managed endpoint")
-public class CustomEndpoint extends MockEndpoint implements ManagementAware<CustomEndpoint> {
+public class CustomEndpoint extends MockEndpoint {
 
     public CustomEndpoint(final String endpointUri, final Component component) {
         super(endpointUri, component);
-    }
-
-    public Object getManagedObject(CustomEndpoint object) {
-        return this;
     }
 
     public boolean isSingleton() {

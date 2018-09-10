@@ -114,7 +114,7 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
 
         if (camelContext != null) {
             // configure pretty print
-            String property = camelContext.getProperty(PRETTY_PRINT);
+            String property = camelContext.getGlobalOption(PRETTY_PRINT);
             if (property != null) {
                 if (property.equalsIgnoreCase("false")) {
                     setPrettyPrint(false);
@@ -124,7 +124,7 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
             }
 
             // configure object factory
-            property = camelContext.getProperty(OBJECT_FACTORY);
+            property = camelContext.getGlobalOption(OBJECT_FACTORY);
             if (property != null) {
                 if (property.equalsIgnoreCase("false")) {
                     setObjectFactory(false);

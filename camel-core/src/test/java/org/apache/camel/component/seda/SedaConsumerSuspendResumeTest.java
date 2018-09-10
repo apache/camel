@@ -40,8 +40,8 @@ public class SedaConsumerSuspendResumeTest extends ContextTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertEquals("Started", context.getRouteStatus("foo").name());
-        assertEquals("Started", context.getRouteStatus("bar").name());
+        assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals("Started", context.getRouteController().getRouteStatus("bar").name());
 
         // suspend bar consumer (not the route)
         SedaConsumer consumer = (SedaConsumer) context.getRoute("bar").getConsumer();

@@ -28,8 +28,8 @@ public class DurationRoutePolicyMaxSecondsTest extends ContextTestSupport {
 
     @Test
     public void testDurationRoutePolicy() throws Exception {
-        assertTrue(context.getRouteStatus("foo").isStarted());
-        assertFalse(context.getRouteStatus("foo").isStopped());
+        assertTrue(context.getRouteController().getRouteStatus("foo").isStarted());
+        assertFalse(context.getRouteController().getRouteStatus("foo").isStopped());
 
         // the policy should stop the route after 2 seconds which is approx 20-30 messages
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(10);
@@ -37,8 +37,8 @@ public class DurationRoutePolicyMaxSecondsTest extends ContextTestSupport {
 
         // need a little time to stop async
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
-            assertFalse(context.getRouteStatus("foo").isStarted());
-            assertTrue(context.getRouteStatus("foo").isStopped());
+            assertFalse(context.getRouteController().getRouteStatus("foo").isStarted());
+            assertTrue(context.getRouteController().getRouteStatus("foo").isStopped());
         });
     }
 

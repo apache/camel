@@ -35,11 +35,13 @@ import org.eclipse.jetty.security.HashLoginService;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.eclipse.jetty.util.security.Constraint;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @version 
  */
+@Ignore
 public class HttpAuthMethodPriorityTest extends BaseJettyTest {
 
     @Override

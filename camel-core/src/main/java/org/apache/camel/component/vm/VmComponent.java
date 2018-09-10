@@ -42,11 +42,6 @@ public class VmComponent extends SedaComponent {
     private static final AtomicInteger START_COUNTER = new AtomicInteger();
 
     public VmComponent() {
-        super(VmEndpoint.class);
-    }
-
-    public VmComponent(Class<? extends Endpoint> endpointClass) {
-        super(endpointClass);
     }
 
     @Override

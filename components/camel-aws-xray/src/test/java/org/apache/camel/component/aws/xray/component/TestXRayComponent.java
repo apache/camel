@@ -25,7 +25,6 @@ import org.apache.camel.impl.DefaultComponent;
 public class TestXRayComponent extends DefaultComponent {
 
     public TestXRayComponent() {
-        super();
     }
 
     public TestXRayComponent(final CamelContext context) {

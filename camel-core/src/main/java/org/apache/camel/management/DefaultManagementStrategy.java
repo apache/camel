@@ -22,7 +22,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.management.event.DefaultEventFactory;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.EventFactory;
@@ -121,26 +120,6 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
         this.managementAgent = managementAgent;
     }
 
-    @Deprecated
-    public void onlyManageProcessorWithCustomId(boolean flag) {
-        LOG.warn("Using @deprecated option onlyManageProcessorWithCustomId on ManagementStrategy. Configure this on ManagementAgent instead.");
-        if (managementAgent != null) {
-            getManagementAgent().setOnlyRegisterProcessorWithCustomId(flag);
-        } else {
-            throw new IllegalStateException("Not started");
-        }
-    }
-
-    @Deprecated
-    public boolean isOnlyManageProcessorWithCustomId() {
-        if (managementAgent != null) {
-            boolean only = getManagementAgent().getOnlyRegisterProcessorWithCustomId() != null && getManagementAgent().getOnlyRegisterProcessorWithCustomId();
-            return only;
-        } else {
-            throw new IllegalStateException("Not started");
-        }
-    }
-
     public boolean manageProcessor(ProcessorDefinition<?> definition) {
         return false;
     }
@@ -186,45 +165,6 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
                     notifier.notify(event);
                 }
             }
-        }
-    }
-
-    @Deprecated
-    public void setStatisticsLevel(ManagementStatisticsLevel level) {
-        LOG.warn("Using @deprecated option statisticsLevel on ManagementStrategy. Configure this on ManagementAgent instead.");
-        if (managementAgent != null) {
-            getManagementAgent().setStatisticsLevel(level);
-        } else {
-            throw new IllegalStateException("Not started");
-        }
-    }
-
-    @Deprecated
-    public ManagementStatisticsLevel getStatisticsLevel() {
-        if (managementAgent != null) {
-            return getManagementAgent().getStatisticsLevel();
-        } else {
-            throw new IllegalStateException("Not started");
-        }
-    }
-
-    @Deprecated
-    public boolean isLoadStatisticsEnabled() {
-        if (managementAgent != null) {
-            boolean load = getManagementAgent().getLoadStatisticsEnabled() != null && getManagementAgent().getLoadStatisticsEnabled();
-            return load;
-        } else {
-            throw new IllegalStateException("Not started");
-        }
-    }
-
-    @Deprecated
-    public void setLoadStatisticsEnabled(boolean loadStatisticsEnabled) {
-        LOG.warn("Using @deprecated option loadStatisticsEnabled on ManagementStrategy. Configure this on ManagementAgent instead.");
-        if (managementAgent != null) {
-            getManagementAgent().setLoadStatisticsEnabled(loadStatisticsEnabled);
-        } else {
-            throw new IllegalStateException("Not started");
         }
     }
 

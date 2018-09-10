@@ -20,17 +20,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
 /**
  * Represents the component that manages {@link CMISComponent}.
  */
-public class CMISComponent extends UriEndpointComponent {
+public class CMISComponent extends DefaultComponent {
 
     private CMISSessionFacadeFactory sessionFacadeFactory;
 
     public CMISComponent() {
-        super(CMISEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, final String remaining, final Map<String, Object> parameters) throws Exception {

@@ -51,16 +51,16 @@ public class CamelRoutesEndpointWriteOperationTest extends Assert {
 
     @Test
     public void testWriteOperation() throws Exception {
-        ServiceStatus status = camelContext.getRouteStatus("foo-route");
+        ServiceStatus status = camelContext.getRouteController().getRouteStatus("foo-route");
         Assert.assertTrue(status.isStarted());
         TimeInfo timeInfo = new TimeInfo();
         timeInfo.setAbortAfterTimeout(true);
         timeInfo.setTimeout(5L);
         endpoint.doWriteAction("foo-route", WriteAction.STOP, timeInfo);
-        status = camelContext.getRouteStatus("foo-route");
+        status = camelContext.getRouteController().getRouteStatus("foo-route");
         Assert.assertTrue(status.isStopped());
         endpoint.doWriteAction("foo-route", WriteAction.START, timeInfo);
-        status = camelContext.getRouteStatus("foo-route");
+        status = camelContext.getRouteController().getRouteStatus("foo-route");
         Assert.assertTrue(status.isStarted());
     }
 

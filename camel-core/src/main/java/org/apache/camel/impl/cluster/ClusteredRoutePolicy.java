@@ -232,7 +232,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
                 ServiceStatus status = route.getRouteContext().getRoute().getStatus(getCamelContext());
                 if (status.isStartable()) {
                     LOGGER.debug("Starting route '{}'", route.getId());
-                    camelContext.startRoute(route.getId());
+                    camelContext.getRouteController().startRoute(route.getId());
 
                     startedRoutes.add(route);
                 }

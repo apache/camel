@@ -33,11 +33,6 @@ public class StaticMethodTypeConverter extends TypeConverterSupport {
     private final boolean useExchange;
     private final boolean allowNull;
 
-    @Deprecated
-    public StaticMethodTypeConverter(Method method) {
-        this(method,  false);
-    }
-
     public StaticMethodTypeConverter(Method method, boolean allowNull) {
         this.method = method;
         this.useExchange = method.getParameterCount() == 2;

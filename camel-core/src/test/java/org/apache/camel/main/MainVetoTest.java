@@ -23,6 +23,7 @@ import org.apache.camel.support.LifecycleStrategySupport;
 import org.junit.Assert;
 import org.junit.Test;
 
+
 /**
  * @version 
  */

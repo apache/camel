@@ -75,7 +75,6 @@ import org.apache.camel.management.mbean.ManagedThrottlingInflightRoutePolicy;
 import org.apache.camel.management.mbean.ManagedTransformerRegistry;
 import org.apache.camel.management.mbean.ManagedTypeConverterRegistry;
 import org.apache.camel.management.mbean.ManagedValidatorRegistry;
-import org.apache.camel.model.AOPDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
@@ -93,7 +92,6 @@ import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementAgent;
-import org.apache.camel.spi.ManagementAware;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementObjectStrategy;
 import org.apache.camel.spi.ManagementStrategy;
@@ -473,9 +471,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
 
         Object answer = null;
 
-        if (service instanceof ManagementAware) {
-            return ((ManagementAware<Service>) service).getManagedObject(service);
-        } else if (service instanceof BacklogTracer) {
+        if (service instanceof BacklogTracer) {
             // special for backlog tracer
             BacklogTracer backlogTracer = (BacklogTracer) service;
             ManagedBacklogTracer mt = managedBacklogTracers.get(backlogTracer);
@@ -840,10 +836,6 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         if (processor instanceof InterceptDefinition) {
             return false;
         }
-        // skip aop
-        if (processor instanceof AOPDefinition) {
-            return false;
-        }
         // skip policy
         if (processor instanceof PolicyDefinition) {
             return false;
@@ -948,7 +940,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         if (agent.getRegisterNewRoutes()) {
             // no specific route, then fallback to see if this thread is starting routes
             // which is kept as state on the camel context
-            return getCamelContext().isStartingRoutes();
+            return getCamelContext().getRouteController().isStartingRoutes();
         }
 
         return false;
@@ -969,7 +961,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             // we are disabled either if configured explicit, or if level is off
             boolean load = camelContext.getManagementStrategy().getManagementAgent().getLoadStatisticsEnabled() != null
                     && camelContext.getManagementStrategy().getManagementAgent().getLoadStatisticsEnabled();
-            boolean disabled = !load || camelContext.getManagementStrategy().getStatisticsLevel() == ManagementStatisticsLevel.Off;
+            boolean disabled = !load || camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel() == ManagementStatisticsLevel.Off;
 
             LOG.debug("Load performance statistics {}", disabled ? "disabled" : "enabled");
             if (!disabled) {

@@ -24,9 +24,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
-import org.apache.camel.VerifiableComponent;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.model.rest.RestConstants;
@@ -42,7 +40,7 @@ import org.apache.camel.util.URISupport;
  * Rest component.
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
-public class RestComponent extends DefaultComponent implements VerifiableComponent {
+public class RestComponent extends DefaultComponent {
 
     @Metadata(label = "common")
     private String componentName;
@@ -240,8 +238,7 @@ public class RestComponent extends DefaultComponent implements VerifiableCompone
         }
     }
 
-    @Override
-    public ComponentVerifier getVerifier() {
+    public ComponentVerifierExtension getVerifier() {
         return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 }

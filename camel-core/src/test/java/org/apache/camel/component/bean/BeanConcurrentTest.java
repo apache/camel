@@ -41,7 +41,7 @@ public class BeanConcurrentTest extends ContextTestSupport {
             template.sendBody("seda:foo", "" + i);
         }
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
 

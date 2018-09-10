@@ -545,7 +545,7 @@ public class SupervisingRouteController extends DefaultRouteController {
         }
 
         public ServiceStatus getStatus() {
-            return getContext().getCamelContext().getRouteStatus(getId());
+            return getContext().getCamelContext().getRouteController().getRouteStatus(getId());
         }
 
         public int getInitializationOrder() {

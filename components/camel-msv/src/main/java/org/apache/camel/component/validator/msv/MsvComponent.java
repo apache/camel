@@ -33,7 +33,6 @@ public class MsvComponent extends ValidatorComponent {
     private SchemaFactory schemaFactory;
 
     public MsvComponent() {
-        super(MsvEndpoint.class);
     }
 
     @Override

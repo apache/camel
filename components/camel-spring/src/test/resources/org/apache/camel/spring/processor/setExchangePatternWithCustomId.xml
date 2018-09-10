@@ -65,10 +65,6 @@
       <from uri="direct:testToWithInOutParam" id="p"/>
       <to uri="mock:result" pattern="InOut" id="q"/>
     </route>
-    <route>
-      <from uri="direct:testToWithRobustInOnlyParam" id="r"/>
-      <to uri="mock:result" pattern="RobustInOnly" id="s"/>
-    </route>
    </camelContext>
 
 </beans>

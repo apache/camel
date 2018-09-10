@@ -24,7 +24,7 @@
     <endpoint uri="dozer:java2java?mappingFile=org/apache/camel/component/dozer/expressionMappingFile.xml&amp;targetModel=org.apache.camel.component.dozer.example.xyz.XYZOrder&amp;sourceModel=org.apache.camel.component.dozer.example.abc.ABCOrder" id="java2java"/>
     <route>
         <from uri="direct:start"/>
-        <to ref="java2java"/>
+        <to uri="ref:java2java"/>
         <to uri="mock:result"/>
     </route>
 </camelContext>

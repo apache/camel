@@ -30,7 +30,6 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.impl.MainSupport;
 import org.apache.camel.util.IOHelper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -49,7 +48,7 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
  * which by default gets loaded from classpath.
  */
 @SuppressWarnings("deprecation")
-public class Main extends MainSupport {
+public class Main extends org.apache.camel.main.MainSupport {
 
     public static final String LOCATION_PROPERTIES = "META-INF/camel-spring/location.properties";
     protected static Main instance;

@@ -447,7 +447,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     @Override
     public void setErrorHandlerBuilder(ErrorHandlerBuilder errorHandlerBuilder) {
         super.setErrorHandlerBuilder(errorHandlerBuilder);
-        getRouteCollection().setErrorHandlerBuilder(getErrorHandlerBuilder());
+        getRouteCollection().setErrorHandlerFactory(getErrorHandlerBuilder());
     }
 
     // Implementation methods
@@ -457,8 +457,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         if (initialized.compareAndSet(false, true)) {
             // Set the CamelContext ErrorHandler here
             ModelCamelContext camelContext = getContext();
-            if (camelContext.getErrorHandlerBuilder() != null) {
-                setErrorHandlerBuilder(camelContext.getErrorHandlerBuilder());
+            if (camelContext.getErrorHandlerFactory() instanceof ErrorHandlerBuilder) {
+                setErrorHandlerBuilder((ErrorHandlerBuilder) camelContext.getErrorHandlerFactory());
             }
             configure();
             // mark all route definitions as custom prepared because
@@ -586,18 +586,6 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     protected void configureRoute(RouteDefinition route) {
         // noop
-    }
-
-    /**
-     * Adds a collection of routes to this context
-     *
-     * @param routes the routes
-     * @throws Exception if the routes could not be created for whatever reason
-     * @deprecated will be removed in Camel 3.0. Instead use {@link #includeRoutes(org.apache.camel.RoutesBuilder) includeRoutes} instead.
-     */
-    @Deprecated
-    protected void addRoutes(RoutesBuilder routes) throws Exception {
-        includeRoutes(routes);
     }
 
 }

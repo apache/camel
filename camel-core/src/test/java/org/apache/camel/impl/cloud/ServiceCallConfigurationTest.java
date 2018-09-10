@@ -50,7 +50,7 @@ public class ServiceCallConfigurationTest {
         conf.setServiceDiscovery(sd);
         conf.setComponent("mock");
 
-        CamelContext context = new DefaultCamelContext();
+        DefaultCamelContext context = new DefaultCamelContext();
         context.setServiceCallConfiguration(conf);
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -96,7 +96,7 @@ public class ServiceCallConfigurationTest {
         conf.setServiceDiscovery(sd);
         conf.setServiceFilter(sf);
 
-        CamelContext context = new DefaultCamelContext();
+        DefaultCamelContext context = new DefaultCamelContext();
         context.setServiceCallConfiguration(conf);
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -246,7 +246,7 @@ public class ServiceCallConfigurationTest {
 
 
         // Camel context
-        CamelContext context = new DefaultCamelContext();
+        DefaultCamelContext context = new DefaultCamelContext();
         context.setServiceCallConfiguration(defaultConfiguration);
         context.addServiceCallConfiguration("named", namedConfiguration);
         context.addRoutes(new RouteBuilder() {
@@ -323,7 +323,7 @@ public class ServiceCallConfigurationTest {
 
     @Test
     public void testPlaceholders() throws Exception {
-        CamelContext context = null;
+        DefaultCamelContext context = null;
 
         try {
             System.setProperty("scall.name", "service-name");
@@ -401,7 +401,7 @@ public class ServiceCallConfigurationTest {
 
     @Test
     public void testExpression() throws Exception {
-        CamelContext context = null;
+        DefaultCamelContext context = null;
 
         try {
             ServiceCallConfigurationDefinition config = new ServiceCallConfigurationDefinition();

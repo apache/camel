@@ -32,6 +32,7 @@ import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.apache.commons.net.ftp.FTPClient;
@@ -273,7 +274,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         answer.setAbsoluteFilePath(absoluteFileName);
 
         // the relative filename, skip the leading endpoint configured path
-        String relativePath = ObjectHelper.after(absoluteFileName, endpointPath);
+        String relativePath = StringHelper.after(absoluteFileName, endpointPath);
         // skip leading /
         relativePath = FileUtil.stripLeadingSeparator(relativePath);
         answer.setRelativeFilePath(relativePath);

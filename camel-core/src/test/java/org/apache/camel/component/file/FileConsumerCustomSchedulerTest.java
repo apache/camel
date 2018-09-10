@@ -52,7 +52,7 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("file:target/file/custom", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
 

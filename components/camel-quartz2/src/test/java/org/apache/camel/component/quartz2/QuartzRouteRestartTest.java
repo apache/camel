@@ -33,7 +33,7 @@ public class QuartzRouteRestartTest extends BaseQuartzTest {
         assertMockEndpointsSatisfied();
 
         // restart route
-        context().stopRoute("trigger");
+        context().getRouteController().stopRoute("trigger");
         mock.reset();
         mock.expectedMessageCount(0);
         
@@ -46,7 +46,7 @@ public class QuartzRouteRestartTest extends BaseQuartzTest {
         mock.reset();
         mock.expectedMinimumMessageCount(1);
 
-        context().startRoute("trigger");
+        context().getRouteController().startRoute("trigger");
 
         assertMockEndpointsSatisfied();
     }

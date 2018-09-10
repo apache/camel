@@ -67,7 +67,7 @@ public class DisruptorMultipleConsumersTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
         resetMocks();
 
-        context.suspendRoute("testRoute");
+        context.getRouteController().suspendRoute("testRoute");
         getMockEndpoint("mock:a").expectedMessageCount(20);
         getMockEndpoint("mock:b").expectedMessageCount(20);
         getMockEndpoint("mock:c").expectedMessageCount(0);

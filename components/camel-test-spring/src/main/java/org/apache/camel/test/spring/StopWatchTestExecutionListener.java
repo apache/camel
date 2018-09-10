@@ -47,7 +47,7 @@ public class StopWatchTestExecutionListener extends AbstractTestExecutionListene
     public void afterTestMethod(TestContext testContext) throws Exception {
         StopWatch watch = threadStopWatch.get();
         if (watch != null) {
-            long time = watch.stop();
+            long time = watch.taken();
             Logger log = LoggerFactory.getLogger(testContext.getTestClass());
 
             log.info("********************************************************************************");

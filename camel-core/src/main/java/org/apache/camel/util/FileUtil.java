@@ -24,7 +24,6 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,8 +42,6 @@ public final class FileUtil {
      */
     private static final String USER_DIR_KEY = "user.dir";
     private static final File USER_DIR = new File(System.getProperty(USER_DIR_KEY));
-    private static File defaultTempDir;
-    private static Thread shutdownHook;
     private static boolean windowsOs = initWindowsOs();
 
     private FileUtil() {
@@ -85,15 +82,7 @@ public final class FileUtil {
         return windowsOs;
     }
 
-    @Deprecated
-    public static File createTempFile(String prefix, String suffix) throws IOException {
-        return createTempFile(prefix, suffix, null);
-    }
-
-    public static File createTempFile(String prefix, String suffix, File parentDir) throws IOException {
-        // TODO: parentDir should be mandatory
-        File parent = (parentDir == null) ? getDefaultTempDir() : parentDir;
-            
+    public static File createTempFile(String prefix, String suffix, File parent) throws IOException {
         if (suffix == null) {
             suffix = ".tmp";
         }
@@ -338,83 +327,6 @@ public final class FileUtil {
         }
 
         return sb.toString();
-    }
-
-    @Deprecated
-    private static synchronized File getDefaultTempDir() {
-        if (defaultTempDir != null && defaultTempDir.exists()) {
-            return defaultTempDir;
-        }
-
-        defaultTempDir = createNewTempDir();
-
-        // create shutdown hook to remove the temp dir
-        shutdownHook = new Thread() {
-            @Override
-            public void run() {
-                removeDir(defaultTempDir);
-            }
-        };
-        Runtime.getRuntime().addShutdownHook(shutdownHook);
-
-        return defaultTempDir;
-    }
-
-    /**
-     * Creates a new temporary directory in the <tt>java.io.tmpdir</tt> directory.
-     */
-    @Deprecated
-    private static File createNewTempDir() {
-        String s = System.getProperty("java.io.tmpdir");
-        File checkExists = new File(s);
-        if (!checkExists.exists()) {
-            throw new RuntimeException("The directory "
-                                   + checkExists.getAbsolutePath()
-                                   + " does not exist, please set java.io.tempdir"
-                                   + " to an existing directory");
-        }
-        
-        if (!checkExists.canWrite()) {
-            throw new RuntimeException("The directory "
-                + checkExists.getAbsolutePath()
-                + " is not writable, please set java.io.tempdir"
-                + " to a writable directory");
-        }
-
-        // create a sub folder with a random number
-        Random ran = new Random();
-        int x = ran.nextInt(1000000);
-        File f = new File(s, "camel-tmp-" + x);
-        int count = 0;
-        // Let us just try 100 times to avoid the infinite loop
-        while (!f.mkdir()) {
-            count++;
-            if (count >= 100) {
-                throw new RuntimeException("Camel cannot a temp directory from"
-                    + checkExists.getAbsolutePath()
-                    + " 100 times , please set java.io.tempdir"
-                    + " to a writable directory");
-            }
-            x = ran.nextInt(1000000);
-            f = new File(s, "camel-tmp-" + x);
-        }
-
-        return f;
-    }
-
-    /**
-     * Shutdown and cleanup the temporary directory and removes any shutdown hooks in use.
-     */
-    @Deprecated
-    public static synchronized void shutdown() {
-        if (defaultTempDir != null && defaultTempDir.exists()) {
-            removeDir(defaultTempDir);
-        }
-
-        if (shutdownHook != null) {
-            Runtime.getRuntime().removeShutdownHook(shutdownHook);
-            shutdownHook = null;
-        }
     }
 
     public static void removeDir(File d) {

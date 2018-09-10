@@ -39,6 +39,7 @@ import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
@@ -731,7 +732,7 @@ public final class CamelContextHelper {
      * @return <tt>true</tt> if in use, <tt>false</tt> if not
      */
     public static boolean isEipInUse(CamelContext camelContext, String name) {
-        for (RouteDefinition route : camelContext.getRouteDefinitions()) {
+        for (RouteDefinition route : camelContext.adapt(ModelCamelContext.class).getRouteDefinitions()) {
             for (FromDefinition from : route.getInputs()) {
                 if (name.equals(from.getShortName())) {
                     return true;

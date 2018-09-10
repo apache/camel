@@ -28,12 +28,10 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 public class SftpComponent extends RemoteFileComponent<SftpRemoteFile> {
 
     public SftpComponent() {
-        setEndpointClass(SftpEndpoint.class);
     }
 
     public SftpComponent(CamelContext context) {
         super(context);
-        setEndpointClass(SftpEndpoint.class);
     }
 
     @Override

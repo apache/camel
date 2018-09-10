@@ -25,7 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.util.FileUtil;
@@ -40,18 +40,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents the component that manages {@link CoAPEndpoint}.
  */
-public class CoAPComponent extends UriEndpointComponent implements RestConsumerFactory {
+public class CoAPComponent extends DefaultComponent implements RestConsumerFactory {
     static final int DEFAULT_PORT = 5684;
     private static final Logger LOG = LoggerFactory.getLogger(CoAPComponent.class);
 
     final Map<Integer, CoapServer> servers = new ConcurrentHashMap<>();
 
     public CoAPComponent() {
-        super(CoAPEndpoint.class);
-    }
-
-    public CoAPComponent(CamelContext context) {
-        super(context, CoAPEndpoint.class);
     }
 
     public synchronized CoapServer getServer(int port) {
@@ -103,11 +98,11 @@ public class CoAPComponent extends UriEndpointComponent implements RestConsumerF
 
         String host = config.getHost();
         if (ObjectHelper.isEmpty(host)) {
-            if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
+            if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
                 host = "0.0.0.0";
-            } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+            } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
                 host = HostUtils.getLocalHostName();
-            } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
+            } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
                 host = HostUtils.getLocalIp();
             }
         }

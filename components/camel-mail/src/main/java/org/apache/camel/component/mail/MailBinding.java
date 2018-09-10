@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -394,7 +395,7 @@ public class MailBinding {
                     }
 
                     // Mail messages can repeat the same header...
-                    if (ObjectConverter.isCollection(headerValue)) {
+                    if (isCollection(headerValue)) {
                         Iterator<?> iter = ObjectHelper.createIterator(headerValue);
                         while (iter.hasNext()) {
                             Object value = iter.next();
@@ -414,7 +415,7 @@ public class MailBinding {
             Object headerValue = entry.getValue();
             if (headerValue != null && isRecipientHeader(headerName)) {
                 // special handling of recipients
-                if (ObjectConverter.isCollection(headerValue)) {
+                if (isCollection(headerValue)) {
                     Iterator<?> iter = ObjectHelper.createIterator(headerValue);
                     while (iter.hasNext()) {
                         Object recipient = iter.next();
@@ -732,6 +733,10 @@ public class MailBinding {
         InternetAddress internetAddress = new InternetAddress(address);
         internetAddress.setPersonal(internetAddress.getPersonal(), charset);
         return internetAddress;
+    }
+
+    private static boolean isCollection(Object value) {
+        return value instanceof Collection || (value != null && value.getClass().isArray());
     }
 
 }

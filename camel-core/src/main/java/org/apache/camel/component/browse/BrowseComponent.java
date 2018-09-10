@@ -19,7 +19,7 @@ package org.apache.camel.component.browse;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
 /**
  * The <a href="http://camel.apache.org/browse.html">Browse Component</a> provides a simple
@@ -27,10 +27,9 @@ import org.apache.camel.impl.UriEndpointComponent;
  *
  * @version 
  */
-public class BrowseComponent extends UriEndpointComponent {
+public class BrowseComponent extends DefaultComponent {
 
     public BrowseComponent() {
-        super(BrowseEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

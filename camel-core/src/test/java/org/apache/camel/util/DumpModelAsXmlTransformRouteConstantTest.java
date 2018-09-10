@@ -37,7 +37,7 @@ public class DumpModelAsXmlTransformRouteConstantTest extends ContextTestSupport
         assertNotNull(xml);
         log.info(xml);
 
-        Document doc = new XmlConverter().toDOMDocument(xml);
+        Document doc = new XmlConverter().toDOMDocument(xml, null);
         NodeList nodes = doc.getElementsByTagName("constant");
         assertEquals(1, nodes.getLength());
         Element node = (Element)nodes.item(0);

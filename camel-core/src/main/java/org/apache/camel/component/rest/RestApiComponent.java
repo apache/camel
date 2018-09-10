@@ -19,15 +19,14 @@ package org.apache.camel.component.rest;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
 /**
  * Rest API component.
  */
-public class RestApiComponent extends UriEndpointComponent {
+public class RestApiComponent extends DefaultComponent {
 
     public RestApiComponent() {
-        super(RestApiEndpoint.class);
     }
 
     @Override

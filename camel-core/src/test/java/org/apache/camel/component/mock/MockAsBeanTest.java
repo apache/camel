@@ -30,8 +30,7 @@ import org.junit.Test;
 public class MockAsBeanTest extends ContextTestSupport {
 
     // create foo bean as a mock endpoint
-    @SuppressWarnings("deprecation")
-    private MockEndpoint foo = new MockEndpoint("mock:foo");
+    private MockEndpoint foo = new MockEndpoint("mock:foo", new MockComponent(context));
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {

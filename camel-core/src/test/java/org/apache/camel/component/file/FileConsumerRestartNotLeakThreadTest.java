@@ -39,8 +39,8 @@ public class FileConsumerRestartNotLeakThreadTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         for (int i = 0; i < 50; i++) {
-            context.stopRoute("foo");
-            context.startRoute("foo");
+            context.getRouteController().stopRoute("foo");
+            context.getRouteController().startRoute("foo");
         }
 
         resetMocks();

@@ -42,8 +42,8 @@ public class StartupListenerComponentFromRegistryTest extends ContextTestSupport
     @Test
     public void testStartupListenerComponent() throws Exception {
         // and now the routes are started
-        assertTrue(context.getRouteStatus("foo").isStarted());
-        assertTrue(context.getRouteStatus("bar").isStarted());
+        assertTrue(context.getRouteController().getRouteStatus("foo").isStarted());
+        assertTrue(context.getRouteController().getRouteStatus("bar").isStarted());
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -62,8 +62,8 @@ public class StartupListenerComponentFromRegistryTest extends ContextTestSupport
             invoked++;
 
             // the routes should not have been started as they start afterwards
-            assertTrue(context.getRouteStatus("foo").isStopped());
-            assertTrue(context.getRouteStatus("bar").isStopped());
+            assertTrue(context.getRouteController().getRouteStatus("foo").isStopped());
+            assertTrue(context.getRouteController().getRouteStatus("bar").isStopped());
         }
 
         public int getInvoked() {

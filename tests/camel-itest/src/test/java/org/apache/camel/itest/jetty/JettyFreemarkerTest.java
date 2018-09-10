@@ -88,7 +88,7 @@ public class JettyFreemarkerTest extends CamelTestSupport {
                             name = StringHelper.before(name, "_");
 
                             name = "org/apache/camel/itest/jetty/" + name + ".ftl";
-                            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext().getClassResolver(), name);
+                            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), name);
                             String xml = exchange.getContext().getTypeConverter().convertTo(String.class, is);
 
                             exchange.getOut().setBody(xml);

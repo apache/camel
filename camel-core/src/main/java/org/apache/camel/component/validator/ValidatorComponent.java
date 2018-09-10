@@ -19,7 +19,7 @@ package org.apache.camel.component.validator;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -27,17 +27,12 @@ import org.apache.camel.spi.Metadata;
  *
  * @version
  */
-public class ValidatorComponent extends UriEndpointComponent {
+public class ValidatorComponent extends DefaultComponent {
 
     @Metadata(label = "advanced", description = "To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI")
     private ValidatorResourceResolverFactory resourceResolverFactory;
     
     public ValidatorComponent() {
-        this(ValidatorEndpoint.class);
-    }
-
-    public ValidatorComponent(Class<? extends Endpoint> endpointClass) {
-        super(endpointClass);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

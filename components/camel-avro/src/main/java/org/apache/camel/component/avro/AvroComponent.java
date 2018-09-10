@@ -27,11 +27,11 @@ import org.apache.avro.Protocol;
 import org.apache.avro.reflect.ReflectData;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.URISupport;
 
-public class AvroComponent extends UriEndpointComponent {
+public class AvroComponent extends DefaultComponent {
 
     private ConcurrentMap<String, AvroListener> listenerRegistry = new ConcurrentHashMap<>();
 
@@ -39,11 +39,10 @@ public class AvroComponent extends UriEndpointComponent {
     private AvroConfiguration configuration;
 
     public AvroComponent() {
-        super(AvroEndpoint.class);
     }
 
     public AvroComponent(CamelContext context) {
-        super(context, AvroEndpoint.class);
+        super(context);
     }
 
 

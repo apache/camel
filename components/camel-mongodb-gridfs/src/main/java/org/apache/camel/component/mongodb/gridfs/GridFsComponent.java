@@ -19,13 +19,12 @@ package org.apache.camel.component.mongodb.gridfs;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
 
-public class GridFsComponent extends UriEndpointComponent {
+public class GridFsComponent extends DefaultComponent {
 
     public GridFsComponent() {
-        super(GridFsEndpoint.class);
     }
     
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

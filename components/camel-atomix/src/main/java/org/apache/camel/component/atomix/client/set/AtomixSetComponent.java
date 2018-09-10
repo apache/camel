@@ -26,7 +26,6 @@ public final class AtomixSetComponent extends AbstractAtomixClientComponent<Atom
     private AtomixSetConfiguration configuration = new AtomixSetConfiguration();
 
     public AtomixSetComponent() {
-        super();
     }
 
     public AtomixSetComponent(CamelContext camelContext) {

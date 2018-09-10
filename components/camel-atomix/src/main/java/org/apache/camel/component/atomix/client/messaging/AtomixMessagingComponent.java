@@ -26,7 +26,6 @@ public final class AtomixMessagingComponent extends AbstractAtomixClientComponen
     private AtomixMessagingConfiguration configuration = new AtomixMessagingConfiguration();
 
     public AtomixMessagingComponent() {
-        super();
     }
 
     public AtomixMessagingComponent(CamelContext camelContext) {

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -22,6 +23,7 @@ import org.apache.camel.impl.DefaultStreamCachingStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.junit.Before;
 import org.junit.Test;
+
 
 public class SplitterWireTapStreamCacheTest extends ContextTestSupport {
 

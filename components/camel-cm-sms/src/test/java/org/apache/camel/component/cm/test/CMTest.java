@@ -87,7 +87,7 @@ public class CMTest extends AbstractJUnit4SpringContextTests {
     @Before
     public void beforeTest() throws Exception {
         mock.reset();
-        camelContext.startRoute(CamelTestConfiguration.SIMPLE_ROUTE_ID);
+        camelContext.getRouteController().startRoute(CamelTestConfiguration.SIMPLE_ROUTE_ID);
         validNumber = pnu.format(pnu.getExampleNumber("ES"), PhoneNumberFormat.E164);
     }
 
@@ -95,7 +95,7 @@ public class CMTest extends AbstractJUnit4SpringContextTests {
     public void afterTest() {
 
         try {
-            camelContext.stopRoute(CamelTestConfiguration.SIMPLE_ROUTE_ID);
+            camelContext.getRouteController().stopRoute(CamelTestConfiguration.SIMPLE_ROUTE_ID);
         } catch (Exception e) {
             logger.error("Exception trying to stop de routes", e);
         }
@@ -103,7 +103,7 @@ public class CMTest extends AbstractJUnit4SpringContextTests {
         // Stop all routes
         // for (Route route : camelContext.getRoutes()) {
         // try {
-        // camelContext.stopRoute(route.getId());
+        // camelContext.getRouteController().stopRoute(route.getId());
         // } catch (Exception e) {
         // logger.error("Exception trying to stop de routes", e);
         // }

@@ -31,6 +31,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.TypedProcessorFactory;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.HystrixDefinition;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.function.Suppliers;
@@ -217,7 +218,7 @@ public class HystrixProcessorFactory extends TypedProcessorFactory<HystrixDefini
         // Extract properties from default configuration, the one configured on
         // camel context takes the precedence over those in the registry
         loadProperties(properties, Suppliers.firstNotNull(
-            () -> camelContext.getHystrixConfiguration(null),
+            () -> camelContext.adapt(ModelCamelContext.class).getHystrixConfiguration(null),
             () -> lookup(camelContext, HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, HystrixConfigurationDefinition.class))
         );
 
@@ -227,7 +228,7 @@ public class HystrixProcessorFactory extends TypedProcessorFactory<HystrixDefini
             final String ref = definition.getHystrixConfigurationRef();
 
             loadProperties(properties, Suppliers.firstNotNull(
-                () -> camelContext.getHystrixConfiguration(ref),
+                () -> camelContext.adapt(ModelCamelContext.class).getHystrixConfiguration(ref),
                 () -> mandatoryLookup(camelContext, ref, HystrixConfigurationDefinition.class))
             );
         }

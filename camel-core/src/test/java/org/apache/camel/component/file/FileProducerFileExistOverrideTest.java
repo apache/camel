@@ -43,7 +43,7 @@ public class FileProducerFileExistOverrideTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/file", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file://target/file?fileExist=Override", "Bye World", Exchange.FILE_NAME, "hello.txt");
 
-        context.startAllRoutes();
+        context.getRouteController().startAllRoutes();
 
         assertMockEndpointsSatisfied();
     }

@@ -20,30 +20,23 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 
 /**
  * Component that creates {@link ZooKeeperEndpoint}s for interacting with a ZooKeeper cluster.
  */
-public class ZooKeeperComponent extends UriEndpointComponent {
+public class ZooKeeperComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
     private ZooKeeperConfiguration configuration;
 
     public ZooKeeperComponent() {
-        super(ZooKeeperEndpoint.class);
-    }
-
-    public ZooKeeperComponent(CamelContext context) {
-        super(context, ZooKeeperEndpoint.class);
     }
 
     public ZooKeeperComponent(ZooKeeperConfiguration configuration) {
-        super(ZooKeeperEndpoint.class);
         this.configuration = configuration;
     }
 

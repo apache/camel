@@ -36,8 +36,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -291,7 +291,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
 
     private InputStream resolveStreamFromUrl() throws IOException {
         String u = endpoint.getUrl();
-        ObjectHelper.notEmpty(u, "url");
+        StringHelper.notEmpty(u, "url");
         LOG.debug("About to read from url: {}", u);
 
         URL url = new URL(u);
@@ -310,7 +310,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
 
     private InputStream resolveStreamFromFile() throws IOException {
         String fileName = endpoint.getFileName();
-        ObjectHelper.notEmpty(fileName, "fileName");
+        StringHelper.notEmpty(fileName, "fileName");
         
         FileInputStream fileStream;
 

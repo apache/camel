@@ -23,7 +23,6 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.model.ModelCamelContext;
@@ -31,8 +30,6 @@ import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Base class for implementation inheritance for different clauses in the <a
@@ -63,17 +60,6 @@ public abstract class BuilderSupport {
     }
 
     /**
-     *
-     * Returns a value builder for the given exchange property
-     * @deprecated use {@link #exchangeProperty(String)} instead
-     */
-    @Deprecated
-    public ValueBuilder property(String name) {
-        Expression exp = new ExchangePropertyExpression(name);
-        return new ValueBuilder(exp);
-    }
-
-    /**
      * Returns a value builder for the given exchange property
      */
     public ValueBuilder exchangeProperty(String name) {
@@ -91,61 +77,9 @@ public abstract class BuilderSupport {
     /**
      * Returns a predicate and value builder for the inbound message body as a
      * specific type
-     *
-     * @deprecated use {@link #bodyAs(Class)}
-     */
-    @Deprecated
-    public <T> ValueBuilder body(Class<T> type) {
-        return bodyAs(type);
-    }
-
-    /**
-     * Returns a predicate and value builder for the inbound message body as a
-     * specific type
      */
     public <T> ValueBuilder bodyAs(Class<T> type) {
         return Builder.bodyAs(type);
-    }
-
-    /**
-     * Returns a predicate and value builder for the outbound body on an
-     * exchange
-     *
-     * @deprecated use {@link #body()}
-     */
-    @Deprecated
-    public ValueBuilder outBody() {
-        return Builder.outBody();
-    }
-
-    /**
-     * Returns a predicate and value builder for the outbound message body as a
-     * specific type
-     *
-     * @deprecated use {@link #bodyAs(Class)}
-     */
-    @Deprecated
-    public <T> ValueBuilder outBody(Class<T> type) {
-        return Builder.outBodyAs(type);
-    }
-
-    /**
-     * Returns a predicate and value builder for the fault body on an
-     * exchange
-     */
-    public ValueBuilder faultBody() {
-        return Builder.faultBody();
-    }
-
-    /**
-     * Returns a predicate and value builder for the fault message body as a
-     * specific type
-     *
-     * @deprecated use {@link #bodyAs(Class)}
-     */
-    @Deprecated
-    public <T> ValueBuilder faultBodyAs(Class<T> type) {
-        return Builder.faultBodyAs(type);
     }
 
     /**
@@ -259,64 +193,6 @@ public abstract class BuilderSupport {
      *
      * @param beanOrBeanRef  either an instanceof a bean or a reference to bean to lookup in the Registry
      * @return the builder
-     * @deprecated use {@link #method(Object)} instead
-     */
-    @Deprecated
-    public ValueBuilder bean(Object beanOrBeanRef) {
-        return bean(beanOrBeanRef, null);
-    }
-
-    /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a>
-     * value builder
-     * <p/>
-     * This method accepts dual parameters. Either an bean instance or a reference to a bean (String).
-     *
-     * @param beanOrBeanRef  either an instanceof a bean or a reference to bean to lookup in the Registry
-     * @param method   name of method to invoke
-     * @return the builder
-     * @deprecated use {@link #method(Object, String)} instead
-     */
-    @Deprecated
-    public ValueBuilder bean(Object beanOrBeanRef, String method) {
-        return Builder.bean(beanOrBeanRef, method);
-    }
-
-    /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a>
-     * value builder
-     *
-     * @param beanType the Class of the bean which we want to invoke
-     * @return the builder
-     * @deprecated use {@link #method(Class)} instead
-     */
-    @Deprecated
-    public ValueBuilder bean(Class<?> beanType) {
-        return Builder.bean(beanType);
-    }
-
-    /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a>
-     * value builder
-     *
-     * @param beanType the Class of the bean which we want to invoke
-     * @param method   name of method to invoke
-     * @return the builder
-     * @deprecated use {@link #method(Class, String)} instead
-     */
-    @Deprecated
-    public ValueBuilder bean(Class<?> beanType, String method) {
-        return Builder.bean(beanType, method);
-    }
-
-    /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a>
-     * value builder
-     * <p/>
-     * This method accepts dual parameters. Either an bean instance or a reference to a bean (String).
-     *
-     * @param beanOrBeanRef  either an instanceof a bean or a reference to bean to lookup in the Registry
-     * @return the builder
      */
     public ValueBuilder method(Object beanOrBeanRef) {
         return method(beanOrBeanRef, null);
@@ -357,18 +233,6 @@ public abstract class BuilderSupport {
      */
     public ValueBuilder method(Class<?> beanType, String method) {
         return Builder.bean(beanType, method);
-    }
-
-    /**
-     * Returns an expression processing the exchange to the given endpoint uri
-     *
-     * @param uri endpoint uri to send the exchange to
-     * @return the builder
-     * @deprecated not in use, and not available in XML DSL
-     */
-    @Deprecated
-    public ValueBuilder sendTo(String uri) {
-        return Builder.sendTo(uri);
     }
 
     /**

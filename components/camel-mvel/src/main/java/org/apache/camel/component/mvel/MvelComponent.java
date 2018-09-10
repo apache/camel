@@ -19,17 +19,16 @@ package org.apache.camel.component.mvel;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ResourceHelper;
 
 /**
  * An <a href="http://camel.apache.org/mvel.html">Mvel Component</a>
  * for performing transforming messages
  */
-public class MvelComponent extends UriEndpointComponent {
+public class MvelComponent extends DefaultComponent {
 
     public MvelComponent() {
-        super(MvelEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

@@ -33,6 +33,7 @@ import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import org.apache.camel.model.ModelCamelContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -93,6 +94,7 @@ import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.blueprint.KeyStoreParametersFactoryBean;
 import org.apache.camel.util.blueprint.SSLContextParametersFactoryBean;
@@ -152,8 +154,8 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                 Node att = map.item(i);
                 if (att.getNodeName().equals("uri") || att.getNodeName().endsWith("Uri")) {
                     final String value = att.getNodeValue();
-                    String before = ObjectHelper.before(value, "?");
-                    String after = ObjectHelper.after(value, "?");
+                    String before = StringHelper.before(value, "?");
+                    String after = StringHelper.after(value, "?");
 
                     if (before != null && after != null) {
                         // remove all double spaces in the uri parameters
@@ -993,13 +995,13 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             Set<String> dataformats = new HashSet<>();
 
             // regular camel routes
-            for (RouteDefinition rd : camelContext.getRouteDefinitions()) {
+            for (RouteDefinition rd : camelContext.adapt(ModelCamelContext.class).getRouteDefinitions()) {
                 findInputComponents(rd.getInputs(), components, languages, dataformats);
                 findOutputComponents(rd.getOutputs(), components, languages, dataformats);
             }
 
             // rest services can have embedded routes or a singular to
-            for (RestDefinition rd : camelContext.getRestDefinitions()) {
+            for (RestDefinition rd : camelContext.adapt(ModelCamelContext.class).getRestDefinitions()) {
                 for (VerbDefinition vd : rd.getVerbs()) {
                     Object o = vd.getToOrRoute();
                     if (o instanceof RouteDefinition) {
@@ -1163,7 +1165,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                 return;
             }
 
-            String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 2);
+            String splitURI[] = StringHelper.splitOnCharacter(uri, ":", 2);
             if (splitURI[1] != null) {
                 String scheme = splitURI[0];
                 components.add(scheme);

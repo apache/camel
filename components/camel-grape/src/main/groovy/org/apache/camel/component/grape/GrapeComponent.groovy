@@ -25,6 +25,9 @@ class GrapeComponent extends DefaultComponent {
 	@Metadata(label = "advanced", description = "Implementation of org.apache.camel.component.grape.PatchesRepository, by default: FilePatchesRepository")
     private PatchesRepository patchesRepository = new FilePatchesRepository()
 
+    GrapeComponent() {
+    }
+
     @Override
     protected GrapeEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
         GrapeEndpoint grapeEndpoint = new GrapeEndpoint(uri, remaining, this)

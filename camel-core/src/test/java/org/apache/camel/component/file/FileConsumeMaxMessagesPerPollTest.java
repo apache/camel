@@ -49,7 +49,7 @@ public class FileConsumeMaxMessagesPerPollTest extends ContextTestSupport {
         template.sendBodyAndHeader(fileUrl, "Godday World", Exchange.FILE_NAME, "godday.txt");
 
         // start route
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
     }

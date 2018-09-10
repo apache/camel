@@ -60,7 +60,7 @@
     <endpoint id="input1" uri="netty4-http:http://0.0.0.0:#{dynaPort}/foo?matchOnUriPrefix=true&amp;securityConfiguration.realm=karaf&amp;securityConfiguration.securityConstraint=#constraint"/>
 
     <route>
-      <from ref="input1"/>
+      <from uri="ref:input1"/>
       <to uri="mock:input"/>
       <transform>
         <simple>Bye ${header.CamelHttpUri}</simple>

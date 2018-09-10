@@ -833,7 +833,7 @@ public class RestConfigurationDefinition {
             answer.setContextPath(CamelContextHelper.parseText(context, contextPath));
         }
         if (hostNameResolver != null) {
-            answer.setRestHostNameResolver(hostNameResolver.name());
+            answer.setHostNameResolver(hostNameResolver.name());
         }
         if (bindingMode != null) {
             answer.setBindingMode(bindingMode.name());

@@ -34,7 +34,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:unmarshal"/>
-      <unmarshal ref="asn1"/>
+      <unmarshal><custom ref="asn1"/></unmarshal>
       <split streaming="true">
         <simple>${body}</simple>
         <to uri="mock:unmarshal"/>

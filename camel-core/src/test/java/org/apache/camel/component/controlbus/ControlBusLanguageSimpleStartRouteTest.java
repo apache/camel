@@ -27,33 +27,33 @@ public class ControlBusLanguageSimpleStartRouteTest extends ContextTestSupport {
 
     @Test
     public void testControlBusStartStop() throws Exception {
-        assertEquals("Stopped", context.getRouteStatus("foo").name());
+        assertEquals("Stopped", context.getRouteController().getRouteStatus("foo").name());
 
         // store a pending message
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
         template.sendBody("seda:foo", "Hello World");
 
         // start the route using control bus
-        template.sendBody("controlbus:language:simple", "${camelContext.startRoute('foo')}");
+        template.sendBody("controlbus:language:simple", "${camelContext.getRouteController().startRoute('foo')}");
 
         assertMockEndpointsSatisfied();
 
         // now stop the route, using a header
-        template.sendBodyAndHeader("controlbus:language:simple", "${camelContext.stopRoute(${header.me})}", "me", "foo");
+        template.sendBodyAndHeader("controlbus:language:simple", "${camelContext.getRouteController().stopRoute(${header.me})}", "me", "foo");
 
-        assertEquals("Stopped", context.getRouteStatus("foo").name());
+        assertEquals("Stopped", context.getRouteController().getRouteStatus("foo").name());
     }
 
     @Test
     public void testControlBusStatus() throws Exception {
-        assertEquals("Stopped", context.getRouteStatus("foo").name());
+        assertEquals("Stopped", context.getRouteController().getRouteStatus("foo").name());
 
-        String status = template.requestBody("controlbus:language:simple", "${camelContext.getRouteStatus('foo')}", String.class);
+        String status = template.requestBody("controlbus:language:simple", "${camelContext.getRouteController().getRouteStatus('foo')}", String.class);
         assertEquals("Stopped", status);
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
-        status = template.requestBody("controlbus:language:simple", "${camelContext.getRouteStatus('foo')}", String.class);
+        status = template.requestBody("controlbus:language:simple", "${camelContext.getRouteController().getRouteStatus('foo')}", String.class);
         assertEquals("Started", status);
     }
 

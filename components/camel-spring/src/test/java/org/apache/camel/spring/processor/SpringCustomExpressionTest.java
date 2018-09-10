@@ -43,7 +43,7 @@ public class SpringCustomExpressionTest extends SpringTestSupport {
     }
 
     @SuppressWarnings("deprecation")
-    public static class MyExpression extends org.apache.camel.impl.ExpressionAdapter {
+    public static class MyExpression extends org.apache.camel.support.ExpressionAdapter {
 
         @Override
         public Object evaluate(Exchange exchange) {

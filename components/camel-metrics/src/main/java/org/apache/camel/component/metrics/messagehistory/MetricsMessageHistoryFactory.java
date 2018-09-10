@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.metrics.messagehistory;
 
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import com.codahale.metrics.MetricRegistry;
@@ -122,12 +121,6 @@ public class MetricsMessageHistoryFactory extends ServiceSupport implements Came
      */
     public void setDurationUnit(TimeUnit durationUnit) {
         this.durationUnit = durationUnit;
-    }
-
-    @Override
-    @Deprecated
-    public MessageHistory newMessageHistory(String routeId, NamedNode namedNode, Date date) {
-        return newMessageHistory(routeId, namedNode, date.getTime());
     }
 
     @Override

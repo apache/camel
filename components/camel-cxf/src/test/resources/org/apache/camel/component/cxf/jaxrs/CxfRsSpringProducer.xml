@@ -58,7 +58,7 @@
        <to uri="cxfrs://bean://rsClientHttp?synchronous=true"/>
     </route>
     <route>
-       <from ref="fromEndpoint"/>
+       <from uri="ref:fromEndpoint"/>
        <process ref="myProcessor" />
     </route>
   </camelContext>

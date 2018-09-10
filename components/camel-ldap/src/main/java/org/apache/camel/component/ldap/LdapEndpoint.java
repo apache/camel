@@ -56,12 +56,6 @@ public class LdapEndpoint extends DefaultEndpoint {
         this.dirContextName = remaining;
     }
 
-    @SuppressWarnings("deprecation")
-    public LdapEndpoint(String endpointUri, String remaining) throws URISyntaxException {
-        super(endpointUri);
-        this.dirContextName = remaining;
-    }
-
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new RuntimeCamelException("An LDAP Consumer would be the LDAP server itself! No such support here");
     }

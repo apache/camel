@@ -71,7 +71,7 @@
       <!-- Need to remove the http headers which could confuse the http endpoint -->
       <removeHeaders pattern="CamelHttp*"/>
       <!-- send proxied request to real web service -->
-      <to ref="callRealWebService"/>
+      <to uri="ref:callRealWebService"/>
       <!-- log answer from real web service -->
       <to uri="log:output"/>
     </route>

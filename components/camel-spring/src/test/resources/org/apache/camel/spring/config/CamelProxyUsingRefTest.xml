@@ -38,7 +38,7 @@
         <!-- this is the route that our proxy will routed when invoked
              and the output from this route is returned as reply on the proxy -->
         <route>
-            <from ref="cool"/>
+            <from uri="ref:cool"/>
             <to uri="log:foo"/>
             <transform>
                 <constant>Hello World</constant>

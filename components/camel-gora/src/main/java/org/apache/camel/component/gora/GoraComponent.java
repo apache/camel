@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.gora.persistency.Persistent;
 import org.apache.gora.store.DataStore;
 import org.apache.gora.store.DataStoreFactory;
@@ -29,7 +29,7 @@ import org.apache.hadoop.conf.Configuration;
 
 import static org.apache.camel.component.gora.GoraConstants.GORA_DEFAULT_DATASTORE_KEY;
 
-public class GoraComponent extends UriEndpointComponent {
+public class GoraComponent extends DefaultComponent {
 
     /**
      * GORA datastore
@@ -47,7 +47,6 @@ public class GoraComponent extends UriEndpointComponent {
     private Configuration configuration;
 
     public GoraComponent() {
-        super(GoraEndpoint.class);
     }
 
     /**

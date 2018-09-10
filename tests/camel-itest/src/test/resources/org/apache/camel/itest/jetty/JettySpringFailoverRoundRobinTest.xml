@@ -41,36 +41,36 @@
             <loadBalance inheritErrorHandler="false">
                 <failover roundRobin="true"/>
                 <!-- and this is the four endpoints we will load balance with failover -->
-                <to ref="bad"/>
-                <to ref="bad2"/>
-                <to ref="good"/>
-                <to ref="good2"/>
+                <to uri="ref:bad"/>
+                <to uri="ref:bad2"/>
+                <to uri="ref:good"/>
+                <to uri="ref:good2"/>
             </loadBalance>
         </route>
         <!-- END SNIPPET: e1 -->
 
         <route>
-            <from ref="bad"/>
+            <from uri="ref:bad"/>
             <to uri="mock:bad"/>
             <setHeader headerName="CamelHttpResponseCode"><constant>500</constant></setHeader>
             <setBody><constant>Something bad happened</constant></setBody>
         </route>
 
         <route>
-            <from ref="bad2"/>
+            <from uri="ref:bad2"/>
             <to uri="mock:bad2"/>
             <setHeader headerName="CamelHttpResponseCode"><constant>404</constant></setHeader>
             <setBody><constant>Not found</constant></setBody>
         </route>
 
         <route>
-            <from ref="good"/>
+            <from uri="ref:good"/>
             <to uri="mock:good"/>
             <setBody><constant>Good</constant></setBody>
         </route>
 
         <route>
-            <from ref="good2"/>
+            <from uri="ref:good2"/>
             <to uri="mock:good2"/>
             <setBody><constant>Also good</constant></setBody>
         </route>

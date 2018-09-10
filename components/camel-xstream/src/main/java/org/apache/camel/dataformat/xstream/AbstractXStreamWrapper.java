@@ -91,7 +91,7 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements C
      */
     public XStream getXStream(ClassResolver resolver) {
         if (xstream == null) {
-            xstream = createXStream(resolver);
+            xstream = createXStream(resolver, null);
         }
         return xstream;
     }
@@ -112,14 +112,6 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements C
 
     public void setXStream(XStream xstream) {
         this.xstream = xstream;
-    }
-
-    /**
-     * @deprecated Use {@link #createXStream(ClassResolver, ClassLoader)}
-     */
-    @Deprecated
-    protected XStream createXStream(ClassResolver resolver) {
-        return createXStream(resolver, null);
     }
 
     protected XStream createXStream(ClassResolver resolver, ClassLoader classLoader) {

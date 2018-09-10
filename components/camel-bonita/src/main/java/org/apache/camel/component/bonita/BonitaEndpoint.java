@@ -44,10 +44,6 @@ public class BonitaEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
-    public BonitaEndpoint(String endpointUri) {
-        super(endpointUri);
-    }
-
     public Producer createProducer() throws Exception {
         if (configuration.getOperation() == BonitaOperation.startCase) {
             return new BonitaStartProducer(this, configuration);

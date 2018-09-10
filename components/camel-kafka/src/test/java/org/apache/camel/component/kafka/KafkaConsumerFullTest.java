@@ -126,12 +126,12 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
 
         //Restart endpoint,
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
 
         KafkaEndpoint kafkaEndpoint = (KafkaEndpoint) from;
         kafkaEndpoint.getConfiguration().setSeekTo("beginning");
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         // As wee set seek to beginning we should re-consume all messages
         to.assertIsSatisfied(3000);
@@ -154,12 +154,12 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
         to.expectedMessageCount(0);
 
         //Restart endpoint,
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
 
         KafkaEndpoint kafkaEndpoint = (KafkaEndpoint) from;
         kafkaEndpoint.getConfiguration().setSeekTo("end");
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         // As wee set seek to end we should not re-consume any messages
         synchronized (this) {

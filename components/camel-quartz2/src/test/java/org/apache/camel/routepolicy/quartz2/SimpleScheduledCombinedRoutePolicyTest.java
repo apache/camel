@@ -61,10 +61,10 @@ public class SimpleScheduledCombinedRoutePolicyTest extends CamelTestSupport {
         context.start();
         
         Thread.sleep(5000);
-        assertTrue(context.getRouteStatus("test") == ServiceStatus.Started);
+        assertTrue(context.getRouteController().getRouteStatus("test") == ServiceStatus.Started);
         template.sendBody("direct:start", "Ready or not, Here, I come");
         Thread.sleep(5000);
-        assertTrue(context.getRouteStatus("test") == ServiceStatus.Stopped);
+        assertTrue(context.getRouteController().getRouteStatus("test") == ServiceStatus.Stopped);
         
         context.getComponent("quartz2", QuartzComponent.class).stop();
         success.assertIsSatisfied();

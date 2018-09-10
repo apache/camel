@@ -41,7 +41,7 @@
 
         <route>
             <from uri="direct:start"/>
-            <marshal ref="xstream"/>
+            <marshal><custom ref="xstream"/></marshal>
             <convertBodyTo type="String"/>
             <to uri="mock:result"/>
         </route>

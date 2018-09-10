@@ -55,12 +55,6 @@ public class SpringIntegrationEndpoint extends DefaultEndpoint {
         this.messageChannel = channel;
     }
 
-    @Deprecated
-    public SpringIntegrationEndpoint(String endpointUri, MessageChannel messageChannel) {
-        super(endpointUri);
-        this.messageChannel = messageChannel;
-    }
-
     public Producer createProducer() throws Exception {
         return new SpringIntegrationProducer((SpringCamelContext) getCamelContext(), this);
     }

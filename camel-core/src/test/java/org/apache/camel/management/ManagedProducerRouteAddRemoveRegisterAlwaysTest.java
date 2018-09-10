@@ -86,7 +86,7 @@ public class ManagedProducerRouteAddRemoveRegisterAlwaysTest extends ManagementT
         log.info("Removing 2nd route");
 
         // now remove the 2nd route
-        context.stopRoute("bar");
+        context.getRouteController().stopRoute("bar");
         boolean removed = context.removeRoute("bar");
         assertTrue(removed);
 

@@ -70,7 +70,7 @@ public class FtpConsumerLocalWorkDirectoryTest extends FtpServerTestSupport {
         mock.expectedBodiesReceived("Hello World");
         mock.expectedMessageCount(1);
 
-        context.startRoute("myRoute");
+        context.getRouteController().startRoute("myRoute");
 
         assertMockEndpointsSatisfied();
 

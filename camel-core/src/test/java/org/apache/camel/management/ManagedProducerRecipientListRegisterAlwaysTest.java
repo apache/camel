@@ -55,11 +55,8 @@ public class ManagedProducerRecipientListRegisterAlwaysTest extends ManagementTe
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=producers,*"), null);
         assertEquals(2, set.size());
-        Iterator<ObjectName> it = set.iterator();
 
-        for (int i = 0; i < 2; i++) {
-            ObjectName on = it.next();
-
+        for (ObjectName on : set) {
             boolean registered = mbeanServer.isRegistered(on);
             assertEquals("Should be registered", true, registered);
 

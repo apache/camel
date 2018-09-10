@@ -20,7 +20,7 @@ import java.net.URLDecoder;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
@@ -32,12 +32,11 @@ import org.apache.camel.util.StringHelper;
  *
  * @version 
  */
-public class LanguageComponent extends UriEndpointComponent {
+public class LanguageComponent extends DefaultComponent {
 
     public static final String RESOURCE = "resource:";
 
     public LanguageComponent() {
-        super(LanguageEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

@@ -36,7 +36,7 @@ public class DisruptorRemoveRouteThenAddAgainTest extends CamelTestSupport {
         out.assertIsSatisfied();
 
         // now stop & remove the route
-        context.stopRoute("disruptorToMock");
+        context.getRouteController().stopRoute("disruptorToMock");
         context.removeRoute("disruptorToMock");
         
         // and then add it back again

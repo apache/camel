@@ -36,11 +36,11 @@ import org.apache.camel.spi.TypeConverterRegistry;
  * This implementation uses a {@link FallbackConverter}.
  * <p/>
  * The converter is disabled by default. To enable then set the property
- * {@link JacksonConstants#ENABLE_TYPE_CONVERTER} to <tt>true</tt> on {@link CamelContext#getProperties()}.
+ * {@link JacksonConstants#ENABLE_TYPE_CONVERTER} to <tt>true</tt> on {@link CamelContext#getGlobalOptions()}.
  * <br/>
  * The option {@link JacksonConstants#TYPE_CONVERTER_TO_POJO} can be used to allow converting to POJO types. By
  * default the converter only attempts to convert to primitive types such as String and numbers. To convert to any kind, then
- * enable this by setting {@link JacksonConstants#TYPE_CONVERTER_TO_POJO} to <tt>true</tt> on {@link CamelContext#getProperties()}.
+ * enable this by setting {@link JacksonConstants#TYPE_CONVERTER_TO_POJO} to <tt>true</tt> on {@link CamelContext#getGlobalOptions()}.
  */
 public final class JacksonTypeConverters {
 
@@ -62,14 +62,14 @@ public final class JacksonTypeConverters {
         // only do this if enabled (disabled by default)
         if (!init && exchange != null) {
             // init to see if this is enabled
-            String text = exchange.getContext().getProperties().get(JacksonConstants.ENABLE_TYPE_CONVERTER);
+            String text = exchange.getContext().getGlobalOptions().get(JacksonConstants.ENABLE_TYPE_CONVERTER);
             if (text != null) {
                 text = exchange.getContext().resolvePropertyPlaceholders(text);
                 enabled = "true".equalsIgnoreCase(text);
             }
 
             // pojoOnly is enabled by default
-            text = exchange.getContext().getProperties().get(JacksonConstants.TYPE_CONVERTER_TO_POJO);
+            text = exchange.getContext().getGlobalOptions().get(JacksonConstants.TYPE_CONVERTER_TO_POJO);
             if (text != null) {
                 text = exchange.getContext().resolvePropertyPlaceholders(text);
                 toPojo = "true".equalsIgnoreCase(text);

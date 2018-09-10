@@ -62,7 +62,7 @@ public class MailSortTermThreeTest extends CamelTestSupport {
         MockEndpoint mockDescImap = getMockEndpoint("mock:resultDescendingImap");
         mockDescImap.expectedBodiesReceived("Even later date", "Later date", "Earlier date");
 
-        context.startAllRoutes();
+        context.getRouteController().startAllRoutes();
 
         assertMockEndpointsSatisfied();
     }

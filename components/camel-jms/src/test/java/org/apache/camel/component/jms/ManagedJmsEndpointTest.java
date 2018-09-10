@@ -81,7 +81,7 @@ public class ManagedJmsEndpointTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // stop route
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
 
         // send a message to queue
         template.sendBody("activemq:queue:start", "Hi World");

@@ -1047,34 +1047,6 @@ public abstract class AbstractCamelCatalog {
         }
     }
 
-    @Deprecated
-    private static String[] syntaxTokens(String syntax) {
-        // build tokens between the words
-        List<String> tokens = new ArrayList<>();
-        // preserve backwards behavior which had an empty token first
-        tokens.add("");
-
-        String current = "";
-        for (int i = 0; i < syntax.length(); i++) {
-            char ch = syntax.charAt(i);
-            if (Character.isLetterOrDigit(ch)) {
-                // reset for new current tokens
-                if (current.length() > 0) {
-                    tokens.add(current);
-                    current = "";
-                }
-            } else {
-                current += ch;
-            }
-        }
-        // anything left over?
-        if (current.length() > 0) {
-            tokens.add(current);
-        }
-
-        return tokens.toArray(new String[tokens.size()]);
-    }
-
     private static String[] syntaxKeys(String syntax) {
         // build tokens between the separators
         List<String> tokens = new ArrayList<>();
@@ -1102,23 +1074,7 @@ public abstract class AbstractCamelCatalog {
         return tokens.toArray(new String[tokens.size()]);
     }
 
-    public SimpleValidationResult validateSimpleExpression(String simple) {
-        return doValidateSimple(null, simple, false);
-    }
-
-    public SimpleValidationResult validateSimpleExpression(ClassLoader classLoader, String simple) {
-        return doValidateSimple(classLoader, simple, false);
-    }
-
-    public SimpleValidationResult validateSimplePredicate(String simple) {
-        return doValidateSimple(null, simple, true);
-    }
-
-    public SimpleValidationResult validateSimplePredicate(ClassLoader classLoader, String simple) {
-        return doValidateSimple(classLoader, simple, true);
-    }
-
-    private SimpleValidationResult doValidateSimple(ClassLoader classLoader, String simple, boolean predicate) {
+    private LanguageValidationResult doValidateSimple(ClassLoader classLoader, String simple, boolean predicate) {
         if (classLoader == null) {
             classLoader = getClass().getClassLoader();
         }
@@ -1129,10 +1085,10 @@ public abstract class AbstractCamelCatalog {
         // therefore we use an more unlikely character: {{XXX}} to ~^XXX^~
         String resolved = simple.replaceAll("\\{\\{(.+)\\}\\}", "~^$1^~");
 
-        SimpleValidationResult answer = new SimpleValidationResult(simple);
+        LanguageValidationResult answer = new LanguageValidationResult(simple);
 
         Object instance = null;
-        Class clazz = null;
+        Class<?> clazz = null;
         try {
             clazz = classLoader.loadClass("org.apache.camel.language.simple.SimpleLanguage");
             instance = clazz.newInstance();
@@ -1164,7 +1120,7 @@ public abstract class AbstractCamelCatalog {
 
                 // is it simple parser exception then we can grab the index where the problem is
                 if (cause.getClass().getName().equals("org.apache.camel.language.simple.types.SimpleIllegalSyntaxException")
-                    || cause.getClass().getName().equals("org.apache.camel.language.simple.types.SimpleParserException")) {
+                        || cause.getClass().getName().equals("org.apache.camel.language.simple.types.SimpleParserException")) {
                     try {
                         // we need to grab the index field from those simple parser exceptions
                         Method method = cause.getClass().getMethod("getIndex");
@@ -1209,11 +1165,19 @@ public abstract class AbstractCamelCatalog {
     }
 
     public LanguageValidationResult validateLanguagePredicate(ClassLoader classLoader, String language, String text) {
-        return doValidateLanguage(classLoader, language, text, true);
+        if ("simple".equals(language)) {
+            return doValidateSimple(classLoader, text, true);
+        } else {
+            return doValidateLanguage(classLoader, language, text, true);
+        }
     }
 
     public LanguageValidationResult validateLanguageExpression(ClassLoader classLoader, String language, String text) {
-        return doValidateLanguage(classLoader, language, text, false);
+        if ("simple".equals(language)) {
+            return doValidateSimple(classLoader, text, false);
+        } else {
+            return doValidateLanguage(classLoader, language, text, false);
+        }
     }
 
     private LanguageValidationResult doValidateLanguage(ClassLoader classLoader, String language, String text, boolean predicate) {
@@ -1221,7 +1185,7 @@ public abstract class AbstractCamelCatalog {
             classLoader = getClass().getClassLoader();
         }
 
-        SimpleValidationResult answer = new SimpleValidationResult(text);
+        LanguageValidationResult answer = new LanguageValidationResult(text);
 
         String json = jsonSchemaResolver.getLanguageJSonSchema(language);
         if (json == null) {

@@ -34,6 +34,7 @@ import org.apache.camel.component.zookeepermaster.ZookeeperGroupListenerSupport;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.curator.framework.CuratorFramework;
 
 /**
@@ -209,7 +210,7 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
         super.doStart();
 
         ObjectHelper.notNull(camelContext, "CamelContext");
-        ObjectHelper.notEmpty("groupName", groupName);
+        StringHelper.notEmpty("groupName", groupName);
 
         String path = getCamelClusterPath(groupName);
         this.groupListener = new ZookeeperGroupListenerSupport(path, route.getEndpoint(), onLockOwned(), onDisconnected());

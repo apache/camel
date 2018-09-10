@@ -33,41 +33,21 @@ import org.apache.camel.util.ExchangeHelper;
  */
 public class SedaProducer extends DefaultAsyncProducer {
     
-    /**
-     * @deprecated Better make use of the {@link SedaEndpoint#getQueue()} API which delivers the accurate reference to the queue currently being used.
-     */
-    @Deprecated
-    protected final BlockingQueue<Exchange> queue;
     private final SedaEndpoint endpoint;
     private final WaitForTaskToComplete waitForTaskToComplete;
     private final long timeout;
     private final boolean blockWhenFull;
     private final long offerTimeout;
 
-    /**
-     * @deprecated Use {@link #SedaProducer(SedaEndpoint, WaitForTaskToComplete, long, boolean) the other constructor}.
-     */
-    @Deprecated
-    public SedaProducer(SedaEndpoint endpoint, BlockingQueue<Exchange> queue, WaitForTaskToComplete waitForTaskToComplete, long timeout) {
-        this(endpoint, waitForTaskToComplete, timeout, false, 0);
-    }
-
-    /**
-     * @deprecated Use {@link #SedaProducer(SedaEndpoint, WaitForTaskToComplete, long, boolean) the other constructor}.
-     */
-    @Deprecated
-    public SedaProducer(SedaEndpoint endpoint, BlockingQueue<Exchange> queue, WaitForTaskToComplete waitForTaskToComplete, long timeout, boolean blockWhenFull, long offerTimeout) {
-        this(endpoint, waitForTaskToComplete, timeout, blockWhenFull, offerTimeout);
-    }
-
     public SedaProducer(SedaEndpoint endpoint, WaitForTaskToComplete waitForTaskToComplete, long timeout, boolean blockWhenFull, long offerTimeout) {
         super(endpoint);
-        this.queue = endpoint.getQueue();
         this.endpoint = endpoint;
         this.waitForTaskToComplete = waitForTaskToComplete;
         this.timeout = timeout;
         this.blockWhenFull = blockWhenFull;
         this.offerTimeout = offerTimeout;
+        // Force the creation of the queue
+        endpoint.getQueue();
     }
 
     @Override

@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
@@ -30,8 +31,7 @@ import org.junit.Test;
  */
 public class EnricherRefTest extends ContextTestSupport {
 
-    @SuppressWarnings("deprecation")
-    private MockEndpoint cool = new MockEndpoint("mock:cool");
+    private MockEndpoint cool = new MockEndpoint("mock:cool", new MockComponent(context));
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {

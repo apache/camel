@@ -57,7 +57,7 @@
         <!-- START SNIPPET: e2 -->
     <route>
             <!-- here we route from or mina endpoint we have defined above -->
-      <from ref="myMinaEndpoint"/>
+      <from uri="ref:myMinaEndpoint"/>
       <to uri="mock:result"/>
     </route>
         <!-- END SNIPPET: e2 -->

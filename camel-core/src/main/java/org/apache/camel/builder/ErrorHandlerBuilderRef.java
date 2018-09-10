@@ -158,7 +158,7 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
 
     protected static ErrorHandlerFactory lookupErrorHandlerBuilder(ModelCamelContext camelContext) {
         @SuppressWarnings("deprecation")
-        ErrorHandlerFactory answer = camelContext.getErrorHandlerBuilder();
+        ErrorHandlerFactory answer = camelContext.getErrorHandlerFactory();
         if (answer instanceof ErrorHandlerBuilderRef) {
             ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef) answer;
             String otherRef = other.getRef();

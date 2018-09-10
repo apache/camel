@@ -33,7 +33,7 @@ import org.apache.camel.component.spring.ws.filter.impl.BasicMessageFilter;
 import org.apache.camel.component.spring.ws.type.EndpointMappingKey;
 import org.apache.camel.component.spring.ws.type.EndpointMappingType;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
@@ -47,18 +47,17 @@ import org.springframework.xml.xpath.XPathExpressionFactory;
 /**
  * Apache Camel component for working with Spring Web Services (a.k.a Spring-WS).
  */
-public class SpringWebserviceComponent extends UriEndpointComponent implements SSLContextParametersAware {
+public class SpringWebserviceComponent extends DefaultComponent implements SSLContextParametersAware {
     private static final Logger LOG = LoggerFactory.getLogger(SpringWebserviceComponent.class);
 
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 
     public SpringWebserviceComponent() {
-        super(SpringWebserviceEndpoint.class);
     }
 
     public SpringWebserviceComponent(CamelContext context) {
-        super(context, SpringWebserviceEndpoint.class);
+        super(context);
     }
 
     @Deprecated

@@ -28,14 +28,6 @@ import org.apache.camel.util.ExpressionToPredicateAdapter;
  */
 public class ExchangePropertyLanguage implements Language, IsSingleton {
 
-    /**
-     * @deprecated use {@link #exchangeProperty(String)} instead
-     */
-    @Deprecated
-    public static Expression property(String propertyName) {
-        return exchangeProperty(propertyName);
-    }
-
     public static Expression exchangeProperty(String propertyName) {
         return ExpressionBuilder.exchangePropertyExpression(propertyName);
     }

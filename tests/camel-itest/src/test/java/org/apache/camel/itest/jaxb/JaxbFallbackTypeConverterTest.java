@@ -48,7 +48,7 @@ public class JaxbFallbackTypeConverterTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // setup the camel property for the PrettyPrint
-                context.getProperties().put(FallbackTypeConverter.PRETTY_PRINT, "false");
+                context.getGlobalOptions().put(FallbackTypeConverter.PRETTY_PRINT, "false");
 
                 from("direct:start").process(new Processor() {
 

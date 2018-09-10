@@ -26,7 +26,6 @@ public final class AtomixValueComponent extends AbstractAtomixClientComponent<At
     private AtomixValueConfiguration configuration = new AtomixValueConfiguration();
 
     public AtomixValueComponent() {
-        super();
     }
 
     public AtomixValueComponent(CamelContext camelContext) {

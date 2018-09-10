@@ -52,9 +52,9 @@ public class ManagedThrottlingInflightRoutePolicyTest extends ManagementTestSupp
         // the route has this starting endpoint uri
         assertEquals("direct://start", uri);
 
-        Integer val = (Integer) mbeanServer.getAttribute(on, "InflightExchanges");
+        Long val = (Long) mbeanServer.getAttribute(on, "ExchangesInflight");
         // the route has no inflight exchanges
-        assertEquals(0, val.intValue());
+        assertEquals(0L, val.longValue());
 
         // should be started
         String state = (String) mbeanServer.getAttribute(on, "State");

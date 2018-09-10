@@ -131,7 +131,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
             try {
                 StopWatch watch = new StopWatch();
                 super.start();
-                LOG.debug("start() took {} millis", watch.stop());
+                LOG.debug("start() took {} millis", watch.taken());
             } catch (Exception e) {
                 throw wrapRuntimeCamelException(e);
             }

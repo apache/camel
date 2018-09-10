@@ -29,7 +29,7 @@ public class MyProduceBean {
     private Producer producer;
 
     public void testDoSomething(String body) throws Exception {
-        Exchange exchange = producer.createExchange();
+        Exchange exchange = producer.getEndpoint().createExchange();
         exchange.getIn().setBody(body);
         producer.process(exchange);
     }

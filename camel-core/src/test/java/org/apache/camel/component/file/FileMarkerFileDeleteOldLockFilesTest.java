@@ -45,7 +45,7 @@ public class FileMarkerFileDeleteOldLockFilesTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/oldlock", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         // start the route
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
     }

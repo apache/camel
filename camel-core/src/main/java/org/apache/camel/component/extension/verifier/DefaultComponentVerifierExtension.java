@@ -25,7 +25,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.ComponentAware;
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.runtimecatalog.EndpointValidationResult;
@@ -36,7 +35,7 @@ import org.apache.camel.util.IntrospectionSupport;
 
 import static org.apache.camel.util.StreamUtils.stream;
 
-public class DefaultComponentVerifierExtension implements ComponentVerifierExtension, ComponentVerifier, CamelContextAware, ComponentAware {
+public class DefaultComponentVerifierExtension implements ComponentVerifierExtension, CamelContextAware, ComponentAware {
     private final String defaultScheme;
     private Component component;
     private CamelContext camelContext;

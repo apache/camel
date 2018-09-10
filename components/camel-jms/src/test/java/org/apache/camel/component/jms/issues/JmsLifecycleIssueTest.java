@@ -38,7 +38,7 @@ public class JmsLifecycleIssueTest extends CamelTestSupport {
     public void routeThatIsStoppedAndThenResumedAcceptsMessage() throws Exception {
         assertThatRouteIs(Stopped);
 
-        context.resumeRoute(ROUTE_ID);
+        context.getRouteController().resumeRoute(ROUTE_ID);
 
         assertRouteWorks();
     }
@@ -47,14 +47,14 @@ public class JmsLifecycleIssueTest extends CamelTestSupport {
     public void routeThatIsStoppedSuspendedAndThenResumedAcceptsMessage() throws Exception {
         assertThatRouteIs(Stopped);
 
-        context.suspendRoute(ROUTE_ID);
-        context.resumeRoute(ROUTE_ID);
+        context.getRouteController().resumeRoute(ROUTE_ID);
+        context.getRouteController().resumeRoute(ROUTE_ID);
 
         assertRouteWorks();
     }
 
     private void assertThatRouteIs(ServiceStatus expectedStatus) {
-        assertEquals(expectedStatus, context.getRouteStatus(ROUTE_ID));
+        assertEquals(expectedStatus, context.getRouteController().getRouteStatus(ROUTE_ID));
     }
 
     private void assertRouteWorks() throws Exception {

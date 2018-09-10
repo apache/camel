@@ -23,7 +23,7 @@ import org.apache.camel.support.TimerListenerManager;
  * The {@link org.apache.camel.support.TimerListenerManager} used for tracking load statistics.
  * <p/>
  * From Camel 2.13 onwards the {@link ManagedLoadTimer} is only enabled if
- * {@link org.apache.camel.spi.ManagementStrategy#isLoadStatisticsEnabled()} is enabled.
+ * {@link org.apache.camel.spi.ManagementAgent#getLoadStatisticsEnabled()} is enabled.
  */
 public class ManagedLoadTimer extends TimerListenerManager implements NonManagedService {
 

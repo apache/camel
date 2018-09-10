@@ -30,7 +30,6 @@ public class PubNubComponent extends DefaultComponent {
     }
 
     public PubNubComponent() {
-        super();
     }
 
     @Override

@@ -666,7 +666,7 @@ DSL. Here is the big spender sample using Spring DSL:
 <route>
   <from uri="jms:topic:OrdersTopic"/>
   <filter>
-    <method bean="myBean" method="isGoldCustomer"/>
+    <method ref="myBean" method="isGoldCustomer"/>
     <to uri="jms:queue:BigSpendersQueue"/>
   </filter>
 </route>

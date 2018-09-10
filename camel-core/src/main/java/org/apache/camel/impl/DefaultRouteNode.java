@@ -75,10 +75,6 @@ public class DefaultRouteNode implements RouteNode {
         if (target instanceof Traceable) {
             Traceable trace = (Traceable) target;
             return trace.getTraceLabel();
-        } else if (target instanceof org.apache.camel.processor.Traceable) {
-            // to be backwards compatible
-            org.apache.camel.processor.Traceable trace = (org.apache.camel.processor.Traceable) target;
-            return trace.getTraceLabel();
         }
 
         // if we are a delegate then drill down

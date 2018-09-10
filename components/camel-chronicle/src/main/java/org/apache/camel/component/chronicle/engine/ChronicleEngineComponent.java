@@ -20,20 +20,19 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.StringHelper;
 
 /**
  * Represents the component that manages {@link ChronicleEngineEndpoint}.
  */
-public class ChronicleEngineComponent extends UriEndpointComponent {
+public class ChronicleEngineComponent extends DefaultComponent {
     
     public ChronicleEngineComponent() {
-        super(ChronicleEngineEndpoint.class);
     }
 
     public ChronicleEngineComponent(CamelContext context) {
-        super(context, ChronicleEngineEndpoint.class);
+        super(context);
     }
 
     @Override

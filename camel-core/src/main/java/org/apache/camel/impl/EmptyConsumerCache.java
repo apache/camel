@@ -43,7 +43,7 @@ public class EmptyConsumerCache extends ConsumerCache {
             if (answer instanceof IsSingleton) {
                 singleton = ((IsSingleton) answer).isSingleton();
             }
-            if (getCamelContext().isStartingRoutes() && singleton) {
+            if (getCamelContext().getRouteController().isStartingRoutes() && singleton) {
                 // if we are currently starting a route, then add as service and enlist in JMX
                 // - but do not enlist non-singletons in JMX
                 // - note addService will also start the service

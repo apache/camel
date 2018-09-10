@@ -68,7 +68,7 @@ public class FilePollEnrichTest extends ContextTestSupport {
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             // force stop route after use to prevent firing timer again
-                            exchange.getContext().stopRoute("foo", 100, TimeUnit.MILLISECONDS);
+                            exchange.getContext().getRouteController().stopRoute("foo", 100, TimeUnit.MILLISECONDS);
                         }
                     });
             }

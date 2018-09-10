@@ -60,7 +60,7 @@ public class StAXXPathSplitChoicePerformanceTest extends CamelTestSupport {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(size).create();
 
         boolean matches = notify.matches(60, TimeUnit.SECONDS);
-        log.info("Processed file with " + size + " elements in: " + TimeUtils.printDuration(watch.stop()));
+        log.info("Processed file with " + size + " elements in: " + TimeUtils.printDuration(watch.taken()));
 
         log.info("Processed " + tiny.get() + " tiny messages");
         log.info("Processed " + small.get() + " small messages");

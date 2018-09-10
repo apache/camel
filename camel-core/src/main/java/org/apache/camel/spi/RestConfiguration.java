@@ -305,39 +305,6 @@ public class RestConfiguration {
      * Gets the resolver to use for resolving hostname
      *
      * @return the resolver
-     * @deprecated use getHostNameResolver
-     */
-    @Deprecated
-    public RestHostNameResolver getRestHostNameResolver() {
-        return getHostNameResolver();
-    }
-
-    /**
-     * Sets the resolver to use for resolving hostname
-     *
-     * @param restHostNameResolver the resolver
-     * @deprecated use setHostNameResolver
-     */
-    @Deprecated
-    public void setRestHostNameResolver(RestHostNameResolver restHostNameResolver) {
-        setHostNameResolver(restHostNameResolver);
-    }
-
-    /**
-     * Sets the resolver to use for resolving hostname
-     *
-     * @param restHostNameResolver the resolver
-     * @deprecated use setHostNameResolver
-     */
-    @Deprecated
-    public void setRestHostNameResolver(String restHostNameResolver) {
-        settHostNameResolver(restHostNameResolver);
-    }
-
-    /**
-     * Gets the resolver to use for resolving hostname
-     *
-     * @return the resolver
      */
     public RestHostNameResolver getHostNameResolver() {
         return hostNameResolver;
@@ -357,7 +324,7 @@ public class RestConfiguration {
      *
      * @param hostNameResolver the resolver
      */
-    public void settHostNameResolver(String hostNameResolver) {
+    public void setHostNameResolver(String hostNameResolver) {
         this.hostNameResolver = RestHostNameResolver.valueOf(hostNameResolver);
     }
 

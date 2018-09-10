@@ -136,19 +136,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean copyOnExchange = true;
 
+    public MockEndpoint() {
+    }
+
     public MockEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
         init();
-    }
-
-    @Deprecated
-    public MockEndpoint(String endpointUri) {
-        super(endpointUri);
-        init();
-    }
-
-    public MockEndpoint() {
-        this(null);
     }
 
     /**
@@ -1139,14 +1132,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      */
     public void setResultMinimumWaitTime(long resultMinimumWaitTime) {
         this.resultMinimumWaitTime = resultMinimumWaitTime;
-    }
-
-    /**
-     * @deprecated use {@link #setResultMinimumWaitTime(long)}
-     */
-    @Deprecated
-    public void setMinimumResultWaitTime(long resultMinimumWaitTime) {
-        setResultMinimumWaitTime(resultMinimumWaitTime);
     }
 
     /**

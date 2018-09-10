@@ -74,8 +74,8 @@ public class FailoverCuratorLeaderRoutePolicyTest extends ZooKeeperTestSupport {
         });
         context.start();
         // this check verifies that a route marked as autostartable is not started automatically. It will be the policy responsibility to eventually start it.
-        assertThat(context.getRouteStatus("single_route").isStarted(), is(false));
-        assertThat(context.getRouteStatus("single_route").isStarting(), is(false));
+        assertThat(context.getRouteController().getRouteStatus("single_route").isStarted(), is(false));
+        assertThat(context.getRouteController().getRouteStatus("single_route").isStarting(), is(false));
 
         context.shutdown();
     }

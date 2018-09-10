@@ -186,10 +186,10 @@ public class HttpEndpoint extends HttpCommonEndpoint {
 
         if (!useSystemProperties) {
             // configure http proxy from camelContext
-            if (ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyHost")) && ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyPort"))) {
-                String host = getCamelContext().getProperty("http.proxyHost");
-                int port = Integer.parseInt(getCamelContext().getProperty("http.proxyPort"));
-                String scheme = getCamelContext().getProperty("http.proxyScheme");
+            if (ObjectHelper.isNotEmpty(getCamelContext().getGlobalOption("http.proxyHost")) && ObjectHelper.isNotEmpty(getCamelContext().getGlobalOption("http.proxyPort"))) {
+                String host = getCamelContext().getGlobalOption("http.proxyHost");
+                int port = Integer.parseInt(getCamelContext().getGlobalOption("http.proxyPort"));
+                String scheme = getCamelContext().getGlobalOption("http.proxyScheme");
                 // fallback and use either http or https depending on secure
                 if (scheme == null) {
                     scheme = HttpHelper.isSecureConnection(getEndpointUri()) ? "https" : "http";

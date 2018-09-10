@@ -83,9 +83,6 @@ import org.slf4j.LoggerFactory;
  */
 @Converter
 public class XmlConverter {
-    @Deprecated
-    //It will be removed in Camel 3.0, please use the Exchange.DEFAULT_CHARSET
-    public static final String DEFAULT_CHARSET_PROPERTY = "org.apache.camel.default.charset";
 
     public static final String OUTPUT_PROPERTIES_PREFIX = "org.apache.camel.xmlconverter.output.";
     public static final String DOCUMENT_BUILDER_FACTORY_FEATURE = "org.apache.camel.xmlconverter.documentBuilderFactory.feature";
@@ -170,24 +167,6 @@ public class XmlConverter {
     }
 
     /**
-     * Converts the given Document to a Source
-     * @deprecated use toDOMSource instead
-     */
-    @Deprecated
-    public DOMSource toSource(Document document) {
-        return new DOMSource(document);
-    }
-
-    /**
-     * Converts the given Node to a Source
-     * @deprecated  use toDOMSource instead
-     */
-    @Deprecated
-    public Source toSource(Node node) throws ParserConfigurationException, TransformerException {
-        return toDOMSource(node);
-    }
-
-    /**
      * Converts the given Node to a Source
      */
     @Converter
@@ -210,16 +189,6 @@ public class XmlConverter {
     @Converter
     public Source toSource(String data) {
         return new StringSource(data);
-    }
-
-    /**
-     * Converts the given input Source into text.
-     *
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public String toString(Source source) throws TransformerException {
-        return toString(source, null);
     }
 
     /**
@@ -275,16 +244,6 @@ public class XmlConverter {
 
     /**
      * Converts the given input Node into text
-     *
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public String toString(Node node) throws TransformerException {
-        return toString(node, null);
-    }
-
-    /**
-     * Converts the given input Node into text
      */
     @Converter
     public String toString(Node node, Exchange exchange) throws TransformerException {
@@ -312,16 +271,6 @@ public class XmlConverter {
     /**
      * Converts the source instance to a {@link DOMSource} or returns null if the conversion is not
      * supported (making it easy to derive from this class to add new kinds of conversion).
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public DOMSource toDOMSource(Source source) throws ParserConfigurationException, IOException, SAXException, TransformerException {
-        return toDOMSource(source, null);
-    }
-    
-    /**
-     * Converts the source instance to a {@link DOMSource} or returns null if the conversion is not
-     * supported (making it easy to derive from this class to add new kinds of conversion).
      */
     @Converter
     public DOMSource toDOMSource(Source source, Exchange exchange) throws ParserConfigurationException, IOException, SAXException, TransformerException {
@@ -345,7 +294,7 @@ public class XmlConverter {
     @Converter
     public DOMSource toDOMSource(String text) throws ParserConfigurationException, IOException, SAXException, TransformerException {
         Source source = toSource(text);
-        return toDOMSourceFromStream((StreamSource) source);
+        return toDOMSourceFromStream((StreamSource) source, null);
     }
 
     /**
@@ -356,23 +305,12 @@ public class XmlConverter {
     public DOMSource toDOMSource(byte[] bytes) throws IOException, SAXException, ParserConfigurationException {
         InputStream is = new ByteArrayInputStream(bytes);
         try {
-            return toDOMSource(is);
+            return toDOMSource(is, null);
         } finally {
             IOHelper.close(is);
         }
     }
 
-
-    /**
-     * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not
-     * supported (making it easy to derive from this class to add new kinds of conversion).
-     *
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public SAXSource toSAXSource(String source) throws IOException, SAXException, TransformerException {
-        return toSAXSource(source, null);
-    }
 
     /**
      * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not
@@ -403,17 +341,6 @@ public class XmlConverter {
     public StAXSource toStAXSource(byte[] in, Exchange exchange) throws XMLStreamException {
         XMLStreamReader r = new StaxConverter().createXMLStreamReader(new ByteArrayInputStream(in), exchange);
         return new StAXSource(r);
-    }
-
-    /**
-     * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not
-     * supported (making it easy to derive from this class to add new kinds of conversion).
-     *
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public SAXSource toSAXSource(InputStream source) throws IOException, SAXException, TransformerException {
-        return toSAXSource(source, null);
     }
 
     /**
@@ -471,17 +398,6 @@ public class XmlConverter {
     /**
      * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not
      * supported (making it easy to derive from this class to add new kinds of conversion).
-     *
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public SAXSource toSAXSource(Source source) throws IOException, SAXException, TransformerException {
-        return toSAXSource(source, null);
-    }
-
-    /**
-     * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not
-     * supported (making it easy to derive from this class to add new kinds of conversion).
      */
     @Converter
     public SAXSource toSAXSource(Source source, Exchange exchange) throws IOException, SAXException, TransformerException {
@@ -496,14 +412,6 @@ public class XmlConverter {
         } else {
             return null;
         }
-    }
-
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public StreamSource toStreamSource(Source source) throws TransformerException {
-        return toStreamSource(source, null);
     }
 
     @Converter
@@ -548,14 +456,6 @@ public class XmlConverter {
         return new StreamSource(is);
     }
 
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public StreamSource toStreamSourceFromSAX(SAXSource source) throws TransformerException {
-        return toStreamSourceFromSAX(source, null);
-    }
-
     @Converter
     public StreamSource toStreamSourceFromSAX(SAXSource source, Exchange exchange) throws TransformerException {
         InputSource inputSource = source.getInputSource();
@@ -571,14 +471,6 @@ public class XmlConverter {
         return new StringSource(result);
     }
 
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public StreamSource toStreamSourceFromDOM(DOMSource source) throws TransformerException {
-        return toStreamSourceFromDOM(source, null);
-    }
-
     @Converter
     public StreamSource toStreamSourceFromDOM(DOMSource source, Exchange exchange) throws TransformerException {
         String result = toString(source, exchange);
@@ -590,14 +482,6 @@ public class XmlConverter {
         return new StringSource(result);
     }
 
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public SAXSource toSAXSourceFromStream(StreamSource source) throws SAXException {
-        return toSAXSourceFromStream(source, null);
-    }
-    
     @Converter
     public SAXSource toSAXSourceFromStream(StreamSource source, Exchange exchange) throws SAXException {
         InputSource inputSource;
@@ -633,14 +517,6 @@ public class XmlConverter {
         return new SAXSource(xmlReader, inputSource);
     }
 
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public Reader toReaderFromSource(Source src) throws TransformerException {
-        return toReaderFromSource(src, null);
-    }
-
     @Converter
     public Reader toReaderFromSource(Source src, Exchange exchange) throws TransformerException {
         StreamSource stSrc = toStreamSource(src, exchange);
@@ -651,14 +527,6 @@ public class XmlConverter {
         return r;
     }
 
-    /**
-    * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-    */
-    @Deprecated
-    public DOMSource toDOMSource(InputStream is) throws ParserConfigurationException, IOException, SAXException {
-        return toDOMSource(is, null);
-    }
-    
     @Converter
     public DOMSource toDOMSource(InputStream is, Exchange exchange) throws ParserConfigurationException, IOException, SAXException {
         InputSource source = new InputSource(is);
@@ -668,28 +536,12 @@ public class XmlConverter {
         return new DOMSource(document, systemId);
     }
 
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public DOMSource toDOMSource(File file) throws ParserConfigurationException, IOException, SAXException {
-        return toDOMSource(file, null);
-    }
-    
     @Converter
     public DOMSource toDOMSource(File file, Exchange exchange) throws ParserConfigurationException, IOException, SAXException {
         InputStream is = IOHelper.buffered(new FileInputStream(file));
         return toDOMSource(is, exchange);
     }
 
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public DOMSource toDOMSourceFromStream(StreamSource source) throws ParserConfigurationException, IOException, SAXException {
-        return toDOMSourceFromStream(source, null);
-    }
-    
     @Converter
     public DOMSource toDOMSourceFromStream(StreamSource source, Exchange exchange) throws ParserConfigurationException, IOException, SAXException {
         Document document;
@@ -710,14 +562,6 @@ public class XmlConverter {
             }
         }
         return new DOMSource(document, systemId);
-    }
-
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public SAXSource toSAXSourceFromDOM(DOMSource source) throws TransformerException {
-        return toSAXSourceFromDOM(source, null);
     }
 
     @Converter
@@ -792,7 +636,7 @@ public class XmlConverter {
      */
     @Converter(allowNull = true)
     public Node toDOMNode(Source source) throws TransformerException, ParserConfigurationException, IOException, SAXException {
-        DOMSource domSrc = toDOMSource(source);
+        DOMSource domSrc = toDOMSource(source, null);
         return domSrc != null ? domSrc.getNode() : null;
     }
 
@@ -824,18 +668,7 @@ public class XmlConverter {
         }
     }
 
-    
-    /**
-     * Converts the given data to a DOM document
-     *
-     * @param data is the data to be parsed
-     * @return the parsed document
-     */
-    @Deprecated
-    public Document toDOMDocument(byte[] data) throws IOException, SAXException, ParserConfigurationException {
-        return toDOMDocument(data, null);
-    }
-    
+
     /**
      * Converts the given data to a DOM document
      *
@@ -849,18 +682,6 @@ public class XmlConverter {
         return documentBuilder.parse(new ByteArrayInputStream(data));
     }
 
-    /**
-     * Converts the given {@link InputStream} to a DOM document
-     *
-     * @param in is the data to be parsed
-     * @return the parsed document
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public Document toDOMDocument(InputStream in) throws IOException, SAXException, ParserConfigurationException {
-        return toDOMDocument(in, null);
-    }
-    
     /**
      * Converts the given {@link InputStream} to a DOM document
      *
@@ -885,18 +706,6 @@ public class XmlConverter {
      * Converts the given {@link Reader} to a DOM document
      *
      * @param in is the data to be parsed
-     * @return the parsed document
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public Document toDOMDocument(Reader in) throws IOException, SAXException, ParserConfigurationException {
-        return toDOMDocument(new InputSource(in));
-    }
-    
-    /**
-     * Converts the given {@link Reader} to a DOM document
-     *
-     * @param in is the data to be parsed
      * @param exchange is the exchange to be used when calling the converter
      * @return the parsed document
      */
@@ -905,18 +714,6 @@ public class XmlConverter {
         return toDOMDocument(new InputSource(in), exchange);
     }
 
-    /**
-     * Converts the given {@link InputSource} to a DOM document
-     *
-     * @param in is the data to be parsed
-     * @return the parsed document
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public Document toDOMDocument(InputSource in) throws IOException, SAXException, ParserConfigurationException {
-        return toDOMDocument(in, null);
-    }
-    
     /**
      * Converts the given {@link InputSource} to a DOM document
      *
@@ -934,18 +731,6 @@ public class XmlConverter {
      * Converts the given {@link String} to a DOM document
      *
      * @param text is the data to be parsed
-     * @return the parsed document
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public Document toDOMDocument(String text) throws IOException, SAXException, ParserConfigurationException {
-        return toDOMDocument(new StringReader(text));
-    }
-    
-    /**
-     * Converts the given {@link String} to a DOM document
-     *
-     * @param text is the data to be parsed
      * @param exchange is the exchange to be used when calling the converter
      * @return the parsed document
      */
@@ -954,18 +739,6 @@ public class XmlConverter {
         return toDOMDocument(new StringReader(text), exchange);
     }
 
-    /**
-     * Converts the given {@link File} to a DOM document
-     *
-     * @param file is the data to be parsed
-     * @return the parsed document
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public Document toDOMDocument(File file) throws IOException, SAXException, ParserConfigurationException {
-        return toDOMDocument(file, null);
-    }
-    
     /**
      * Converts the given {@link File} to a DOM document
      *
@@ -1023,25 +796,9 @@ public class XmlConverter {
         }
     }
 
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public InputStream toInputStream(DOMSource source) throws TransformerException, IOException {
-        return toInputStream(source, null);
-    }
-
     @Converter
     public InputStream toInputStream(DOMSource source, Exchange exchange) throws TransformerException, IOException {
         return new ByteArrayInputStream(toByteArray(source, exchange));
-    }
-
-    /**
-     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
-     */
-    @Deprecated
-    public InputStream toInputStream(Document dom) throws TransformerException, IOException {
-        return toInputStream(dom, null);
     }
 
     @Converter
@@ -1175,14 +932,6 @@ public class XmlConverter {
     public Document createDocument() throws ParserConfigurationException {
         DocumentBuilder builder = createDocumentBuilder();
         return builder.newDocument();
-    }
-
-    /**
-     * @deprecated use {@link #createTransformer}, will be removed in Camel 3.0
-     */
-    @Deprecated
-    public Transformer createTransfomer() throws TransformerConfigurationException {
-        return createTransformer();
     }
 
     public Transformer createTransformer() throws TransformerConfigurationException {

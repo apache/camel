@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.soap;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -82,7 +83,7 @@ public class SoapToSoapSingleDataFormatterTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-        context.getProperties().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "0");
+        context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "0");
         context.setTracing(true);
 
         return new RouteBuilder() {

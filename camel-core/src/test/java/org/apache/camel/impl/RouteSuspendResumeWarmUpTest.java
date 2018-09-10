@@ -34,11 +34,11 @@ public class RouteSuspendResumeWarmUpTest extends ContextTestSupport {
     public void testRouteSuspendResumeWarmUpTest() throws Exception {
         assertEquals("start", service.getState());
 
-        context.suspendRoute("foo");
+        context.getRouteController().resumeRoute("foo");
         // should keep this state as we are only suspending the consumer
         assertEquals("start", service.getState());
 
-        context.resumeRoute("foo");
+        context.getRouteController().resumeRoute("foo");
         // should keep this state as we are only suspending the consumer
         assertEquals("start", service.getState());
 

@@ -222,9 +222,9 @@ public class BeanIODataFormatComplexTest extends CamelTestSupport {
                 forgivingFormat.setIgnoreUnexpectedRecords(true);
                 forgivingFormat.setIgnoreUnidentifiedRecords(true);
 
-                from("direct:unmarshal").unmarshal(format).split(simple("body")).to("mock:beanio-unmarshal");
+                from("direct:unmarshal").unmarshal(format).split(simple("${body}")).to("mock:beanio-unmarshal");
 
-                from("direct:unmarshal-forgiving").unmarshal(forgivingFormat).split(simple("body")).to("mock:beanio-unmarshal");
+                from("direct:unmarshal-forgiving").unmarshal(forgivingFormat).split(simple("${body}")).to("mock:beanio-unmarshal");
 
                 from("direct:marshal").marshal(format).to("mock:beanio-marshal");
             }

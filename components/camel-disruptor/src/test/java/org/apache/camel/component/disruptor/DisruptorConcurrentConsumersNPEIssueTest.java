@@ -36,7 +36,7 @@ public class DisruptorConcurrentConsumersNPEIssueTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         try {
-            context.startRoute("first");
+            context.getRouteController().startRoute("first");
             fail("Should have thrown exception");
         } catch (FailedToStartRouteException e) {
             assertEquals(
@@ -55,10 +55,10 @@ public class DisruptorConcurrentConsumersNPEIssueTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // this should be okay
-        context.startRoute("third");
+        context.getRouteController().startRoute("third");
 
         try {
-            context.startRoute("first");
+            context.getRouteController().startRoute("first");
             fail("Should have thrown exception");
         } catch (FailedToStartRouteException e) {
             assertEquals(

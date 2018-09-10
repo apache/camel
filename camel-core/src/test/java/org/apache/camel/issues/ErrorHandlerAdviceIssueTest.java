@@ -55,7 +55,7 @@ public class ErrorHandlerAdviceIssueTest extends ContextTestSupport {
         // should be intercepted
         getMockEndpoint("mock:foo").expectedMessageCount(0);
 
-        context.stopRoute("timer");
+        context.getRouteController().stopRoute("timer");
 
         template.sendBody("direct:start", "Hello World");
 

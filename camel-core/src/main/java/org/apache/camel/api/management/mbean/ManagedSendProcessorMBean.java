@@ -26,13 +26,6 @@ public interface ManagedSendProcessorMBean extends ManagedProcessorMBean, Manage
     @ManagedAttribute(description = "Destination as Endpoint URI", mask = true)
     String getDestination();
 
-    /**
-     * @deprecated no longer in use. Will be removed in a future Camel release.
-     */
-    @ManagedAttribute(description = "Destination as Endpoint URI")
-    @Deprecated
-    void setDestination(String uri);
-
     @ManagedAttribute(description = "Message Exchange Pattern")
     String getMessageExchangePattern();
 

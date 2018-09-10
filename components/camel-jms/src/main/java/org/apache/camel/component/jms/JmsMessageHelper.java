@@ -449,9 +449,11 @@ public final class JmsMessageHelper {
         try {
             byte[] bytes = message.getJMSCorrelationIDAsBytes();
             boolean isNull = true;
-            for (byte b : bytes) {
-                if (b != 0) {
-                    isNull = false;
+            if (bytes != null) {
+                for (byte b : bytes) {
+                    if (b != 0) {
+                        isNull = false;
+                    }
                 }
             }
             return isNull ? null : new String(bytes);

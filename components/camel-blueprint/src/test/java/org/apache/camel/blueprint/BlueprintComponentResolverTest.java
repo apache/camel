@@ -18,9 +18,7 @@ package org.apache.camel.blueprint;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
-import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.test.junit4.TestSupport;
@@ -81,16 +79,6 @@ public class BlueprintComponentResolverTest extends TestSupport {
 
         @Override
         public boolean useRawUri() {
-            throw new UnsupportedOperationException("Should not be called");
-        }
-
-        @Override
-        public EndpointConfiguration createConfiguration(String uri) throws Exception {
-            throw new UnsupportedOperationException("Should not be called");
-        }
-
-        @Override
-        public ComponentConfiguration createComponentConfiguration() {
             throw new UnsupportedOperationException("Should not be called");
         }
 

@@ -182,7 +182,7 @@ public class ServicePoolAwareLeakyTest extends ContextTestSupport {
                 assertEquals(1, references.get(LEAKY_SIEVE_STABLE).get());
             }
 
-            context.stopRoute("sieve-transient");
+            context.getRouteController().stopRoute("sieve-transient");
 
             if (isFailFast()) {
                 assertEquals("Expected no service references to remain", 0, references.get(LEAKY_SIEVE_TRANSIENT));
@@ -216,7 +216,7 @@ public class ServicePoolAwareLeakyTest extends ContextTestSupport {
                 assertEquals("Expected reference to stable producer", 1, references.get(LEAKY_SIEVE_STABLE).get());
             }
 
-            context.startRoute("sieve-transient");
+            context.getRouteController().startRoute("sieve-transient");
 
             // ok, back to normal
             assertEquals(ServiceStatus.Started, service.getStatus());

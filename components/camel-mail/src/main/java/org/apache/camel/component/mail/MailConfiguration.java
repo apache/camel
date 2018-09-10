@@ -273,7 +273,7 @@ public class MailConfiguration implements Cloneable {
 
     private SSLContext createSSLContext() {
         try {
-            return sslContextParameters.createSSLContext();
+            return sslContextParameters.createSSLContext(null);
         } catch (Exception e) {
             throw new RuntimeCamelException("Error initializing SSLContext.", e);
         }

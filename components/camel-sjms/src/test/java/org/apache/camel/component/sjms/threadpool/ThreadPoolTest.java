@@ -73,7 +73,7 @@ public class ThreadPoolTest extends JmsTestSupport {
      */
     @Test
     public void testProducerThreadThreadPoolRemoved() throws Exception {
-        context.stopRoute(FROM_ROUTE);
+        context.getRouteController().stopRoute(FROM_ROUTE);
         assertProducerThreadPoolCount(0);
     }
 
@@ -83,7 +83,7 @@ public class ThreadPoolTest extends JmsTestSupport {
      */
     @Test
     public void testConsumerThreadThreadPoolRemoved() throws Exception {
-        context.stopRoute(TO_ROUTE);
+        context.getRouteController().stopRoute(TO_ROUTE);
         assertConsumerThreadPoolCount(0);
     }
 

@@ -19,7 +19,7 @@ package org.apache.camel.component.bean;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.LRUCache;
@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The <a href="http://camel.apache.org/bean.html">Bean Component</a> is for invoking Java beans from Camel.
  */
-public class BeanComponent extends UriEndpointComponent {
+public class BeanComponent extends DefaultComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(BeanComponent.class);
     // use an internal soft cache for BeanInfo as they are costly to introspect
@@ -43,13 +43,8 @@ public class BeanComponent extends UriEndpointComponent {
     private Boolean cache;
 
     public BeanComponent() {
-        super(BeanEndpoint.class);
     }
     
-    public BeanComponent(Class<? extends Endpoint> endpointClass) {
-        super(endpointClass);
-    }
-
     // Implementation methods
     //-----------------------------------------------------------------------
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

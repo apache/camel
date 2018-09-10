@@ -34,15 +34,15 @@ public class FileConsumerQuartzSchedulerRestartTest extends CamelTestSupport {
     public void testQuartzSchedulerRestart() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBodyAndHeader("file:target/file/quartz", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
         assertMockEndpointsSatisfied();
 
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
         resetMocks();
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBodyAndHeader("file:target/file/quartz", "Bye World", Exchange.FILE_NAME, "bye.txt");
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
         assertMockEndpointsSatisfied();
     }
 

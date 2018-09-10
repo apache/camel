@@ -42,16 +42,6 @@ public class SimpleExpressionParser extends BaseSimpleParser {
     // use caches to avoid re-parsing the same expressions over and over again
     private Map<String, Expression> cacheExpression;
 
-    @Deprecated
-    public SimpleExpressionParser(String expression) {
-        super(expression, true);
-    }
-
-    @Deprecated
-    public SimpleExpressionParser(String expression, boolean allowEscape) {
-        super(expression, allowEscape);
-    }
-
     public SimpleExpressionParser(String expression, boolean allowEscape,
                                   Map<String, Expression> cacheExpression) {
         super(expression, allowEscape);

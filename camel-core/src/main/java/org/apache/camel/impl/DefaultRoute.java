@@ -33,8 +33,8 @@ import org.apache.camel.util.TimeUtils;
  * Default implementation of {@link Route}.
  * <p/>
  * Use the API from {@link org.apache.camel.CamelContext} to control the lifecycle of a route,
- * such as starting and stopping using the {@link org.apache.camel.CamelContext#startRoute(String)}
- * and {@link org.apache.camel.CamelContext#stopRoute(String)} methods.
+ * such as starting and stopping using the {@link org.apache.camel.spi.RouteController#startRoute(String)}
+ * and {@link org.apache.camel.spi.RouteController#stopRoute(String)} methods.
  *
  * @version 
  */
@@ -122,7 +122,7 @@ public abstract class DefaultRoute extends ServiceSupport implements Route {
     }
 
     /**
-     * Do not invoke this method directly, use {@link org.apache.camel.CamelContext#startRoute(String)} to start a route.
+     * Do not invoke this method directly, use {@link org.apache.camel.spi.RouteController#startRoute(String)} to start a route.
      */
     @Override
     public void start() throws Exception {
@@ -130,7 +130,7 @@ public abstract class DefaultRoute extends ServiceSupport implements Route {
     }
 
     /**
-     * Do not invoke this method directly, use {@link org.apache.camel.CamelContext#stopRoute(String)} to stop a route.
+     * Do not invoke this method directly, use {@link org.apache.camel.spi.RouteController#stopRoute(String)} to stop a route.
      */
     @Override
     public void stop() throws Exception {

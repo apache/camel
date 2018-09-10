@@ -45,7 +45,7 @@ public class RedeliveryDeadLetterErrorHandlerNoRedeliveryOnShutdownTest extends 
         // sleep 0.5 seconds to do some redeliveries before we stop
         Thread.sleep(500);
         log.info("==== stopping route foo ====");
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
         long taken = watch.taken();
 
         getMockEndpoint("mock:deadLetter").assertIsSatisfied();

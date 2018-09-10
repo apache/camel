@@ -33,18 +33,6 @@ public interface MessageHistoryFactory {
      * @param node      the node in the route
      * @param timestamp the time the message processed at this node.
      * @return a new {@link MessageHistory}
-     * @deprecated use {@link #newMessageHistory(String, NamedNode, long)}
-     */
-    @Deprecated
-    MessageHistory newMessageHistory(String routeId, NamedNode node, Date timestamp);
-
-    /**
-     * Creates a new {@link MessageHistory}
-     *
-     * @param routeId   the route id
-     * @param node      the node in the route
-     * @param timestamp the time the message processed at this node.
-     * @return a new {@link MessageHistory}
      */
     MessageHistory newMessageHistory(String routeId, NamedNode node, long timestamp);
 }

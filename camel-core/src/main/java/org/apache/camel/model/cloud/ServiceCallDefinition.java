@@ -48,6 +48,7 @@ import org.apache.camel.impl.cloud.HealthyServiceFilter;
 import org.apache.camel.impl.cloud.PassThroughServiceFilter;
 import org.apache.camel.impl.cloud.RandomServiceChooser;
 import org.apache.camel.impl.cloud.RoundRobinServiceChooser;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.NoOutputDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
@@ -98,7 +99,6 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
 
     @XmlElements({
         @XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class),
-        @XmlElement(name = "aggregatingServiceDiscovery", type = AggregatingServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "combinedServiceDiscovery", type = CombinedServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
@@ -111,7 +111,6 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
 
     @XmlElements({
         @XmlElement(name = "blacklistServiceFilter", type = BlacklistServiceCallServiceFilterConfiguration.class),
-        @XmlElement(name = "chainedServiceFilter", type = ChainedServiceCallServiceFilterConfiguration.class),
         @XmlElement(name = "combinedServiceFilter", type = CombinedServiceCallServiceFilterConfiguration.class),
         @XmlElement(name = "customServiceFilter", type = CustomServiceCallServiceFilterConfiguration.class),
         @XmlElement(name = "healthyServiceFilter", type = HealthyServiceCallServiceFilterConfiguration.class),
@@ -645,17 +644,6 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         return this;
     }
 
-    /**
-     * @deprecated As of version 2.22.0, replaced by  {@link #combinedServiceDiscovery()}
-     */
-    @Deprecated
-    public AggregatingServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
-        AggregatingServiceCallServiceDiscoveryConfiguration conf = new AggregatingServiceCallServiceDiscoveryConfiguration(this);
-        setServiceDiscoveryConfiguration(conf);
-
-        return conf;
-    }
-
     public CombinedServiceCallServiceDiscoveryConfiguration combinedServiceDiscovery() {
         CombinedServiceCallServiceDiscoveryConfiguration conf = new CombinedServiceCallServiceDiscoveryConfiguration(this);
         setServiceDiscoveryConfiguration(conf);
@@ -703,17 +691,6 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         setServiceFilterConfiguration(conf);
 
         return this;
-    }
-
-    /**
-     * @deprecated As of version 2.22.0, replaced by {@link #combinedFilter()}
-     */
-    @Deprecated
-    public ChainedServiceCallServiceFilterConfiguration multiFilter() {
-        ChainedServiceCallServiceFilterConfiguration conf = new ChainedServiceCallServiceFilterConfiguration(this);
-        setServiceFilterConfiguration(conf);
-
-        return conf;
     }
 
     public CombinedServiceCallServiceFilterConfiguration combinedFilter() {
@@ -856,7 +833,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
 
     private ServiceCallConfigurationDefinition retrieveDefaultConfig(CamelContext camelContext) {
         // check if a default configuration is bound to the registry
-        ServiceCallConfigurationDefinition config = camelContext.getServiceCallConfiguration(null);
+        ServiceCallConfigurationDefinition config = camelContext.adapt(ModelCamelContext.class).getServiceCallConfiguration(null);
 
         if (config == null) {
             // Or if it is in the registry
@@ -883,7 +860,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
             config = lookup(camelContext, configurationRef, ServiceCallConfigurationDefinition.class);
             if (config == null) {
                 // and fallback as service configuration
-                config = camelContext.getServiceCallConfiguration(configurationRef);
+                config = camelContext.adapt(ModelCamelContext.class).getServiceCallConfiguration(configurationRef);
             }
         }
 
