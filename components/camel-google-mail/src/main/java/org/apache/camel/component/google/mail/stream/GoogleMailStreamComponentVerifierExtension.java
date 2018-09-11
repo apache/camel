@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.google.mail;
+package org.apache.camel.component.google.mail.stream;
 
 import java.util.Map;
 
@@ -24,14 +24,17 @@ import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExt
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorHelper;
+import org.apache.camel.component.google.mail.BatchGoogleMailClientFactory;
+import org.apache.camel.component.google.mail.GoogleMailClientFactory;
+import org.apache.camel.component.google.mail.GoogleMailConfiguration;
 
-public class GoogleMailComponentVerifierExtension extends DefaultComponentVerifierExtension {
+public class GoogleMailStreamComponentVerifierExtension extends DefaultComponentVerifierExtension {
 
-    public GoogleMailComponentVerifierExtension() {
-        this("google-mail");
+    public GoogleMailStreamComponentVerifierExtension() {
+        this("google-mail-stream");
     }
 
-    public GoogleMailComponentVerifierExtension(String scheme) {
+    public GoogleMailStreamComponentVerifierExtension(String scheme) {
         super(scheme);
     }
 
