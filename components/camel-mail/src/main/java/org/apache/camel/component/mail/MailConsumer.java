@@ -162,7 +162,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             try {
                 store.close();
             } catch (Exception e) {
-                LOG.debug("Could not disconnect from {}: " + getEndpoint().getConfiguration().getMailStoreLogInformation() + ". This exception is ignored.", e);
+                LOG.debug("Could not disconnect from {}. This exception is ignored.", getEndpoint().getConfiguration().getMailStoreLogInformation(), e);
             }
             store = null;
             folder = null;
