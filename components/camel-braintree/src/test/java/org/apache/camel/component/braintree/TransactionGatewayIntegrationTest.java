@@ -192,7 +192,7 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
             Result.class);
 
         assertNotNull("Submit For Settlement result", result);
-        LOG.debug("Transaction submitted for settlement - id={}" + result.getTarget().getId());
+        LOG.debug("Transaction submitted for settlement - id={}", result.getTarget().getId());
     }
 
     @Test
@@ -225,7 +225,7 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
             Result.class);
 
         assertNotNull("Submit For Settlement result", result);
-        LOG.debug("Transaction submitted for settlement - id={}" + result.getTarget().getId());
+        LOG.debug("Transaction submitted for settlement - id={}", result.getTarget().getId());
     }
 
     @Test
@@ -259,7 +259,7 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
             Result.class);
 
         assertNotNull("Submit For Settlement result", result);
-        LOG.debug("Transaction submitted for settlement - id={}" + result.getTarget().getId());
+        LOG.debug("Transaction submitted for settlement - id={}", result.getTarget().getId());
     }
 
     @Test
