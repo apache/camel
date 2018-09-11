@@ -65,7 +65,7 @@ public class DropboxEndpoint extends DefaultEndpoint {
      * @throws Exception
      */
     public Producer createProducer() throws Exception {
-        LOG.trace("Resolve producer dropbox endpoint {{}}", configuration.getOperation().toString());
+        LOG.trace("Resolve producer dropbox endpoint {{}}", configuration.getOperation());
         LOG.trace("Resolve producer dropbox attached client: {}", configuration.getClient());
         if (configuration.getOperation() == DropboxOperation.put) {
             return new DropboxPutProducer(this, configuration);
@@ -89,7 +89,7 @@ public class DropboxEndpoint extends DefaultEndpoint {
      * @throws Exception
      */
     public Consumer createConsumer(Processor processor) throws Exception {
-        LOG.trace("Resolve consumer dropbox endpoint {{}}", configuration.getOperation().toString());
+        LOG.trace("Resolve consumer dropbox endpoint {{}}", configuration.getOperation());
         LOG.trace("Resolve consumer dropbox attached client: {}", configuration.getClient());
         DropboxScheduledPollConsumer consumer;
         if (this.configuration.getOperation() == DropboxOperation.search) {
