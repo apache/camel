@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.mail.BatchGoogleMailClientFactory;
 import org.apache.camel.component.google.mail.GoogleMailClientFactory;
+import org.apache.camel.component.google.mail.GoogleMailComponentVerifierExtension;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 
@@ -45,7 +46,7 @@ public class GoogleMailStreamComponent extends DefaultComponent {
 
     public GoogleMailStreamComponent(CamelContext context) {
         super(context);
-
+        registerExtension(new GoogleMailComponentVerifierExtension());
         this.configuration = new GoogleMailStreamConfiguration();
     }
 
