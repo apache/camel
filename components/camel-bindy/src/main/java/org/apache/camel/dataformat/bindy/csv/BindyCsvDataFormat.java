@@ -155,6 +155,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             // Retrieve the separator defined to split the record
             String separator = factory.getSeparator();
             String quote = factory.getQuote();
+            Boolean quoting = factory.getQuoting();
             ObjectHelper.notNull(separator, "The separator has not been defined in the annotation @CsvRecord or not instantiated during initModel.");
     
             int count = 0;
@@ -202,7 +203,9 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                 String[] tokens = pattern.split(line, factory.getAutospanLine() ? factory.getMaxpos() : -1);
                 List<String> result = Arrays.asList(tokens);
                 // must unquote tokens before use
-                result = unquoteTokens(result, separators, quote);
+                if(quoting) {
+                    result = unquoteTokens(result, separators, quote);
+                }
     
                 if (result.size() == 0 || result.isEmpty()) {
                     throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
