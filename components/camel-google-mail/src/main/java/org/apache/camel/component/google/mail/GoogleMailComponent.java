@@ -37,10 +37,12 @@ public class GoogleMailComponent extends AbstractApiComponent<GoogleMailApiName,
 
     public GoogleMailComponent() {
         super(GoogleMailEndpoint.class, GoogleMailApiName.class, GoogleMailApiCollection.getCollection());
+        registerExtension(new GoogleMailComponentVerifierExtension());
     }
 
     public GoogleMailComponent(CamelContext context) {
         super(context, GoogleMailEndpoint.class, GoogleMailApiName.class, GoogleMailApiCollection.getCollection());
+        registerExtension(new GoogleMailComponentVerifierExtension());
     }
 
     @Override
