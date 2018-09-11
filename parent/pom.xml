@@ -579,7 +579,7 @@
     <quickfixj-version>2.1.0</quickfixj-version>
     <rabbitmq-amqp-client-version>5.4.1</rabbitmq-amqp-client-version>
     <reactive-streams-version>1.0.2</reactive-streams-version>
-    <reactor-version>3.1.8.RELEASE</reactor-version>
+    <reactor-version>3.1.9.RELEASE</reactor-version>
     <reflections-version>0.9.11</reflections-version>
     <reflections-bundle-version>0.9.11_1</reflections-bundle-version>
     <regexp-bundle-version>1.4_1</regexp-bundle-version>
