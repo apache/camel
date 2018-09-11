@@ -18,15 +18,14 @@ package org.apache.camel.component.google.mail;
 
 import java.util.Map;
 
+import com.google.api.services.gmail.Gmail;
+
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorHelper;
-import org.apache.camel.component.google.mail.BatchGoogleMailClientFactory;
 import org.apache.camel.component.google.mail.GoogleMailClientFactory;
 import org.apache.camel.component.google.mail.GoogleMailConfiguration;
-
-import com.google.api.services.gmail.Gmail;
 
 public class GoogleMailComponentVerifierExtension extends DefaultComponentVerifierExtension {
 
