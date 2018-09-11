@@ -320,7 +320,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         ServletEndpoint endpoint = camelContext.getEndpoint(url, ServletEndpoint.class);
         setProperties(camelContext, endpoint, parameters);
 
-        if (!map.containsKey("httpBindingRef")) {
+        if (!map.containsKey("httpBinding")) {
             // use the rest binding, if not using a custom http binding
             HttpBinding binding = new ServletRestHttpBinding();
             binding.setHeaderFilterStrategy(endpoint.getHeaderFilterStrategy());
