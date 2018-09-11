@@ -753,6 +753,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         return quote;
     }
 
+    public Boolean getQuoting() {
+        return quoting;
+    }
+
     public int getMaxpos() {
         return maxpos;
     }
