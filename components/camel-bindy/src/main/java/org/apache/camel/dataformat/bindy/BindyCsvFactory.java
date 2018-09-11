@@ -620,11 +620,11 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                     // Get skipFirstLine parameter
                     skipFirstLine = record.skipFirstLine();
-                    LOG.debug("Skip First Line parameter of the CSV: {}" + skipFirstLine);
+                    LOG.debug("Skip First Line parameter of the CSV: {}", skipFirstLine);
 
                     // Get skipFirstLine parameter
                     skipField = record.skipField();
-                    LOG.debug("Skip Field parameter of the CSV: {}" + skipField);
+                    LOG.debug("Skip Field parameter of the CSV: {}", skipField);
 
                     // Get generateHeaderColumnNames parameter
                     generateHeaderColumnNames = record.generateHeaderColumns();
@@ -656,15 +656,15 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     
                     // Get allowEmptyStream parameter
                     allowEmptyStream = record.allowEmptyStream();
-                    LOG.debug("Allow empty stream parameter of the CSV: {}" + allowEmptyStream);
+                    LOG.debug("Allow empty stream parameter of the CSV: {}", allowEmptyStream);
                     
                     // Get quotingEscaped parameter
                     quotingEscaped = record.quotingEscaped();
-                    LOG.debug("Escape quote character flag of the CSV: {}" + quotingEscaped);
+                    LOG.debug("Escape quote character flag of the CSV: {}", quotingEscaped);
                     
                     // Get endWithLineBreak parameter
                     endWithLineBreak = record.endWithLineBreak();
-                    LOG.debug("End with line break: {}" + endWithLineBreak);
+                    LOG.debug("End with line break: {}", endWithLineBreak);
                 }
 
                 if (section != null) {

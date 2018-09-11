@@ -178,7 +178,7 @@ public class IrcEndpoint extends DefaultEndpoint {
 
         // hackish but working approach to prevent an endless loop. Abort after 4 nick attempts.
         if (nick.endsWith("----")) {
-            LOG.error("Unable to set nick: " + nick + " disconnecting");
+            LOG.error("Unable to set nick: {} disconnecting", nick);
         } else {
             LOG.warn("Unable to set nick: " + nick + " Retrying with " + nick + "-");
             connection.doNick(nick);

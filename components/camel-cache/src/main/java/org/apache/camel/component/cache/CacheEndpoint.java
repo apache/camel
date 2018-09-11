@@ -153,7 +153,7 @@ public class CacheEndpoint extends DefaultEndpoint {
             cacheManager.addCache(cache);
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Added a new cache: " + cache.getName());
+                LOG.debug("Added a new cache: {}", cache.getName());
             }
         }
 

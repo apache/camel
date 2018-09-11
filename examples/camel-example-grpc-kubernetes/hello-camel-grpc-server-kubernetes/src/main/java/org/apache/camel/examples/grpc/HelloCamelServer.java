@@ -39,7 +39,7 @@ public class HelloCamelServer {
         /* The port on which the server should run */
         int port = 8080;
         server = ServerBuilder.forPort(port).addService(new HelloCamelImpl()).build().start();
-        LOG.info("Server started. I'm listening on " + port);
+        LOG.info("Server started. I'm listening on {}", port);
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {

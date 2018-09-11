@@ -361,7 +361,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
                     break;
                 }
             } catch (NoClassDefFoundError ex) {
-                LOG.warn("Cannot load ScriptEngine for " + name + ". Please ensure correct JARs is provided on classpath (stacktrace in DEBUG logging).");
+                LOG.warn("Cannot load ScriptEngine for {}. Please ensure correct JARs is provided on classpath (stacktrace in DEBUG logging).", name);
                 // include stacktrace in debug logging
                 LOG.debug("Cannot load ScriptEngine for " + name + ". Please ensure correct JARs is provided on classpath.", ex);
             }
@@ -410,7 +410,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
             }
         } catch (ScriptException e) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Script evaluation failed: " + e.getMessage(), e);
+                LOG.debug("Script evaluation failed: {}", e.getMessage(), e);
             }
             if (e.getCause() != null) {
                 throw createScriptEvaluationException(e.getCause());

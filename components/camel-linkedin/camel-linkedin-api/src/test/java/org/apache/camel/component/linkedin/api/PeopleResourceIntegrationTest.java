@@ -54,7 +54,7 @@ public class PeopleResourceIntegrationTest extends AbstractResourceIntegrationTe
                 final Person person = peopleResource.getPerson(":(id)", true);
                 assertNotNull(person);
                 assertNotNull(person.getId());
-                LOG.debug("getPerson result: " + person);
+                LOG.debug("getPerson result: {}", person);
             }
         });
     }
@@ -73,7 +73,7 @@ public class PeopleResourceIntegrationTest extends AbstractResourceIntegrationTe
                         groupMemberships.getGroupMembershipList().get(0).getGroup().getId()), null, null,
                     Order.RECENCY, PostRole.FOLLOWER, PostCategoryCode.DISCUSSION, null, ":(id)");
                 assertNotNull(posts);
-                LOG.debug("getPosts result: " + posts);
+                LOG.debug("getPosts result: {}", posts);
             }
         });
     }
@@ -95,7 +95,7 @@ public class PeopleResourceIntegrationTest extends AbstractResourceIntegrationTe
             peopleResource.getPerson("bad_fields_selector", true);
         } catch (LinkedInException e) {
             assertNotNull(e.getError());
-            LOG.debug("getPerson error: " + e.getMessage());
+            LOG.debug("getPerson error: {}", e.getMessage());
             throw e;
         }
     }
@@ -118,7 +118,7 @@ public class PeopleResourceIntegrationTest extends AbstractResourceIntegrationTe
             public void run() {
                 final JobSuggestions suggestedJobs = peopleResource.getSuggestedJobs(DEFAULT_FIELDS);
                 assertNotNull(suggestedJobs);
-                LOG.debug("Suggested Jobs " + suggestedJobs.getJobs());
+                LOG.debug("Suggested Jobs {}", suggestedJobs.getJobs());
             }
         });
     }

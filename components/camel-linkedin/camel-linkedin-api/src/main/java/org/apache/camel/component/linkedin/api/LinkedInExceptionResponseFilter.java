@@ -70,7 +70,7 @@ public class LinkedInExceptionResponseFilter implements ClientResponseFilter {
                 throw new LinkedInException(error, builder.build());
             } catch (JAXBException e) {
                 // log and ignore
-                LOG.warn("Unable to parse LinkedIn error: " + e.getMessage(), e);
+                LOG.warn("Unable to parse LinkedIn error: {}", e.getMessage(), e);
             }
         }
     }

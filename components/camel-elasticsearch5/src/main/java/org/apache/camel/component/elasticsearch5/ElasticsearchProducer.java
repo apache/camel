@@ -261,7 +261,7 @@ public class ElasticsearchProducer extends DefaultProducer {
     @Override
     protected void doStop() throws Exception {
         if (client != null) {
-            LOG.info("Disconnecting from ElasticSearch cluster: " + configuration.getClusterName());
+            LOG.info("Disconnecting from ElasticSearch cluster: {}", configuration.getClusterName());
             client.close();
             client = null;
         }

@@ -67,7 +67,7 @@ public class BoxTasksManager {
      */
     public List<BoxTask.Info> getFileTasks(String fileId) {
         try {
-            LOG.debug("Getting tasks of file(id=" + fileId + ")");
+            LOG.debug("Getting tasks of file(id={})", fileId);
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
             }
@@ -124,7 +124,7 @@ public class BoxTasksManager {
      */
     public void deleteTask(String taskId) {
         try {
-            LOG.debug("Deleting task(id=" + taskId + ")");
+            LOG.debug("Deleting task(id={})", taskId);
             if (taskId == null) {
                 throw new IllegalArgumentException("Parameter 'taskId' can not be null");
             }
@@ -145,7 +145,7 @@ public class BoxTasksManager {
      */
     public BoxTask.Info getTaskInfo(String taskId) {
         try {
-            LOG.debug("Getting info for task(id=" + taskId + ")");
+            LOG.debug("Getting info for task(id={})", taskId);
             if (taskId == null) {
                 throw new IllegalArgumentException("Parameter 'taskId' can not be null");
             }
@@ -170,7 +170,7 @@ public class BoxTasksManager {
      */
     public BoxTask updateTaskInfo(String taskId, BoxTask.Info info) {
         try {
-            LOG.debug("Updating info for task(id=" + taskId + ")");
+            LOG.debug("Updating info for task(id={})", taskId);
             if (taskId == null) {
                 throw new IllegalArgumentException("Parameter 'taskId' can not be null");
             }
@@ -197,7 +197,7 @@ public class BoxTasksManager {
      */
     public List<BoxTaskAssignment.Info> getTaskAssignments(String taskId) {
         try {
-            LOG.debug("Getting assignments for task(id=" + taskId + ")");
+            LOG.debug("Getting assignments for task(id={})", taskId);
             if (taskId == null) {
                 throw new IllegalArgumentException("Parameter 'taskId' can not be null");
             }
@@ -252,7 +252,7 @@ public class BoxTasksManager {
      */
     public BoxTaskAssignment.Info getTaskAssignmentInfo(String taskAssignmentId) {
         try {
-            LOG.debug("Getting info for task(id=" + taskAssignmentId + ")");
+            LOG.debug("Getting info for task(id={})", taskAssignmentId);
             if (taskAssignmentId == null) {
                 throw new IllegalArgumentException("Parameter 'taskAssignmentId' can not be null");
             }
@@ -281,7 +281,7 @@ public class BoxTasksManager {
     // public BoxTaskAssignment updateTaskAssignmentInfo(String
     // taskAssignmentId, BoxTaskAssignment.Info info) {
     // try {
-    // LOG.debug("Updating info for task(id=" + taskAssignmentId + ")");
+    // LOG.debug("Updating info for task(id={})", taskAssignmentId);
     // if (taskAssignmentId == null) {
     // throw new IllegalArgumentException("Parameter 'taskAssignmentId' can not
     // be null");
@@ -310,7 +310,7 @@ public class BoxTasksManager {
      */
     public void deleteTaskAssignment(String taskAssignmentId) {
         try {
-            LOG.debug("Deleting task(id=" + taskAssignmentId + ")");
+            LOG.debug("Deleting task(id={})", taskAssignmentId);
             if (taskAssignmentId == null) {
                 throw new IllegalArgumentException("Parameter 'taskAssignmentId' can not be null");
             }

@@ -86,7 +86,7 @@ public class DefaultCamelBeanPostProcessor {
             CamelContextAware contextAware = (CamelContextAware)bean;
             CamelContext context = getOrLookupCamelContext();
             if (context == null) {
-                LOG.warn("No CamelContext defined yet so cannot inject into bean: " + beanName);
+                LOG.warn("No CamelContext defined yet so cannot inject into bean: {}", beanName);
             } else {
                 contextAware.setCamelContext(context);
             }
@@ -247,7 +247,7 @@ public class DefaultCamelBeanPostProcessor {
         Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes != null) {
             if (parameterTypes.length != 1) {
-                LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: " + method);
+                LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
             } else {
                 String propertyName = ObjectHelper.getPropertyName(method);
                 Object value = getPostProcessorHelper().getInjectionValue(parameterTypes[0], endpointUri, endpointRef, endpointProperty,
@@ -262,7 +262,7 @@ public class DefaultCamelBeanPostProcessor {
         Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes != null) {
             if (parameterTypes.length != 1) {
-                LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: " + method);
+                LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
             } else {
                 String propertyName = ObjectHelper.getPropertyName(method);
                 Object value = getPostProcessorHelper().getInjectionPropertyValue(parameterTypes[0], propertyValue, propertyDefaultValue, propertyName, bean, beanName);
@@ -275,7 +275,7 @@ public class DefaultCamelBeanPostProcessor {
         Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes != null) {
             if (parameterTypes.length != 1) {
-                LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: " + method);
+                LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
             } else {
                 Object value = getPostProcessorHelper().getInjectionBeanValue(parameterTypes[0], name);
                 ObjectHelper.invokeMethod(method, bean, value);

@@ -269,7 +269,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
                     reconnect();
                     connected = true;
                 } catch (Exception e) {
-                    log.warn("Unable to obtain a RabbitMQ channel. Will try again. Caused by: " + e.getMessage() + ". Stacktrace logged at DEBUG logging level.");
+                    log.warn("Unable to obtain a RabbitMQ channel. Will try again. Caused by: {}. Stacktrace logged at DEBUG logging level.", e.getMessage());
                     // include stacktrace in DEBUG logging
                     log.debug(e.getMessage(), e);
 

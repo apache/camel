@@ -52,7 +52,7 @@ public class ${className}Test {
     @Before
     public void setUp() throws Exception {
         log.info("*******************************************************************");
-        log.info("Test: " + testName.getMethodName());
+        log.info("Test: {}", testName.getMethodName());
         log.info("*******************************************************************");
 
         // Set property prefix for unit testing

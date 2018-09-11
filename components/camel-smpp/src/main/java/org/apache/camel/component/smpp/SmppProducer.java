@@ -204,7 +204,7 @@ public class SmppProducer extends DefaultProducer {
                         }
                         
                         if (reconnected) {
-                            LOG.info("Reconnected to " + getEndpoint().getConnectionString());                        
+                            LOG.info("Reconnected to {}", getEndpoint().getConnectionString());                        
                         }
                     }
                 };

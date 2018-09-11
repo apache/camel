@@ -170,7 +170,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             }
         } catch (Throwable t) {
             // not running with camel-core-osgi so we fallback to the regular factory bean
-            LOG.trace("Cannot find class so assuming not running in OSGi container: " + t.getMessage());
+            LOG.trace("Cannot find class so assuming not running in OSGi container: {}", t.getMessage());
         }
         if (osgi) {
             LOG.info("OSGi environment detected.");

@@ -404,7 +404,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         if (localConnectionsPerRoute > 0) {
             answer.setDefaultMaxPerRoute(localConnectionsPerRoute);
         }
-        LOG.info("Created ClientConnectionManager " + answer);
+        LOG.info("Created ClientConnectionManager {}", answer);
 
         return answer;
     }
@@ -661,7 +661,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     public void doStop() throws Exception {
         // shutdown connection manager
         if (clientConnectionManager != null) {
-            LOG.info("Shutting down ClientConnectionManager: " + clientConnectionManager);
+            LOG.info("Shutting down ClientConnectionManager: {}", clientConnectionManager);
             clientConnectionManager.shutdown();
             clientConnectionManager = null;
         }

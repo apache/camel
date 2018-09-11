@@ -187,7 +187,7 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
             }
 
             if (file.getName().endsWith(FileComponent.DEFAULT_LOCK_FILE_POSTFIX)) {
-                LOG.warn("Deleting orphaned lock file: " + file);
+                LOG.warn("Deleting orphaned lock file: {}", file);
                 FileUtil.deleteFile(file);
             } else if (recursive && file.isDirectory()) {
                 deleteLockFiles(file, true, endpointPath, filter, antFilter, excludePattern, includePattern);

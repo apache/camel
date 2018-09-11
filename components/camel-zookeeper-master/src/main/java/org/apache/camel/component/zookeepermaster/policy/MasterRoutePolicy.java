@@ -246,7 +246,7 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
                     thisNodeState.setStarted(true);
                     groupListener.updateState(thisNodeState);
                 } catch (Exception e) {
-                    log.error("Failed to start master consumer for: " + route.getEndpoint(), e);
+                    log.error("Failed to start master consumer for: {}", route.getEndpoint(), e);
                 }
 
                 log.info("Elected as master. Consumer started: {}", route.getEndpoint());
@@ -260,7 +260,7 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
             try {
                 stopConsumer(route.getConsumer());
             } catch (Exception e) {
-                log.warn("Failed to stop master consumer: " + route.getEndpoint(), e);
+                log.warn("Failed to stop master consumer: {}", route.getEndpoint(), e);
             }
         };
     }
