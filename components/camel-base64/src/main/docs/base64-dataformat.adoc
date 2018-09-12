@@ -109,9 +109,9 @@ In Spring DSL:
 [source,xml]
 ----
  <from uri="jms://queue/order">
- <marshal>
+ <unmarshal>
      <base64/>
- </marshal>
+ </unmarshal>
  <to uri="bean:newOrder"/> 
 ----
 
