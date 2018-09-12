@@ -147,6 +147,9 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
                 // Split the message according to the pair separator defined in
                 // annotated class @Message
                 // Explicitly replace any occurrence of the Unicode new line character.
+                // Simply reading the line in with the File stream doesn't get us around the fact
+                // that this character is still present in the data set, and we don't wish for it
+                // to be present when storing the actual data in the model.
                 List<String> result = Arrays.stream(line.split(separator))
                         .map(x -> x.replace("\u0085", ""))
                         .collect(Collectors.toList());
