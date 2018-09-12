@@ -65,7 +65,6 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
 
     @Override
     protected int poll() throws Exception {
-        System.err.println("Io pollo");
         com.google.api.services.calendar.Calendar.Events.List request = getClient().events().list(calendarId).setOrderBy("updated");
         if (ObjectHelper.isNotEmpty(getConfiguration().getQuery())) {
             request.setQ(getConfiguration().getQuery());
@@ -125,7 +124,6 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
                 }
             });
         }
-        System.err.println("Io ho pollato");
         return total;
     }
 
