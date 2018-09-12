@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,20 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.bindy.kvp;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.TypeConverter;
-import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
-import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
-import org.apache.camel.dataformat.bindy.BindyKeyValuePairFactory;
-import org.apache.camel.dataformat.bindy.FormatFactory;
-import org.apache.camel.dataformat.bindy.WrappedException;
-import org.apache.camel.dataformat.bindy.util.ConverterUtils;
-import org.apache.camel.spi.DataFormat;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -44,6 +30,20 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
+import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
+import org.apache.camel.dataformat.bindy.BindyKeyValuePairFactory;
+import org.apache.camel.dataformat.bindy.FormatFactory;
+import org.apache.camel.dataformat.bindy.WrappedException;
+import org.apache.camel.dataformat.bindy.util.ConverterUtils;
+import org.apache.camel.spi.DataFormat;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> (
