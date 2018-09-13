@@ -17,11 +17,11 @@
 
 package org.apache.camel.builder;
 
-import static org.apache.camel.builder.ExpressionBuilder.messageExpression;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
+
+import static org.apache.camel.builder.ExpressionBuilder.messageExpression;
 
 /**
  * @version 

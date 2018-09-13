@@ -16,11 +16,6 @@
  */
 package org.apache.camel.processor.async;
 
-import static org.apache.camel.impl.MDCUnitOfWork.MDC_BREADCRUMB_ID;
-import static org.apache.camel.impl.MDCUnitOfWork.MDC_CAMEL_CONTEXT_ID;
-import static org.apache.camel.impl.MDCUnitOfWork.MDC_EXCHANGE_ID;
-import static org.apache.camel.impl.MDCUnitOfWork.MDC_ROUTE_ID;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -28,6 +23,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.slf4j.MDC;
+
+import static org.apache.camel.impl.MDCUnitOfWork.MDC_BREADCRUMB_ID;
+import static org.apache.camel.impl.MDCUnitOfWork.MDC_CAMEL_CONTEXT_ID;
+import static org.apache.camel.impl.MDCUnitOfWork.MDC_EXCHANGE_ID;
+import static org.apache.camel.impl.MDCUnitOfWork.MDC_ROUTE_ID;
 
 /**
  * @version 

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import static org.apache.camel.processor.PipelineHelper.continueProcessing;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +33,8 @@ import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
 /**
  * Implements a Choice structure where one or more predicates are used which if

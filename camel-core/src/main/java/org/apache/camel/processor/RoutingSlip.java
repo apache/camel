@@ -16,9 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import static org.apache.camel.processor.PipelineHelper.continueProcessing;
-import static org.apache.camel.util.ObjectHelper.notNull;
-
 import java.util.Iterator;
 
 import org.apache.camel.AsyncCallback;
@@ -48,6 +45,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.processor.PipelineHelper.continueProcessing;
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * Implements a <a href="http://camel.apache.org/routing-slip.html">Routing Slip</a>

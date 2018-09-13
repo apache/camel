@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
-import static org.awaitility.Awaitility.await;
-
 import java.io.File;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -31,6 +29,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.RoutePolicySupport;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * @version 

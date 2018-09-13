@@ -16,12 +16,12 @@
  */
 package org.apache.camel.impl.converter;
 
-import static org.junit.Assert.assertEquals;
-
 import java.net.URI;
 
 import org.apache.camel.TypeConversionException;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class UriTypeConverterTest {
 

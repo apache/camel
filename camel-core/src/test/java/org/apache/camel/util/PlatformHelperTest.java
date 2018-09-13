@@ -16,11 +16,11 @@
  */
 package org.apache.camel.util;
 
-import static org.apache.camel.util.PlatformHelper.isOsgiContext;
-
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
 import org.junit.Test;
+
+import static org.apache.camel.util.PlatformHelper.isOsgiContext;
 
 public class PlatformHelperTest extends Assert {
 

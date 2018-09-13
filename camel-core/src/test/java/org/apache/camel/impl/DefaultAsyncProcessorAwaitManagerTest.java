@@ -16,10 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertThat;
-
 import java.util.LinkedList;
 import java.util.concurrent.CountDownLatch;
 
@@ -29,6 +25,10 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.junit.Test;
+
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.nullValue;
+import static org.junit.Assert.assertThat;
 
 public class DefaultAsyncProcessorAwaitManagerTest {
 

@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.bean;
 
+import org.w3c.dom.Document;
+
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.util.FileUtil;
-import org.w3c.dom.Document;
 
 /**
  * @version 

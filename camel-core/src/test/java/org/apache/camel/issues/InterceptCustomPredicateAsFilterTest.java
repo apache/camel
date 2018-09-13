@@ -16,8 +16,6 @@
  */
 package org.apache.camel.issues;
 
-import static org.apache.camel.builder.PredicateBuilder.not;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +24,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
+
+import static org.apache.camel.builder.PredicateBuilder.not;
 
 /**
  * @version 

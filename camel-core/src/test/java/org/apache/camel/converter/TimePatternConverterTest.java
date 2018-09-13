@@ -16,10 +16,10 @@
  */
 package org.apache.camel.converter;
 
-import static org.hamcrest.core.Is.is;
-
 import org.apache.camel.ContextTestSupport;
 import org.junit.Test;
+
+import static org.hamcrest.core.Is.is;
 
 public class TimePatternConverterTest extends ContextTestSupport {
 

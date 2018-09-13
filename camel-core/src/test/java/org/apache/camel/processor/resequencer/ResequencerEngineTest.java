@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.resequencer;
-import static org.awaitility.Awaitility.await;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -26,6 +24,8 @@ import org.apache.camel.TestSupport;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.awaitility.Awaitility.await;
 
 public class ResequencerEngineTest extends TestSupport {
 

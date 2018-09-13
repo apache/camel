@@ -16,11 +16,11 @@
  */
 package org.apache.camel.processor;
 
-import static org.apache.camel.ThreadPoolRejectedPolicy.DiscardOldest;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
+
+import static org.apache.camel.ThreadPoolRejectedPolicy.DiscardOldest;
 
 /**
  * @version 

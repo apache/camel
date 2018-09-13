@@ -22,10 +22,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.w3c.dom.NodeList;
+
 import org.apache.camel.component.bean.XPathAnnotationExpressionFactory;
 import org.apache.camel.language.LanguageAnnotation;
 import org.apache.camel.language.NamespacePrefix;
-import org.w3c.dom.NodeList;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})

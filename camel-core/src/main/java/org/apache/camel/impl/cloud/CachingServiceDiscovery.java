@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
-
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.util.ObjectHelper;

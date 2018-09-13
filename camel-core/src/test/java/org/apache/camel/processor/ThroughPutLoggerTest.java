@@ -16,12 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import static org.hamcrest.Matchers.startsWith;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.hamcrest.MockitoHamcrest.argThat;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
@@ -29,6 +23,12 @@ import org.apache.camel.util.CamelLogger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
+
+import static org.hamcrest.Matchers.startsWith;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
 public class ThroughPutLoggerTest extends Assert {
 

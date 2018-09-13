@@ -16,12 +16,13 @@
  */
 package org.apache.camel.util;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ModelHelper;
 import org.junit.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 public class DumpModelAsXmlNamespaceTest extends ContextTestSupport {
 

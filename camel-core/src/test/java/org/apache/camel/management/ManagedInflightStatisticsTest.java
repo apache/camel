@@ -16,8 +16,6 @@
  */
 package org.apache.camel.management;
 
-import static org.awaitility.Awaitility.await;
-
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -31,6 +29,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * @version

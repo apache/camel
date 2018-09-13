@@ -16,17 +16,17 @@
  */
 package org.apache.camel.builder.xml;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
 import java.net.URL;
 
 import javax.xml.transform.ErrorListener;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class XsltTestErrorListenerTest extends Assert {
 

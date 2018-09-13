@@ -16,13 +16,13 @@
  */
 package org.apache.camel.converter;
 
-import static org.hamcrest.core.Is.is;
-
 import java.time.Duration;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.TypeConversionException;
 import org.junit.Test;
+
+import static org.hamcrest.core.Is.is;
 
 public class DurationConverterTest extends ContextTestSupport {
 

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.util.jsse;
 
-import static org.apache.camel.util.CollectionHelper.collectionAsCommaDelimitedString;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -51,6 +49,8 @@ import javax.net.ssl.TrustManager;
 import org.apache.camel.util.jsse.FilterParameters.Patterns;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.util.CollectionHelper.collectionAsCommaDelimitedString;
 
 /**
  * Represents configuration options that can be applied in the client-side

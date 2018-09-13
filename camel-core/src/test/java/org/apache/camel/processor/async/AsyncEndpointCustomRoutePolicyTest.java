@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.async;
 
-import static org.awaitility.Awaitility.await;
-
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -29,6 +27,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.RoutePolicySupport;
 import org.junit.Test;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * @version 

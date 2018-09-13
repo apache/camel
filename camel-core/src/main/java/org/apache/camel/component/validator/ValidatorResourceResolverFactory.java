@@ -17,6 +17,7 @@
 package org.apache.camel.component.validator;
 
 import org.w3c.dom.ls.LSResourceResolver;
+
 import org.apache.camel.CamelContext;
 
 /**

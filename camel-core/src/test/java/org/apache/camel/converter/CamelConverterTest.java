@@ -16,9 +16,6 @@
  */
 package org.apache.camel.converter;
 
-import static org.apache.camel.builder.Builder.constant;
-import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -28,6 +25,9 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.impl.DefaultExchange;
 import org.junit.Test;
+
+import static org.apache.camel.builder.Builder.constant;
+import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
 
 /**
  * @version 

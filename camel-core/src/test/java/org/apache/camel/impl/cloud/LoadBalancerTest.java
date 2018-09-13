@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.impl.cloud;
-import static org.junit.Assert.assertEquals;
-
 import java.util.concurrent.RejectedExecutionException;
 import java.util.stream.Collectors;
 
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class LoadBalancerTest {
 

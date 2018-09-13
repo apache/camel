@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.onexception;
 
-import static org.awaitility.Awaitility.await;
-
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -25,6 +23,8 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.seda.SedaEndpoint;
 import org.junit.Test;
+
+import static org.awaitility.Awaitility.await;
 
 public class ContextScopedOnExceptionLoadBalancerStopRouteTest extends ContextTestSupport {
 

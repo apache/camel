@@ -15,19 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.builder;
-import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
-import static org.apache.camel.builder.ExpressionBuilder.camelContextPropertiesExpression;
-import static org.apache.camel.builder.ExpressionBuilder.camelContextPropertyExpression;
-import static org.apache.camel.builder.ExpressionBuilder.constantExpression;
-import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
-import static org.apache.camel.builder.ExpressionBuilder.messageExpression;
-import static org.apache.camel.builder.ExpressionBuilder.parseSimpleOrFallbackToConstantExpression;
-import static org.apache.camel.builder.ExpressionBuilder.regexReplaceAll;
-import static org.apache.camel.builder.ExpressionBuilder.regexTokenizeExpression;
-import static org.apache.camel.builder.ExpressionBuilder.sortExpression;
-import static org.apache.camel.builder.ExpressionBuilder.tokenizeExpression;
-import static org.apache.camel.builder.PredicateBuilder.contains;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -44,6 +31,19 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
+import static org.apache.camel.builder.ExpressionBuilder.camelContextPropertiesExpression;
+import static org.apache.camel.builder.ExpressionBuilder.camelContextPropertyExpression;
+import static org.apache.camel.builder.ExpressionBuilder.constantExpression;
+import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
+import static org.apache.camel.builder.ExpressionBuilder.messageExpression;
+import static org.apache.camel.builder.ExpressionBuilder.parseSimpleOrFallbackToConstantExpression;
+import static org.apache.camel.builder.ExpressionBuilder.regexReplaceAll;
+import static org.apache.camel.builder.ExpressionBuilder.regexTokenizeExpression;
+import static org.apache.camel.builder.ExpressionBuilder.sortExpression;
+import static org.apache.camel.builder.ExpressionBuilder.tokenizeExpression;
+import static org.apache.camel.builder.PredicateBuilder.contains;
 
 /**
  * @version 

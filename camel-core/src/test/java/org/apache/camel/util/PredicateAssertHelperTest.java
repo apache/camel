@@ -16,14 +16,14 @@
  */
 package org.apache.camel.util;
 
-import static org.apache.camel.builder.Builder.constant;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.impl.DefaultExchange;
 import org.junit.Test;
+
+import static org.apache.camel.builder.Builder.constant;
 
 /**
  * @version 

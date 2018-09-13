@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import static org.awaitility.Awaitility.await;
-
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -25,6 +23,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.seda.SedaEndpoint;
 import org.junit.Test;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * @version 

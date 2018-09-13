@@ -16,10 +16,6 @@
  */
 package org.apache.camel.util;
 
-import static org.apache.camel.util.ObjectHelper.isEmpty;
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
-import static org.apache.camel.util.ObjectHelper.notNull;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -50,6 +46,10 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.util.ObjectHelper.isEmpty;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * A number of helper methods

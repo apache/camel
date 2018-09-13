@@ -16,14 +16,14 @@
  */
 package org.apache.camel.issues;
 
-import static org.apache.camel.builder.PredicateBuilder.and;
-import static org.apache.camel.builder.PredicateBuilder.isNotNull;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
+
+import static org.apache.camel.builder.PredicateBuilder.and;
+import static org.apache.camel.builder.PredicateBuilder.isNotNull;
 
 /**
  *

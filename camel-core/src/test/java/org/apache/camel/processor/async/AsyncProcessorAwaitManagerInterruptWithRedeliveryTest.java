@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.async;
-import static org.mockito.Mockito.atMost;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-
 import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RejectedExecutionException;
@@ -33,6 +29,10 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.mockito.Mockito.atMost;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends ContextTestSupport {
     private CountDownLatch latch;

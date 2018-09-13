@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.zip.Deflater;
 
 import org.w3c.dom.Node;
+
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.dataformat.ASN1DataFormat;

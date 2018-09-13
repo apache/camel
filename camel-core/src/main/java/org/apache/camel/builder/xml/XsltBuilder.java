@@ -41,6 +41,7 @@ import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Node;
+
 import org.xml.sax.EntityResolver;
 
 import org.apache.camel.Exchange;

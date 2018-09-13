@@ -16,12 +16,12 @@
  */
 package org.apache.camel.processor;
 
-import static org.apache.camel.processor.ExchangeAwareDelayCalcBean.BEAN_DELAYER_HEADER;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
+
+import static org.apache.camel.processor.ExchangeAwareDelayCalcBean.BEAN_DELAYER_HEADER;
 
 /**
  * @version 

@@ -16,9 +16,6 @@
  */
 package org.apache.camel.model.cloud;
 
-import static org.apache.camel.util.CamelContextHelper.findByType;
-import static org.apache.camel.util.CamelContextHelper.lookup;
-
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -57,6 +54,9 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.Suppliers;
+
+import static org.apache.camel.util.CamelContextHelper.findByType;
+import static org.apache.camel.util.CamelContextHelper.lookup;
 
 /**
  * To call remote services
