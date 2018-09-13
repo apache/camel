@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.slack;
 
+import static org.apache.camel.component.slack.utils.SlackUtils.readResponse;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -40,8 +42,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.slack.utils.SlackUtils.readResponse;
 
 public class SlackConsumer extends ScheduledBatchPollingConsumer {
 
@@ -85,17 +85,19 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
 
     private Queue<Exchange> createExchanges(List list) {
         Queue<Exchange> answer = new LinkedList<>();
-        Iterator it = list.iterator();
-        int i = 0;
-        while (it.hasNext()) {
-            Object object = (Object)it.next();
-            JSONObject singleMess = (JSONObject)object;
-            if (i == 0) {
-                timestamp = (String)singleMess.get("ts");
+        if (ObjectHelper.isNotEmpty(list)) {
+            Iterator it = list.iterator();
+            int i = 0;
+            while (it.hasNext()) {
+                Object object = (Object)it.next();
+                JSONObject singleMess = (JSONObject)object;
+                if (i == 0) {
+                    timestamp = (String)singleMess.get("ts");
+                }
+                i++;
+                Exchange exchange = slackEndpoint.createExchange(singleMess);
+                answer.add(exchange);
             }
-            i++;
-            Exchange exchange = slackEndpoint.createExchange(singleMess);
-            answer.add(exchange);
         }
         return answer;
     }
