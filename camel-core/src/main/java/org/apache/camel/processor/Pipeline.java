@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import static org.apache.camel.processor.PipelineHelper.continueProcessing;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -33,6 +31,8 @@ import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
 /**
  * Creates a Pipeline pattern where the output of the previous step is sent as

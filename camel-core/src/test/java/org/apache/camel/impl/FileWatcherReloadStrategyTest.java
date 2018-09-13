@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import static org.awaitility.Awaitility.await;
-
 import java.io.File;
 import java.util.EventObject;
 import java.util.concurrent.CountDownLatch;
@@ -30,6 +28,8 @@ import org.apache.camel.management.event.RouteAddedEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.util.FileUtil;
 import org.junit.Test;
+
+import static org.awaitility.Awaitility.await;
 
 public class FileWatcherReloadStrategyTest extends ContextTestSupport {
 

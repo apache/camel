@@ -16,9 +16,6 @@
  */
 package org.apache.camel.impl.cluster;
 
-import static org.apache.camel.impl.cluster.ClusterServiceHelper.lookupService;
-import static org.apache.camel.impl.cluster.ClusterServiceHelper.mandatoryLookupService;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +28,9 @@ import org.apache.camel.component.file.cluster.FileLockClusterService;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
 import org.junit.Test;
+
+import static org.apache.camel.impl.cluster.ClusterServiceHelper.lookupService;
+import static org.apache.camel.impl.cluster.ClusterServiceHelper.mandatoryLookupService;
 
 
 public class ClusterServiceSelectorTest {

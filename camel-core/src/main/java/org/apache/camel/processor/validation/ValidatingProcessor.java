@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.validation;
 
-import static org.apache.camel.processor.validation.SchemaReader.ACCESS_EXTERNAL_DTD;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +36,12 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.w3c.dom.Node;
+import org.w3c.dom.ls.LSResourceResolver;
+
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
@@ -49,10 +53,8 @@ import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Node;
-import org.w3c.dom.ls.LSResourceResolver;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
+
+import static org.apache.camel.processor.validation.SchemaReader.ACCESS_EXTERNAL_DTD;
 
 /**
  * A processor which validates the XML version of the inbound message body

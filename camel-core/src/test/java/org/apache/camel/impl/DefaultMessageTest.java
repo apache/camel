@@ -16,15 +16,15 @@
  */
 package org.apache.camel.impl;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Attachment;
 import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 public class DefaultMessageTest {
 

@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-import static org.apache.camel.language.simple.SimpleLanguage.simple;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -26,6 +24,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.apache.camel.language.simple.SimpleLanguage.simple;
 
 /**
  * Unit test for expression option for file producer.

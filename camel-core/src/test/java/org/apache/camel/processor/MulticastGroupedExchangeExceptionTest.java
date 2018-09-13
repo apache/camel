@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import static org.hamcrest.CoreMatchers.is;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -25,6 +23,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.is;
 
 public class MulticastGroupedExchangeExceptionTest extends ContextTestSupport {
 

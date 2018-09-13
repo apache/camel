@@ -16,8 +16,6 @@
  */
 package org.apache.camel.management;
 
-import static org.awaitility.Awaitility.await;
-
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -26,6 +24,8 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * @version 

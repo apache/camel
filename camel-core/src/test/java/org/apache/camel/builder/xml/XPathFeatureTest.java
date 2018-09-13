@@ -16,9 +16,9 @@
  */
 package org.apache.camel.builder.xml;
 
-import static org.apache.camel.builder.xml.XPathBuilder.xpath;
-
 import java.io.FileNotFoundException;
+
+import org.xml.sax.SAXParseException;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -27,7 +27,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.junit.Test;
-import org.xml.sax.SAXParseException;
+
+import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
 public class XPathFeatureTest extends ContextTestSupport {
     public static final String DOM_BUILDER_FACTORY_FEATURE = XmlConverter.DOCUMENT_BUILDER_FACTORY_FEATURE;

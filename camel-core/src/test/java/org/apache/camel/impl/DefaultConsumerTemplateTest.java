@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
-import static org.awaitility.Awaitility.await;
-
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
@@ -28,6 +26,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * @version 

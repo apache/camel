@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.aggregator;
 
-import static org.awaitility.Awaitility.await;
-
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
@@ -28,6 +26,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 import org.junit.Test;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * Testing CAMEL-3139

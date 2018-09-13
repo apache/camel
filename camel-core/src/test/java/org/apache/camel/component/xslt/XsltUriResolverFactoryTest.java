@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.xslt;
 
-import static org.awaitility.Awaitility.await;
-
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
@@ -37,6 +35,8 @@ import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.junit.Assert;
 import org.junit.Test;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  *

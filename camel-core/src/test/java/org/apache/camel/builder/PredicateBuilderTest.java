@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.builder;
-import static org.apache.camel.builder.Builder.constant;
-import static org.apache.camel.builder.PredicateBuilder.in;
-import static org.apache.camel.builder.PredicateBuilder.not;
-
 import java.util.Arrays;
 
 import org.apache.camel.Exchange;
@@ -29,6 +25,10 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.apache.camel.builder.Builder.constant;
+import static org.apache.camel.builder.PredicateBuilder.in;
+import static org.apache.camel.builder.PredicateBuilder.not;
 
 public class PredicateBuilderTest extends TestSupport {
 

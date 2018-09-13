@@ -16,8 +16,6 @@
  */
 package org.apache.camel.util;
 
-import static org.apache.camel.util.StringHelper.after;
-
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,6 +41,8 @@ import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.util.StringHelper.after;
 
 /**
  * Some helper methods for working with {@link Endpoint} instances

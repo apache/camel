@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import static org.awaitility.Awaitility.await;
-
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -27,6 +25,8 @@ import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * Wire tap unit test

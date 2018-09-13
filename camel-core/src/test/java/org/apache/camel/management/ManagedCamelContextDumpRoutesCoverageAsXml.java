@@ -19,8 +19,9 @@ package org.apache.camel.management;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.builder.RouteBuilder;
 import org.w3c.dom.Document;
+
+import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version 

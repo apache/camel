@@ -16,13 +16,13 @@
  */
 package org.apache.camel.management.mbean;
 
-import static org.apache.camel.builder.Builder.constant;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedThrottlerMBean;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.Throttler;
+
+import static org.apache.camel.builder.Builder.constant;
 
 /**
  * @version 

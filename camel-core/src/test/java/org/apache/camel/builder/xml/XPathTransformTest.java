@@ -16,6 +16,16 @@
  */
 package org.apache.camel.builder.xml;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+
+import org.apache.camel.ContextTestSupport;
+import org.junit.Test;
+import org.slf4j.Logger;
+
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -23,15 +33,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-
-import org.apache.camel.ContextTestSupport;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
 
 
 /**

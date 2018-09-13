@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-import static org.apache.camel.ShutdownRoute.Defer;
-
 import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -30,6 +28,8 @@ import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.apache.camel.ShutdownRoute.Defer;
 
 /**
  * @version 

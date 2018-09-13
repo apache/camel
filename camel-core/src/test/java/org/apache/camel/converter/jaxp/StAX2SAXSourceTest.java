@@ -16,8 +16,6 @@
  */
 package org.apache.camel.converter.jaxp;
 
-import static org.hamcrest.core.IsEqual.equalTo;
-
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.nio.charset.Charset;
@@ -34,6 +32,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
 import org.junit.Test;
+
+import static org.hamcrest.core.IsEqual.equalTo;
 
 public class StAX2SAXSourceTest extends ContextTestSupport {
 

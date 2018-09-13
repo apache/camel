@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-import static org.awaitility.Awaitility.await;
-
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -30,6 +28,8 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * Unit test for expression option for file consumer.

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import static org.apache.camel.util.ObjectHelper.notNull;
-
 import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -74,6 +72,8 @@ import org.apache.camel.util.concurrent.AtomicExchange;
 import org.apache.camel.util.concurrent.SubmitOrderedCompletionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 
 /**

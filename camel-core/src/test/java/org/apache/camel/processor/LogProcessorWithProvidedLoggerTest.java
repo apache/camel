@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-
 import java.io.StringWriter;
 
 import org.apache.camel.CamelContext;
@@ -31,6 +29,8 @@ import org.apache.logging.log4j.Level;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
+
+import static org.hamcrest.CoreMatchers.equalTo;
 
 /**
  * @version

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.model;
 
-import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -33,6 +31,8 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+
+import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
 /**
  * Helper for {@link RouteDefinition}

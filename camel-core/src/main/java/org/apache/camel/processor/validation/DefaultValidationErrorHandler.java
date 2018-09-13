@@ -22,12 +22,13 @@ import java.util.List;
 import javax.xml.transform.Result;
 import javax.xml.validation.Schema;
 
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 /**
  * A default error handler which just stores all the errors so they can be reported or transformed.

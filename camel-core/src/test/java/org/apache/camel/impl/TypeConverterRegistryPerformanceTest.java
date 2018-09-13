@@ -21,10 +21,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.w3c.dom.Document;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.junit.Test;
-import org.w3c.dom.Document;
 
 public class TypeConverterRegistryPerformanceTest extends ContextTestSupport {
 

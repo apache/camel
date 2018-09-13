@@ -17,6 +17,8 @@
 package org.apache.camel.component.validator;
 import java.net.URL;
 
+import org.w3c.dom.ls.LSResourceResolver;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,7 +31,6 @@ import org.apache.xml.resolver.CatalogManager;
 import org.apache.xml.resolver.tools.CatalogResolver;
 import org.junit.Before;
 import org.junit.Test;
-import org.w3c.dom.ls.LSResourceResolver;
 
 public class ValidatorWithResourceResolverRouteTest extends ContextTestSupport {
 

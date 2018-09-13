@@ -20,14 +20,15 @@ import java.net.URL;
 import javax.activation.DataHandler;
 import javax.activation.URLDataSource;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import org.apache.camel.impl.DefaultAttachment;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * @version 
