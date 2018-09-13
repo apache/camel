@@ -345,7 +345,7 @@
     <java-util-version>1.34.0</java-util-version>
     <java-util-bundle-version>1.34.0_1</java-util-bundle-version>
     <jna-version>4.2.2</jna-version>
-    <jnats-version>2.0.2</jnats-version>
+    <jnats-version>2.1.0</jnats-version>
     <javacc-maven-plugin-version>2.6</javacc-maven-plugin-version>
     <javacrumbs-version>0.22</javacrumbs-version>
     <javapoet-version>1.11.1</javapoet-version>
