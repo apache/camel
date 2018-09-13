@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.slack;
 
-import static org.apache.camel.component.slack.utils.SlackUtils.readResponse;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -42,6 +40,8 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.slack.utils.SlackUtils.readResponse;
 
 public class SlackConsumer extends ScheduledBatchPollingConsumer {
 
