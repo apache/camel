@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.paho;
-import org.junit.After;
 
 import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,6 +22,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.junit.After;
 import org.junit.Test;
 
 public class PahoOverrideTopicTest extends CamelTestSupport {
