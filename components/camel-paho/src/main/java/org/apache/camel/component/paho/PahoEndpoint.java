@@ -314,6 +314,10 @@ public class PahoEndpoint extends DefaultEndpoint {
         return resolveMqttConnectOptions;
     }
 
+    /**
+     * Define if you don't want to resolve the MQTT Connect Options from registry
+     * @param resolveMqttConnectOptions
+     */
     public synchronized void setResolveMqttConnectOptions(boolean resolveMqttConnectOptions) {
         this.resolveMqttConnectOptions = resolveMqttConnectOptions;
     }
