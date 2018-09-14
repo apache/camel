@@ -65,25 +65,7 @@ public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        String calendarId = null;
-        if (getConfiguration().getCalendarSummaryName().equals("primary")) {
-            com.google.api.services.calendar.model.CalendarList calendars = getClient().calendarList().list().execute();
-            if (calendars.getItems() != null) {
-                for (CalendarListEntry entry : calendars.getItems()) {
-                    if (getConfiguration().getCalendarSummaryName().equals(entry.getSummary())) {
-                        calendarId = entry.getId();
-                    }
-                }
-            }
-            if (ObjectHelper.isEmpty(calendarId)) {
-                LOG.warn("The calendar {} doesn't exists fallback to primary calendar", getConfiguration().getCalendarSummaryName());
-                calendarId = "primary";
-            }
-        } else {
-            LOG.debug("Setting calendarId as primary", getConfiguration().getCalendarSummaryName());
-            calendarId = "primary";
-        }
-        final GoogleCalendarStreamConsumer consumer = new GoogleCalendarStreamConsumer(this, processor, calendarId);
+        final GoogleCalendarStreamConsumer consumer = new GoogleCalendarStreamConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
     }
