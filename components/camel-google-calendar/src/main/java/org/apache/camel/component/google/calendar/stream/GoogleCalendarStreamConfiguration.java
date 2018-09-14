@@ -172,19 +172,19 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     public void setMaxResults(int maxResults) {
         this.maxResults = maxResults;
     }
-    
+
     public String getCalendarId() {
-		return calendarId;
-	}
+        return calendarId;
+    }
 
     /**
      * The calendarId to be used
      */
-	public void setCalendarId(String calendarId) {
-		this.calendarId = calendarId;
-	}
+    public void setCalendarId(String calendarId) {
+        this.calendarId = calendarId;
+    }
 
-	public boolean isConsumeFromNow() {
+    public boolean isConsumeFromNow() {
         return consumeFromNow;
     }
     
