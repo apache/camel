@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.spring;
-import org.junit.After;
-
-import org.junit.Test;
-
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -29,6 +25,8 @@ import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.IOHelper;
+import org.junit.After;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

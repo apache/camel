@@ -18,6 +18,7 @@ package org.apache.camel.spring.issues;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.issues.TryCatchWithSplitIssueTest;
+
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**

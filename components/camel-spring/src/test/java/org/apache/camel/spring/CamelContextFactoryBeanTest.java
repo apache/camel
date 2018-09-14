@@ -15,20 +15,18 @@
  * limitations under the License.
  */
 package org.apache.camel.spring;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.Assert;
 import org.apache.camel.impl.DefaultModelJAXBContextFactory;
 import org.apache.camel.impl.DefaultUuidGenerator;
 import org.apache.camel.impl.SimpleUuidGenerator;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.UuidGenerator;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.StaticApplicationContext;
 import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.builder.Input;

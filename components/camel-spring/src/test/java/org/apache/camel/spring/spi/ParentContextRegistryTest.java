@@ -16,12 +16,11 @@
  */
 package org.apache.camel.spring.spi;
 
-import org.junit.Test;
-
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

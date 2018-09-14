@@ -16,13 +16,11 @@
  */
 package org.apache.camel.spring.remoting;
 
-import org.junit.Test;
-
-import org.junit.Assert;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.IOHelper;
+import org.junit.Assert;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

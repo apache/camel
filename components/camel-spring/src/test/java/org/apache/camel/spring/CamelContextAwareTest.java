@@ -15,14 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.spring;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.util.Map;
 
 import org.apache.camel.impl.DefaultConsumerTemplate;
 import org.apache.camel.impl.DefaultProducerTemplate;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

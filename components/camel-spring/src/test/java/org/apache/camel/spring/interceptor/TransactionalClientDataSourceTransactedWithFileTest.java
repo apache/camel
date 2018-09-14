@@ -15,15 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.interceptor;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 

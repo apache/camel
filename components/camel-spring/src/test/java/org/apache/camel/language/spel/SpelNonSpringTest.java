@@ -16,14 +16,13 @@
  */
 package org.apache.camel.language.spel;
 
-import org.junit.Test;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.language.spel.bean.Dummy;
+import org.junit.Test;
 
 /**
  * Test access to beans defined in non-Spring context from SpEL expressions/predicates.

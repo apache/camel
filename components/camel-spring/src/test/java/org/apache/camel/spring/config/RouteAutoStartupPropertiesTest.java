@@ -15,15 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.config;
-import org.junit.After;
-
-import org.junit.Test;
-
-import org.junit.Assert;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.IOHelper;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

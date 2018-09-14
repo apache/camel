@@ -15,12 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.processor;
-import org.junit.Before;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.processor.RouteWithConstantFieldFromExchangeFailTest;
+import org.junit.Before;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 

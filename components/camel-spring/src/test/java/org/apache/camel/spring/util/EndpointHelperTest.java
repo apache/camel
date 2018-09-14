@@ -16,11 +16,10 @@
  */
 package org.apache.camel.spring.util;
 
-import org.junit.Test;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.util.EndpointHelper;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

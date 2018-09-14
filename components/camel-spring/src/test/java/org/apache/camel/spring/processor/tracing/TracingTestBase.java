@@ -16,14 +16,13 @@
  */
 package org.apache.camel.spring.processor.tracing;
 
-import org.junit.Test;
-
 import java.util.List;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.interceptor.TraceHandlerTestHandler;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 
 public abstract class TracingTestBase extends SpringTestSupport {
 

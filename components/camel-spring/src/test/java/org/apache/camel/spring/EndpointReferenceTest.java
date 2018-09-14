@@ -16,8 +16,6 @@
  */
 package org.apache.camel.spring;
 
-import org.junit.Test;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
@@ -25,6 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spring.example.DummyBean;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

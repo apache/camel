@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.scan;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.RandomAccessFile;
@@ -31,6 +27,8 @@ import java.util.jar.JarFile;
 
 import org.apache.camel.core.xml.PatternBasedPackageScanFilter;
 import org.apache.camel.util.CollectionHelper;
+import org.junit.Before;
+import org.junit.Test;
 
 public class PatternBasedPackageScanFilterTest extends org.apache.camel.spring.scan.ScanTestSupport {
 

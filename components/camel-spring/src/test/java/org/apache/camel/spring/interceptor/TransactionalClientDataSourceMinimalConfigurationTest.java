@@ -15,14 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.interceptor;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import javax.sql.DataSource;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
