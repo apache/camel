@@ -513,6 +513,7 @@
     <mvel-version>2.4.2.Final</mvel-version>
     <mybatis-version>3.4.6</mybatis-version>
     <narayana-version>5.9.0.Final</narayana-version>
+    <nessus-version>1.0.0.Beta1</nessus-version>
     <nsq-client-version>1.0.0.RC4</nsq-client-version>
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
     <nekohtml-version>1.9.22</nekohtml-version>
@@ -4886,6 +4887,11 @@
         <version>${pdfbox-version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>io.nessus</groupId>
+        <artifactId>nessus-ipfs</artifactId>
+        <version>${nessus-version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
