@@ -134,6 +134,7 @@
         <include>org.apache.camel:camel-infinispan</include>
         <include>org.apache.camel:camel-influxdb</include>
         <include>org.apache.camel:camel-ignite</include>
+        <include>org.apache.camel:camel-ipfs</include>
         <include>org.apache.camel:camel-irc</include>
         <include>org.apache.camel:camel-ironmq</include>
         <include>org.apache.camel:camel-jackson</include>
