@@ -95,6 +95,7 @@ with the following path and query parameters:
 | *brokerUrl* (common) | The URL of the MQTT broker. | tcp://localhost:1883 | String
 | *clientId* (common) | MQTT client identifier. |  | String
 | *connectOptions* (common) | Client connection options |  | MqttConnectOptions
+| *resolveMqttConnectOptions* (common) | Auto Resolve Client connection options | true | boolean
 | *filePersistenceDirectory* (common) | Base directory used by the file persistence provider. |  | String
 | *password* (common) | Password to be used for authentication against the MQTT broker |  | String
 | *persistence* (common) | Client persistence to be used - memory or file. | MEMORY | PahoPersistence

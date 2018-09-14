@@ -68,7 +68,8 @@ public class PahoEndpoint extends DefaultEndpoint {
     private String userName; 
     @UriParam @Metadata(secret = true)
     private String password; 
-    
+    @UriParam(defaultValue = "true")
+    private boolean resolveMqttConnectOptions = true; 
 
     // Collaboration members
     @UriParam
@@ -135,13 +136,16 @@ public class PahoEndpoint extends DefaultEndpoint {
         if (connectOptions != null) {
             return connectOptions;
         }
-        Set<MqttConnectOptions> connectOptions = getCamelContext().getRegistry().findByType(MqttConnectOptions.class);
-        if (connectOptions.size() == 1) {
-            LOG.info("Single MqttConnectOptions instance found in the registry. It will be used by the endpoint.");
-            return connectOptions.iterator().next();
-        } else if (connectOptions.size() > 1) {
-            LOG.warn("Found {} instances of the MqttConnectOptions in the registry. None of these will be used by the endpoint. "
-                     + "Please use 'connectOptions' endpoint option to select one.", connectOptions.size());
+        
+        if(resolveMqttConnectOptions) {
+            Set<MqttConnectOptions> connectOptions = getCamelContext().getRegistry().findByType(MqttConnectOptions.class);
+            if (connectOptions.size() == 1) {
+                LOG.info("Single MqttConnectOptions instance found in the registry. It will be used by the endpoint.");
+                return connectOptions.iterator().next();
+            } else if (connectOptions.size() > 1) {
+                LOG.warn("Found {} instances of the MqttConnectOptions in the registry. None of these will be used by the endpoint. "
+                         + "Please use 'connectOptions' endpoint option to select one.", connectOptions.size());
+            }
         }
         
         MqttConnectOptions options = new MqttConnectOptions();
@@ -304,6 +308,14 @@ public class PahoEndpoint extends DefaultEndpoint {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public synchronized boolean isResolveMqttConnectOptions() {
+        return resolveMqttConnectOptions;
+    }
+
+    public synchronized void setResolveMqttConnectOptions(boolean resolveMqttConnectOptions) {
+        this.resolveMqttConnectOptions = resolveMqttConnectOptions;
     }
 
 }
