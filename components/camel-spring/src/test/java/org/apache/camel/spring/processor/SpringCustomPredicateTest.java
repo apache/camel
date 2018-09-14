@@ -16,11 +16,10 @@
  */
 package org.apache.camel.spring.processor;
 
-import org.junit.Test;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

@@ -16,13 +16,9 @@
  */
 package org.apache.camel.spring.scan;
 
-import org.junit.Test;
-
 import java.lang.annotation.Annotation;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-import org.junit.Assert;
 
 import org.apache.camel.impl.scan.AnnotatedWithAnyPackageScanFilter;
 import org.apache.camel.impl.scan.AnnotatedWithPackageScanFilter;
@@ -34,6 +30,8 @@ import org.apache.camel.spring.scan.a.ScanTargetOne;
 import org.apache.camel.spring.scan.b.ScanTargetTwo;
 import org.apache.camel.spring.scan.c.ScanTargetThree;
 import org.apache.camel.util.CollectionHelper;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class PackageScanFiltersTest extends Assert {
 

@@ -17,6 +17,7 @@
 package org.apache.camel.spring.processor.onexception;
 
 import org.apache.camel.CamelContext;
+
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**

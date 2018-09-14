@@ -19,6 +19,7 @@ package org.apache.camel.spring.management;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;

@@ -16,13 +16,12 @@
  */
 package org.apache.camel.spring.interceptor;
 
-import org.junit.Test;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
+import org.junit.Test;
 
 /**
  * Unit test to demonstrate the transactional client pattern.

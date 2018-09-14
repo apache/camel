@@ -15,12 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.handler;
-import org.junit.Before;
-import org.junit.After;
-
-import org.junit.Test;
-
-import org.junit.Assert;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
@@ -29,6 +23,10 @@ import org.apache.camel.builder.LoggingErrorHandlerBuilder;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 import org.apache.camel.util.IOHelper;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ErrorHandlerDefinitionParserTest extends Assert {

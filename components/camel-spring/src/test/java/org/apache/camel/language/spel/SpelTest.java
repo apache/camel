@@ -16,9 +16,8 @@
  */
 package org.apache.camel.language.spel;
 
-import org.junit.Test;
-
 import org.apache.camel.LanguageTestSupport;
+import org.junit.Test;
 
 public class SpelTest extends LanguageTestSupport {
 

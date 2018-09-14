@@ -16,11 +16,11 @@
  */
 package org.apache.camel.language.spel;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
+
 import static org.apache.camel.language.spel.SpelExpression.spel;
 
 public class SpelRouteTest extends ContextTestSupport {

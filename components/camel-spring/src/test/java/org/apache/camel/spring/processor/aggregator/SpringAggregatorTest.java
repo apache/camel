@@ -18,6 +18,7 @@ package org.apache.camel.spring.processor.aggregator;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.aggregator.AggregatorTest;
+
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**

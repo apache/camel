@@ -16,9 +16,8 @@
  */
 package org.apache.camel.spring.mock;
 
-import org.junit.Test;
-
 import org.apache.camel.spring.ApplicationContextTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

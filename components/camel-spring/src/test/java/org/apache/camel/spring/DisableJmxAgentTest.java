@@ -16,10 +16,9 @@
  */
 package org.apache.camel.spring;
 
-import org.junit.Test;
-
 import javax.management.ObjectName;
 
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

@@ -16,9 +16,8 @@
  */
 package org.apache.camel.spring;
 
-import org.junit.Test;
-
 import org.apache.camel.TypeConverter;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

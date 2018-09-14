@@ -17,6 +17,7 @@
 package org.apache.camel.spring.remoting;
 
 import java.util.Date;
+
 import org.apache.camel.Produce;
 
 public class MultiArgumentsWithDefaultBinding {

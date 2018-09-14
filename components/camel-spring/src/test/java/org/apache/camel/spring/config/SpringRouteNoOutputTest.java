@@ -15,12 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.config;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

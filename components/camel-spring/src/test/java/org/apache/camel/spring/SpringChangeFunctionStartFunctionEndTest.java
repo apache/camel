@@ -15,11 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.spring;
-import org.junit.After;
-
-import org.junit.Test;
-
 import org.apache.camel.language.simple.SimpleLanguage;
+import org.junit.After;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

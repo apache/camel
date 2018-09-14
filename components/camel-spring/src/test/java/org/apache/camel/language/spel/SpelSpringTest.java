@@ -16,11 +16,10 @@
  */
 package org.apache.camel.language.spel;
 
-import org.junit.Test;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.spring.processor.SpringTestHelper;
+import org.junit.Test;
 
 /**
  * Test access to beans defined in Spring XML file from SpEL expressions/predicates.

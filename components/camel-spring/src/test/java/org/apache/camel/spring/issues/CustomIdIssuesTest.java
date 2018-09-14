@@ -16,14 +16,13 @@
  */
 package org.apache.camel.spring.issues;
 
-import org.junit.Test;
-
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.LogDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
