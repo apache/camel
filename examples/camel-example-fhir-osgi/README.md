@@ -57,7 +57,7 @@ The following messages should be displayed:
     2018-07-17 17:02:35,590 | INFO  | nt Dispatcher: 1 | FhirContext                      | 52 - ca.uhn.hapi.fhir.hapi-fhir-base - 3.3.0 | Creating new FHIR context for FHIR version [DSTU3]
     2018-07-17 17:02:35,631 | INFO  | nt Dispatcher: 1 | BlueprintCamelContext            | 59 - org.apache.camel.camel-blueprint - 2.23.0.SNAPSHOT | Route: fhir-example-osgi started and consuming from: file://work/fhir/input
     2018-07-17 17:02:35,631 | INFO  | nt Dispatcher: 1 | BlueprintCamelContext            | 59 - org.apache.camel.camel-blueprint - 2.23.0.SNAPSHOT | Total 1 routes, of which 1 are started
-    2018-07-17 17:02:35,632 | INFO  | nt Dispatcher: 1 | BlueprintCamelContext            | 59 - org.apache.camel.camel-blueprint - 2.23.0.SNAPSHOT | Apache Camel 2.23.0-SNAPSHOT (CamelContext: camel-fhir) started in 0.853 seconds
+    2018-07-17 17:02:35,632 | INFO  | nt Dispatcher: 1 | BlueprintCamelContext            | 59 - org.apache.camel.camel-blueprint - 2.23.0.SNAPSHOT | Apache Camel 3.0.0-SNAPSHOT (CamelContext: camel-fhir) started in 0.853 seconds
     2018-07-17 17:03:06,157 | INFO  | /work/fhir/input | fhir-example-osgi                | 61 - org.apache.camel.camel-core - 2.23.0.SNAPSHOT | Converting hl7v2.patient
     2018-07-17 17:03:06,577 | INFO  | /work/fhir/input | fhir-example-osgi                | 61 - org.apache.camel.camel-core - 2.23.0.SNAPSHOT | Inserting Patient: {"resourceType":"Patient","id":"100005056","name":[{"family":"Freeman","given":["Vincent"]}]}
     2018-07-17 17:03:08,829 | INFO  | d #2 - CamelFhir | fhir-example-osgi                | 61 - org.apache.camel.camel-core - 2.23.0.SNAPSHOT | Patient created successfully: true
@@ -124,12 +124,12 @@ shutdown:
     ```
     2018-07-17 17:09:32,418 | INFO  | xample-fhir-osgi | BlueprintExtender                | 12 - org.apache.aries.blueprint.core - 1.8.3 | Destroying BlueprintContainer for bundle org.apache.camel.example.camel-example-fhir-osgi/2.23.0.SNAPSHOT
     2018-07-17 17:09:32,420 | INFO  | nt Dispatcher: 1 | BlueprintCamelContext            | 59 - org.apache.camel.camel-blueprint - 2.23.0.SNAPSHOT | Stopping CamelContext: camel-fhir
-    2018-07-17 17:09:32,421 | INFO  | nt Dispatcher: 1 | BlueprintCamelContext            | 59 - org.apache.camel.camel-blueprint - 2.23.0.SNAPSHOT | Apache Camel 2.23.0-SNAPSHOT (CamelContext: camel-fhir) is shutting down
+    2018-07-17 17:09:32,421 | INFO  | nt Dispatcher: 1 | BlueprintCamelContext            | 59 - org.apache.camel.camel-blueprint - 2.23.0.SNAPSHOT | Apache Camel 3.0.0-SNAPSHOT (CamelContext: camel-fhir) is shutting down
     2018-07-17 17:09:32,423 | INFO  | nt Dispatcher: 1 | DefaultShutdownStrategy          | 61 - org.apache.camel.camel-core - 2.23.0.SNAPSHOT | Starting to graceful shutdown 1 routes (timeout 300 seconds)
     2018-07-17 17:09:32,427 | INFO  | 3 - ShutdownTask | DefaultShutdownStrategy          | 61 - org.apache.camel.camel-core - 2.23.0.SNAPSHOT | Route: fhir-example-osgi shutdown complete, was consuming from: file://work/fhir/input
     2018-07-17 17:09:32,428 | INFO  | nt Dispatcher: 1 | DefaultShutdownStrategy          | 61 - org.apache.camel.camel-core - 2.23.0.SNAPSHOT | Graceful shutdown of 1 routes completed in 0 seconds
-    2018-07-17 17:09:32,438 | INFO  | nt Dispatcher: 1 | BlueprintCamelContext            | 59 - org.apache.camel.camel-blueprint - 2.23.0.SNAPSHOT | Apache Camel 2.23.0-SNAPSHOT (CamelContext: camel-fhir) uptime 6 minutes
-    2018-07-17 17:09:32,438 | INFO  | nt Dispatcher: 1 | BlueprintCamelContext            | 59 - org.apache.camel.camel-blueprint - 2.23.0.SNAPSHOT | Apache Camel 2.23.0-SNAPSHOT (CamelContext: camel-fhir) is shutdown in 0.017 seconds
+    2018-07-17 17:09:32,438 | INFO  | nt Dispatcher: 1 | BlueprintCamelContext            | 59 - org.apache.camel.camel-blueprint - 2.23.0.SNAPSHOT | Apache Camel 3.0.0-SNAPSHOT (CamelContext: camel-fhir) uptime 6 minutes
+    2018-07-17 17:09:32,438 | INFO  | nt Dispatcher: 1 | BlueprintCamelContext            | 59 - org.apache.camel.camel-blueprint - 2.23.0.SNAPSHOT | Apache Camel 3.0.0-SNAPSHOT (CamelContext: camel-fhir) is shutdown in 0.017 seconds
     ```
 
 ### Forum, Help, etc

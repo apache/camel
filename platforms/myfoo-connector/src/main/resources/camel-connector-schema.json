@@ -14,7 +14,7 @@
     "javaType":"org.myfoo.connector.MyFooComponent",
     "groupId":"org.apache.camel",
     "artifactId":"myfoo-connector",
-    "version":"2.23.0-SNAPSHOT"
+    "version":"3.0.0-SNAPSHOT"
   },
   "componentProperties":{
     
