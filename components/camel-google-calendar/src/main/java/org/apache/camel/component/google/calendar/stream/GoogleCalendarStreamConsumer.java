@@ -42,12 +42,10 @@ import org.slf4j.LoggerFactory;
 public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleCalendarStreamConsumer.class);
-    private String calendarId;
     private DateTime lastUpdate;
 
-    public GoogleCalendarStreamConsumer(Endpoint endpoint, Processor processor, String calendarId) {
+    public GoogleCalendarStreamConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        this.calendarId = calendarId;
     }
 
     protected GoogleCalendarStreamConfiguration getConfiguration() {
@@ -65,7 +63,7 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
 
     @Override
     protected int poll() throws Exception {
-        com.google.api.services.calendar.Calendar.Events.List request = getClient().events().list(calendarId).setOrderBy("updated");
+        com.google.api.services.calendar.Calendar.Events.List request = getClient().events().list(getConfiguration().getCalendarId()).setOrderBy("updated");
         if (ObjectHelper.isNotEmpty(getConfiguration().getQuery())) {
             request.setQ(getConfiguration().getQuery());
         }

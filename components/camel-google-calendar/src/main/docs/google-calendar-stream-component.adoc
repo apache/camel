@@ -87,7 +87,7 @@ with the following path and query parameters:
 | *accessToken* (consumer) | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
 | *applicationName* (consumer) | Google Calendar application name. Example would be camel-google-calendar/1.0 |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *calendarSummaryName* (consumer) | Calendar Summary Name to use | primary | String
+| *calendarId* (consumer) | The calendarId to be used | primary | String
 | *clientId* (consumer) | Client ID of the mail application |  | String
 | *clientSecret* (consumer) | Client secret of the mail application |  | String
 | *considerLastUpdate* (consumer) | Take into account the lastUpdate of the last event polled as start date for the next poll | false | boolean
