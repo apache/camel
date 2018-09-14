@@ -137,7 +137,7 @@ public class PahoEndpoint extends DefaultEndpoint {
             return connectOptions;
         }
         
-        if(resolveMqttConnectOptions) {
+        if (resolveMqttConnectOptions) {
             Set<MqttConnectOptions> connectOptions = getCamelContext().getRegistry().findByType(MqttConnectOptions.class);
             if (connectOptions.size() == 1) {
                 LOG.info("Single MqttConnectOptions instance found in the registry. It will be used by the endpoint.");
