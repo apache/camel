@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy;
+import org.apache.camel.routepolicy.quartz2.CronScheduledRoutePolicy;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;

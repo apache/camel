@@ -35,7 +35,6 @@
     <module>camel-package-maven-plugin</module>
     <module>camel-maven-plugin</module>
     <module>camel-eip-documentation-enricher-maven-plugin</module>
-    <module>guice-maven-plugin</module>
     <module>camel-api-component-maven-plugin</module>
     <module>bom-generator-maven-plugin</module>
     <module>camel-restdsl-swagger-plugin</module>

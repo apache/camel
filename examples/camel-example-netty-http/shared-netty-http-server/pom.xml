@@ -34,8 +34,8 @@
 
   <properties>
     <camel.osgi.import.pkg>
-      org.apache.camel.component.netty,
-      org.apache.camel.component.netty.http,
+      org.apache.camel.component.netty4,
+      org.apache.camel.component.netty4.http,
       org.osgi.service.blueprint
     </camel.osgi.import.pkg>
     <camel.osgi.export.pkg>

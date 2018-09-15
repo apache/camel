@@ -128,13 +128,6 @@
     <!-- test dependencies -->
 
     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-context</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>

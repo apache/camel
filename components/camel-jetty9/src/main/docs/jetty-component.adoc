@@ -621,7 +621,7 @@ internally.
 === Default behavior for returning HTTP status codes
 
 The default behavior of HTTP status codes is defined by the
-`org.apache.camel.component.http.DefaultHttpBinding` class, which
+`org.apache.camel.component.http4.DefaultHttpBinding` class, which
 handles how a response is written and also sets the HTTP status code.
 
 If the exchange was processed successfully, the 200 HTTP status code is
@@ -634,7 +634,7 @@ specify which HTTP status code to return, set the code in the
 === Customizing HttpBinding
 
 By default, Camel uses the
-`org.apache.camel.component.http.DefaultHttpBinding` to handle how a
+`org.apache.camel.component.http4.DefaultHttpBinding` to handle how a
 response is written. If you like, you can customize this behavior either
 by implementing your own `HttpBinding` class or by extending
 `DefaultHttpBinding` and overriding the appropriate methods.

@@ -116,7 +116,6 @@
     <module>camel-aws-starter</module>
     <module>camel-aws-xray-starter</module>
     <module>camel-azure-starter</module>
-    <module>camel-bam-starter</module>
     <module>camel-barcode-starter</module>
     <module>camel-base64-starter</module>
     <module>camel-bean-validator-starter</module>
@@ -127,7 +126,6 @@
     <module>camel-boon-starter</module>
     <module>camel-box-starter</module>
     <module>camel-braintree-starter</module>
-    <module>camel-cache-starter</module>
     <module>camel-caffeine-starter</module>
     <module>camel-cassandraql-starter</module>
     <module>camel-chronicle-starter</module>
@@ -137,7 +135,6 @@
     <module>camel-coap-starter</module>
     <module>camel-cometd-starter</module>
     <module>camel-consul-starter</module>
-    <module>camel-context-starter</module>
     <module>camel-core-starter</module>
     <module>camel-couchbase-starter</module>
     <module>camel-couchdb-starter</module>
@@ -153,11 +150,8 @@
     <module>camel-dozer-starter</module>
     <module>camel-drill-starter</module>
     <module>camel-dropbox-starter</module>
-    <module>camel-eclipse-starter</module>
     <module>camel-ehcache-starter</module>
     <module>camel-elasticsearch-rest-starter</module>
-    <module>camel-elasticsearch-starter</module>
-    <module>camel-elasticsearch5-starter</module>
     <module>camel-elsql-starter</module>
     <module>camel-etcd-starter</module>
     <module>camel-exec-starter</module>
@@ -184,17 +178,13 @@
     <module>camel-grpc-starter</module>
     <module>camel-gson-starter</module>
     <module>camel-guava-eventbus-starter</module>
-    <module>camel-guice-starter</module>
-    <module>camel-hawtdb-starter</module>
     <module>camel-hazelcast-starter</module>
     <module>camel-hbase-starter</module>
-    <module>camel-hdfs-starter</module>
     <module>camel-hdfs2-starter</module>
     <module>camel-headersmap-starter</module>
     <module>camel-hipchat-starter</module>
     <module>camel-hl7-starter</module>
     <module>camel-http-common-starter</module>
-    <module>camel-http-starter</module>
     <module>camel-http4-starter</module>
     <module>camel-hystrix-starter</module>
     <module>camel-ical-starter</module>
@@ -207,7 +197,6 @@
     <module>camel-jackson-starter</module>
     <module>camel-jacksonxml-starter</module>
     <module>camel-jasypt-starter</module>
-    <module>camel-javaspace-starter</module>
     <module>camel-jaxb-starter</module>
     <module>camel-jbpm-starter</module>
     <module>camel-jcache-starter</module>
@@ -220,7 +209,6 @@
     <module>camel-jgroups-starter</module>
     <module>camel-jibx-starter</module>
     <module>camel-jing-starter</module>
-    <module>camel-jira-starter</module>
     <module>camel-jms-starter</module>
     <module>camel-jmx-starter</module>
     <module>camel-johnzon-starter</module>
@@ -231,8 +219,6 @@
     <module>camel-jsonpath-starter</module>
     <module>camel-jt400-starter</module>
     <module>camel-kafka-starter</module>
-    <module>camel-kestrel-starter</module>
-    <module>camel-krati-starter</module>
     <module>camel-kubernetes-starter</module>
     <module>camel-kura-starter</module>
     <module>camel-ldap-starter</module>
@@ -251,7 +237,6 @@
     <module>camel-mina2-starter</module>
     <module>camel-mllp-starter</module>
     <module>camel-mongodb-gridfs-starter</module>
-    <module>camel-mongodb-starter</module>
     <module>camel-mongodb3-starter</module>
     <module>camel-mqtt-starter</module>
     <module>camel-msv-starter</module>
@@ -260,14 +245,11 @@
     <module>camel-mybatis-starter</module>
     <module>camel-nagios-starter</module>
     <module>camel-nats-starter</module>
-    <module>camel-netty-http-starter</module>
-    <module>camel-netty-starter</module>
     <module>camel-netty4-http-starter</module>
     <module>camel-netty4-starter</module>
     <module>camel-ognl-starter</module>
     <module>camel-olingo2-starter</module>
     <module>camel-olingo4-starter</module>
-    <module>camel-openshift-starter</module>
     <module>camel-openstack-starter</module>
     <module>camel-opentracing-starter</module>
     <module>camel-optaplanner-starter</module>
@@ -286,9 +268,7 @@
     <module>camel-restlet-starter</module>
     <module>camel-ribbon-starter</module>
     <module>camel-rmi-starter</module>
-    <module>camel-routebox-starter</module>
     <module>camel-rss-starter</module>
-    <module>camel-rx-starter</module>
     <module>camel-rxjava2-starter</module>
     <module>camel-salesforce-starter</module>
     <module>camel-sap-netweaver-starter</module>
@@ -298,7 +278,6 @@
     <module>camel-service-starter</module>
     <module>camel-servicenow-starter</module>
     <module>camel-servlet-starter</module>
-    <module>camel-servletlistener-starter</module>
     <module>camel-shiro-starter</module>
     <module>camel-sip-starter</module>
     <module>camel-sjms-starter</module>
@@ -341,7 +320,6 @@
     <module>camel-twitter-starter</module>
     <module>camel-undertow-starter</module>
     <module>camel-univocity-parsers-starter</module>
-    <module>camel-urlrewrite-starter</module>
     <module>camel-velocity-starter</module>
     <module>camel-vertx-starter</module>
     <module>camel-weather-starter</module>
@@ -349,7 +327,6 @@
     <module>camel-websocket-starter</module>
     <module>camel-wordpress-starter</module>
     <module>camel-xchange-starter</module>
-    <module>camel-xmlrpc-starter</module>
     <module>camel-xmlsecurity-starter</module>
     <module>camel-xmpp-starter</module>
     <module>camel-xstream-starter</module>

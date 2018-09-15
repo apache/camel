@@ -41,11 +41,8 @@
     <module>camel-archetype-component</module>
     <module>camel-archetype-connector</module>
     <module>camel-archetype-dataformat</module>
-    <module>camel-archetype-groovy</module>
     <module>camel-archetype-java</module>
     <module>camel-archetype-java8</module>
-    <module>camel-archetype-scala</module>
-    <module>camel-archetype-scr</module>
     <module>camel-archetype-spring</module>
     <module>camel-archetype-spring-boot</module>
     <module>camel-archetype-web</module>

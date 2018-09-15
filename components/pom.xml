@@ -36,7 +36,6 @@
   <modules>
     <!-- we want to test these modules first to catch any errors early as possible -->
     <module>camel-test</module>
-    <module>camel-testng</module>
     <module>camel-test-blueprint</module>
     <module>camel-test-cdi</module>
     <module>camel-test-karaf</module>
@@ -47,12 +46,8 @@
     <module>camel-core-xml</module>
     <module>camel-blueprint</module>
     <module>camel-spring</module>
-    <module>camel-bam</module>
     <module>camel-groovy</module>
-    <module>camel-groovy-dsl</module>
-    <module>camel-scala</module>
     <module>camel-http-common</module>
-    <module>camel-http</module>
     <module>camel-http4</module>
     <module>camel-hystrix</module>
     <module>camel-jetty-common</module>
@@ -94,7 +89,6 @@
     <module>camel-boon</module>
     <module>camel-box</module>
     <module>camel-braintree</module>
-    <module>camel-cache</module>
     <module>camel-caffeine</module>
     <module>camel-cassandraql</module>
     <module>camel-cdi</module>
@@ -105,7 +99,6 @@
     <module>camel-coap</module>
     <module>camel-cometd</module>
     <module>camel-consul</module>
-    <module>camel-context</module>
     <module>camel-couchbase</module>
     <module>camel-couchdb</module>
     <module>camel-crypto</module>
@@ -118,11 +111,8 @@
     <module>camel-dozer</module>
     <module>camel-drill</module>
     <module>camel-dropbox</module>
-    <module>camel-eclipse</module>
     <module>camel-ehcache</module>
     <module>camel-ejb</module>
-    <module>camel-elasticsearch</module>
-    <module>camel-elasticsearch5</module>
     <module>camel-elasticsearch-rest</module>
     <module>camel-elsql</module>
     <module>camel-etcd</module>
@@ -151,16 +141,12 @@
     <module>camel-grpc</module>
     <module>camel-gson</module>
     <module>camel-guava-eventbus</module>
-    <module>camel-guice</module>
-    <module>camel-hawtdb</module>
     <module>camel-hazelcast</module>
     <module>camel-hbase</module>
-    <module>camel-hdfs</module>
     <module>camel-hdfs2</module>
     <module>camel-headersmap</module>
     <module>camel-hipchat</module>
     <module>camel-hl7</module>
-    <module>camel-ibatis</module>
     <module>camel-ical</module>
     <module>camel-iec60870</module>
     <module>camel-ignite</module>
@@ -170,7 +156,6 @@
     <module>camel-ironmq</module>
     <module>camel-jackson</module>
     <module>camel-jacksonxml</module>
-    <module>camel-javaspace</module>
     <module>camel-jaxb</module>
     <module>camel-jasypt</module>
     <module>camel-jbpm</module>
@@ -182,7 +167,6 @@
     <!-- camel-jibx doesn't work under JDK8, but may be build without tests -->
     <module>camel-jibx</module>
     <module>camel-jing</module>
-    <module>camel-jira</module>
     <module>camel-jmx</module>
     <module>camel-jolt</module>
     <module>camel-johnzon</module>
@@ -191,8 +175,6 @@
     <module>camel-jsch</module>
     <module>camel-jt400</module>
     <module>camel-kafka</module>
-    <module>camel-kestrel</module>
-    <module>camel-krati</module>
     <module>camel-kubernetes</module>
     <module>camel-kura</module>
     <module>camel-ldap</module>
@@ -207,10 +189,8 @@
     <module>camel-metrics</module>
     <module>camel-micrometer</module>
     <module>camel-milo</module>
-    <module>camel-mina</module>
     <module>camel-mina2</module>
     <module>camel-mllp</module>
-    <module>camel-mongodb</module>
     <module>camel-mongodb3</module>
     <module>camel-mongodb-gridfs</module>
     <module>camel-mqtt</module>
@@ -220,14 +200,11 @@
     <module>camel-mybatis</module>
     <module>camel-nagios</module>
     <module>camel-nats</module>
-    <module>camel-netty</module>
     <module>camel-netty4</module>
-    <module>camel-netty-http</module>
     <module>camel-netty4-http</module>
     <module>camel-ognl</module>
     <module>camel-olingo2</module>
     <module>camel-olingo4</module>
-    <module>camel-openshift</module>
     <module>camel-openstack</module>
     <module>camel-opentracing</module>
     <module>camel-optaplanner</module>
@@ -238,7 +215,6 @@
     <module>camel-printer</module>
     <module>camel-protobuf</module>
     <module>camel-pubnub</module>
-    <module>camel-quartz</module>
     <module>camel-quartz2</module>
     <module>camel-quickfix</module>
     <module>camel-rabbitmq</module>
@@ -247,19 +223,15 @@
     <module>camel-rest-swagger</module>
     <module>camel-restlet</module>
     <module>camel-rmi</module>
-    <module>camel-routebox</module>
     <module>camel-rss</module>
-    <module>camel-rx</module>
     <module>camel-rxjava2</module>
     <module>camel-sap-netweaver</module>
     <module>camel-saxon</module>
     <module>camel-salesforce</module>
     <module>camel-schematron</module>
-    <module>camel-scr</module>
     <module>camel-script</module>
     <module>camel-servicenow</module>
     <module>camel-servlet</module>
-    <module>camel-servletlistener</module>
     <module>camel-shiro</module>
     <module>camel-sip</module>
     <module>camel-smpp</module>
@@ -292,7 +264,6 @@
     <module>camel-stream</module>
     <module>camel-stringtemplate</module>
     <module>camel-syslog</module>
-    <module>camel-swagger</module>
     <module>camel-swagger-java</module>
     <module>camel-tagsoup</module>
     <module>camel-tarfile</module>
@@ -302,7 +273,6 @@
     <module>camel-twilio</module>
     <module>camel-twitter</module>
     <module>camel-univocity-parsers</module>
-    <module>camel-urlrewrite</module>
     <module>camel-velocity</module>
     <module>camel-vertx</module>
     <module>camel-weather</module>
@@ -310,7 +280,6 @@
     <module>camel-websocket</module>
     <module>camel-wordpress</module>
     <module>camel-xchange</module>
-    <module>camel-xmlrpc</module>
     <module>camel-xmlsecurity</module>
     <module>camel-xmpp</module>
     <module>camel-xstream</module>

@@ -23,7 +23,7 @@
            http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
 
   <!-- reference the shared http server -->
-  <reference id="sharedNettyHttpServer" interface="org.apache.camel.component.netty.http.NettySharedHttpServer"/>
+  <reference id="sharedNettyHttpServer" interface="org.apache.camel.component.netty4.http.NettySharedHttpServer"/>
 
   <!-- Camel application which uses the netty-http component and the shared Netty HTTP server -->
   <camelContext xmlns="http://camel.apache.org/schema/blueprint">

@@ -90,11 +90,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-http</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-http4</artifactId>
       <scope>test</scope>
     </dependency>
@@ -105,12 +100,12 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-netty-http</artifactId>
+      <artifactId>camel-netty4-http</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-quartz</artifactId>
+      <artifactId>camel-quartz2</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -168,10 +163,10 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-	  <groupId>org.apache.camel</groupId>
-	  <artifactId>camel-netty</artifactId>
-	  <scope>test</scope>
-	</dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-netty4</artifactId>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-shiro</artifactId>
@@ -241,6 +236,11 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
