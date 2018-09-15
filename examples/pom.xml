@@ -39,7 +39,6 @@
     <module>camel-example-aggregate</module>
     <module>camel-example-artemis-amqp-blueprint</module>
     <module>camel-example-artemis-large-messages</module>
-    <module>camel-example-bam</module>
     <module>camel-example-cafe</module>
     <module>camel-example-cassandra-kubernetes</module>
     <module>camel-example-cdi</module>
@@ -51,7 +50,6 @@
     <module>camel-example-fhir-spring-boot</module>
     <module>camel-example-cdi-kubernetes</module>
     <module>camel-example-cdi-metrics</module>
-    <module>camel-example-cdi-osgi</module>
     <module>camel-example-cdi-properties</module>
     <module>camel-example-cdi-rest-servlet</module>
     <module>camel-example-cdi-test</module>
@@ -64,13 +62,10 @@
     <module>camel-example-ehcache-blueprint</module>
     <module>camel-example-ftp</module>
     <module>camel-example-google-pubsub</module>
-    <module>camel-example-guice-jms</module>
-    <module>camel-example-groovy</module>
     <module>camel-example-grpc-kubernetes</module>
     <module>camel-example-hazelcast-kubernetes</module>
     <module>camel-example-hystrix</module>
     <module>camel-example-java8</module>
-    <module>camel-example-java8-rx</module>
     <module>camel-example-jdbc</module>
     <module>camel-example-jmx</module>
     <module>camel-example-jms-file</module>
@@ -96,11 +91,8 @@
     <module>camel-example-rest-swagger</module>
     <module>camel-example-restlet-jdbc</module>
     <module>camel-example-route-throttling</module>
-    <module>camel-example-scala</module>
-    <module>camel-example-servlet-httpregistry-blueprint</module>
     <module>camel-example-servlet-rest-blueprint</module>
     <module>camel-example-servlet-tomcat</module>
-    <module>camel-example-servlet-tomcat-no-spring</module>
     <module>camel-example-simplejirabot</module>
     <module>camel-example-spark-rest</module>
     <module>camel-example-splunk</module>

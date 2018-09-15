@@ -66,8 +66,8 @@
           <instructions>
             <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
             <Import-Package>
-              org.apache.camel.component.netty,
-              org.apache.camel.component.netty.http,
+              org.apache.camel.component.netty4,
+              org.apache.camel.component.netty4.http,
               org.apache.camel.spi,
               *
             </Import-Package>

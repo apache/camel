@@ -143,7 +143,7 @@ with the following path and query parameters:
 | *udpByteArrayCodec* (advanced) | For UDP only. If enabled the using byte array codec instead of Java serialization protocol. | false | boolean
 | *workerCount* (advanced) | When netty works on nio mode, it uses default workerCount parameter from Netty, which is cpu_core_threads x 2. User can use this operation to override the default workerCount from Netty. |  | int
 | *workerGroup* (advanced) | To use a explicit EventLoopGroup as the boss thread pool. For example to share a thread pool with multiple consumers or producers. By default each consumer or producer has their own worker pool with 2 x cpu count core threads. |  | EventLoopGroup
-| *allowDefaultCodec* (codec) | The netty component installs a default codec if both, encoder/decoder is null and textline is false. Setting allowDefaultCodec to false prevents the netty component from installing a default codec as the first element in the filter chain. | true | boolean
+| *allowDefaultCodec* (codec) | The netty component installs a default codec if both, encoder/deocder is null and textline is false. Setting allowDefaultCodec to false prevents the netty component from installing a default codec as the first element in the filter chain. | true | boolean
 | *autoAppendDelimiter* (codec) | Whether or not to auto append missing end delimiter when sending using the textline codec. | true | boolean
 | *decoder* (codec) | *Deprecated* A custom ChannelHandler class that can be used to perform special marshalling of inbound payloads. |  | ChannelHandler
 | *decoderMaxLineLength* (codec) | The max line length to use for the textline codec. | 1024 | int
@@ -179,7 +179,7 @@ The component supports 78 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.netty4.configuration.allow-default-codec* | The netty component installs a default codec if both, encoder/decoder is null and textline is false. Setting allowDefaultCodec to false prevents the netty component from installing a default codec as the first element in the filter chain. | true | Boolean
+| *camel.component.netty4.configuration.allow-default-codec* | The netty component installs a default codec if both, encoder/deocder is null and textline is false. Setting allowDefaultCodec to false prevents the netty component from installing a default codec as the first element in the filter chain. | true | Boolean
 | *camel.component.netty4.configuration.allow-serialized-headers* | Only used for TCP when transferExchange is true. When set to true, serializable objects in headers and properties will be added to the exchange. Otherwise Camel will exclude any non-serializable objects and log it at WARN level. | false | Boolean
 | *camel.component.netty4.configuration.auto-append-delimiter* | Whether or not to auto append missing end delimiter when sending using the textline codec. | true | Boolean
 | *camel.component.netty4.configuration.backlog* | Allows to configure a backlog for netty consumer (server). Note the backlog is just a best effort depending on the OS. Setting this option to a value such as 200, 500 or 1000, tells the TCP stack how long the accept queue can be If this option is not configured, then the backlog depends on OS setting. |  | Integer

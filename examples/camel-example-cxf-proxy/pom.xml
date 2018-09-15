@@ -60,7 +60,7 @@
 
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-http</artifactId>
+      <artifactId>camel-http4</artifactId>
     </dependency>
 
     <dependency>
