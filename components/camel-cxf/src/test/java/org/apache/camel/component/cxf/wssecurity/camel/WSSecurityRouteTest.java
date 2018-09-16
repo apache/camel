@@ -15,9 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf.wssecurity.camel;
-import org.junit.Before;
-import org.junit.After;
-
 import java.net.URL;
 
 import javax.xml.ws.BindingProvider;

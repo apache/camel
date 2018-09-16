@@ -18,7 +18,9 @@ package org.apache.camel.component.cxf.spring;
 
 import java.util.List;
 import java.util.Map;
+
 import org.w3c.dom.Element;
+
 import org.apache.cxf.jaxrs.model.UserResource;
 import org.apache.cxf.jaxrs.utils.ResourceUtils;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;

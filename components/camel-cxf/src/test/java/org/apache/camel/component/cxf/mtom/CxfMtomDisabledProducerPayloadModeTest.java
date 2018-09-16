@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.cxf.mtom;
 
-import org.junit.Test;
-
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -49,6 +47,7 @@ import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.Assert;
+import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 
 
