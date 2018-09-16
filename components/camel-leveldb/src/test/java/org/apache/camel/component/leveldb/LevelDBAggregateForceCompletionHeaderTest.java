@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.leveldb;
-import org.junit.Before;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 
 /**

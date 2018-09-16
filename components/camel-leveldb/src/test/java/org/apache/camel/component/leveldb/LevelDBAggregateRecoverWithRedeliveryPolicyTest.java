@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.leveldb;
-import org.junit.Before;
-
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -25,6 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 
 public class LevelDBAggregateRecoverWithRedeliveryPolicyTest extends CamelTestSupport {
