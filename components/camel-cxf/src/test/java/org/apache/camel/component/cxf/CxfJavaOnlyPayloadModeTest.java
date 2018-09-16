@@ -17,6 +17,7 @@
 
 package org.apache.camel.component.cxf;
 import org.w3c.dom.Document;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;

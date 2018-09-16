@@ -27,7 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.Test;
 
 

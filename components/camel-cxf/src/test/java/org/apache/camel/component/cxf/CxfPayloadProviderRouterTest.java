@@ -16,9 +16,6 @@
  */
 
 package org.apache.camel.component.cxf;
-import org.junit.Before;
-import org.junit.After;
-
 import javax.xml.namespace.QName;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.Service;

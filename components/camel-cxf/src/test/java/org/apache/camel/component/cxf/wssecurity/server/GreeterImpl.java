@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf.wssecurity.server;
 
 import java.util.logging.Logger;
+
 import org.apache.camel.hello_world_soap_http.Greeter;
 
 @javax.jws.WebService(serviceName = "GreeterService",
