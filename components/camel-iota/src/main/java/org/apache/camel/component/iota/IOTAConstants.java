@@ -31,7 +31,7 @@ public final class IOTAConstants {
     protected static final int TAG_LENGTH = Constants.TAG_LENGTH;
     protected static final int MESSAGE_LENGTH = Constants.MESSAGE_LENGTH;
 
-    protected static final String SEND_TRANSFER_OPERATION = "sendTranfer";
+    protected static final String SEND_TRANSFER_OPERATION = "sendTransfer";
     protected static final String GET_NEW_ADDRESS_OPERATION = "getNewAddress";
 
     private IOTAConstants() {

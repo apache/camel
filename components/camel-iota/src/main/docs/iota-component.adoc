@@ -42,7 +42,7 @@ iota:name?url=nodeurl[&moreOptions...]
 |===
 | Name | Description | Default | Type
 | *url* (common) | *Required* Node url |  | String
-| *operation* (producer) | *Required* Supported operations are 'sendTranfer', 'getNewAddress' |  | String
+| *operation* (producer) | *Required* Supported operations are 'sendTransfer', 'getNewAddress' |  | String
 | *tag* (producer) | TAG |  | String
 | *securityLevel* (producer) | Address security level | 1 | int
 | *minWeightMagnitude* (producer) | The minWeightMagnitude is the minimum number of zeroes that a proof-of-work output/transaction hash must end with to be considered valid by full nodes | 14 | int
@@ -87,11 +87,35 @@ The following route defined in Spring XML send a message to tangle
   <setHeader headerName="CamelIOTAToAddress">
   	<constant>RECIPIENTADDRESS</constant>
   </setHeader>
+  <setHeader headerName="CamelIOTAToAddress">
+  	<constant>RECIPIENTADDRESS</constant>
+  </setHeader>
   
-  <to uri="iota:good?url=https://node.iota.org:443" />
+  <to uri="iota:good?url=https://node.iota.org:443&operation=sendTransfer" />
   <to uri="direct:result" />
 </route>
 ---------------------------------------------------------------------------------------------------------------------------
+
+The following route defined in Spring XML create a new address
+
+*Create a new address*
+
+[source,xml]
+---------------------------------------------------------------------------------------------------------------------------
+<route>
+  <from uri="direct:start" />
+  <setHeader headerName="CamelIOTASeed">
+  	<constant>MYSEEDHERE</constant>
+  </setHeader>
+  <setHeader headerName="CamelIOTAAddressIndex">
+  	<constant>1</constant>
+  </setHeader>
+  
+  <to uri="iota:good?url=https://node.iota.org:443&operation=getNewAddress" />
+  <to uri="direct:result" />
+</route>
+---------------------------------------------------------------------------------------------------------------------------
+
 
 === See also
 

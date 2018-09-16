@@ -179,7 +179,7 @@ public class IOTAEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Supported operations are 'sendTranfer', 'getNewAddress'
+     * Supported operations are 'sendTransfer', 'getNewAddress'
      * 
      * @param operation
      */

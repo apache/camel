@@ -29,7 +29,7 @@ public class IOTAProducerTest extends CamelTestSupport {
     private static final String IOTA_NODE_URL = "https://nodes.thetangle.org:443";
 
     @Test
-    public void sendTranferTest() throws Exception {
+    public void sendTransferTest() throws Exception {
         final String message = "ILOVEAPACHECAMEL";
 
         MockEndpoint mock = getMockEndpoint("mock:iota-send-message-response");
