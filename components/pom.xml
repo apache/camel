@@ -168,6 +168,7 @@
     <module>camel-ignite</module>
     <module>camel-infinispan</module>
     <module>camel-influxdb</module>
+    <module>camel-iota</module>
     <module>camel-irc</module>
     <module>camel-ironmq</module>
     <module>camel-jackson</module>
@@ -394,7 +395,7 @@
     <profile>
       <id>validate</id>
       <build>
-        <plugins>           
+        <plugins>
           <!-- to validate Camel endpoints: mvn camel:validate -Pvalidate -->
           <plugin>
             <groupId>org.apache.camel</groupId>

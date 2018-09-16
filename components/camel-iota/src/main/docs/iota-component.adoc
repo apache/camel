@@ -1,0 +1,99 @@
+[[iota-component]]
+== IOTA Component
+
+*Available as of Camel version 2.23*
+
+According to IOTA Official site: "IOTA is the first open-source distributed ledger that is being built to power the future of the Internet of Things with feeless microtransactions and data integrity for machines."
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-iota</artifactId>
+    <version>x.y.z</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+=== URI format
+
+[source,java]
+---------------------------------------------------------------------------------------------------------------
+iota:name?url=nodeurl[&moreOptions...]
+---------------------------------------------------------------------------------------------------------------
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *name* | *Required* Name of component to use. |  | String
+|===
+
+
+==== Query Parameters (5 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *url* (common) | *Required* Node url |  | String
+| *operation* (producer) | *Required* Supported operations are 'sendTranfer', 'getNewAddress' |  | String
+| *tag* (producer) | TAG |  | String
+| *securityLevel* (producer) | Address security level | 1 | int
+| *minWeightMagnitude* (producer) | The minWeightMagnitude is the minimum number of zeroes that a proof-of-work output/transaction hash must end with to be considered valid by full nodes | 14 | int
+| *depth* (producer) | The depth determines how deep the tangle is analysed for getting Tips | 9 | int
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.iota.enabled* | Enable IOTA component | true | Boolean
+| *camel.component.iota.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+=== Sample route
+
+The following route defined in Spring XML send a message to tangle
+
+*Send message to tangle*
+
+[source,xml]
+---------------------------------------------------------------------------------------------------------------------------
+<route>
+  <from uri="direct:start" />
+  <setMessage>
+  	<constant>Hello world!</constant>
+  </setMessage>
+  <setHeader headerName="CamelIOTASeed">
+  	<constant>MYSEEDHERE</constant>
+  </setHeader>
+  <setHeader headerName="CamelIOTAValue">
+  	<constant>1</constant>
+  </setHeader>
+  <setHeader headerName="CamelIOTAToAddress">
+  	<constant>RECIPIENTADDRESS</constant>
+  </setHeader>
+  
+  <to uri="iota:good?url=https://node.iota.org:443" />
+  <to uri="direct:result" />
+</route>
+---------------------------------------------------------------------------------------------------------------------------
+
+=== See also
+
+* https://www.iota.org/[IOTA website]
+* https://github.com/iotaledger/iota.lib.java[IOTA java lib]
