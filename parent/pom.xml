@@ -187,7 +187,7 @@
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
     <dozer-version>6.4.1</dozer-version>
     <drools-version>7.3.0.Final</drools-version>
-    <dropbox-version>3.0.8</dropbox-version>
+    <dropbox-version>3.0.9</dropbox-version>
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <egit-github-core-bundle-version>2.1.5_1</egit-github-core-bundle-version>
