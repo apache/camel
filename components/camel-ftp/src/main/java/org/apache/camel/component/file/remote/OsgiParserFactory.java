@@ -20,7 +20,6 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 import org.apache.camel.spi.ClassResolver;
-
 import org.apache.commons.net.ftp.Configurable;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFileEntryParser;

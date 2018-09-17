@@ -15,15 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.component.rabbitmq.qpid;
-import org.junit.Before;
-import org.junit.After;
-
-import org.junit.Test;
-
 import org.apache.camel.component.rabbitmq.RabbitMQRequeueIntTest;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.Test;
 
 public class RabbitMQRequeueQpidTest extends RabbitMQRequeueIntTest {
     @BeforeClass

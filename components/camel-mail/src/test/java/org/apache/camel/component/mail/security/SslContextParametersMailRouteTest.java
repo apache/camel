@@ -18,6 +18,7 @@ package org.apache.camel.component.mail.security;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.net.ssl.SSLHandshakeException;
 
 import org.apache.camel.CamelExecutionException;

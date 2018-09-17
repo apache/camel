@@ -16,9 +16,8 @@
  */
 package org.apache.camel.component.netty4.http;
 
-import org.junit.Test;
-
 import org.junit.Assert;
+import org.junit.Test;
 
 public class SecurityConstraintMappingTest extends Assert {
 

@@ -18,6 +18,7 @@ package org.apache.camel.component.mail;
 
 import java.util.Date;
 import java.util.Properties;
+
 import javax.mail.MessagingException;
 import javax.mail.NoSuchProviderException;
 import javax.mail.Session;

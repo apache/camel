@@ -18,6 +18,7 @@ package org.apache.camel.component.mail.mock;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.mail.Folder;
 import javax.mail.MessagingException;
 import javax.mail.Session;

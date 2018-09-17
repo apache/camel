@@ -15,12 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty.http;
-import org.junit.Before;
-import org.junit.After;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 public class NettyHttpBasicAuthConstraintMapperTest extends BaseNettyTest {

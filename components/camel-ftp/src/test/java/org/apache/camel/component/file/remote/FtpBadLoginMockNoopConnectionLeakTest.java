@@ -15,20 +15,20 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.remote;
-import org.junit.Before;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.net.SocketFactory;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.commons.net.ftp.FTPClient;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
