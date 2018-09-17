@@ -15,11 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.handler;
-import org.apache.camel.LoggingLevel;
+
 import org.apache.camel.Processor;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
-import org.apache.camel.builder.LoggingErrorHandlerBuilder;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 import org.apache.camel.util.IOHelper;
@@ -40,14 +39,6 @@ public class ErrorHandlerDefinitionParserTest extends Assert {
     @After
     public void tearDown() throws Exception {
         IOHelper.close(ctx);
-    }
-    
-    @Test
-    public void testLoggingErrorHandler() {
-        LoggingErrorHandlerBuilder errorHandler = ctx.getBean("loggingErrorHandler", LoggingErrorHandlerBuilder.class);
-        assertNotNull(errorHandler);
-        assertEquals("The log level should be INFO", LoggingLevel.INFO, errorHandler.getLevel());
-        assertEquals("The log name should be foo", "foo", errorHandler.getLogName());
     }
     
     @Test

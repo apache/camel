@@ -29,7 +29,6 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.builder.LoggingErrorHandlerBuilder;
 import org.apache.camel.core.xml.AbstractCamelFactoryBean;
 import org.apache.camel.model.RedeliveryPolicyDefinition;
 import org.apache.camel.processor.RedeliveryPolicy;
@@ -102,14 +101,6 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
             }
             if (executorServiceRef != null) {
                 handler.setExecutorServiceRef(executorServiceRef);
-            }
-        } else if (errorHandler instanceof LoggingErrorHandlerBuilder) {
-            LoggingErrorHandlerBuilder handler = (LoggingErrorHandlerBuilder) errorHandler;
-            if (level != null) {
-                handler.setLevel(level);
-            }
-            if (logName != null) {
-                handler.setLogName(logName);
             }
         }
         return errorHandler;

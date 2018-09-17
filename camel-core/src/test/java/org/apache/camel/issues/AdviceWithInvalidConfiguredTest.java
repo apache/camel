@@ -32,7 +32,7 @@ public class AdviceWithInvalidConfiguredTest extends ContextTestSupport {
             context.getRouteDefinition("route-a").adviceWith(context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    errorHandler(loggingErrorHandler());
+                    errorHandler(defaultErrorHandler());
 
                     interceptSendToEndpoint("direct:bar")
                         .skipSendToOriginalEndpoint()

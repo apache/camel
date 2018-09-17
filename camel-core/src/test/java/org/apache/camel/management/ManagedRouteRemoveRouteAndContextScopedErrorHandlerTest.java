@@ -77,8 +77,6 @@ public class ManagedRouteRemoveRouteAndContextScopedErrorHandlerTest extends Man
         // and the route scoped error handler should be removed
         set = mbeanServer.queryNames(new ObjectName("*:type=errorhandlers,*"), null);
         assertEquals(1, set.size());
-        // should be the context scoped logging error handler
-        assertTrue("Should be context scoped error handler: " + set, set.iterator().next().toString().contains("Logging"));
     }
 
     @Test
@@ -148,7 +146,7 @@ public class ManagedRouteRemoveRouteAndContextScopedErrorHandlerTest extends Man
             @Override
             public void configure() throws Exception {
                 // context scoped error handler
-                errorHandler(loggingErrorHandler("global"));
+                errorHandler(deadLetterChannel("log:global"));
 
                 from("seda:bar").routeId("bar")
                         .to("mock:result");
