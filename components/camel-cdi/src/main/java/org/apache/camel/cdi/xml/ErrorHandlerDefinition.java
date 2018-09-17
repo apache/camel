@@ -42,13 +42,7 @@ public class ErrorHandlerDefinition extends IdentifiedType {
     private Boolean deadLetterHandleNewException;
 
     @XmlAttribute
-    private LoggingLevel level;
-
-    @XmlAttribute
     private LoggingLevel rollbackLoggingLevel;
-
-    @XmlAttribute
-    private String logName;
 
     @XmlAttribute
     private Boolean useOriginalMessage;
@@ -104,28 +98,12 @@ public class ErrorHandlerDefinition extends IdentifiedType {
         this.deadLetterHandleNewException = deadLetterHandleNewException;
     }
 
-    public LoggingLevel getLevel() {
-        return level;
-    }
-
-    public void setLevel(LoggingLevel level) {
-        this.level = level;
-    }
-
     public LoggingLevel getRollbackLoggingLevel() {
         return rollbackLoggingLevel;
     }
 
     public void setRollbackLoggingLevel(LoggingLevel rollbackLoggingLevel) {
         this.rollbackLoggingLevel = rollbackLoggingLevel;
-    }
-
-    public String getLogName() {
-        return logName;
-    }
-
-    public void setLogName(String logName) {
-        this.logName = logName;
     }
 
     public Boolean getUseOriginalMessage() {

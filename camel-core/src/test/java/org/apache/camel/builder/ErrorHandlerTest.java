@@ -25,7 +25,6 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.FilterProcessor;
-import org.apache.camel.processor.LoggingErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.SendProcessor;
 import org.junit.After;
@@ -54,7 +53,7 @@ public class ErrorHandlerTest extends TestSupport {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 // use logging error handler
-                errorHandler(loggingErrorHandler("com.mycompany.foo"));
+                errorHandler(deadLetterChannel("log:com.mycompany.foo"));
 
                 // here is our regular route
                 from("seda:a").to("seda:b");
@@ -71,7 +70,7 @@ public class ErrorHandlerTest extends TestSupport {
             EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Channel channel = unwrapChannel(consumerRoute.getProcessor());
 
-            assertIsInstanceOf(LoggingErrorHandler.class, channel.getErrorHandler());
+            assertIsInstanceOf(DeadLetterChannel.class, channel.getErrorHandler());
 
             Processor processor = unwrap(channel.getNextProcessor());
             assertIsInstanceOf(SendProcessor.class, processor);
@@ -87,7 +86,7 @@ public class ErrorHandlerTest extends TestSupport {
                 // this route is using a nested logging error handler
                 from("seda:a")
                     // here we configure the logging error handler
-                    .errorHandler(loggingErrorHandler("com.mycompany.foo"))
+                    .errorHandler(deadLetterChannel("log:com.mycompany.foo"))
                     // and we continue with the routing here
                     .to("seda:b");
 
@@ -168,7 +167,7 @@ public class ErrorHandlerTest extends TestSupport {
         // START SNIPPET: e5
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("seda:a").errorHandler(loggingErrorHandler("FOO.BAR")).filter(body().isInstanceOf(String.class)).to("seda:b");
+                from("seda:a").errorHandler(deadLetterChannel("log:FOO.BAR")).filter(body().isInstanceOf(String.class)).to("seda:b");
             }
         };
         // END SNIPPET: e5
@@ -181,7 +180,7 @@ public class ErrorHandlerTest extends TestSupport {
             EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Channel channel = unwrapChannel(consumerRoute.getProcessor());
 
-            assertIsInstanceOf(LoggingErrorHandler.class, channel.getErrorHandler());
+            assertIsInstanceOf(DeadLetterChannel.class, channel.getErrorHandler());
             assertIsInstanceOf(FilterProcessor.class, channel.getNextProcessor());
         }
     }

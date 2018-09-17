@@ -474,54 +474,6 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Creates an <a href="http://camel.apache.org/error-handler.html">error handler</a>
-     * which just logs errors
-     *
-     * @return the builder
-     * @deprecated use dead letter channel with a log endpoint
-     */
-    @Deprecated
-    public LoggingErrorHandlerBuilder loggingErrorHandler() {
-        return new LoggingErrorHandlerBuilder();
-    }
-
-    /**
-     * Creates an <a href="http://camel.apache.org/error-handler.html">error handler</a>
-     * which just logs errors
-     *
-     * @return the builder
-     * @deprecated use dead letter channel with a log endpoint
-     */
-    @Deprecated
-    public LoggingErrorHandlerBuilder loggingErrorHandler(String log) {
-        return loggingErrorHandler(LoggerFactory.getLogger(log));
-    }
-
-    /**
-     * Creates an <a href="http://camel.apache.org/error-handler.html">error handler</a>
-     * which just logs errors
-     *
-     * @return the builder
-     * @deprecated use dead letter channel with a log endpoint
-     */
-    @Deprecated
-    public LoggingErrorHandlerBuilder loggingErrorHandler(Logger log) {
-        return new LoggingErrorHandlerBuilder(log);
-    }
-
-    /**
-     * Creates an <a href="http://camel.apache.org/error-handler.html">error handler</a>
-     * which just logs errors
-     *
-     * @return the builder
-     * @deprecated use dead letter channel with a log endpoint
-     */
-    @Deprecated
-    public LoggingErrorHandlerBuilder loggingErrorHandler(Logger log, LoggingLevel level) {
-        return new LoggingErrorHandlerBuilder(log, level);
-    }
-
-    /**
      * <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter Channel EIP:</a>
      * is a error handler for handling messages that could not be delivered to it's intended destination.
      *

@@ -28,8 +28,6 @@
     ">
 
     <!-- START SNIPPET: example -->
-    <errorHandler id="loggingErrorHandler" type="LoggingErrorHandler" logName="foo" level="INFO" xmlns="http://camel.apache.org/schema/spring"/>
-
     <!-- If don't specify type attribute, the type value will be set to DefaultErrorHandler -->
     <errorHandler id="errorHandler" xmlns="http://camel.apache.org/schema/spring"/>
 
