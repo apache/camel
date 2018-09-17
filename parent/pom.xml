@@ -653,7 +653,7 @@
     <spring-version>${spring5-version}</spring-version>
     <spring5-version>5.0.9.RELEASE</spring5-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
-    <spring-security-version>5.0.5.RELEASE</spring-security-version>
+    <spring-security-version>5.0.8.RELEASE</spring-security-version>
     <spring-security-bundle-version>5.0.4.RELEASE_1</spring-security-bundle-version>
     <spring-ws-bundle-version>2.4.2.RELEASE_1</spring-ws-bundle-version>
     <spring-xml-bundle-version>2.4.2.RELEASE_1</spring-xml-bundle-version>
