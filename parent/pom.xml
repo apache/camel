@@ -399,7 +399,7 @@
     <jmh-version>1.21</jmh-version>
     <jodatime-bundle-version>1.6.2</jodatime-bundle-version>
     <jodatime2-bundle-version>2.10</jodatime2-bundle-version>
-    <jota-bundle-version>0.9.10</jota-bundle-version>
+    <jota-version>0.9.10</jota-version>
     <jolokia-version>1.6.0</jolokia-version>
     <jolt-version>0.1.1</jolt-version>
     <jolt-bundle-version>0.1.1_1</jolt-bundle-version>

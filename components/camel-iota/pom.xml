@@ -47,7 +47,7 @@
 		<dependency>
 		    <groupId>org.iota</groupId>
 		    <artifactId>jota</artifactId>
-		    <version>${jota-bundle-version}</version>
+		    <version>${jota-version}</version>
 		</dependency>
 
 		<!-- test dependencies -->
