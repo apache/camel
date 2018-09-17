@@ -41,10 +41,4 @@ public class IOTAComponent extends DefaultComponent {
 
         return endpoint;
     }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        super.doShutdown();
-    }
-
 }
