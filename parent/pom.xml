@@ -388,7 +388,7 @@
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
     <jettison-version>1.4.0</jettison-version>
     <jgit-version>5.0.3.201809091024-r</jgit-version>
-    <jgroups-version>4.0.13.Final</jgroups-version>
+    <jgroups-version>4.0.14.Final</jgroups-version>
     <libthrift-version>0.11.0</libthrift-version>
     <jibx-version>1.2.6</jibx-version>
     <jing-bundle-version>20030619_5</jing-bundle-version>
