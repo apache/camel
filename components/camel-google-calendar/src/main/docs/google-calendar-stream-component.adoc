@@ -130,7 +130,7 @@ The component supports 15 options, which are listed below.
 | *camel.component.google-calendar-stream.client-factory* | The client Factory. The option is a org.apache.camel.component.google.calendar.GoogleCalendarClientFactory type. |  | String
 | *camel.component.google-calendar-stream.configuration.access-token* | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
 | *camel.component.google-calendar-stream.configuration.application-name* | Google Calendar application name. Example would be camel-google-calendar/1.0 |  | String
-| *camel.component.google-calendar-stream.configuration.calendar-summary-name* | Calendar Summary Name to use | primary | String
+| *camel.component.google-calendar-stream.configuration.calendar-id* | The calendarId to be used | primary | String
 | *camel.component.google-calendar-stream.configuration.client-id* | Client ID of the mail application |  | String
 | *camel.component.google-calendar-stream.configuration.client-secret* | Client secret of the mail application |  | String
 | *camel.component.google-calendar-stream.configuration.consider-last-update* | Take into account the lastUpdate of the last event polled as start date for the next poll | false | Boolean
