@@ -17,6 +17,7 @@
 package org.apache.camel.component.mail;
 
 import java.util.Map;
+
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 

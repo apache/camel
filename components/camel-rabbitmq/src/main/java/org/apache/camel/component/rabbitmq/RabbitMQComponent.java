@@ -19,6 +19,7 @@ package org.apache.camel.component.rabbitmq;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.net.ssl.TrustManager;
 
 import com.rabbitmq.client.Address;

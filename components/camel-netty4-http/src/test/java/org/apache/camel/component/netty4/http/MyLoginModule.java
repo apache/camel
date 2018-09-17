@@ -18,6 +18,7 @@ package org.apache.camel.component.netty4.http;
 
 import java.io.IOException;
 import java.util.Map;
+
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;

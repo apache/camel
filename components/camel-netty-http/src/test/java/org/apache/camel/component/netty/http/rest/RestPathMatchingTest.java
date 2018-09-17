@@ -16,10 +16,9 @@
  */
 package org.apache.camel.component.netty.http.rest;
 
-import org.junit.Test;
-
-import org.junit.Assert;
 import org.apache.camel.component.netty.http.RestContextPathMatcher;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class RestPathMatchingTest extends Assert {
 

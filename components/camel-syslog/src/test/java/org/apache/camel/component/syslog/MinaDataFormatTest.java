@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.syslog;
-import org.junit.Before;
-
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;

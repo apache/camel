@@ -18,6 +18,7 @@ package org.apache.camel.component.mail;
 
 import java.util.Enumeration;
 import java.util.UUID;
+
 import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;
