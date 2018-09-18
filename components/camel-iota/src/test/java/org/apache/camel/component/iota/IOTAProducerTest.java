@@ -42,7 +42,6 @@ public class IOTAProducerTest extends CamelTestSupport {
 
     @Test
     public void getNewAddressTest() throws Exception {
-
         MockEndpoint mock = getMockEndpoint("mock:iota-new-address-response");
         mock.expectedMinimumMessageCount(1);
 
@@ -51,6 +50,16 @@ public class IOTAProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void getTransfersTest() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:iota-get-transfers-response");
+        mock.expectedMinimumMessageCount(1);
+
+        template.sendBody("direct:iota-get-transfers", new String());
+
+        assertMockEndpointsSatisfied();
+    }
+    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -62,6 +71,10 @@ public class IOTAProducerTest extends CamelTestSupport {
 
                 from("direct:iota-new-address").setHeader(IOTAConstants.SEED_HEADER, constant(SEED)).setHeader(IOTAConstants.ADDRESS_INDEX_HEADER, constant(1))
                     .to("iota://test?url=" + IOTA_NODE_URL + "&securityLevel=1&operation=" + IOTAConstants.GET_NEW_ADDRESS_OPERATION).to("mock:iota-new-address-response");
+                
+                from("direct:iota-get-transfers").setHeader(IOTAConstants.SEED_HEADER, constant(SEED)).setHeader(IOTAConstants.ADDRESS_START_INDEX_HEADER, constant(1))
+                .setHeader(IOTAConstants.ADDRESS_END_INDEX_HEADER, constant(10))
+                .to("iota://test?url=" + IOTA_NODE_URL + "&securityLevel=1&operation=" + IOTAConstants.GET_TRANSFERS_OPERATION).to("mock:iota-get-transfers-response");
             }
         };
     }

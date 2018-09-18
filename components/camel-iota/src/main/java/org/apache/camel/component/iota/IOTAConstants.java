@@ -24,6 +24,8 @@ public final class IOTAConstants {
     public static final String VALUE_HEADER = "CamelIOTAValue";
     public static final String TO_ADDRESS_HEADER = "CamelIOTAToAddress";
     public static final String ADDRESS_INDEX_HEADER = "CamelIOTAAddressIndex";
+    public static final String ADDRESS_START_INDEX_HEADER = "CamelIOTAAddressStartIndex";
+    public static final String ADDRESS_END_INDEX_HEADER = "CamelIOTAAddressEndIndex";
 
     protected static final int MIN_WEIGHT_MAGNITUDE = 14;
     protected static final int DEPTH = 9;
@@ -33,6 +35,8 @@ public final class IOTAConstants {
 
     protected static final String SEND_TRANSFER_OPERATION = "sendTransfer";
     protected static final String GET_NEW_ADDRESS_OPERATION = "getNewAddress";
+    protected static final String GET_TRANSFERS_OPERATION = "getTransfers";
+    
 
     private IOTAConstants() {
     }

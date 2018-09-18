@@ -42,7 +42,7 @@ iota:name?url=nodeurl[&moreOptions...]
 |===
 | Name | Description | Default | Type
 | *url* (common) | *Required* Node url |  | String
-| *operation* (producer) | *Required* Supported operations are 'sendTransfer', 'getNewAddress' |  | String
+| *operation* (producer) | *Required* Supported operations are 'sendTransfer', 'getNewAddress', 'getTransfers' |  | String
 | *tag* (producer) | TAG |  | String
 | *securityLevel* (producer) | Address security level | 1 | int
 | *minWeightMagnitude* (producer) | The minWeightMagnitude is the minimum number of zeroes that a proof-of-work output/transaction hash must end with to be considered valid by full nodes | 14 | int
@@ -116,6 +116,28 @@ The following route defined in Spring XML create a new address
 </route>
 ---------------------------------------------------------------------------------------------------------------------------
 
+The following route defined in Spring XML retrieve transfers data
+
+*Retrieve transfers*
+
+[source,xml]
+---------------------------------------------------------------------------------------------------------------------------
+<route>
+  <from uri="direct:start" />
+  <setHeader headerName="CamelIOTASeed">
+  	<constant>MYSEEDHERE</constant>
+  </setHeader>
+  <setHeader headerName="CamelIOTAAddressStartIndex">
+  	<constant>1</constant>
+  </setHeader>
+  <setHeader headerName="CamelIOTAAddressEndIndex">
+  	<constant>10</constant>
+  </setHeader>
+  
+  <to uri="iota:good?url=https://node.iota.org:443&operation=getTransfers" />
+  <to uri="direct:result" />
+</route>
+---------------------------------------------------------------------------------------------------------------------------
 
 === See also
 

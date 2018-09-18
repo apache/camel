@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jota.dto.response.GetNewAddressResponse;
+import jota.dto.response.GetTransferResponse;
 import jota.dto.response.SendTransferResponse;
 import jota.model.Transfer;
 import jota.utils.TrytesConverter;
@@ -47,7 +48,7 @@ public class IOTAProducer extends DefaultProducer {
         String seed = exchange.getIn().getHeader(IOTAConstants.SEED_HEADER, String.class);
 
         if (endpoint.getOperation() == null) {
-            throw new UnsupportedOperationException("IOTAproducer operation cannot be null!");
+            throw new UnsupportedOperationException("IOTAProducer operation cannot be null!");
         }
 
         if (endpoint.getOperation().equals(IOTAConstants.SEND_TRANSFER_OPERATION)) {
@@ -74,12 +75,18 @@ public class IOTAProducer extends DefaultProducer {
 
             exchange.getIn().setBody(response.getTransactions());
         } else if (endpoint.getOperation().equals(IOTAConstants.GET_NEW_ADDRESS_OPERATION)) {
-
+            
             Integer index = exchange.getIn().getHeader(IOTAConstants.ADDRESS_INDEX_HEADER, Integer.class);
 
             GetNewAddressResponse response = endpoint.getApiClient().getNewAddress(seed, endpoint.getSecurityLevel(), index, true, 1, false);
             exchange.getIn().setBody(response.getAddresses());
-        }
+        } else if (endpoint.getOperation().equals(IOTAConstants.GET_TRANSFERS_OPERATION)) {
+            Integer startIdx = exchange.getIn().getHeader(IOTAConstants.ADDRESS_START_INDEX_HEADER, Integer.class);
+            Integer endIdx = exchange.getIn().getHeader(IOTAConstants.ADDRESS_END_INDEX_HEADER, Integer.class);
+
+            GetTransferResponse response = endpoint.getApiClient().getTransfers(seed, endpoint.getSecurityLevel(), startIdx, endIdx, true);
+            exchange.getIn().setBody(response.getTransfers());
+        } 
     }
 
 }
