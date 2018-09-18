@@ -19,11 +19,11 @@ package org.apache.camel.component.mqtt;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.concurrent.Executor;
+
 import javax.net.ssl.SSLContext;
 
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-
 import org.fusesource.hawtdispatch.DispatchQueue;
 import org.fusesource.hawtdispatch.transport.TcpTransport;
 import org.fusesource.mqtt.client.MQTT;

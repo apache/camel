@@ -17,6 +17,7 @@
 package org.apache.camel.component.hdfs;
 
 import java.io.IOException;
+
 import javax.security.auth.login.Configuration;
 
 import org.slf4j.Logger;

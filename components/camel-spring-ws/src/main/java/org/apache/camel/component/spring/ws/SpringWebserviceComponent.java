@@ -19,6 +19,7 @@ package org.apache.camel.component.spring.ws;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
+
 import javax.xml.transform.TransformerFactory;
 
 import org.apache.camel.CamelContext;

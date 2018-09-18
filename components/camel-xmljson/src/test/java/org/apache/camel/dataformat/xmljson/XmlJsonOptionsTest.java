@@ -25,10 +25,8 @@ import org.w3c.dom.Document;
 
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-
 import org.junit.Test;
 
 /**

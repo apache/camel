@@ -19,7 +19,6 @@ package org.apache.camel.component.google.drive;
 import java.util.List;
 
 import com.google.api.services.drive.model.Change;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.drive.internal.DriveChangesApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;

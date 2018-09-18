@@ -18,6 +18,7 @@ package org.apache.camel.component.hdfs;
 
 import java.net.URL;
 import java.util.Map;
+
 import javax.security.auth.login.Configuration;
 
 import org.apache.camel.CamelContext;

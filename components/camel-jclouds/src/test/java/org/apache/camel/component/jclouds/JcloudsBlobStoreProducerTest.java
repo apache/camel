@@ -28,7 +28,6 @@ import javax.xml.transform.sax.SAXSource;
 import org.xml.sax.InputSource;
 
 import com.google.common.collect.Lists;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.builder.RouteBuilder;

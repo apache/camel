@@ -20,7 +20,6 @@ import krati.core.segment.ChannelSegmentFactory;
 import krati.core.segment.SegmentFactory;
 import krati.io.Serializer;
 import krati.store.DataSet;
-
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.component.krati.KratiHelper;
 import org.apache.camel.component.krati.serializer.KratiDefaultSerializer;

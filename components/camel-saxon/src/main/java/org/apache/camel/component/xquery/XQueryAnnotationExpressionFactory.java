@@ -19,6 +19,7 @@ package org.apache.camel.component.xquery;
 import java.lang.annotation.Annotation;
 
 import org.w3c.dom.Node;
+
 import net.sf.saxon.functions.CollectionFn;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;

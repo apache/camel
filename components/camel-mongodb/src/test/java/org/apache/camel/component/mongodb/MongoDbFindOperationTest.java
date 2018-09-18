@@ -23,10 +23,8 @@ import java.util.Map;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBObject;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-
 import org.bson.types.ObjectId;
 import org.junit.Test;
 

@@ -19,6 +19,7 @@ package org.apache.camel.component.spring.ws;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;

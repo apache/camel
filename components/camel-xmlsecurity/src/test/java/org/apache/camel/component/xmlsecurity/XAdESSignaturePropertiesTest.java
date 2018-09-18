@@ -50,6 +50,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+
 import org.xml.sax.SAXException;
 
 import org.apache.camel.Exchange;

@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cache;
-import org.junit.Before;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +28,6 @@ import net.sf.ehcache.Element;
 import net.sf.ehcache.Status;
 import net.sf.ehcache.event.CacheEventListener;
 import net.sf.ehcache.loader.CacheLoader;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -40,6 +37,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.BaseCacheTest;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Before;
 import org.junit.Test;
 
 public class CacheRegistryRefTest extends BaseCacheTest {

@@ -18,7 +18,6 @@ package org.apache.camel.component.netty4;
 
 import io.netty.util.ResourceLeakDetector;
 import io.netty.util.internal.logging.InternalLoggerFactory;
-
 import org.junit.Assert;
 import org.junit.Test;
 

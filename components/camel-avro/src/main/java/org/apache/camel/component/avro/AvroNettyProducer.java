@@ -21,7 +21,6 @@ import java.net.InetSocketAddress;
 
 import org.apache.avro.ipc.NettyTransceiver;
 import org.apache.avro.ipc.Transceiver;
-
 import org.apache.camel.Endpoint;
 
 public class AvroNettyProducer extends AvroProducer {

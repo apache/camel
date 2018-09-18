@@ -35,7 +35,6 @@ import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 
-
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 

@@ -18,6 +18,7 @@ package org.apache.camel.component.ejb;
 
 import java.util.Map;
 import java.util.Properties;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;

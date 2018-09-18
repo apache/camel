@@ -15,16 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mongodb.gridfs;
-import org.junit.After;
-
-
 import com.mongodb.MongoClient;
 import com.mongodb.gridfs.GridFS;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 

@@ -20,6 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.wordpress.api.model.User;
 import org.junit.Test;
+
 import static org.hamcrest.CoreMatchers.is;
 
 public class WordpressUserOperationTest extends WordpressComponentTestSupport {

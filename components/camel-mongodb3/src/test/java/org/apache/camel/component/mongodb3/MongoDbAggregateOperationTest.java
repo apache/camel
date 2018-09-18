@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.mongodb.client.MongoIterable;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.bson.Document;
 import org.junit.Test;

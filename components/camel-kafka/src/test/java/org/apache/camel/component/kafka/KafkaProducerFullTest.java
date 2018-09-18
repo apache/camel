@@ -15,9 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.kafka;
-import org.junit.Before;
-import org.junit.After;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -37,7 +34,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderDeserializer;
 import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderSerializer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;

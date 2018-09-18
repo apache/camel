@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import java.io.IOException;
 import java.io.InputStream;
+
 import javax.jms.JMSException;
 import javax.jms.MessageEOFException;
 import javax.jms.StreamMessage;

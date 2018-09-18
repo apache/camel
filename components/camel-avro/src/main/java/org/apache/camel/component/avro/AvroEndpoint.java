@@ -18,7 +18,6 @@ package org.apache.camel.component.avro;
 
 import org.apache.avro.Protocol;
 import org.apache.avro.Schema;
-
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;

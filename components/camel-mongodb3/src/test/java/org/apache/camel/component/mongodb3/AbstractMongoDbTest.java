@@ -15,14 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mongodb3;
-import org.junit.After;
-
 import java.util.Formatter;
 
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -31,6 +28,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.bson.Document;
+import org.junit.After;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 

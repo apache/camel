@@ -15,9 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.smpp;
-import org.junit.Before;
-import org.junit.After;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;

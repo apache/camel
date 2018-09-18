@@ -26,7 +26,6 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Flowable;
-
 import org.apache.camel.component.reactive.streams.engine.DelayedMonoPublisher;
 import org.apache.camel.component.reactive.streams.support.TestSubscriber;
 import org.junit.After;

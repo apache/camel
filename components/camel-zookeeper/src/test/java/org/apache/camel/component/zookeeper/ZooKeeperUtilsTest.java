@@ -25,7 +25,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getCreateMode;
 import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getCreateModeFromString;
-
 import static org.junit.Assert.assertEquals;
 
 public class ZooKeeperUtilsTest {

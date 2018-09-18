@@ -21,7 +21,6 @@ import java.net.URL;
 
 import org.apache.avro.ipc.HttpTransceiver;
 import org.apache.avro.ipc.Transceiver;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.util.URISupport;
 

@@ -15,9 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.ahc.ws;
-import org.junit.Before;
-import org.junit.After;
-
 import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -28,6 +25,8 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**

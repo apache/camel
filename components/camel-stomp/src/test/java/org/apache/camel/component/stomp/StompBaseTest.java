@@ -15,9 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.stomp;
-import org.junit.Before;
-import org.junit.After;
-
 import javax.net.ssl.SSLContext;
 
 import org.apache.activemq.broker.BrokerService;
@@ -30,6 +27,8 @@ import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.camel.util.jsse.TrustManagersParameters;
 import org.fusesource.stomp.client.Stomp;
+import org.junit.After;
+import org.junit.Before;
 
 public abstract class StompBaseTest extends CamelTestSupport {
 

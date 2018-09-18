@@ -17,11 +17,12 @@
 package org.apache.camel.dataformat.bindy.format.factories;
 
 import java.math.BigDecimal;
+
 import org.apache.camel.dataformat.bindy.FormattingOptions;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class BigDecimalFormatFactoryTest {
 
