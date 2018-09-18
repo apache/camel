@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregate.cassandra;
-import org.junit.After;
-
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import org.apache.camel.Exchange;
@@ -26,6 +24,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.util.HeaderDto;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
 import org.junit.Test;
 
 import static org.junit.Assume.assumeTrue;

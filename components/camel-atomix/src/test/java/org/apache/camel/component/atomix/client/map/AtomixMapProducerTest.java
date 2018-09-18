@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.atomix.client.map;
-import org.junit.After;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -33,6 +31,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.atomix.client.AtomixClientConstants;
 import org.apache.camel.component.atomix.client.AtomixClientTestSupport;
+import org.junit.After;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;

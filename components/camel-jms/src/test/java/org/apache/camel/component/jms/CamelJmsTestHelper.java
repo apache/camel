@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;

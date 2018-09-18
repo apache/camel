@@ -15,11 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.component.sparkrest;
-import org.junit.Before;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 
 public abstract class BaseSparkTest extends CamelTestSupport {
 

@@ -19,7 +19,9 @@ package org.apache.camel.component.sjms.producer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import javax.jms.Message;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;

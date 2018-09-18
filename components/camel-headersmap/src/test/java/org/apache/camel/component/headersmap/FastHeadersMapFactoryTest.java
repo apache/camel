@@ -16,12 +16,11 @@
  */
 package org.apache.camel.component.headersmap;
 
-import org.junit.Test;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Assert;
+import org.junit.Test;
 
 public class FastHeadersMapFactoryTest extends Assert {
 

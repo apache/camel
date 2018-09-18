@@ -15,15 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.component.ejb;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.util.Properties;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 

@@ -17,6 +17,7 @@
 package org.apache.camel.component.sjms.consumer;
 
 import java.util.concurrent.ExecutorService;
+
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.Session;

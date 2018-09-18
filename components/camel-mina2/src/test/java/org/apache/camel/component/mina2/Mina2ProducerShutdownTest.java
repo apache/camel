@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.mina2;
 
-import org.junit.Test;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -26,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * Unit testing for using a MinaProducer that it can shutdown properly (CAMEL-395)

@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.as2.api;
-import org.junit.After;
-
 import java.io.IOException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;

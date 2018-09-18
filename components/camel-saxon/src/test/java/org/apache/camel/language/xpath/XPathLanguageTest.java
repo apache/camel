@@ -15,14 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.language.xpath;
-import org.junit.Before;
-import org.junit.After;
-
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;

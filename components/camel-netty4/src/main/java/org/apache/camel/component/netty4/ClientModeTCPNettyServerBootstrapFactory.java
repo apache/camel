@@ -31,7 +31,6 @@ import io.netty.channel.EventLoop;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.ServiceSupport;
 import org.slf4j.Logger;

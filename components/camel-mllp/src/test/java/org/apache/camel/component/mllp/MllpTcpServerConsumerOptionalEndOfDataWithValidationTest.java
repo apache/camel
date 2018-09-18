@@ -17,12 +17,11 @@
 
 package org.apache.camel.component.mllp;
 
-import org.junit.Test;
-
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
+import org.junit.Test;
 
 public class MllpTcpServerConsumerOptionalEndOfDataWithValidationTest extends TcpServerConsumerEndOfDataAndValidationTestSupport {
 

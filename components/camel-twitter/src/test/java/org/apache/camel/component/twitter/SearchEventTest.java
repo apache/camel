@@ -25,7 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
-
 import twitter4j.Status;
 import twitter4j.StatusListener;
 import twitter4j.TwitterStream;

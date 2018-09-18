@@ -19,7 +19,6 @@ package org.apache.camel.component.twitter.timeline;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.twitter.TwitterEndpoint;
 import org.apache.camel.impl.DefaultProducer;
-
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
 

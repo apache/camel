@@ -120,8 +120,7 @@ public final class MicUtils {
             break;
         }
         default:
-            LOG.debug("can not create MIC: invalid content type '{}' for message integrity check", contentType.getMimeType()
-                   );
+            LOG.debug("can not create MIC: invalid content type '{}' for message integrity check", contentType.getMimeType());
             return null;
         }
 

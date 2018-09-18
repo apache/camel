@@ -17,6 +17,7 @@
 package org.apache.camel.component.sjms.batch;
 
 import java.util.concurrent.ScheduledExecutorService;
+
 import javax.jms.Message;
 import javax.jms.Session;
 

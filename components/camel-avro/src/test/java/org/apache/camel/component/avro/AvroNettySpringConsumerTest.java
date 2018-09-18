@@ -22,10 +22,8 @@ import org.apache.camel.avro.impl.KeyValueProtocolImpl;
 import org.apache.camel.avro.test.TestReflectionImpl;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.IOHelper;
-
 import org.junit.After;
 import org.junit.Before;
-
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

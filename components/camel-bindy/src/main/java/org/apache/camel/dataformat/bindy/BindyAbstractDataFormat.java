@@ -23,10 +23,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.dataformat.bindy.annotation.FormatFactories;

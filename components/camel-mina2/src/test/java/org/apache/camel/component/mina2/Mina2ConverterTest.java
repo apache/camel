@@ -16,16 +16,15 @@
  */
 package org.apache.camel.component.mina2;
 
-import org.junit.Test;
-
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
-import org.junit.Assert;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.mina.core.buffer.IoBuffer;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 

@@ -38,7 +38,6 @@ import org.apache.camel.component.twitter.timeline.MentionsConsumerHandler;
 import org.apache.camel.component.twitter.timeline.RetweetsConsumerHandler;
 import org.apache.camel.component.twitter.timeline.UserConsumerHandler;
 import org.apache.camel.component.twitter.timeline.UserProducer;
-
 import twitter4j.User;
 
 public final class TwitterHelper {

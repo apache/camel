@@ -21,7 +21,6 @@ import java.io.File;
 import com.braintreegateway.DocumentUpload;
 import com.braintreegateway.DocumentUploadRequest;
 import com.braintreegateway.Result;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.DocumentUploadGatewayApiMethod;

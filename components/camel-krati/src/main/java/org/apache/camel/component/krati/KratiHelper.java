@@ -27,7 +27,6 @@ import krati.store.DynamicDataSet;
 import krati.store.DynamicDataStore;
 import krati.store.SerializableObjectStore;
 import krati.util.HashFunction;
-
 import org.apache.camel.RuntimeCamelException;
 
 public final class KratiHelper {

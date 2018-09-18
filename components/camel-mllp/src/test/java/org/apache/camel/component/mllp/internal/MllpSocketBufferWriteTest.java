@@ -20,7 +20,6 @@ package org.apache.camel.component.mllp.internal;
 import java.net.SocketTimeoutException;
 
 import org.apache.camel.component.mllp.MllpProtocolConstants;
-
 import org.apache.camel.test.stub.tcp.SocketStub;
 import org.junit.Test;
 

@@ -19,6 +19,7 @@ package org.apache.camel.component.sjms.jms;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
 import javax.jms.JMSException;

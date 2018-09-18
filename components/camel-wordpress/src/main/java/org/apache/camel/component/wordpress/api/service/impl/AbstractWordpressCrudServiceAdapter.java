@@ -20,6 +20,7 @@ import org.apache.camel.component.wordpress.api.model.Context;
 import org.apache.camel.component.wordpress.api.model.DeletedModel;
 import org.apache.camel.component.wordpress.api.model.SearchCriteria;
 import org.apache.camel.component.wordpress.api.service.WordpressCrudService;
+
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 

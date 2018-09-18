@@ -18,7 +18,6 @@ package org.apache.camel.component.undertow.handlers;
 
 import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.RedirectHandler;
-
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregate.zipfile;
-import org.junit.Before;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -29,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
+import org.junit.Before;
 import org.junit.Test;
 
 public class AggregationStrategyWithFilenameHeaderTest extends CamelTestSupport {

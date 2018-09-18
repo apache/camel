@@ -18,6 +18,7 @@ package org.apache.camel.component.netty;
 
 import java.math.BigInteger;
 import java.security.Principal;
+
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
 import javax.security.cert.X509Certificate;

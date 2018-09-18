@@ -17,6 +17,7 @@
 package org.apache.camel.component.atom;
 
 import java.util.Date;
+
 import javax.naming.Context;
 
 import org.apache.abdera.model.Entry;

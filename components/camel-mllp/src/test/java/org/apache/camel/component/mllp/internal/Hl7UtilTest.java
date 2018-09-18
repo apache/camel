@@ -21,7 +21,6 @@ import java.io.ByteArrayOutputStream;
 
 import org.apache.camel.component.mllp.MllpAcknowledgementGenerationException;
 import org.apache.camel.component.mllp.MllpProtocolConstants;
-
 import org.apache.camel.test.stub.camel.MllpEndpointStub;
 import org.junit.Test;
 

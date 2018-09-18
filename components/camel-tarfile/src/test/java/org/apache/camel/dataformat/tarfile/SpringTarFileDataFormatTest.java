@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.tarfile;
-import org.junit.Before;
-
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
@@ -27,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

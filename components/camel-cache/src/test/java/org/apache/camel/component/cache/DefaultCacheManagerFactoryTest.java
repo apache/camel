@@ -24,7 +24,8 @@ import net.sf.ehcache.config.ConfigurationFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 
 /**
  * 
