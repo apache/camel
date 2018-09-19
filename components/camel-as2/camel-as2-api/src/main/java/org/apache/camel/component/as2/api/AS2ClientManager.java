@@ -142,7 +142,7 @@ public class AS2ClientManager {
      * The HTTP Context Attribute containing the algorithm name used to encrypt EDI
      * message
      */
-    public static final String ENCRYPTING_ALGORITHM_NAME = CAMEL_AS2_CLIENT_PREFIX + "encrypting-algorithm-name";
+    public static final String ENCRYPTING_ALGORITHM = CAMEL_AS2_CLIENT_PREFIX + "encrypting-algorithm-name";
 
     /**
      * The HTTP Context Attribute containing the certificate used to encrypt
@@ -194,7 +194,7 @@ public class AS2ClientManager {
      * @param signingPrivateKey - the private key used to sign EDI message
      * @param dispositionNotificationTo - an RFC2822 address to request a receipt or <code>null</code> if no receipt requested
      * @param signedReceiptMicAlgorithms - the senders list of signing algorithms for signing receipt, in preferred order,  or <code>null</code> if requesting an unsigned receipt.
-     * @param encryptionAlgorithmName - the name of the algorithm used to encrypt the message or <code>null</code> if sending EDI message unencrypted
+     * @param encryptionAlgorithm - the algorithm used to encrypt the message or <code>null</code> if sending EDI message unencrypted
      * @param encryptionCertificateChain - the chain of certificates used to encrypt the message or <code>null</code> if sending EDI message unencrypted
      * @param encryptionPrivateKey - the private key used to encrypt EDI message
      * @return {@link HttpCoreContext} containing request and response used to send EDI message
@@ -213,7 +213,7 @@ public class AS2ClientManager {
                                 PrivateKey signingPrivateKey,
                                 String dispositionNotificationTo,
                                 String[] signedReceiptMicAlgorithms,
-                                String encryptionAlgorithmName,
+                                AS2EncryptionAlgorithm encryptionAlgorithm,
                                 Certificate[] encryptionCertificateChain,
                                 PrivateKey encryptionPrivateKey)
             throws HttpException {
@@ -237,7 +237,7 @@ public class AS2ClientManager {
         httpContext.setAttribute(AS2ClientManager.SIGNING_PRIVATE_KEY, signingPrivateKey);
         httpContext.setAttribute(AS2ClientManager.DISPOSITION_NOTIFICATION_TO, dispositionNotificationTo);
         httpContext.setAttribute(AS2ClientManager.SIGNED_RECEIPT_MIC_ALGORITHMS, signedReceiptMicAlgorithms);
-        httpContext.setAttribute(AS2ClientManager.ENCRYPTING_ALGORITHM_NAME, encryptionAlgorithmName);
+        httpContext.setAttribute(AS2ClientManager.ENCRYPTING_ALGORITHM, encryptionAlgorithm);
         httpContext.setAttribute(AS2ClientManager.ENCRYPTING_CERTIFICATE_CHAIN, encryptionCertificateChain);
         httpContext.setAttribute(AS2ClientManager.ENCRYPTING_PRIVATE_KEY, encryptionPrivateKey);
 
@@ -322,12 +322,12 @@ public class AS2ClientManager {
     
     public OutputEncryptor createEncryptor(HttpCoreContext httpContext) throws HttpException {
         
-        String algorithmName = httpContext.getAttribute(ENCRYPTING_ALGORITHM_NAME, String.class);
-        if (algorithmName == null) {
-            throw new HttpException("Encrypting algorithm name missing");
+        AS2EncryptionAlgorithm encryptionAlgorithm = httpContext.getAttribute(ENCRYPTING_ALGORITHM, AS2EncryptionAlgorithm.class);
+        if (encryptionAlgorithm == null) {
+            throw new HttpException("Encrypting algorithm missing");
         }
 
-        return EncryptingUtils.createEncryptor(algorithmName);
+        return EncryptingUtils.createEncryptor(encryptionAlgorithm);
     }
 
 }
