@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.catalog.karaf;
-import org.junit.Before;
 
 import java.util.List;
 

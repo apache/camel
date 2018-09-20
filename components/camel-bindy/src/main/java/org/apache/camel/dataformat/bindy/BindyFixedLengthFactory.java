@@ -201,7 +201,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
             // skip ahead if the expected position is greater than the offset
             if (dataField.pos() > offset) {
-                LOG.debug("skipping ahead [{}] chars.", (dataField.pos() - offset));
+                LOG.debug("skipping ahead [{}] chars.", dataField.pos() - offset);
                 offset = dataField.pos();
             }
 
