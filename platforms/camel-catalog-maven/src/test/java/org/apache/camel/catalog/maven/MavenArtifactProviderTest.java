@@ -19,12 +19,12 @@ package org.apache.camel.catalog.maven;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Assert;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.connector.CamelConnectorCatalog;
 import org.apache.camel.catalog.connector.ConnectorDto;
 import org.apache.camel.catalog.connector.DefaultCamelConnectorCatalog;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 

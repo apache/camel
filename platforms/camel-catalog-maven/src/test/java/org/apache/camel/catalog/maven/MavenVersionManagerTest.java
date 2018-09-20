@@ -19,12 +19,12 @@ package org.apache.camel.catalog.maven;
 import java.io.InputStream;
 import java.util.List;
 
-import org.junit.Assert;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.CatalogHelper;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.karaf.KarafRuntimeProvider;
 import org.apache.camel.catalog.springboot.SpringBootRuntimeProvider;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 

@@ -15,9 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.itest.http;
-import org.junit.Before;
-import org.junit.After;
-
 import java.io.IOException;
 
 import org.apache.camel.CamelContext;

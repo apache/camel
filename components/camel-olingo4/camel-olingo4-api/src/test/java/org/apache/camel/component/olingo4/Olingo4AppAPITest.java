@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.olingo4;
-import org.junit.Before;
-import org.junit.After;
 
 import java.io.IOException;
 import java.io.InputStream;

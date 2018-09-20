@@ -254,7 +254,7 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
         private final String key;
         private final DelayQueue<ThrottlePermit> delayQueue = new DelayQueue<>();
         private final AtomicReference<ScheduledFuture<?>> cleanFuture = new AtomicReference<>();
-        private volatile int throttleRate = 0;
+        private volatile int throttleRate;
 
         ThrottlingState(String key) {
             this.key = key;
