@@ -25,12 +25,8 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RoasterJavaRestDslTest extends CamelTestSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(RoasterJavaRestDslTest.class);
 
     @Override
     public boolean isDumpRouteCoverage() {
@@ -45,11 +41,21 @@ public class RoasterJavaRestDslTest extends CamelTestSupport {
             "src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java", true);
         assertEquals(1, list.size());
         RestConfigurationDetails details = list.get(0);
+        assertEquals("27", details.getLineNumber());
+        assertEquals("36", details.getLineNumberEnd());
         assertEquals("src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java", details.getFileName());
         assertEquals("configure", details.getMethodName());
         assertEquals("org.apache.camel.parser.java.MyRestDslRouteBuilder", details.getClassName());
         assertEquals("1234", details.getPort());
         assertEquals("myapi", details.getContextPath());
+        assertEquals("jetty", details.getComponent());
+        assertEquals("json", details.getBindingMode());
+        assertEquals("swagger", details.getApiComponent());
+        assertEquals("myapi/swagger", details.getApiContextPath());
+        assertEquals("localhost", details.getApiHost());
+        assertEquals("true", details.getSkipBindingOnErrorCode());
+        assertEquals("https", details.getScheme());
+        assertEquals("allLocalIp", details.getHostNameResolver());
     }
 
 }

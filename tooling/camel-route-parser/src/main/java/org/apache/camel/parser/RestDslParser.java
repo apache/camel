@@ -33,6 +33,9 @@ import org.jboss.forge.roaster.model.source.MethodSource;
  */
 public final class RestDslParser {
 
+    // TODO: add support for rest services (eg rest().get() ...)
+    // TODO: add XML rest-dsl parser also
+
     private RestDslParser() {
     }
 

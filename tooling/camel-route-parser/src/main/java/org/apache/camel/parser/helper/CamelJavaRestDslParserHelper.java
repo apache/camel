@@ -82,6 +82,11 @@ public final class CamelJavaRestDslParserHelper {
                             if (line > -1) {
                                 node.setLineNumber("" + line);
                             }
+                            pos = exp.getStartPosition() + exp.getLength();
+                            line = findLineNumber(fullyQualifiedFileName, pos);
+                            if (line > -1) {
+                                node.setLineNumberEnd("" + line);
+                            }
                             node.setFileName(fullyQualifiedFileName);
                             node.setClassName(clazz.getQualifiedName());
                             node.setMethodName(configureMethod.getName());
@@ -138,11 +143,59 @@ public final class CamelJavaRestDslParserHelper {
     private void doParseRestConfiguration(RestConfigurationDetails node, String fullyQualifiedFileName,
                                           JavaClassSource clazz, MethodSource<JavaClassSource> configureMethod, Block block,
                                           MethodInvocation mi) {
+
+        // end line number is the first node in the method chain we parse
+        if (node.getLineNumberEnd() == null) {
+            int pos = mi.getStartPosition() + mi.getLength();
+            int line = findLineNumber(fullyQualifiedFileName, pos);
+            if (line > -1) {
+                node.setLineNumberEnd("" + line);
+            }
+        }
+
         String name = mi.getName().getIdentifier();
-        if ("port".equals(name)) {
+        if ("component".equals(name)) {
+            node.setComponent(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("apiComponent".equals(name)) {
+            node.setApiComponent(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("producerComponent".equals(name)) {
+            node.setProducerComponent(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("scheme".equals(name)) {
+            node.setScheme(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("host".equals(name)) {
+            node.setHost(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("apiHost".equals(name)) {
+            node.setApiHost(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("port".equals(name)) {
             node.setPort(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("producerApiDoc".equals(name)) {
+            node.setProducerApiDoc(extractValueFromFirstArgument(clazz, block, mi));
         } else if ("contextPath".equals(name)) {
             node.setContextPath(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("apiContextPath".equals(name)) {
+            node.setApiContextPath(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("apiContextRouteId".equals(name)) {
+            node.setApiContextRouteId(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("apiContextIdPattern".equals(name)) {
+            node.setApiContextIdPattern(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("apiContextListening".equals(name)) {
+            node.setApiContextListening(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("apiVendorExtension".equals(name)) {
+            node.setApiVendorExtension(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("hostNameResolver".equals(name)) {
+            node.setHostNameResolver(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("bindingMode".equals(name)) {
+            node.setBindingMode(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("skipBindingOnErrorCode".equals(name)) {
+            node.setSkipBindingOnErrorCode(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("clientRequestValidation".equals(name)) {
+            node.setClientRequestValidation(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("enableCORS".equals(name)) {
+            node.setEnableCORS(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("jsonDataFormat".equals(name)) {
+            node.setJsonDataFormat(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("xmlDataFormat".equals(name)) {
+            node.setXmlDataFormat(extractValueFromFirstArgument(clazz, block, mi));
         }
     }
 
@@ -234,13 +287,10 @@ public final class CamelJavaRestDslParserHelper {
             return "{{" + name + "}}";
         }
 
-        // if its a qualified name (usually a constant field in another class)
-        // then add a dummy value as we cannot find the field value in other classes and maybe even outside the
-        // source code we have access to
+        // if its a qualified name, then its an enum where we should grab the simple name
         if (expression instanceof QualifiedName) {
             QualifiedName qn = (QualifiedName) expression;
-            String name = qn.getFullyQualifiedName();
-            return "{{" + name + "}}";
+            return qn.getName().getIdentifier();
         }
 
         if (expression instanceof SimpleName) {

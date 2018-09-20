@@ -17,12 +17,23 @@
 package org.apache.camel.parser.java;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.rest.RestBindingMode;
+import org.apache.camel.model.rest.RestHostNameResolver;
 
 public class MyRestDslRouteBuilder extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        restConfiguration().contextPath("myapi").port(1234);
+        restConfiguration()
+            .contextPath("myapi").port(1234)
+            .component("jetty")
+            .apiComponent("swagger")
+            .apiHost("localhost")
+            .apiContextPath("myapi/swagger")
+            .skipBindingOnErrorCode(true)
+            .scheme("https")
+            .hostNameResolver(RestHostNameResolver.allLocalIp)
+            .bindingMode(RestBindingMode.json);
 
         rest()
             .get("/foo")
