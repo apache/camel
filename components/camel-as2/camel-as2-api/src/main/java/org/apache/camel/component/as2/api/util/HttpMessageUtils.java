@@ -96,16 +96,17 @@ public final class HttpMessageUtils {
         }
     }
 
-    public static String getBoundaryParameterValue(HttpMessage message, String headerName) {
+    public static String getParameterValue(HttpMessage message, String headerName, String parameterName) {
         Args.notNull(message, "message");
         Args.notNull(headerName, "headerName");
+        Args.notNull(parameterName, "parameterName");
         Header header = message.getFirstHeader(headerName);
         if (header == null) {
             return null;
         }
         for (HeaderElement headerElement : header.getElements()) {
             for (NameValuePair nameValuePair : headerElement.getParameters()) {
-                if (nameValuePair.getName().equalsIgnoreCase("boundary")) {
+                if (nameValuePair.getName().equalsIgnoreCase(parameterName)) {
                     return nameValuePair.getValue();
                 }
             }
