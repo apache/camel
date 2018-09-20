@@ -32,6 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.as2.api.AS2AsynchronousMDNManager;
 import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Constants;
+import org.apache.camel.component.as2.api.AS2EncryptionAlgorithm;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MediaType;
 import org.apache.camel.component.as2.api.AS2MessageStructure;
@@ -43,6 +44,7 @@ import org.apache.camel.component.as2.api.entity.AS2DispositionModifier;
 import org.apache.camel.component.as2.api.entity.AS2DispositionType;
 import org.apache.camel.component.as2.api.entity.AS2MessageDispositionNotificationEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
+import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationPkcs7SignatureEntity;
 import org.apache.camel.component.as2.api.entity.DispositionMode;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
@@ -227,6 +229,12 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         headers.put("CamelAS2.dispositionNotificationTo", "mrAS2@example.com");
         // parameter type is String[]
         headers.put("CamelAS2.signedReceiptMicAlgorithms", null);
+        // parameter type is org.apache.camel.component.as2.api.AS2EncryptionAlgorithm
+        headers.put("CamelAS2.encryptingAlgorithm", null);
+        // parameter type is java.security.cert.Certificate[]
+        headers.put("CamelAS2.encryptingCertificateChain", null);
+        // parameter type is java.security.PrivateKey
+        headers.put("CamelAS2.encryptingPrivateKey", null);
 
         final org.apache.http.protocol.HttpCoreContext result = requestBodyAndHeaders("direct://SEND", EDI_MESSAGE, headers);
 
@@ -240,6 +248,88 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         assertTrue("Request body does not contain EDI entity", entity instanceof ApplicationEDIEntity);
         String ediMessage = ((ApplicationEDIEntity)entity).getEdiMessage();
         assertEquals("EDI message is different", EDI_MESSAGE, ediMessage);
+
+        HttpResponse response = result.getResponse();
+        assertNotNull("Response", response);
+        assertTrue("Unexpected response type", HttpMessageUtils.getHeaderValue(response, AS2Header.CONTENT_TYPE).startsWith(AS2MimeType.MULTIPART_REPORT));
+        assertEquals("Unexpected mime version", AS2Constants.MIME_VERSION, HttpMessageUtils.getHeaderValue(response, AS2Header.MIME_VERSION));
+        assertEquals("Unexpected AS2 version", EXPECTED_AS2_VERSION, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_VERSION));
+        assertEquals("Unexpected MDN subject", EXPECTED_MDN_SUBJECT, HttpMessageUtils.getHeaderValue(response, AS2Header.SUBJECT));
+        assertEquals("Unexpected MDN from", MDN_FROM, HttpMessageUtils.getHeaderValue(response, AS2Header.FROM));
+        assertEquals("Unexpected AS2 from", AS2_NAME, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_FROM));
+        assertEquals("Unexpected AS2 to", AS2_NAME, HttpMessageUtils.getHeaderValue(response, AS2Header.AS2_TO));
+        assertNotNull("Missing message id", HttpMessageUtils.getHeaderValue(response, AS2Header.MESSAGE_ID));
+
+        HttpEntity responseEntity = response.getEntity();
+        assertNotNull("Response entity", responseEntity);
+        assertTrue("Unexpected response entity type", responseEntity instanceof DispositionNotificationMultipartReportEntity);
+        DispositionNotificationMultipartReportEntity reportEntity = (DispositionNotificationMultipartReportEntity)responseEntity;
+        assertEquals("Unexpected number of body parts in report", 2, reportEntity.getPartCount());
+        MimeEntity firstPart = reportEntity.getPart(0);
+        assertEquals("Unexpected content type in first body part of report", ContentType.create(AS2MimeType.TEXT_PLAIN, AS2Charset.US_ASCII).toString(), firstPart.getContentTypeValue());
+        MimeEntity secondPart = reportEntity.getPart(1);
+        assertEquals("Unexpected content type in second body part of report",
+                ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, AS2Charset.US_ASCII).toString(),
+                secondPart.getContentTypeValue());
+        
+        assertTrue("", secondPart instanceof AS2MessageDispositionNotificationEntity);
+        AS2MessageDispositionNotificationEntity messageDispositionNotificationEntity = (AS2MessageDispositionNotificationEntity) secondPart;
+        assertEquals("Unexpected value for reporting UA", ORIGIN_SERVER_NAME, messageDispositionNotificationEntity.getReportingUA());
+        assertEquals("Unexpected value for final recipient", AS2_NAME, messageDispositionNotificationEntity.getFinalRecipient());
+        assertEquals("Unexpected value for original message ID", HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID), messageDispositionNotificationEntity.getOriginalMessageId());
+        assertEquals("Unexpected value for disposition mode", DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, messageDispositionNotificationEntity.getDispositionMode());
+        assertEquals("Unexpected value for disposition type", AS2DispositionType.PROCESSED, messageDispositionNotificationEntity.getDispositionType());
+        
+    }
+
+    @Test
+    public void envelopedMessageSendTest() throws Exception {
+        final Map<String, Object> headers = new HashMap<>();
+        // parameter type is String
+        headers.put("CamelAS2.requestUri", REQUEST_URI);
+        // parameter type is String
+        headers.put("CamelAS2.subject", SUBJECT);
+        // parameter type is String
+        headers.put("CamelAS2.from", FROM);
+        // parameter type is String
+        headers.put("CamelAS2.as2From", AS2_NAME);
+        // parameter type is String
+        headers.put("CamelAS2.as2To", AS2_NAME);
+        // parameter type is org.apache.camel.component.as2.api.AS2MessageStructure
+        headers.put("CamelAS2.as2MessageStructure", AS2MessageStructure.ENCRYPTED);
+        // parameter type is org.apache.http.entity.ContentType
+        headers.put("CamelAS2.ediMessageContentType", ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII));
+        // parameter type is String
+        headers.put("CamelAS2.ediMessageTransferEncoding", EDI_MESSAGE_CONTENT_TRANSFER_ENCODING);
+        // parameter type is java.security.cert.Certificate[]
+        headers.put("CamelAS2.signingCertificateChain", null);
+        // parameter type is java.security.PrivateKey
+        headers.put("CamelAS2.signingPrivateKey", null);
+        // parameter type is String
+        headers.put("CamelAS2.dispositionNotificationTo", "mrAS2@example.com");
+        // parameter type is String[]
+        headers.put("CamelAS2.signedReceiptMicAlgorithms", null);
+        // parameter type is org.apache.camel.component.as2.api.AS2EncryptionAlgorithm
+        headers.put("CamelAS2.encryptingAlgorithm", AS2EncryptionAlgorithm.AES128_CBC);
+        // parameter type is java.security.cert.Certificate[]
+        headers.put("CamelAS2.encryptingCertificateChain", certList);
+        // parameter type is java.security.PrivateKey
+        headers.put("CamelAS2.encryptingPrivateKey", signingKP.getPrivate());
+
+        final org.apache.http.protocol.HttpCoreContext result = requestBodyAndHeaders("direct://SEND", EDI_MESSAGE, headers);
+
+        assertNotNull("send result", result);
+        LOG.debug("send: " + result);
+        HttpRequest request = result.getRequest();
+        assertNotNull("Request", request);
+        assertTrue("Request does not contain body", request instanceof HttpEntityEnclosingRequest);
+        HttpEntity entity = ((HttpEntityEnclosingRequest)request).getEntity();
+        assertNotNull("Request body", entity);
+        assertTrue("Request body does not contain ApplicationPkcs7Mime entity", entity instanceof ApplicationPkcs7MimeEntity);
+        MimeEntity envelopeEntity = ((ApplicationPkcs7MimeEntity)entity).getEncryptedEntity(signingKP.getPrivate());
+        assertTrue("Enveloped entity is not an EDI entity", envelopeEntity instanceof ApplicationEDIEntity);
+        String ediMessage = ((ApplicationEDIEntity)envelopeEntity).getEdiMessage();
+        assertEquals("EDI message is different", EDI_MESSAGE.replaceAll("[\n\r]", ""), ediMessage.replaceAll("[\n\r]", ""));
 
         HttpResponse response = result.getResponse();
         assertNotNull("Response", response);
@@ -301,6 +391,12 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         headers.put("CamelAS2.dispositionNotificationTo", "mrAS2@example.com");
         // parameter type is String[]
         headers.put("CamelAS2.signedReceiptMicAlgorithms", SIGNED_RECEIPT_MIC_ALGORITHMS);
+        // parameter type is org.apache.camel.component.as2.api.AS2EncryptionAlgorithm
+        headers.put("CamelAS2.encryptingAlgorithm", null);
+        // parameter type is java.security.cert.Certificate[]
+        headers.put("CamelAS2.encryptingCertificateChain", null);
+        // parameter type is java.security.PrivateKey
+        headers.put("CamelAS2.encryptingPrivateKey", null);
 
         final org.apache.http.protocol.HttpCoreContext result = requestBodyAndHeaders("direct://SEND", EDI_MESSAGE, headers);
 
