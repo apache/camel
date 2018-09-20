@@ -27,14 +27,13 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
 /**
- * A Camel Rest DSL parser that parses Camel Java Rest DSL.
+ * A Camel parser that parses Camel Java Rest DSL source code.
  * <p/>
  * This implementation is higher level details, and uses the lower level parser {@link CamelJavaRestDslParserHelper}.
  */
 public final class RestDslParser {
 
     // TODO: add support for rest services (eg rest().get() ...)
-    // TODO: add XML rest-dsl parser also
 
     private RestDslParser() {
     }
