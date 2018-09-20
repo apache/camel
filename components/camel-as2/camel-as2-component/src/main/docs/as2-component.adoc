@@ -84,7 +84,7 @@ with the following path and query parameters:
 | *dispositionNotificationTo* (common) | The value of the Disposition-Notification-To header. Assigning a value to this parameter requests a message disposition notification (MDN) for the AS2 message. |  | String
 | *ediMessageTransferEncoding* (common) | The transfer encoding of EDI message. |  | String
 | *ediMessageType* (common) | The content type of EDI message. One of application/edifact, application/edi-x12, application/edi-consent |  | ContentType
-| *encryptingAlgorithmName* (common) | The name of algorithm used to encrypt EDI message. |  | String
+| *encryptingAlgorithm* (common) | The algorithm used to encrypt EDI message. |  | AS2EncryptionAlgorithm
 | *encryptingCertificateChain* (common) | The chain of certificates used to encrypt EDI message. |  | Certificate[]
 | *encryptingPrivateKey* (common) | The key used to encrypt the EDI message. |  | PrivateKey
 | *from* (common) | The value of the From header of AS2 message. |  | String
@@ -128,7 +128,7 @@ The component supports 28 options, which are listed below.
 | *camel.component.as2.configuration.disposition-notification-to* | The value of the Disposition-Notification-To header. Assigning a value to this parameter requests a message disposition notification (MDN) for the AS2 message. |  | String
 | *camel.component.as2.configuration.edi-message-transfer-encoding* | The transfer encoding of EDI message. |  | String
 | *camel.component.as2.configuration.edi-message-type* | The content type of EDI message. One of application/edifact, application/edi-x12, application/edi-consent |  | ContentType
-| *camel.component.as2.configuration.encrypting-algorithm-name* | The name of algorithm used to encrypt EDI message. |  | String
+| *camel.component.as2.configuration.encrypting-algorithm* | The algorithm used to encrypt EDI message. |  | AS2EncryptionAlgorithm
 | *camel.component.as2.configuration.encrypting-certificate-chain* | The chain of certificates used to encrypt EDI message. |  | Certificate[]
 | *camel.component.as2.configuration.encrypting-private-key* | The key used to encrypt the EDI message. |  | PrivateKey
 | *camel.component.as2.configuration.from* | The value of the From header of AS2 message. |  | String
