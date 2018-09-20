@@ -511,7 +511,7 @@
     <mustache-java-version>0.9.5</mustache-java-version>
     <mustache-guava-version>16.0</mustache-guava-version>
     <mustache-bundle-version>0.9.5_3</mustache-bundle-version>
-    <mvel-version>2.4.0.Final</mvel-version>
+    <mvel-version>2.4.2.Final</mvel-version>
     <mybatis-version>3.4.6</mybatis-version>
     <narayana-version>5.9.0.Final</narayana-version>
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
