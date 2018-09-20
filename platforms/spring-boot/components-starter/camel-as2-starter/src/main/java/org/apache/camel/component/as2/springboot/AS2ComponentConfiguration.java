@@ -19,6 +19,7 @@ package org.apache.camel.component.as2.springboot;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import javax.annotation.Generated;
+import org.apache.camel.component.as2.api.AS2EncryptionAlgorithm;
 import org.apache.camel.component.as2.api.AS2MessageStructure;
 import org.apache.camel.component.as2.internal.AS2ApiName;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
@@ -177,9 +178,9 @@ public class AS2ComponentConfiguration
          */
         private String[] signedReceiptMicAlgorithms;
         /**
-         * The name of algorithm used to encrypt EDI message.
+         * The algorithm used to encrypt EDI message.
          */
-        private String encryptingAlgorithmName;
+        private AS2EncryptionAlgorithm encryptingAlgorithm;
         /**
          * The chain of certificates used to encrypt EDI message.
          */
@@ -378,12 +379,13 @@ public class AS2ComponentConfiguration
             this.signedReceiptMicAlgorithms = signedReceiptMicAlgorithms;
         }
 
-        public String getEncryptingAlgorithmName() {
-            return encryptingAlgorithmName;
+        public AS2EncryptionAlgorithm getEncryptingAlgorithm() {
+            return encryptingAlgorithm;
         }
 
-        public void setEncryptingAlgorithmName(String encryptingAlgorithmName) {
-            this.encryptingAlgorithmName = encryptingAlgorithmName;
+        public void setEncryptingAlgorithm(
+                AS2EncryptionAlgorithm encryptingAlgorithm) {
+            this.encryptingAlgorithm = encryptingAlgorithm;
         }
 
         public Certificate[] getEncryptingCertificateChain() {

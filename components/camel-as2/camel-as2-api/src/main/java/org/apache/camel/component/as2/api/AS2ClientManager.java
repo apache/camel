@@ -194,9 +194,9 @@ public class AS2ClientManager {
      * @param signingPrivateKey - the private key used to sign EDI message
      * @param dispositionNotificationTo - an RFC2822 address to request a receipt or <code>null</code> if no receipt requested
      * @param signedReceiptMicAlgorithms - the senders list of signing algorithms for signing receipt, in preferred order,  or <code>null</code> if requesting an unsigned receipt.
-     * @param encryptionAlgorithm - the algorithm used to encrypt the message or <code>null</code> if sending EDI message unencrypted
-     * @param encryptionCertificateChain - the chain of certificates used to encrypt the message or <code>null</code> if sending EDI message unencrypted
-     * @param encryptionPrivateKey - the private key used to encrypt EDI message
+     * @param encryptingAlgorithm - the algorithm used to encrypt the message or <code>null</code> if sending EDI message unencrypted
+     * @param encryptingCertificateChain - the chain of certificates used to encrypt the message or <code>null</code> if sending EDI message unencrypted
+     * @param encryptingPrivateKey - the private key used to encrypt EDI message
      * @return {@link HttpCoreContext} containing request and response used to send EDI message
      * @throws HttpException when things go wrong.
      */
@@ -213,9 +213,9 @@ public class AS2ClientManager {
                                 PrivateKey signingPrivateKey,
                                 String dispositionNotificationTo,
                                 String[] signedReceiptMicAlgorithms,
-                                AS2EncryptionAlgorithm encryptionAlgorithm,
-                                Certificate[] encryptionCertificateChain,
-                                PrivateKey encryptionPrivateKey)
+                                AS2EncryptionAlgorithm encryptingAlgorithm,
+                                Certificate[] encryptingCertificateChain,
+                                PrivateKey encryptingPrivateKey)
             throws HttpException {
 
         Args.notNull(ediMessage, "EDI Message");
@@ -237,9 +237,9 @@ public class AS2ClientManager {
         httpContext.setAttribute(AS2ClientManager.SIGNING_PRIVATE_KEY, signingPrivateKey);
         httpContext.setAttribute(AS2ClientManager.DISPOSITION_NOTIFICATION_TO, dispositionNotificationTo);
         httpContext.setAttribute(AS2ClientManager.SIGNED_RECEIPT_MIC_ALGORITHMS, signedReceiptMicAlgorithms);
-        httpContext.setAttribute(AS2ClientManager.ENCRYPTING_ALGORITHM, encryptionAlgorithm);
-        httpContext.setAttribute(AS2ClientManager.ENCRYPTING_CERTIFICATE_CHAIN, encryptionCertificateChain);
-        httpContext.setAttribute(AS2ClientManager.ENCRYPTING_PRIVATE_KEY, encryptionPrivateKey);
+        httpContext.setAttribute(AS2ClientManager.ENCRYPTING_ALGORITHM, encryptingAlgorithm);
+        httpContext.setAttribute(AS2ClientManager.ENCRYPTING_CERTIFICATE_CHAIN, encryptingCertificateChain);
+        httpContext.setAttribute(AS2ClientManager.ENCRYPTING_PRIVATE_KEY, encryptingPrivateKey);
 
         BasicHttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest("POST", requestUri);
         httpContext.setAttribute(HTTP_REQUEST, request);

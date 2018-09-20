@@ -20,6 +20,7 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.as2.api.AS2EncryptionAlgorithm;
 import org.apache.camel.component.as2.api.AS2MessageStructure;
 import org.apache.camel.component.as2.internal.AS2ApiName;
 import org.apache.camel.spi.Metadata;
@@ -106,7 +107,7 @@ public class AS2Configuration {
     private String[] signedReceiptMicAlgorithms;
 
     @UriParam
-    private String encryptingAlgorithmName;
+    private AS2EncryptionAlgorithm encryptingAlgorithm;
 
     @UriParam
     private Certificate[] encryptingCertificateChain;
@@ -413,15 +414,15 @@ public class AS2Configuration {
         this.signedReceiptMicAlgorithms = signedReceiptMicAlgorithms;
     }
 
-    public String getEncryptingingAlgorithmName() {
-        return signingAlgorithmName;
+    public AS2EncryptionAlgorithm getEncryptingingAlgorithm() {
+        return encryptingAlgorithm;
     }
 
     /**
-     * The name of algorithm used to encrypt EDI message.
+     * The algorithm used to encrypt EDI message.
      */
-    public void setEncryptingAlgorithmName(String signingAlgorithmName) {
-        this.encryptingAlgorithmName = signingAlgorithmName;
+    public void setEncryptingAlgorithm(AS2EncryptionAlgorithm encryptingAlgorithm) {
+        this.encryptingAlgorithm = encryptingAlgorithm;
     }
 
     public Certificate[] getEncryptingCertificateChain() {
