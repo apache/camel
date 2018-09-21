@@ -18,9 +18,11 @@ package org.apache.camel.component.grape
 
 import org.apache.camel.CamelContext
 import org.apache.camel.impl.UriEndpointComponent
+import org.apache.camel.spi.Metadata
 
 class GrapeComponent extends UriEndpointComponent {
 
+	@Metadata(label = "advanced", description = "Implementation of org.apache.camel.component.grape.PatchesRepository, by default: FilePatchesRepository")
     private PatchesRepository patchesRepository = new FilePatchesRepository()
 
     GrapeComponent() {
