@@ -16,6 +16,7 @@
  */
 package org.apache.camel.parser.model;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class RestConfigurationDetails {
@@ -324,5 +325,47 @@ public class RestConfigurationDetails {
 
     public void setCorsHeaders(Map<String, String> corsHeaders) {
         this.corsHeaders = corsHeaders;
+    }
+
+    public void addComponentProperty(String key, String value) {
+        if (componentProperties == null) {
+            componentProperties = new LinkedHashMap<>();
+        }
+        componentProperties.put(key, value);
+    }
+
+    public void addEndpointProperty(String key, String value) {
+        if (endpointProperties == null) {
+            endpointProperties = new LinkedHashMap<>();
+        }
+        endpointProperties.put(key, value);
+    }
+
+    public void addConsumerProperty(String key, String value) {
+        if (consumerProperties == null) {
+            consumerProperties = new LinkedHashMap<>();
+        }
+        consumerProperties.put(key, value);
+    }
+
+    public void addDataFormatProperty(String key, String value) {
+        if (dataFormatProperties == null) {
+            dataFormatProperties = new LinkedHashMap<>();
+        }
+        dataFormatProperties.put(key, value);
+    }
+
+    public void addApiProperty(String key, String value) {
+        if (apiProperties == null) {
+            apiProperties = new LinkedHashMap<>();
+        }
+        apiProperties.put(key, value);
+    }
+
+    public void addCorsHeader(String key, String value) {
+        if (corsHeaders == null) {
+            corsHeaders = new LinkedHashMap<>();
+        }
+        corsHeaders.put(key, value);
     }
 }

@@ -27,6 +27,11 @@
     <restConfiguration component="jetty" port="1234" bindingMode="json" apiComponent="swagger" scheme="https"
                        contextPath="myapi" apiContextPath="myapi/swagger" hostNameResolver="allLocalIp" apiHost="localhost"
                        skipBindingOnErrorCode="true">
+      <componentProperty key="foo" value="123"/>
+      <endpointProperty key="pretty" value="false"/>
+      <consumerProperty key="bar" value="456"/>
+      <corsHeaders key="key1" value="value1"/>
+      <corsHeaders key="key2" value="value2"/>
     </restConfiguration>
   </camelContext>
 

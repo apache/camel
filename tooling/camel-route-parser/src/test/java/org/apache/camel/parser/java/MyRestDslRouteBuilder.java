@@ -33,7 +33,12 @@ public class MyRestDslRouteBuilder extends RouteBuilder {
             .skipBindingOnErrorCode(true)
             .scheme("https")
             .hostNameResolver(RestHostNameResolver.allLocalIp)
-            .bindingMode(RestBindingMode.json);
+            .bindingMode(RestBindingMode.json)
+            .componentProperty("foo", "123")
+            .endpointProperty("pretty", "false")
+            .consumerProperty("bar", "456")
+            .corsHeaderProperty("key1", "value1")
+            .corsHeaderProperty("key2", "value2");
 
         rest()
             .get("/foo")

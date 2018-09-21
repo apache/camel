@@ -23,14 +23,11 @@ import java.util.List;
 import org.apache.camel.parser.XmlRestDslParser;
 import org.apache.camel.parser.model.RestConfigurationDetails;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class XmlRestDslTest {
-
-    private static final Logger LOG = LoggerFactory.getLogger(XmlParseTreeTest.class);
 
     @Test
     public void testXmlTree() throws Exception {
@@ -42,11 +39,11 @@ public class XmlRestDslTest {
         assertEquals(1, list.size());
         RestConfigurationDetails details = list.get(0);
         assertEquals("src/test/resources/org/apache/camel/camel/parser/xml/myrest.xml", details.getFileName());
-        assertEquals(null, details.getMethodName());
-        assertEquals(null, details.getClassName());
+        assertNull(details.getMethodName());
+        assertNull(details.getClassName());
 
         assertEquals("29", details.getLineNumber());
-        assertEquals("30", details.getLineNumberEnd());
+        assertEquals("35", details.getLineNumberEnd());
         assertEquals("1234", details.getPort());
         assertEquals("myapi", details.getContextPath());
         assertEquals("jetty", details.getComponent());
@@ -58,6 +55,15 @@ public class XmlRestDslTest {
         assertEquals("https", details.getScheme());
         assertEquals("allLocalIp", details.getHostNameResolver());
 
+        assertEquals(1, details.getComponentProperties().size());
+        assertEquals("123", details.getComponentProperties().get("foo"));
+        assertEquals(1, details.getEndpointProperties().size());
+        assertEquals("false", details.getEndpointProperties().get("pretty"));
+        assertEquals(1, details.getEndpointProperties().size());
+        assertEquals("456", details.getConsumerProperties().get("bar"));
+        assertEquals(2, details.getCorsHeaders().size());
+        assertEquals("value1", details.getCorsHeaders().get("key1"));
+        assertEquals("value2", details.getCorsHeaders().get("key2"));
     }
 
 }

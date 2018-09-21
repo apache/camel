@@ -70,6 +70,56 @@ public final class CamelXmlRestDslParserHelper {
             detail.setXmlDataFormat(extractAttribute(map, "xmlDataFormat"));
         }
 
+        if ("componentProperty".equals(xmlNode.getNodeName())
+            && (xmlNode.getParentNode() != null && "restConfiguration".equals(xmlNode.getParentNode().getNodeName()))) {
+            NamedNodeMap map = xmlNode.getAttributes();
+            String key = extractAttribute(map, "key");
+            String value = extractAttribute(map, "value");
+            if (key != null && value != null) {
+                detail.addComponentProperty(key, value);
+            }
+        } else if ("endpointProperty".equals(xmlNode.getNodeName())
+            && (xmlNode.getParentNode() != null && "restConfiguration".equals(xmlNode.getParentNode().getNodeName()))) {
+            NamedNodeMap map = xmlNode.getAttributes();
+            String key = extractAttribute(map, "key");
+            String value = extractAttribute(map, "value");
+            if (key != null && value != null) {
+                detail.addEndpointProperty(key, value);
+            }
+        } else if ("consumerProperty".equals(xmlNode.getNodeName())
+            && (xmlNode.getParentNode() != null && "restConfiguration".equals(xmlNode.getParentNode().getNodeName()))) {
+            NamedNodeMap map = xmlNode.getAttributes();
+            String key = extractAttribute(map, "key");
+            String value = extractAttribute(map, "value");
+            if (key != null && value != null) {
+                detail.addConsumerProperty(key, value);
+            }
+        } else if ("dataFormatProperty".equals(xmlNode.getNodeName())
+            && (xmlNode.getParentNode() != null && "restConfiguration".equals(xmlNode.getParentNode().getNodeName()))) {
+            NamedNodeMap map = xmlNode.getAttributes();
+            String key = extractAttribute(map, "key");
+            String value = extractAttribute(map, "value");
+            if (key != null && value != null) {
+                detail.addDataFormatProperty(key, value);
+            }
+        } else if ("apiProperty".equals(xmlNode.getNodeName())
+            && (xmlNode.getParentNode() != null && "restConfiguration".equals(xmlNode.getParentNode().getNodeName()))) {
+            NamedNodeMap map = xmlNode.getAttributes();
+            String key = extractAttribute(map, "key");
+            String value = extractAttribute(map, "value");
+            if (key != null && value != null) {
+                detail.addApiProperty(key, value);
+            }
+        } else if ("corsHeaders".equals(xmlNode.getNodeName())
+            && (xmlNode.getParentNode() != null && "restConfiguration".equals(xmlNode.getParentNode().getNodeName()))) {
+            NamedNodeMap map = xmlNode.getAttributes();
+            String key = extractAttribute(map, "key");
+            String value = extractAttribute(map, "value");
+            if (key != null && value != null) {
+                detail.addCorsHeader(key, value);
+            }
+        }
+
         // walk the rest of the children
         NodeList children = xmlNode.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {

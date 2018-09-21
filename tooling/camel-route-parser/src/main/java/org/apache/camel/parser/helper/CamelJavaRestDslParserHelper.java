@@ -196,6 +196,30 @@ public final class CamelJavaRestDslParserHelper {
             node.setJsonDataFormat(extractValueFromFirstArgument(clazz, block, mi));
         } else if ("xmlDataFormat".equals(name)) {
             node.setXmlDataFormat(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("componentProperty".equals(name)) {
+            String key = extractValueFromFirstArgument(clazz, block, mi);
+            String value = extractValueFromSecondArgument(clazz, block, mi);
+            node.addComponentProperty(key, value);
+        } else if ("endpointProperty".equals(name)) {
+            String key = extractValueFromFirstArgument(clazz, block, mi);
+            String value = extractValueFromSecondArgument(clazz, block, mi);
+            node.addEndpointProperty(key, value);
+        } else if ("consumerProperty".equals(name)) {
+            String key = extractValueFromFirstArgument(clazz, block, mi);
+            String value = extractValueFromSecondArgument(clazz, block, mi);
+            node.addConsumerProperty(key, value);
+        } else if ("dataFormatProperty".equals(name)) {
+            String key = extractValueFromFirstArgument(clazz, block, mi);
+            String value = extractValueFromSecondArgument(clazz, block, mi);
+            node.addDataFormatProperty(key, value);
+        } else if ("apiProperty".equals(name)) {
+            String key = extractValueFromFirstArgument(clazz, block, mi);
+            String value = extractValueFromSecondArgument(clazz, block, mi);
+            node.addApiProperty(key, value);
+        } else if ("corsHeaderProperty".equals(name)) {
+            String key = extractValueFromFirstArgument(clazz, block, mi);
+            String value = extractValueFromSecondArgument(clazz, block, mi);
+            node.addCorsHeader(key, value);
         }
     }
 
@@ -203,6 +227,15 @@ public final class CamelJavaRestDslParserHelper {
         List args = mi.arguments();
         if (args != null && args.size() > 0) {
             Expression exp = (Expression) args.get(0);
+            return getLiteralValue(clazz, block, exp);
+        }
+        return null;
+    }
+
+    private static String extractValueFromSecondArgument(JavaClassSource clazz, Block block, MethodInvocation mi) {
+        List args = mi.arguments();
+        if (args != null && args.size() > 1) {
+            Expression exp = (Expression) args.get(1);
             return getLiteralValue(clazz, block, exp);
         }
         return null;

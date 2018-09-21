@@ -42,7 +42,7 @@ public class RoasterJavaRestDslTest extends CamelTestSupport {
         assertEquals(1, list.size());
         RestConfigurationDetails details = list.get(0);
         assertEquals("27", details.getLineNumber());
-        assertEquals("36", details.getLineNumberEnd());
+        assertEquals("41", details.getLineNumberEnd());
         assertEquals("src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java", details.getFileName());
         assertEquals("configure", details.getMethodName());
         assertEquals("org.apache.camel.parser.java.MyRestDslRouteBuilder", details.getClassName());
@@ -56,6 +56,16 @@ public class RoasterJavaRestDslTest extends CamelTestSupport {
         assertEquals("true", details.getSkipBindingOnErrorCode());
         assertEquals("https", details.getScheme());
         assertEquals("allLocalIp", details.getHostNameResolver());
+
+        assertEquals(1, details.getComponentProperties().size());
+        assertEquals("123", details.getComponentProperties().get("foo"));
+        assertEquals(1, details.getEndpointProperties().size());
+        assertEquals("false", details.getEndpointProperties().get("pretty"));
+        assertEquals(1, details.getEndpointProperties().size());
+        assertEquals("456", details.getConsumerProperties().get("bar"));
+        assertEquals(2, details.getCorsHeaders().size());
+        assertEquals("value1", details.getCorsHeaders().get("key1"));
+        assertEquals("value2", details.getCorsHeaders().get("key2"));
     }
 
 }
