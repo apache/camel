@@ -261,6 +261,8 @@
                   <proxyClass>org.apache.camel.component.fhir.api.FhirUpdate</proxyClass>
                   <fromJavadoc/>
                   <nullableOptions>
+                    <nullableOption>id</nullableOption>
+                    <nullableOption>stringId</nullableOption>
                     <nullableOption>preferReturn</nullableOption>
                     <nullableOption>extraParameters</nullableOption>
                   </nullableOptions>
