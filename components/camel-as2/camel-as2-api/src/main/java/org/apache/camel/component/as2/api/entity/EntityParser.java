@@ -524,9 +524,9 @@ public final class EntityParser {
             // End Signature Body Part
 
             NameValuePair[] parameters = new NameValuePair[] {
-                    new BasicNameValuePair("protocol", AS2MimeType.APPLICATION_PKCS7_SIGNATURE),
-                    new BasicNameValuePair("boundary", boundary), new BasicNameValuePair("micalg", micalg),
-                    new BasicNameValuePair("charset", charsetName)};
+                new BasicNameValuePair("protocol", AS2MimeType.APPLICATION_PKCS7_SIGNATURE),
+                new BasicNameValuePair("boundary", boundary), new BasicNameValuePair("micalg", micalg),
+                new BasicNameValuePair("charset", charsetName)};
             ContentType contentType = ContentType.create(AS2MimeType.MULTIPART_SIGNED, parameters);
             multipartSignedEntity.setContentType(contentType);
             multipartSignedEntity.setContentTransferEncoding(contentTransferEncoding);
