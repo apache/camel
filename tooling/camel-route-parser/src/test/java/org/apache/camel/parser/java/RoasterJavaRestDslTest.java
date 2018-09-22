@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.parser.RestDslParser;
 import org.apache.camel.parser.model.RestConfigurationDetails;
+import org.apache.camel.parser.model.RestServiceDetails;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -34,7 +35,7 @@ public class RoasterJavaRestDslTest extends CamelTestSupport {
     }
 
     @Test
-    public void parseTree() throws Exception {
+    public void parseRestConfiguration() throws Exception {
         JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java"));
 
         List<RestConfigurationDetails> list = RestDslParser.parseRestConfiguration(clazz, ".",
@@ -66,6 +67,28 @@ public class RoasterJavaRestDslTest extends CamelTestSupport {
         assertEquals(2, details.getCorsHeaders().size());
         assertEquals("value1", details.getCorsHeaders().get("key1"));
         assertEquals("value2", details.getCorsHeaders().get("key2"));
+    }
+
+    @Test
+    public void parseRestService() throws Exception {
+        JavaClassSource clazz = (JavaClassSource) Roaster.parse(new File("src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java"));
+
+        List<RestServiceDetails> list = RestDslParser.parseRestService(clazz, ".",
+            "src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java", true);
+        assertEquals(1, list.size());
+        RestServiceDetails details = list.get(0);
+        assertEquals("43", details.getLineNumber());
+        assertEquals("49", details.getLineNumberEnd());
+        assertEquals("src/test/java/org/apache/camel/parser/java/MyRestDslRouteBuilder.java", details.getFileName());
+        assertEquals("configure", details.getMethodName());
+        assertEquals("org.apache.camel.parser.java.MyRestDslRouteBuilder", details.getClassName());
+
+        assertEquals("/foo", details.getPath());
+        assertEquals(2, details.getVerbs().size());
+        assertEquals("get", details.getVerbs().get(0).getMethod());
+        assertEquals("{id}", details.getVerbs().get(0).getUri());
+        assertEquals("post", details.getVerbs().get(1).getMethod());
+        assertNull(details.getVerbs().get(1).getUri());
     }
 
 }

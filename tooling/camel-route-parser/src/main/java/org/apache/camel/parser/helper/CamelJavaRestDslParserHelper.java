@@ -20,9 +20,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.parser.model.RestConfigurationDetails;
+import org.apache.camel.parser.model.RestServiceDetails;
+import org.apache.camel.parser.model.RestVerbDetails;
 import org.apache.camel.parser.roaster.StatementFieldSource;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
@@ -101,6 +104,55 @@ public final class CamelJavaRestDslParserHelper {
         return answer;
     }
 
+    public List<RestServiceDetails> parseRestService(JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
+                                                     MethodSource<JavaClassSource> configureMethod) {
+
+        List<RestServiceDetails> answer = new ArrayList<>();
+
+        if (configureMethod != null) {
+            MethodDeclaration md = (MethodDeclaration) configureMethod.getInternal();
+            Block block = md.getBody();
+            if (block != null) {
+                for (Object statement : md.getBody().statements()) {
+                    // must be a method call expression
+                    if (statement instanceof ExpressionStatement) {
+                        ExpressionStatement es = (ExpressionStatement) statement;
+                        Expression exp = es.getExpression();
+                        boolean valid = isRest(exp);
+                        if (valid) {
+                            RestServiceDetails node = new RestServiceDetails();
+                            answer.add(node);
+
+                            // include source code details
+                            int pos = exp.getStartPosition();
+                            int line = findLineNumber(fullyQualifiedFileName, pos);
+                            if (line > -1) {
+                                node.setLineNumber("" + line);
+                            }
+                            pos = exp.getStartPosition() + exp.getLength();
+                            line = findLineNumber(fullyQualifiedFileName, pos);
+                            if (line > -1) {
+                                node.setLineNumberEnd("" + line);
+                            }
+                            node.setFileName(fullyQualifiedFileName);
+                            node.setClassName(clazz.getQualifiedName());
+                            node.setMethodName(configureMethod.getName());
+
+                            parseExpression(node, fullyQualifiedFileName, clazz, configureMethod, block, exp);
+
+                            // flip order of verbs as we parse bottom-up
+                            if (node.getVerbs() != null) {
+                                Collections.reverse(node.getVerbs());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return answer;
+    }
+
     private boolean isRestConfiguration(Expression exp) {
         String rootMethodName = null;
 
@@ -125,6 +177,30 @@ public final class CamelJavaRestDslParserHelper {
         return "restConfiguration".equals(rootMethodName);
     }
 
+    private boolean isRest(Expression exp) {
+        String rootMethodName = null;
+
+        // find out if this is from a Camel route (eg from, route etc.)
+        Expression sub = exp;
+        while (sub instanceof MethodInvocation) {
+            sub = ((MethodInvocation) sub).getExpression();
+            if (sub instanceof MethodInvocation) {
+                Expression parent = ((MethodInvocation) sub).getExpression();
+                if (parent == null) {
+                    break;
+                }
+            }
+        }
+        if (sub instanceof MethodInvocation) {
+            rootMethodName = ((MethodInvocation) sub).getName().getIdentifier();
+        } else if (sub instanceof SimpleName) {
+            rootMethodName = ((SimpleName) sub).getIdentifier();
+        }
+
+        // must be from rest
+        return "rest".equals(rootMethodName);
+    }
+
     private void parseExpression(RestConfigurationDetails node, String fullyQualifiedFileName,
                                  JavaClassSource clazz, MethodSource<JavaClassSource> configureMethod, Block block,
                                  Expression exp) {
@@ -134,6 +210,21 @@ public final class CamelJavaRestDslParserHelper {
         if (exp instanceof MethodInvocation) {
             MethodInvocation mi = (MethodInvocation) exp;
             doParseRestConfiguration(node, fullyQualifiedFileName, clazz, configureMethod, block, mi);
+            // if the method was called on another method, then recursive
+            exp = mi.getExpression();
+            parseExpression(node, fullyQualifiedFileName, clazz, configureMethod, block, exp);
+        }
+    }
+
+    private void parseExpression(RestServiceDetails node, String fullyQualifiedFileName,
+                                 JavaClassSource clazz, MethodSource<JavaClassSource> configureMethod, Block block,
+                                 Expression exp) {
+        if (exp == null) {
+            return;
+        }
+        if (exp instanceof MethodInvocation) {
+            MethodInvocation mi = (MethodInvocation) exp;
+            doParseRestService(node, fullyQualifiedFileName, clazz, configureMethod, block, mi);
             // if the method was called on another method, then recursive
             exp = mi.getExpression();
             parseExpression(node, fullyQualifiedFileName, clazz, configureMethod, block, exp);
@@ -221,6 +312,81 @@ public final class CamelJavaRestDslParserHelper {
             String value = extractValueFromSecondArgument(clazz, block, mi);
             node.addCorsHeader(key, value);
         }
+    }
+
+    private void doParseRestService(RestServiceDetails node, String fullyQualifiedFileName,
+                                    JavaClassSource clazz, MethodSource<JavaClassSource> configureMethod, Block block,
+                                    MethodInvocation mi) {
+
+        // end line number is the first node in the method chain we parse
+        if (node.getLineNumberEnd() == null) {
+            int pos = mi.getStartPosition() + mi.getLength();
+            int line = findLineNumber(fullyQualifiedFileName, pos);
+            if (line > -1) {
+                node.setLineNumberEnd("" + line);
+            }
+        }
+
+        String name = mi.getName().getIdentifier();
+        if ("rest".equals(name)) {
+            node.setPath(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("delete".equals(name)) {
+            RestVerbDetails verb = new RestVerbDetails();
+            node.addVerb(verb);
+            verb.setMethod("delete");
+            verb.setUri(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("get".equals(name)) {
+            RestVerbDetails verb = new RestVerbDetails();
+            node.addVerb(verb);
+            verb.setMethod("get");
+            verb.setUri(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("head".equals(name)) {
+            RestVerbDetails verb = new RestVerbDetails();
+            node.addVerb(verb);
+            verb.setMethod("head");
+            verb.setUri(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("patch".equals(name)) {
+            RestVerbDetails verb = new RestVerbDetails();
+            node.addVerb(verb);
+            verb.setMethod("patch");
+            verb.setUri(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("post".equals(name)) {
+            RestVerbDetails verb = new RestVerbDetails();
+            node.addVerb(verb);
+            verb.setMethod("post");
+            verb.setUri(extractValueFromFirstArgument(clazz, block, mi));
+        } else if ("put".equals(name)) {
+            RestVerbDetails verb = new RestVerbDetails();
+            node.addVerb(verb);
+            verb.setMethod("put");
+            verb.setUri(extractValueFromFirstArgument(clazz, block, mi));
+        } else {
+            if (isParentMethod(mi, "rest")) {
+                // okay its within the rest block, so then find out if its within one of the verbs
+                // TODO: implement me
+            }
+        }
+    }
+
+    private static boolean isParentMethod(MethodInvocation mi, String parentName) {
+        String name = mi.getName().getIdentifier();
+        if (parentName.equals(name)) {
+            return true;
+        }
+
+        // find out if this is from a Camel route (eg from, route etc.)
+        Expression sub = mi;
+        while (sub instanceof MethodInvocation) {
+            sub = ((MethodInvocation) sub).getExpression();
+            if (sub instanceof MethodInvocation) {
+                name = ((MethodInvocation) sub).getName().getIdentifier();
+                if (parentName.equals(name)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private static String extractValueFromFirstArgument(JavaClassSource clazz, Block block, MethodInvocation mi) {
