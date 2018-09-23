@@ -33,6 +33,19 @@
       <corsHeaders key="key1" value="value1"/>
       <corsHeaders key="key2" value="value2"/>
     </restConfiguration>
+
+    <rest path="/foo" consumes="xml" produces="json">
+      <description>my foo service</description>
+      <get uri="{id}" apiDocs="false">
+        <description>get by id</description>
+        <to uri="log:id"/>
+      </get>
+      <post bindingMode="xml">
+        <description>post something</description>
+        <toD uri="log:post"/>
+      </post>
+    </rest>
+
   </camelContext>
 
 </beans>

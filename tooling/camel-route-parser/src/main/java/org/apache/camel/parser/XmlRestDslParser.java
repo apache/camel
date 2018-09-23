@@ -25,6 +25,7 @@ import org.w3c.dom.Document;
 import org.apache.camel.parser.helper.CamelXmlRestDslParserHelper;
 import org.apache.camel.parser.helper.XmlLineNumberParser;
 import org.apache.camel.parser.model.RestConfigurationDetails;
+import org.apache.camel.parser.model.RestServiceDetails;
 
 /**
  * A Camel XML parser that parses Camel XML Rest DSL source code.
@@ -32,8 +33,6 @@ import org.apache.camel.parser.model.RestConfigurationDetails;
  * This implementation is higher level details, and uses the lower level parser {@link CamelXmlRestDslParserHelper}.
  */
 public final class XmlRestDslParser {
-
-    // TODO: xml rest services
 
     private XmlRestDslParser() {
     }
@@ -57,6 +56,31 @@ public final class XmlRestDslParser {
         if (dom != null) {
             CamelXmlRestDslParserHelper parser = new CamelXmlRestDslParserHelper();
             return parser.parseRestConfiguration(dom, baseDir, fullyQualifiedFileName);
+        }
+
+        return Collections.EMPTY_LIST;
+    }
+
+    /**
+     * Parses the java source class and build a rest service model of the discovered rest services in the java source class.
+     *
+     * @param xml                     the xml file as input stream
+     * @param baseDir                 the base of the source code
+     * @param fullyQualifiedFileName  the fully qualified source code file name
+     * @return a list of rest services
+     */
+    public static List<RestServiceDetails> parseRestService(InputStream xml, String baseDir, String fullyQualifiedFileName) {
+
+        // try parse it as dom
+        Document dom = null;
+        try {
+            dom = XmlLineNumberParser.parseXml(xml);
+        } catch (Exception e) {
+            // ignore as the xml file may not be valid at this point
+        }
+        if (dom != null) {
+            CamelXmlRestDslParserHelper parser = new CamelXmlRestDslParserHelper();
+            return parser.parseRestService(dom, baseDir, fullyQualifiedFileName);
         }
 
         return Collections.EMPTY_LIST;

@@ -16,12 +16,17 @@
  */
 package org.apache.camel.parser.xml;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
 
+import org.apache.camel.parser.RestDslParser;
 import org.apache.camel.parser.XmlRestDslParser;
 import org.apache.camel.parser.model.RestConfigurationDetails;
+import org.apache.camel.parser.model.RestServiceDetails;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -65,5 +70,42 @@ public class XmlRestDslTest {
         assertEquals("value1", details.getCorsHeaders().get("key1"));
         assertEquals("value2", details.getCorsHeaders().get("key2"));
     }
+
+    @Test
+    public void parseRestService() throws Exception {
+        InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parser/xml/myrest.xml");
+        String fqn = "src/test/resources/org/apache/camel/camel/parser/xml/myrest.xml";
+        String baseDir = "src/test/resources";
+        List<RestServiceDetails> list = XmlRestDslParser.parseRestService(is, baseDir, fqn);
+
+        assertEquals(1, list.size());
+        RestServiceDetails details = list.get(0);
+        assertEquals("src/test/resources/org/apache/camel/camel/parser/xml/myrest.xml", details.getFileName());
+        assertNull(details.getMethodName());
+        assertNull(details.getClassName());
+
+        assertEquals("37", details.getLineNumber());
+        assertEquals("47", details.getLineNumberEnd());
+        assertEquals("src/test/resources/org/apache/camel/camel/parser/xml/myrest.xml", details.getFileName());
+        assertNull(details.getMethodName());
+        assertNull(details.getClassName());
+
+        assertEquals("/foo", details.getPath());
+        assertEquals("my foo service", details.getDescription());
+        assertEquals("json", details.getProduces());
+        assertEquals("json", details.getProduces());
+        assertEquals(2, details.getVerbs().size());
+        assertEquals("get", details.getVerbs().get(0).getMethod());
+        assertEquals("{id}", details.getVerbs().get(0).getUri());
+        assertEquals("get by id", details.getVerbs().get(0).getDescription());
+        assertEquals("log:id", details.getVerbs().get(0).getTo());
+        assertEquals("false", details.getVerbs().get(0).getApiDocs());
+        assertEquals("post", details.getVerbs().get(1).getMethod());
+        assertEquals("post something", details.getVerbs().get(1).getDescription());
+        assertEquals("xml", details.getVerbs().get(1).getBindingMode());
+        assertEquals("log:post", details.getVerbs().get(1).getToD());
+        assertNull(details.getVerbs().get(1).getUri());
+    }
+
 
 }
