@@ -40,11 +40,11 @@ public class MyRestDslRouteBuilder extends RouteBuilder {
             .corsHeaderProperty("key1", "value1")
             .corsHeaderProperty("key2", "value2");
 
-        rest("/foo")
-            .get("{id}")
+        rest("/foo").consumes("xml").produces("json").description("my foo service")
+            .get("{id}").apiDocs(false)
                 .description("get by id")
                 .to("log:id")
-            .post()
+            .post().bindingMode(RestBindingMode.xml)
                 .description("post something")
                 .to("log:post");
     }

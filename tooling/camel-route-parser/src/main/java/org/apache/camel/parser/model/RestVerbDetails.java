@@ -38,6 +38,8 @@ public class RestVerbDetails {
     private String clientRequestValidation;
     private String type;
     private String outType;
+    private String description;
+    private String apiDocs;
 
     public String getFileName() {
         return fileName;
@@ -157,5 +159,21 @@ public class RestVerbDetails {
 
     public void setOutType(String outType) {
         this.outType = outType;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getApiDocs() {
+        return apiDocs;
+    }
+
+    public void setApiDocs(String apiDocs) {
+        this.apiDocs = apiDocs;
     }
 }

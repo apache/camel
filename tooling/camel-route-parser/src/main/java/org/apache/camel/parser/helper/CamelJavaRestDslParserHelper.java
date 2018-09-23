@@ -138,7 +138,7 @@ public final class CamelJavaRestDslParserHelper {
                             node.setClassName(clazz.getQualifiedName());
                             node.setMethodName(configureMethod.getName());
 
-                            parseExpression(node, fullyQualifiedFileName, clazz, configureMethod, block, exp);
+                            parseExpression(node, null, fullyQualifiedFileName, clazz, configureMethod, block, exp);
 
                             // flip order of verbs as we parse bottom-up
                             if (node.getVerbs() != null) {
@@ -216,18 +216,28 @@ public final class CamelJavaRestDslParserHelper {
         }
     }
 
-    private void parseExpression(RestServiceDetails node, String fullyQualifiedFileName,
+    private void parseExpression(RestServiceDetails node, RestVerbDetails verb, String fullyQualifiedFileName,
                                  JavaClassSource clazz, MethodSource<JavaClassSource> configureMethod, Block block,
                                  Expression exp) {
         if (exp == null) {
+            // this rest service is not complete, if there is any details on verb then they are actually general
+            // for this rest service and we should pass the details to it
+            if (verb != null) {
+                node.setConsumes(verb.getConsumes());
+                node.setProduces(verb.getProduces());
+                node.setSkipBindingOnErrorCode(verb.getSkipBindingOnErrorCode());
+                node.setClientRequestValidation(verb.getClientRequestValidation());
+                node.setApiDocs(verb.getApiDocs());
+                node.setDescription(verb.getDescription());
+            }
             return;
         }
         if (exp instanceof MethodInvocation) {
             MethodInvocation mi = (MethodInvocation) exp;
-            doParseRestService(node, fullyQualifiedFileName, clazz, configureMethod, block, mi);
+            verb = doParseRestService(node, verb, fullyQualifiedFileName, clazz, configureMethod, block, mi);
             // if the method was called on another method, then recursive
             exp = mi.getExpression();
-            parseExpression(node, fullyQualifiedFileName, clazz, configureMethod, block, exp);
+            parseExpression(node, verb, fullyQualifiedFileName, clazz, configureMethod, block, exp);
         }
     }
 
@@ -314,9 +324,9 @@ public final class CamelJavaRestDslParserHelper {
         }
     }
 
-    private void doParseRestService(RestServiceDetails node, String fullyQualifiedFileName,
-                                    JavaClassSource clazz, MethodSource<JavaClassSource> configureMethod, Block block,
-                                    MethodInvocation mi) {
+    private RestVerbDetails doParseRestService(RestServiceDetails node, RestVerbDetails verb, String fullyQualifiedFileName,
+                                               JavaClassSource clazz, MethodSource<JavaClassSource> configureMethod, Block block,
+                                               MethodInvocation mi) {
 
         // end line number is the first node in the method chain we parse
         if (node.getLineNumberEnd() == null) {
@@ -330,42 +340,76 @@ public final class CamelJavaRestDslParserHelper {
         String name = mi.getName().getIdentifier();
         if ("rest".equals(name)) {
             node.setPath(extractValueFromFirstArgument(clazz, block, mi));
-        } else if ("delete".equals(name)) {
-            RestVerbDetails verb = new RestVerbDetails();
+        } else if (isParentMethod(mi, "rest")) {
+            verb = doParseRestVerb(node, verb, clazz, configureMethod, block, mi);
+        }
+        return verb;
+    }
+
+    private RestVerbDetails doParseRestVerb(RestServiceDetails node, RestVerbDetails verb,
+                                            JavaClassSource clazz, MethodSource<JavaClassSource> configureMethod, Block block,
+                                            MethodInvocation mi) {
+        if (verb == null) {
+            verb = new RestVerbDetails();
+        }
+
+        String name = mi.getName().getIdentifier();
+        if ("description".equals(name)) {
+            verb.setDescription(extractValueFromFirstArgument(clazz, block, mi));
+        } else  if ("bindingMode".equals(name)) {
+            verb.setBindingMode(extractValueFromFirstArgument(clazz, block, mi));
+        } else  if ("skipBindingOnErrorcode".equals(name)) {
+            verb.setSkipBindingOnErrorCode(extractValueFromFirstArgument(clazz, block, mi));
+        } else  if ("clientRequestValidation".equals(name)) {
+            verb.setClientRequestValidation(extractValueFromFirstArgument(clazz, block, mi));
+        } else  if ("consumes".equals(name)) {
+            verb.setConsumes(extractValueFromFirstArgument(clazz, block, mi));
+        } else  if ("produces".equals(name)) {
+            verb.setProduces(extractValueFromFirstArgument(clazz, block, mi));
+        } else  if ("type".equals(name)) {
+            verb.setType(extractValueFromFirstArgument(clazz, block, mi));
+        } else  if ("outType".equals(name)) {
+            verb.setOutType(extractValueFromFirstArgument(clazz, block, mi));
+        } else  if ("apiDocs".equals(name)) {
+            verb.setApiDocs(extractValueFromFirstArgument(clazz, block, mi));
+        } else  if ("tag".equals(name)) {
+            // tag is only available on the node
+            node.setTag(extractValueFromFirstArgument(clazz, block, mi));
+        }
+
+        if ("delete".equals(name)) {
             node.addVerb(verb);
             verb.setMethod("delete");
             verb.setUri(extractValueFromFirstArgument(clazz, block, mi));
+            verb = null; // reset as this verb is not complete
         } else if ("get".equals(name)) {
-            RestVerbDetails verb = new RestVerbDetails();
             node.addVerb(verb);
             verb.setMethod("get");
             verb.setUri(extractValueFromFirstArgument(clazz, block, mi));
+            verb = null; // reset as this verb is not complete
         } else if ("head".equals(name)) {
-            RestVerbDetails verb = new RestVerbDetails();
             node.addVerb(verb);
             verb.setMethod("head");
             verb.setUri(extractValueFromFirstArgument(clazz, block, mi));
+            verb = null; // reset as this verb is not complete
         } else if ("patch".equals(name)) {
-            RestVerbDetails verb = new RestVerbDetails();
             node.addVerb(verb);
             verb.setMethod("patch");
             verb.setUri(extractValueFromFirstArgument(clazz, block, mi));
+            verb = null; // reset as this verb is not complete
         } else if ("post".equals(name)) {
-            RestVerbDetails verb = new RestVerbDetails();
             node.addVerb(verb);
             verb.setMethod("post");
             verb.setUri(extractValueFromFirstArgument(clazz, block, mi));
+            verb = null; // reset as this verb is not complete
         } else if ("put".equals(name)) {
-            RestVerbDetails verb = new RestVerbDetails();
             node.addVerb(verb);
             verb.setMethod("put");
             verb.setUri(extractValueFromFirstArgument(clazz, block, mi));
-        } else {
-            if (isParentMethod(mi, "rest")) {
-                // okay its within the rest block, so then find out if its within one of the verbs
-                // TODO: implement me
-            }
+            verb = null; // reset as this verb is not complete
         }
+
+        return verb;
     }
 
     private static boolean isParentMethod(MethodInvocation mi, String parentName) {

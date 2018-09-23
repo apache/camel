@@ -41,6 +41,7 @@ public class RestServiceDetails {
     private String clientRequestValidation;
     private String enableCORS;
     private String apiDocs;
+    private String description;
     private List<RestVerbDetails> verbs;
 
     public String getFileName() {
@@ -161,6 +162,14 @@ public class RestServiceDetails {
 
     public void setApiDocs(String apiDocs) {
         this.apiDocs = apiDocs;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public List<RestVerbDetails> getVerbs() {

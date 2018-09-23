@@ -84,10 +84,17 @@ public class RoasterJavaRestDslTest extends CamelTestSupport {
         assertEquals("org.apache.camel.parser.java.MyRestDslRouteBuilder", details.getClassName());
 
         assertEquals("/foo", details.getPath());
+        assertEquals("my foo service", details.getDescription());
+        assertEquals("json", details.getProduces());
+        assertEquals("json", details.getProduces());
         assertEquals(2, details.getVerbs().size());
         assertEquals("get", details.getVerbs().get(0).getMethod());
         assertEquals("{id}", details.getVerbs().get(0).getUri());
+        assertEquals("get by id", details.getVerbs().get(0).getDescription());
+        assertEquals("false", details.getVerbs().get(0).getApiDocs());
         assertEquals("post", details.getVerbs().get(1).getMethod());
+        assertEquals("post something", details.getVerbs().get(1).getDescription());
+        assertEquals("xml", details.getVerbs().get(1).getBindingMode());
         assertNull(details.getVerbs().get(1).getUri());
     }
 
