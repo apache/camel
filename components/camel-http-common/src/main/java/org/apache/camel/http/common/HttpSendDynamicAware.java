@@ -141,7 +141,7 @@ public class HttpSendDynamicAware implements SendDynamicAware {
             // if the path is just a trailing slash then skip it (eg it must be longer than just the slash itself)
             if (path != null && path.length() > 1) {
                 int port = parse.getPort();
-                if (port != 80 && port != 443) {
+                if (port > 0 && port != 80 && port != 443) {
                     host += ":" + port;
                 }
                 if (!httpComponent) {
