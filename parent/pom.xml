@@ -154,7 +154,7 @@
     <commons-jexl2-version>2.1.1</commons-jexl2-version>
     <commons-jxpath-version>1.3</commons-jxpath-version>
     <commons-lang-version>2.6</commons-lang-version>
-    <commons-lang3-version>3.8</commons-lang3-version>
+    <commons-lang3-version>3.8.1</commons-lang3-version>
     <commons-logging-version>1.2</commons-logging-version>
     <commons-math-version>2.2</commons-math-version>
     <commons-math3-version>3.6.1</commons-math3-version>
