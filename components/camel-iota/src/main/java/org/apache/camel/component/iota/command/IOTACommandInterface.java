@@ -14,20 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.iota;
+package org.apache.camel.component.iota.command;
 
-public final class IOTAConstants {
+import java.io.IOException;
 
-    public static final String TRANSACTION_HASH_HEADER = "CamelIOTATransactionHash";
-    public static final String ADDRESS_HEADER = "CamelIOTAAddress";
-    public static final String TAG_HEADER = "CamelIOTATAG";
+import org.apache.camel.Exchange;
+import org.apache.http.ParseException;
 
-    public static final int ADDRESS_LENGTH = 81;
-    public static final int CHECKSUM_LENGTH = 9;
-
-    public static final int TAG_LENGTH = 27;
-
-    private IOTAConstants() {
-    }
-
+public interface IOTACommandInterface {
+    String execute(Exchange exchange) throws ParseException, IOException;
 }

@@ -16,27 +16,25 @@
  */
 package org.apache.camel.component.iota;
 
-import java.util.ArrayList;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import jota.dto.response.GetNewAddressResponse;
-import jota.dto.response.GetTransferResponse;
-import jota.dto.response.SendTransferResponse;
-import jota.model.Transfer;
-import jota.utils.TrytesConverter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.iota.command.IOTACommandInterface;
+import org.apache.camel.component.iota.command.IOTAGetTransactionByAddressCommand;
+import org.apache.camel.component.iota.command.IOTAGetTransactionByTAGCommand;
+import org.apache.camel.component.iota.command.IOTAGetTransactionDataCommand;
+import org.apache.camel.component.iota.utils.TrytesConverter;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 /**
  * The IOTA producer.
  */
 public class IOTAProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(IOTAProducer.class);
     private IOTAEndpoint endpoint;
 
     public IOTAProducer(IOTAEndpoint endpoint) {
@@ -44,49 +42,64 @@ public class IOTAProducer extends DefaultProducer {
         this.endpoint = endpoint;
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void process(Exchange exchange) throws Exception {
-        String seed = exchange.getIn().getHeader(IOTAConstants.SEED_HEADER, String.class);
-
         if (endpoint.getOperation() == null) {
             throw new UnsupportedOperationException("IOTAProducer operation cannot be null!");
         }
 
-        if (endpoint.getOperation().equals(IOTAConstants.SEND_TRANSFER_OPERATION)) {
+        IOTACommandInterface command = null;
 
-            String address = exchange.getIn().getHeader(IOTAConstants.TO_ADDRESS_HEADER, String.class);
-            Integer value = exchange.getIn().getHeader(IOTAConstants.VALUE_HEADER, Integer.class);
-            value = value != null ? value : 0;
+        if (endpoint.getOperation().equals(IOTAOperation.FIND_TRANSACTION_DATA.toString())) {
+            command = new IOTAGetTransactionDataCommand();
+            ((IOTAGetTransactionDataCommand)command).setUrl(endpoint.getUrl());
 
-            String tag = StringUtils.rightPad(endpoint.getTag(), IOTAConstants.TAG_LENGTH, '9');
+            exchange.getIn().setBody(new ObjectMapper().readValue(command.execute(exchange), Map.class));
 
-            String message = TrytesConverter.toTrytes(exchange.getIn().getBody(String.class));
+        } else if (endpoint.getOperation().equals(IOTAOperation.FIND_TRANSACTION_BY_ADDRESS.toString())) {
+            command = new IOTAGetTransactionByAddressCommand();
+            ((IOTAGetTransactionByAddressCommand)command).setUrl(endpoint.getUrl());
 
-            if (LOG.isDebugEnabled()) {
-                // LOG.debug("seed {}", seed);
-                LOG.debug("endpoint: security level {} depth {} minWeightMagnitude {} tag {} ", endpoint.getSecurityLevel(), endpoint.getDepth(), endpoint.getMinWeightMagnitude(),
-                          tag);
-                LOG.debug("Sending value {} with message {} to address {}", value, message, address);
+            Map<String, Object> response = new ObjectMapper().readValue(command.execute(exchange), Map.class);
+
+            // convert output of transaction
+            Map output = getTransactionData(exchange, response);
+            exchange.getIn().setBody(output);
+
+        } else if (endpoint.getOperation().equals(IOTAOperation.FIND_TRANSACTION_BY_TAG.toString())) {
+            command = new IOTAGetTransactionByTAGCommand();
+            ((IOTAGetTransactionByTAGCommand)command).setUrl(endpoint.getUrl());
+
+            Map<String, Object> response = new ObjectMapper().readValue(command.execute(exchange), Map.class);
+
+            // convert output of transaction
+            Map output = getTransactionData(exchange, response);
+            exchange.getIn().setBody(output);
+        } else {
+            throw new UnsupportedOperationException("IOTAProducer operation unknown!");
+        }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private Map getTransactionData(Exchange exchange, Map<String, Object> response) throws IOException {
+        IOTACommandInterface command;
+        command = new IOTAGetTransactionDataCommand();
+        ((IOTAGetTransactionDataCommand)command).setUrl(endpoint.getUrl());
+
+        Map output = new HashMap<>();
+        ObjectMapper mapper = new ObjectMapper();
+        Map getTrytesResp = null;
+        for (String hash : (List<String>)response.get("hashes")) {
+            ((IOTAGetTransactionDataCommand)command).setHash(hash);
+
+            // parse string response to json
+            getTrytesResp = mapper.readValue(command.execute(exchange), Map.class);
+            if (getTrytesResp.containsKey("trytes")) {
+                String trytes = (String)((List)getTrytesResp.get("trytes")).get(0);
+                output.put(hash, TrytesConverter.transactionObject(trytes));
             }
-
-            List<Transfer> transfers = new ArrayList<>();
-            transfers.add(new Transfer(address, value, message, tag));
-            SendTransferResponse response = endpoint.getApiClient().sendTransfer(seed, endpoint.getSecurityLevel(), endpoint.getDepth(), endpoint.getMinWeightMagnitude(),
-                                                                                 transfers, null, null, false);
-
-            exchange.getIn().setBody(response.getTransactions());
-        } else if (endpoint.getOperation().equals(IOTAConstants.GET_NEW_ADDRESS_OPERATION)) {
-            
-            Integer index = exchange.getIn().getHeader(IOTAConstants.ADDRESS_INDEX_HEADER, Integer.class);
-
-            GetNewAddressResponse response = endpoint.getApiClient().getNewAddress(seed, endpoint.getSecurityLevel(), index, true, 1, false);
-            exchange.getIn().setBody(response.getAddresses());
-        } else if (endpoint.getOperation().equals(IOTAConstants.GET_TRANSFERS_OPERATION)) {
-            Integer startIdx = exchange.getIn().getHeader(IOTAConstants.ADDRESS_START_INDEX_HEADER, Integer.class);
-            Integer endIdx = exchange.getIn().getHeader(IOTAConstants.ADDRESS_END_INDEX_HEADER, Integer.class);
-
-            GetTransferResponse response = endpoint.getApiClient().getTransfers(seed, endpoint.getSecurityLevel(), startIdx, endIdx, true);
-            exchange.getIn().setBody(response.getTransfers());
-        } 
+        }
+        return output;
     }
 
 }

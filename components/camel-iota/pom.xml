@@ -29,25 +29,23 @@
 		<camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=iota</camel.osgi.export.service>
 	</properties>
 
-	<repositories>
-		<repository>
-		    <id>spring-plugin</id>
-		    <url>http://repo.spring.io/plugins-release</url>
-		</repository>
-	</repositories>
-
 	<dependencies>
-
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-core</artifactId>
 		</dependency>
-
-		<!-- IOTA JAVA LIB dependency -->
 		<dependency>
-		    <groupId>org.iota</groupId>
-		    <artifactId>jota</artifactId>
-		    <version>${jota-version}</version>
+    	<groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpclient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${commons-lang3-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-jackson</artifactId>
 		</dependency>
 
 		<!-- test dependencies -->

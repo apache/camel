@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.iota;
 
-import java.net.URL;
-
-import jota.IotaAPI;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -35,8 +31,6 @@ import org.apache.camel.spi.UriPath;
 @UriEndpoint(firstVersion = "2.23.0", scheme = "iota", title = "IOTA", syntax = "iota:name", label = "dlt")
 public class IOTAEndpoint extends DefaultEndpoint {
 
-    private IotaAPI apiClient;
-
     @UriPath
     @Metadata(required = "true")
     private String name;
@@ -46,14 +40,6 @@ public class IOTAEndpoint extends DefaultEndpoint {
 
     @UriParam
     private String operation;
-    @UriParam
-    private String tag;
-    @UriParam(defaultValue = "1")
-    private Integer securityLevel = 1;
-    @UriParam(defaultValue = "14")
-    private Integer minWeightMagnitude = IOTAConstants.MIN_WEIGHT_MAGNITUDE;
-    @UriParam(defaultValue = "9")
-    private Integer depth = IOTAConstants.DEPTH;
 
     public IOTAEndpoint() {
     }
@@ -72,21 +58,6 @@ public class IOTAEndpoint extends DefaultEndpoint {
 
     public boolean isSingleton() {
         return true;
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        final URL u = new URL(url);
-        apiClient = new IotaAPI.Builder().protocol(u.getProtocol()).host(u.getHost()).port(String.valueOf(u.getPort())).build();
-
-        super.doStart();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-
-        apiClient = null;
     }
 
     public String getName() {
@@ -115,71 +86,13 @@ public class IOTAEndpoint extends DefaultEndpoint {
         this.url = url;
     }
 
-    public String getTag() {
-        return tag;
-    }
-
-    /**
-     * TAG
-     * 
-     * @param tag
-     */
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
-
-    public Integer getSecurityLevel() {
-        return securityLevel;
-    }
-
-    /**
-     * Address security level
-     * 
-     * @param security level
-     */
-    public void setSecurityLevel(Integer securityLevel) {
-        this.securityLevel = securityLevel;
-    }
-
-    public Integer getMinWeightMagnitude() {
-        return minWeightMagnitude;
-    }
-
-    /**
-     * The minWeightMagnitude is the minimum number of zeroes that a
-     * proof-of-work output/transaction hash must end with to be considered
-     * valid by full nodes
-     * 
-     * @param minWeightMagnitude
-     */
-
-    public void setMinWeightMagnitude(Integer minWeightMagnitude) {
-        this.minWeightMagnitude = minWeightMagnitude;
-    }
-
-    public Integer getDepth() {
-        return depth;
-    }
-
-    /**
-     * The depth determines how deep the tangle is analysed for getting Tips
-     * 
-     * @param depth
-     */
-    public void setDepth(Integer depth) {
-        this.depth = depth;
-    }
-
-    public IotaAPI getApiClient() {
-        return apiClient;
-    }
-
     public String getOperation() {
         return operation;
     }
 
     /**
-     * Supported operations are 'sendTransfer', 'getNewAddress'
+     * Supported operations are 'FIND_TRANSACTION_BY_ADDRESS',
+     * 'FIND_TRANSACTION_BY_TAG', 'FIND_TRANSACTION_DATA'
      * 
      * @param operation
      */

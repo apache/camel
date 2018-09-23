@@ -23,58 +23,41 @@ import org.junit.Test;
 
 public class IOTAProducerTest extends CamelTestSupport {
 
-    private static final String SEED = "IHDEENZYITYVYSPKAURUZAQKGVJEREFDJMYTANNXXGPZ9GJWTEOJJ9IPMXOGZNQLSNMFDSQOTZAEETUEA";
-    private static final String ADDRESS = "LXQHWNY9CQOHPNMKFJFIJHGEPAENAOVFRDIBF99PPHDTWJDCGHLYETXT9NPUVSNKT9XDTDYNJKJCPQMZCCOZVXMTXC";
+    private static final String ADDRESS_WITH_CHECKSUM = "RRMKENGN9DIFIKXSVGWGSMFJLHC9DHZURZAIBAPDH9DRRUFFUVLQHHFORX9WAWMBGRJULRESRCKCF9PVYLEIZWCHVC";
+    private static final String TAG = "EHCCHECAMELTEST999999999999";
 
     private static final String IOTA_NODE_URL = "https://nodes.thetangle.org:443";
 
     @Test
-    public void sendTransferTest() throws Exception {
-        final String message = "ILOVEAPACHECAMEL";
-
-        MockEndpoint mock = getMockEndpoint("mock:iota-send-message-response");
+    public void getTransactionByAddressTest() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:iota-get-transaction-by-address");
         mock.expectedMinimumMessageCount(1);
 
-        template.sendBody("direct:iota-send-message", message);
+        template.sendBody("direct:iota-get-transaction-by-address", new String());
 
         assertMockEndpointsSatisfied();
     }
 
     @Test
-    public void getNewAddressTest() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:iota-new-address-response");
+    public void getTransactionByTAG() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:iota-get-transaction-by-tag");
         mock.expectedMinimumMessageCount(1);
 
-        template.sendBody("direct:iota-new-address", new String());
+        template.sendBody("direct:iota-get-transaction-by-tag", new String());
 
         assertMockEndpointsSatisfied();
     }
 
-    @Test
-    public void getTransfersTest() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:iota-get-transfers-response");
-        mock.expectedMinimumMessageCount(1);
-
-        template.sendBody("direct:iota-get-transfers", new String());
-
-        assertMockEndpointsSatisfied();
-    }
-    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:iota-send-message").setHeader(IOTAConstants.SEED_HEADER, constant(SEED)).setHeader(IOTAConstants.TO_ADDRESS_HEADER, constant(ADDRESS))
-                    .to("iota://test?url=" + IOTA_NODE_URL + "&securityLevel=2&tag=APACHECAMELTEST&depth=3&operation=" + IOTAConstants.SEND_TRANSFER_OPERATION)
-                    .to("mock:iota-send-message-response");
+                from("direct:iota-get-transaction-by-address").setHeader(IOTAConstants.ADDRESS_HEADER, constant(ADDRESS_WITH_CHECKSUM))
+                    .to("iota://test?url=" + IOTA_NODE_URL + "&operation=" + IOTAOperation.FIND_TRANSACTION_BY_ADDRESS).to("mock:iota-get-transaction-by-address");
 
-                from("direct:iota-new-address").setHeader(IOTAConstants.SEED_HEADER, constant(SEED)).setHeader(IOTAConstants.ADDRESS_INDEX_HEADER, constant(1))
-                    .to("iota://test?url=" + IOTA_NODE_URL + "&securityLevel=1&operation=" + IOTAConstants.GET_NEW_ADDRESS_OPERATION).to("mock:iota-new-address-response");
-                
-                from("direct:iota-get-transfers").setHeader(IOTAConstants.SEED_HEADER, constant(SEED)).setHeader(IOTAConstants.ADDRESS_START_INDEX_HEADER, constant(1))
-                .setHeader(IOTAConstants.ADDRESS_END_INDEX_HEADER, constant(10))
-                .to("iota://test?url=" + IOTA_NODE_URL + "&securityLevel=1&operation=" + IOTAConstants.GET_TRANSFERS_OPERATION).to("mock:iota-get-transfers-response");
+                from("direct:iota-get-transaction-by-tag").setHeader(IOTAConstants.TAG_HEADER, constant(TAG))
+                    .to("iota://test?url=" + IOTA_NODE_URL + "&operation=" + IOTAOperation.FIND_TRANSACTION_BY_TAG).to("mock:iota-get-transaction-by-tag");
             }
         };
     }

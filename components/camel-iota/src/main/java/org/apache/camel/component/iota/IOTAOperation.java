@@ -16,18 +16,6 @@
  */
 package org.apache.camel.component.iota;
 
-public final class IOTAConstants {
-
-    public static final String TRANSACTION_HASH_HEADER = "CamelIOTATransactionHash";
-    public static final String ADDRESS_HEADER = "CamelIOTAAddress";
-    public static final String TAG_HEADER = "CamelIOTATAG";
-
-    public static final int ADDRESS_LENGTH = 81;
-    public static final int CHECKSUM_LENGTH = 9;
-
-    public static final int TAG_LENGTH = 27;
-
-    private IOTAConstants() {
-    }
-
+public enum IOTAOperation {
+    FIND_TRANSACTION_BY_ADDRESS, FIND_TRANSACTION_BY_TAG, FIND_TRANSACTION_DATA
 }
