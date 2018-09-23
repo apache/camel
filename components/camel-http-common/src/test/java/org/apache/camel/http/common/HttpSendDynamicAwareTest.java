@@ -16,19 +16,20 @@
  */
 package org.apache.camel.http.common;
 
-import static org.junit.Assert.*;
+import org.apache.camel.spi.SendDynamicAware.DynamicAwareEntry;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.apache.camel.spi.SendDynamicAware.DynamicAwareEntry;
+
+import static org.junit.Assert.assertEquals;
 
 public class HttpSendDynamicAwareTest {
 
     private HttpSendDynamicAware httpSendDynamicAware;
+
     @Before
     public void setUp() throws Exception {
         this.httpSendDynamicAware = new HttpSendDynamicAware();
-        
     }
 
     @Test
