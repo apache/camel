@@ -91,10 +91,12 @@ public class RoasterJavaRestDslTest extends CamelTestSupport {
         assertEquals("get", details.getVerbs().get(0).getMethod());
         assertEquals("{id}", details.getVerbs().get(0).getUri());
         assertEquals("get by id", details.getVerbs().get(0).getDescription());
+        assertEquals("log:id", details.getVerbs().get(0).getTo());
         assertEquals("false", details.getVerbs().get(0).getApiDocs());
         assertEquals("post", details.getVerbs().get(1).getMethod());
         assertEquals("post something", details.getVerbs().get(1).getDescription());
         assertEquals("xml", details.getVerbs().get(1).getBindingMode());
+        assertEquals("log:post", details.getVerbs().get(1).getToD());
         assertNull(details.getVerbs().get(1).getUri());
     }
 

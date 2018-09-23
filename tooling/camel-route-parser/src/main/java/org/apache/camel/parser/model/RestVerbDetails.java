@@ -40,6 +40,8 @@ public class RestVerbDetails {
     private String outType;
     private String description;
     private String apiDocs;
+    private String to;
+    private String toD;
 
     public String getFileName() {
         return fileName;
@@ -175,5 +177,21 @@ public class RestVerbDetails {
 
     public void setApiDocs(String apiDocs) {
         this.apiDocs = apiDocs;
+    }
+
+    public String getTo() {
+        return to;
+    }
+
+    public void setTo(String to) {
+        this.to = to;
+    }
+
+    public String getToD() {
+        return toD;
+    }
+
+    public void setToD(String toD) {
+        this.toD = toD;
     }
 }

@@ -33,6 +33,8 @@ import org.apache.camel.parser.model.RestConfigurationDetails;
  */
 public final class XmlRestDslParser {
 
+    // TODO: xml rest services
+
     private XmlRestDslParser() {
     }
 

@@ -372,6 +372,10 @@ public final class CamelJavaRestDslParserHelper {
             verb.setOutType(extractValueFromFirstArgument(clazz, block, mi));
         } else  if ("apiDocs".equals(name)) {
             verb.setApiDocs(extractValueFromFirstArgument(clazz, block, mi));
+        } else  if ("to".equals(name)) {
+            verb.setTo(extractValueFromFirstArgument(clazz, block, mi));
+        } else  if ("toD".equals(name)) {
+            verb.setToD(extractValueFromFirstArgument(clazz, block, mi));
         } else  if ("tag".equals(name)) {
             // tag is only available on the node
             node.setTag(extractValueFromFirstArgument(clazz, block, mi));

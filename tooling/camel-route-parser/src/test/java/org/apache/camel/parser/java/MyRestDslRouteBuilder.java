@@ -46,6 +46,6 @@ public class MyRestDslRouteBuilder extends RouteBuilder {
                 .to("log:id")
             .post().bindingMode(RestBindingMode.xml)
                 .description("post something")
-                .to("log:post");
+                .toD("log:post");
     }
 }
