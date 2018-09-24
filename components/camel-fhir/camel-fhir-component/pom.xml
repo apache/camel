@@ -238,6 +238,7 @@
                     <nullableOption>returnResource</nullableOption>
                     <nullableOption>throwError</nullableOption>
                     <nullableOption>extraParameters</nullableOption>
+                    <nullableOption>version</nullableOption>
                   </nullableOptions>
                 </api>
                 <api>
