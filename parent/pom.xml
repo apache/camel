@@ -317,8 +317,8 @@
     <ignite-version>2.6.0</ignite-version>
     <infinispan-version>9.3.3.Final</infinispan-version>
     <infinispan-spring-boot-version>2.0.0.Beta1</infinispan-spring-boot-version>
-    <influx-java-driver-version>2.12</influx-java-driver-version>
-    <influx-java-driver-bundle-version>2.12_1</influx-java-driver-bundle-version>
+    <influx-java-driver-version>2.13</influx-java-driver-version>
+    <influx-java-driver-bundle-version>2.13_1</influx-java-driver-bundle-version>
     <influx-guava-version>20.0</influx-guava-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <irclib-version>1.10</irclib-version>
