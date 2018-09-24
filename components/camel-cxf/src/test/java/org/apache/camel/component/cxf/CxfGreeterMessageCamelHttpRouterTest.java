@@ -48,7 +48,7 @@ public class CxfGreeterMessageCamelHttpRouterTest extends CxfGreeterMessageRoute
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("cxf:bean:routerEndpoint?dataFormat=Message&publishedEndpointUrl=http://www.simple.com/services/test")
+                from("cxf:bean:routerEndpoint?dataFormat=RAW&publishedEndpointUrl=http://www.simple.com/services/test")
                     // The fix the side effect of CAMEL-7436
                     .removeHeaders("CamelHttp*") 
                     .to(serverAddress + "?throwExceptionOnFailure=false");

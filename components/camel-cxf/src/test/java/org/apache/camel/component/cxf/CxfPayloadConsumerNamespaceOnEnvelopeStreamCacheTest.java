@@ -28,7 +28,7 @@ public class CxfPayloadConsumerNamespaceOnEnvelopeStreamCacheTest extends CxfPay
             public void configure() {
                 from("direct:router")
                         // Use message mode to send the raw message
-                        .to("cxf:bean:serviceEndpoint?dataFormat=MESSAGE")
+                        .to("cxf:bean:serviceEndpoint?dataFormat=RAW")
                         // Convert to String to make testing the result easier
                         .convertBodyTo(String.class);
                 // The consumer is running in payload mode

@@ -90,7 +90,7 @@ public class CxfPayloadProducerNamespaceOnEnvelopeTest extends CamelTestSupport 
                         // easier
                         .convertBodyTo(String.class);
                 // This route just returns the test message
-                from("cxf:bean:serviceEndpoint?dataFormat=MESSAGE").setBody().constant(RESPONSE_MESSAGE);
+                from("cxf:bean:serviceEndpoint?dataFormat=RAW").setBody().constant(RESPONSE_MESSAGE);
             }
         };
     }

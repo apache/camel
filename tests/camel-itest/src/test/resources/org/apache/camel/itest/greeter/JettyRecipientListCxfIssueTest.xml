@@ -36,7 +36,7 @@
                    serviceName="s:SOAPService"
                    xmlns:s="http://apache.org/hello_world_soap_http">
     <cxf:properties>
-      <entry key="dataFormat" value="MESSAGE"/>
+      <entry key="dataFormat" value="RAW"/>
       <entry key="receiveTimeout" value="60000"/>
       <entry key="connectionTimeout" value="60000"/>
       <entry key="schema-validation-enabled" value="true" />
@@ -50,7 +50,7 @@
                    serviceName="s:SOAPService"
                    xmlns:s="http://apache.org/hello_world_soap_http">
     <cxf:properties>
-      <entry key="dataFormat" value="MESSAGE"/>
+      <entry key="dataFormat" value="RAW"/>
       <entry key="receiveTimeout" value="60000"/>
       <entry key="connectionTimeout" value="60000"/>
       <entry key="schema-validation-enabled" value="true" />

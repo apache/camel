@@ -141,7 +141,7 @@ public class CxfProducerTest extends Assert {
         assertTrue(reply.getException().getCause() instanceof ConnectException);
         
         //Test the data format MESSAGE
-        reply = sendSimpleMessageWithRawMessage(getWrongEndpointUri() + "&dataFormat=MESSAGE");
+        reply = sendSimpleMessageWithRawMessage(getWrongEndpointUri() + "&dataFormat=RAW");
         assertNotNull("We should get the exception here", reply.getException());
         assertTrue(reply.getException().getCause() instanceof ConnectException);
     }

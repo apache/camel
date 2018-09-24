@@ -272,7 +272,7 @@ following is an example.
         <ref bean="loggingOutInterceptor"/>
     </cxf:outInterceptors>
     <cxf:properties>
-        <entry key="dataFormat" value="MESSAGE"/>
+        <entry key="dataFormat" value="RAW"/>
     </cxf:properties>
 </cxf:cxfEndpoint>
 -------------------------------------------------------------------------------------------------------
@@ -544,7 +544,7 @@ and setDefaultBus properties from spring configuration file.
      serviceName="s:ServiceName"
      xmlns:s="http://www.example.com/test">
      <cxf:properties>
-       <entry key="dataFormat" value="MESSAGE"/>
+       <entry key="dataFormat" value="RAW"/>
        <entry key="setDefaultBus" value="true"/>
      </cxf:properties>
    </cxf:cxfEndpoint>
@@ -572,7 +572,7 @@ Example
                      address="http://localhost:9001/router"
                      serviceClass="org.apache.servicemix.examples.cxf.HelloWorld">
         <camel-cxf:properties>
-            <entry key="dataFormat" value="MESSAGE"/>
+            <entry key="dataFormat" value="RAW"/>
         </camel-cxf:properties>
      </camel-cxf:cxfEndpoint>
 

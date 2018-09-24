@@ -29,7 +29,7 @@
 	<cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port1}/LoggingInterceptorInMessageModeTest/router"
 		serviceClass="org.apache.camel.component.cxf.HelloService">
 		<cxf:properties>
-			<entry key="dataFormat" value="MESSAGE"/>
+			<entry key="dataFormat" value="RAW"/>
 		</cxf:properties>	
 	</cxf:cxfEndpoint>
 		
@@ -45,7 +45,7 @@
 		    <ref bean="loggingOutInterceptor"/>
 		</cxf:outInterceptors>
 		<cxf:properties>
-			<entry key="dataFormat" value="MESSAGE"/>
+			<entry key="dataFormat" value="RAW"/>
 		</cxf:properties>
 	</cxf:cxfEndpoint>
 	<!-- END SNIPPET: enableLoggingOutInterceptor -->

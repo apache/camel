@@ -70,7 +70,7 @@ public class CxfProducerRouterTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:EndpointA").to(getSimpleEndpointUri());
-                from("direct:EndpointB").to(getSimpleEndpointUri() + "&dataFormat=MESSAGE");
+                from("direct:EndpointB").to(getSimpleEndpointUri() + "&dataFormat=RAW");
                 from("direct:EndpointC").to(getSimpleEndpointUri() + "&dataFormat=PAYLOAD");
                 // This route is for checking camel-cxf producer throwing exception
                 from("direct:start")
@@ -102,8 +102,8 @@ public class CxfProducerRouterTest extends CamelTestSupport {
         CxfEndpoint endpoint = context.getEndpoint(getSimpleEndpointUri(), CxfEndpoint.class);
         assertEquals("Get a wrong endpoint uri", getSimpleEndpointUri(), endpoint.getEndpointUri());
         
-        endpoint = context.getEndpoint(getSimpleEndpointUri() + "&dataFormat=MESSAGE", CxfEndpoint.class);
-        assertEquals("Get a wrong endpoint uri", URISupport.normalizeUri(getSimpleEndpointUri() + "&dataFormat=MESSAGE"), endpoint.getEndpointUri());
+        endpoint = context.getEndpoint(getSimpleEndpointUri() + "&dataFormat=RAW", CxfEndpoint.class);
+        assertEquals("Get a wrong endpoint uri", URISupport.normalizeUri(getSimpleEndpointUri() + "&dataFormat=RAW"), endpoint.getEndpointUri());
 
     }
 

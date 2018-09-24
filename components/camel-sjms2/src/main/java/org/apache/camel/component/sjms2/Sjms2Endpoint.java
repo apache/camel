@@ -56,7 +56,6 @@ public class Sjms2Endpoint extends SjmsEndpoint implements AsyncEndpoint {
     /**
      * Sets the durable subscription Id required for durable topics.
      */
-    @Deprecated
     @Override
     public void setDurableSubscriptionId(String durableSubscriptionId) {
         super.setDurableSubscriptionId(durableSubscriptionId);
