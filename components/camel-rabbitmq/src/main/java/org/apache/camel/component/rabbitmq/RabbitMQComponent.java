@@ -259,12 +259,6 @@ public class RabbitMQComponent extends DefaultComponent {
         localArgs.putAll(IntrospectionSupport.extractProperties(params, ARG_PREFIX));
         endpoint.setArgs(localArgs);
 
-        Map<String, Object> argsCopy = new HashMap<>(localArgs);
-        
-        // Combine the three types of rabbit arguments with their individual endpoint properties
-        endpoint.getExchangeArgs().putAll(IntrospectionSupport.extractProperties(argsCopy, EXCHANGE_ARG_PREFIX));
-        endpoint.getQueueArgs().putAll(IntrospectionSupport.extractProperties(argsCopy, QUEUE_ARG_PREFIX));
-        endpoint.getBindingArgs().putAll(IntrospectionSupport.extractProperties(argsCopy, BINDING_ARG_PREFIX));
         // Change null headers processing for message converter
         endpoint.getMessageConverter().setAllowNullHeaders(endpoint.isAllowNullHeaders());
 

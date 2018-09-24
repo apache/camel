@@ -46,13 +46,6 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
 
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
-        registry.bind("argsConfigurer", new ArgsConfigurer() {
-            @Override
-            public void configurArgs(Map<String, Object> args) {
-                // do nothing here
-            }
-
-        });
 
         HashMap<String, Object> args = new HashMap<>();
         args.put("foo", "bar");
@@ -161,50 +154,13 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
     @Test
     public void createEndpointWithAutoAckDisabled() throws Exception {
         RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?autoAck=false", RabbitMQEndpoint.class);
-        assertEquals(false, endpoint.isAutoAck());
+        assertFalse(endpoint.isAutoAck());
     }
 
     @Test
     public void assertSingleton() throws Exception {
         RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange", RabbitMQEndpoint.class);
-
         assertTrue(endpoint.isSingleton());
-    }
-
-    @Test
-    public void testQueueArgsConfigurer() throws Exception {
-        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?queueArgsConfigurer=#argsConfigurer", RabbitMQEndpoint.class);
-        assertNotNull("We should get the queueArgsConfigurer here.", endpoint.getQueueArgsConfigurer());
-        assertNull("We should not get the exchangeArgsConfigurer here.", endpoint.getExchangeArgsConfigurer());
-        assertTrue("We should not get the bindingArgsConfigurer here.", endpoint.getBindingArgs().isEmpty());
-    }
-
-    @Test
-    public void testBindingArgs() throws Exception {
-        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?bindingArgs=#args", RabbitMQEndpoint.class);
-        assertEquals("We should get the bindingArgsConfigurer here.", 1, endpoint.getBindingArgs().size());
-        assertNull("We should not get the queueArgsConfigurer here.", endpoint.getQueueArgsConfigurer());
-        assertNull("We should not get the exchangeArgsConfigurer here.", endpoint.getExchangeArgsConfigurer());
-    }
-
-    @Test
-    public void testQueueArgs() throws Exception {
-        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?queueArgs=#args", RabbitMQEndpoint.class);
-        assertEquals("We should get the queueArgs here.", 1, endpoint.getQueueArgs().size());
-        assertTrue("We should not get the binding args here.", endpoint.getBindingArgs().isEmpty());
-        assertTrue("We should not get the exchange args here.", endpoint.getExchangeArgs().isEmpty());
-        assertNull("We should not get the exchangeArgsConfigurer here.", endpoint.getExchangeArgsConfigurer());
-        assertNull("We should not get the queueArgsConfigurer here.", endpoint.getQueueArgsConfigurer());
-    }
-
-    @Test
-    public void testExchangeArgs() throws Exception {
-        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?exchangeArgs=#args", RabbitMQEndpoint.class);
-        assertEquals("We should get the exchangeArgs here.", 1, endpoint.getExchangeArgs().size());
-        assertTrue("We should not get the binding args here.", endpoint.getBindingArgs().isEmpty());
-        assertTrue("We should not get the queue args here.", endpoint.getQueueArgs().isEmpty());
-        assertNull("We should not get the exchangeArgsConfigurer here.", endpoint.getExchangeArgsConfigurer());
-        assertNull("We should not get the queueArgsConfigurer here.", endpoint.getQueueArgsConfigurer());
     }
 
     @Test
@@ -215,36 +171,6 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         assertEquals("Wrong number of args", 1, endpoint.getBindingArgs().size());
         assertEquals("Wrong number of args", 2, endpoint.getExchangeArgs().size());
         assertEquals("Wrong number of args", 1, endpoint.getQueueArgs().size());
-    }
-
-    @Test
-    public void testMultiArgsCombinedWithIndividuallySpecified() throws Exception {
-        // setup two arguments for each rabbit fundamental.
-        // Configured inline and via named map in the camel registry
-        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange" + "?arg.exchange.e1=v1&exchangeArgs=#args" + "&arg.queue.q1=v2&queueArgs=#moreArgs"
-                                                        + "&arg.binding.b1=v3&bindingArgs=#evenMoreArgs", RabbitMQEndpoint.class);
-
-        // The multi-value inline has 3
-        Map<String, Object> inlineArgs = endpoint.getArgs();
-        assertEquals("Wrong number of args", 3, inlineArgs.size());
-        assertTrue(inlineArgs.containsKey("exchange.e1"));
-        assertTrue(inlineArgs.containsKey("queue.q1"));
-        assertTrue(inlineArgs.containsKey("binding.b1"));
-
-        Map<String, Object> exchangeArgs = endpoint.getExchangeArgs();
-        assertEquals("Wrong number of exchange args", 2, exchangeArgs.size());
-        assertTrue("Should contain the individually specified exchange args", exchangeArgs.containsKey("foo"));
-        assertTrue("Should contain the args in the multi-value map", exchangeArgs.containsKey("e1"));
-
-        Map<String, Object> queueArgs = endpoint.getQueueArgs();
-        assertEquals("Wrong number of queue args", 2, queueArgs.size());
-        assertTrue("Should contain the individually specified queue args", queueArgs.containsKey("fizz"));
-        assertTrue("Should contain the args in the multi-value map", queueArgs.containsKey("q1"));
-
-        Map<String, Object> bindingArgs = endpoint.getBindingArgs();
-        assertEquals("Wrong number of binding args", 2, bindingArgs.size());
-        assertTrue("Should contain the individually specified binding args", bindingArgs.containsKey("ping"));
-        assertTrue("Should contain the args in the multi-value map", bindingArgs.containsKey("b1"));
     }
 
     @Test

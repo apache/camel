@@ -66,9 +66,6 @@ public class RestletEndpoint extends DefaultEndpoint implements AsyncEndpoint, H
     private Method restletMethod = Method.GET;
     @UriParam(label = "consumer", javaType = "java.lang.String")
     private Method[] restletMethods;
-    @UriParam(label = "consumer,advanced")
-    @Deprecated
-    private List<String> restletUriPatterns;
     @UriParam(label = "security")
     private Map<String, String> restletRealm;
     @UriParam(label = "advanced")
@@ -266,21 +263,6 @@ public class RestletEndpoint extends DefaultEndpoint implements AsyncEndpoint, H
 
     public Method[] getRestletMethods() {
         return restletMethods;
-    }
-
-    /**
-     * Specify one ore more URI templates to be serviced by a restlet consumer endpoint, using the # notation to
-     * reference a List<String> in the Camel Registry.
-     * If a URI pattern has been defined in the endpoint URI, both the URI pattern defined in the endpoint and the restletUriPatterns option will be honored.
-     */
-    @Deprecated
-    public void setRestletUriPatterns(List<String> restletUriPatterns) {
-        this.restletUriPatterns = restletUriPatterns;
-    }
-
-    @Deprecated
-    public List<String> getRestletUriPatterns() {
-        return restletUriPatterns;
     }
 
     public boolean isThrowExceptionOnFailure() {

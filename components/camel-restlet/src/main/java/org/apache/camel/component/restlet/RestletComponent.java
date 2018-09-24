@@ -255,12 +255,6 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
         if (endpoint.getUriPattern() != null && endpoint.getUriPattern().length() > 0) {
             attachUriPatternToRestlet(offsetPath, endpoint.getUriPattern(), endpoint, consumer.getRestlet());
         }
-
-        if (endpoint.getRestletUriPatterns() != null) {
-            for (String uriPattern : endpoint.getRestletUriPatterns()) {
-                attachUriPatternToRestlet(offsetPath, uriPattern, endpoint, consumer.getRestlet());
-            }
-        }
     }
 
     public void disconnect(RestletConsumer consumer) throws Exception {
@@ -273,15 +267,6 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
             MethodBasedRouter methodRouter = getMethodRouter(pattern, false);
             if (methodRouter != null) {
                 routesToRemove.add(methodRouter);
-            }
-        }
-
-        if (endpoint.getRestletUriPatterns() != null) {
-            for (String uriPattern : endpoint.getRestletUriPatterns()) {
-                MethodBasedRouter methodRouter = getMethodRouter(uriPattern, false);
-                if (methodRouter != null) {
-                    routesToRemove.add(methodRouter);
-                }
             }
         }
 

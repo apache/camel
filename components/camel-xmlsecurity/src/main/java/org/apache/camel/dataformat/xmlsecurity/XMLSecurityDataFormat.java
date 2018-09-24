@@ -20,7 +20,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
-import java.net.URL;
 import java.security.AccessController;
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -70,42 +69,6 @@ import org.slf4j.LoggerFactory;
 
 public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
-    /**
-     * @deprecated  Use {@link #XMLSecurityDataFormat(String, Map, boolean, String, String, String, KeyStoreParameters)} instead.
-     */
-    @Deprecated
-    public static final String XML_ENC_RECIPIENT_ALIAS = "CamelXmlEncryptionRecipientAlias";
-    
-    /**
-     * @deprecated  Use {@link #XMLSecurityDataFormat(String, Map, boolean, String, String, String, KeyStoreParameters)} instead.
-     */
-    @Deprecated
-    public static final String XML_ENC_TRUST_STORE_URL = "CamelXmlEncryptionTrustStoreUrl";
-    
-    /**
-     * @deprecated  Use {@link #XMLSecurityDataFormat(String, Map, boolean, String, String, String, KeyStoreParameters)} instead.
-     */
-    @Deprecated
-    public static final String XML_ENC_TRUST_STORE_PASSWORD = "CamelXmlEncryptionTrustStorePassword";
-    
-    /**
-     * @deprecated  Use {@link #XMLSecurityDataFormat(String, Map, boolean, String, String, String, KeyStoreParameters)} instead.
-     */                 
-    @Deprecated
-    public static final String XML_ENC_KEY_STORE_URL = "CamelXmlEncryptionKeyStoreUrl";
-    
-    /**
-     * @deprecated  Use {@link #XMLSecurityDataFormat(String, Map, boolean, String, String, String, KeyStoreParameters)} instead.
-     */
-    @Deprecated
-    public static final String XML_ENC_KEY_STORE_PASSWORD = "CamelXmlEncryptionKeyStorePassword";
-    
-    /**
-     * @deprecated  Use {@link #XMLSecurityDataFormat(String, Map, boolean, String, String, String, KeyStoreParameters)} instead.
-     */
-    @Deprecated
-    public static final String XML_ENC_KEY_STORE_ALIAS = "CamelXmlEncryptionKeyAlias";
-    
     private static final Logger LOG = LoggerFactory.getLogger(XMLSecurityDataFormat.class);
     private static final String DEFAULT_KEY = "Just another 24 Byte key";
 
@@ -221,37 +184,8 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         this.setPassPhrase(passPhrase);
         this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
     }
-    
-    /**
-     * @deprecated  use {@link #XMLSecurityDataFormat(String, Map, boolean, String, String, String, String)} or
-     *                  {@link #XMLSecurityDataFormat(String, Map, boolean, String, String, String, KeyStoreParameters)} instead. 
-     */
-    @Deprecated
-    public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String xmlCipherAlgorithm, 
-            String keyCipherAlgorithm) {
-        this();
-        this.setSecureTag(secureTag);
-        this.setSecureTagContents(secureTagContents);
-        this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
-        this.setKeyCipherAlgorithm(keyCipherAlgorithm);
-    }
-            
-    /**
-     * @deprecated  use {@link #XMLSecurityDataFormat(String, Map, boolean, String, String, String, String)} or
-     *                  {@link #XMLSecurityDataFormat(String, Map, boolean, String, String, String, KeyStoreParameters)} instead.  
-     */
-    @Deprecated
-    public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias, 
-            String xmlCipherAlgorithm, String keyCipherAlgorithm) {
-        this();
-        this.setSecureTag(secureTag);
-        this.setSecureTagContents(secureTagContents);
-        this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
-        this.setRecipientKeyAlias(recipientKeyAlias);
-        this.setKeyCipherAlgorithm(keyCipherAlgorithm);
-    }
-      
-    public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias, 
+
+    public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias,
                                  String xmlCipherAlgorithm, String keyCipherAlgorithm, String keyOrTrustStoreParametersId) {
         this();
         this.setSecureTag(secureTag);
@@ -374,11 +308,6 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
-        try {
-            setDefaultsFromContext(camelContext);
-        } catch (Exception e) {
-            throw new IllegalStateException("Could not initialize XMLSecurityDataFormat with camelContext. ", e);
-        }
     }
 
     @Override
@@ -396,44 +325,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         // noop
     }
 
-    /**
-     * Sets missing properties that are defined in the Camel context.
-     * @deprecated  this operation populates the data format using depreciated properties and will be
-     *              removed at the end of the deprecation period
-     */
-    @Deprecated
-    private void setDefaultsFromContext(CamelContext context) throws Exception {
 
-        Map<String, String> contextProps = context.getGlobalOptions();
-               
-        if (this.recipientKeyAlias == null) {
-            recipientKeyAlias = context.getGlobalOption(XML_ENC_RECIPIENT_ALIAS);
-        }
-
-        if (this.trustStore == null && contextProps.containsKey(XML_ENC_TRUST_STORE_URL)) {
-            trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            URL trustStoreUrl = new URL(context.getGlobalOption(XML_ENC_TRUST_STORE_URL));
-            if (trustStorePassword == null) {
-                trustStorePassword = context.getGlobalOption(XML_ENC_TRUST_STORE_PASSWORD);
-            }
-            trustStore.load(trustStoreUrl.openStream(), trustStorePassword.toCharArray());
-        }
-        
-        if (this.keyStore == null && contextProps.containsKey(XML_ENC_KEY_STORE_URL)) {
-            keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            URL keyStoreUrl = new URL(context.getGlobalOption(XML_ENC_KEY_STORE_URL));
-            if (keyStorePassword == null) {
-                keyStorePassword = context.getGlobalOption(XML_ENC_KEY_STORE_PASSWORD);
-            }
-            keyStore.load(keyStoreUrl.openStream(), keyStorePassword.toCharArray());    
-        }
-        
-        if (context.getGlobalOptions().containsKey(XML_ENC_KEY_STORE_ALIAS) && this.recipientKeyAlias == null) {
-            recipientKeyAlias = context.getGlobalOption(XML_ENC_KEY_STORE_ALIAS);
-        }
-    }
-    
-    
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         // Retrieve the message body as input stream
         InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, graph);
@@ -461,7 +353,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
      * or recipient list.
      */
     private void encryptAsymmetric(Exchange exchange, Document document, OutputStream stream) throws Exception {       
-        String exchangeRecipientAlias = getRecipientKeyAlias(exchange);
+        String exchangeRecipientAlias = getRecipientKeyAlias();
         
         if (null == exchangeRecipientAlias) {
             throw new IllegalStateException("The  recipient's key alias must be defined for asymmetric key encryption.");
@@ -810,16 +702,6 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         return algorithmKeyWrap;
     }
     
-    private String getRecipientKeyAlias(Exchange exchange) {
-        String alias = exchange.getIn().getHeader(XML_ENC_RECIPIENT_ALIAS, String.class);
-        if (alias != null) {
-            exchange.getIn().setHeader(XML_ENC_RECIPIENT_ALIAS, null);
-        } else {
-            alias = recipientKeyAlias;
-        }
-        return alias;
-    }
-    
     // Check to see if the asymmetric key transport algorithm is allowed
     private void checkEncryptionAlgorithm(Key keyEncryptionKey, Element parentElement) throws Exception {
         if (XMLCipher.RSA_v1dot5.equals(keyCipherAlgorithm)
@@ -917,12 +799,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
     public void setXmlCipherAlgorithm(String xmlCipherAlgorithm) {
         this.xmlCipherAlgorithm = xmlCipherAlgorithm;
     }
-    
-    @Deprecated
-    public String getKeyCyperAlgorithm() {
-        return keyCipherAlgorithm;
-    }
-    
+
     public String getKeyCipherAlgorithm() {
         return keyCipherAlgorithm;
     }
@@ -966,92 +843,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
     public void setSecureTagContents(boolean secureTagContents) {
         this.secureTagContents = secureTagContents;
     }
-    
-    /**
-     * Gets the KeyStore configured for this data format.
-     * @deprecated  Will change to private access in the future.
-     */
-    @Deprecated
-    public KeyStore getKeyStore() {
-        if (keyStore == null && this.keyOrTrustStoreParameters != null) {
-            try {
-                keyStore = keyOrTrustStoreParameters.createKeyStore();
-            } catch (Exception e) {
-                throw new RuntimeException("Unable to create KeyStore with configured KeyStoreParameters. " + e.getMessage(), e);
-            }
-        }
-        return this.keyStore;
-    }
-    
-    /**
-     * @deprecated  Use {@link #getKeyOrTrustStoreParameters()} instead.
-     */
-    @Deprecated  
-    public void setKeyStore(KeyStore keyStore) {
-        this.keyStore = keyStore;
-    }
-         
-    /**
-     * @deprecated  Will change to private access in the future. Use {@link #getKeyOrTrustStoreParameters()} instead.
-     */
-    @Deprecated
-    public KeyStore getTrustStore() {
-        if (trustStore == null && this.keyOrTrustStoreParameters != null) {
-            try {
-                trustStore = keyOrTrustStoreParameters.createKeyStore();
-            } catch (Exception e) {
-                throw new RuntimeException("Unable to create KeyStore with configured KeyStoreParameters. " + e.getMessage(), e);
-            }
-        }
-        return this.trustStore;
-    }
-    
-    /**
-     * @deprecated  Use {@link #setKeyOrTrustStoreParameters()} instead.
-     */
-    @Deprecated  
-    public void setTrustStore(KeyStore trustStore) {
-        this.trustStore = trustStore;
-    }
-      
-    /**
-     * @deprecated  Will change to private access in the future. Use {@link #getKeyOrTrustStoreParameters()} instead.
-     */
-    @Deprecated
-    public String getKeyStorePassword() {
-        if (this.keyOrTrustStoreParameters != null) {
-            return keyOrTrustStoreParameters.getPassword();
-        }
-        return this.keyStorePassword;
-    }
-    
-    /**
-     * @deprecated  Use {@link #setKeyOrTrustStoreParameters()} instead.
-     */
-    @Deprecated
-    public void setKeyStorePassword(String keyStorePassword) {
-        this.keyStorePassword = keyStorePassword;
-    }
-    
-    /**
-     * @deprecated  Will change to private access in the future.  Use {@link #setKeyOrTrustStoreParameters()} instead.
-     */
-    @Deprecated
-    public String getTrustStorePassword() {
-        if (this.keyOrTrustStoreParameters != null) {
-            return keyOrTrustStoreParameters.getPassword();
-        }
-        return this.trustStorePassword;
-    }
-    
-    /**
-     * @deprecated  Use {@link #setKeyOrTrustStoreParameters()} instead.
-     */
-    @Deprecated
-    public void setTrustStorePassword(String trustStorePassword) {
-        this.trustStorePassword = trustStorePassword;
-    }
-    
+
     public void setKeyOrTrustStoreParameters(KeyStoreParameters parameters) {
         this.keyOrTrustStoreParameters = parameters;
     }

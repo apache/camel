@@ -127,7 +127,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (62 parameters):
+==== Query Parameters (57 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -175,14 +175,9 @@ with the following path and query parameters:
 | *publisherAcknowledgements Timeout* (producer) | The amount of time in milliseconds to wait for a basic.ack response from RabbitMQ server |  | long
 | *args* (advanced) | Specify arguments for configuring the different RabbitMQ concepts, a different prefix is required for each: Exchange: arg.exchange. Queue: arg.queue. Binding: arg.binding. For example to declare a queue with message ttl argument: http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000 |  | Map
 | *automaticRecoveryEnabled* (advanced) | Enables connection automatic recovery (uses connection implementation that performs automatic recovery when connection shutdown is not initiated by the application) |  | Boolean
-| *bindingArgs* (advanced) | *Deprecated* Key/value args for configuring the queue binding parameters when declare=true |  | Map
 | *clientProperties* (advanced) | Connection client properties (client info used in negotiating with the server) |  | Map
 | *connectionTimeout* (advanced) | Connection timeout | 60000 | int
-| *exchangeArgs* (advanced) | *Deprecated* Key/value args for configuring the exchange parameters when declare=true |  | Map
-| *exchangeArgsConfigurer* (advanced) | *Deprecated* Set the configurer for setting the exchange args in Channel.exchangeDeclare |  | ArgsConfigurer
 | *networkRecoveryInterval* (advanced) | Network recovery interval in milliseconds (interval used when recovering from network failure) | 5000 | Integer
-| *queueArgs* (advanced) | *Deprecated* Key/value args for configuring the queue parameters when declare=true |  | Map
-| *queueArgsConfigurer* (advanced) | *Deprecated* Set the configurer for setting the queue args in Channel.queueDeclare |  | ArgsConfigurer
 | *requestedChannelMax* (advanced) | Connection requested channel max (max number of channels offered) | 2047 | int
 | *requestedFrameMax* (advanced) | Connection requested frame max (max size of frame offered) | 0 | int
 | *requestedHeartbeat* (advanced) | Connection requested heartbeat (heart-beat in seconds offered) | 60 | int
