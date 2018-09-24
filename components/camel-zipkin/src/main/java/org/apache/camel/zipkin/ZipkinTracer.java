@@ -154,7 +154,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition route) {
         // ensure this zipkin tracer gets initialized when Camel starts
         init(camelContext);
-        return new ZipkinRoutePolicy(routeId);
+        return new ZipkinRoutePolicy();
     }
 
     /**
@@ -713,11 +713,6 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         }
     }
 
-    private boolean hasZipkinTraceId(Exchange exchange) {
-        // must have zipkin headers to start a server event
-        return exchange.getIn().getHeader(ZipkinConstants.TRACE_ID) != null;
-    }
-
     private final class ZipkinEventNotifier extends EventNotifierSupport {
 
         @Override
@@ -759,12 +754,6 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     }
 
     private final class ZipkinRoutePolicy extends RoutePolicySupport {
-
-        private final String routeId;
-
-        ZipkinRoutePolicy(String routeId) {
-            this.routeId = routeId;
-        }
 
         @Override
         public void onExchangeBegin(Route route, Exchange exchange) {
