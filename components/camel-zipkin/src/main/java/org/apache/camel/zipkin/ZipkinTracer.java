@@ -58,6 +58,7 @@ import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import zipkin2.reporter.AsyncReporter;
@@ -512,10 +513,11 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
                     return null;
                 }
             }
-            if (LOG.isTraceEnabled() && key != null) {
-                LOG.trace("Using serviceName: {} as fallback", key);
+            String sanitizedKey = URISupport.sanitizeUri(key);
+            if (LOG.isTraceEnabled() && sanitizedKey != null) {
+                LOG.trace("Using serviceName: {} as fallback", sanitizedKey);
             }
-            return key;
+            return sanitizedKey;
         } else {
             if (LOG.isTraceEnabled() && answer != null) {
                 LOG.trace("Using serviceName: {}", answer);
