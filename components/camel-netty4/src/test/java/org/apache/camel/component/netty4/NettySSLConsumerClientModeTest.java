@@ -96,7 +96,7 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty4:tcp://localhost:{{port}}?textline=true&clientMode=true&ssl=true&passphrase=changeit&keyStoreFile=#ksf&trustStoreFile=#tsf").id("sslclient")
+                from("netty4:tcp://localhost:{{port}}?textline=true&clientMode=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf").id("sslclient")
                 .process(new Processor() {
                     public void process(final Exchange exchange) {
                         String body = exchange.getIn().getBody(String.class);

@@ -39,7 +39,7 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
-        registry.bind("cpf", new TestClientChannelPipelineFactory(null));
+        registry.bind("cpf", new TestClientChannelInitializerFactory(null));
         registry.bind("spf", new TestServerChannelPipelineFactory(null));
         return registry;
     }
@@ -60,7 +60,7 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
     }
 
     @Test
-    public void testCustomClientPipelineFactory() throws Exception {
+    public void testCustomClientInitializerFactory() throws Exception {
         String response = (String) template.requestBody(
                 "netty4:tcp://localhost:{{port}}?clientInitializerFactory=#cpf&textline=true",
                 "Forest Gump describing Vietnam...");
@@ -70,11 +70,11 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
         assertEquals(true, serverInvoked);
     }
 
-    public class TestClientChannelPipelineFactory extends ClientInitializerFactory {
+    public class TestClientChannelInitializerFactory extends ClientInitializerFactory {
         private int maxLineSize = 1024;
         private NettyProducer producer;
 
-        public TestClientChannelPipelineFactory(NettyProducer producer) {
+        public TestClientChannelInitializerFactory(NettyProducer producer) {
             this.producer = producer;
         }
 
@@ -91,7 +91,7 @@ public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
 
         @Override
         public ClientInitializerFactory createPipelineFactory(NettyProducer producer) {
-            return new TestClientChannelPipelineFactory(producer);
+            return new TestClientChannelInitializerFactory(producer);
         }
     }
 

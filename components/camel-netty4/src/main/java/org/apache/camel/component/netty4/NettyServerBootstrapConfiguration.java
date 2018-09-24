@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.netty4;
 
-import java.io.File;
 import java.util.Map;
 
 import io.netty.channel.EventLoopGroup;
