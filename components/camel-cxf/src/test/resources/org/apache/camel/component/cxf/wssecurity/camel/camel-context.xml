@@ -77,7 +77,7 @@
         address="http://localhost:${CXFTestSupport.port2}/WSSecurityRouteTest/GreeterEncryptionPort" 
         serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
         <cxf:properties>
-            <entry key="dataFormat" value="MESSAGE"/>
+            <entry key="dataFormat" value="RAW"/>
         </cxf:properties>
     </cxf:cxfEndpoint>
     
@@ -86,7 +86,7 @@
         address="http://localhost:${CXFTestSupport.port1}/WSSecurityRouteTest/GreeterEncryptionPort" 
         serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
         <cxf:properties>
-            <entry key="dataFormat" value="MESSAGE"/>
+            <entry key="dataFormat" value="RAW"/>
         </cxf:properties>
     </cxf:cxfEndpoint>
     
@@ -95,7 +95,7 @@
         address="http://localhost:${CXFTestSupport.port2}/WSSecurityRouteTest/GreeterSecurityPolicyPort" 
         serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
         <cxf:properties>
-            <entry key="dataFormat" value="MESSAGE"/>
+            <entry key="dataFormat" value="RAW"/>
         </cxf:properties>
     </cxf:cxfEndpoint>
     
@@ -104,7 +104,7 @@
         address="http://localhost:${CXFTestSupport.port1}/WSSecurityRouteTest/GreeterSecurityPolicyPort" 
         serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
         <cxf:properties>
-            <entry key="dataFormat" value="MESSAGE"/>
+            <entry key="dataFormat" value="RAW"/>
         </cxf:properties>
     </cxf:cxfEndpoint>
     

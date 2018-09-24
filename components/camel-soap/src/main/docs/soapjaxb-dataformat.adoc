@@ -246,7 +246,7 @@ response or fault.
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------------------
-String WS_URI = "cxf://http://myserver/customerservice?serviceClass=com.example.customerservice&dataFormat=MESSAGE";
+String WS_URI = "cxf://http://myserver/customerservice?serviceClass=com.example.customerservice&dataFormat=RAW";
 SoapJaxbDataFormat soapDF = new SoapJaxbDataFormat("com.example.customerservice", new ServiceInterfaceStrategy(CustomerService.class));
 from("direct:customerServiceClient")
   .onException(Exception.class)

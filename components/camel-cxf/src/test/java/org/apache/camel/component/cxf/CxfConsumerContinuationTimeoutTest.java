@@ -59,9 +59,9 @@ public class CxfConsumerContinuationTimeoutTest extends CamelTestSupport {
 
                 from("direct:start")
                     .setBody(constant("Sensitive Data"))
-                    .to(simpleEndpointURI + "&continuationTimeout=5000&dataFormat=MESSAGE");
+                    .to(simpleEndpointURI + "&continuationTimeout=5000&dataFormat=RAW");
 
-                from(simpleEndpointURI + "&continuationTimeout=5000&dataFormat=MESSAGE").process(new AsyncProcessor() {
+                from(simpleEndpointURI + "&continuationTimeout=5000&dataFormat=RAW").process(new AsyncProcessor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         AsyncProcessorHelper.process(this, exchange);

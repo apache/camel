@@ -61,8 +61,8 @@
    
    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
       <route>
-         <from uri="cxf:bean:routerEndpoint?dataFormat=MESSAGE" />
-         <to uri="cxf:bean:serviceEndpoint?dataFormat=MESSAGE" />
+         <from uri="cxf:bean:routerEndpoint?dataFormat=RAW" />
+         <to uri="cxf:bean:serviceEndpoint?dataFormat=RAW" />
          <to uri="log:camelLogger" />
       </route>
             <route>

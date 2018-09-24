@@ -21,7 +21,7 @@ public class CXFWsdlOnlyMessageModeNoSpringTest extends CXFWsdlOnlyPayloadModeNo
 
     @Override
     protected String getDataFormat() {
-        return "MESSAGE";
+        return "RAW";
 
     }
 

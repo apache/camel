@@ -63,7 +63,7 @@
 
     <route>
       <!-- CXF consumer using MESSAGE format -->
-      <from uri="cxf:bean:reportIncident?dataFormat=MESSAGE"/>
+      <from uri="cxf:bean:reportIncident?dataFormat=RAW"/>
       <!-- log input received -->
       <to uri="log:input"/>
       <!-- enrich the input by ensure the incidentId parameter is set -->

@@ -50,8 +50,8 @@ public class CxfGreeterMessageRouterTest extends AbstractCXFGreeterRouterTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("cxf:bean:routerEndpoint?dataFormat=Message&publishedEndpointUrl=http://www.simple.com/services/test")
-                    .to("cxf:bean:serviceEndpoint?dataFormat=Message");
+                from("cxf:bean:routerEndpoint?dataFormat=RAW&publishedEndpointUrl=http://www.simple.com/services/test")
+                    .to("cxf:bean:serviceEndpoint?dataFormat=RAW");
             }
         };
     }

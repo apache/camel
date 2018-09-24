@@ -27,8 +27,8 @@ import org.apache.cxf.helpers.CastUtils;
 import org.junit.Test;
 
 public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
-    private String routerEndpointURI = "cxf://" + getRouterAddress() + "?" + SERVICE_CLASS + "&dataFormat=MESSAGE";
-    private String serviceEndpointURI = "cxf://" + getServiceAddress() + "?" + SERVICE_CLASS + "&dataFormat=MESSAGE";
+    private String routerEndpointURI = "cxf://" + getRouterAddress() + "?" + SERVICE_CLASS + "&dataFormat=RAW";
+    private String serviceEndpointURI = "cxf://" + getServiceAddress() + "?" + SERVICE_CLASS + "&dataFormat=RAW";
     
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
