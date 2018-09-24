@@ -39,7 +39,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @DirtiesContext
 @RunWith(SpringRunner.class)
 @EnableAutoConfiguration
-@SpringBootTest(classes = CamelEventNotifierTest.class)
+@SpringBootTest
 public class CamelEventNotifierTest extends Assert {
 
     @Configuration

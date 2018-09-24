@@ -38,7 +38,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @DirtiesContext
 @RunWith(SpringRunner.class)
 @EnableAutoConfiguration
-@SpringBootTest(classes = CustomShutdownStrategyTest.class)
+@SpringBootTest
 public class CustomShutdownStrategyTest extends Assert {
 
     @Autowired
