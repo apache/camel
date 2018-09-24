@@ -35,7 +35,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @DirtiesContext
 @RunWith(SpringRunner.class)
 @EnableAutoConfiguration
-@SpringBootTest(classes = CamelAutoConfigurationPropertiesTest.class, properties = "camel.springboot.jmxEnabled=false")
+@SpringBootTest(properties = "camel.springboot.jmxEnabled=false")
 public class CamelAutoConfigurationPropertiesTest extends Assert {
 
     // Route fixtures
