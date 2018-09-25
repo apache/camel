@@ -41,7 +41,6 @@ public abstract class AbstractBeanProcessor implements AsyncProcessor {
     private transient Processor processor;
     private transient boolean lookupProcessorDone;
     private final Object lock = new Object();
-    private boolean multiParameterArray;
     private Boolean cache;
     private String method;
     private boolean shorthandMethod;
@@ -162,10 +161,6 @@ public abstract class AbstractBeanProcessor implements AsyncProcessor {
             }
         }
 
-        // set temporary header which is a hint for the bean info that introspect the bean
-        if (isMultiParameterArray()) {
-            in.setHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY, Boolean.TRUE);
-        }
         // set explicit method name to invoke as a header, which is how BeanInfo can detect it
         if (explicitMethodName != null) {
             in.setHeader(Exchange.BEAN_METHOD_NAME, explicitMethodName);
@@ -180,9 +175,6 @@ public abstract class AbstractBeanProcessor implements AsyncProcessor {
             return true;
         } finally {
             // must remove headers as they were provisional
-            if (isMultiParameterArray()) {
-                in.removeHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY);
-            }
             if (explicitMethodName != null) {
                 in.removeHeader(Exchange.BEAN_METHOD_NAME);
             }
@@ -215,14 +207,6 @@ public abstract class AbstractBeanProcessor implements AsyncProcessor {
 
     public String getMethod() {
         return method;
-    }
-
-    public boolean isMultiParameterArray() {
-        return multiParameterArray;
-    }
-
-    public void setMultiParameterArray(boolean mpArray) {
-        multiParameterArray = mpArray;
     }
 
     public Boolean getCache() {

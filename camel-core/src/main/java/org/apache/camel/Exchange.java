@@ -90,8 +90,6 @@ public interface Exchange {
     String BATCH_SIZE                 = "CamelBatchSize";
     String BATCH_COMPLETE             = "CamelBatchComplete";
     String BEAN_METHOD_NAME           = "CamelBeanMethodName";
-    @Deprecated
-    String BEAN_MULTI_PARAMETER_ARRAY = "CamelBeanMultiParameterArray";
     String BINDING                    = "CamelBinding";
     // do not prefix with Camel and use lower-case starting letter as its a shared key
     // used across other Apache products such as AMQ, SMX etc.

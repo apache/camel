@@ -16,7 +16,7 @@ the <<Registry-Registry,Registry>>
 === EIP options
 
 // eip options: START
-The Bean EIP supports 5 options which are listed below:
+The Bean EIP supports 4 options which are listed below:
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -25,7 +25,6 @@ The Bean EIP supports 5 options which are listed below:
 | *method* | Sets the method name on the bean to use |  | String
 | *beanType* | Sets the Class of the bean |  | String
 | *cache* | Caches the bean lookup, to avoid lookup up bean on every usage. | true | Boolean
-| *multiParameterArray* | *Deprecated* Whether the message body is an array type. | false | Boolean
 |===
 // eip options: END
 

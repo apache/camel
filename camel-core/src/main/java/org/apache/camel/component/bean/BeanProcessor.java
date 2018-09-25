@@ -69,14 +69,6 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         return delegate.getMethod();
     }
 
-    public boolean isMultiParameterArray() {
-        return delegate.isMultiParameterArray();
-    }
-
-    public void setMultiParameterArray(boolean mpArray) {
-        delegate.setMultiParameterArray(mpArray);
-    }
-
     public Boolean getCache() {
         return delegate.getCache();
     }

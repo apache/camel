@@ -17,7 +17,7 @@ Camel provides the following policies out-of-the-box:
 | Failover | In case of failures the exchange will be tried on the next endpoint.
 | Weighted Round-Robin | *Camel 2.5*: The weighted load balancing policy allows you to specify a processing load distribution ratio for each server with respect to the others. In addition to the weight, endpoint selection is then further refined using *round-robin* distribution based on weight.
 | Weighted Random | *Camel 2.5*: The weighted load balancing policy allows you to specify a processing load distribution ratio for each server with respect to others.In addition to the weight, endpoint selection is then further refined using *random* distribution based on weight.
-| Custom | *Camel 2.8*: From *Camel 2.8* onwards the preferred way of using a custom Load Balancer is to use this policy, instead of using the `@deprecated` ref attribute.
+| Custom | *Camel 2.8*: From *Camel 2.8* onwards the preferred way of using a custom Load Balancer is to use this policy, as the ref attribute is not supported anymore.
 | Circuit Breaker | *Camel 2.14*: Implements the Circuit Breaker pattern as described in "Release it!" book.
 |=======================================================================
 

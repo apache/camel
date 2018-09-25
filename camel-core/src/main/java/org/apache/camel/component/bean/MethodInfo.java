@@ -641,13 +641,6 @@ public class MethodInfo {
         @SuppressWarnings("unchecked")
         public <T> T evaluate(Exchange exchange, Class<T> type) {
             Object body = exchange.getIn().getBody();
-            boolean multiParameterArray = exchange.getIn().getHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY, false, boolean.class);
-            if (multiParameterArray) {
-                // Just change the message body to an Object array
-                if (!(body instanceof Object[])) {
-                    body = exchange.getIn().getBody(Object[].class);
-                }
-            }
 
             // if there was an explicit method name to invoke, then we should support using
             // any provided parameter values in the method name
@@ -667,21 +660,18 @@ public class MethodInfo {
             // we need to do this before the expressions gets evaluated as it may contain
             // a @Bean expression which would by mistake read these headers. So the headers
             // must be removed at this point of time
-            if (multiParameterArray) {
-                exchange.getIn().removeHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY);
-            }
             if (methodName != null) {
                 exchange.getIn().removeHeader(Exchange.BEAN_METHOD_NAME);
             }
 
-            Object[] answer = evaluateParameterExpressions(exchange, body, multiParameterArray, it);
+            Object[] answer = evaluateParameterExpressions(exchange, body, it);
             return (T) answer;
         }
 
         /**
          * Evaluates all the parameter expressions
          */
-        private Object[] evaluateParameterExpressions(Exchange exchange, Object body, boolean multiParameterArray, Iterator<?> it) {
+        private Object[] evaluateParameterExpressions(Exchange exchange, Object body, Iterator<?> it) {
             Object[] answer = new Object[expressions.length];
             for (int i = 0; i < expressions.length; i++) {
 
@@ -697,24 +687,16 @@ public class MethodInfo {
                 // the value for the parameter to use
                 Object value = null;
 
-                if (multiParameterArray && body instanceof Object[]) {
-                    // get the value from the array
-                    Object[] array = (Object[]) body;
-                    if (array.length >= i) {
-                        value = array[i];
-                    }
-                } else {
-                    // prefer to use parameter value if given, as they override any bean parameter binding
-                    // we should skip * as its a type placeholder to indicate any type
-                    if (parameterValue != null && !parameterValue.equals("*")) {
-                        // evaluate the parameter value binding
-                        value = evaluateParameterValue(exchange, i, parameterValue, parameterType);
-                    }
-                    // use bean parameter binding, if still no value
-                    Expression expression = expressions[i];
-                    if (value == null && expression != null) {
-                        value = evaluateParameterBinding(exchange, expression, i, parameterType);
-                    }
+                // prefer to use parameter value if given, as they override any bean parameter binding
+                // we should skip * as its a type placeholder to indicate any type
+                if (parameterValue != null && !parameterValue.equals("*")) {
+                    // evaluate the parameter value binding
+                    value = evaluateParameterValue(exchange, i, parameterValue, parameterType);
+                }
+                // use bean parameter binding, if still no value
+                Expression expression = expressions[i];
+                if (value == null && expression != null) {
+                    value = evaluateParameterBinding(exchange, expression, i, parameterType);
                 }
                 // remember the value to use
                 if (value != Void.TYPE) {
