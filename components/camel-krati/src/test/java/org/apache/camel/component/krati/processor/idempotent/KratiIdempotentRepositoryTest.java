@@ -16,7 +16,6 @@
  */
 
 package org.apache.camel.component.krati.processor.idempotent;
-
 import krati.core.segment.ChannelSegmentFactory;
 import krati.io.Serializer;
 import krati.store.DataSet;
@@ -25,6 +24,8 @@ import org.apache.camel.component.krati.KratiHelper;
 import org.apache.camel.component.krati.serializer.KratiDefaultSerializer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 public class KratiIdempotentRepositoryTest extends CamelTestSupport {
@@ -37,6 +38,7 @@ public class KratiIdempotentRepositoryTest extends CamelTestSupport {
     private String key01 = "123";
     private String key02 = "456";
 
+    @Before
     public void setUp() throws Exception {
         repository = new KratiIdempotentRepository("target/test/idempotent");
         repository.setDataSet(dataSet);
@@ -44,6 +46,7 @@ public class KratiIdempotentRepositoryTest extends CamelTestSupport {
         super.setUp();
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         dataSet.clear();

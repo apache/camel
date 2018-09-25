@@ -164,7 +164,7 @@ public class HttpProducer extends DefaultProducer {
         // lets store the result in the output message.
         try {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Executing http {} method: {}", method.getName(), method.getURI().toString());
+                LOG.debug("Executing http {} method: {}", method.getName(), method.getURI());
             }
             int responseCode = executeMethod(method);
             LOG.debug("Http responseCode: {}", responseCode);
@@ -247,7 +247,7 @@ public class HttpProducer extends DefaultProducer {
         }
 
         Object responseBody = extractResponseBody(method, exchange, getEndpoint().isIgnoreResponseBody());
-        if (transferException && responseBody != null && responseBody instanceof Exception) {
+        if (transferException && responseBody instanceof Exception) {
             // if the response was a serialized exception then use that
             return (Exception) responseBody;
         }

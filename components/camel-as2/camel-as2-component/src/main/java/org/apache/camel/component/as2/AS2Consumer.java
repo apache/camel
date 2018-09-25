@@ -60,7 +60,7 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
 
         // Add listener property to register this consumer as listener for
         // events.
-        properties = new HashMap<String, Object>();
+        properties = new HashMap<>();
         properties.putAll(endpoint.getEndpointProperties());
         properties.put(HANDLER_PROPERTY, this);
 

@@ -33,6 +33,11 @@ public class ThriftComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the thrift component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Determine if the thrift component is using global SSL context parameters
      */
     private Boolean useGlobalSslContextParameters = false;

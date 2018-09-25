@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregate.zipfile;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.zip.ZipEntry;
@@ -25,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
+import org.junit.Before;
 import org.junit.Test;
 
 public class ZipAggregationStrategyEmptyFileTest extends CamelTestSupport {
@@ -32,6 +32,7 @@ public class ZipAggregationStrategyEmptyFileTest extends CamelTestSupport {
     private static final int EXPECTED_NO_FILES = 3;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/foo");
         deleteDirectory("target/out");

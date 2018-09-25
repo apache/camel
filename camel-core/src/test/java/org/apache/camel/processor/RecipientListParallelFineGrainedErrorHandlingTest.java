@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * @version 
@@ -37,6 +38,7 @@ public class RecipientListParallelFineGrainedErrorHandlingTest extends ContextTe
         return jndi;
     }
 
+    @Test
     public void testRecipientListOk() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -60,6 +62,7 @@ public class RecipientListParallelFineGrainedErrorHandlingTest extends ContextTe
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRecipientListError() throws Exception {
         counter = 0;
 
@@ -93,6 +96,7 @@ public class RecipientListParallelFineGrainedErrorHandlingTest extends ContextTe
         assertEquals(3, counter);
     }
 
+    @Test
     public void testRecipientListAsBeanError() throws Exception {
         counter = 0;
 

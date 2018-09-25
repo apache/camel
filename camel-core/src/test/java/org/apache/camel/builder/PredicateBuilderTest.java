@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.builder;
-
-
 import java.util.Arrays;
 
 import org.apache.camel.Exchange;
@@ -25,6 +23,8 @@ import org.apache.camel.Predicate;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.apache.camel.builder.Builder.constant;
 import static org.apache.camel.builder.PredicateBuilder.in;
@@ -34,11 +34,13 @@ public class PredicateBuilderTest extends TestSupport {
 
     protected Exchange exchange = new DefaultExchange(new DefaultCamelContext());
 
+    @Test
     public void testRegexPredicates() throws Exception {
         assertMatches(header("location").regex("[a-zA-Z]+,London,UK"));
         assertDoesNotMatch(header("location").regex("[a-zA-Z]+,Westminster,[a-zA-Z]+"));
     }
 
+    @Test
     public void testPredicates() throws Exception {
         assertMatches(header("name").isEqualTo(constant("James")));
         assertMatches(not(header("name").isEqualTo(constant("Claus"))));
@@ -47,12 +49,14 @@ public class PredicateBuilderTest extends TestSupport {
         assertMatches(header("size").isEqualTo("10"));
     }
 
+    @Test
     public void testFailingPredicates() throws Exception {
         assertDoesNotMatch(header("name").isEqualTo(constant("Hiram")));
         assertDoesNotMatch(header("size").isGreaterThan(constant(100)));
         assertDoesNotMatch(not(header("size").isLessThan(constant(100))));
     }
 
+    @Test
     public void testCompoundOrPredicates() throws Exception {
         Predicate p1 = header("name").isEqualTo(constant("Hiram"));
         Predicate p2 = header("size").isGreaterThanOrEqualTo(constant(10));
@@ -61,6 +65,7 @@ public class PredicateBuilderTest extends TestSupport {
         assertMatches(or);
     }
 
+    @Test
     public void testCompoundAndPredicates() throws Exception {
         Predicate p1 = header("name").isEqualTo(constant("James"));
         Predicate p2 = header("size").isGreaterThanOrEqualTo(constant(10));
@@ -69,6 +74,7 @@ public class PredicateBuilderTest extends TestSupport {
         assertMatches(and);
     }
 
+    @Test
     public void testCompoundAndPredicatesVarargs() throws Exception {
         Predicate p1 = header("name").isEqualTo(constant("James"));
         Predicate p2 = header("size").isGreaterThanOrEqualTo(constant(10));
@@ -78,6 +84,7 @@ public class PredicateBuilderTest extends TestSupport {
         assertMatches(and);
     }
 
+    @Test
     public void testOrSignatures() throws Exception {
         Predicate p1 = header("name").isEqualTo(constant("does-not-apply"));
         Predicate p2 = header("size").isGreaterThanOrEqualTo(constant(10));
@@ -96,6 +103,7 @@ public class PredicateBuilderTest extends TestSupport {
         assertMatches(PredicateBuilder.or(Arrays.asList(p1, p2, p3)));
     }
 
+    @Test
     public void testCompoundAndOrPredicates() throws Exception {
         Predicate p1 = header("name").isEqualTo(constant("Hiram"));
         Predicate p2 = header("size").isGreaterThan(constant(100));
@@ -106,19 +114,23 @@ public class PredicateBuilderTest extends TestSupport {
         assertMatches(andor);
     }
 
+    @Test
     public void testPredicateIn() throws Exception {
         assertMatches(in(header("name").isEqualTo("Hiram"), header("name").isEqualTo("James")));
     }
 
+    @Test
     public void testValueIn() throws Exception {
         assertMatches(header("name").in("Hiram", "Jonathan", "James", "Claus"));
     }
 
+    @Test
     public void testEmptyHeaderValueIn() throws Exception {
         // there is no header with xxx
         assertDoesNotMatch(header("xxx").in("Hiram", "Jonathan", "James", "Claus"));
     }
 
+    @Test
     public void testStartsWith() throws Exception {
         assertMatches(header("name").startsWith("J"));
         assertMatches(header("name").startsWith("James"));
@@ -135,6 +147,7 @@ public class PredicateBuilderTest extends TestSupport {
         assertDoesNotMatch(header("size").startsWith(9));
     }
 
+    @Test
     public void testEndsWith() throws Exception {
         assertMatches(header("name").endsWith("mes"));
         assertMatches(header("name").endsWith("James"));
@@ -151,6 +164,7 @@ public class PredicateBuilderTest extends TestSupport {
         assertDoesNotMatch(header("size").endsWith(9));
     }
 
+    @Test
     public void testNot() throws Exception {
         assertMatches(body().not().isInstanceOf(Integer.class));
         assertMatches(header("name").not().isEqualTo("Claus"));
@@ -165,7 +179,8 @@ public class PredicateBuilderTest extends TestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         Message in = exchange.getIn();
         in.setBody("Hello there!");

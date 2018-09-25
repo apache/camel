@@ -19,9 +19,11 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class SplitTokenizerGroupTest extends ContextTestSupport {
 
+    @Test
     public void testSplitTokenizerA() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedBodiesReceived("Claus,James", "Willem");
@@ -31,6 +33,7 @@ public class SplitTokenizerGroupTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitTokenizerB() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedBodiesReceived("James,Willem");

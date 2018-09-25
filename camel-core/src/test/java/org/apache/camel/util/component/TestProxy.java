@@ -74,6 +74,18 @@ class TestProxy {
         return result;
     }
 
+    public final <T extends java.util.Date> T sayHiResource(java.util.Set<T> resourceType, String resourceId) {
+        return null;
+    }
+
+    public final <T extends java.util.Date> T with(T theDate) {
+        return null;
+    }
+
+    public final <T extends java.util.Date> String withDate(T theDate, Class<? extends java.util.Date> dateClass, Class<T> parameter, T parameters) {
+        return null;
+    }
+
     public final String greetInnerChild(InnerChild child) {
         return sayHi(child.getName());
     }

@@ -24,12 +24,14 @@ import org.apache.camel.Headers;
 import org.apache.camel.OutHeaders;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Unit test to verify that handled policy is working as expected for wiki documentation.
  */
 public class DeadLetterChannelHandledExampleTest extends ContextTestSupport {
 
+    @Test
     public void testOrderOK() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Order OK");
@@ -44,6 +46,7 @@ public class DeadLetterChannelHandledExampleTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOrderERROR() throws Exception {
         MockEndpoint error = getMockEndpoint("mock:error");
         error.expectedBodiesReceived("Order ERROR");

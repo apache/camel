@@ -23,12 +23,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class ManagedInlinedProcessorTest extends ManagementTestSupport {
 
+    @Test
     public void testManageInlinedProcessor() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

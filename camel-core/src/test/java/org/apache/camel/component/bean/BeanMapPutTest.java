@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * @version 
@@ -37,6 +38,7 @@ public class BeanMapPutTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testMapPut() throws Exception {
         assertEquals(0, myMap.size());
 

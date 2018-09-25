@@ -27,6 +27,7 @@ import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.util.PredicateAssertHelper;
+import org.junit.Test;
 
 /**
  * @version 
@@ -48,6 +49,7 @@ public class CustomDataSetTest extends ContextTestSupport {
         }
     };
 
+    @Test
     public void testUsingCustomDataSet() throws Exception {
         // data set will itself set its assertions so we should just
         // assert that all mocks is ok

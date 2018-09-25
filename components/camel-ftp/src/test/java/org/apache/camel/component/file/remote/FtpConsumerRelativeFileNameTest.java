@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.remote;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
 import org.junit.Test;
 
 public class FtpConsumerRelativeFileNameTest extends FtpServerTestSupport {
@@ -28,6 +28,7 @@ public class FtpConsumerRelativeFileNameTest extends FtpServerTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         sendFile(getFtpUrl(), "Hello World", "target/filename-consumer-hello.txt");

@@ -58,7 +58,7 @@ public class DropboxGetProducer extends DropboxProducer {
             exchange.getIn().setHeader(DropboxResultHeader.DOWNLOADED_FILES.name(), pathsExtracted.toString());
             exchange.getIn().setBody(map);
         }
-        LOG.debug("Downloaded: {}", result.toString());
+        LOG.debug("Downloaded: {}", result);
     }
 
 }

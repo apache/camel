@@ -18,12 +18,14 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class CBRWhenUnmarshalEndChoiceTest extends ContextTestSupport {
 
+    @Test
     public void testCBR() throws Exception {
         getMockEndpoint("mock:when").expectedMessageCount(1);
         getMockEndpoint("mock:other").expectedMessageCount(1);

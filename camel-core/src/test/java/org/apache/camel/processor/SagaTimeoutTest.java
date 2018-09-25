@@ -23,10 +23,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.saga.InMemorySagaService;
 import org.apache.camel.model.SagaCompletionMode;
+import org.junit.Test;
 
 public class SagaTimeoutTest extends ContextTestSupport {
 
 
+    @Test
     public void testTimeoutCalledCorrectly() throws Exception {
 
         MockEndpoint compensate = getMockEndpoint("mock:compensate");
@@ -42,6 +44,7 @@ public class SagaTimeoutTest extends ContextTestSupport {
         compensate.assertIsSatisfied();
     }
 
+    @Test
     public void testTimeoutHasNoEffectIfCompleted() throws Exception {
 
         MockEndpoint compensate = getMockEndpoint("mock:compensate");

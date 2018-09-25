@@ -22,12 +22,10 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import javax.annotation.Generated;
-import org.apache.camel.CamelContext;
 import org.apache.camel.component.crypto.CryptoOperation;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The crypto component is used for signing and verifying exchanges using the
@@ -41,6 +39,11 @@ public class DigitalSignatureComponentConfiguration
         extends
             ComponentConfigurationPropertiesCommon {
 
+    /**
+     * Whether to enable auto configuration of the crypto component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
     /**
      * To use the shared DigitalSignatureConfiguration as configuration
      */
@@ -72,7 +75,6 @@ public class DigitalSignatureComponentConfiguration
 
     public static class DigitalSignatureConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.crypto.DigitalSignatureConfiguration.class;
-        private CamelContext camelContext;
         /**
          * The logical name of this operation.
          */
@@ -83,18 +85,16 @@ public class DigitalSignatureComponentConfiguration
          */
         private String algorithm = "SHA1WithDSA";
         /**
-         * Sets the alias used to query the KeyStore for keys and
-         * {@link java.security.cert.Certificate Certificates} to be used in
-         * signing and verifying exchanges. This value can be provided at
-         * runtime via the message header
-         * {@link org.apache.camel.component.crypto.DigitalSignatureConstants#KEYSTORE_ALIAS}
+         * Sets the alias used to query the KeyStore for keys and link
+         * java.security.cert.Certificate Certificates to be used in signing and
+         * verifying exchanges. This value can be provided at runtime via the
+         * message header
+         * org.apache.camel.component.crypto.DigitalSignatureConstants
+         * #KEYSTORE_ALIAS
          */
         private String alias;
         /**
          * Set the PrivateKey that should be used to sign the exchange
-         * 
-         * @param privateKey
-         *            the key with with to sign the exchange.
          */
         private PrivateKey privateKey;
         /**
@@ -108,8 +108,7 @@ public class DigitalSignatureComponentConfiguration
          */
         private PublicKey publicKey;
         /**
-         * Sets the reference name for a publicKey that can be fond in the
-         * registry.
+         * references that should be resolved when the context changes
          */
         private String publicKeyName;
         /**
@@ -124,11 +123,11 @@ public class DigitalSignatureComponentConfiguration
         private String certificateName;
         /**
          * Sets the KeyStore that can contain keys and Certficates for use in
-         * signing and verifying exchanges. A {@link KeyStore} is typically used
-         * with an alias, either one supplied in the Route definition or
-         * dynamically via the message header "CamelSignatureKeyStoreAlias". If
-         * no alias is supplied and there is only a single entry in the
-         * Keystore, then this single entry will be used.
+         * signing and verifying exchanges. A KeyStore is typically used with an
+         * alias, either one supplied in the Route definition or dynamically via
+         * the message header CamelSignatureKeyStoreAlias. If no alias is
+         * supplied and there is only a single entry in the Keystore, then this
+         * single entry will be used.
          */
         private KeyStore keystore;
         /**
@@ -137,26 +136,22 @@ public class DigitalSignatureComponentConfiguration
          */
         private String keystoreName;
         /**
-         * Sets the password used to access an aliased {@link PrivateKey} in the
+         * Sets the password used to access an aliased PrivateKey in the
          * KeyStore.
          */
         private char[] password;
         /**
          * Sets the KeyStore that can contain keys and Certficates for use in
          * signing and verifying exchanges based on the given
-         * KeyStoreParameters. A {@link KeyStore} is typically used with an
-         * alias, either one supplied in the Route definition or dynamically via
-         * the message header "CamelSignatureKeyStoreAlias". If no alias is
-         * supplied and there is only a single entry in the Keystore, then this
-         * single entry will be used.
+         * KeyStoreParameters. A KeyStore is typically used with an alias,
+         * either one supplied in the Route definition or dynamically via the
+         * message header CamelSignatureKeyStoreAlias. If no alias is supplied
+         * and there is only a single entry in the Keystore, then this single
+         * entry will be used.
          */
-        @NestedConfigurationProperty
         private KeyStoreParameters keyStoreParameters;
         /**
          * Set the SecureRandom used to initialize the Signature service
-         * 
-         * @param secureRandom
-         *            the random used to init the Signature service
          */
         private SecureRandom secureRandom;
         /**
@@ -170,10 +165,7 @@ public class DigitalSignatureComponentConfiguration
         private Integer bufferSize = 2048;
         /**
          * Set the id of the security provider that provides the configured
-         * {@link Signature} algorithm.
-         * 
-         * @param provider
-         *            the id of the security provider
+         * Signature algorithm.
          */
         private String provider;
         /**
@@ -188,15 +180,11 @@ public class DigitalSignatureComponentConfiguration
          * passwords may escape if unset.
          */
         private Boolean clearHeaders = true;
+        /**
+         * Set the Crypto operation from that supplied after the crypto scheme
+         * in the endpoint uri e.g. crypto:sign sets sign as the operation.
+         */
         private CryptoOperation cryptoOperation;
-
-        public CamelContext getCamelContext() {
-            return camelContext;
-        }
-
-        public void setCamelContext(CamelContext camelContext) {
-            this.camelContext = camelContext;
-        }
 
         public String getName() {
             return name;

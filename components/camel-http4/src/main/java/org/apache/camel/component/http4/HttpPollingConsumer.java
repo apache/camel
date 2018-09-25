@@ -33,6 +33,8 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
 /**
@@ -43,11 +45,20 @@ import org.apache.http.util.EntityUtils;
 public class HttpPollingConsumer extends PollingConsumerSupport implements ServicePoolAware {
     private final HttpEndpoint endpoint;
     private HttpClient httpClient;
-
+    private HttpContext httpContext;
+    
+        
     public HttpPollingConsumer(HttpEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
+        this.httpContext = endpoint.getHttpContext();
         this.httpClient = endpoint.getHttpClient();
+        
+    }
+    
+    @Override
+    public HttpEndpoint getEndpoint() {
+        return (HttpEndpoint) super.getEndpoint();
     }
 
     public Exchange receive() {
@@ -76,7 +87,7 @@ public class HttpPollingConsumer extends PollingConsumerSupport implements Servi
         HttpEntity responeEntity = null;
         try {
             // execute request
-            HttpResponse response = httpClient.execute(method, httpClientContext);
+            HttpResponse response = executeMethod(method, httpClientContext);
             int responseCode = response.getStatusLine().getStatusCode();
             responeEntity = response.getEntity();
             Object body = HttpHelper.readResponseBodyFromInputStream(responeEntity.getContent(), exchange);
@@ -116,6 +127,25 @@ public class HttpPollingConsumer extends PollingConsumerSupport implements Servi
                 }
             }
         }
+    }
+    
+    /**
+     * Strategy when executing the method (calling the remote server).
+     *
+     * @param httpRequest the http Request to execute
+     * @return the response
+     * @throws IOException can be thrown
+     */
+    protected HttpResponse executeMethod(HttpRequestBase httpRequest, HttpClientContext httpClientContext) throws IOException {
+       
+        if (getEndpoint().isAuthenticationPreemptive()) {
+            BasicScheme basicAuth = new BasicScheme();
+            httpClientContext.setAttribute("preemptive-auth", basicAuth);
+        }
+        if (httpContext != null) {
+            httpClientContext = new HttpClientContext(httpContext);
+        }
+        return httpClient.execute(httpRequest, httpClientContext);
     }
 
     // Properties

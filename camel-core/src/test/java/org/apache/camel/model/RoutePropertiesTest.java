@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class RoutePropertiesTest extends ContextTestSupport {
 
@@ -28,6 +29,7 @@ public class RoutePropertiesTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testRouteProperties() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -53,6 +55,7 @@ public class RoutePropertiesTest extends ContextTestSupport {
         assertEquals("val2", route.getProperties().get("key2"));
     }
 
+    @Test
     public void testRoutePropertiesFailuer() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {

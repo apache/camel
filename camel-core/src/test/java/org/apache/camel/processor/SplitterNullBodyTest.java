@@ -21,12 +21,14 @@ import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Testing the splitter can work with null or empty bodies
  */
 public class SplitterNullBodyTest extends ContextTestSupport {
 
+    @Test
     public void testSplitABC() throws Exception {
         getMockEndpoint("mock:split").expectedMessageCount(3);
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -36,6 +38,7 @@ public class SplitterNullBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitABCStreaming() throws Exception {
         getMockEndpoint("mock:split").expectedMessageCount(3);
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -45,6 +48,7 @@ public class SplitterNullBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitEmptyList() throws Exception {
         getMockEndpoint("mock:split").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -55,6 +59,7 @@ public class SplitterNullBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitEmptyListStreaming() throws Exception {
         getMockEndpoint("mock:split").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -65,6 +70,7 @@ public class SplitterNullBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitNullBody() throws Exception {
         getMockEndpoint("mock:split").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -74,6 +80,7 @@ public class SplitterNullBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitNullBodyStreaming() throws Exception {
         getMockEndpoint("mock:split").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(1);

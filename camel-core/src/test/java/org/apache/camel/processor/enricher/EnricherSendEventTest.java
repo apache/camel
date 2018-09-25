@@ -30,11 +30,13 @@ import org.apache.camel.processor.async.MyAsyncComponent;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.support.EventNotifierSupport;
+import org.junit.Test;
 
 
 public class EnricherSendEventTest extends ContextTestSupport {
     private MyEventNotifier en = new MyEventNotifier();
     
+    @Test
     public void testAsyncEnricher() throws Exception {
         
         template.sendBody("direct:start1", "test");
@@ -43,6 +45,7 @@ public class EnricherSendEventTest extends ContextTestSupport {
     }
     
     
+    @Test
     public void testSyncEnricher() throws Exception {
         template.sendBody("direct:start2", "test");
         assertEquals("Get a wrong sending event number", 3, en.exchangeSendingEvent.get());

@@ -60,11 +60,13 @@ import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.spi.RestProducerFactoryHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -212,7 +214,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         // create endpoint after all known parameters have been extracted from parameters
 
         // include component scheme in the uri
-        String scheme = ObjectHelper.before(uri, ":");
+        String scheme = StringHelper.before(uri, ":");
         endpointUri = new URI(scheme + ":" + endpointUri);
 
         JettyHttpEndpoint endpoint = createEndpoint(endpointUri, httpUri);
@@ -757,7 +759,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
 
         if (LOG.isDebugEnabled()) {
             if (minThreads != null) {
-                LOG.debug("Created HttpClient with thread pool {}-{} -> {}", new Object[]{minThreads, maxThreads, httpClient});
+                LOG.debug("Created HttpClient with thread pool {}-{} -> {}", minThreads, maxThreads, httpClient);
             } else {
                 LOG.debug("Created HttpClient with default thread pool size -> {}", httpClient);
             }
@@ -1273,6 +1275,11 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         if (!query.isEmpty()) {
             url = url + "?" + query;
         }
+
+        // there are cases where we might end up here without component being created beforehand
+        // we need to abide by the component properties specified in the parameters when creating
+        // the component
+        RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.get("component"));
 
         JettyHttpEndpoint endpoint = camelContext.getEndpoint(url, JettyHttpEndpoint.class);
         if (parameters != null && !parameters.isEmpty()) {

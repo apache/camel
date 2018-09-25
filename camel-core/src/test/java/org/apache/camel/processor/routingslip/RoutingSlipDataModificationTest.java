@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.routingslip;
-
 import javax.naming.Context;
 
 import org.apache.camel.Body;
@@ -23,12 +22,15 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Before;
+import org.junit.Test;
 
 public class RoutingSlipDataModificationTest extends ContextTestSupport {
     protected static final String ANSWER = "answer";
     protected static final String ROUTING_SLIP_HEADER = "routingSlipHeader";
     protected MyBean myBean = new MyBean();
 
+    @Test
     public void testModificationOfDataAlongRoute()
         throws Exception {
         MockEndpoint x = getMockEndpoint("mock:x");
@@ -48,7 +50,8 @@ public class RoutingSlipDataModificationTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         Object lookedUpBean = context.getRegistry().lookupByName("myBean");

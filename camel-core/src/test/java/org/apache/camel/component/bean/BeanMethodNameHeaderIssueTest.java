@@ -20,12 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Handler;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class BeanMethodNameHeaderIssueTest extends ContextTestSupport {
 
+    @Test
     public void testBeanMethodNameHeaderIssue() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("foo");
         getMockEndpoint("mock:a").message(0).header(Exchange.BEAN_METHOD_NAME).isNull();

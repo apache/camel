@@ -23,12 +23,14 @@ import javax.management.openmbean.TabularData;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class ManagedSendProcessorTest extends ManagementTestSupport {
 
+    @Test
     public void testManageSendProcessor() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

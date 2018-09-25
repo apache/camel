@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf;
-
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.jws.WebService;
@@ -27,7 +26,6 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 

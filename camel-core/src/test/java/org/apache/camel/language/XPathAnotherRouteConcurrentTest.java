@@ -22,12 +22,14 @@ import java.util.concurrent.Executors;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class XPathAnotherRouteConcurrentTest extends ContextTestSupport {
 
+    @Test
     public void testConcurrent() throws Exception {
         doSendMessages(100, 10);
     }

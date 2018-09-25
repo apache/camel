@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
@@ -27,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dataset.SimpleDataSet;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.StopWatch;
+import org.junit.Test;
 
 /**
  * A route for simple performance testing that can be used when we suspect
@@ -38,6 +40,7 @@ public class RoutePerformanceTest extends ContextTestSupport {
     private SimpleDataSet dataSet = new SimpleDataSet(size);
     private String uri = "mock:results";
 
+    @Test
     public void testPerformance() throws Exception {
         StopWatch watch = new StopWatch();
 

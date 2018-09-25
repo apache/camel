@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.interceptor;
-
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -26,6 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class TransactionalClientWithAnnotatedBeanTest extends TransactionalClientDataSourceTest {
 
     @Override
+    @Test
     public void testTransactionSuccess() throws Exception {
         MockEndpoint book = getMockEndpoint("mock:book");
         book.expectedMessageCount(2);
@@ -36,6 +38,7 @@ public class TransactionalClientWithAnnotatedBeanTest extends TransactionalClien
     }
 
     @Override
+    @Test
     public void testTransactionRollback() throws Exception {
         MockEndpoint book = getMockEndpoint("mock:book");
         book.expectedMessageCount(1);
@@ -46,7 +49,8 @@ public class TransactionalClientWithAnnotatedBeanTest extends TransactionalClien
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         setUseRouteBuilder(false);
         super.setUp();
     }

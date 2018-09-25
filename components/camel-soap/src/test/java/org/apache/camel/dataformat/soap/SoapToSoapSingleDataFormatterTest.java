@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.soap;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;

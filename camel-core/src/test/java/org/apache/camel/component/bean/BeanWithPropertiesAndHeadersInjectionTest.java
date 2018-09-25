@@ -29,6 +29,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BeanRouteTest;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +40,7 @@ public class BeanWithPropertiesAndHeadersInjectionTest extends ContextTestSuppor
     private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
     protected MyBean myBean = new MyBean();
 
+    @Test
     public void testSendMessage() throws Exception {
         template.send("direct:in", new Processor() {
             public void process(Exchange exchange) throws Exception {

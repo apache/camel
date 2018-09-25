@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.simple;
 
+import java.util.Map;
+
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.StaticService;
@@ -104,8 +106,8 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
     boolean allowEscape = true;
 
     // use caches to avoid re-parsing the same expressions over and over again
-    private LRUCache<String, Expression> cacheExpression;
-    private LRUCache<String, Predicate> cachePredicate;
+    private Map<String, Expression> cacheExpression;
+    private Map<String, Predicate> cachePredicate;
 
     /**
      * Default constructor.
@@ -131,16 +133,18 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
 
     @Override
     public void stop() throws Exception {
-        if (cachePredicate != null) {
+        if (cachePredicate instanceof LRUCache) {
             if (LOG.isDebugEnabled()) {
+                LRUCache cache = (LRUCache) cachePredicate;
                 LOG.debug("Clearing simple language predicate cache[size={}, hits={}, misses={}, evicted={}]",
-                    cachePredicate.size(), cachePredicate.getHits(), cachePredicate.getMisses(), cachePredicate.getEvicted());
+                        cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted());
             }
         }
-        if (cacheExpression != null) {
+        if (cacheExpression instanceof LRUCache) {
             if (LOG.isDebugEnabled()) {
+                LRUCache cache = (LRUCache) cacheExpression;
                 LOG.debug("Clearing simple language expression cache[size={}, hits={}, misses={}, evicted={}]",
-                    cacheExpression.size(), cacheExpression.getHits(), cacheExpression.getMisses(), cacheExpression.getEvicted());
+                        cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted());
             }
         }
     }

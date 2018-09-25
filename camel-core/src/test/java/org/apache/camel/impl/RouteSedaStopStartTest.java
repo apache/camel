@@ -21,12 +21,14 @@ import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class RouteSedaStopStartTest extends ContextTestSupport {
 
+    @Test
     public void testStopStart() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A");

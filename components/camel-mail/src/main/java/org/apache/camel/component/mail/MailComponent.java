@@ -20,15 +20,17 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 import javax.mail.search.SearchTerm;
 
+import com.sun.mail.imap.SortTerm;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Component for JavaMail.
@@ -83,6 +85,21 @@ public class MailComponent extends UriEndpointComponent implements SSLContextPar
             endpoint.setSearchTerm(st);
         }
 
+        // special for sort term
+        Object sortTerm = getAndRemoveOrResolveReferenceParameter(parameters, "sortTerm", Object.class);
+        if (sortTerm != null) {
+            SortTerm[] st;
+            if (sortTerm instanceof String) {
+                // okay its a String then lets convert that to SortTerm
+                st = MailConverters.toSortTerm((String) sortTerm);
+            } else if (sortTerm instanceof SortTerm[]) {
+                st = (SortTerm[]) sortTerm;
+            } else {
+                throw new IllegalArgumentException("SortTerm must either be SortTerm[] or a String value");
+            }
+            endpoint.setSortTerm(st);
+        }
+
         endpoint.setContentTypeResolver(contentTypeResolver);
         setProperties(endpoint.getConfiguration(), parameters);
         setProperties(endpoint, parameters);
@@ -98,8 +115,8 @@ public class MailComponent extends UriEndpointComponent implements SSLContextPar
         }
 
         // sanity check that we know the mail server
-        ObjectHelper.notEmpty(config.getHost(), "host");
-        ObjectHelper.notEmpty(config.getProtocol(), "protocol");
+        StringHelper.notEmpty(config.getHost(), "host");
+        StringHelper.notEmpty(config.getProtocol(), "protocol");
 
         // Use global ssl if present
         if (endpoint.getConfiguration().getSslContextParameters() == null) {

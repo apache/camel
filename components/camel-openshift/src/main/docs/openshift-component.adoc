@@ -34,7 +34,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The OpenShift component supports 5 options which are listed below.
+The OpenShift component supports 5 options, which are listed below.
 
 
 
@@ -105,6 +105,26 @@ with the following path and query parameters:
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 6 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.openshift.domain* | Domain name. If not specified then the default domain is used. |  | String
+| *camel.component.openshift.enabled* | Enable openshift component | true | Boolean
+| *camel.component.openshift.password* | The password for login to openshift server. |  | String
+| *camel.component.openshift.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.openshift.server* | Url to the openshift server. If not specified then the default value from the local openshift configuration file /.openshift/express.conf is used. And if that fails as well then openshift.redhat.com is used. |  | String
+| *camel.component.openshift.username* | The username to login to openshift server. |  | String
+|===
+// spring-boot-auto-configure options: END
+
 
 
 ### Examples

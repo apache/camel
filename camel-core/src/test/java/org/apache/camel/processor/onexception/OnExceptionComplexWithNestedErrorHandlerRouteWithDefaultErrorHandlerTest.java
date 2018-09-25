@@ -18,9 +18,11 @@ package org.apache.camel.processor.onexception;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class OnExceptionComplexWithNestedErrorHandlerRouteWithDefaultErrorHandlerTest extends OnExceptionComplexWithNestedErrorHandlerRouteTest {
 
+    @Test
     public void testFunctionalError() throws Exception {
         // override as we dont support redelivery with DefaultErrorHandler
         // then mock error should not receive any messages

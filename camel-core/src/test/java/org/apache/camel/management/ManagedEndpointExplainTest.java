@@ -21,12 +21,14 @@ import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class ManagedEndpointExplainTest extends ManagementTestSupport {
 
+    @Test
     public void testManageEndpointExplain() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

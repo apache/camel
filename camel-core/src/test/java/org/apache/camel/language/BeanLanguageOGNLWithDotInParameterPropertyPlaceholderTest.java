@@ -23,6 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * @version 
@@ -31,6 +32,7 @@ public class BeanLanguageOGNLWithDotInParameterPropertyPlaceholderTest extends C
 
     private Properties myProp;
 
+    @Test
     public void testDot() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedHeaderReceived("goto", "mock:MyAppV1.2.3/blah");

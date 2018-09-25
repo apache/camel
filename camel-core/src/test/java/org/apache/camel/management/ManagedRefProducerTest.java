@@ -19,6 +19,7 @@ package org.apache.camel.management;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -29,6 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.spi.Registry;
+import org.junit.Test;
 
 /**
  * @version
@@ -44,6 +46,7 @@ public class ManagedRefProducerTest extends ManagementTestSupport {
         return context;
     }
 
+    @Test
     public void testProducer() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

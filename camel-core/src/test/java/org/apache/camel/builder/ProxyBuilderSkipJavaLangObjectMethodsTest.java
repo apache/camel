@@ -17,12 +17,14 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.ContextTestSupport;
+import org.junit.Test;
 
 /**
  *
  */
 public class ProxyBuilderSkipJavaLangObjectMethodsTest extends ContextTestSupport {
 
+    @Test
     public void testSayFoo() throws Exception {
         getMockEndpoint("mock:start").expectedBodiesReceived("Camel");
 

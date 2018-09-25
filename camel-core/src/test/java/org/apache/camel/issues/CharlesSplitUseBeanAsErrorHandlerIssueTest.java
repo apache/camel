@@ -22,6 +22,7 @@ import org.apache.camel.ExchangeException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
@@ -30,6 +31,7 @@ public class CharlesSplitUseBeanAsErrorHandlerIssueTest extends ContextTestSuppo
 
     private static String logged;
 
+    @Test
     public void testSplitBeanErrorHandlerOK() throws Exception {
         MockEndpoint split = getMockEndpoint("mock:split");
         MockEndpoint ile = getMockEndpoint("mock:ile");
@@ -44,6 +46,7 @@ public class CharlesSplitUseBeanAsErrorHandlerIssueTest extends ContextTestSuppo
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitBeanErrorHandlerHandled() throws Exception {
         MockEndpoint split = getMockEndpoint("mock:split");
         MockEndpoint ile = getMockEndpoint("mock:ile");

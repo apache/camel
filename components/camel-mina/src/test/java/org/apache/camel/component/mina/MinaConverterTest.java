@@ -20,17 +20,19 @@ package org.apache.camel.component.mina;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
-import junit.framework.TestCase;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.mina.common.ByteBuffer;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class MinaConverterTest extends TestCase {
+public class MinaConverterTest extends Assert {
 
+    @Test
     public void testToByteArray() {
         byte[] in = "Hello World".getBytes();
         ByteBuffer bb = ByteBuffer.wrap(in);
@@ -42,6 +44,7 @@ public class MinaConverterTest extends TestCase {
         }
     }
 
+    @Test
     public void testToString() throws UnsupportedEncodingException {
         String in = "Hello World \u4f60\u597d";
         ByteBuffer bb = ByteBuffer.wrap(in.getBytes("UTF-8"));
@@ -52,6 +55,7 @@ public class MinaConverterTest extends TestCase {
         assertEquals("Hello World \u4f60\u597d", out);
     }
 
+    @Test
     public void testToStringTwoTimes() throws UnsupportedEncodingException {
         String in = "Hello World \u4f60\u597d";
         ByteBuffer bb = ByteBuffer.wrap(in.getBytes("UTF-8"));
@@ -66,6 +70,7 @@ public class MinaConverterTest extends TestCase {
         assertEquals("Hello World \u4f60\u597d", out);
     }
 
+    @Test
     public void testToInputStream() throws Exception {
         byte[] in = "Hello World".getBytes();
         ByteBuffer bb = ByteBuffer.wrap(in);
@@ -77,6 +82,7 @@ public class MinaConverterTest extends TestCase {
         }
     }
 
+    @Test
     public void testToByteBuffer() {
         byte[] in = "Hello World".getBytes();
 

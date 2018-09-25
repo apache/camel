@@ -15,17 +15,18 @@
  * limitations under the License.
  */
 package org.apache.camel.util;
-
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *
@@ -36,6 +37,7 @@ public class GroupTokenIteratorTest extends TestSupport {
     private Exchange exchange;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         context = new DefaultCamelContext();
@@ -45,15 +47,16 @@ public class GroupTokenIteratorTest extends TestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         context.stop();
         super.tearDown();
     }
 
+    @Test
     public void testGroupIterator() throws Exception {
         String s = "ABC\nDEF\nGHI\nJKL\nMNO\nPQR\nSTU\nVW";
-        Scanner scanner = new Scanner(s);
-        scanner.useDelimiter("\n");
+        Scanner scanner = new Scanner(s, "\n");
 
         GroupTokenIterator gi = new GroupTokenIterator(exchange, scanner, "\n", 3, false);
 
@@ -66,10 +69,10 @@ public class GroupTokenIteratorTest extends TestSupport {
         IOHelper.close(gi);
     }
 
+    @Test
     public void testGroupIteratorSkipFirst() throws Exception {
         String s = "##comment\nABC\nDEF\nGHI\nJKL\nMNO\nPQR\nSTU\nVW";
-        Scanner scanner = new Scanner(s);
-        scanner.useDelimiter("\n");
+        Scanner scanner = new Scanner(s, "\n");
 
         GroupTokenIterator gi = new GroupTokenIterator(exchange, scanner, "\n", 3, true);
 
@@ -82,6 +85,7 @@ public class GroupTokenIteratorTest extends TestSupport {
         IOHelper.close(gi);
     }
 
+    @Test
     public void testGroupIteratorWithDifferentEncodingFromDefault() throws Exception {
         if (Charset.defaultCharset() == StandardCharsets.UTF_8) {
             // can't think of test case where having default charset set to UTF-8 is affected
@@ -92,8 +96,7 @@ public class GroupTokenIteratorTest extends TestSupport {
 
         ByteArrayInputStream in = new ByteArrayInputStream(buf);
 
-        Scanner scanner = new Scanner(in, StandardCharsets.UTF_8.displayName());
-        scanner.useDelimiter("\n");
+        Scanner scanner = new Scanner(in, StandardCharsets.UTF_8.displayName(), "\n");
 
         exchange.setProperty(Exchange.CHARSET_NAME, StandardCharsets.UTF_8.displayName());
         GroupTokenIterator gi = new GroupTokenIterator(exchange, scanner, "\n", 1, false);

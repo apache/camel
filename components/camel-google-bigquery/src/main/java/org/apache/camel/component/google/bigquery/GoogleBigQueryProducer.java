@@ -150,7 +150,7 @@ public class GoogleBigQueryProducer extends DefaultProducer {
         }
 
         if (log.isTraceEnabled()) {
-            log.trace("Sending {} messages to bigquery table {}, suffix, partition",
+            log.trace("Sending {} messages to bigquery table {}, suffix {}, partition {}",
                     apiRequestRows.size(), tableId, suffix, partitionDecorator);
         }
 
@@ -161,7 +161,7 @@ public class GoogleBigQueryProducer extends DefaultProducer {
         }
 
         if (log.isTraceEnabled()) {
-            log.trace("Sent {} messages to bigquery table {}, suffix, partition",
+            log.trace("Sent {} messages to bigquery table {}, suffix {}, partition {}",
                 apiRequestRows.size(), tableId, suffix, partitionDecorator);
         }
         if (log.isDebugEnabled()) {

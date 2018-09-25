@@ -104,9 +104,9 @@ public class RestConfigurationDefinitionProperties {
     /**
      * Sets an CamelContext id pattern to only allow Rest APIs from rest
      * services within CamelContext's which name matches the pattern. The
-     * pattern name refers to the CamelContext name, to match on the current
+     * pattern #name# refers to the CamelContext name, to match on the current
      * CamelContext only. For any other value, the pattern uses the rules from
-     * link org.apache.camel.util.EndpointHelpermatchPattern(String, String)
+     * link org.apache.camel.util.EndpointHelper#matchPattern(String, String)
      */
     private String apiContextIdPattern;
     /**
@@ -138,6 +138,14 @@ public class RestConfigurationDefinitionProperties {
      * json / xml etc, as success messages otherwise will do.
      */
     private Boolean skipBindingOnErrorCode = false;
+    /**
+     * Whether to enable validation of the client request to check whether the
+     * Content-Type and Accept headers from the client is supported by the
+     * Rest-DSL configuration of its consumes/produces settings. This can be
+     * turned on, to enable this check. In case of validation error, then HTTP
+     * Status codes 415 or 406 is returned. The default value is false.
+     */
+    private Boolean clientRequestValidation = false;
     /**
      * Whether to enable CORS headers in the HTTP response. The default value is
      * false.
@@ -325,6 +333,14 @@ public class RestConfigurationDefinitionProperties {
 
     public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+    }
+
+    public Boolean getClientRequestValidation() {
+        return clientRequestValidation;
+    }
+
+    public void setClientRequestValidation(Boolean clientRequestValidation) {
+        this.clientRequestValidation = clientRequestValidation;
     }
 
     public Boolean getEnableCors() {

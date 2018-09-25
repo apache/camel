@@ -36,6 +36,11 @@ public class Web3jComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the web3j component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Default configuration
      */
     private Web3jConfigurationNestedConfiguration configuration;
@@ -66,38 +71,153 @@ public class Web3jComponentConfiguration
 
     public static class Web3jConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.web3j.Web3jConfiguration.class;
+        /**
+         * A transaction privateFor nodes with public keys in a Quorum network
+         */
+        private List privateFor;
+        /**
+         * If true, this will support Quorum API.
+         */
+        private Boolean quorumAPI = false;
+        /**
+         * The preconfigured Web3j object.
+         */
         private Web3j web3j;
+        /**
+         * The priority of a whisper message.
+         */
         private BigInteger priority;
+        /**
+         * The time to live in seconds of a whisper message.
+         */
         private BigInteger ttl;
+        /**
+         * Gas price used for each paid gas.
+         */
         private BigInteger gasPrice;
+        /**
+         * The maximum gas allowed in this block.
+         */
         private BigInteger gasLimit;
+        /**
+         * The value sent within a transaction.
+         */
         private BigInteger value;
+        /**
+         * The compiled code of a contract OR the hash of the invoked method
+         * signature and encoded parameters.
+         */
         private String data;
+        /**
+         * The address the transaction is send from
+         */
         private String fromAddress;
+        /**
+         * The address the transaction is directed to.
+         */
         private String toAddress;
+        /**
+         * A random hexadecimal(32 bytes) ID identifying the client.
+         */
         private String clientId;
+        /**
+         * A hexadecimal string representation (32 bytes) of the hash rate.
+         */
         private String hashrate;
+        /**
+         * The mix digest (256 bits) used for submitting a proof-of-work
+         * solution.
+         */
         private String mixDigest;
+        /**
+         * The header's pow-hash (256 bits) used for submitting a proof-of-work
+         * solution.
+         */
         private String headerPowHash;
+        /**
+         * The nonce found (64 bits) used for submitting a proof-of-work
+         * solution.
+         */
         private String nonce;
+        /**
+         * The source code to compile.
+         */
         private String sourceCode;
+        /**
+         * The information about a transaction requested by transaction hash.
+         */
         private String transactionHash;
+        /**
+         * The local database name.
+         */
         private String databaseName;
+        /**
+         * The key name in the database.
+         */
         private String keyName;
+        /**
+         * The filter id to use.
+         */
         private BigInteger filterId;
-        private BigInteger transactionIndex;
+        /**
+         * The transactions/uncle index position in the block.
+         */
+        private BigInteger index;
+        /**
+         * The signed transaction data for a new message call transaction or a
+         * contract creation for signed transactions.
+         */
         private String signedTransactionData;
+        /**
+         * Hash of the block where this transaction was in.
+         */
         private String blockHash;
+        /**
+         * Message to sign by calculating an Ethereum specific signature.
+         */
         private String sha3HashOfDataToSign;
+        /**
+         * The transaction index position withing a block.
+         */
         private BigInteger position;
+        /**
+         * Contract address or a list of addresses.
+         */
         private List addresses;
+        /**
+         * Topics are order-dependent. Each topic can also be a list of topics.
+         * Specify multiple topics separated by comma.
+         */
         private List topics;
+        /**
+         * Contract address.
+         */
         private String address;
-        private Boolean fullTransactionObjects;
+        /**
+         * If true it returns the full transaction objects, if false only the
+         * hashes of the transactions.
+         */
+        private Boolean fullTransactionObjects = false;
         /**
          * Operation to use.
          */
         private String operation = "transaction";
+
+        public List getPrivateFor() {
+            return privateFor;
+        }
+
+        public void setPrivateFor(List privateFor) {
+            this.privateFor = privateFor;
+        }
+
+        public Boolean getQuorumAPI() {
+            return quorumAPI;
+        }
+
+        public void setQuorumAPI(Boolean quorumAPI) {
+            this.quorumAPI = quorumAPI;
+        }
 
         public Web3j getWeb3j() {
             return web3j;
@@ -251,12 +371,12 @@ public class Web3jComponentConfiguration
             this.filterId = filterId;
         }
 
-        public BigInteger getTransactionIndex() {
-            return transactionIndex;
+        public BigInteger getIndex() {
+            return index;
         }
 
-        public void setTransactionIndex(BigInteger transactionIndex) {
-            this.transactionIndex = transactionIndex;
+        public void setIndex(BigInteger index) {
+            this.index = index;
         }
 
         public String getSignedTransactionData() {

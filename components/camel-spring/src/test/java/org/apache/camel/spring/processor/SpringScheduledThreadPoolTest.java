@@ -18,6 +18,7 @@ package org.apache.camel.spring.processor;
 
 import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -28,6 +29,7 @@ public class SpringScheduledThreadPoolTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringScheduledThreadPoolTest.xml");
     }
 
+    @Test
     public void testScheduledThreadPool() throws Exception {
         SizedScheduledExecutorService pool = context.getRegistry().lookupByNameAndType("myPool", SizedScheduledExecutorService.class);
         assertNotNull(pool);

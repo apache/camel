@@ -21,6 +21,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Unit test to verify that error handling using async() also works as expected.
@@ -34,6 +35,7 @@ public class AsyncDefaultErrorHandlerTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testAsyncDefaultErrorHandlerWait() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

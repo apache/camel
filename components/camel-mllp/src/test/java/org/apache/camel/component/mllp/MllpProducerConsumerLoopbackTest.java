@@ -16,7 +16,6 @@
  */
 
 package org.apache.camel.component.mllp;
-
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
@@ -26,13 +25,10 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
 import org.apache.camel.test.mllp.PassthroughProcessor;
-
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.BeforeClass;

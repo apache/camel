@@ -21,14 +21,14 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>18</version>
+    <version>21</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.camel</groupId>
   <artifactId>camel</artifactId>
-  <version>2.22.0-SNAPSHOT</version>
+  <version>2.23.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Camel</name>
   <description>Camel build POM</description>
@@ -51,8 +51,11 @@
     <jdk.version>1.8</jdk.version>
     <compiler.fork>false</compiler.fork>
 
-    <maven-compiler-plugin-version>3.7.0</maven-compiler-plugin-version>
-    <maven-surefire-plugin-version>2.21.0</maven-surefire-plugin-version>
+    <maven-compiler-plugin-version>3.8.0</maven-compiler-plugin-version>
+    <maven-javadoc-plugin-version>3.0.1</maven-javadoc-plugin-version>
+    <maven-surefire-plugin-version>2.22.0</maven-surefire-plugin-version>
+    <!-- we need to override the version inherited from Apache POM for modules that use this POM as parent -->
+    <surefire.version>${maven-surefire-plugin-version}</surefire.version>
 
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
     <!-- Make sure to keep JAXB version up to date in parent/pom.xml in the bottom of the file -->
@@ -60,7 +63,7 @@
     <errorprone-version>2.5</errorprone-version>
     <mycila-license-version>3.0</mycila-license-version>
     <gmavenplus-plugin-version>1.5</gmavenplus-plugin-version>
-    <groovy-version>2.4.15</groovy-version>
+    <groovy-version>2.5.1</groovy-version>
   </properties>
 
   <mailingLists>
@@ -191,7 +194,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.0.0-M1</version>
+          <version>${maven-javadoc-plugin-version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -612,7 +615,7 @@
                   <goal>jar</goal>
                 </goals>
                 <configuration>
-                  <additionalparam>${javadoc.opts}</additionalparam>
+                  <additionalOptions>${javadoc.opts}</additionalOptions>
                 </configuration>
               </execution>
             </executions>
@@ -682,7 +685,7 @@
               </execution>
             </executions>
             <configuration>
-              <additionalparam>${javadoc.opts}</additionalparam>
+              <additionalOptions>${javadoc.opts}</additionalOptions>
             </configuration>
           </plugin>
           <!-- We want to sign the artifact, the POM, and all attached artifacts -->

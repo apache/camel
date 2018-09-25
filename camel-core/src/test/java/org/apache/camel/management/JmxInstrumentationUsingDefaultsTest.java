@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
-
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.Iterator;
@@ -30,6 +29,9 @@ import javax.management.ObjectName;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
@@ -56,6 +58,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testMBeansRegistered() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -87,6 +90,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         assertEquals("Could not find 1 route: " + s, 1, s.size());
     }
 
+    @Test
     public void testCounters() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -176,7 +180,8 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         releaseMBeanServers();
         super.setUp();
 
@@ -187,7 +192,8 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         try {
             super.tearDown();
             releaseMBeanServers();

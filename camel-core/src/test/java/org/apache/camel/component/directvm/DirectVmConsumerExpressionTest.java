@@ -24,6 +24,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ServiceHelper;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 
 /**
  *
@@ -36,7 +37,7 @@ public class DirectVmConsumerExpressionTest extends ContextTestSupport {
 
     @Override
     @Before
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
 
         context2 = new DefaultCamelContext();
@@ -66,11 +67,12 @@ public class DirectVmConsumerExpressionTest extends ContextTestSupport {
 
     @Override
     @After
-    protected void tearDown() throws Exception {
+    public void tearDown() throws Exception {
         ServiceHelper.stopServices(context2, context3, context4);
         super.tearDown();
     }
 
+    @Test
     public void testSelectEndpoint() throws Exception {
         MockEndpoint result2 = context2.getEndpoint("mock:result2", MockEndpoint.class);
         result2.expectedBodiesReceived("Hello World");

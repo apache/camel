@@ -36,28 +36,31 @@ import org.slf4j.LoggerFactory;
 
 public class KubernetesClientServiceDiscovery extends KubernetesServiceDiscovery {
     private static final Logger LOG = LoggerFactory.getLogger(KubernetesClientServiceDiscovery.class);
-    private static final int FIRST = 0;
 
+    private final String namespace;
+    private final String portName;
     private AutoAdaptableKubernetesClient client;
 
     public KubernetesClientServiceDiscovery(KubernetesConfiguration configuration) {
         super(configuration);
+        this.namespace = configuration.getNamespace() != null ? configuration.getNamespace() : System.getenv("KUBERNETES_NAMESPACE");
+        this.portName = configuration.getPortName();
         this.client = null;
     }
 
     @Override
     public List<ServiceDefinition> getServices(String name) {
-        LOG.debug("Discovering endpoints from namespace: {} with name: {}", getNamespace(), name);
-        Endpoints endpoints = client.endpoints().inNamespace(getNamespace()).withName(name).get();
+        LOG.debug("Discovering endpoints from namespace: {} with name: {}", this.namespace, name);
+        Endpoints endpoints = client.endpoints().inNamespace(this.namespace).withName(name).get();
         List<ServiceDefinition> result = new ArrayList<>();
         if (endpoints != null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Found {} endpoints in namespace: {} for name: {} and portName: {}",
-                    endpoints.getSubsets().size(), getNamespace(), name, getPortName());
+                    endpoints.getSubsets().size(), this.namespace, name, this.portName);
             }
             for (EndpointSubset subset : endpoints.getSubsets()) {
                 if (subset.getPorts().size() == 1) {
-                    addServers(name, result, subset.getPorts().get(FIRST), subset);
+                    addServers(name, result, subset.getPorts().get(0), subset);
                 } else {
                     final List<EndpointPort> ports = subset.getPorts();
                     final int portSize = ports.size();
@@ -65,7 +68,7 @@ public class KubernetesClientServiceDiscovery extends KubernetesServiceDiscovery
                     EndpointPort port;
                     for (int p = 0; p < portSize; p++) {
                         port = ports.get(p);
-                        if (ObjectHelper.isEmpty(getPortName()) || getPortName().endsWith(port.getName())) {
+                        if (ObjectHelper.isEmpty(this.portName) || this.portName.endsWith(port.getName())) {
                             addServers(name, result, port, subset);
                         }
                     }
@@ -144,5 +147,13 @@ public class KubernetesClientServiceDiscovery extends KubernetesServiceDiscovery
             IOHelper.close(client);
             client = null;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "KubernetesClientServiceDiscovery{"
+            + "namespace='" + namespace + '\''
+            + ", portName='" + portName + '\''
+            + '}';
     }
 }

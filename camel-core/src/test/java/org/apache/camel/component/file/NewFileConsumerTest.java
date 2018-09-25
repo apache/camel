@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
@@ -23,6 +22,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
@@ -34,11 +35,13 @@ public class NewFileConsumerTest extends ContextTestSupport {
     private MyFileEndpoint myFile;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/myfile");
         super.setUp();
     }
 
+    @Test
     public void testNewFileConsumer() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

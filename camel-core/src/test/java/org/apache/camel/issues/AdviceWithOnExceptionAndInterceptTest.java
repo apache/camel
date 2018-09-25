@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
+import org.junit.Test;
 
 /**
  *
@@ -56,6 +57,7 @@ public class AdviceWithOnExceptionAndInterceptTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testFailover() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

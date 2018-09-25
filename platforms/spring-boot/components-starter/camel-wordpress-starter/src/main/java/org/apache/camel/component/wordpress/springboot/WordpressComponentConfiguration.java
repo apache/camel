@@ -21,7 +21,6 @@ import javax.annotation.Generated;
 import org.apache.camel.component.wordpress.api.model.SearchCriteria;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Integrates Camel with Wordpress.
@@ -34,6 +33,11 @@ public class WordpressComponentConfiguration
         extends
             ComponentConfigurationPropertiesCommon {
 
+    /**
+     * Whether to enable auto configuration of the wordpress component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
     /**
      * Wordpress component configuration
      */
@@ -65,13 +69,30 @@ public class WordpressComponentConfiguration
 
     public static class WordpressComponentConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.wordpress.WordpressComponentConfiguration.class;
+        /**
+         * The Wordpress API URL from your site, e.g. http://myblog.com/wp-json/
+         */
         private String url;
+        /**
+         * The Wordpress REST API version
+         */
         private String apiVersion = "2";
+        /**
+         * Password from authorized user
+         */
         private String password;
+        /**
+         * Authorized user to perform writing operations
+         */
         private String user;
+        /**
+         * The entity id
+         */
         private Integer id;
+        /**
+         * Whether to bypass trash and force deletion.
+         */
         private Boolean force = false;
-        @NestedConfigurationProperty
         private SearchCriteria searchCriteria;
         private Map criteriaProperties;
 

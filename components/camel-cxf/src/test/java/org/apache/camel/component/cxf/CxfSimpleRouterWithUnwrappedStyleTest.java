@@ -21,7 +21,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
-
 import org.junit.Ignore;
 import org.junit.Test;
 

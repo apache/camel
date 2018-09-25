@@ -26,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.seda.SedaEndpoint;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Test;
 
 /**
  * Tests mbeans is registered when adding a 2nd route from within an existing route.
@@ -64,6 +65,7 @@ public class ManagedRouteAddFromRouteTest extends ManagementTestSupport {
         };
     }
 
+    @Test
     public void testAddRouteFromRoute() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

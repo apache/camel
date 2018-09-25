@@ -23,12 +23,14 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class FromMultipleEndpointTest extends ContextTestSupport {
 
+    @Test
     public void testMultipleFromEndpoint() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:results");
         mock.expectedMessageCount(2);

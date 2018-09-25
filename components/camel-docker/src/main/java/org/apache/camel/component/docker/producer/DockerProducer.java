@@ -1019,7 +1019,7 @@ public class DockerProducer extends DefaultProducer {
      */
     private StopContainerCmd executeStopContainerRequest(DockerClient client, Message message) {
 
-        LOGGER.debug("Executing Docker Kill Container Request");
+        LOGGER.debug("Executing Docker Stop Container Request");
 
         String containerId = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 

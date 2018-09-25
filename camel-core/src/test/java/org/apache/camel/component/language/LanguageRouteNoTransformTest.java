@@ -20,12 +20,14 @@ import java.net.URLEncoder;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class LanguageRouteNoTransformTest extends ContextTestSupport {
 
+    @Test
     public void testLanguage() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("World");
 

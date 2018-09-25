@@ -18,12 +18,14 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Test;
 
 /**
  * Unit test for bridged methods.
  */
 public class BeanInfoWithBridgedMethodTest extends ContextTestSupport {
 
+    @Test
     public void testBridgedMethod() throws Exception {
         BeanInfo beanInfo = new BeanInfo(context, MyService.class);
 
@@ -40,6 +42,7 @@ public class BeanInfoWithBridgedMethodTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testPackagePrivate() throws Exception {
         BeanInfo beanInfo = new BeanInfo(context, MyPackagePrivateService.class);
 

@@ -21,6 +21,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
+import org.junit.Test;
 
 /**
  * Testing intercept from can intercept when endpoint is an instance
@@ -34,6 +35,7 @@ public class InterceptFromEndpointRefUriTest extends ContextTestSupport {
         return new DefaultCamelContext(reg);
     }
 
+    @Test
     public void testIntercept() throws Exception {
         getMockEndpoint("mock:intercepted").expectedMessageCount(1);
         getMockEndpoint("mock:first").expectedMessageCount(1);

@@ -26,12 +26,14 @@ import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class DefinitionPolicyPerProcessorTest extends ContextTestSupport {
 
+    @Test
     public void testDefintionAugmentationPolicy() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:foo").expectedHeaderReceived("foo", "was wrapped");

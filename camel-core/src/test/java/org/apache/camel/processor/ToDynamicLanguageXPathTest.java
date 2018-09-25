@@ -18,9 +18,11 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class ToDynamicLanguageXPathTest extends ContextTestSupport {
 
+    @Test
     public void testToDynamic() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("<order uri=\"mock:foo\"/>");
         getMockEndpoint("mock:bar").expectedBodiesReceived("<order uri=\"mock:bar\"/>");

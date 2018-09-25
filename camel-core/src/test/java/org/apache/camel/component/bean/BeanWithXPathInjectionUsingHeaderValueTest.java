@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Handler;
 import org.apache.camel.language.XPath;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
 /**
  * Tests the XPath annotation 'header' value which when set will cause the XPath
@@ -31,6 +32,7 @@ import org.apache.camel.util.jndi.JndiContext;
 public class BeanWithXPathInjectionUsingHeaderValueTest extends ContextTestSupport {
     protected MyBean myBean = new MyBean();
 
+    @Test
     public void testConstantXPathHeaders() throws Exception {
         template.sendBodyAndHeader("bean:myBean", "<response>OK</response>",
                                    "invoiceDetails", "<invoice><person><name>Alan</name><date>26/08/2012</date></person></invoice>");

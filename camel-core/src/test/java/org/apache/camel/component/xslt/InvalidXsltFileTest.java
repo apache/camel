@@ -23,12 +23,14 @@ import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Test;
 
 /**
  *
  */
 public class InvalidXsltFileTest extends TestSupport {
 
+    @Test
     public void testInvalidStylesheet() throws Exception {
         try {
             RouteBuilder builder = createRouteBuilder();

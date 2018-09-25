@@ -17,10 +17,8 @@
 package org.apache.camel.component.cxf.jaxrs.springboot;
 
 import javax.annotation.Generated;
-import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The cxfrs component is used for JAX-RS REST services using Apache CXF.
@@ -34,15 +32,20 @@ public class CxfRsComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the cxfrs component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Enable usage of global SSL context parameters.
      */
     private Boolean useGlobalSslContextParameters = false;
     /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
-     * header to and from Camel message.
+     * header to and from Camel message. The option is a
+     * org.apache.camel.spi.HeaderFilterStrategy type.
      */
-    @NestedConfigurationProperty
-    private HeaderFilterStrategy headerFilterStrategy;
+    private String headerFilterStrategy;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -59,12 +62,11 @@ public class CxfRsComponentConfiguration
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
+    public String getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
 
-    public void setHeaderFilterStrategy(
-            HeaderFilterStrategy headerFilterStrategy) {
+    public void setHeaderFilterStrategy(String headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 

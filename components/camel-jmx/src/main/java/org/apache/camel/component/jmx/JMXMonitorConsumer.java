@@ -37,7 +37,6 @@ import org.apache.camel.Processor;
  * monitor object and attribute referenced by the endpoint. The only 
  * difference here is the act of adding and removing the notification
  * listener.
- *
  */
 public class JMXMonitorConsumer extends JMXConsumer {
     
@@ -51,7 +50,7 @@ public class JMXMonitorConsumer extends JMXConsumer {
     @Override
     protected void addNotificationListener() throws Exception {
         
-        JMXEndpoint ep = (JMXEndpoint) getEndpoint();
+        JMXEndpoint ep = getEndpoint();
         // create the monitor bean
         Monitor bean = null;
         if (ep.getMonitorType().equals("counter")) {
@@ -80,6 +79,8 @@ public class JMXMonitorConsumer extends JMXConsumer {
             sm.setNotifyMatch(ep.isNotifyMatch());
             sm.setStringToCompare(ep.getStringToCompare());
             bean = sm;
+        } else {
+            throw new IllegalArgumentException("Unsupported monitortype: " + ep.getMonitorType());
         }
         
         bean.addObservedObject(ep.getJMXObjectName());

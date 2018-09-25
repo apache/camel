@@ -22,6 +22,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
@@ -29,6 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class DavidSiefertTest extends ContextTestSupport {
     protected static Object expectedBody = "Some Output";
 
+    @Test
     public void testWorks() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
@@ -38,6 +40,7 @@ public class DavidSiefertTest extends ContextTestSupport {
         result.assertIsSatisfied();
     }
 
+    @Test
     public void testHeaderPredicateFails() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.message(0).header("sample.name").isEqualTo("shouldNotMatch");

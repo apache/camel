@@ -24,6 +24,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.interceptor.TraceEventMessage;
 import org.apache.camel.processor.interceptor.Tracer;
+import org.junit.Test;
 
 /**
  * Default error handler test with trace
@@ -39,6 +40,7 @@ public class DefaultErrorHandlerOnExceptionTraceTest extends ContextTestSupport 
         return jndi;
     }
 
+    @Test
     public void testOk() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
@@ -58,6 +60,7 @@ public class DefaultErrorHandlerOnExceptionTraceTest extends ContextTestSupport 
         assertEquals("mock://result", msg2.getToNode());
     }
 
+    @Test
     public void testWithError() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:boom");
         mock.expectedMessageCount(1);

@@ -16,13 +16,9 @@
  */
 package org.apache.camel.component.quartz2.springboot;
 
-import java.util.Properties;
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Provides a scheduled delivery of messages using the Quartz 2.x scheduler.
@@ -35,6 +31,11 @@ public class QuartzComponentConfiguration
         extends
             ComponentConfigurationPropertiesCommon {
 
+    /**
+     * Whether to enable auto configuration of the quartz2 component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
     /**
      * Whether or not the scheduler should be auto started. This options is
      * default true
@@ -55,9 +56,10 @@ public class QuartzComponentConfiguration
      */
     private Boolean enableJmx = true;
     /**
-     * Properties to configure the Quartz scheduler.
+     * Properties to configure the Quartz scheduler. The option is a
+     * java.util.Properties type.
      */
-    private Properties properties;
+    private String properties;
     /**
      * File name of the properties to load from the classpath
      */
@@ -78,15 +80,14 @@ public class QuartzComponentConfiguration
     private Boolean interruptJobsOnShutdown = false;
     /**
      * To use the custom SchedulerFactory which is used to create the Scheduler.
+     * The option is a org.quartz.SchedulerFactory type.
      */
-    @NestedConfigurationProperty
-    private SchedulerFactory schedulerFactory;
+    private String schedulerFactory;
     /**
      * To use the custom configured Quartz scheduler, instead of creating a new
-     * Scheduler.
+     * Scheduler. The option is a org.quartz.Scheduler type.
      */
-    @NestedConfigurationProperty
-    private Scheduler scheduler;
+    private String scheduler;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -127,11 +128,11 @@ public class QuartzComponentConfiguration
         this.enableJmx = enableJmx;
     }
 
-    public Properties getProperties() {
+    public String getProperties() {
         return properties;
     }
 
-    public void setProperties(Properties properties) {
+    public void setProperties(String properties) {
         this.properties = properties;
     }
 
@@ -159,19 +160,19 @@ public class QuartzComponentConfiguration
         this.interruptJobsOnShutdown = interruptJobsOnShutdown;
     }
 
-    public SchedulerFactory getSchedulerFactory() {
+    public String getSchedulerFactory() {
         return schedulerFactory;
     }
 
-    public void setSchedulerFactory(SchedulerFactory schedulerFactory) {
+    public void setSchedulerFactory(String schedulerFactory) {
         this.schedulerFactory = schedulerFactory;
     }
 
-    public Scheduler getScheduler() {
+    public String getScheduler() {
         return scheduler;
     }
 
-    public void setScheduler(Scheduler scheduler) {
+    public void setScheduler(String scheduler) {
         this.scheduler = scheduler;
     }
 

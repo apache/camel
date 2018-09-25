@@ -23,7 +23,7 @@ Where *operation* is the specific action to perform on Docker.
 ### General Options
 
 // component options: START
-The Docker component supports 2 options which are listed below.
+The Docker component supports 2 options, which are listed below.
 
 
 
@@ -83,6 +83,40 @@ with the following path and query parameters:
 | *username* (security) | User name to authenticate with |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 20 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.docker.configuration.cert-path* | Location containing the SSL certificate chain |  | String
+| *camel.component.docker.configuration.cmd-exec-factory* | The fully qualified class name of the DockerCmdExecFactory implementation to use | com.github.dockerjava.netty.NettyDockerCmdExecFactory | String
+| *camel.component.docker.configuration.email* | Email address associated with the user |  | String
+| *camel.component.docker.configuration.follow-redirect-filter* | Whether to follow redirect filter | false | Boolean
+| *camel.component.docker.configuration.host* | Docker host | localhost | String
+| *camel.component.docker.configuration.logging-filter* | Whether to use logging filter | false | Boolean
+| *camel.component.docker.configuration.max-per-route-connections* | Maximum route connections | 100 | Integer
+| *camel.component.docker.configuration.max-total-connections* | Maximum total connections | 100 | Integer
+| *camel.component.docker.configuration.operation* | Which operation to use |  | DockerOperation
+| *camel.component.docker.configuration.parameters* | Additional configuration parameters as key/value pairs |  | Map
+| *camel.component.docker.configuration.password* | Password to authenticate with |  | String
+| *camel.component.docker.configuration.port* | Docker port | 2375 | Integer
+| *camel.component.docker.configuration.request-timeout* | Request timeout for response (in seconds) |  | Integer
+| *camel.component.docker.configuration.secure* | Use HTTPS communication | false | Boolean
+| *camel.component.docker.configuration.server-address* | Server address for docker registry. | https://index.docker.io/v1/ | String
+| *camel.component.docker.configuration.socket* | Socket connection mode | true | Boolean
+| *camel.component.docker.configuration.tls-verify* | Check TLS | false | Boolean
+| *camel.component.docker.configuration.username* | User name to authenticate with |  | String
+| *camel.component.docker.enabled* | Enable docker component | true | Boolean
+| *camel.component.docker.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 ### Header Strategy
 

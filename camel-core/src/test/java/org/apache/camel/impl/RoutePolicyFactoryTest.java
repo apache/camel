@@ -25,9 +25,11 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.support.RoutePolicySupport;
+import org.junit.Test;
 
 public class RoutePolicyFactoryTest extends ContextTestSupport {
 
+    @Test
     public void testRoutePolicyFactory() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);

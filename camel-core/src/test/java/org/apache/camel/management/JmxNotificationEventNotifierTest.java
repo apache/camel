@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Test;
 
 /**
  * @version 
@@ -55,6 +56,7 @@ public class JmxNotificationEventNotifierTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testExchangeDone() throws Exception {
         // START SNIPPET: e2
         // register the NotificationListener
@@ -82,6 +84,7 @@ public class JmxNotificationEventNotifierTest extends ContextTestSupport {
         context.stop();
     }
 
+    @Test
     public void testExchangeFailed() throws Exception {
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=eventnotifiers,name=JmxEventNotifier");
         

@@ -18,12 +18,14 @@ package org.apache.camel.processor.onexception;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class DoCatchDirectRouteTest extends ContextTestSupport {
 
+    @Test
     public void testDoCatchDirectRoute() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:b").expectedMessageCount(1);

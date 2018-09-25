@@ -21,12 +21,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
 /**
  * Unit test for using our own aggregation strategy.
  */
 public class CustomAggregationStrategyTest extends ContextTestSupport {
 
+    @Test
     public void testCustomAggregationStrategy() throws Exception {
         // START SNIPPET: e2
         MockEndpoint result = getMockEndpoint("mock:result");

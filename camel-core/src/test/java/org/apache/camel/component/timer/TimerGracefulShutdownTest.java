@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.component.timer;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.ExceptionHandler;
+import org.junit.After;
+import org.junit.Test;
 
 /**
  * @version 
@@ -37,6 +38,7 @@ public class TimerGracefulShutdownTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testTimerShutdown() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
@@ -45,7 +47,8 @@ public class TimerGracefulShutdownTest extends ContextTestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
 
         assertFalse("Should not throw exception during graceful shutdown", eh.isError());

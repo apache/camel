@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
-
 import java.io.File;
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -30,6 +30,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.idempotent.FileIdempotentRepository;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.FileUtil;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -40,6 +42,7 @@ public class ManagedFileIdempotentConsumerTest extends ManagementTestSupport {
     private File store = new File("target/idempotentfilestore.dat");
     private IdempotentRepository<String> repo;
 
+    @Test
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -118,7 +121,8 @@ public class ManagedFileIdempotentConsumerTest extends ManagementTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // delete file store before testing
         if (store.exists()) {
             store.delete();

@@ -21,7 +21,6 @@ import java.util.Map;
 
 import com.google.api.services.drive.model.Comment;
 import com.google.api.services.drive.model.File;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
 import org.apache.camel.component.google.drive.internal.DriveRepliesApiMethod;

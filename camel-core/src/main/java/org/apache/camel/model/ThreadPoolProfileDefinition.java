@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -56,6 +57,11 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
     private ThreadPoolRejectedPolicy rejectedPolicy;
 
     public ThreadPoolProfileDefinition() {
+    }
+
+    @Override
+    public String getShortName() {
+        return "threadPoolProfile";
     }
 
     @Override

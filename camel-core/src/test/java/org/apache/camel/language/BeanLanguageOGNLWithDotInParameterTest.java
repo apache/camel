@@ -19,12 +19,14 @@ package org.apache.camel.language;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class BeanLanguageOGNLWithDotInParameterTest extends ContextTestSupport {
 
+    @Test
     public void testDot() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedHeaderReceived("goto", "mock:MyAppV1.2.3/blah");

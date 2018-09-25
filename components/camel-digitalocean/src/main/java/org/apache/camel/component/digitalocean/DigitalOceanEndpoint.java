@@ -62,7 +62,7 @@ public class DigitalOceanEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        LOG.trace("Resolve producer digitalocean endpoint {" + configuration.getResource() + "}");
+        LOG.trace("Resolve producer digitalocean endpoint {{}}", configuration.getResource());
 
         switch (configuration.getResource()) {
         case account:

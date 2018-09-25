@@ -17,6 +17,7 @@
 package org.apache.camel.component.direct;
 
 import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;

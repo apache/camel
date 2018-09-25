@@ -87,7 +87,7 @@ SplunkEvent in the body.
 
 
 // component options: START
-The Splunk component supports 2 options which are listed below.
+The Splunk component supports 2 options, which are listed below.
 
 
 
@@ -171,6 +171,23 @@ with the following path and query parameters:
 | *useSunHttpsHandler* (security) | Use sun.net.www.protocol.https.Handler Https handler to establish the Splunk Connection. Can be useful when running in application servers to avoid app. server https handling. | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.splunk.enabled* | Enable splunk component | true | Boolean
+| *camel.component.splunk.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.splunk.splunk-configuration-factory* | To use the SplunkConfigurationFactory. The option is a org.apache.camel.component.splunk.SplunkConfigurationFactory type. |  | String
+|===
+// spring-boot-auto-configure options: END
+
 
 
 ### Message body

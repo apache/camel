@@ -29,13 +29,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.dto.Version;
 import org.apache.camel.component.salesforce.api.dto.Versions;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.jetty.proxy.ConnectHandler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.B64Code;
 import org.eclipse.jetty.util.StringUtil;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -150,9 +148,8 @@ public class HttpProxyIntegrationTest extends AbstractSalesforceTestBase {
         configurationMethod.accept(salesforce);
     }
 
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception {
-        CamelTestSupport.tearDownAfterClass();
+    @Override
+    public void cleanupResources() throws Exception {
         // stop the proxy server after component
         LOG.info("Stopping proxy server...");
         server.stop();

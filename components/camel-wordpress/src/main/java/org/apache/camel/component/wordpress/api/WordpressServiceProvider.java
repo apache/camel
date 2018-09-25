@@ -17,6 +17,7 @@
 package org.apache.camel.component.wordpress.api;
 
 import java.util.HashMap;
+
 import org.apache.camel.component.wordpress.api.service.WordpressService;
 import org.apache.camel.component.wordpress.api.service.WordpressServicePosts;
 import org.apache.camel.component.wordpress.api.service.WordpressServiceUsers;
@@ -24,6 +25,7 @@ import org.apache.camel.component.wordpress.api.service.impl.WordpressServicePos
 import org.apache.camel.component.wordpress.api.service.impl.WordpressServiceUsersAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -71,6 +73,7 @@ public final class WordpressServiceProvider {
         this.services = new HashMap<>();
         this.services.put(WordpressServicePosts.class, servicePosts);
         this.services.put(WordpressServiceUsers.class, serviceUsers);
+        this.configuration = config;
 
         LOGGER.info("Wordpress Service Provider initialized using base URL: {}, API Version {}", config.getApiUrl(), config.getApiVersion());
     }

@@ -24,12 +24,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class InterceptorStrategyOrderedTest extends ContextTestSupport {
 
+    @Test
     public void testInterceptorStrategyOrdered() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:result").expectedHeaderReceived("order", "12");

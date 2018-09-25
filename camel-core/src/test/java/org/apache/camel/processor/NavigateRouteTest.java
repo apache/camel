@@ -21,6 +21,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Unit test for navigating a route (runtime processors, not the model).
@@ -31,6 +32,7 @@ public class NavigateRouteTest extends ContextTestSupport {
 
     private static int count;
 
+    @Test
     public void testNavigateRoute() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);

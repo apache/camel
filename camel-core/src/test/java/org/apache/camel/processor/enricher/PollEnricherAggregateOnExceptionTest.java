@@ -23,12 +23,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class PollEnricherAggregateOnExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testEnrichTrueOk() throws Exception {
         template.sendBody("seda:foo", "Hello World");
 
@@ -40,6 +42,7 @@ public class PollEnricherAggregateOnExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testEnrichTrueKaboom() throws Exception {
         template.send("seda:foo", new Processor() {
             @Override
@@ -56,6 +59,7 @@ public class PollEnricherAggregateOnExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testEnrichFalseOk() throws Exception {
         template.sendBody("seda:foo", "Hello World");
 
@@ -67,6 +71,7 @@ public class PollEnricherAggregateOnExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testEnrichFalseKaboom() throws Exception {
         template.send("seda:foo", new Processor() {
             @Override

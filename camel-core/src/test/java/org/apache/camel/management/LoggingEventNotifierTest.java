@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Test;
 
 /**
  * @version 
@@ -45,6 +46,7 @@ public class LoggingEventNotifierTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testExchangeDone() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -55,6 +57,7 @@ public class LoggingEventNotifierTest extends ContextTestSupport {
         context.stop();
     }
 
+    @Test
     public void testExchangeFailed() throws Exception {
         try {
             template.sendBody("direct:fail", "Hello World");

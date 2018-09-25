@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.issues;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +24,8 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -34,11 +35,13 @@ public class SplitPropertiesFileIssueTest extends ContextTestSupport {
     private String body = "foo=1" + LS + "bar=2" + LS + "bar=3" + LS + "foo=4";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/file/splitprop");
         super.setUp();
     }
 
+    @Test
     public void testSplitPropertiesFileAndRoute() throws Exception {
         MockEndpoint foo = getMockEndpoint("mock:foo");
         foo.expectedBodiesReceived("[foo=1, foo=4]");

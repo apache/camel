@@ -17,6 +17,7 @@
 package org.apache.camel.spring.mock;
 
 import org.apache.camel.spring.ApplicationContextTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -25,6 +26,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class BeanMockTest extends ApplicationContextTestSupport {
 
+    @Test
     public void testAssertionsUsingBean() throws Exception {
         MyAssertions bean = getMandatoryBean(MyAssertions.class, "myBean");
         bean.assertEndpointsValid();

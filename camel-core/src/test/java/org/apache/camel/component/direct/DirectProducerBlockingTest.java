@@ -24,9 +24,11 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
+import org.junit.Test;
 
 public class DirectProducerBlockingTest extends ContextTestSupport {
 
+    @Test
     public void testProducerBlocksForSuspendedConsumer() throws Exception {
         DirectEndpoint endpoint = getMandatoryEndpoint("direct:suspended", DirectEndpoint.class);
         endpoint.getConsumer().suspend();
@@ -42,6 +44,7 @@ public class DirectProducerBlockingTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testProducerBlocksWithNoConsumers() throws Exception {
         DirectEndpoint endpoint = getMandatoryEndpoint("direct:suspended", DirectEndpoint.class);
         endpoint.getConsumer().suspend();
@@ -58,6 +61,7 @@ public class DirectProducerBlockingTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testProducerBlocksResumeTest() throws Exception {
         context.suspendRoute("foo");
 

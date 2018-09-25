@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
@@ -25,6 +25,8 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Before;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +37,7 @@ public class BeanRouteTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
     protected MyBean myBean = new MyBean();
 
+    @Test
     public void testSendingMessageWithMethodNameHeader() throws Exception {
         String expectedBody = "Wobble";
 
@@ -43,6 +46,7 @@ public class BeanRouteTest extends ContextTestSupport {
         assertEquals("bean received correct value for: " + myBean, expectedBody, myBean.body);
     }
 
+    @Test
     public void testSendingMessageWithMethodNameHeaderWithMoreVerboseCoe() throws Exception {
         final String expectedBody = "Wibble";
 
@@ -57,7 +61,8 @@ public class BeanRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         Object lookedUpBean = context.getRegistry().lookupByName("myBean");

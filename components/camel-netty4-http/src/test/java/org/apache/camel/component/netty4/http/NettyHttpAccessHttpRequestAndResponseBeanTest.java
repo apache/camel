@@ -24,7 +24,6 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty4.NettyConverter;
 import org.junit.Test;

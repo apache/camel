@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.junit.Test;
 
 import static org.apache.camel.ThreadPoolRejectedPolicy.Abort;
 
@@ -27,6 +28,7 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
 
     ThreadPoolProfile threadPoolProfile = new ThreadPoolProfile("poll");
 
+    @Test
     public void testCreateRouteIfNoInvalidOptions() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -39,6 +41,7 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
         });
     }
 
+    @Test
     public void testFailIfThreadNameAndExecutorServiceRef() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -58,6 +61,7 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
         fail();
     }
 
+    @Test
     public void testPassIfThreadNameWithoutExecutorServiceRef() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -70,6 +74,7 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
         });
     }
 
+    @Test
     public void testFailIfPoolSizeAndExecutorServiceRef() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -89,6 +94,7 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
         fail();
     }
 
+    @Test
     public void testFailIfMaxPoolSizeAndExecutorServiceRef() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -108,6 +114,7 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
         fail();
     }
 
+    @Test
     public void testFailIfKeepAliveTimeAndExecutorServiceRef() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -127,6 +134,7 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
         fail();
     }
 
+    @Test
     public void testFailIfMaxQueueSizeAndExecutorServiceRef() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -146,6 +154,7 @@ public class ThreadsInvalidConfigTest extends ContextTestSupport {
         fail();
     }
 
+    @Test
     public void testFailIfRejectedPolicyAndExecutorServiceRef() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -26,6 +25,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.support.EventNotifierSupport;
+import org.junit.After;
+import org.junit.Test;
 
 /**
  * @version 
@@ -58,11 +59,13 @@ public class UnitOfWorkProducerTest extends ContextTestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         events.clear();
         super.tearDown();
     }
 
+    @Test
     public void testSedaBasedUnitOfWorkProducer() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -78,6 +81,7 @@ public class UnitOfWorkProducerTest extends ContextTestSupport {
         assertEquals(2, events.size());
     }
 
+    @Test
     public void testDirectBasedUnitOfWorkProducer() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

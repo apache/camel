@@ -17,6 +17,7 @@
 package org.apache.camel.management;
 
 import java.util.Set;
+
 import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -27,6 +28,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
@@ -35,6 +37,7 @@ public class ManagedErrorHandlerRedeliveryTest extends ManagementTestSupport {
 
     private static int counter;
 
+    @Test
     public void testManagedErrorHandlerRedelivery() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

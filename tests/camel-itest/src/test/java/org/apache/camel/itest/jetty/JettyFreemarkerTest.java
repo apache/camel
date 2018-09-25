@@ -28,6 +28,7 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.util.StringHelper;
 import org.junit.Test;
 
 public class JettyFreemarkerTest extends CamelTestSupport {
@@ -84,7 +85,7 @@ public class JettyFreemarkerTest extends CamelTestSupport {
                             ObjectHelper.notNull(name, "name");
 
                             // strip off the locale
-                            name = ObjectHelper.before(name, "_");
+                            name = StringHelper.before(name, "_");
 
                             name = "org/apache/camel/itest/jetty/" + name + ".ftl";
                             InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext().getClassResolver(), name);

@@ -15,15 +15,17 @@
  * limitations under the License.
  */
 package org.apache.camel.issues;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.RoutingSlip;
+import org.junit.Before;
+import org.junit.Test;
 
 public class RoutingSlipMemoryLeakTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/output");
         super.setUp();
     }
@@ -31,6 +33,7 @@ public class RoutingSlipMemoryLeakTest extends ContextTestSupport {
     /**
      * Reproducer for the memory leak: CAMEL-10048
      */
+    @Test
     public void testMemoryLeakInExceptionHandlerCaching() throws Exception {
         int messageCount = 100;
         for (int i = 0; i < messageCount; i++) {

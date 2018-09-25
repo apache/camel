@@ -23,12 +23,14 @@ import javax.management.openmbean.TabularData;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class ManagedInflightRepositoryTest extends ManagementTestSupport {
 
+    @Test
     public void testInflightRepository() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

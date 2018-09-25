@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangeProperties;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
@@ -31,6 +32,7 @@ public class DynamicRouterExchangePropertiesTest extends ContextTestSupport {
 
     private static List<String> bodies = new ArrayList<>();
 
+    @Test
     public void testDynamicRouter() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:a").expectedPropertyReceived("invoked", 1);

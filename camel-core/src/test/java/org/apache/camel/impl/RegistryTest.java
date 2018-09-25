@@ -15,20 +15,21 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
-
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.camel.util.jndi.JndiTest;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class RegistryTest extends TestCase {
+public class RegistryTest extends Assert {
     protected JndiRegistry registry;
 
+    @Test
     public void testBind() throws Exception {
         List<?> foo = Arrays.asList("a", "b", "c");
 
@@ -38,18 +39,21 @@ public class RegistryTest extends TestCase {
         assertEquals("Should be same!", foo, list);
     }
 
+    @Test
     public void testDefaultProviderAllowsValuesToBeCreatedInThePropertiesFile() throws Exception {
         Object value = registry.lookupByName("foo");
         assertEquals("lookup of foo", "bar", value);
     }
 
+    @Test
     public void testLookupOfUnknownName() throws Exception {
         Object value = registry.lookupByName("No such entry!");
         assertNull("Should not find anything!", value);
     }
 
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
+
         registry = new JndiRegistry(JndiTest.createInitialContext());
     }
 }

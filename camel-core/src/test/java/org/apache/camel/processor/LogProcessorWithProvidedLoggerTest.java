@@ -27,10 +27,10 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.logging.log4j.Level;
 import org.junit.Before;
+import org.junit.Test;
 import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
 
 /**
  * @version
@@ -54,6 +54,7 @@ public class LogProcessorWithProvidedLoggerTest extends ContextTestSupport {
         );
     }
 
+    @Test
     public void testLogProcessorWithRegistryLogger() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
 
@@ -64,6 +65,7 @@ public class LogProcessorWithProvidedLoggerTest extends ContextTestSupport {
         assertThat(sw.toString(), equalTo("org.apache.camel.customlogger INFO Got Bye World"));
     }
 
+    @Test
     public void testLogProcessorWithProvidedLogger() throws Exception {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
 

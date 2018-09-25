@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.xml.ws.WebFault;
 
 import org.w3c.dom.Element;
@@ -76,6 +77,7 @@ public class CxfConsumer extends DefaultConsumer {
         if (cxfEndpoint.getCxfEndpointConfigurer() != null) {
             cxfEndpoint.getCxfEndpointConfigurer().configureServer(server);
         }
+        server.getEndpoint().getEndpointInfo().setProperty("serviceClass", cxfEndpoint.getServiceClass());
         if (ObjectHelper.isNotEmpty(cxfEndpoint.getPublishedEndpointUrl())) {
             server.getEndpoint().getEndpointInfo().setProperty("publishedEndpointUrl", cxfEndpoint.getPublishedEndpointUrl());
         }
@@ -191,7 +193,7 @@ public class CxfConsumer extends DefaultConsumer {
                         }
                     });
 
-                } else if (continuation.isResumed()) {
+                } else if (!continuation.isTimeout() && continuation.isResumed()) {
                     org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange)continuation.getObject();
                     try {
                         setResponseBack(cxfExchange, camelExchange);
@@ -199,7 +201,8 @@ public class CxfConsumer extends DefaultConsumer {
                         CxfConsumer.this.doneUoW(camelExchange);
                         throw ex;
                     }
-                } else if (!continuation.isResumed() && !continuation.isPending()) {
+
+                } else if (continuation.isTimeout() || (!continuation.isResumed() && !continuation.isPending())) {
                     org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange)continuation.getObject();
                     try {
                         if (!continuation.isPending()) {

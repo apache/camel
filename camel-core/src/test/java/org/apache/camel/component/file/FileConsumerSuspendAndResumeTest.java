@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 
 import org.apache.camel.Consumer;
@@ -25,6 +24,8 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.RoutePolicySupport;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -34,11 +35,13 @@ public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
     private MyPolicy myPolicy = new MyPolicy();
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/suspended");
         super.setUp();
     }
 
+    @Test
     public void testConsumeSuspendAndResumeFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

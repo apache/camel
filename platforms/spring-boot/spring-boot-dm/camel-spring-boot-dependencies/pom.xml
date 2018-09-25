@@ -22,7 +22,7 @@
   <parent>
     <artifactId>camel-spring-boot-dm</artifactId>
     <groupId>org.apache.camel</groupId>
-    <version>2.22.0-SNAPSHOT</version>
+    <version>2.23.0-SNAPSHOT</version>
   </parent>
   <artifactId>camel-spring-boot-dependencies</artifactId>
   <packaging>pom</packaging>
@@ -30,6 +30,11 @@
   <description>Camel Spring-Boot Dependencies BOM</description>
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>ca.uhn.hapi</groupId>
+        <artifactId>hapi-structures-v21</artifactId>
+        <version>2.3</version>
+      </dependency>
       <dependency>
         <groupId>ca.uhn.hapi</groupId>
         <artifactId>hapi-structures-v22</artifactId>
@@ -68,7 +73,7 @@
       <dependency>
         <groupId>com.alibaba</groupId>
         <artifactId>fastjson</artifactId>
-        <version>1.2.47</version>
+        <version>1.2.49</version>
       </dependency>
       <dependency>
         <groupId>com.atlassian.jira</groupId>
@@ -83,12 +88,12 @@
       <dependency>
         <groupId>com.dropbox.core</groupId>
         <artifactId>dropbox-core-sdk</artifactId>
-        <version>3.0.7</version>
+        <version>3.0.9</version>
       </dependency>
       <dependency>
         <groupId>com.github.dozermapper</groupId>
         <artifactId>dozer-core</artifactId>
-        <version>6.2.0</version>
+        <version>6.4.1</version>
       </dependency>
       <dependency>
         <groupId>com.google.code.scriptengines</groupId>
@@ -108,7 +113,7 @@
       <dependency>
         <groupId>com.lmax</groupId>
         <artifactId>disruptor</artifactId>
-        <version>3.3.8</version>
+        <version>3.4.2</version>
       </dependency>
       <dependency>
         <groupId>com.sna-projects.krati</groupId>
@@ -179,7 +184,7 @@
       <dependency>
         <groupId>net.sf.saxon</groupId>
         <artifactId>Saxon-HE</artifactId>
-        <version>9.8.0-10</version>
+        <version>9.8.0-14</version>
       </dependency>
       <dependency>
         <groupId>ognl</groupId>
@@ -270,6 +275,16 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-apns-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-as2</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-as2-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -966,6 +981,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-fhir-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-fhir-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1462,6 +1482,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jclouds</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jclouds-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2386,6 +2411,16 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-service</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-service-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-servicenow</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -2571,6 +2606,16 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-spring-cloud-consul</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-spring-cloud-consul-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-cloud-netflix</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -2582,6 +2627,16 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-cloud-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-spring-cloud-zookeeper</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-spring-cloud-zookeeper-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2787,6 +2842,16 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-test-spring</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-testcontainers</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-testcontainers-spring</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3077,142 +3142,142 @@
       <dependency>
         <groupId>org.apache.cxf.services.sts</groupId>
         <artifactId>cxf-services-sts-core</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf.services.ws-discovery</groupId>
         <artifactId>cxf-services-ws-discovery-api</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-core</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-bindings-soap</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-bindings-xml</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-databinding-jaxb</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-features-clustering</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-features-logging</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-frontend-jaxws</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-frontend-simple</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-management</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-client</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-extension-providers</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-security-oauth2</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-service-description-swagger</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-transports-http</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-transports-http-jetty</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-transports-jms</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-transports-local</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-addr</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-mex</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-policy</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-rm</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-security</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-security-oauth2</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-wsdl</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-testutils</artifactId>
-        <version>3.2.4</version>
+        <version>3.2.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.ftpserver</groupId>
@@ -3267,32 +3332,32 @@
       <dependency>
         <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa-persistence-jdbc</artifactId>
-        <version>2.4.2</version>
+        <version>2.4.3</version>
       </dependency>
       <dependency>
         <groupId>org.apache.pdfbox</groupId>
         <artifactId>fontbox</artifactId>
-        <version>2.0.9</version>
+        <version>2.0.11</version>
       </dependency>
       <dependency>
         <groupId>org.apache.pdfbox</groupId>
         <artifactId>jempbox</artifactId>
-        <version>1.8.13</version>
+        <version>1.8.15</version>
       </dependency>
       <dependency>
         <groupId>org.apache.pdfbox</groupId>
         <artifactId>pdfbox</artifactId>
-        <version>2.0.9</version>
+        <version>2.0.11</version>
       </dependency>
       <dependency>
         <groupId>org.apache.pdfbox</groupId>
         <artifactId>pdfbox-debugger</artifactId>
-        <version>2.0.9</version>
+        <version>2.0.11</version>
       </dependency>
       <dependency>
         <groupId>org.apache.pdfbox</groupId>
         <artifactId>pdfbox-tools</artifactId>
-        <version>2.0.9</version>
+        <version>2.0.11</version>
       </dependency>
       <dependency>
         <groupId>org.apache.ws.commons.axiom</groupId>
@@ -3312,12 +3377,12 @@
       <dependency>
         <groupId>org.apache.zookeeper</groupId>
         <artifactId>zookeeper</artifactId>
-        <version>3.4.10</version>
+        <version>3.4.13</version>
       </dependency>
       <dependency>
         <groupId>org.awaitility</groupId>
         <artifactId>awaitility</artifactId>
-        <version>3.1.0</version>
+        <version>3.1.2</version>
       </dependency>
       <dependency>
         <groupId>org.cassandraunit</groupId>
@@ -3363,7 +3428,7 @@
       <dependency>
         <groupId>org.codehaus.jettison</groupId>
         <artifactId>jettison</artifactId>
-        <version>1.3.8</version>
+        <version>1.4.0</version>
       </dependency>
       <dependency>
         <groupId>org.codehaus.woodstox</groupId>
@@ -3394,7 +3459,7 @@
       <dependency>
         <groupId>org.knowm.xchange</groupId>
         <artifactId>xchange-core</artifactId>
-        <version>4.3.6</version>
+        <version>4.3.10</version>
       </dependency>
       <dependency>
         <groupId>org.mozilla</groupId>

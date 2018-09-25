@@ -21,9 +21,11 @@ import java.net.ConnectException;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class FailOverLoadBalanceNotInheritedErrorHandlerTest extends ContextTestSupport {
 
+    @Test
     public void testFailOverLoadBalanceNotInheritedErrorHandler() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:dead").expectedMessageCount(1);

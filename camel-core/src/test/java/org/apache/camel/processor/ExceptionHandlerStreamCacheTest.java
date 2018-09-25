@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +29,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test cases for dealing with stream types in an exception handler
@@ -41,10 +42,12 @@ public class ExceptionHandlerStreamCacheTest extends ContextTestSupport {
     private MockEndpoint successEndpoint;
     private MockEndpoint exceptionEndpoint;
 
+    @Test
     public void testSendFault() throws Exception {
         doTestInputStreamPayload("fault");
     }
 
+    @Test
     public void testSendError() throws Exception {
         doTestInputStreamPayload("error");
     }
@@ -62,10 +65,12 @@ public class ExceptionHandlerStreamCacheTest extends ContextTestSupport {
         assertEquals("Ensure message re-readability in the exception handler", message, new String(IOConverter.toBytes(body)));
     }
 
+    @Test
     public void testSendFaultXml() throws Exception {
         doTestXmlPayload("<fault/>");
     }
 
+    @Test
     public void testSendErrorXml() throws Exception {
         doTestXmlPayload("<error/>");
     }
@@ -84,7 +89,8 @@ public class ExceptionHandlerStreamCacheTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         exceptionEndpoint = getMockEndpoint("mock:exception");

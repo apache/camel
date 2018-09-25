@@ -22,12 +22,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SendDefinition;
+import org.junit.Test;
 
 /**
  *
  */
 public class PropertiesRouteFromTest extends ContextTestSupport {
 
+    @Test
     public void testPropertiesRouteFrom() throws Exception {
         ProcessorDefinition out = context.getRouteDefinition("foo").getOutputs().get(0);
         assertEquals("{{cool.end}}", ((SendDefinition) out).getUri());

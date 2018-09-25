@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hawtdb;
-
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 
 public class HawtDBAggregateRecoverDeadLetterChannelTest extends CamelTestSupport {
@@ -29,6 +29,7 @@ public class HawtDBAggregateRecoverDeadLetterChannelTest extends CamelTestSuppor
     private HawtDBAggregationRepository repo;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/data");
         repo = new HawtDBAggregationRepository("repo1", "target/data/hawtdb.dat");

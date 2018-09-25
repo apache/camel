@@ -18,12 +18,14 @@ package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class InterceptSimpleRouteTest extends ContextTestSupport {
 
+    @Test
     public void testIntercept() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);

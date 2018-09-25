@@ -24,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.junit.Test;
 
 /**
  * This test stops a route, mutates it then restarts it
@@ -36,6 +37,7 @@ public class StartAndStopRoutesTest extends ContextTestSupport {
     protected Endpoint endpointC;
     protected Object expectedBody = "<hello>world!</hello>";
 
+    @Test
     public void testStartRouteThenStopMutateAndStartRouteAgain() throws Exception {
         List<RouteDefinition> routes = context.getRouteDefinitions();
         assertCollectionSize("Route", routes, 1);

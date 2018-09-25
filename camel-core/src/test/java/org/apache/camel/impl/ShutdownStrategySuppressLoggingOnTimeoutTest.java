@@ -19,10 +19,12 @@ package org.apache.camel.impl;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Ignore;
+import org.junit.Test;
 
 @Ignore("Test manually by inspecting logs")
 public class ShutdownStrategySuppressLoggingOnTimeoutTest extends ContextTestSupport {
 
+    @Test
     public void testSuppressLogging() throws Exception {
         context.getShutdownStrategy().setTimeout(1);
         context.getShutdownStrategy().setSuppressLoggingOnTimeout(true);

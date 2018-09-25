@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -25,6 +24,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.IdempotentRepository;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -38,6 +39,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -61,6 +63,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNotSkiDuplicate() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -92,6 +95,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNotSkiDuplicateWithFilter() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -129,6 +133,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFailedExchangesNotAddedDeadLetterChannel() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -163,6 +168,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFailedExchangesNotAddedDeadLetterChannelNotHandled() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -197,6 +203,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFailedExchangesNotAdded() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -242,7 +249,8 @@ public class IdempotentConsumerTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         startEndpoint = resolveMandatoryEndpoint("direct:start");

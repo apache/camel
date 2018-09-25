@@ -114,6 +114,22 @@ public class CouchDbProducerTest {
         verify(msg).setHeader(CouchDbConstants.HEADER_DOC_ID, id);
         verify(msg).setHeader(CouchDbConstants.HEADER_DOC_REV, rev);
     }
+    
+    @Test
+    public void testGetResponse() throws Exception {
+        String id = UUID.randomUUID().toString();
+
+        JsonObject doc = new JsonObject();
+        doc.addProperty("_id", id);
+
+        when(msg.getHeader(CouchDbConstants.HEADER_METHOD, String.class)).thenReturn("GET");
+        when(msg.getHeader(CouchDbConstants.HEADER_DOC_ID, String.class)).thenReturn(id);
+        when(msg.getMandatoryBody()).thenReturn(doc);
+        when(client.get(id)).thenReturn(response);
+
+        producer.process(exchange);
+        verify(msg).getHeader(CouchDbConstants.HEADER_DOC_ID, String.class);
+    }
 
     @Test
     public void testStringBodyIsConvertedToJsonTree() throws Exception {

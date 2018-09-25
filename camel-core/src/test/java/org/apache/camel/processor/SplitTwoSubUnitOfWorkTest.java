@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
@@ -28,6 +29,7 @@ public class SplitTwoSubUnitOfWorkTest extends ContextTestSupport {
 
     private static int counter;
 
+    @Test
     public void testOK() throws Exception {
         counter = 0;
 
@@ -44,6 +46,7 @@ public class SplitTwoSubUnitOfWorkTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testError() throws Exception {
         counter = 0;
 

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf;
-
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;

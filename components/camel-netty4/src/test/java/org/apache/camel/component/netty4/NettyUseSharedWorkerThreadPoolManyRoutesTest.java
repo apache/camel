@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty4;
-
 import io.netty.channel.EventLoopGroup;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -37,6 +37,7 @@ public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest 
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         before = Thread.activeCount();
         super.setUp();

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -24,6 +23,8 @@ import org.apache.camel.builder.Builder;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -33,6 +34,7 @@ public class ValidationTest extends ContextTestSupport {
     protected MockEndpoint validEndpoint;
     protected MockEndpoint invalidEndpoint;
 
+    @Test
     public void testValidMessage() throws Exception {
         validEndpoint.expectedMessageCount(1);
         invalidEndpoint.expectedMessageCount(0);
@@ -43,6 +45,7 @@ public class ValidationTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInvalidMessage() throws Exception {
         validEndpoint.expectedMessageCount(0);
         invalidEndpoint.expectedMessageCount(1);
@@ -60,6 +63,7 @@ public class ValidationTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testinvalidThenValidMessage() throws Exception {
         validEndpoint.expectedMessageCount(2);
         invalidEndpoint.expectedMessageCount(1);
@@ -80,7 +84,8 @@ public class ValidationTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         validEndpoint = resolveMandatoryEndpoint("mock:valid", MockEndpoint.class);

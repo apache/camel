@@ -41,7 +41,8 @@ public class CamelGoogleMailTest extends AbstractSpringBootTestSupport {
 
     @Test
     public void componentTests() throws Exception {
-        this.runComponentTest(config);
+        this.runComponentTest(config, "google-mail");
+        this.runComponentTest(config, "google-mail-stream");
         this.runModuleUnitTestsIfEnabled(config);
     }
 

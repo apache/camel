@@ -24,12 +24,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class ChangeHeaderCaseIssueTest extends ContextTestSupport {
 
+    @Test
     public void testChangeHeaderCaseIssue() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

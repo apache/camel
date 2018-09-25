@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 import javax.net.ssl.HostnameVerifier;
 
 import org.apache.camel.CamelContext;
@@ -47,8 +48,8 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.common.util.ModCountCopyOnWriteArrayList;
 import org.apache.cxf.common.util.StringUtils;
+import org.apache.cxf.ext.logging.LoggingFeature;
 import org.apache.cxf.feature.Feature;
-import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.interceptor.AbstractBasicInterceptorProvider;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
@@ -266,7 +267,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         getNullSafeCxfRsEndpointConfigurer().configure(sfb);
     }
 
-    private CxfRsEndpointConfigurer getNullSafeCxfRsEndpointConfigurer() {
+    protected CxfRsEndpointConfigurer getNullSafeCxfRsEndpointConfigurer() {
         if (cxfRsEndpointConfigurer == null) {
             return new ChainedCxfRsEndpointConfigurer.NullCxfRsEndpointConfigurer();
         }
@@ -304,10 +305,6 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     protected void setupJAXRSClientFactoryBean(JAXRSClientFactoryBean cfb, String address) {
-        // address
-        if (address != null) {
-            cfb.setAddress(address);
-        }
         if (modelRef != null) {
             cfb.setModelRef(modelRef);
         }
@@ -318,6 +315,10 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         setupCommonFactoryProperties(cfb);
         cfb.setThreadSafe(true);
         getNullSafeCxfRsEndpointConfigurer().configure(cfb);
+        // Add the address could be override by message header
+        if (address != null) {
+            cfb.setAddress(address);
+        }
     }
 
     protected void setupCommonFactoryProperties(AbstractJAXRSFactoryBean factory) {
@@ -359,11 +360,11 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         }
 
         if (isLoggingFeatureEnabled()) {
+            LoggingFeature loggingFeature = new LoggingFeature();
             if (getLoggingSizeLimit() > 0) {
-                factory.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
-            } else {
-                factory.getFeatures().add(new LoggingFeature());
+                loggingFeature.setLimit(getLoggingSizeLimit());
             }
+            factory.getFeatures().add(loggingFeature);
         }
         if (this.isSkipFaultLogging()) {
             if (factory.getProperties() == null) {

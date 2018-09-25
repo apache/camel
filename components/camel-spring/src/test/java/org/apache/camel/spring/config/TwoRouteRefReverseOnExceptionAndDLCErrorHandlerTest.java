@@ -17,6 +17,7 @@
 package org.apache.camel.spring.config;
 
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -25,6 +26,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class TwoRouteRefReverseOnExceptionAndDLCErrorHandlerTest extends SpringTestSupport {
 
+    @Test
     public void testTwoRouteRefReverseNoOnExceptionAndDLCErrorHandler() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:dead").expectedMessageCount(1);
@@ -35,6 +37,7 @@ public class TwoRouteRefReverseOnExceptionAndDLCErrorHandlerTest extends SpringT
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTwoRouteRefReverseOnExceptionAndDLCErrorHandler() throws Exception {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:dead").expectedMessageCount(0);

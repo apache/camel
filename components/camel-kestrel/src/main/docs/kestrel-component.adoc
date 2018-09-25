@@ -67,7 +67,7 @@ kestrel://kserver03:22133/massive?concurrentConsumers=25&waitTimeMs=500
 
 
 // component options: START
-The Kestrel component supports 2 options which are listed below.
+The Kestrel component supports 2 options, which are listed below.
 
 
 
@@ -119,6 +119,25 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.kestrel.configuration.addresses* | The address(es) on which kestrel is running |  | String[]
+| *camel.component.kestrel.configuration.concurrent-consumers* | How many concurrent listeners to schedule for the thread pool | 1 | Integer
+| *camel.component.kestrel.configuration.wait-time-ms* | How long a given wait should block (server side), in milliseconds | 100 | Integer
+| *camel.component.kestrel.enabled* | Enable kestrel component | true | Boolean
+| *camel.component.kestrel.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

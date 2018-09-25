@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class MulticastPipelineTest extends ContextTestSupport {
 
@@ -26,6 +27,7 @@ public class MulticastPipelineTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testPlainPipeline() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -54,6 +56,7 @@ public class MulticastPipelineTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPlainPipelineTo() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -82,6 +85,7 @@ public class MulticastPipelineTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMulticastPipeline() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -112,6 +116,7 @@ public class MulticastPipelineTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMulticastPipelineTo() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

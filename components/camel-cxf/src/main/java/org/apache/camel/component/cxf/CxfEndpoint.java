@@ -88,12 +88,12 @@ import org.apache.cxf.databinding.source.SourceDataBinding;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.ClientImpl;
 import org.apache.cxf.endpoint.Endpoint;
+import org.apache.cxf.ext.logging.AbstractLoggingInterceptor;
+import org.apache.cxf.ext.logging.LoggingFeature;
 import org.apache.cxf.feature.Feature;
-import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.headers.Header;
-import org.apache.cxf.interceptor.AbstractLoggingInterceptor;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.jaxws.JaxWsClientFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
@@ -127,8 +127,8 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     @UriParam(label = "advanced")
     protected Bus bus;
 
-    private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
-    private volatile boolean createBus;
+    protected volatile boolean createBus;
+    private final AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
 
     private BindingConfiguration bindingConfig;
     private DataBinding dataBinding;
@@ -341,11 +341,11 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         }
 
         if (isLoggingFeatureEnabled()) {
-            if (getLoggingSizeLimit() != 0) {
-                sfb.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
-            } else {
-                sfb.getFeatures().add(new LoggingFeature());
+            LoggingFeature loggingFeature = new LoggingFeature();
+            if (getLoggingSizeLimit() > 0) {
+                loggingFeature.setLimit(getLoggingSizeLimit());
             }
+            sfb.getFeatures().add(loggingFeature);
         }
 
         if (getDataFormat() == DataFormat.PAYLOAD) {
@@ -439,7 +439,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     protected void setupHandlers(ClientFactoryBean factoryBean, Client client)
         throws Exception {
 
-        if (factoryBean instanceof JaxWsClientFactoryBean && handlers != null) {
+        if (handlers != null) {
             AnnotationHandlerChainBuilder
                 builder = new AnnotationHandlerChainBuilder();
             Method m = factoryBean.getClass().getMethod("getServiceFactory");
@@ -530,11 +530,12 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         }
 
         if (isLoggingFeatureEnabled()) {
-            if (getLoggingSizeLimit() != 0) {
-                factoryBean.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
-            } else {
-                factoryBean.getFeatures().add(new LoggingFeature());
+            LoggingFeature loggingFeature = new LoggingFeature();
+            if (getLoggingSizeLimit() > 0) {
+                loggingFeature.setLimit(getLoggingSizeLimit());
+
             }
+            factoryBean.getFeatures().add(loggingFeature);
         }
 
         // set the document-literal wrapped style
@@ -628,28 +629,28 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
             }
         }
 
-        Class<?> cls = null;
-        if (getServiceClass() != null) {
-            cls = getServiceClass();
+        Class<?> cls = getServiceClass();
+        ClientFactoryBean factoryBean;
+        if (cls != null) {
             // create client factory bean
-            ClientFactoryBean factoryBean = createClientFactoryBean(cls);
-            // setup client factory bean
-            setupClientFactoryBean(factoryBean, cls);
-            Client client = factoryBean.create();
-            // setup the handlers
-            setupHandlers(factoryBean, client);
-            return client;
+            factoryBean = createClientFactoryBean(cls);
         } else {
-            // create the client without service class
-
-            checkName(getPortName(), "endpoint/port name");
-            checkName(getServiceName(), "service name");
-
-            ClientFactoryBean factoryBean = createClientFactoryBean();
-            // setup client factory bean
-            setupClientFactoryBean(factoryBean, null);
-            return factoryBean.create();
+            factoryBean = createClientFactoryBean();
         }
+        
+        // setup client factory bean
+        setupClientFactoryBean(factoryBean, cls);
+        
+        if (cls == null) {
+            checkName(factoryBean.getEndpointName(), "endpoint/port name");
+            checkName(factoryBean.getServiceName(), "service name");
+        }
+        
+        Client client = factoryBean.create();
+
+        // setup the handlers
+        setupHandlers(factoryBean, client);
+        return client;
     }
 
     void checkName(Object value, String name) {
@@ -687,11 +688,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         if (cls == null) {
             checkName(portName, " endpoint/port name");
             checkName(serviceName, " service name");
-            answer = new JaxWsServerFactoryBean(new WSDLServiceFactoryBean()) {
-                {
-                    doInit = false;
-                }
-            };
+            answer = new JaxWsServerFactoryBean(new WSDLServiceFactoryBean());
             cls = Provider.class;
         } else if (CxfEndpointUtils.hasWebServiceAnnotation(cls)) {
             answer = new JaxWsServerFactoryBean();
@@ -1100,7 +1097,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     protected void doStop() throws Exception {
         // we should consider to shutdown the bus if the bus is created by cxfEndpoint
         if (createBus && bus != null) {
-            LOG.info("shutdown the bus ... " + bus);
+            LOG.info("shutdown the bus ... {}", bus);
             getBus().shutdown(false);
             // clean up the bus to create a new one if the endpoint is started again
             bus = null;
@@ -1176,85 +1173,18 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         CamelCxfClientImpl(Bus bus, Endpoint ep) {
             super(bus, ep);
         }
-
-        public Bus getBus() {
-            return bus;
-        }
-        
+  
         @Override
         protected Object[] processResult(Message message, org.apache.cxf.message.Exchange exchange,
                                          BindingOperationInfo oi, Map<String, Object> resContext)
                                              throws Exception {
-            Exception ex = null;
-            // Check to see if there is a Fault from the outgoing chain if it's an out Message
-            if (!message.get(Message.INBOUND_MESSAGE).equals(Boolean.TRUE)) {
-                ex = message.getContent(Exception.class);
+            try {
+                return super.processResult(message, exchange, oi, resContext);
+            } catch (IllegalEmptyResponseException ex) {
+                //Camel does not strickly enforce returning a value when a value is required from the WSDL/contract
+                //Thus, we'll capture the exception raised and return a null
+                return null;
             }
-            boolean mepCompleteCalled = false;
-            if (ex != null) {
-                completeExchange(exchange);
-                mepCompleteCalled = true;
-                if (message.getContent(Exception.class) != null) {
-                    throw ex;
-                }
-            }
-            ex = message.getExchange().get(Exception.class);
-            if (ex != null) {
-                if (!mepCompleteCalled) {
-                    completeExchange(exchange);
-                }
-                throw ex;
-            }
-
-            Integer responseCode = (Integer)exchange.get(Message.RESPONSE_CODE);
-            if (null != responseCode && 202 == responseCode) {
-                Endpoint ep = exchange.getEndpoint();
-                if (null != ep && null != ep.getEndpointInfo() && null == ep.getEndpointInfo()
-                    .getProperty("org.apache.cxf.ws.addressing.MAPAggregator.decoupledDestination")) {
-                    return null;
-                }
-            }
-
-            // Wait for a response if we need to
-            if (oi != null && !oi.getOperationInfo().isOneWay()) {
-                waitResponse(exchange);
-            }
-
-            // leave the input stream open for the caller
-            Boolean keepConduitAlive = (Boolean)exchange.get(Client.KEEP_CONDUIT_ALIVE);
-            if (keepConduitAlive == null || !keepConduitAlive) {
-                completeExchange(exchange);
-            }
-
-            // Grab the response objects if there are any
-            List<Object> resList = null;
-            Message inMsg = exchange.getInMessage();
-            if (inMsg != null) {
-                if (null != resContext) {
-                    resContext.putAll(inMsg);
-                    // remove the recursive reference if present
-                    resContext.remove(Message.INVOCATION_CONTEXT);
-                    responseContext.put(Thread.currentThread(), resContext);
-                }
-                resList = CastUtils.cast(inMsg.getContent(List.class));
-            }
-
-            // check for an incoming fault
-            ex = getException(exchange);
-
-            if (ex != null) {
-                throw ex;
-            }
-
-            if (resList != null) {
-                return resList.toArray();
-            }
-
-            return null;
-        }
-
-        private void completeExchange(org.apache.cxf.message.Exchange exchange) {
-            getConduitSelector().complete(exchange);
         }
         
         @SuppressWarnings("unchecked")

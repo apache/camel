@@ -28,12 +28,14 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultProducerTemplate;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class SedaConcurrentTest extends ContextTestSupport {
 
+    @Test
     public void testSedaConcurrentInOnly() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(20);
@@ -48,6 +50,7 @@ public class SedaConcurrentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSedaConcurrentInOnlyWithAsync() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(20);
@@ -62,6 +65,7 @@ public class SedaConcurrentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSedaConcurrentInOut() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(20);
@@ -88,6 +92,7 @@ public class SedaConcurrentTest extends ContextTestSupport {
         executors.shutdownNow();
     }
 
+    @Test
     public void testSedaConcurrentInOutWithAsync() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(20);

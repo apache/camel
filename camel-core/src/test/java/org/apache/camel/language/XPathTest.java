@@ -21,24 +21,28 @@ import javax.xml.xpath.XPathConstants;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.language.xpath.XPathLanguage;
 import org.apache.camel.spi.Language;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class XPathTest extends LanguageTestSupport {
 
+    @Test
     public void testExpressions() throws Exception {
         assertExpression("in:body()", "<hello id='m123'>world!</hello>");
         assertExpression("in:header('foo')", "abc");
         assertExpression("$foo", "abc");
     }
 
+    @Test
     public void testPredicates() throws Exception {
         assertPredicate("in:header('foo') = 'abc'");
         assertPredicate("$foo = 'abc'");
         assertPredicate("$foo = 'bar'", false);
     }
 
+    @Test
     public void testNormalXPathExpression() throws Exception {
         assertExpression("hello", "world!");
         assertExpression("hello/text()", "world!");

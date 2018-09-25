@@ -26,6 +26,7 @@ import org.apache.camel.processor.interceptor.TraceEventHandler;
 import org.apache.camel.processor.interceptor.TraceInterceptor;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * @version 
@@ -37,6 +38,7 @@ public class AsyncTraceHandlerTest extends ContextTestSupport {
     private static String beforeThreadName;
     private static String afterThreadName;
 
+    @Test
     public void testAsyncTraceHandler() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
 

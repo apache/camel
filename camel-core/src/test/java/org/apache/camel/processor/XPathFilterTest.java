@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
@@ -26,6 +27,7 @@ public class XPathFilterTest extends ContextTestSupport {
     protected String matchingBody = "<person name='James' city='London'/>";
     protected String notMatchingBody = "<person name='Hiram' city='Tampa'/>";
 
+    @Test
     public void testSendMatchingMessage() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived(matchingBody);
 
@@ -34,6 +36,7 @@ public class XPathFilterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendNotMatchingMessage() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 

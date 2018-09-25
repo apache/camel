@@ -9,7 +9,7 @@ named exchange properties.
 === Exchange Property Options
 
 // language options: START
-The ExchangeProperty language supports 1 options which are listed below.
+The ExchangeProperty language supports 1 options, which are listed below.
 
 
 

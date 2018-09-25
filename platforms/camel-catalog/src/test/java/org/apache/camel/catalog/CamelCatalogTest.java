@@ -581,6 +581,10 @@ public class CamelCatalogTest {
         assertTrue(result.isSuccess());
         result = catalog.validateEndpointProperties("activemq:temp-queue:cheese?jmsMessageType=Bytes", false, false, true);
         assertTrue(result.isSuccess());
+
+        // connection factory
+        result = catalog.validateEndpointProperties("activemq:Consumer.Baz.VirtualTopic.FooRequest?connectionFactory=#pooledJmsConnectionFactory");
+        assertTrue(result.isSuccess());
     }
 
     @Test
@@ -1090,6 +1094,19 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testTransactedAndPolicyNoOutputs() throws Exception {
+        String json = catalog.modelJSonSchema("transacted");
+        assertNotNull(json);
+        assertTrue(json.contains("\"output\": false"));
+        assertFalse(json.contains("\"outputs\":"));
+
+        json = catalog.modelJSonSchema("policy");
+        assertNotNull(json);
+        assertTrue(json.contains("\"output\": false"));
+        assertFalse(json.contains("\"outputs\":"));
+    }
+
+    @Test
     public void testDataFormatAsciiDoc() throws Exception {
         String doc = catalog.dataFormatAsciiDoc("json-jackson");
         assertNotNull(doc);
@@ -1160,6 +1177,17 @@ public class CamelCatalogTest {
         assertFalse(result.isSuccess());
 
         assertEquals("delete", result.getNotProducerOnly().iterator().next());
+    }
+
+    @Test
+    public void testNetty4Http4DynamicToIssue() throws Exception {
+        String uri = "netty4-http:http://10.192.1.10:8080/client/alerts/summary?throwExceptionOnFailure=false";
+        Map<String, String> params = catalog.endpointProperties(uri);
+        params.remove("path");
+        params.remove("throwExceptionOnFailure");
+
+        String resolved = catalog.asEndpointUri("netty4-http", params, false);
+        assertEquals("netty4-http:http:10.192.1.10:8080", resolved);
     }
 
     @Test

@@ -34,6 +34,11 @@ public class XmlJsonDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the xmljson data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Sets the encoding. Used for unmarshalling (JSON to XML conversion).
      */
     private String encoding;

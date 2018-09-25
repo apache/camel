@@ -19,6 +19,7 @@ package org.apache.camel.component.properties;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class PropertiesComponentOnlyUseDefaultValuesTest extends ContextTestSupport {
 
@@ -27,6 +28,7 @@ public class PropertiesComponentOnlyUseDefaultValuesTest extends ContextTestSupp
         return false;
     }
 
+    @Test
     public void testOnlyDefaults() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -46,6 +48,7 @@ public class PropertiesComponentOnlyUseDefaultValuesTest extends ContextTestSupp
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOneMissing() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -64,6 +67,7 @@ public class PropertiesComponentOnlyUseDefaultValuesTest extends ContextTestSupp
         }
     }
 
+    @Test
     public void testAllMissing() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

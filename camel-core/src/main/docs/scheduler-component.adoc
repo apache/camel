@@ -32,7 +32,7 @@ You can append query options to the URI in the following format,
 === Options
 
 // component options: START
-The Scheduler component supports 2 options which are listed below.
+The Scheduler component supports 2 options, which are listed below.
 
 
 
@@ -85,7 +85,7 @@ with the following path and query parameters:
 | *initialDelay* (scheduler) | Milliseconds before the first poll starts. The default value is 1000. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
 | *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
 | *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. This option allows you to share a thread pool among multiple consumers. |  | ScheduledExecutor Service
-| *scheduler* (scheduler) | Allow to plugin a custom org.apache.camel.spi.ScheduledPollConsumerScheduler to use as the scheduler for firing when the polling consumer runs. The default implementation uses the ScheduledExecutorService and there is a Quartz2, and Spring based which supports CRON expressions. Notice: If using a custom scheduler then the options for initialDelay, useFixedDelay, timeUnit, and scheduledExecutorService may not be in use. Use the text quartz2 to refer to use the Quartz2 scheduler; and use the text spring to use the Spring based; and use the text myScheduler to refer to a custom scheduler by its id in the Registry. See Quartz2 page for an example. | none | ScheduledPollConsumer Scheduler
+| *scheduler* (scheduler) | Allow to plugin a custom org.apache.camel.spi.ScheduledPollConsumerScheduler to use as the scheduler for firing when the polling consumer runs. The default implementation uses the ScheduledExecutorService and there is a Quartz2, and Spring based which supports CRON expressions. Notice: If using a custom scheduler then the options for initialDelay, useFixedDelay, timeUnit, and scheduledExecutorService may not be in use. Use the text quartz2 to refer to use the Quartz2 scheduler; and use the text spring to use the Spring based; and use the text #myScheduler to refer to a custom scheduler by its id in the Registry. See Quartz2 page for an example. | none | ScheduledPollConsumer Scheduler
 | *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit

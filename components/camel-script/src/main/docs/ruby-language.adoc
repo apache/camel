@@ -24,7 +24,7 @@ Recipient List
 ### Ruby Language Options
 
 // language options: START
-The Ruby language supports 1 options which are listed below.
+The Ruby language supports 1 options, which are listed below.
 
 
 
@@ -34,6 +34,9 @@ The Ruby language supports 1 options which are listed below.
 | trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
 |===
 // language options: END
+// spring-boot-auto-configure options: START
+// spring-boot-auto-configure options: END
+
 
 ### Example
 

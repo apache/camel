@@ -266,11 +266,11 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         try {
             Object answer;
 
-            XMLStreamReader xmlReader;
+            final XMLStreamReader xmlReader;
             if (needFiltering(exchange)) {
-                xmlReader = typeConverter.convertTo(XMLStreamReader.class, createNonXmlFilterReader(exchange, stream));
+                xmlReader = typeConverter.convertTo(XMLStreamReader.class, exchange, createNonXmlFilterReader(exchange, stream));
             } else {
-                xmlReader = typeConverter.convertTo(XMLStreamReader.class, stream);
+                xmlReader = typeConverter.convertTo(XMLStreamReader.class, exchange, stream);
             }
             String partClassFromHeader = exchange.getIn().getHeader(JaxbConstants.JAXB_PART_CLASS, String.class);
             if (partialClass != null || partClassFromHeader != null) {
@@ -527,13 +527,13 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
     protected JAXBContext createContext() throws JAXBException {
         if (contextPath != null) {
             // prefer to use application class loader which is most likely to be able to
-            // load the the class which has been JAXB annotated
+            // load the class which has been JAXB annotated
             ClassLoader cl = camelContext.getApplicationContextClassLoader();
             if (cl != null) {
                 LOG.debug("Creating JAXBContext with contextPath: " + contextPath + " and ApplicationContextClassLoader: " + cl);
                 return JAXBContext.newInstance(contextPath, cl);
             } else {
-                LOG.debug("Creating JAXBContext with contextPath: " + contextPath);
+                LOG.debug("Creating JAXBContext with contextPath: {}", contextPath);
                 return JAXBContext.newInstance(contextPath);
             }
         } else {

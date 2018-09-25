@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.processor;
-
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -41,11 +42,13 @@ public class SpringFilterNoChildTest extends SpringTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // must override as there is no valid spring xml file
         createApplicationContext();
     }
 
+    @Test
     public void testFilterNoOutput() throws Exception {
         // noop
     }

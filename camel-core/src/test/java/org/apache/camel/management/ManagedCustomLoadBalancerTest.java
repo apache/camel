@@ -26,6 +26,7 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.loadbalancer.LoadBalancerSupport;
+import org.junit.Test;
 
 /**
  * @version 
@@ -39,6 +40,7 @@ public class ManagedCustomLoadBalancerTest extends ManagementTestSupport {
         return jndi;
     }
 
+    @Test
     public void testManageCustomLoadBalancer() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

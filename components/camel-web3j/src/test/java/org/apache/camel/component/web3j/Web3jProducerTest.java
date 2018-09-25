@@ -90,7 +90,7 @@ import static org.apache.camel.component.web3j.Web3jConstants.OPERATION;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 
-public class Web3jProducerTest extends Web3jTestSupport {
+public class Web3jProducerTest extends Web3jMockTestSupport {
 
     @Produce(uri = "direct:start")
     protected ProducerTemplate template;
@@ -148,7 +148,7 @@ public class Web3jProducerTest extends Web3jTestSupport {
         NetListening response = Mockito.mock(NetListening.class);
         Mockito.when(mockWeb3j.netListening()).thenReturn(request);
         Mockito.when(request.send()).thenReturn(response);
-        Mockito.when(response.getResult()).thenReturn(true);
+        Mockito.when(response.isListening()).thenReturn(true);
 
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.NET_LISTENING);
         template.send(exchange);
@@ -158,15 +158,16 @@ public class Web3jProducerTest extends Web3jTestSupport {
 
     @Test
     public void netPeerCountTest() throws Exception {
+        BigInteger peerCount = BigInteger.ONE;
         NetPeerCount response = Mockito.mock(NetPeerCount.class);
         Mockito.when(mockWeb3j.netPeerCount()).thenReturn(request);
         Mockito.when(request.send()).thenReturn(response);
-        Mockito.when(response.getResult()).thenReturn("123");
+        Mockito.when(response.getQuantity()).thenReturn(peerCount);
 
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.NET_PEER_COUNT);
         template.send(exchange);
-        String body = exchange.getIn().getBody(String.class);
-        assertTrue(body.equals("123"));
+        BigInteger body = exchange.getIn().getBody(BigInteger.class);
+        assertTrue(body.equals(peerCount));
     }
 
     @Test
@@ -174,7 +175,7 @@ public class Web3jProducerTest extends Web3jTestSupport {
         EthProtocolVersion response = Mockito.mock(EthProtocolVersion.class);
         Mockito.when(mockWeb3j.ethProtocolVersion()).thenReturn(request);
         Mockito.when(request.send()).thenReturn(response);
-        Mockito.when(response.getResult()).thenReturn("123");
+        Mockito.when(response.getProtocolVersion()).thenReturn("123");
 
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_PROTOCOL_VERSION);
         template.send(exchange);
@@ -187,7 +188,7 @@ public class Web3jProducerTest extends Web3jTestSupport {
         EthCoinbase response = Mockito.mock(EthCoinbase.class);
         Mockito.when(mockWeb3j.ethCoinbase()).thenReturn(request);
         Mockito.when(request.send()).thenReturn(response);
-        Mockito.when(response.getResult()).thenReturn("123");
+        Mockito.when(response.getAddress()).thenReturn("123");
 
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_COINBASE);
         template.send(exchange);
@@ -478,11 +479,13 @@ public class Web3jProducerTest extends Web3jTestSupport {
         EthTransaction response = Mockito.mock(EthTransaction.class);
         Mockito.when(mockWeb3j.ethGetTransactionByHash(any())).thenReturn(request);
         Mockito.when(request.send()).thenReturn(response);
-        Mockito.when(response.getTransaction()).thenReturn(Mockito.mock(Optional.class));
+        Transaction transaction = Mockito.mock(Transaction.class);
+        Optional<Transaction> optional = Optional.ofNullable(transaction);
+        Mockito.when(response.getTransaction()).thenReturn(optional);
 
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_GET_TRANSACTION_BY_HASH);
         template.send(exchange);
-        Optional<Transaction> body = exchange.getIn().getBody(Optional.class);
+        Transaction body = exchange.getIn().getBody(Transaction.class);
         assertTrue(body != null);
     }
 
@@ -491,11 +494,13 @@ public class Web3jProducerTest extends Web3jTestSupport {
         EthTransaction response = Mockito.mock(EthTransaction.class);
         Mockito.when(mockWeb3j.ethGetTransactionByBlockHashAndIndex(any(), any())).thenReturn(request);
         Mockito.when(request.send()).thenReturn(response);
-        Mockito.when(response.getTransaction()).thenReturn(Mockito.mock(Optional.class));
+        Transaction transaction = Mockito.mock(Transaction.class);
+        Optional<Transaction> optional = Optional.ofNullable(transaction);
+        Mockito.when(response.getTransaction()).thenReturn(optional);
 
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_GET_TRANSACTION_BY_BLOCK_HASH_AND_INDEX);
         template.send(exchange);
-        Optional<Transaction> body = exchange.getIn().getBody(Optional.class);
+        Transaction body = exchange.getIn().getBody(Transaction.class);
         assertTrue(body != null);
     }
 
@@ -504,11 +509,13 @@ public class Web3jProducerTest extends Web3jTestSupport {
         EthTransaction response = Mockito.mock(EthTransaction.class);
         Mockito.when(mockWeb3j.ethGetTransactionByBlockNumberAndIndex(any(), any())).thenReturn(request);
         Mockito.when(request.send()).thenReturn(response);
-        Mockito.when(response.getTransaction()).thenReturn(Mockito.mock(Optional.class));
+        Transaction transaction = Mockito.mock(Transaction.class);
+        Optional<Transaction> optional = Optional.ofNullable(transaction);
+        Mockito.when(response.getTransaction()).thenReturn(optional);
 
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_GET_TRANSACTION_BY_BLOCK_NUMBER_AND_INDEX);
         template.send(exchange);
-        Optional<Transaction> body = exchange.getIn().getBody(Optional.class);
+        Transaction body = exchange.getIn().getBody(Transaction.class);
         assertTrue(body != null);
     }
 
@@ -686,12 +693,12 @@ public class Web3jProducerTest extends Web3jTestSupport {
         EthGetWork response = Mockito.mock(EthGetWork.class);
         Mockito.when(mockWeb3j.ethGetWork()).thenReturn(request);
         Mockito.when(request.send()).thenReturn(response);
-        Mockito.when(response.getBoundaryCondition()).thenReturn("test");
+        Mockito.when(response.getResult()).thenReturn(Collections.EMPTY_LIST);
 
         Exchange exchange = createExchangeWithBodyAndHeader(null, OPERATION, Web3jConstants.ETH_GET_WORK);
         template.send(exchange);
-        String body = exchange.getIn().getBody(String.class);
-        assertTrue(body.equals("test"));
+        List body = exchange.getIn().getBody(List.class);
+        assertTrue(body.equals(Collections.EMPTY_LIST));
     }
 
     @Test

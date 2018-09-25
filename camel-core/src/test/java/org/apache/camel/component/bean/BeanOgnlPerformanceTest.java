@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.StopWatch;
+import org.junit.Test;
 
 /**
  *
@@ -36,6 +37,7 @@ public class BeanOgnlPerformanceTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testBeanOgnlPerformance() throws Exception {
         StopWatch watch = new StopWatch();
 

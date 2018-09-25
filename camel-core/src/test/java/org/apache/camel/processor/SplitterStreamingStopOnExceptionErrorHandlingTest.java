@@ -21,12 +21,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class SplitterStreamingStopOnExceptionErrorHandlingTest extends ContextTestSupport {
 
+    @Test
     public void testSplitterStreamingNoError() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("A", "B", "C", "D", "E");
         getMockEndpoint("mock:b").expectedBodiesReceived("A", "B", "C", "D", "E");
@@ -37,6 +39,7 @@ public class SplitterStreamingStopOnExceptionErrorHandlingTest extends ContextTe
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitterStreamingWithError() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("A", "B", "Kaboom");
         getMockEndpoint("mock:b").expectedBodiesReceived("A", "B");

@@ -22,6 +22,7 @@ import javax.management.ObjectName;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  *
@@ -37,6 +38,7 @@ public class ManagedXsltOutputBytesTest extends ContextTestSupport {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
+    @Test
     public void testXsltOutput() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>");

@@ -32,6 +32,11 @@ public class SlackComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the slack component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The incoming webhook URL
      */
     private String webhookUrl;

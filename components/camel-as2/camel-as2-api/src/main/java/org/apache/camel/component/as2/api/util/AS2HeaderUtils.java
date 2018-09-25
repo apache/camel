@@ -126,7 +126,7 @@ public final class AS2HeaderUtils {
             cursor.updatePos(cursor.getPos() + 1);
         }
 
-        List<String> values = new ArrayList<String>();
+        List<String> values = new ArrayList<>();
         while (!cursor.atEnd()) {
             String value = TOKEN_PARSER.parseValue(buffer, cursor, VALUE_DELIMS);
             values.add(value);
@@ -145,14 +145,14 @@ public final class AS2HeaderUtils {
         return new Parameter(name, importance, values.toArray(new String[values.size()]));
     }
 
-    public static String getBoundaryParameterValue(Header[] headers, String headerName) {
+    public static String getParameterValue(Header[] headers, String headerName, String parameterName) {
         Args.notNull(headers, "headers");
         Args.notNull(headerName, "headerName");
         for (Header header : headers) {
             if (header.getName().equalsIgnoreCase(headerName)) {
                 for (HeaderElement headerElement : header.getElements()) {
                     for (NameValuePair nameValuePair : headerElement.getParameters()) {
-                        if (nameValuePair.getName().equalsIgnoreCase("boundary")) {
+                        if (nameValuePair.getName().equalsIgnoreCase(parameterName)) {
                             return nameValuePair.getValue();
                         }
                     }

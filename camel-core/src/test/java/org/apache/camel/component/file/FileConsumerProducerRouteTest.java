@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -27,11 +28,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileConsumerProducerRouteTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/file-test");
         super.setUp();
     }
 
+    @Test
     public void testFileRoute() throws Exception {
         MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         result.expectedMessageCount(2);

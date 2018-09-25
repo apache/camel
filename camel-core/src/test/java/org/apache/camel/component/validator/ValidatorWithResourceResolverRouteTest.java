@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.validator;
-
 import java.net.URL;
 
 import org.w3c.dom.ls.LSResourceResolver;
@@ -30,6 +29,8 @@ import org.apache.camel.processor.validation.CatalogLSResourceResolver;
 import org.apache.camel.util.ResourceHelper;
 import org.apache.xml.resolver.CatalogManager;
 import org.apache.xml.resolver.tools.CatalogResolver;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ValidatorWithResourceResolverRouteTest extends ContextTestSupport {
 
@@ -37,6 +38,7 @@ public class ValidatorWithResourceResolverRouteTest extends ContextTestSupport {
     protected MockEndpoint finallyEndpoint;
     protected MockEndpoint invalidEndpoint;
 
+    @Test
     public void testValidMessage() throws Exception {
         validEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
@@ -49,6 +51,7 @@ public class ValidatorWithResourceResolverRouteTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
 
+    @Test
     public void testInvalidMessage() throws Exception {
         validEndpoint.expectedMessageCount(0);
         invalidEndpoint.expectedMessageCount(1);
@@ -62,7 +65,8 @@ public class ValidatorWithResourceResolverRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         validEndpoint = resolveMandatoryEndpoint("mock:valid", MockEndpoint.class);

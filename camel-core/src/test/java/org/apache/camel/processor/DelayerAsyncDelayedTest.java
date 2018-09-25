@@ -19,12 +19,14 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class DelayerAsyncDelayedTest extends ContextTestSupport {
 
+    @Test
     public void testSendingMessageGetsDelayed() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
 
@@ -41,6 +43,7 @@ public class DelayerAsyncDelayedTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testDelayConstant() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);

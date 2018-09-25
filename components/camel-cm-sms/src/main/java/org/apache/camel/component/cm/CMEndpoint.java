@@ -26,7 +26,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * The cm-sms component allows to integrate with <a href="https://www.cmtelecom.com/">CM SMS Gateway</a>.
@@ -65,7 +65,7 @@ public class CMEndpoint extends DefaultEndpoint {
         // CMConstants.DEFAULT_SCHEME + host is a valid URL. It was previously checked
 
         String token = config.getProductToken();
-        ObjectHelper.notEmpty(token, "productToken");
+        StringHelper.notEmpty(token, "productToken");
 
         UUID uuid = UUID.fromString(token);
         return new CMProducer(this, new CMSenderOneMessageImpl(getCMUrl(), uuid));

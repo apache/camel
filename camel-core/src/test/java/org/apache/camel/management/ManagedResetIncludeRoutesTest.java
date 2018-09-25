@@ -17,6 +17,7 @@
 package org.apache.camel.management;
 
 import java.util.Set;
+
 import javax.management.AttributeValueExp;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -25,12 +26,14 @@ import javax.management.QueryExp;
 import javax.management.StringValueExp;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class ManagedResetIncludeRoutesTest extends ManagementTestSupport {
 
+    @Test
     public void testReset() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

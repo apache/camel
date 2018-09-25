@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-starter-parent</artifactId>
-    <version>2.22.0-SNAPSHOT</version>
+    <version>2.23.0-SNAPSHOT</version>
     <relativePath>../../../platforms/spring-boot/spring-boot-dm/camel-starter-parent</relativePath>
   </parent>
   <artifactId>components-starter</artifactId>
@@ -42,6 +42,12 @@
       <artifactId>spring-boot-autoconfigure</artifactId>
       <version>${spring-boot-version}</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-autoconfigure-processor</artifactId>
+      <version>${spring-boot-version}</version>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -70,6 +76,26 @@
         <configuration>
           <failIfNoTests>false</failIfNoTests>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-package-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <!-- set to true to make build fail fast if missing documentation in docs files -->
+          <failFast>false</failFast>
+          <!-- set to true to make build fail if an option has no description -->
+          <failOnMissingDescription>false</failOnMissingDescription>
+        </configuration>
+        <executions>
+          <execution>
+            <id>readme</id>
+            <goals>
+              <goal>update-spring-boot-auto-configuration-readme</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -187,6 +213,7 @@
     <module>camel-jaxb-starter</module>
     <module>camel-jbpm-starter</module>
     <module>camel-jcache-starter</module>
+    <module>camel-jclouds-starter</module>
     <module>camel-jcr-starter</module>
     <module>camel-jdbc-starter</module>
     <module>camel-jetty-common-starter</module>
@@ -274,6 +301,7 @@
     <module>camel-saxon-starter</module>
     <module>camel-schematron-starter</module>
     <module>camel-script-starter</module>
+    <module>camel-service-starter</module>
     <module>camel-servicenow-starter</module>
     <module>camel-servlet-starter</module>
     <module>camel-servletlistener-starter</module>
@@ -291,8 +319,10 @@
     <module>camel-splunk-starter</module>
     <module>camel-spring-batch-starter</module>
     <module>camel-spring-boot-starter</module>
+    <module>camel-spring-cloud-consul-starter</module>
     <module>camel-spring-cloud-netflix-starter</module>
     <module>camel-spring-cloud-starter</module>
+    <module>camel-spring-cloud-zookeeper-starter</module>
     <module>camel-spring-integration-starter</module>
     <module>camel-spring-javaconfig-starter</module>
     <module>camel-spring-ldap-starter</module>

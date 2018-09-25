@@ -25,6 +25,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
 /**
  * @version 
@@ -38,10 +39,12 @@ public class SimulatorTest extends ContextTestSupport {
         return answer;
     }
 
+    @Test
     public void testReceivesFooResponse() throws Exception {
         assertRespondsWith("foo", "Bye said foo");
     }
 
+    @Test
     public void testReceivesBarResponse() throws Exception {
         assertRespondsWith("bar", "Bye said bar");
     }

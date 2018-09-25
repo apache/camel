@@ -21,12 +21,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class TryCatchWithSplitNotHandledIssueTest extends ContextTestSupport {
 
+    @Test
     public void testSplitWithErrorIsNotHandled() throws Exception {
         MockEndpoint error = getMockEndpoint("mock:error");
         error.expectedBodiesReceived("James");

@@ -25,11 +25,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.junit.Test;
 
 public class AggregatorLockingTest extends ContextTestSupport {
 
     private final CountDownLatch latch = new CountDownLatch(2);
 
+    @Test
     public void testAggregationWithoutParallelNorOptimisticShouldNotLockDownstreamProcessors() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("a", "b");

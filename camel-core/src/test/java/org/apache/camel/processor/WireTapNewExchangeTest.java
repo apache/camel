@@ -22,12 +22,14 @@ import java.util.Date;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class WireTapNewExchangeTest extends ContextTestSupport {
 
+    @Test
     public void testFireAndForgetUsingExpressions() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Hello World");

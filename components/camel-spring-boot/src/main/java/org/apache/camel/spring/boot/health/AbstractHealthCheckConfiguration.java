@@ -34,10 +34,8 @@ public abstract class AbstractHealthCheckConfiguration {
      */
     private Integer failureThreshold;
 
-
     /**
-     * @return true if the check associated to this configuration is enabled,
-     * false otherwise.
+     * Set if the check associated to this configuration is enabled or not.
      */
     public Boolean isEnabled() {
         return enabled;
@@ -50,9 +48,6 @@ public abstract class AbstractHealthCheckConfiguration {
         this.enabled = enabled;
     }
 
-    /**
-     * @return the check interval.
-     */
     public String getInterval() {
         return interval;
     }
@@ -64,9 +59,6 @@ public abstract class AbstractHealthCheckConfiguration {
         this.interval = interval;
     }
 
-    /**
-     * @return the number of failure before reporting the service as un-healthy.
-     */
     public Integer getFailureThreshold() {
         return failureThreshold;
     }

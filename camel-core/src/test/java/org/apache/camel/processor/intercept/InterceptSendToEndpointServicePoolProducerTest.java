@@ -30,11 +30,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.junit.Test;
 
 public class InterceptSendToEndpointServicePoolProducerTest extends ContextTestSupport {
 
     private MyProducer myProducer;
 
+    @Test
     public void testInterceptSendToEndpointServicePoolProducer() throws Exception {
         assertNotNull(myProducer);
 

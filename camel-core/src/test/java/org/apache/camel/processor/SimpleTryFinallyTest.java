@@ -18,12 +18,14 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class SimpleTryFinallyTest extends ContextTestSupport {
 
+    @Test
     public void testSimpleTryFinally() throws Exception {
         getMockEndpoint("mock:try").expectedMessageCount(1);
         getMockEndpoint("mock:finally").expectedMessageCount(1);

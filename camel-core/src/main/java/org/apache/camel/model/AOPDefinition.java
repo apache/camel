@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -93,6 +94,11 @@ public class AOPDefinition extends OutputDefinition<AOPDefinition> {
      */
     public void setAfterFinallyUri(String afterFinallyUri) {
         this.afterFinallyUri = afterFinallyUri;
+    }
+
+    @Override
+    public String getShortName() {
+        return "aop";
     }
 
     @Override

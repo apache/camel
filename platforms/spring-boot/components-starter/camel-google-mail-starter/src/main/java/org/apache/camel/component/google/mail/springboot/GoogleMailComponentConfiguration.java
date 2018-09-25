@@ -16,13 +16,10 @@
  */
 package org.apache.camel.component.google.mail.springboot;
 
-import java.util.List;
 import javax.annotation.Generated;
-import org.apache.camel.component.google.mail.GoogleMailClientFactory;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The google-mail component provides access to Google Mail.
@@ -36,15 +33,20 @@ public class GoogleMailComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the google-mail component. This
+     * is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the shared configuration
      */
     private GoogleMailConfigurationNestedConfiguration configuration;
     /**
      * To use the GoogleCalendarClientFactory as factory for creating the
-     * client. Will by default use BatchGoogleMailClientFactory
+     * client. Will by default use BatchGoogleMailClientFactory. The option is a
+     * org.apache.camel.component.google.mail.GoogleMailClientFactory type.
      */
-    @NestedConfigurationProperty
-    private GoogleMailClientFactory clientFactory;
+    private String clientFactory;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -61,11 +63,11 @@ public class GoogleMailComponentConfiguration
         this.configuration = configuration;
     }
 
-    public GoogleMailClientFactory getClientFactory() {
+    public String getClientFactory() {
         return clientFactory;
     }
 
-    public void setClientFactory(GoogleMailClientFactory clientFactory) {
+    public void setClientFactory(String clientFactory) {
         this.clientFactory = clientFactory;
     }
 
@@ -108,16 +110,9 @@ public class GoogleMailComponentConfiguration
          */
         private String refreshToken;
         /**
-         * Google mail application name. Example would be
-         * "camel-google-mail/1.0"
+         * Google mail application name. Example would be camel-google-mail/1.0
          */
         private String applicationName;
-        /**
-         * Specifies the level of permissions you want a mail application to
-         * have to a user account. See
-         * https://developers.google.com/gmail/api/auth/scopes for more info.
-         */
-        private List scopes;
 
         public GoogleMailApiName getApiName() {
             return apiName;
@@ -173,14 +168,6 @@ public class GoogleMailComponentConfiguration
 
         public void setApplicationName(String applicationName) {
             this.applicationName = applicationName;
-        }
-
-        public List getScopes() {
-            return scopes;
-        }
-
-        public void setScopes(List scopes) {
-            this.scopes = scopes;
         }
     }
 }

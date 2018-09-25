@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -26,6 +25,8 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.NodeIdFactory;
+import org.junit.Before;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +45,8 @@ public class CustomIdFactoryTest extends ContextTestSupport {
     private static String ids;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         ids = "";
         counter = 0;
         super.setUp();
@@ -81,6 +83,7 @@ public class CustomIdFactoryTest extends ContextTestSupport {
     /**
      * Test path 1
      */
+    @Test
     public void testHello() throws Exception {
         assertEquals("#route1#", context.getRouteDefinitions().get(0).getId());
 
@@ -95,6 +98,7 @@ public class CustomIdFactoryTest extends ContextTestSupport {
     /**
      * Test path 2
      */
+    @Test
     public void testOther() throws Exception {
         assertEquals("#route1#", context.getRouteDefinitions().get(0).getId());
 
@@ -118,7 +122,7 @@ public class CustomIdFactoryTest extends ContextTestSupport {
             return new DelegateProcessor(target) {
                 @Override
                 protected void processNext(Exchange exchange) throws Exception {
-                    LOG.debug("Debugging at: {} with id: {} with exchange: {}", definition.toString(), definition.getId(), exchange);
+                    LOG.debug("Debugging at: {} with id: {} with exchange: {}", definition, definition.getId(), exchange);
 
                     // record the path taken at runtime
                     ids += definition.getId();

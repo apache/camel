@@ -35,7 +35,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The IRC component supports 2 options which are listed below.
+The IRC component supports 2 options, which are listed below.
 
 
 
@@ -80,7 +80,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *autoRejoin* (common) | Whether to auto re-join when being kicked | true | boolean
-| *namesOnJoin* (common) | Sends NAMES command to channel after joining it. link onReply has to be true in order to process the result which will have the header value irc.num = '353'. | false | boolean
+| *namesOnJoin* (common) | Sends NAMES command to channel after joining it. onReply has to be true in order to process the result which will have the header value irc.num = '353'. | false | boolean
 | *nickname* (common) | The nickname used in chat. |  | String
 | *persistent* (common) | *Deprecated* Use persistent messages. | true | boolean
 | *realname* (common) | The IRC user's actual name. |  | String
@@ -105,6 +105,23 @@ with the following path and query parameters:
 | *username* (security) | The IRC server user name. |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.irc.enabled* | Enable irc component | true | Boolean
+| *camel.component.irc.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.irc.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

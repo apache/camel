@@ -16,8 +16,6 @@
  */
 
 package org.apache.camel.component.disruptor;
-
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -28,8 +26,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import com.lmax.disruptor.collections.Histogram;
-
+import org.HdrHistogram.Histogram;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -168,15 +165,11 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
         addParameterPair(parameters, singleProducer(), singleConsumer(), singleConcurrentConsumerThread());
         addParameterPair(parameters, singleProducer(), singleConsumer(), multipleConcurrentConsumerThreads());
         addParameterPair(parameters, singleProducer(), multipleConsumers(), singleConcurrentConsumerThread());
-        addParameterPair(parameters, singleProducer(), multipleConsumers(),
-                multipleConcurrentConsumerThreads());
+        addParameterPair(parameters, singleProducer(), multipleConsumers(), multipleConcurrentConsumerThreads());
         addParameterPair(parameters, multipleProducers(), singleConsumer(), singleConcurrentConsumerThread());
-        addParameterPair(parameters, multipleProducers(), singleConsumer(),
-                multipleConcurrentConsumerThreads());
-        addParameterPair(parameters, multipleProducers(), multipleConsumers(),
-                singleConcurrentConsumerThread());
-        addParameterPair(parameters, multipleProducers(), multipleConsumers(),
-                multipleConcurrentConsumerThreads());
+        addParameterPair(parameters, multipleProducers(), singleConsumer(), multipleConcurrentConsumerThreads());
+        addParameterPair(parameters, multipleProducers(), multipleConsumers(), singleConcurrentConsumerThread());
+        addParameterPair(parameters, multipleProducers(), multipleConsumers(), multipleConcurrentConsumerThreads());
 
         return parameters;
     }
@@ -264,7 +257,8 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
             final long stop = exchangeAwaiter.getCountDownReachedTime();
             final Histogram histogram = exchangeAwaiter.getLatencyHistogram();
 
-            System.out.printf("%-45s time spent = %5d ms. Latency (ms): %s %n", componentName, stop - start, histogram.toString());
+            System.out.printf("%-45s time spent = %5d ms.%n", componentName, stop - start);
+            histogram.outputPercentileDistribution(System.out, 1, 1000.0);
         }
     }
 
@@ -325,9 +319,9 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
         if (monitoring != null) {
             monitoring.shutdownNow();
         }
-        final Histogram histogram = new Histogram(sizeHistogramBounds);
+        final Histogram histogram = new Histogram(sizeHistogramBounds[sizeHistogramBounds.length - 1], 4);
         for (final int observation : endpointSizeQueue) {
-            histogram.addObservation(observation);
+            histogram.recordValue(observation);
         }
         System.out.printf("%82s %s%n", "Endpoint size (# exchanges pending):", histogram.toString());
     }
@@ -397,9 +391,9 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
         }
 
         public Histogram getLatencyHistogram() {
-            final Histogram histogram = new Histogram(LATENCY_HISTOGRAM_BOUNDS);
+            final Histogram histogram = new Histogram(LATENCY_HISTOGRAM_BOUNDS[LATENCY_HISTOGRAM_BOUNDS.length - 1], 4);
             for (final Long latencyValue : latencyQueue) {
-                histogram.addObservation(latencyValue / 1000000);
+                histogram.recordValue(latencyValue / 1000000);
             }
             return histogram;
         }

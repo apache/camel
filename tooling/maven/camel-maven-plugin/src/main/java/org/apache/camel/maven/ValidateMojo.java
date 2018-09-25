@@ -23,11 +23,12 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.EndpointValidationResult;
-import org.apache.camel.catalog.SimpleValidationResult;
+import org.apache.camel.catalog.LanguageValidationResult;
 import org.apache.camel.catalog.lucene.LuceneSuggestionStrategy;
 import org.apache.camel.catalog.maven.MavenVersionManager;
 import org.apache.camel.maven.helper.EndpointHelper;
@@ -36,6 +37,7 @@ import org.apache.camel.parser.XmlRouteParser;
 import org.apache.camel.parser.model.CamelEndpointDetails;
 import org.apache.camel.parser.model.CamelRouteDetails;
 import org.apache.camel.parser.model.CamelSimpleExpressionDetails;
+import org.apache.camel.util.StringHelper;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -136,6 +138,14 @@ public class ValidateMojo extends AbstractExecMojo {
     private boolean ignoreIncapable;
 
     /**
+     * Whether to ignore deprecated options being used in the endpoint uri
+     *
+     * @parameter property="camel.ignoreDeprecated"
+     *            default-value="true"
+     */
+    private boolean ignoreDeprecated;
+
+    /**
      * Whether to ignore components that uses lenient properties. When this is true, then the uri validation is stricter
      * but would fail on properties that are not part of the component but in the uri because of using lenient properties.
      * For example using the HTTP components to provide query parameters in the endpoint uri.
@@ -170,6 +180,14 @@ public class ValidateMojo extends AbstractExecMojo {
      *            default-value="true"
      */
     private boolean duplicateRouteId;
+
+    /**
+     * Whether to validate direct/seda endpoints sending to non existing consumers.
+     *
+     * @parameter property="camel.directOrSedaPairCheck"
+     *            default-value="true"
+     */
+    private boolean directOrSedaPairCheck;
 
     // CHECKSTYLE:OFF
     @Override
@@ -319,12 +337,16 @@ public class ValidateMojo extends AbstractExecMojo {
             }
         }
 
+        // endpoint uris
         int endpointErrors = 0;
         int unknownComponents = 0;
         int incapableErrors = 0;
+        int deprecatedOptions = 0;
         for (CamelEndpointDetails detail : endpoints) {
             getLog().debug("Validating endpoint: " + detail.getEndpointUri());
             EndpointValidationResult result = catalog.validateEndpointProperties(detail.getEndpointUri(), ignoreLenientProperties);
+            int deprecated = result.getDeprecated() != null ? result.getDeprecated().size() : 0;
+            deprecatedOptions += deprecated;
 
             boolean ok = result.isSuccess();
             if (!ok && ignoreUnknownComponent && result.getUnknownComponent() != null) {
@@ -337,6 +359,10 @@ public class ValidateMojo extends AbstractExecMojo {
                 incapableErrors++;
                 ok = true;
             }
+            if (ok && !ignoreDeprecated && deprecated > 0) {
+                ok = false;
+            }
+
             if (!ok) {
                 if (result.getUnknownComponent() != null) {
                     unknownComponents++;
@@ -370,7 +396,7 @@ public class ValidateMojo extends AbstractExecMojo {
                     sb.append(detail.getFileName());
                 }
                 sb.append("\n\n");
-                String out = result.summaryErrorMessage(false);
+                String out = result.summaryErrorMessage(false, ignoreDeprecated);
                 sb.append(out);
                 sb.append("\n\n");
 
@@ -409,30 +435,196 @@ public class ValidateMojo extends AbstractExecMojo {
         String endpointSummary;
         if (endpointErrors == 0) {
             int ok = endpoints.size() - endpointErrors - incapableErrors - unknownComponents;
-            endpointSummary = String.format("Endpoint validation success: (%s = passed, %s = invalid, %s = incapable, %s = unknown components)",
-                    ok, endpointErrors, incapableErrors, unknownComponents);
+            endpointSummary = String.format("Endpoint validation success: (%s = passed, %s = invalid, %s = incapable, %s = unknown components, %s = deprecated options)",
+                    ok, endpointErrors, incapableErrors, unknownComponents, deprecatedOptions);
         } else {
             int ok = endpoints.size() - endpointErrors - incapableErrors - unknownComponents;
-            endpointSummary = String.format("Endpoint validation error: (%s = passed, %s = invalid, %s = incapable, %s = unknown components)",
-                    ok, endpointErrors, incapableErrors, unknownComponents);
+            endpointSummary = String.format("Endpoint validation error: (%s = passed, %s = invalid, %s = incapable, %s = unknown components, %s = deprecated options)",
+                    ok, endpointErrors, incapableErrors, unknownComponents, deprecatedOptions);
         }
-
         if (endpointErrors > 0) {
             getLog().warn(endpointSummary);
         } else {
             getLog().info(endpointSummary);
         }
 
+        // simple
+        int simpleErrors = validateSimple(catalog, simpleExpressions);
+        String simpleSummary;
+        if (simpleErrors == 0) {
+            int ok = simpleExpressions.size() - simpleErrors;
+            simpleSummary = String.format("Simple validation success: (%s = passed, %s = invalid)", ok, simpleErrors);
+        } else {
+            int ok = simpleExpressions.size() - simpleErrors;
+            simpleSummary = String.format("Simple validation error: (%s = passed, %s = invalid)", ok, simpleErrors);
+        }
+        if (simpleErrors > 0) {
+            getLog().warn(simpleSummary);
+        } else {
+            getLog().info(simpleSummary);
+        }
+
+        // endpoint pairs
+        int sedaDirectErrors = 0;
+        String sedaDirectSummary = "";
+        if (directOrSedaPairCheck) {
+            long sedaDirectEndpoints = countEndpointPairs(endpoints, "direct") + countEndpointPairs(endpoints, "seda");
+            sedaDirectErrors += validateEndpointPairs(endpoints, "direct") + validateEndpointPairs(endpoints, "seda");
+            if (sedaDirectErrors == 0) {
+                sedaDirectSummary = String.format("Endpoint pair (seda/direct) validation success (%s = pairs)", sedaDirectEndpoints);
+            } else {
+                sedaDirectSummary = String.format("Endpoint pair (seda/direct) validation error: (%s = pairs, %s = non-pairs)", sedaDirectEndpoints, sedaDirectErrors);
+            }
+            if (sedaDirectErrors > 0) {
+                getLog().warn(sedaDirectSummary);
+            } else {
+                getLog().info(sedaDirectSummary);
+            }
+        }
+
+        // route id
+        int duplicateRouteIdErrors = validateDuplicateRouteId(routeIds);
+        String routeIdSummary = "";
+        if (duplicateRouteId) {
+            if (duplicateRouteIdErrors == 0) {
+                routeIdSummary = String.format("Duplicate route id validation success (%s = ids)", routeIds.size());
+            } else {
+                routeIdSummary = String.format("Duplicate route id validation error: (%s = ids, %s = duplicates)", routeIds.size(), duplicateRouteIdErrors);
+            }
+            if (duplicateRouteIdErrors > 0) {
+                getLog().warn(routeIdSummary);
+            } else {
+                getLog().info(routeIdSummary);
+            }
+        }
+
+        if (failOnError && (endpointErrors > 0 || simpleErrors > 0 || duplicateRouteIdErrors > 0) || sedaDirectErrors > 0) {
+            throw new MojoExecutionException(endpointSummary + "\n" + simpleSummary + "\n" + routeIdSummary + "\n" + sedaDirectSummary);
+        }
+    }
+
+    private int countEndpointPairs(List<CamelEndpointDetails> endpoints, String scheme) {
+        int pairs = 0;
+
+        Set<CamelEndpointDetails> consumers = endpoints.stream().filter(e -> e.isConsumerOnly() && e.getEndpointUri().startsWith(scheme + ":")).collect(Collectors.toSet());
+        Set<CamelEndpointDetails> producers = endpoints.stream().filter(e -> e.isProducerOnly() && e.getEndpointUri().startsWith(scheme + ":")).collect(Collectors.toSet());
+
+        // find all pairs, eg producers that has a consumer (no need to check for opposite)
+        for (CamelEndpointDetails p : producers) {
+            boolean any = consumers.stream().anyMatch(c -> matchEndpointPath(p.getEndpointUri(), c.getEndpointUri()));
+            if (any) {
+                pairs++;
+            }
+        }
+
+        return pairs;
+    }
+
+    private int validateEndpointPairs(List<CamelEndpointDetails> endpoints, String scheme) {
+        int errors = 0;
+
+        Set<CamelEndpointDetails> consumers = endpoints.stream().filter(e -> e.isConsumerOnly() && e.getEndpointUri().startsWith(scheme + ":")).collect(Collectors.toSet());
+        Set<CamelEndpointDetails> producers = endpoints.stream().filter(e -> e.isProducerOnly() && e.getEndpointUri().startsWith(scheme + ":")).collect(Collectors.toSet());
+
+        // are there any producers that do not have a consumer pair
+        for (CamelEndpointDetails detail : producers) {
+            boolean none = consumers.stream().noneMatch(c -> matchEndpointPath(detail.getEndpointUri(), c.getEndpointUri()));
+            if (none) {
+                errors++;
+
+                StringBuilder sb = new StringBuilder();
+                sb.append("Endpoint pair (seda/direct) validation error at: ");
+                if (detail.getClassName() != null && detail.getLineNumber() != null) {
+                    // this is from java code
+                    sb.append(detail.getClassName());
+                    if (detail.getMethodName() != null) {
+                        sb.append(".").append(detail.getMethodName());
+                    }
+                    sb.append("(").append(asSimpleClassName(detail.getClassName())).append(".java:");
+                    sb.append(detail.getLineNumber()).append(")");
+                } else if (detail.getLineNumber() != null) {
+                    // this is from xml
+                    String fqn = stripRootPath(asRelativeFile(detail.getFileName()));
+                    if (fqn.endsWith(".xml")) {
+                        fqn = fqn.substring(0, fqn.length() - 4);
+                        fqn = asPackageName(fqn);
+                    }
+                    sb.append(fqn);
+                    sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
+                    sb.append(detail.getLineNumber()).append(")");
+                } else {
+                    sb.append(detail.getFileName());
+                }
+                sb.append("\n");
+                sb.append("\n\t").append(detail.getEndpointUri());
+                sb.append("\n\n\t\t\t\t").append(endpointPathSummaryError(detail));
+                sb.append("\n\n");
+
+                getLog().warn(sb.toString());
+            } else if (showAll) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("Endpoint pair (seda/direct) validation passed at: ");
+                if (detail.getClassName() != null && detail.getLineNumber() != null) {
+                    // this is from java code
+                    sb.append(detail.getClassName());
+                    if (detail.getMethodName() != null) {
+                        sb.append(".").append(detail.getMethodName());
+                    }
+                    sb.append("(").append(asSimpleClassName(detail.getClassName())).append(".java:");
+                    sb.append(detail.getLineNumber()).append(")");
+                } else if (detail.getLineNumber() != null) {
+                    // this is from xml
+                    String fqn = stripRootPath(asRelativeFile(detail.getFileName()));
+                    if (fqn.endsWith(".xml")) {
+                        fqn = fqn.substring(0, fqn.length() - 4);
+                        fqn = asPackageName(fqn);
+                    }
+                    sb.append(fqn);
+                    sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
+                    sb.append(detail.getLineNumber()).append(")");
+                } else {
+                    sb.append(detail.getFileName());
+                }
+                sb.append("\n");
+                sb.append("\n\t").append(detail.getEndpointUri());
+                sb.append("\n\n");
+
+                getLog().info(sb.toString());
+            }
+        }
+
+        // NOTE: are there any consumers that do not have a producer pair
+        // You can have a consumer which you send to from outside a Camel route such as via ProducerTemplate
+
+        return errors;
+    }
+
+    private static String endpointPathSummaryError(CamelEndpointDetails detail) {
+        String uri = detail.getEndpointUri();
+        String p = uri.contains("?") ? StringHelper.before(uri, "?") : uri;
+        String path = StringHelper.after(p, ":");
+        return path + "\t" + "Sending to non existing " + detail.getEndpointComponentName() + " queue name";
+    }
+
+    private static boolean matchEndpointPath(String uri, String uri2) {
+        String p = uri.contains("?") ? StringHelper.before(uri, "?") : uri;
+        String p2 = uri2.contains("?") ? StringHelper.before(uri2, "?") : uri2;
+        p = p.trim();
+        p2 = p2.trim();
+        return p.equals(p2);
+    }
+
+    private int validateSimple(CamelCatalog catalog, List<CamelSimpleExpressionDetails> simpleExpressions) {
         int simpleErrors = 0;
         for (CamelSimpleExpressionDetails detail : simpleExpressions) {
-            SimpleValidationResult result;
+            LanguageValidationResult result;
             boolean predicate = detail.isPredicate();
             if (predicate) {
                 getLog().debug("Validating simple predicate: " + detail.getSimple());
-                result = catalog.validateSimplePredicate(detail.getSimple());
+                result = catalog.validateSimplePredicate(null, detail.getSimple());
             } else {
                 getLog().debug("Validating simple expression: " + detail.getSimple());
-                result = catalog.validateSimpleExpression(detail.getSimple());
+                result = catalog.validateSimpleExpression(null, detail.getSimple());
             }
             if (!result.isSuccess()) {
                 simpleErrors++;
@@ -493,31 +685,18 @@ public class ValidateMojo extends AbstractExecMojo {
                     sb.append(detail.getFileName());
                 }
                 sb.append("\n");
-                sb.append("\n\t").append(result.getSimple());
+                sb.append("\n\t").append(result.getText());
                 sb.append("\n\n");
 
                 getLog().info(sb.toString());
             }
         }
+        return simpleErrors;
+    }
 
-        String simpleSummary;
-        if (simpleErrors == 0) {
-            int ok = simpleExpressions.size() - simpleErrors;
-            simpleSummary = String.format("Simple validation success: (%s = passed, %s = invalid)", ok, simpleErrors);
-        } else {
-            int ok = simpleExpressions.size() - simpleErrors;
-            simpleSummary = String.format("Simple validation error: (%s = passed, %s = invalid)", ok, simpleErrors);
-        }
-
-        if (simpleErrors > 0) {
-            getLog().warn(simpleSummary);
-        } else {
-            getLog().info(simpleSummary);
-        }
-
+    private int validateDuplicateRouteId(List<CamelRouteDetails> routeIds) {
         int duplicateRouteIdErrors = 0;
         if (duplicateRouteId) {
-
             // filter out all non uniques
             for (CamelRouteDetails detail : routeIds) {
                 // skip empty route ids
@@ -588,25 +767,7 @@ public class ValidateMojo extends AbstractExecMojo {
                 }
             }
         }
-
-        String routeIdSummary = "";
-        if (duplicateRouteId) {
-            if (duplicateRouteIdErrors == 0) {
-                routeIdSummary = String.format("Duplicate route id validation success (%s = ids)", routeIds.size());
-            } else {
-                routeIdSummary = String.format("Duplicate route id validation error: (%s = ids, %s = duplicates)", routeIds.size(), duplicateRouteIdErrors);
-            }
-
-            if (duplicateRouteIdErrors > 0) {
-                getLog().warn(routeIdSummary);
-            } else {
-                getLog().info(routeIdSummary);
-            }
-        }
-
-        if (failOnError && (endpointErrors > 0 || simpleErrors > 0 || duplicateRouteIdErrors > 0)) {
-            throw new MojoExecutionException(endpointSummary + "\n" + simpleSummary + "\n" + routeIdSummary);
-        }
+        return duplicateRouteIdErrors;
     }
     // CHECKSTYLE:ON
 

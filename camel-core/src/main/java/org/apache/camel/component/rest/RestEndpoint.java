@@ -41,6 +41,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.spi.RestProducerFactoryHelper.setupComponent;
+
 /**
  * The rest component is used for either hosting REST services (consumer) or calling external REST services (producer).
  */
@@ -301,7 +303,7 @@ public class RestEndpoint extends DefaultEndpoint {
             if (comp instanceof RestProducerFactory) {
                 factory = (RestProducerFactory) comp;
             } else {
-                comp = getCamelContext().getComponent(getComponentName());
+                comp = setupComponent(getComponentName(), getCamelContext(), (Map<String, Object>) parameters.get("component"));
                 if (comp instanceof RestProducerFactory) {
                     factory = (RestProducerFactory) comp;
                 }
@@ -320,7 +322,7 @@ public class RestEndpoint extends DefaultEndpoint {
         // try all components
         if (factory == null) {
             for (String name : getCamelContext().getComponentNames()) {
-                Component comp = getCamelContext().getComponent(name);
+                Component comp = setupComponent(name, getCamelContext(), (Map<String, Object>) parameters.get("component"));
                 if (comp instanceof RestProducerFactory) {
                     factory = (RestProducerFactory) comp;
                     cname = name;
@@ -345,7 +347,7 @@ public class RestEndpoint extends DefaultEndpoint {
             RestProducerFactory found = null;
             String foundName = null;
             for (String name : DEFAULT_REST_PRODUCER_COMPONENTS) {
-                Object comp = getCamelContext().getComponent(name, true);
+                Object comp = setupComponent(getComponentName(), getCamelContext(), (Map<String, Object>) parameters.get("component"));
                 if (comp instanceof RestProducerFactory) {
                     if (found == null) {
                         found = (RestProducerFactory) comp;

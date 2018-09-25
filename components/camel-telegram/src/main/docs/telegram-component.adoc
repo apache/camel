@@ -31,9 +31,9 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+=== URI format
 
-[source,java]
+[source,text]
 ----------------------------------------------------
 telegram:type/authorizationToken[?options]
 ----------------------------------------------------
@@ -41,10 +41,10 @@ telegram:type/authorizationToken[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+=== Options
 
 // component options: START
-The Telegram component supports 2 options which are listed below.
+The Telegram component supports 2 options, which are listed below.
 
 
 
@@ -108,11 +108,28 @@ with the following path and query parameters:
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.telegram.authorization-token* | The default Telegram authorization token to be used when the information is not provided in the endpoints. |  | String
+| *camel.component.telegram.enabled* | Enable telegram component | true | Boolean
+| *camel.component.telegram.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
 
 
 
 
-### Message Headers
+
+=== Message Headers
 
 [width="100%",cols="20%,80%",options="header",]
 |=======================================================================
@@ -134,12 +151,12 @@ for outgoing binary messages.
 
 |=======================================================================
 
-### Usage
+=== Usage
 
 The Telegram component supports both consumer and producer endpoints.
 It can also be used in *reactive chat-bot mode* (to consume, then produce messages).
 
-### Producer Example
+=== Producer Example
 
 The following is a basic example of how to send a message to a Telegram chat through the
 Telegram Bot API.
@@ -148,7 +165,7 @@ in Java DSL
 
 [source,java]
 ---------------------------------------------------------
-from("direct:start").to("telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L");
+from("direct:start").to("telegram:bots/123456789:insertYourAuthorizationTokenHere");
 ---------------------------------------------------------
 
 or in Spring XML
@@ -157,11 +174,11 @@ or in Spring XML
 ---------------------------------------------
 <route>
     <from uri="direct:start"/>
-    <to uri="telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L"/>
+    <to uri="telegram:bots/123456789:insertYourAuthorizationTokenHere"/>
 <route>
 ---------------------------------------------
 
-The code `123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L` is the *authorization token* corresponding to the Bot.
+The code `123456789:insertYourAuthorizationTokenHere` is the *authorization token* corresponding to the Bot.
 
 When using the producer endpoint without specifying the *chat id* option, the target chat will be identified using information contained in the body or headers of the message.
 The following message bodies are allowed for a producer endpoint (messages of type `OutgoingXXXMessage` belong to the package `org.apache.camel.component.telegram.model`)
@@ -181,14 +198,14 @@ The following message bodies are allowed for a producer endpoint (messages of ty
 |===================================================
 
 
-### Consumer Example
+=== Consumer Example
 
 The following is a basic example of how to receive all messages that telegram users are sending to the configured Bot.
 In Java DSL
 
 [source,java]
 ---------------------------------------------------------
-from("telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L")
+from("telegram:bots/123456789:insertYourAuthorizationTokenHere")
 .bean(ProcessorBean.class)
 ---------------------------------------------------------
 
@@ -197,7 +214,7 @@ or in Spring XML
 [source,xml]
 ---------------------------------------------
 <route>
-    <from uri="telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L"/>
+    <from uri="telegram:bots/123456789:insertYourAuthorizationTokenHere"/>
     <bean ref="myBean" />
 <route>
 
@@ -234,7 +251,7 @@ Supported types for incoming messages are
 
 
 
-### Reactive Chat-Bot Example
+=== Reactive Chat-Bot Example
 
 The reactive chat-bot mode is a simple way of using the Camel component to build a simple
 chat bot that replies directly to chat messages received from the Telegram users.
@@ -243,9 +260,9 @@ The following is a basic configuration of the chat-bot in Java DSL
 
 [source,java]
 ---------------------------------------------------------
-from("telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L")
+from("telegram:bots/123456789:insertYourAuthorizationTokenHere")
 .bean(ChatBotLogic.class)
-.to("telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L");
+.to("telegram:bots/123456789:insertYourAuthorizationTokenHere");
 ---------------------------------------------------------
 
 or in Spring XML
@@ -253,9 +270,9 @@ or in Spring XML
 [source,xml]
 ---------------------------------------------
 <route>
-    <from uri="telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L"/>
+    <from uri="telegram:bots/123456789:insertYourAuthorizationTokenHere"/>
     <bean ref="chatBotLogic" />
-    <to uri="telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L"/>
+    <to uri="telegram:bots/123456789:insertYourAuthorizationTokenHere"/>
 <route>
 
 <bean id="chatBotLogic" class="com.example.ChatBotLogic"/>
@@ -283,7 +300,7 @@ public class ChatBotLogic {
 Every non-null string returned by the `chatBotProcess` method is automatically routed to the
 chat that originated the request (as the `CamelTelegramChatId` header is used to route the message).
 
-### Getting the Chat ID
+=== Getting the Chat ID
 
 If you want to push messages to a specific Telegram chat when an event occurs, you need to
 retrieve the corresponding chat ID. The chat ID is not currently shown in the telegram client,
@@ -293,7 +310,7 @@ First, add the bot to the chat where you want to push messages, then run a route
 
 [source,java]
 ---------------------------------------------------------
-from("telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L")
+from("telegram:bots/123456789:insertYourAuthorizationTokenHere")
 .to("log:INFO?showHeaders=true");
 ---------------------------------------------------------
 
@@ -306,18 +323,18 @@ Once you get the chat ID, you can use the following sample route to push message
 ---------------------------------------------------------
 from("timer:tick")
 .setBody().constant("Hello")
-to("telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L?chatId=123456")
+to("telegram:bots/123456789:insertYourAuthorizationTokenHere?chatId=123456")
 ---------------------------------------------------------
 
 Note that the corresponding URI parameter is simply `chatId`.
 
-### Customizing keyboard
+=== Customizing keyboard
 
 You can customize the user keyboard instead of asking him to write an option. `OutgoingTextMessage` has the property `ReplyKeyboardMarkup` which can be used for such thing.
 
 [source,java]
 ---------------------------------------------------------
-from("telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L")
+from("telegram:bots/123456789:insertYourAuthorizationTokenHere")
     .process(exchange -> {
 
         OutgoingTextMessage msg = new OutgoingTextMessage();
@@ -344,14 +361,14 @@ from("telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_d
 
         exchange.getIn().setBody(msg);
     })
-    .to("telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L");
+    .to("telegram:bots/123456789:insertYourAuthorizationTokenHere");
 ---------------------------------------------------------
 
 If you want to disable it the next message must have the property `removeKeyboard` set on `ReplyKeyboardMarkup` object.
 
 [source,java]
 ---------------------------------------------------------
-from("telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L")
+from("telegram:bots/123456789:insertYourAuthorizationTokenHere")
     .process(exchange -> {
 
         OutgoingTextMessage msg = new OutgoingTextMessage();
@@ -365,5 +382,5 @@ from("telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_d
 
         exchange.getIn().setBody(msg);
     })
-    .to("telegram:bots/123456789:AAE_dLq5C19xwGjw3yiC2NvEUrZcejK21-Q987654321:AAE_dLq5C19xwOmg5yiC2NvSrkT3wj5Q1-L");
+    .to("telegram:bots/123456789:insertYourAuthorizationTokenHere");
 ---------------------------------------------------------

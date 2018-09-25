@@ -17,10 +17,8 @@
 package org.apache.camel.component.metrics.springboot;
 
 import javax.annotation.Generated;
-import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * To collect various metrics directly from Camel routes using the DropWizard
@@ -35,10 +33,15 @@ public class MetricsComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * To use a custom configured MetricRegistry.
+     * Whether to enable auto configuration of the metrics component. This is
+     * enabled by default.
      */
-    @NestedConfigurationProperty
-    private MetricRegistry metricRegistry;
+    private Boolean enabled;
+    /**
+     * To use a custom configured MetricRegistry. The option is a
+     * com.codahale.metrics.MetricRegistry type.
+     */
+    private String metricRegistry;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -46,11 +49,11 @@ public class MetricsComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public MetricRegistry getMetricRegistry() {
+    public String getMetricRegistry() {
         return metricRegistry;
     }
 
-    public void setMetricRegistry(MetricRegistry metricRegistry) {
+    public void setMetricRegistry(String metricRegistry) {
         this.metricRegistry = metricRegistry;
     }
 

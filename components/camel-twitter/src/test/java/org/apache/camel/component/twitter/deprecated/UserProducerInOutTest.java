@@ -28,7 +28,6 @@ import org.apache.camel.component.twitter.CamelTwitterTestSupport;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import twitter4j.Status;
 
 import static org.hamcrest.core.Is.is;

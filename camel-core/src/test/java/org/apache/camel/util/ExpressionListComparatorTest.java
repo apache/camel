@@ -23,6 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Test;
 
 /**
  * @version 
@@ -45,6 +46,7 @@ public class ExpressionListComparatorTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testExpressionListComparator() {
         List<Expression> list = new ArrayList<>();
         list.add(new MyFooExpression());

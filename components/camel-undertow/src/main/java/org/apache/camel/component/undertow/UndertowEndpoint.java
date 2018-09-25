@@ -19,6 +19,7 @@ package org.apache.camel.component.undertow;
 import java.net.URI;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.net.ssl.SSLContext;
 
 import io.undertow.server.HttpServerExchange;
@@ -30,6 +31,8 @@ import org.apache.camel.Message;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.cloud.DiscoverableService;
+import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.undertow.UndertowConstants.EventType;
 import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
 import org.apache.camel.http.common.cookie.CookieHandler;
@@ -40,6 +43,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +56,7 @@ import org.xnio.Options;
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI",
         consumerClass = UndertowConsumer.class, label = "http,websocket", lenientProperties = true)
-public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
+public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, DiscoverableService {
 
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
     private UndertowComponent component;
@@ -133,6 +137,18 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     public boolean isLenientProperties() {
         // true to allow dynamic URI options to be configured and passed to external system for eg. the UndertowProducer
         return true;
+    }
+
+    // Service Registration
+    //-------------------------------------------------------------------------
+
+    @Override
+    public Map<String, String> getServiceProperties() {
+        return CollectionHelper.immutableMapOf(
+            ServiceDefinition.SERVICE_META_PORT, Integer.toString(httpURI.getPort()),
+            ServiceDefinition.SERVICE_META_PATH, httpURI.getPath(),
+            ServiceDefinition.SERVICE_META_PROTOCOL, httpURI.getScheme()
+        );
     }
 
     public Exchange createExchange(HttpServerExchange httpExchange) throws Exception {

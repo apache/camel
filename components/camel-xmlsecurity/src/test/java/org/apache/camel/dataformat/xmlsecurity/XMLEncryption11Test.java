@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.xmlsecurity;
-
 import java.lang.reflect.Constructor;
 import java.security.Provider;
 import java.security.Security;
@@ -29,6 +28,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.utils.EncryptionConstants;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -58,6 +58,7 @@ public class XMLEncryption11Test extends CamelTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         context.getProperties().put(XmlConverter.OUTPUT_PROPERTIES_PREFIX + OutputKeys.ENCODING, "UTF-8");

@@ -22,12 +22,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class AggregateRepositoryReturnNullTest extends ContextTestSupport {
 
+    @Test
     public void testAggregateRepositoryReturnNull() throws Exception {
         try {
             template.sendBodyAndHeader("direct:start", "Hello World", "id", 123);

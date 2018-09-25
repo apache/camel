@@ -21,7 +21,7 @@ semantics are assigned as follows:
 ### Options
 
 // dataformat options: START
-The XML JSon dataformat supports 13 options which are listed below.
+The XML JSon dataformat supports 13 options, which are listed below.
 
 
 
@@ -43,6 +43,34 @@ The XML JSon dataformat supports 13 options which are listed below.
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 14 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.dataformat.xmljson.array-name* | Specifies the name of the top-level XML element. Used for unmarshalling (JSON to XML conversion). For example, when converting 1, 2, 3, it will be output by default as 123. By setting this option or rootName, you can alter the name of element 'a'. |  | String
+| *camel.dataformat.xmljson.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.xmljson.element-name* | Specifies the name of the XML elements representing each array element. Used for unmarshalling (JSON to XML conversion). |  | String
+| *camel.dataformat.xmljson.enabled* | Enable xmljson dataformat | true | Boolean
+| *camel.dataformat.xmljson.encoding* | Sets the encoding. Used for unmarshalling (JSON to XML conversion). |  | String
+| *camel.dataformat.xmljson.expandable-properties* | With expandable properties, JSON array elements are converted to XML as a sequence of repetitive XML elements with the local name equal to the JSON key, for example: number: 1,2,3 , normally converted to: 123 (where e can be modified by setting elementName), would instead translate to 123, if number is set as an expandable property Used for unmarshalling (JSON to XML conversion). |  | List
+| *camel.dataformat.xmljson.force-top-level-object* | Determines whether the resulting JSON will start off with a top-most element whose name matches the XML root element. Used for marshalling (XML to JSon conversion). If disabled, XML string 12 turns into 'x: '1', 'y': '2' . Otherwise, it turns into 'a': 'x: '1', 'y': '2' . | false | Boolean
+| *camel.dataformat.xmljson.namespace-lenient* | Flag to be tolerant to incomplete namespace prefixes. Used for unmarshalling (JSON to XML conversion). In most cases, json-lib automatically changes this flag at runtime to match the processing. | false | Boolean
+| *camel.dataformat.xmljson.remove-namespace-prefixes* | Removes the namespace prefixes from XML qualified elements, so that the resulting JSON string does not contain them. Used for marshalling (XML to JSon conversion). | false | Boolean
+| *camel.dataformat.xmljson.root-name* | Specifies the name of the top-level element. Used for unmarshalling (JSON to XML conversion). If not set, json-lib will use arrayName or objectName (default value: 'o', at the current time it is not configurable in this data format). If set to 'root', the JSON string 'x': 'value1', 'y' : 'value2' would turn into value1value2, otherwise the 'root' element would be named 'o'. |  | String
+| *camel.dataformat.xmljson.skip-namespaces* | Signals whether namespaces should be ignored. By default they will be added to the JSON output using xmlns elements. Used for marshalling (XML to JSon conversion). | false | Boolean
+| *camel.dataformat.xmljson.skip-whitespace* | Determines whether white spaces between XML elements will be regarded as text values or disregarded. Used for marshalling (XML to JSon conversion). | false | Boolean
+| *camel.dataformat.xmljson.trim-spaces* | Determines whether leading and trailing white spaces will be omitted from String values. Used for marshalling (XML to JSon conversion). | false | Boolean
+| *camel.dataformat.xmljson.type-hints* | Adds type hints to the resulting XML to aid conversion back to JSON. Used for unmarshalling (JSON to XML conversion). |  | String
+|===
+// spring-boot-auto-configure options: END
+ND
 
 ### Basic Usage with Java DSL
 

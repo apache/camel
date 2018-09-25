@@ -23,12 +23,12 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.22.0-SNAPSHOT</version>
+    <version>2.23.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-mongodb</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: MongoDB</name>
+  <name>Camel :: MongoDB (deprecated)</name>
   <description>Camel MongoDB component</description>
 
   <properties>

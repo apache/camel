@@ -21,6 +21,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Tests mbeans is registered when adding a 2nd route after CamelContext has been started.
@@ -39,6 +40,7 @@ public class ManagedRouteAddSecondRouteTest extends ManagementTestSupport {
         };
     }
 
+    @Test
     public void testRouteAddSecondRoute() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

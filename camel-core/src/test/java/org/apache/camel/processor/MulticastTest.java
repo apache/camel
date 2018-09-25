@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -23,6 +22,8 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -33,6 +34,7 @@ public class MulticastTest extends ContextTestSupport {
     protected MockEndpoint y;
     protected MockEndpoint z;
 
+    @Test
     public void testSendingAMessageUsingMulticastReceivesItsOwnExchange() throws Exception {
         x.expectedBodiesReceived("input+output");
         y.expectedBodiesReceived("input+output");
@@ -50,7 +52,8 @@ public class MulticastTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         x = getMockEndpoint("mock:x");

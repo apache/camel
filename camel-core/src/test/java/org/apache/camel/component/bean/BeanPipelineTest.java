@@ -17,6 +17,7 @@
 package org.apache.camel.component.bean;
 
 import java.util.Map;
+
 import javax.naming.Context;
 
 import org.apache.camel.Body;
@@ -26,12 +27,14 @@ import org.apache.camel.Headers;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
 /**
  * Unit test of bean can propagate headers in a pipeline
  */
 public class BeanPipelineTest extends ContextTestSupport {
 
+    @Test
     public void testBeanInPipeline() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World from James");

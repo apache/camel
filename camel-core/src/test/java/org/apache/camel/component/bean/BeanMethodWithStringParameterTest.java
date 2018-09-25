@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  *
@@ -33,6 +34,7 @@ public class BeanMethodWithStringParameterTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testBean() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello WorldHello World");
 
@@ -41,6 +43,7 @@ public class BeanMethodWithStringParameterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanOther() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
 

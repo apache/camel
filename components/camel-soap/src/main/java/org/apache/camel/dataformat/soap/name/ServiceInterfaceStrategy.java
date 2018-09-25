@@ -33,7 +33,6 @@ import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.WebFault;
 
 import org.apache.camel.RuntimeCamelException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

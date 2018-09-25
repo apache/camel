@@ -119,7 +119,21 @@ with the following path and query parameters:
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
 
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.cql.enabled* | Enable cql component | true | Boolean
+| *camel.component.cql.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
 
 === Messages
 
@@ -245,3 +259,25 @@ Alternatively, the `CassandraAggregationRepository` does not have a
 |`readConsistencyLevel` |  | Consistency level used to read/check exchange: `ONE`, `TWO`, `QUORUM`,
 `LOCAL_QUORUM`…
 |=======================================================================
+
+=== Examples
+
+To insert something on a table you can use the following code:
+
+[source,java]
+---------------------------------------------------------
+String CQL = "insert into camel_user(login, first_name, last_name) values (?, ?, ?)";
+from("direct:input")
+    .to("cql://localhost/camel_ks?cql=" + CQL);
+---------------------------------------------------------
+
+At this point you should be able to insert data by using a list as body
+
+[source,java]
+---------------------------------------------------------
+Arrays.asList("davsclaus", "Claus", "Ibsen")
+---------------------------------------------------------
+
+The same approach can be used for updating or querying the table.
+
+

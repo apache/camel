@@ -33,6 +33,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * File consumer.
@@ -220,7 +221,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
         String endpointNormalized = FileUtil.normalizePath(endpointPath);
         if (file.getPath().startsWith(endpointNormalized + File.separator)) {
             // skip duplicate endpoint path
-            path = new File(ObjectHelper.after(file.getPath(), endpointNormalized + File.separator));
+            path = new File(StringHelper.after(file.getPath(), endpointNormalized + File.separator));
         } else {
             path = new File(file.getPath());
         }
@@ -241,8 +242,12 @@ public class FileConsumer extends GenericFileConsumer<File> {
 
     @Override
     protected void updateFileHeaders(GenericFile<File> file, Message message) {
-        long length = file.getFile().length();
-        long modified = file.getFile().lastModified();
+        File upToDateFile = file.getFile();
+        if (fileHasMoved(file)) {
+            upToDateFile = new File(file.getAbsoluteFilePath());
+        }
+        long length = upToDateFile.length();
+        long modified = upToDateFile.lastModified();
         file.setFileLength(length);
         file.setLastModified(modified);
         if (length >= 0) {
@@ -256,5 +261,10 @@ public class FileConsumer extends GenericFileConsumer<File> {
     @Override
     public FileEndpoint getEndpoint() {
         return (FileEndpoint) super.getEndpoint();
+    }
+
+    private boolean fileHasMoved(GenericFile<File> file) {
+        // GenericFile's absolute path is always up to date whereas the underlying file is not
+        return !file.getFile().getAbsolutePath().equals(file.getAbsoluteFilePath());
     }
 }

@@ -22,11 +22,13 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class ScatterGatherTest extends ContextTestSupport {
 
+    @Test
     public void testScatterAndGather() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);

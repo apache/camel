@@ -285,7 +285,7 @@ public abstract class CamelTestSupport extends TestSupport {
         if (isUseRouteBuilder()) {
             RoutesBuilder[] builders = createRouteBuilders();
             for (RoutesBuilder builder : builders) {
-                log.debug("Using created route builder: " + builder);
+                log.debug("Using created route builder: {}", builder);
                 context.addRoutes(builder);
             }
             boolean skip = "true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"));
@@ -297,9 +297,9 @@ public abstract class CamelTestSupport extends TestSupport {
                 startCamelContext();
             }
         } else {
-            log.debug("Using route builder from the created context: " + context);
+            log.debug("Using route builder from the created context: {}", context);
         }
-        log.debug("Routing Rules are: " + context.getRoutes());
+        log.debug("Routing Rules are: {}", context.getRoutes());
 
         assertValidContext(context);
 

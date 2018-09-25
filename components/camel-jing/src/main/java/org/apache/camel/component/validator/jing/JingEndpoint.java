@@ -23,7 +23,6 @@ import org.xml.sax.InputSource;
 import com.thaiopensource.relaxng.SchemaFactory;
 import com.thaiopensource.validate.Schema;
 import com.thaiopensource.xml.sax.Jaxp11XMLReaderCreator;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -33,8 +32,8 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Validates the payload of a message using RelaxNG Syntax using Jing library.
@@ -126,7 +125,7 @@ public class JingEndpoint extends DefaultEndpoint {
         super.doStart();
 
         if (inputSource == null) {
-            ObjectHelper.notEmpty(resourceUri, "resourceUri", this);
+            StringHelper.notEmpty(resourceUri, "resourceUri", this);
             InputStream inputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), resourceUri);
             inputSource = new InputSource(inputStream);
         }

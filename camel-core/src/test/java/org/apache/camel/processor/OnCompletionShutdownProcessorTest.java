@@ -22,11 +22,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ServiceSupport;
+import org.junit.Test;
 
 public class OnCompletionShutdownProcessorTest extends ContextTestSupport {
 
     private MyProcessor processor = new MyProcessor();
 
+    @Test
     public void testSynchronizeComplete() throws Exception {
         assertEquals("Started", processor.getStatus().name());
 

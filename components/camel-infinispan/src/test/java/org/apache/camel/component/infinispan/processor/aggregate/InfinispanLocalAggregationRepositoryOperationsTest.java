@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.infinispan.processor.aggregate;
-
 import java.util.Set;
 
 import org.apache.camel.CamelContext;

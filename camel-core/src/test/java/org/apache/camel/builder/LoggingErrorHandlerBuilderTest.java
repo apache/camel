@@ -18,6 +18,7 @@ package org.apache.camel.builder;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.LoggingLevel;
+import org.junit.Test;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -30,6 +31,7 @@ public class LoggingErrorHandlerBuilderTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testLoggingErrorHandler() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -57,6 +59,7 @@ public class LoggingErrorHandlerBuilderTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testLoggingErrorHandler2() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -76,6 +79,7 @@ public class LoggingErrorHandlerBuilderTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testLoggingErrorHandler3() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -102,6 +106,7 @@ public class LoggingErrorHandlerBuilderTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testLoggingErrorHandler4() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -127,6 +132,7 @@ public class LoggingErrorHandlerBuilderTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testLoggingErrorHandler5() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -146,6 +152,7 @@ public class LoggingErrorHandlerBuilderTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testLoggingErrorHandler6() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;

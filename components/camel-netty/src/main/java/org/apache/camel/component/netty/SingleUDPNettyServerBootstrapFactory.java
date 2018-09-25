@@ -169,7 +169,7 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
             String networkInterface = configuration.getNetworkInterface() == null ? LOOPBACK_INTERFACE : configuration.getNetworkInterface();
             multicastNetworkInterface = NetworkInterface.getByName(networkInterface);
             ObjectHelper.notNull(multicastNetworkInterface, "No network interface found for '" + networkInterface + "'.");
-            LOG.info("ConnectionlessBootstrap joining {}:{} using network interface: {}", new Object[]{configuration.getHost(), configuration.getPort(), multicastNetworkInterface.getName()});
+            LOG.info("ConnectionlessBootstrap joining {}:{} using network interface: {}", configuration.getHost(), configuration.getPort(), multicastNetworkInterface.getName());
             datagramChannel.joinGroup(hostAddress, multicastNetworkInterface).syncUninterruptibly();
             allChannels.add(datagramChannel);
         } else {

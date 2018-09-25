@@ -35,7 +35,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,6 +90,15 @@ public class StreamProducer extends DefaultProducer {
         URL url = new URL(u);
         URLConnection c = url.openConnection();
         c.setDoOutput(true);
+        if (endpoint.getConnectTimeout() > 0) {
+            c.setConnectTimeout(endpoint.getConnectTimeout());
+        }
+        if (endpoint.getReadTimeout() > 0) {
+            c.setReadTimeout(endpoint.getReadTimeout());
+        }
+        if (endpoint.getHttpHeaders() != null) {
+            endpoint.getHttpHeaders().forEach((k, v) -> c.addRequestProperty(k, v.toString()));
+        }
         return c.getOutputStream();
     }
 
@@ -141,7 +149,7 @@ public class StreamProducer extends DefaultProducer {
         Writer writer = new OutputStreamWriter(outputStream, charset);
         BufferedWriter bw = IOHelper.buffered(writer);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Writing as text: {} to {} using encoding: {}", new Object[]{body, outputStream, charset});
+            LOG.debug("Writing as text: {} to {} using encoding: {}", body, outputStream, charset);
         }
         bw.write(s);
         bw.write(System.lineSeparator());

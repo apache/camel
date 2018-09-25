@@ -18,17 +18,20 @@ package org.apache.camel;
 
 import org.apache.camel.impl.DefaultInjector;
 import org.apache.camel.spi.Injector;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class InjectorDefaultsTest extends ContextTestSupport {
 
+    @Test
     public void testInjectorIsDefaultByDefault() throws Exception {
         Injector injector = context.getInjector();
         assertIsInstanceOf(DefaultInjector.class, injector);
     }
 
+    @Test
     public void testNewInstance() throws Exception {
         Injector injector = context.getInjector();
 
@@ -42,6 +45,7 @@ public class InjectorDefaultsTest extends ContextTestSupport {
         assertNull(foo2.getName());
     }
 
+    @Test
     public void testSharedInstance() throws Exception {
         Injector injector = context.getInjector();
 

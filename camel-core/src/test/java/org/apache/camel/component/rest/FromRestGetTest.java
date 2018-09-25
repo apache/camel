@@ -25,6 +25,7 @@ import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestParamType;
+import org.junit.Test;
 
 public class FromRestGetTest extends ContextTestSupport {
 
@@ -39,6 +40,7 @@ public class FromRestGetTest extends ContextTestSupport {
         return 2 + 3;
     }
 
+    @Test
     public void testFromRestModel() throws Exception {
         assertEquals(getExpectedNumberOfRoutes(), context.getRoutes().size());
 

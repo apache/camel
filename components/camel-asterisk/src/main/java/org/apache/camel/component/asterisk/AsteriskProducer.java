@@ -70,7 +70,7 @@ public class AsteriskProducer extends DefaultProducer {
         // Action must be set
         ObjectHelper.notNull(action, "action");
 
-        LOG.debug("Send action {} ", action);
+        LOG.debug("Send action {}", action);
 
         ManagerAction managerAction = action.apply(exchange);
         ManagerResponse managerResponse = connection.sendAction(managerAction);

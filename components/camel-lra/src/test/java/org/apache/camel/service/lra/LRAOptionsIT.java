@@ -17,6 +17,7 @@
 package org.apache.camel.service.lra;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Assert;
@@ -57,6 +58,11 @@ public class LRAOptionsIT extends AbstractLRATestSupport {
         compensate.assertIsSatisfied();
     }
 
+    @Test(expected = RuntimeCamelException.class)
+    public void testRouteDoesNotHangOnOptionError() throws Exception {
+        template.sendBody("direct:wrong-expression", "Hello");
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
 
@@ -79,6 +85,11 @@ public class LRAOptionsIT extends AbstractLRATestSupport {
                         .setHeader("myname", constant("TryToOverride"))
                         .setHeader("name", constant("TryToOverride"))
                         .to("mock:endpoint");
+
+                from("direct:wrong-expression")
+                        .saga()
+                        .option("id", simple("${10 / 0}"))
+                        .to("log:info");
 
             }
         };

@@ -15,23 +15,17 @@
  * limitations under the License.
  */
 package org.apache.camel.component.grpc;
-
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Stopwatch;
-import io.grpc.BindableService;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -93,7 +87,7 @@ public class GrpcProducerSyncTest extends CamelTestSupport {
             Object pongResponse = template.requestBody("direct:grpc-sync-sync", pingRequest);
             assertEquals(((PongResponse)pongResponse).getPongId(), id);
         }
-        LOG.info("Multiple sync invocation time {} milliseconds, everage operations/sec {} ", stopwatch.stop().elapsed(TimeUnit.MILLISECONDS),
+        LOG.info("Multiple sync invocation time {} milliseconds, everage operations/sec {}", stopwatch.stop().elapsed(TimeUnit.MILLISECONDS),
                  Math.round(1000 * MULTIPLE_RUN_TEST_COUNT / stopwatch.elapsed(TimeUnit.MILLISECONDS)));
     }
 

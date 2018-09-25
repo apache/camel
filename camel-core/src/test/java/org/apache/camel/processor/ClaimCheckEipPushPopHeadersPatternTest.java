@@ -22,9 +22,11 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ClaimCheckOperation;
+import org.junit.Test;
 
 public class ClaimCheckEipPushPopHeadersPatternTest extends ContextTestSupport {
 
+    @Test
     public void testPushPopHeadersPattern() throws Exception {
         Map<String, Object> headers = new HashMap<>();
         headers.put("foo", 123);

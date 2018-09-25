@@ -23,14 +23,20 @@ import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.AS2TransferEncoding;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
-import org.apache.http.Header;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
-import org.apache.http.message.BasicHeader;
+import org.apache.http.entity.ContentType;
 import org.apache.http.util.CharArrayBuffer;
 
 public class DispositionNotificationMultipartReportEntity extends MultipartReportEntity {
+
+    protected DispositionNotificationMultipartReportEntity(String boundary, boolean isMainBody) {
+        this.boundary = boundary;
+        this.isMainBody = isMainBody;
+        removeHeaders(AS2Header.CONTENT_TYPE);
+        setContentType(getContentTypeValue(boundary));
+    }
 
     public DispositionNotificationMultipartReportEntity(HttpEntityEnclosingRequest request,
                                                         HttpResponse response,
@@ -46,19 +52,17 @@ public class DispositionNotificationMultipartReportEntity extends MultipartRepor
                                                         boolean isMainBody)
             throws HttpException {
         super(charset, isMainBody, boundary);
-        this.contentType = new BasicHeader(AS2Header.CONTENT_TYPE, AS2MimeType.MULTIPART_REPORT);
-        Header reportType = new BasicHeader(AS2Header.REPORT_TYPE, getReportTypeValue(boundary));
-        addHeader(reportType);
+        removeHeaders(AS2Header.CONTENT_TYPE);
+        setContentType(getContentTypeValue(boundary));
 
-        addPart(buildPlainTextReport(request, response, dispositionMode, dispositionType,
-                dispositionModifier, failureFields, errorFields, warningFields, extensionFields));
+        addPart(buildPlainTextReport(request, response, dispositionMode, dispositionType, dispositionModifier,
+                failureFields, errorFields, warningFields, extensionFields));
         addPart(new AS2MessageDispositionNotificationEntity(request, response, dispositionMode, dispositionType,
                 dispositionModifier, failureFields, errorFields, warningFields, extensionFields, charset, false));
     }
 
-    protected DispositionNotificationMultipartReportEntity(String boundary, boolean isMainBody) {
-        this.boundary = boundary;
-        this.isMainBody = isMainBody;
+    public String getMainMessageContentType() {
+        return AS2MimeType.MULTIPART_REPORT + "; report-type=disposition-notification; boundary=\"" + boundary + "\"";
     }
 
     protected TextPlainEntity buildPlainTextReport(HttpEntityEnclosingRequest request,
@@ -69,11 +73,12 @@ public class DispositionNotificationMultipartReportEntity extends MultipartRepor
                                                    String[] failureFields,
                                                    String[] errorFields,
                                                    String[] warningFields,
-                                                   Map<String, String> extensionFields) throws HttpException {
+                                                   Map<String, String> extensionFields)
+            throws HttpException {
 
         CharArrayBuffer charBuffer = new CharArrayBuffer(10);
 
-        String originalMessageId  = HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID);
+        String originalMessageId = HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID);
         String sentDate = HttpMessageUtils.getHeaderValue(request, AS2Header.DATE);
         String subject = HttpMessageUtils.getHeaderValue(request, AS2Header.SUBJECT);
 
@@ -94,8 +99,10 @@ public class DispositionNotificationMultipartReportEntity extends MultipartRepor
         return new TextPlainEntity(charBuffer.toString(), AS2Charset.US_ASCII, AS2TransferEncoding.SEVENBIT, false);
     }
 
-    protected String getReportTypeValue(String boundary) {
-        return "disposition-notification; boundary=\"" + boundary + "\"";
+    protected String getContentTypeValue(String boundary) {
+        ContentType contentType = ContentType.parse(AS2MimeType.MULTIPART_REPORT + ";"
+                + "report-type=disposition-notification; boundary=\"" + boundary + "\"");
+        return contentType.toString();
     }
 
 }

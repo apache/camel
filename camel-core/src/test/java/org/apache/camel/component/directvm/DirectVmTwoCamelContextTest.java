@@ -17,12 +17,14 @@
 package org.apache.camel.component.directvm;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class DirectVmTwoCamelContextTest extends AbstractDirectVmTestSupport {
 
+    @Test
     public void testTwoCamelContext() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:result").expectedHeaderReceived("name1", context.getName());

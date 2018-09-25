@@ -21,6 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.interceptor.Tracer;
+import org.junit.Test;
 
 /**
  * Tests to ensure a consistent return value when using the different ways of
@@ -37,10 +38,12 @@ public class RecipientListReturnValueTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testRecipientListWithRecipientList() throws Exception {
         doTestRecipientList("direct:recipientList");
     }
 
+    @Test
     public void testRecipientListWithBeanRef() throws Exception {
         doTestRecipientList("direct:beanRef");
     }

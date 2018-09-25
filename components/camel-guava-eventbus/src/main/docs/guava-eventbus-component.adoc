@@ -4,12 +4,12 @@
 *Available as of Camel version 2.10*
 
 The
-http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/eventbus/package-summary.html[Google
+https://google.github.io/guava/releases/19.0/api/docs/com/google/common/eventbus/EventBus.html[Google
 Guava EventBus] allows publish-subscribe-style communication between
 components without requiring the components to explicitly register with
 one another (and thus be aware of each other). The *guava-eventbus:*
 component provides integration bridge between Camel and
-http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/eventbus/package-summary.html[Google
+https://google.github.io/guava/releases/19.0/api/docs/com/google/common/eventbus/EventBus.html[Google
 Guava EventBus] infrastructure. With the latter component, messages
 exchanged with the Guava `EventBus` can be transparently forwarded to
 the Camel routes. EventBus component allows also to route body of Camel
@@ -46,7 +46,7 @@ registry.
 
 
 // component options: START
-The Guava EventBus component supports 3 options which are listed below.
+The Guava EventBus component supports 3 options, which are listed below.
 
 
 
@@ -96,6 +96,24 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.guava-eventbus.enabled* | Enable guava-eventbus component | true | Boolean
+| *camel.component.guava-eventbus.event-bus* | To use the given Guava EventBus instance. The option is a com.google.common.eventbus.EventBus type. |  | String
+| *camel.component.guava-eventbus.listener-interface* | The interface with method(s) marked with the Subscribe annotation. Dynamic proxy will be created over the interface so it could be registered as the EventBus listener. Particularly useful when creating multi-event listeners and for handling DeadEvent properly. This option cannot be used together with eventClass option. |  | Class
+| *camel.component.guava-eventbus.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

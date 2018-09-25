@@ -33,6 +33,11 @@ public class XmlBeansDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the xmlBeans data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To enable pretty printing output nicely formatted. Is by default false.
      */
     private Boolean prettyPrint = false;

@@ -112,24 +112,24 @@ public class LambdaConfiguration implements Cloneable {
         this.operation = operation;
     }
 
-    /**
-     * To define a proxy host when instantiating the Lambda client
-     */
     public String getProxyHost() {
         return proxyHost;
     }
 
+    /**
+     * To define a proxy host when instantiating the Lambda client
+     */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
     }
 
     /**
      * To define a proxy port when instantiating the Lambda client
      */
-    public Integer getProxyPort() {
-        return proxyPort;
-    }
-
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }

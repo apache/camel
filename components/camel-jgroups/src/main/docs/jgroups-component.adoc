@@ -50,7 +50,7 @@ component should connect to.
 
 
 // component options: START
-The JGroups component supports 4 options which are listed below.
+The JGroups component supports 4 options, which are listed below.
 
 
 
@@ -102,6 +102,29 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 9 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.jgroups.channel* | Channel to use. The option is a org.jgroups.JChannel type. |  | String
+| *camel.component.jgroups.channel-properties* | Specifies configuration properties of the JChannel used by the endpoint. |  | String
+| *camel.component.jgroups.enable-view-messages* | If set to true, the consumer endpoint will receive org.jgroups.View messages as well (not only org.jgroups.Message instances). By default only regular messages are consumed by the endpoint. | false | Boolean
+| *camel.component.jgroups.enabled* | Enable jgroups component | true | Boolean
+| *camel.component.jgroups.lock.cluster.service.enabled* | Sets if the jgroups lock cluster service should be enabled or not, default is false. | false | Boolean
+| *camel.component.jgroups.lock.cluster.service.id* | Cluster Service ID |  | String
+| *camel.component.jgroups.lock.cluster.service.jgroups-cluster-name* | JGroups Cluster name |  | String
+| *camel.component.jgroups.lock.cluster.service.jgroups-config* | JGrups configuration File name |  | String
+| *camel.component.jgroups.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test done files with moveFailed option
@@ -28,11 +29,13 @@ import org.apache.camel.builder.RouteBuilder;
 public class FilerConsumerMoveFailedDoneFileNameTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/done");
         super.setUp();
     }
 
+    @Test
     public void testDoneFile() throws Exception {
         getMockEndpoint("mock:input").expectedMessageCount(1);
 

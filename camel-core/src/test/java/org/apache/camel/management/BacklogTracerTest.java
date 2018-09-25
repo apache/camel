@@ -17,6 +17,7 @@
 package org.apache.camel.management;
 
 import java.util.List;
+
 import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -27,10 +28,12 @@ import org.w3c.dom.NodeList;
 import org.apache.camel.Exchange;
 import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class BacklogTracerTest extends ManagementTestSupport {
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testBacklogTracerEventMessage() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -83,6 +86,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
                 + "    </message>", event2.getMessageAsXml());
     }
 
+    @Test
     public void testBacklogTracerEventMessageAsXml() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogTracer");
@@ -121,6 +125,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testBacklogTracerEventMessageDumpAll() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogTracer");
@@ -192,6 +197,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
                 + "    </message>", event4.getMessageAsXml());
     }
 
+    @Test
     public void testBacklogTracerEventMessageDumpAllAsXml() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogTracer");
@@ -226,6 +232,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testBacklogTracerNotRemoveOnDump() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogTracer");
@@ -278,6 +285,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testBacklogTracerNotRemoveOnDumpPattern() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogTracer");
@@ -338,6 +346,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testBacklogTracerNotRemoveOverflow() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogTracer");

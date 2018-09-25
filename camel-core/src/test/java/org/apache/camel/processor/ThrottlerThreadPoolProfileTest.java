@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ThreadPoolProfileBuilder;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.junit.Test;
 
 public class ThrottlerThreadPoolProfileTest extends ContextTestSupport {
 
@@ -28,6 +29,7 @@ public class ThrottlerThreadPoolProfileTest extends ContextTestSupport {
         return !isPlatform("windows");
     }
 
+    @Test
     public void testThreadPool() throws Exception {
         if (!canTest()) {
             return;

@@ -24,10 +24,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Ignore;
+import org.junit.Test;
 
 @Ignore("CamelXsltComponent don't support XSLT_RESOURCE_URI header anymore")
 public class XsltFromHeaderOverrideEndpointUriTest extends ContextTestSupport {
 
+    @Test
     public void testSendMessageAndHaveItTransformed() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedMessageCount(1);

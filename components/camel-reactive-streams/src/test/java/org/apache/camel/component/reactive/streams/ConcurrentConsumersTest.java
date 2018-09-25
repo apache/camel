@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Observable;
-
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;

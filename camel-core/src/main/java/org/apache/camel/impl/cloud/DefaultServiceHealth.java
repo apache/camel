@@ -16,11 +16,10 @@
  */
 package org.apache.camel.impl.cloud;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.cloud.ServiceHealth;
+import org.apache.camel.util.CollectionHelper;
 
 public class DefaultServiceHealth implements ServiceHealth {
     private final boolean healthy;
@@ -40,7 +39,7 @@ public class DefaultServiceHealth implements ServiceHealth {
 
     public DefaultServiceHealth(boolean healthy, Map<String, String> meta) {
         this.healthy = healthy;
-        this.meta = meta != null ? Collections.unmodifiableMap(new HashMap<>(meta)) : Collections.emptyMap();
+        this.meta = CollectionHelper.unmodifiableMap(meta);
     }
 
     @Override

@@ -26,6 +26,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Test;
 
 /**
  *
@@ -34,6 +35,7 @@ public class TestEndpointTest extends ContextTestSupport {
 
     private String expectedBody = "Hello World";
 
+    @Test
     public void testMocksAreValid() throws Exception {
         // now run the test and send in a message with the expected body
         template.sendBody("seda:foo", expectedBody);

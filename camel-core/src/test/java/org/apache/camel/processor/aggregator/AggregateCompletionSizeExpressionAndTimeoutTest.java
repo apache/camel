@@ -20,9 +20,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
+import org.junit.Test;
 
 public class AggregateCompletionSizeExpressionAndTimeoutTest extends ContextTestSupport {
 
+    @Test
     public void testAggregateExpressionSize() throws Exception {
         MockEndpoint result =  getMockEndpoint("mock:result");
         result.expectedBodiesReceived("A+B", "C+D", "E");

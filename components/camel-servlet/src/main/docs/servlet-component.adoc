@@ -16,12 +16,15 @@ for this component:
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-servlet</artifactId>
     <version>x.x.x</version>
-    <\!-\- use the same version as your Camel core version \-->
+    <!-- use the same version as your Camel core version -->
 </dependency>
 ---------------------------------------------------------------
 
 
-INFO: *Stream*. 
+[NOTE]
+====
+*Stream*
+
 Servlet is stream based, which means the input it receives is submitted
 to Camel as a stream. That means you will only be able to read the
 content of the stream *once*. If you find a situation where the message
@@ -29,30 +32,32 @@ body appears to be empty or you need to access the data multiple times
 (eg: doing multicasting, or redelivery error handling) you should use
 Stream caching or convert the message body to
 a `String` which is safe to be read multiple times.
+====
 
-### URI format
+=== URI format
 
 [source,java]
 ---------------------------------
 servlet://relative_path[?options]
 ---------------------------------
 
-You can append query options to the URI in the following format,
+You can append query options to the URI in the following format:
 `?option=value&option=value&...`
 
-### Options
+=== Options
 
 // component options: START
-The Servlet component supports 8 options which are listed below.
+The Servlet component supports 9 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *servletName* (consumer) | Default name of servlet to use. The default name is CamelServlet. |  | String
+| *servletName* (consumer) | Default name of servlet to use. The default name is CamelServlet. | CamelServlet | String
 | *httpRegistry* (consumer) | To use a custom org.apache.camel.component.servlet.HttpRegistry. |  | HttpRegistry
 | *attachmentMultipart Binding* (consumer) | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove disableStreamCache to use AttachmentMultipartBinding. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's. | false | boolean
+| *fileNameExtWhitelist* (consumer) | Whitelist of accepted filename extensions for accepting uploaded files. Multiple extensions can be separated by comma, such as txt,xml. |  | String
 | *httpBinding* (advanced) | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. |  | HttpBinding
 | *httpConfiguration* (advanced) | To use the shared HttpConfiguration as base configuration. |  | HttpConfiguration
 | *allowJavaSerialized Object* (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
@@ -80,7 +85,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (21 parameters):
+==== Query Parameters (22 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -101,6 +106,7 @@ with the following path and query parameters:
 | *eagerCheckContentAvailable* (consumer) | Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present. This can be turned on in case HTTP clients do not send streamed data. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *fileNameExtWhitelist* (consumer) | Whitelist of accepted filename extensions for accepting uploaded files. Multiple extensions can be separated by comma, such as txt,xml. |  | String
 | *optionsEnabled* (consumer) | Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off. | false | boolean
 | *traceEnabled* (consumer) | Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off. | false | boolean
 | *mapHttpMessageBody* (advanced) | If this option is true then IN exchange Body of the exchange will be mapped to HTTP body. Setting this to false will avoid the HTTP mapping. | true | boolean
@@ -109,25 +115,52 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
 
-### Message Headers
+
+The component supports 13 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.servlet.allow-java-serialized-object* | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | Boolean
+| *camel.component.servlet.attachment-multipart-binding* | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove disableStreamCache to use AttachmentMultipartBinding. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's. | false | Boolean
+| *camel.component.servlet.enabled* | Enable servlet component | true | Boolean
+| *camel.component.servlet.file-name-ext-whitelist* | Whitelist of accepted filename extensions for accepting uploaded files. Multiple extensions can be separated by comma, such as txt,xml. |  | String
+| *camel.component.servlet.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
+| *camel.component.servlet.http-binding* | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. The option is a org.apache.camel.http.common.HttpBinding type. |  | String
+| *camel.component.servlet.http-configuration* | To use the shared HttpConfiguration as base configuration. The option is a org.apache.camel.http.common.HttpConfiguration type. |  | String
+| *camel.component.servlet.http-registry* | To use a custom org.apache.camel.component.servlet.HttpRegistry. The option is a org.apache.camel.component.servlet.HttpRegistry type. |  | String
+| *camel.component.servlet.mapping.context-path* | Context path used by the servlet component for automatic mapping. | /camel/* | String
+| *camel.component.servlet.mapping.enabled* | Enables the automatic mapping of the servlet component into the Spring web context. | true | Boolean
+| *camel.component.servlet.mapping.servlet-name* | The name of the Camel servlet. | CamelServlet | String
+| *camel.component.servlet.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.servlet.servlet-name* | Default name of servlet to use. The default name is CamelServlet. | CamelServlet | String
+|===
+// spring-boot-auto-configure options: END
+
+
+=== Message Headers
 
 Camel will apply the same Message Headers as the <<http-component,HTTP>>
 component.
 
 Camel will also populate *all* `request.parameter` and
 `request.headers`. For example, if a client request has the URL,
-`http://myserver/myserver?orderid=123`, the exchange will contain a
+http://myserver/myserver?orderid=123, the exchange will contain a
 header named `orderid` with the value 123.
 
-### Usage
+=== Usage
 
-You can consume only from endpoints generated by the Servlet component.
+You can consume only `from` endpoints generated by the Servlet component.
 Therefore, it should be used only as input into your Camel routes. To
 issue HTTP requests against other HTTP endpoints, use the
-<<http-component,HTTP Component>>
+<<http-component,HTTP Component>>.
 
-### Putting Camel JARs in the app server boot classpath
+=== Putting Camel JARs in the app server boot classpath
 
 If you put the Camel JARs such as `camel-core`, `camel-servlet`, etc. in
 the boot classpath of your application server (eg usually in its lib
@@ -182,18 +215,18 @@ follows:
   </servlet>
 -----------------------------------------------------------------------------------------------
 
-But its *strongly advised* to use unique servlet-name for each Camel
+But it is *strongly advised* to use unique `servlet-name` for each Camel
 application to avoid this duplication clash, as well any unforeseen
 side-effects.
 
-### Sample
+=== Sample
 
-INFO: From Camel 2.7 onwards it's easier to use <<servlet-component,Servlet>> in
+NOTE: From Camel 2.7 onwards it's easier to use <<servlet-component,Servlet>> in
 Spring web applications. See link:servlet-tomcat-example.html[Servlet
 Tomcat Example] for details.
 
 In this sample, we define a route that exposes a HTTP service at
-`http://localhost:8080/camel/services/hello`. +
+http://localhost:8080/camel/services/hello. +
  First, you need to publish the
 http://svn.apache.org/repos/asf/camel/trunk/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
 through the normal Web Container, or OSGi Service. +
@@ -210,11 +243,11 @@ endpoint uses the relative path to specify the endpoint's URL. A client
 can access the `camel-servlet` endpoint through the servlet publish
 address: `("http://localhost:8080/camel/services") + RELATIVE_PATH("/hello")`.
 
-#### Sample when using Spring 3.x
+==== Sample when using Spring 3.x
 
-See Servlet Tomcat Example
+See link:servlet-tomcat-example.html[Servlet Tomcat Example].
 
-#### Sample when using Spring 2.x
+==== Sample when using Spring 2.x
 
 When using the Servlet component in a Camel/Spring application it's
 often required to load the Spring ApplicationContext _after_ the Servlet
@@ -245,7 +278,7 @@ like this:
 <web-app>
 -------------------------------------------------------------------------
 
-#### Sample when using OSGi
+==== Sample when using OSGi
 
 From *Camel 2.6.0*, you can publish the
 http://svn.apache.org/repos/asf/camel/trunk/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
@@ -258,10 +291,10 @@ the
 http://svn.apache.org/repos/asf/camel/trunk/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
 on the OSGi platform
 
-#### Usage with Spring-Boot
+==== Usage with Spring-Boot
 
-From *Camel 2.19.0* onwards, the _camel-servlet-starter_ library binds automatically all the rest endpoints under the "/camel/*" context path.
-The following table summarizes the additional configuration properties available in the camel-servlet-starter library.
+From *Camel 2.19.0* onwards, the _camel-servlet-starter_ library binds automatically all the rest endpoints under the `/camel/*` context path.
+The following table summarizes the additional configuration properties available in the _camel-servlet-starter_ library.
 The automatic mapping of the Camel servlet can also be disabled.
 
 [width="100%",cols="3,1m,6",options="header"]
@@ -272,7 +305,7 @@ The automatic mapping of the Camel servlet can also be disabled.
 | camel.component.servlet.mapping.servlet-name | CamelServlet | The name of the Camel servlet
 |=======================================================================
 
-### See Also
+=== See Also
 
 * Configuring Camel
 * Component

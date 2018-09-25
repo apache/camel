@@ -34,6 +34,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Test;
 
 public class StaxConverterTest extends ContextTestSupport {
 
@@ -66,6 +67,7 @@ public class StaxConverterTest extends ContextTestSupport {
         TEST_XML_7000 = sb.toString();
     }
 
+    @Test
     public void testEncodingXmlEventReader() throws Exception {
         TEST_XML_WITH_XML_HEADER_ISO_8859_1_AS_BYTE_ARRAY_STREAM.reset();
         XMLEventReader reader = null;
@@ -103,6 +105,7 @@ public class StaxConverterTest extends ContextTestSupport {
         assertTrue("Should match header", equals);
     }
 
+    @Test
     public void testEncodingXmlStreamReader() throws Exception {
         TEST_XML_WITH_XML_HEADER_ISO_8859_1_AS_BYTE_ARRAY_STREAM.reset();
 
@@ -157,6 +160,7 @@ public class StaxConverterTest extends ContextTestSupport {
         assertEquals(TEST_XML, result);
     }
 
+    @Test
     public void testToReaderByXmlStreamReader() throws Exception {
         StringReader src = new StringReader(TEST_XML_7000);
         XMLStreamReader xreader = null;
@@ -193,6 +197,7 @@ public class StaxConverterTest extends ContextTestSupport {
             }
         }
     }
+    @Test
     public void testToInputSreamByXmlStreamReader() throws Exception {
         StringReader src = new StringReader(TEST_XML_7000);
         XMLStreamReader xreader = null;

@@ -23,12 +23,14 @@ import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class RollbackDefaultErrorHandlerTest extends ContextTestSupport {
 
+    @Test
     public void testOk() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -38,6 +40,7 @@ public class RollbackDefaultErrorHandlerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRollback() throws Exception {
         try {
             template.requestBody("direct:start", "bad");
@@ -47,6 +50,7 @@ public class RollbackDefaultErrorHandlerTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testRollbackWithExchange() throws Exception {
         Exchange out = template.request("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {

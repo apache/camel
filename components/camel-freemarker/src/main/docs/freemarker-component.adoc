@@ -40,7 +40,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Freemarker component supports 2 options which are listed below.
+The Freemarker component supports 2 options, which are listed below.
 
 
 
@@ -88,6 +88,23 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.freemarker.configuration* | To use an existing freemarker.template.Configuration instance as the configuration. The option is a freemarker.template.Configuration type. |  | String
+| *camel.component.freemarker.enabled* | Enable freemarker component | true | Boolean
+| *camel.component.freemarker.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

@@ -33,21 +33,20 @@ import org.apache.camel.component.as2.internal.AS2ApiName;
 import org.apache.camel.component.as2.internal.AS2ConnectionHelper;
 import org.apache.camel.component.as2.internal.AS2Constants;
 import org.apache.camel.component.as2.internal.AS2PropertiesHelper;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriPath;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.component.AbstractApiEndpoint;
 import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 
 /**
- * Represents a AS2 endpoint.
+ * Component used for transferring data secure and reliable over the internet using the AS2 protocol.
  */
-@UriEndpoint(scheme = "as2", title = "AS2", syntax = "as2:name", consumerClass = AS2Consumer.class, label = "AS2")
+@UriEndpoint(scheme = "as2", firstVersion = "2.22.0", title = "AS2", syntax = "as2:apiName", consumerClass = AS2Consumer.class, label = "AS2")
 public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuration> {
 
-    @UriPath @Metadata(required = "true")
-    private String name;
+    @UriParam
+    private AS2Configuration configuration;
 
     private Object apiProxy;
 
@@ -58,7 +57,11 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     public AS2Endpoint(String uri, AS2Component component,
                          AS2ApiName apiName, String methodName, AS2Configuration endpointConfiguration) {
         super(uri, component, apiName, methodName, AS2ApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
+        this.configuration = endpointConfiguration;
+    }
 
+    public AS2Configuration getAs2Configuration() {
+        return configuration;
     }
 
     public AS2ClientConnection getAS2ClientConnection() {
@@ -97,10 +100,10 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
     protected void afterConfigureProperties() {
         // create HTTP connection eagerly, a good way to validate configuration
         switch (apiName) {
-        case SEND:
+        case CLIENT:
             createAS2ClientConnection();
             break;
-        case LISTEN:
+        case SERVER:
             createAS2ServerConnection();
             break;
         default:
@@ -116,23 +119,12 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
         return apiProxy;
     }
 
-    /**
-     * Some description of this option, and what it does
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
     private void createApiProxy(ApiMethod method, Map<String, Object> args) {
         switch (apiName) {
-        case SEND:
+        case CLIENT:
             apiProxy = new AS2ClientManager(getAS2ClientConnection());
             break;
-        case LISTEN:
+        case SERVER:
             apiProxy = new AS2ServerManager(getAS2ServerConnection());
             break;
         default:

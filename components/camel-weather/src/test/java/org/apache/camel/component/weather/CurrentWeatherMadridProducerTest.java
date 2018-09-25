@@ -68,7 +68,7 @@ public class CurrentWeatherMadridProducerTest extends BaseWeatherConsumerTest {
         // as the default delay option is one hour long, we expect exactly one message exchange
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:start", "Hello World", WeatherConstants.WEATHER_LOCATION, "current");
+        template.sendBodyAndHeader("direct:start", "Hello World", WeatherConstants.WEATHER_LOCATION, "Rome,Italy");
 
         mock.assertIsSatisfied();
 
@@ -89,7 +89,7 @@ public class CurrentWeatherMadridProducerTest extends BaseWeatherConsumerTest {
                 
                 /* The Camel Route uses the apache-camel appid to access the openweathermap service */
                 from("direct:start")
-                    .to("weather:foo?location=Madrid,Spain&appid=9162755b2efa555823cfe0451d7fff38")
+                    .to("weather:foo?location=Madrid,Spain&appid=9162755b2efa555823cfe0451d7fff38&geolocationAccessKey=test&geolocationRequestHostIP=test")
                     .to("mock:result");
             }
         };

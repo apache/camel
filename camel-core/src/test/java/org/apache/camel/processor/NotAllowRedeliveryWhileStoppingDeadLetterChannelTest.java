@@ -23,12 +23,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.StopWatch;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class NotAllowRedeliveryWhileStoppingDeadLetterChannelTest extends ContextTestSupport {
 
+    @Test
     public void testRedelivery() throws Exception {
         StopWatch watch = new StopWatch();
 

@@ -19,6 +19,7 @@ package org.apache.camel.builder;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 import static org.apache.camel.builder.ExpressionBuilder.messageExpression;
 
@@ -27,6 +28,7 @@ import static org.apache.camel.builder.ExpressionBuilder.messageExpression;
  */
 public class ExpressionFunctionTest extends ContextTestSupport {
 
+    @Test
     public void testTransform() throws Exception {
         MockEndpoint functionMock = getMockEndpoint("mock:function");
         functionMock.expectedMessageCount(1);

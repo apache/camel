@@ -28,6 +28,7 @@ import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
+import io.fabric8.kubernetes.client.dsl.ServiceResource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
@@ -117,7 +118,7 @@ public class KubernetesServicesProducer extends DefaultProducer {
         String namespaceName = exchange.getIn().getHeader(
                 KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            NonNamespaceOperation<Service, ServiceList, DoneableService, Resource<Service, DoneableService>> services; 
+            NonNamespaceOperation<Service, ServiceList, DoneableService, ServiceResource<Service, DoneableService>> services; 
             services = getEndpoint().getKubernetesClient().services()
                     .inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {

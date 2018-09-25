@@ -189,7 +189,7 @@ public class SipPresenceAgentListener implements SipListener, SipMessageCodes {
 
     public void processTimeout(javax.sip.TimeoutEvent timeoutEvent) {
         if (LOG.isWarnEnabled()) {
-            LOG.warn("TimeoutEvent received at Sip Subscription Listener");
+            LOG.warn("TimeoutEvent received at Sip Presence Agent Listener");
         }
     }
 

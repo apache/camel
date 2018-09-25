@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -54,6 +55,11 @@ public class HystrixDefinition extends ProcessorDefinition<HystrixDefinition> {
     @Override
     public String toString() {
         return "Hystrix[" + getOutputs() + "]";
+    }
+
+    @Override
+    public String getShortName() {
+        return "hystrix";
     }
 
     @Override

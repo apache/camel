@@ -121,7 +121,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             LOG.trace("Creating endpoint uri=[{}], path=[{}], parameters=[{}]", URISupport.sanitizeUri(uri), URISupport.sanitizePath(path), parameters);
         } else if (LOG.isDebugEnabled()) {
             // but at debug level only output sanitized uris
-            LOG.debug("Creating endpoint uri=[{}], path=[{}]", new Object[]{URISupport.sanitizeUri(uri), URISupport.sanitizePath(path)});
+            LOG.debug("Creating endpoint uri=[{}], path=[{}]", URISupport.sanitizeUri(uri), URISupport.sanitizePath(path));
         }
         Endpoint endpoint = createEndpoint(uri, path, parameters);
         if (endpoint == null) {
@@ -344,14 +344,17 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      */
     public <T> T getAndRemoveParameter(Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
         Object value = parameters.remove(key);
-        if (value == null) {
+        if (value != null) {
+            // if we have a value then convert it
+            return CamelContextHelper.mandatoryConvertTo(getCamelContext(), type, value);
+        } else {
             value = defaultValue;
         }
         if (value == null) {
             return null;
         }
 
-        return CamelContextHelper.convertTo(getCamelContext(), type, value);
+        return CamelContextHelper.mandatoryConvertTo(getCamelContext(), type, value);
     }
 
     /**

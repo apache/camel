@@ -18,9 +18,11 @@ package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class AggregateStrategyServiceTest extends ContextTestSupport {
 
+    @Test
     public void testAggregate() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("StartedStartedABC");
 

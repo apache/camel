@@ -20,12 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  *
  */
 public class BeanAnnotationParameterTwoTest extends ContextTestSupport {
 
+    @Test
     public void testBeanAnnotationOne() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello/Bonjour World");
 
@@ -34,6 +36,7 @@ public class BeanAnnotationParameterTwoTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanAnnotationTwo() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello/Bonjour World");
 
@@ -42,6 +45,7 @@ public class BeanAnnotationParameterTwoTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanAnnotationThree() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello/Bonjour World");
 
@@ -50,6 +54,7 @@ public class BeanAnnotationParameterTwoTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanAnnotationFour() throws Exception {
         getMockEndpoint("mock:middle").expectedBodiesReceived("Hello/Bonjour World");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");

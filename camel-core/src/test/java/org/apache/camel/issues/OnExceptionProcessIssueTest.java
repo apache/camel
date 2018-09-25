@@ -21,12 +21,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class OnExceptionProcessIssueTest extends ContextTestSupport {
 
+    @Test
     public void testOnExceptionProcessIssue() throws Exception {
         Exchange out = template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {

@@ -44,7 +44,7 @@ for this component:
 
 
 // component options: START
-The Olingo2 component supports 3 options which are listed below.
+The Olingo2 component supports 3 options, which are listed below.
 
 
 
@@ -104,7 +104,33 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
 
+
+The component supports 14 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.olingo2.configuration.api-name* | What kind of operation to perform |  | Olingo2ApiName
+| *camel.component.olingo2.configuration.connect-timeout* | HTTP connection creation timeout in milliseconds, defaults to 30,000 (30 seconds) | 30000 | Integer
+| *camel.component.olingo2.configuration.content-type* | Content-Type header value can be used to specify JSON or XML message format, defaults to application/json;charset=utf-8 | application/json;charset=utf-8 | String
+| *camel.component.olingo2.configuration.http-async-client-builder* | Custom HTTP async client builder for more complex HTTP client configuration, overrides connectionTimeout, socketTimeout, proxy and sslContext. Note that a socketTimeout MUST be specified in the builder, otherwise OData requests could block indefinitely |  | HttpAsyncClientBuilder
+| *camel.component.olingo2.configuration.http-client-builder* | Custom HTTP client builder for more complex HTTP client configuration, overrides connectionTimeout, socketTimeout, proxy and sslContext. Note that a socketTimeout MUST be specified in the builder, otherwise OData requests could block indefinitely |  | HttpClientBuilder
+| *camel.component.olingo2.configuration.http-headers* | Custom HTTP headers to inject into every request, this could include OAuth tokens, etc. |  | Map
+| *camel.component.olingo2.configuration.method-name* | What sub operation to use for the selected operation |  | String
+| *camel.component.olingo2.configuration.proxy* | HTTP proxy server configuration |  | HttpHost
+| *camel.component.olingo2.configuration.service-uri* | Target OData service base URI, e.g. http://services.odata.org/OData/OData.svc |  | String
+| *camel.component.olingo2.configuration.socket-timeout* | HTTP request timeout in milliseconds, defaults to 30,000 (30 seconds) | 30000 | Integer
+| *camel.component.olingo2.configuration.ssl-context-parameters* | To configure security using SSLContextParameters |  | SSLContextParameters
+| *camel.component.olingo2.enabled* | Enable olingo2 component | true | Boolean
+| *camel.component.olingo2.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.olingo2.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
 
 ### Producer Endpoints
 

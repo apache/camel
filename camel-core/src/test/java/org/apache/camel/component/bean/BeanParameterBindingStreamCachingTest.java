@@ -21,12 +21,14 @@ import java.io.ByteArrayInputStream;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.language.Simple;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class BeanParameterBindingStreamCachingTest extends ContextTestSupport {
 
+    @Test
     public void testBean() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("abcABC");
 

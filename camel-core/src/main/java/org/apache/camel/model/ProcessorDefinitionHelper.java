@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
+
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
@@ -34,6 +35,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -741,7 +743,7 @@ public final class ProcessorDefinitionHelper {
                         }
                         changedProperties.put(name, value);
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Changed property [{}] from: {} to: {}", new Object[]{name, value, text});
+                            LOG.debug("Changed property [{}] from: {} to: {}", name, value, text);
                         }
                     }
                 }
@@ -779,14 +781,14 @@ public final class ProcessorDefinitionHelper {
 
                     // is the value a known field (currently we only support constants from Exchange.class)
                     if (text.startsWith("Exchange.")) {
-                        String field = ObjectHelper.after(text, "Exchange.");
+                        String field = StringHelper.after(text, "Exchange.");
                         String constant = ObjectHelper.lookupConstantFieldValue(Exchange.class, field);
                         if (constant != null) {
                             // invoke setter as the text has changed
                             IntrospectionSupport.setProperty(definition, name, constant);
                             changedProperties.put(name, value);
                             if (LOG.isDebugEnabled()) {
-                                LOG.debug("Changed property [{}] from: {} to: {}", new Object[]{name, value, constant});
+                                LOG.debug("Changed property [{}] from: {} to: {}", name, value, constant);
                             }
                         } else {
                             throw new IllegalArgumentException("Constant field with name: " + field + " not found on Exchange.class");

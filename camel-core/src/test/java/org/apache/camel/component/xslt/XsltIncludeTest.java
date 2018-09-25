@@ -19,12 +19,14 @@ package org.apache.camel.component.xslt;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  *
  */
 public class XsltIncludeTest extends ContextTestSupport {
 
+    @Test
     public void testXsltInclude() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

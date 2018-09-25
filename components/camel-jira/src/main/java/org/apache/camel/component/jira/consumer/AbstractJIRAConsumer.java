@@ -53,7 +53,7 @@ public abstract class AbstractJIRAConsumer extends ScheduledPollConsumer {
         Registry registry = endpoint.getCamelContext().getRegistry();
         Object target = registry.lookupByName("JerseyJiraRestClientFactory");
         if (target != null) {
-            LOG.debug("JerseyJiraRestClientFactory found in registry " + target.getClass().getCanonicalName());
+            LOG.debug("JerseyJiraRestClientFactory found in registry {}", target.getClass().getCanonicalName());
             factory = (JerseyJiraRestClientFactory) target;
         } else {
             factory = new JerseyJiraRestClientFactory();

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.xmlrpc;
-
 import java.util.HashMap;
 
 import org.apache.camel.CamelExecutionException;

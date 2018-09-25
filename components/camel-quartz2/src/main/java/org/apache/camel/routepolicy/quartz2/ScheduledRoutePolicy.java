@@ -128,7 +128,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
         getScheduler().scheduleJob(jobDetail, trigger);
 
         if (LOG.isInfoEnabled()) {
-            LOG.info("Scheduled trigger: {} for action: {} on route {}", new Object[]{trigger.getKey(), action, route.getId()});
+            LOG.info("Scheduled trigger: {} for action: {} on route {}", trigger.getKey(), action, route.getId());
         }
     }
 

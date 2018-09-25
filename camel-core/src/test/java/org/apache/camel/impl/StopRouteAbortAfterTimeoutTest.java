@@ -21,9 +21,11 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class StopRouteAbortAfterTimeoutTest extends ContextTestSupport {
 
+    @Test
     public void testStopRouteWithAbortAfterTimeoutTrue() throws Exception {
         // doesnt test to well on all Windows
         if (isPlatform("windows")) {
@@ -53,6 +55,7 @@ public class StopRouteAbortAfterTimeoutTest extends ContextTestSupport {
         mockEP.assertIsSatisfied();
     }
     
+    @Test
     public void testStopRouteWithAbortAfterTimeoutFalse() throws Exception {
         // doesnt test to well on all Windows
         if (isPlatform("windows")) {

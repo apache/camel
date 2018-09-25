@@ -30,6 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.ExpressionBuilder;
+import org.junit.Test;
 
 /**
  * Unit test for reference properties
@@ -101,6 +102,7 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
         return jndi;
     }
 
+    @Test
     public void testEmptyPath() throws Exception {
         DefaultComponent component = new DefaultComponent(context) {
             @Override
@@ -117,6 +119,7 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
         component.createEndpoint("foo://?name=Christian");
     }
 
+    @Test
     public void testOnlyStringSetter() throws Exception {
         MyComponent component = new MyComponent(context);
         MyEndpoint endpoint = (MyEndpoint) component.createEndpoint("foo://?name=Claus");
@@ -126,6 +129,7 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
         assertNull(endpoint.stringExpression);
     }
 
+    @Test
     public void testCallStringSetter() throws Exception {
         MyComponent component = new MyComponent(context);
         MyEndpoint endpoint = (MyEndpoint) component.createEndpoint("foo://?expression=hello");
@@ -135,6 +139,7 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
         assertNull(endpoint.name);
     }
 
+    @Test
     public void testNoBeanInRegistryThenCallStringSetter() throws Exception {
         MyComponent component = new MyComponent(context);
         MyEndpoint endpoint = (MyEndpoint) component.createEndpoint("foo://?expression=#hello");
@@ -144,6 +149,7 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
         assertNull(endpoint.name);
     }
 
+    @Test
     public void testCallExpressionSetter() throws Exception {
         MyComponent component = new MyComponent(context);
         MyEndpoint endpoint = (MyEndpoint) component.createEndpoint("foo://?expression=#myExpression");
@@ -158,6 +164,7 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
         assertEquals("Hello World", endpoint.expression.evaluate(exchange, String.class));
     }
 
+    @Test
     public void testCallSingleExpressionSetter() throws Exception {
         MyComponent component = new MyComponent(context);
         MyEndpoint endpoint = (MyEndpoint) component.createEndpoint("foo://?special=#myExpression");
@@ -173,6 +180,7 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
         assertEquals("Hello World", endpoint.special.evaluate(exchange, String.class));
     }
 
+    @Test
     public void testTypoInParameter() throws Exception {
         MyComponent component = new MyComponent(context);
         try {
@@ -183,6 +191,7 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
         }
     }
 
+    @Test
     public void testTypoInParameterValue() throws Exception {
         MyComponent component = new MyComponent(context);
         try {

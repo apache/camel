@@ -11,11 +11,13 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 102 (8 deprecated)
+Number of Examples: 109 (8 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |===
 | Example | Category | Description
+
+| link:camel-example-micrometer/README.md[Micrometer] (camel-example-micrometer) | Advanced | An example showing how to work with Camel, Spring Java Config and Micrometer monitoring
 
 | link:camel-example-cdi/README.md[CDI] (camel-example-cdi) | Beginner | An example showing how to work with Camel and CDI for dependency injection
 
@@ -34,7 +36,7 @@ Number of Examples: 102 (8 deprecated)
 
 | link:camel-example-reload/Readme.md[Reload] (camel-example-reload) | Beginner | An example that live reloads routes when the XML file is updated
 
-| link:camel-example-rest-swagger/README.md[Rest Swagger] (camel-example-rest-swagger) | Beginner | This example shows how to call a REST service defined using Swagger specification
+| link:camel-example-rest-swagger/README.md[REST Swagger] (camel-example-rest-swagger) | Beginner | This example shows how to call a REST service defined using Swagger specification
 
 | link:camel-example-servlet-tomcat/README.md[Servlet Tomcat] (camel-example-servlet-tomcat) | Beginner | An example using Camel Servlet with Apache Tomcat
 
@@ -48,17 +50,11 @@ Number of Examples: 102 (8 deprecated)
 
 | link:camel-example-spring-boot-pojo/README.adoc[Spring Boot Pojo] (camel-example-spring-boot-pojo) | Beginner | An example showing how to work with Camel POJO routing with Spring Boot
 
-| link:camel-example-spring-boot-xml/readme.adoc[Spring Boot Xml] (camel-example-spring-boot-xml) | Beginner | An example showing how to work with Camel routes in XML files and Spring Boot
+| link:camel-example-spring-boot-xml/readme.adoc[Spring Boot XML] (camel-example-spring-boot-xml) | Beginner | An example showing how to work with Camel routes in XML files and Spring Boot
 
 | link:camel-example-spring-javaconfig/README.md[Spring Java Config] (camel-example-spring-javaconfig) | Beginner | An example showing how to work with Camel and Spring Java Config
 
 | link:camel-example-spring-xquery/README.md[Spring XQuery] (camel-example-spring-xquery) | Beginner | An example using Spring XML to transform a message using XQuery
-
-| link:camel-example-widget-gadget-cdi/README.md[Widget Gadget CDI] (camel-example-widget-gadget-cdi) | Beginner | The widget and gadget example from the EIP book
-
-| link:camel-example-widget-gadget-java/README.md[Widget Gadget Java] (camel-example-widget-gadget-java) | Beginner | The widget and gadget example from the EIP book
-
-| link:camel-example-widget-gadget-xml/README.md[Widget Gadget XML] (camel-example-widget-gadget-xml) | Beginner | The widget and gadget example from the EIP book
 
 | link:camel-example-cassandra-kubernetes/ReadMe.md[Cassandra Kubernetes] (camel-example-cassandra-kubernetes) | Cloud | An example with Camel and Cassandra running on Kubernetes
 
@@ -66,17 +62,19 @@ Number of Examples: 102 (8 deprecated)
 
 | link:camel-example-cdi-kubernetes/README.md[CDI Kubernetes] (camel-example-cdi-kubernetes) | Cloud | An example running Camel CDI on Kubernetes
 
-| link:camel-example-grpc-kubernetes/README.adoc[Grpc Kubernetes] (camel-example-grpc-kubernetes) | Cloud | An example showing the Camel gRPC component with Spring Boot running on Kubernetes
+| link:camel-example-grpc-kubernetes/README.adoc[gRPC Kubernetes] (camel-example-grpc-kubernetes) | Cloud | An example showing the Camel gRPC component with Spring Boot running on Kubernetes
 
 | link:camel-example-hazelcast-kubernetes/ReadMe.md[Hazelcast Kubernetes] (camel-example-hazelcast-kubernetes) | Cloud | An example with Camel and Hazelcast running on Kubernetes
 
-| link:camel-example-spring-boot-grpc/README.adoc[Spring Boot Grpc] (camel-example-spring-boot-grpc) | Cloud | An example showing the Camel gRPC component with Spring Boot
+| link:camel-example-spring-boot-grpc/README.adoc[gRPC Spring Boot] (camel-example-spring-boot-grpc) | Cloud | An example showing the Camel gRPC component with Spring Boot
 
 | link:camel-example-spring-boot-infinispan/README.adoc[Spring Boot Infinispan] (camel-example-spring-boot-infinispan) | Cloud | An example showing the Camel Infinispan component with Spring Boot
 
-| link:camel-example-spring-boot-servicecall/README.adoc[Spring Boot Servicecall] (camel-example-spring-boot-servicecall) | Cloud | An example showing how to work with Camel ServiceCall EIP and Spring Boot
+| link:camel-example-spring-boot-servicecall/README.adoc[Spring Boot ServiceCall] (camel-example-spring-boot-servicecall) | Cloud | An example showing how to work with Camel ServiceCall EIP and Spring Boot
 
 | link:camel-example-spring-cloud-servicecall/README.adoc[Spring Cloud Servicecall] (camel-example-spring-cloud-servicecall) | Cloud | An example showing how to work with Camel ServiceCall EIP and Spring Cloud
+
+| link:camel-example-spring-cloud-serviceregistry/README.adoc[Spring Cloud ServiceRegistry] (camel-example-spring-cloud-serviceregistry) | Cloud | An example showing how to work with Camel Service registry and Spring Cloud
 
 | link:camel-example-spring-boot-clustered-route-controller/readme.adoc[Spring Boot Clustered Route Controller] (camel-example-spring-boot-clustered-route-controller) | Clustering | An example showing how to work with Camel's Clustered Route Controller and Spring Boot
 
@@ -105,6 +103,20 @@ Number of Examples: 102 (8 deprecated)
 | link:camel-example-route-throttling/README.md[Route Throttling] (camel-example-route-throttling) | EIP | A client-server example using JMS transport where we on the server side can throttle the Camel
     route dynamically based on the flow of messages
   
+
+| link:camel-example-widget-gadget-cdi/README.md[Widget Gadget CDI] (camel-example-widget-gadget-cdi) | EIP | The widget and gadget example from the EIP book
+
+| link:camel-example-widget-gadget-java/README.md[Widget Gadget Java] (camel-example-widget-gadget-java) | EIP | The widget and gadget example from the EIP book
+
+| link:camel-example-widget-gadget-xml/README.md[Widget Gadget XML] (camel-example-widget-gadget-xml) | EIP | The widget and gadget example from the EIP book
+
+| link:camel-example-fhir/README.md[FHIR] (camel-example-fhir) | Health Care | An example running Camel FHIR using Camel CDI 
+
+| link:camel-example-fhir-auth-tx-spring-boot/readme.adoc[Fhir Auth Tx Spring Boot] (camel-example-fhir-auth-tx-spring-boot) | Health Care | An example showing how to work with Camel, FHIR Authorization, FHIR Transaction and Spring Boot
+
+| link:camel-example-fhir-osgi/README.md[Fhir Osgi] (camel-example-fhir-osgi) | Health Care | An example running Camel FHIR in Apache Karaf
+
+| link:camel-example-fhir-spring-boot/readme.adoc[Fhir Spring Boot] (camel-example-fhir-spring-boot) | Health Care | An example showing how to work with Camel, Fhir and Spring Boot
 
 | link:camel-example-transformer-blueprint/README.md[Transformer OSGi Blueprint] (camel-example-transformer-blueprint) | Input/Output Type Contract | An example demonstrating declarative transformation along data type declaration using OSGi Blueprint XML
 
@@ -162,6 +174,8 @@ Number of Examples: 102 (8 deprecated)
 | link:camel-example-cdi-osgi/README.md[CDI OSGi] (camel-example-cdi-osgi) | OSGi | *deprecated* PAX CDI example
 
 | link:camel-example-cxf-blueprint/README.md[CXF Blueprint] (camel-example-cxf-blueprint) | OSGi | An example which use a CXF consumer and the OSGI HTTP Service
+
+| link:camel-example-ehcache-blueprint/README.md[Ehcache Blueprint] (camel-example-ehcache-blueprint) | OSGi | An example using Ehcache with OSGi Blueprint
 
 | link:camel-example-netty-http/README.md[Netty HTTP] (camel-example-netty-http) | OSGi | An example showing how to use a shared Netty HTTP server with multiple Camel applications in OSGi container
 

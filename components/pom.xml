@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.22.0-SNAPSHOT</version>
+    <version>2.23.0-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -41,6 +41,8 @@
     <module>camel-test-cdi</module>
     <module>camel-test-karaf</module>
     <module>camel-test-spring</module>
+    <module>camel-testcontainers</module>
+    <module>camel-testcontainers-spring</module>
     <module>camel-core-osgi</module>
     <module>camel-core-xml</module>
     <module>camel-blueprint</module>
@@ -56,10 +58,12 @@
     <module>camel-jetty-common</module>
     <module>camel-jetty</module>
     <module>camel-jetty9</module>
+    <module>camel-undertow</module>
     <module>camel-cxf</module>
     <module>camel-cxf-transport</module>
     <module>camel-jms</module>
     <module>camel-master</module>
+    <module>camel-service</module>
 
     <!-- build it first so it can be used by other component to test i.e. ServiceCall EIP -->
     <module>camel-ribbon</module>
@@ -278,7 +282,9 @@
     <module>camel-spring-batch</module>
     <module>camel-spring-boot</module>
     <module>camel-spring-cloud</module>
+    <module>camel-spring-cloud-consul</module>
     <module>camel-spring-cloud-netflix</module>
+    <module>camel-spring-cloud-zookeeper</module>
     <module>camel-spring-javaconfig</module>
     <module>camel-spring-integration</module>
     <module>camel-spring-ldap</module>
@@ -301,7 +307,6 @@
     <module>camel-thrift</module>
     <module>camel-twilio</module>
     <module>camel-twitter</module>
-    <module>camel-undertow</module>
     <module>camel-univocity-parsers</module>
     <module>camel-urlrewrite</module>
     <module>camel-velocity</module>

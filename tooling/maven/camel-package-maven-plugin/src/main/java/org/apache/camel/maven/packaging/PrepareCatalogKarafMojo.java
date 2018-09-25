@@ -154,8 +154,12 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
                             continue;
                         }
 
-                        // special for camel-salesforce which is in a sub dir
-                        if ("camel-salesforce".equals(dir.getName())) {
+                        // special for some components which is in a sub dir
+                        if ("camel-as2".equals(dir.getName())) {
+                            target = new File(dir, "camel-as2-component/target/classes");
+                        } else if ("camel-box".equals(dir.getName())) {
+                            target = new File(dir, "camel-box-component/target/classes");
+                        } else if ("camel-salesforce".equals(dir.getName())) {
                             target = new File(dir, "camel-salesforce-component/target/classes");
                         } else if ("camel-linkedin".equals(dir.getName())) {
                             target = new File(dir, "camel-linkedin-component/target/classes");
@@ -379,11 +383,12 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
                     // (camel-jetty is a placeholder, as camel-jetty9 is the actual component)
                     boolean special = "camel-core-osgi".equals(dir.getName())
                         || "camel-core-xml".equals(dir.getName())
-                        || "camel-box".equals(dir.getName())
                         || "camel-http-common".equals(dir.getName())
                         || "camel-jetty".equals(dir.getName())
                         || "camel-jetty-common".equals(dir.getName());
-                    boolean special2 = "camel-linkedin".equals(dir.getName())
+                    boolean special2 = "camel-as2".equals(dir.getName())
+                        || "camel-box".equals(dir.getName())
+                        || "camel-linkedin".equals(dir.getName())
                         || "camel-olingo2".equals(dir.getName())
                         || "camel-olingo4".equals(dir.getName())
                         || "camel-servicenow".equals(dir.getName())

@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.junit.Test;
 
 /**
  * @version 
@@ -33,6 +34,7 @@ public class TypeConverterRegistryStatisticsEnabledTest extends ContextTestSuppo
         return context;
     }
 
+    @Test
     public void testTypeConverterRegistry() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(2);
 

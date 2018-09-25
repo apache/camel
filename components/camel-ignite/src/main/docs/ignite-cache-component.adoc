@@ -13,7 +13,7 @@ Even if you configure a fixed operation in the endpoint URI, you can vary it per
 ### Options
 
 // component options: START
-The Ignite Cache component supports 4 options which are listed below.
+The Ignite Cache component supports 4 options, which are listed below.
 
 
 
@@ -64,12 +64,31 @@ with the following path and query parameters:
 | *timeInterval* (consumer) | The time interval for the Continuous Query Consumer. | 0 | long
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *cachePeekMode* (producer) | The CachePeekMode, only needed for operations that require it (link IgniteCacheOperationSIZE). | ALL | CachePeekMode
+| *cachePeekMode* (producer) | The CachePeekMode, only needed for operations that require it (IgniteCacheOperation#SIZE). | ALL | CachePeekMode
 | *failIfInexistentCache* (producer) | Whether to fail the initialization if the cache doesn't exist. | false | boolean
 | *operation* (producer) | The cache operation to invoke. Possible values: GET, PUT, REMOVE, SIZE, REBALANCE, QUERY, CLEAR. |  | IgniteCacheOperation
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.ignite-cache.configuration-resource* | Sets the resource from where to load the configuration. It can be a: URI, String (URI) or an InputStream. The option is a java.lang.Object type. |  | String
+| *camel.component.ignite-cache.enabled* | Enable ignite-cache component | true | Boolean
+| *camel.component.ignite-cache.ignite* | Sets the Ignite instance. The option is a org.apache.ignite.Ignite type. |  | String
+| *camel.component.ignite-cache.ignite-configuration* | Allows the user to set a programmatic IgniteConfiguration. The option is a org.apache.ignite.configuration.IgniteConfiguration type. |  | String
+| *camel.component.ignite-cache.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 #### Headers used

@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests to ensure that 
@@ -29,16 +30,19 @@ import org.apache.camel.ContextTestSupport;
 public class FileProducerAllowNullBodyTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/allow");
         super.setUp();
     }
 
+    @Test
     public void testAllowNullBodyTrue() throws Exception {
         template.sendBody("file://target/allow?allowNullBody=true&fileName=allowNullBody.txt", null);
         assertFileExists("target/allow/allowNullBody.txt");
     }
     
+    @Test
     public void testAllowNullBodyFalse() throws Exception {
         try {
             template.sendBody("file://target/allow?fileName=allowNullBody.txt", null);

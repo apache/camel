@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 public class TopicLoadBalanceTest extends ContextTestSupport {
     protected MockEndpoint x;
@@ -26,7 +27,8 @@ public class TopicLoadBalanceTest extends ContextTestSupport {
     protected MockEndpoint z;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         x = getMockEndpoint("mock:x");
@@ -43,6 +45,7 @@ public class TopicLoadBalanceTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testTopicManyMessages() throws Exception {
         // they should all get the message
         x.expectedMessageCount(10);
@@ -56,6 +59,7 @@ public class TopicLoadBalanceTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTopic() throws Exception {
 
         // they should all get the message

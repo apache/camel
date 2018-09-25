@@ -48,7 +48,7 @@ The Box component supports three different types of authenticated connections.
 === Box Options
 
 // component options: START
-The Box component supports 2 options which are listed below.
+The Box component supports 2 options, which are listed below.
 
 
 
@@ -108,6 +108,36 @@ with the following path and query parameters:
 | *userPassword* (security) | Box user password, MUST be provided if authSecureStorage is not set, or returns null on first call |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 17 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.box.configuration.access-token-cache* | Custom Access Token Cache for storing and retrieving access tokens. |  | IAccessTokenCache
+| *camel.component.box.configuration.api-name* | What kind of operation to perform |  | BoxApiName
+| *camel.component.box.configuration.authentication-type* | The type of authentication for connection. Types of Authentication: STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION - OAuth 2.0 with JSON Web Tokens | APP_USER_AUTHENTICATION | String
+| *camel.component.box.configuration.client-id* | Box application client ID |  | String
+| *camel.component.box.configuration.client-secret* | Box application client secret |  | String
+| *camel.component.box.configuration.enterprise-id* | The enterprise ID to use for an App Enterprise. |  | String
+| *camel.component.box.configuration.http-params* | Custom HTTP params for settings like proxy host |  | Map
+| *camel.component.box.configuration.method-name* | What sub operation to use for the selected operation |  | String
+| *camel.component.box.configuration.private-key-file* | The private key for generating the JWT signature. |  | String
+| *camel.component.box.configuration.private-key-password* | The password for the private key. |  | String
+| *camel.component.box.configuration.public-key-id* | The ID for public key for validating the JWT signature. |  | String
+| *camel.component.box.configuration.ssl-context-parameters* | To configure security using SSLContextParameters. |  | SSLContextParameters
+| *camel.component.box.configuration.user-id* | The user ID to use for an App User. |  | String
+| *camel.component.box.configuration.user-name* | Box user name, MUST be provided |  | String
+| *camel.component.box.configuration.user-password* | Box user password, MUST be provided if authSecureStorage is not set, or returns null on first call |  | String
+| *camel.component.box.enabled* | Enable box component | true | Boolean
+| *camel.component.box.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
 
 === URI format
 

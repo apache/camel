@@ -18,6 +18,8 @@ package org.apache.camel.spring.processor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.junit.Test;
+
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
@@ -29,6 +31,7 @@ public class SpringInterceptSendToEndpointWhenTest extends ContextTestSupport {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/interceptSendToEndpointWhen.xml");
     }
 
+    @Test
     public void testInterceptEndpointWhen() throws Exception {
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World", "Hi");
         getMockEndpoint("mock:detour").expectedBodiesReceived("Hello World");

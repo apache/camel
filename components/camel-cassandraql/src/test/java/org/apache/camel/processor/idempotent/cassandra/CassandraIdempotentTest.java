@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.idempotent.cassandra;
-
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cassandra.BaseCassandraTest;
 import org.apache.camel.component.cassandra.CassandraUnitUtils;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.After;
 import org.junit.Test;
 
 /**
@@ -47,6 +47,7 @@ public class CassandraIdempotentTest extends BaseCassandraTest {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         if (canTest()) {

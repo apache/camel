@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.tarfile;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -37,6 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.apache.camel.Exchange.FILE_NAME;
@@ -221,6 +221,7 @@ public class TarFileDataFormatTest extends CamelTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory(TEST_DIR);
         super.setUp();

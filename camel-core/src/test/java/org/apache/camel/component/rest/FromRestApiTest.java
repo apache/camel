@@ -21,6 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.junit.Test;
 
 public class FromRestApiTest extends ContextTestSupport {
 
@@ -32,6 +33,7 @@ public class FromRestApiTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testFromRestModel() throws Exception {
         assertEquals(1, context.getRestDefinitions().size());
         RestDefinition rest = context.getRestDefinitions().get(0);

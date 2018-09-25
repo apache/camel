@@ -33,6 +33,11 @@ public class DirectComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the direct component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * If sending a message to a direct endpoint which has no active consumer,
      * then we can tell the producer to block and wait for the consumer to
      * become active.

@@ -19,6 +19,7 @@ package org.apache.camel.component.rabbitmq;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.net.ssl.TrustManager;
 
 import com.rabbitmq.client.Address;
@@ -59,6 +60,8 @@ public class RabbitMQComponent extends UriEndpointComponent {
     private boolean autoDelete = true;
     @Metadata(label = "common", defaultValue = "true")
     private boolean durable = true;
+    @Metadata(label = "consumer")
+    private boolean exclusiveConsumer;
     @Metadata(label = "common")
     private boolean exclusive;
     @Metadata(label = "common")
@@ -79,6 +82,8 @@ public class RabbitMQComponent extends UriEndpointComponent {
     private String deadLetterQueue;
     @Metadata(label = "common", defaultValue = "direct", enums = "direct,fanout,headers,topic")
     private String deadLetterExchangeType = "direct";
+    @Metadata(label = "producer")
+    private boolean allowNullHeaders;
     @Metadata(label = "security")
     private String sslProtocol;
     @Metadata(label = "security")
@@ -229,6 +234,7 @@ public class RabbitMQComponent extends UriEndpointComponent {
         endpoint.setAutoDelete(isAutoDelete());
         endpoint.setDurable(isDurable());
         endpoint.setExclusive(isExclusive());
+        endpoint.setExclusiveConsumer(isExclusiveConsumer());
         endpoint.setPassive(isPassive());
         endpoint.setSkipExchangeDeclare(isSkipExchangeDeclare());
         endpoint.setSkipQueueBind(isSkipQueueBind());
@@ -238,6 +244,7 @@ public class RabbitMQComponent extends UriEndpointComponent {
         endpoint.setDeadLetterExchangeType(getDeadLetterExchangeType());
         endpoint.setDeadLetterQueue(getDeadLetterQueue());
         endpoint.setDeadLetterRoutingKey(getDeadLetterRoutingKey());
+        endpoint.setAllowNullHeaders(isAllowNullHeaders());
         setProperties(endpoint, params);
 
         if (LOG.isDebugEnabled()) {
@@ -259,6 +266,8 @@ public class RabbitMQComponent extends UriEndpointComponent {
         endpoint.getExchangeArgs().putAll(IntrospectionSupport.extractProperties(argsCopy, EXCHANGE_ARG_PREFIX));
         endpoint.getQueueArgs().putAll(IntrospectionSupport.extractProperties(argsCopy, QUEUE_ARG_PREFIX));
         endpoint.getBindingArgs().putAll(IntrospectionSupport.extractProperties(argsCopy, BINDING_ARG_PREFIX));
+        // Change null headers processing for message converter
+        endpoint.getMessageConverter().setAllowNullHeaders(endpoint.isAllowNullHeaders());
 
         return endpoint;
     }
@@ -268,7 +277,7 @@ public class RabbitMQComponent extends UriEndpointComponent {
     }
 
     /**
-     * The hostname of the running rabbitmq instance or cluster.
+     * The hostname of the running RabbitMQ instance or cluster.
      */
     public void setHostname(String hostname) {
         this.hostname = hostname;
@@ -742,6 +751,18 @@ public class RabbitMQComponent extends UriEndpointComponent {
         this.exclusive = exclusive;
     }
 
+    public boolean isExclusiveConsumer() {
+        return exclusiveConsumer;
+    }
+
+    /**
+     * Request exclusive access to the queue (meaning only this consumer can access the queue). This is useful
+     * when you want a long-lived shared queue to be temporarily accessible by just one consumer.
+     */
+    public void setExclusiveConsumer(boolean exclusiveConsumer) {
+        this.exclusiveConsumer = exclusiveConsumer;
+    }
+
     public boolean isPassive() {
         return passive;
     }
@@ -844,4 +865,14 @@ public class RabbitMQComponent extends UriEndpointComponent {
         this.deadLetterExchangeType = deadLetterExchangeType;
     }
 
+    /**
+     * Allow pass null values to header
+     */
+    public boolean isAllowNullHeaders() {
+        return allowNullHeaders;
+    }
+
+    public void setAllowNullHeaders(boolean allowNullHeaders) {
+        this.allowNullHeaders = allowNullHeaders;
+    }
 }

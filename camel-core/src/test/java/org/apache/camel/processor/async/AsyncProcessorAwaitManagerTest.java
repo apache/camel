@@ -23,12 +23,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class AsyncProcessorAwaitManagerTest extends ContextTestSupport {
 
+    @Test
     public void testAsyncAwait() throws Exception {
         context.getAsyncProcessorAwaitManager().getStatistics().setStatisticsEnabled(true);
 

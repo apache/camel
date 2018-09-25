@@ -45,7 +45,7 @@ public class PullRequestStateProducer extends AbstractGitHubProducer {
         Registry registry = endpoint.getCamelContext().getRegistry();
         Object service = registry.lookupByName(GitHubConstants.GITHUB_COMMIT_SERVICE);
         if (service != null) {
-            LOG.debug("Using CommitService found in registry " + service.getClass().getCanonicalName());
+            LOG.debug("Using CommitService found in registry {}", service.getClass().getCanonicalName());
             commitService = (CommitService) service;
         } else {
             commitService = new CommitService();

@@ -25,6 +25,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.impl.converter.StaticMethodTypeConverter;
 import org.apache.camel.util.StopWatch;
+import org.junit.Test;
 
 /**
  * Testing for CAMEL-5002
@@ -33,6 +34,7 @@ public class TypeConverterConcurrencyIssueTest extends ContextTestSupport {
 
     private int size = 100 * 1000;
     
+    @Test
     public void testTypeConverter() throws Exception {
         // add as type converter
         Method method = TypeConverterConcurrencyIssueTest.class.getMethod("toMyCamelBean", String.class);

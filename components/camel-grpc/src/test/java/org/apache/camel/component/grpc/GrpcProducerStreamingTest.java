@@ -23,7 +23,6 @@ import java.util.List;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
@@ -132,8 +131,6 @@ public class GrpcProducerStreamingTest extends CamelTestSupport {
 
         @Override
         public StreamObserver<PingRequest> pingAsyncAsync(StreamObserver<PongResponse> responseObserver) {
-
-            @SuppressWarnings({"unchecked", "rawtypes"})
             StreamObserver<PingRequest> requestObserver = new StreamObserver<PingRequest>() {
 
                 private List<PingRequest> streamRequests = new LinkedList<>();

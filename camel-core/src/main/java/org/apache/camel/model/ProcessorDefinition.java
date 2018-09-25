@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
@@ -312,8 +313,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             log.trace("{} is part of OnException so no error handler is applied", defn);
             // do not use error handler for onExceptions blocks as it will handle errors itself
         } else if (defn instanceof HystrixDefinition || ProcessorDefinitionHelper.isParentOfType(HystrixDefinition.class, defn, true)) {
-            log.trace("{} is part of HystrixCircuitBreaker so no error handler is applied", defn);
-            // do not use error handler for hystrixCircuitBreaker blocks as it will handle errors itself
+            // do not use error handler for hystrix as it offers circuit breaking with fallback for its outputs
+            // however if inherit error handler is enabled, we need to wrap an error handler on the hystrix parent
+            if (inheritErrorHandler != null && inheritErrorHandler && child == null) {
+                // only wrap the parent (not the children of the hystrix)
+                wrapChannelInErrorHandler(channel, routeContext, inheritErrorHandler);
+            } else {
+                log.trace("{} is part of HystrixCircuitBreaker so no error handler is applied", defn);
+            }
         } else if (defn instanceof MulticastDefinition) {
             // do not use error handler for multicast as it offers fine grained error handlers for its outputs
             // however if share unit of work is enabled, we need to wrap an error handler on the multicast parent
@@ -2281,6 +2288,48 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public ThrottleDefinition throttle(Expression maximumRequestCount) {
         ThrottleDefinition answer = new ThrottleDefinition(maximumRequestCount);
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/throttler.html">Throttler EIP:</a>
+     * Creates a throttler allowing you to ensure that a specific endpoint does not get overloaded,
+     * or that we don't exceed an agreed SLA with some external service.
+     * Here another parameter correlationExpressionKey is introduced for the functionality which
+     * will throttle based on the key expression to group exchanges. This will make key-based throttling
+     * instead of overall throttling.
+     * <p/>
+     * Will default use a time period of 1 second, so setting the maximumRequestCount to eg 10
+     * will default ensure at most 10 messages per second.
+     *
+     * @param maximumRequestCount  an expression to calculate the maximum request count
+     * @param correlationExpressionKey  is a correlation key that can throttle by the given key instead of overall throttling
+     * @return the builder
+     */
+    public ThrottleDefinition throttle(Expression maximumRequestCount, long correlationExpressionKey) {
+        ThrottleDefinition answer = new ThrottleDefinition(maximumRequestCount, ExpressionBuilder.constantExpression(correlationExpressionKey));
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/throttler.html">Throttler EIP:</a>
+     * Creates a throttler allowing you to ensure that a specific endpoint does not get overloaded,
+     * or that we don't exceed an agreed SLA with some external service.
+     * Here another parameter correlationExpressionKey is introduced for the functionality which
+     * will throttle based on the key expression to group exchanges. This will make key-based throttling
+     * instead of overall throttling.
+     * <p/>
+     * Will default use a time period of 1 second, so setting the maximumRequestCount to eg 10
+     * will default ensure at most 10 messages per second.
+     *
+     * @param maximumRequestCount  an expression to calculate the maximum request count
+     * @param correlationExpressionKey  is a correlation key as an expression that can throttle by the given key instead of overall throttling
+     * @return the builder
+     */
+    public ThrottleDefinition throttle(Expression maximumRequestCount, Expression correlationExpressionKey) {
+        ThrottleDefinition answer = new ThrottleDefinition(maximumRequestCount, correlationExpressionKey);
         addOutput(answer);
         return answer;
     }

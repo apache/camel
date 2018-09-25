@@ -14,7 +14,7 @@ The endpoint tries to run the object passed in the body of the IN message as the
 ### Options
 
 // component options: START
-The Ignite Compute component supports 4 options which are listed below.
+The Ignite Compute component supports 4 options, which are listed below.
 
 
 
@@ -54,15 +54,34 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *clusterGroupExpression* (producer) | An expression that returns the Cluster Group for the IgniteCompute instance. |  | ClusterGroupExpression
-| *computeName* (producer) | The name of the compute job, which will be set via link IgniteComputewithName(String). |  | String
+| *computeName* (producer) | The name of the compute job, which will be set via IgniteCompute#withName(String). |  | String
 | *executionType* (producer) | *Required* The compute operation to perform. Possible values: CALL, BROADCAST, APPLY, EXECUTE, RUN, AFFINITY_CALL, AFFINITY_RUN. The component expects different payload types depending on the operation. |  | IgniteComputeExecution Type
 | *propagateIncomingBodyIfNo ReturnValue* (producer) | Sets whether to propagate the incoming body if the return type of the underlying Ignite operation is void. | true | boolean
-| *taskName* (producer) | The task name, only applicable if using the link IgniteComputeExecutionTypeEXECUTE execution type. |  | String
-| *timeoutMillis* (producer) | The timeout interval for triggered jobs, in milliseconds, which will be set via link IgniteComputewithTimeout(long). |  | Long
+| *taskName* (producer) | The task name, only applicable if using the IgniteComputeExecutionType#EXECUTE execution type. |  | String
+| *timeoutMillis* (producer) | The timeout interval for triggered jobs, in milliseconds, which will be set via IgniteCompute#withTimeout(long). |  | Long
 | *treatCollectionsAsCache Objects* (producer) | Sets whether to treat Collections as cache objects or as Collections of items to insert/update/compute, etc. | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.ignite-compute.configuration-resource* | Sets the resource from where to load the configuration. It can be a: URI, String (URI) or an InputStream. The option is a java.lang.Object type. |  | String
+| *camel.component.ignite-compute.enabled* | Enable ignite-compute component | true | Boolean
+| *camel.component.ignite-compute.ignite* | Sets the Ignite instance. The option is a org.apache.ignite.Ignite type. |  | String
+| *camel.component.ignite-compute.ignite-configuration* | Allows the user to set a programmatic IgniteConfiguration. The option is a org.apache.ignite.configuration.IgniteConfiguration type. |  | String
+| *camel.component.ignite-compute.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 #### Expected payload types

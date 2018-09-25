@@ -20,9 +20,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
+import org.junit.Test;
 
 public class IdempotentConsumerDslTest extends ContextTestSupport {
 
+    @Test
     public void testDuplicateMessages() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("one", "two", "three");

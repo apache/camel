@@ -20,12 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class AdviceWithCBRTest extends ContextTestSupport {
 
+    @Test
     public void testAdviceCBR() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         route.adviceWith(context, new AdviceWithRouteBuilder() {
@@ -49,6 +51,7 @@ public class AdviceWithCBRTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAdviceToStringCBR() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         route.adviceWith(context, new AdviceWithRouteBuilder() {

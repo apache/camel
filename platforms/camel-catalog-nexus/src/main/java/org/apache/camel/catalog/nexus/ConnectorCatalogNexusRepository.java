@@ -125,7 +125,7 @@ public class ConnectorCatalogNexusRepository extends BaseNexusRepository {
                 addConnector(dto, name, scheme, javaType, description, csb.toString(), json[0], json[1], json[2]);
             }
         } catch (IOException e) {
-            logger.warn("Error scanning JAR for custom Camel components", e);
+            logger.warn("Error scanning JAR for custom Camel connectors", e);
         }
     }
 

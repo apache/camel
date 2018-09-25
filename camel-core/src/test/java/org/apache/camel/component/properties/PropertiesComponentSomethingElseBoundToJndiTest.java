@@ -19,6 +19,7 @@ package org.apache.camel.component.properties;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * @version 
@@ -30,6 +31,7 @@ public class PropertiesComponentSomethingElseBoundToJndiTest extends ContextTest
         return false;
     }
 
+    @Test
     public void testPropertiesComponent() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

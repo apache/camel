@@ -88,6 +88,7 @@ import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.util.LoadPropertiesException;
+import org.apache.camel.util.ValueHolder;
 import org.apache.camel.util.jsse.SSLContextParameters;
 
 /**
@@ -405,7 +406,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     /**
      * Gets a readonly list of names of the components currently registered
      *
-     * @return a readonly list with the names of the the components
+     * @return a readonly list with the names of the components
      */
     List<String> getComponentNames();
 
@@ -425,7 +426,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     /**
      * Gets the {@link org.apache.camel.spi.EndpointRegistry}
      */
-    EndpointRegistry<String> getEndpointRegistry();
+    EndpointRegistry<? extends ValueHolder<String>> getEndpointRegistry();
 
     /**
      * Resolves the given name to an {@link Endpoint} of the specified type.
@@ -1105,7 +1106,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     /**
      * Gets a readonly list with the names of the languages currently registered.
      *
-     * @return a readonly list with the names of the the languages
+     * @return a readonly list with the names of the languages
      */
     List<String> getLanguageNames();
 
@@ -1334,7 +1335,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Gets the {@link org.apache.camel.spi.TransformerRegistry}
      * @return the TransformerRegistry
      */
-    TransformerRegistry getTransformerRegistry();
+    TransformerRegistry<? extends ValueHolder<String>> getTransformerRegistry();
 
     /**
      * Sets the validators that can be referenced in the routes.
@@ -1362,7 +1363,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Gets the {@link org.apache.camel.spi.ValidatorRegistry}
      * @return the ValidatorRegistry
      */
-    ValidatorRegistry getValidatorRegistry();
+    ValidatorRegistry<? extends ValueHolder<String>> getValidatorRegistry();
 
     /**
      * @deprecated use {@link #setGlobalOptions(Map) setGlobalOptions(Map<String,String>) instead}.
@@ -1614,7 +1615,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void setAsyncProcessorAwaitManager(AsyncProcessorAwaitManager manager);
 
     /**
-     * Gets the the application CamelContext class loader which may be helpful for running camel in other containers
+     * Gets the application CamelContext class loader which may be helpful for running camel in other containers
      *
      * @return the application CamelContext class loader
      */

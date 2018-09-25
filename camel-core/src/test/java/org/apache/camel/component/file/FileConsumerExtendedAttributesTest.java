@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -24,6 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.FileUtil;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -34,7 +34,8 @@ public class FileConsumerExtendedAttributesTest extends ContextTestSupport {
     private static final String FILE = "attributes.txt";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory(ROOT);
 
         super.setUp();

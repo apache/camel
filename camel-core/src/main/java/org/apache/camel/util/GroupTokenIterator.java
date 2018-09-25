@@ -21,7 +21,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
-import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
@@ -50,7 +49,7 @@ public final class GroupTokenIterator implements Iterator<Object>, Closeable {
     private final ByteArrayOutputStream bos = new ByteArrayOutputStream();
     
     /**
-     * Creates a new token based group titerator
+     * Creates a new token based group iterator
      *
      * @param camelContext  the camel context
      * @param it            the iterator to group
@@ -102,17 +101,7 @@ public final class GroupTokenIterator implements Iterator<Object>, Closeable {
     @Override
     public void close() throws IOException {
         try {
-            if (it instanceof Scanner) {
-                // special for Scanner which implement the Closeable since JDK7 
-                Scanner scanner = (Scanner) it;
-                scanner.close();
-                IOException ioException = scanner.ioException();
-                if (ioException != null) {
-                    throw ioException;
-                }
-            } else if (it instanceof Closeable) {
-                IOHelper.closeWithException((Closeable) it);
-            }
+            IOHelper.closeIterator(it);
         } finally {
             // close the buffer as well
             bos.close();
@@ -155,7 +144,12 @@ public final class GroupTokenIterator implements Iterator<Object>, Closeable {
             data = it.next();
 
             if (skipFirst && hasSkipFirst.compareAndSet(false, true)) {
-                data = it.next();
+                if (it.hasNext()) {
+                    data = it.next();
+                } else {
+                    // Content with header only which is marked to skip
+                    data = "";
+                }
             }
 
             // include token in between

@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
 /**
  * Tests the issue stated in
@@ -27,6 +28,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
  */
 public class SplitterParallelWithAggregationStrategyThrowingExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testAggregationTimeExceptionWithParallelProcessing() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(2);
         getMockEndpoint("mock:end").expectedMessageCount(0);

@@ -32,7 +32,6 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Envelope;
-
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -76,6 +75,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean autoDelete = true;
     @UriParam(label = "common", defaultValue = "true")
     private boolean durable = true;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean exclusiveConsumer;
     @UriParam(label = "common")
     private boolean exclusive;
     @UriParam(label = "common")
@@ -173,6 +174,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private long publisherAcknowledgementsTimeout;
     @UriParam(label = "producer")
     private boolean guaranteedDeliveries;
+    @UriParam(label = "producer")
+    private boolean allowNullHeaders;
     // camel-jms supports this setting but it is not currently configurable in camel-rabbitmq
     private boolean useMessageIDAsCorrelationID = true;
     // camel-jms supports this setting but it is not currently configurable in camel-rabbitmq
@@ -983,6 +986,29 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
      */
     public void setExclusive(boolean exclusive) {
         this.exclusive = exclusive;
+    }
+
+    public boolean isExclusiveConsumer() {
+        return exclusiveConsumer;
+    }
+
+    /**
+     * Request exclusive access to the queue (meaning only this consumer can access the queue). This is useful
+     * when you want a long-lived shared queue to be temporarily accessible by just one consumer.
+     */
+    public void setExclusiveConsumer(boolean exclusiveConsumer) {
+        this.exclusiveConsumer = exclusiveConsumer;
+    }
+
+    /**
+     * Allow pass null values to header
+     */
+    public boolean isAllowNullHeaders() {
+        return allowNullHeaders;
+    }
+
+    public void setAllowNullHeaders(boolean allowNullHeaders) {
+        this.allowNullHeaders = allowNullHeaders;
     }
 
     public boolean isPassive() {

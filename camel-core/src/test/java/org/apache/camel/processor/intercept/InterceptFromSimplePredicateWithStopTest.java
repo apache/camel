@@ -18,12 +18,14 @@ package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Testing http://camel.apache.org/dsl.html
  */
 public class InterceptFromSimplePredicateWithStopTest extends ContextTestSupport {
 
+    @Test
     public void testIntercept() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 

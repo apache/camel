@@ -21,7 +21,6 @@ import javax.xml.ws.Holder;
 
 import org.apache.camel.cxf.multipart.MultiPartInvoke;
 import org.apache.camel.cxf.multipart.types.InE;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

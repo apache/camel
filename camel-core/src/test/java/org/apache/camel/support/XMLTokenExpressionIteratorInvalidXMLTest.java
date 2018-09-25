@@ -19,21 +19,20 @@ package org.apache.camel.support;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.StringReader;
-
 import java.text.MessageFormat;
-
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  *
  */
-public class XMLTokenExpressionIteratorInvalidXMLTest extends TestCase {
+public class XMLTokenExpressionIteratorInvalidXMLTest extends Assert {
     private static final String DATA_TEMPLATE = 
         "<?xml version=\"1.0\" encoding=\"utf-u\"?>"
         + "<Statements xmlns=\"http://www.apache.org/xml/test\">"
@@ -44,6 +43,7 @@ public class XMLTokenExpressionIteratorInvalidXMLTest extends TestCase {
 
     private static final Map<String, String> NSMAP = Collections.singletonMap("", "http://www.apache.org/xml/test");
 
+    @Test
     public void testExtractToken() throws Exception {
         String data = MessageFormat.format(DATA_TEMPLATE, "Have a nice day");
         XMLTokenExpressionIterator xtei = new XMLTokenExpressionIterator("//statement", 'i');

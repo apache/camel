@@ -24,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
+import org.junit.Test;
 
 public class ManagedFromRestGetEmbeddedRouteTest extends ManagementTestSupport {
 
@@ -34,6 +35,7 @@ public class ManagedFromRestGetEmbeddedRouteTest extends ManagementTestSupport {
         return new DefaultCamelContext(registry);
     }
 
+    @Test
     public void testFromRestModel() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

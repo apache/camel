@@ -78,7 +78,7 @@ public abstract class BamProcessorSupport<T> implements Processor {
     public void process(final Exchange exchange) {
         for (int i = 1; i <= retryCount; i++) {
             if (i > 1) {
-                LOG.info("Retrying attempt: " + i);
+                LOG.info("Retrying attempt: {}", i);
                 try {
                     Thread.sleep(retrySleep);
                 } catch (InterruptedException e) {
@@ -147,7 +147,7 @@ public abstract class BamProcessorSupport<T> implements Processor {
 
     protected void onError(TransactionStatus status, Exception e) throws RuntimeCamelException {
         status.setRollbackOnly();
-        LOG.warn("Caught: " + e, e);
+        LOG.warn("Caught: {}", e, e);
         throw wrapRuntimeCamelException(e);
     }
 

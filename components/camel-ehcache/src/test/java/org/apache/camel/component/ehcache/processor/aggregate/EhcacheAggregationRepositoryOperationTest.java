@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.component.ehcache.processor.aggregate;
-
 import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.ehcache.EhcacheTestSupport;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultExchangeHolder;
+import org.junit.After;
 import org.junit.Test;
 
 public class EhcacheAggregationRepositoryOperationTest extends EhcacheTestSupport {
@@ -36,6 +36,7 @@ public class EhcacheAggregationRepositoryOperationTest extends EhcacheTestSuppor
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         aggregationRepository.stop();
         super.tearDown();

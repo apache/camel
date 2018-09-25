@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.sjms.batch;
-
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToCreateRouteException;

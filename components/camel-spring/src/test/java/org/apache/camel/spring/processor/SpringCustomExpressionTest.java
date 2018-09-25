@@ -18,6 +18,7 @@ package org.apache.camel.spring.processor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -26,6 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class SpringCustomExpressionTest extends SpringTestSupport {
 
+    @Test
     public void testTransformMyExpression() throws InterruptedException {
         getMockEndpoint("mock:result").expectedBodiesReceived("Yes Camel rocks", "Hello World");
 

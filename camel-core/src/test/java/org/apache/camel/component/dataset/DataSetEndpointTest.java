@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
@@ -33,6 +34,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testDataSetEndpoint() throws Exception {
         @SuppressWarnings("deprecation")
         final DataSetEndpoint endpoint = new DataSetEndpoint();
@@ -57,6 +59,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
         endpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testDataSetEndpointCtr() throws Exception {
         final DataSetEndpoint endpoint = new DataSetEndpoint("dataset://foo", context.getComponent("dataset"), new SimpleDataSet(2));
 
@@ -79,6 +82,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
         endpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testDataSetReporter() throws Exception {
         final DataSetEndpoint endpoint = new DataSetEndpoint("dataset://foo", context.getComponent("dataset"), new SimpleDataSet(10));
         endpoint.setInitialDelay(0);
@@ -103,6 +107,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
         assertTrue(reported.get());
     }
 
+    @Test
     public void testSimpleDataSet() throws Exception {
         SimpleDataSet ds = new SimpleDataSet();
         ds.setSize(2);
@@ -110,6 +115,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
         assertEquals("Hi", ds.getDefaultBody());
     }
 
+    @Test
     public void testDataSetSupport() throws Exception {
         MyDataSet ds = new MyDataSet();
         ds.setSize(4);

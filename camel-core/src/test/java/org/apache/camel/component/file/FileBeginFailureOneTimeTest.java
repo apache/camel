@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -23,6 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -32,7 +33,8 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
     private MyStrategy myStrategy = new MyStrategy();
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/begin");
         super.setUp();
     }
@@ -44,6 +46,7 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testBeginFailureOneTime() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -34,7 +35,7 @@ import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Sends the message to a dynamic endpoint
@@ -72,7 +73,7 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        ObjectHelper.notEmpty(uri, "uri", this);
+        StringHelper.notEmpty(uri, "uri", this);
 
         Expression exp = createExpression(routeContext);
 
@@ -94,10 +95,10 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
         String[] parts = safeSplitRaw(uri);
         for (String part : parts) {
             // the part may have optional language to use, so you can mix languages
-            String value = ObjectHelper.after(part, "language:");
+            String value = StringHelper.after(part, "language:");
             if (value != null) {
-                String before = ObjectHelper.before(value, ":");
-                String after = ObjectHelper.after(value, ":");
+                String before = StringHelper.before(value, ":");
+                String after = StringHelper.after(value, ":");
                 if (before != null && after != null) {
                     // maybe its a language, must have language: as prefix
                     try {
@@ -126,6 +127,11 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
         }
 
         return exp;
+    }
+
+    @Override
+    public String getShortName() {
+        return "toD";
     }
 
     @Override

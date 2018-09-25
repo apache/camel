@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -25,17 +24,21 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
 
     private final int size = 100;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/concurrent");
         super.setUp();
     }
 
+    @Test
     public void testConcurrentAppend() throws Exception {
         // create file with many lines
         StringBuilder sb = new StringBuilder();

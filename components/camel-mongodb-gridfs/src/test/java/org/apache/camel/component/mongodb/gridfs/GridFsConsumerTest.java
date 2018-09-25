@@ -21,11 +21,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.mongodb.gridfs.GridFS;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-
 import org.junit.Test;
 
 /**

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.builder;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -30,8 +29,20 @@ import org.apache.camel.Predicate;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Before;
+import org.junit.Test;
 
-import static org.apache.camel.builder.ExpressionBuilder.*;
+import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
+import static org.apache.camel.builder.ExpressionBuilder.camelContextPropertiesExpression;
+import static org.apache.camel.builder.ExpressionBuilder.camelContextPropertyExpression;
+import static org.apache.camel.builder.ExpressionBuilder.constantExpression;
+import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
+import static org.apache.camel.builder.ExpressionBuilder.messageExpression;
+import static org.apache.camel.builder.ExpressionBuilder.parseSimpleOrFallbackToConstantExpression;
+import static org.apache.camel.builder.ExpressionBuilder.regexReplaceAll;
+import static org.apache.camel.builder.ExpressionBuilder.regexTokenizeExpression;
+import static org.apache.camel.builder.ExpressionBuilder.sortExpression;
+import static org.apache.camel.builder.ExpressionBuilder.tokenizeExpression;
 import static org.apache.camel.builder.PredicateBuilder.contains;
 
 /**
@@ -41,6 +52,7 @@ public class ExpressionBuilderTest extends TestSupport {
     protected CamelContext camelContext = new DefaultCamelContext();
     protected Exchange exchange = new DefaultExchange(camelContext);
     
+    @Test
     public void testRegexTokenize() throws Exception {
         Expression expression = regexTokenizeExpression(headerExpression("location"), ",");
         List<String> expected = new ArrayList<>(Arrays.asList(new String[] {"Islington", "London", "UK"}));
@@ -55,6 +67,7 @@ public class ExpressionBuilderTest extends TestSupport {
         assertPredicate(predicate, exchange, false);
     }
 
+    @Test
     public void testRegexReplaceAll() throws Exception {
         Expression expression = regexReplaceAll(headerExpression("location"), "London",
                                                           "Westminster");
@@ -64,6 +77,7 @@ public class ExpressionBuilderTest extends TestSupport {
         assertExpression(expression, exchange, "Islington,James,UK");
     }
 
+    @Test
     public void testTokenize() throws Exception {
         Expression expression = tokenizeExpression(headerExpression("location"), ",");
 
@@ -79,6 +93,7 @@ public class ExpressionBuilderTest extends TestSupport {
         assertPredicate(predicate, exchange, false);
     }
 
+    @Test
     public void testTokenizeLines() throws Exception {
         Expression expression = regexTokenizeExpression(bodyExpression(), "[\r|\n]");
         exchange.getIn().setBody("Hello World\nBye World\rSee you again");
@@ -87,6 +102,7 @@ public class ExpressionBuilderTest extends TestSupport {
         assertExpression(expression, exchange, expected);
     }
 
+    @Test
     public void testSortLines() throws Exception {
         Expression expression = sortExpression(body().tokenize(",").getExpression(), new SortByName());
         exchange.getIn().setBody("Jonathan,Claus,James,Hadrian");
@@ -95,6 +111,7 @@ public class ExpressionBuilderTest extends TestSupport {
         assertExpression(expression, exchange, expected);
     }
     
+    @Test
     public void testCamelContextPropertiesExpression() throws Exception {
         camelContext.getGlobalOptions().put("CamelTestKey", "CamelTestValue");
         Expression expression = camelContextPropertyExpression("CamelTestKey");
@@ -104,12 +121,14 @@ public class ExpressionBuilderTest extends TestSupport {
         assertEquals("Get a wrong properties size", properties.size(), 1);
     }
 
+    @Test
     public void testParseSimpleOrFallbackToConstantExpression() throws Exception {
         assertEquals("world", parseSimpleOrFallbackToConstantExpression("world", camelContext).evaluate(exchange, String.class));
         assertEquals("Hello there!", parseSimpleOrFallbackToConstantExpression("${body}", camelContext).evaluate(exchange, String.class));
         assertEquals("Hello there!", parseSimpleOrFallbackToConstantExpression("$simple{body}", camelContext).evaluate(exchange, String.class));
     }
 
+    @Test
     public void testFunction() throws Exception {
         assertExpression(
             messageExpression(m -> m.getExchange().getIn().getHeader("name")),
@@ -122,7 +141,8 @@ public class ExpressionBuilderTest extends TestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         Message in = exchange.getIn();
         in.setBody("Hello there!");

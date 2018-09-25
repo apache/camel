@@ -28,9 +28,11 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.ServiceSupport;
+import org.junit.Test;
 
 public class UnmarshalProcessorTest extends TestSupport {
 
+    @Test
     public void testDataFormatReturnsSameExchange() throws Exception {
         Exchange exchange = createExchangeWithBody(new DefaultCamelContext(), "body");
         Processor processor = new UnmarshalProcessor(new MyDataFormat(exchange));
@@ -40,6 +42,7 @@ public class UnmarshalProcessorTest extends TestSupport {
         assertEquals("UnmarshalProcessor did not copy OUT from IN message", "body", exchange.getOut().getBody());
     }
 
+    @Test
     public void testDataFormatReturnsAnotherExchange() throws Exception {
         CamelContext context = new DefaultCamelContext();
         Exchange exchange = createExchangeWithBody(context, "body");
@@ -53,6 +56,7 @@ public class UnmarshalProcessorTest extends TestSupport {
         assertEquals("The returned exchange " + exchange2 + " is not the same as " + exchange + " provided to the DataFormat", e.getMessage());
     }
 
+    @Test
     public void testDataFormatReturnsMessage() throws Exception {
         Exchange exchange = createExchangeWithBody(new DefaultCamelContext(), "body");
         Message out = new DefaultMessage(exchange.getContext());
@@ -64,6 +68,7 @@ public class UnmarshalProcessorTest extends TestSupport {
         assertSame("UnmarshalProcessor did change the body bound to the OUT message", out.getBody(), exchange.getOut().getBody());
     }
 
+    @Test
     public void testDataFormatReturnsBody() throws Exception {
         Exchange exchange = createExchangeWithBody(new DefaultCamelContext(), "body");
         Object unmarshalled = new Object();

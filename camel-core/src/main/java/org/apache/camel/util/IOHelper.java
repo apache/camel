@@ -268,7 +268,7 @@ public final class IOHelper {
             if (name != null) {
                 log.warn("Cannot force FileChannel: " + name + ". Reason: " + e.getMessage(), e);
             } else {
-                log.warn("Cannot force FileChannel. Reason: " + e.getMessage(), e);
+                log.warn("Cannot force FileChannel. Reason: {}", e.getMessage(), e);
             }
         }
     }
@@ -293,7 +293,7 @@ public final class IOHelper {
             if (name != null) {
                 log.warn("Cannot sync FileDescriptor: " + name + ". Reason: " + e.getMessage(), e);
             } else {
-                log.warn("Cannot sync FileDescriptor. Reason: " + e.getMessage(), e);
+                log.warn("Cannot sync FileDescriptor. Reason: {}", e.getMessage(), e);
             }
         }
     }
@@ -303,7 +303,7 @@ public final class IOHelper {
      * An associated FileOutputStream can optionally be forced to disk.
      *
      * @param writer the writer to close
-     * @param os an underlying FileOutputStream that will to be forced to disk according to the the force parameter
+     * @param os an underlying FileOutputStream that will to be forced to disk according to the force parameter
      * @param name the name of the resource
      * @param log the log to use when reporting warnings, will use this class's own {@link Logger} if <tt>log == null</tt>
      * @param force forces the FileOutputStream to disk
@@ -321,7 +321,7 @@ public final class IOHelper {
                 if (name != null) {
                     log.warn("Cannot flush Writer: " + name + ". Reason: " + e.getMessage(), e);
                 } else {
-                    log.warn("Cannot flush Writer. Reason: " + e.getMessage(), e);
+                    log.warn("Cannot flush Writer. Reason: {}", e.getMessage(), e);
                 }
             }
             force(os, name, log);
@@ -348,7 +348,7 @@ public final class IOHelper {
                 if (name != null) {
                     log.warn("Cannot close: " + name + ". Reason: " + e.getMessage(), e);
                 } else {
-                    log.warn("Cannot close. Reason: " + e.getMessage(), e);
+                    log.warn("Cannot close. Reason: {}", e.getMessage(), e);
                 }
             }
         }
@@ -414,6 +414,29 @@ public final class IOHelper {
     public static void close(Closeable... closeables) {
         for (Closeable closeable : closeables) {
             close(closeable);
+        }
+    }
+
+    public static void closeIterator(Object it) throws IOException {
+        if (it instanceof java.util.Scanner) {
+            // special for Scanner which implement the Closeable since JDK7
+            java.util.Scanner scanner = (java.util.Scanner) it;
+            scanner.close();
+            IOException ioException = scanner.ioException();
+            if (ioException != null) {
+                throw ioException;
+            }
+        } else if (it instanceof Scanner) {
+            // special for Scanner which implement the Closeable since JDK7
+            Scanner scanner = (Scanner) it;
+            scanner.close();
+            IOException ioException = scanner.ioException();
+            if (ioException != null) {
+                throw ioException;
+            }
+
+        } else if (it instanceof Closeable) {
+            IOHelper.closeWithException((Closeable) it);
         }
     }
 

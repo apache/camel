@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateProducerException;
@@ -352,7 +351,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
         try {
             if (replyManager != null) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Stopping JmsReplyManager: {} from processing replies from: {}", replyManager,
+                    log.debug("Stopping RabbitMQReplyManager: {} from processing replies from: {}", replyManager,
                                     getEndpoint().getReplyTo() != null ? getEndpoint().getReplyTo() : "temporary queue");
                 }
                 ServiceHelper.stopService(replyManager);

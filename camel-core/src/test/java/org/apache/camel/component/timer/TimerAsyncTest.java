@@ -23,22 +23,26 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version
  */
 public class TimerAsyncTest extends ContextTestSupport {
 
+    @Test
     public void testSync() throws Exception {
         TimerEndpoint endpoint = context.getEndpoint("timer:foo?synchronous=true", TimerEndpoint.class);
         assertTrue("Timer endpoint must be synchronous, but it isn't", endpoint.isSynchronous());
     }
 
+    @Test
     public void testAsync() throws Exception {
         TimerEndpoint endpoint = context.getEndpoint("timer:foo", TimerEndpoint.class);
         assertFalse("Timer endpoint must be asynchronous, but it isn't", endpoint.isSynchronous());
     }
 
+    @Test
     public void testAsyncRouting() throws Exception {
         final int threads = 5;
 

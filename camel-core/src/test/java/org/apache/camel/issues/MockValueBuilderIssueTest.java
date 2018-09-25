@@ -19,9 +19,11 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class MockValueBuilderIssueTest extends ContextTestSupport {
 
+    @Test
     public void testMockValueBuilder() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -32,6 +34,7 @@ public class MockValueBuilderIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMockValueBuilderFail() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -48,6 +51,7 @@ public class MockValueBuilderIssueTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testMockValueBuilderNotSatisfied() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

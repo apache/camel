@@ -13,7 +13,7 @@ NOTE: This is a fixed constant value that is only set once during starting up th
 
 
 // language options: START
-The Constant language supports 1 options which are listed below.
+The Constant language supports 1 options, which are listed below.
 
 
 

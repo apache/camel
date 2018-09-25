@@ -18,6 +18,8 @@ package org.apache.camel.spring.processor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.junit.Test;
+
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
@@ -29,6 +31,7 @@ public class SpringInterceptSendToEndpointSkipTest extends ContextTestSupport {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/interceptSendToEndpointSkip.xml");
     }
 
+    @Test
     public void testInterceptEndpointSkip() throws Exception {
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:detour").expectedBodiesReceived("Bye World");

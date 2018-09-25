@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
@@ -31,6 +32,7 @@ public class ChoiceAsyncTest extends ContextTestSupport {
     protected MockEndpoint z;
     protected MockEndpoint end;
 
+    @Test
     public void testSendToFirstWhen() throws Exception {
         String body = "<one/>";
         x.expectedBodiesReceived(body);
@@ -44,6 +46,7 @@ public class ChoiceAsyncTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendToSecondWhen() throws Exception {
         String body = "<two/>";
         y.expectedBodiesReceived(body);
@@ -55,6 +58,7 @@ public class ChoiceAsyncTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendToOtherwiseClause() throws Exception {
         String body = "<three/>";
         z.expectedBodiesReceived(body);
@@ -71,7 +75,8 @@ public class ChoiceAsyncTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         x = getMockEndpoint("mock:x");

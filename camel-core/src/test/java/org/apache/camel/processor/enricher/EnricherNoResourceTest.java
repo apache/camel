@@ -18,9 +18,11 @@ package org.apache.camel.processor.enricher;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class EnricherNoResourceTest extends ContextTestSupport {
 
+    @Test
     public void testNoResourceA() throws Exception {
         // there should be no message body
         getMockEndpoint("mock:result").expectedMessageCount(1);

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 import java.util.List;
 
@@ -23,6 +22,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *
@@ -30,7 +31,8 @@ import org.apache.camel.spi.BrowsableEndpoint;
 public class FileBrowsableEndpointTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/browse");
         super.setUp();
     }
@@ -40,6 +42,7 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testBrowsableNoFiles() throws Exception {
         BrowsableEndpoint browse = context.getEndpoint("file:target/browse?initialDelay=0&delay=10", BrowsableEndpoint.class);
         assertNotNull(browse);
@@ -49,6 +52,7 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
         assertEquals(0, list.size());
     }
 
+    @Test
     public void testBrowsableOneFile() throws Exception {
         template.sendBodyAndHeader("file:target/browse", "A", Exchange.FILE_NAME, "a.txt");
 
@@ -72,6 +76,7 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
         assertTrue("File should exist " + file, file.exists());
     }
 
+    @Test
     public void testBrowsableTwoFiles() throws Exception {
         template.sendBodyAndHeader("file:target/browse", "A", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader("file:target/browse", "B", Exchange.FILE_NAME, "b.txt");
@@ -99,6 +104,7 @@ public class FileBrowsableEndpointTest extends ContextTestSupport {
         assertTrue("File should exist " + fileB, fileB.exists());
     }
 
+    @Test
     public void testBrowsableThreeFilesRecursive() throws Exception {
         template.sendBodyAndHeader("file:target/browse", "A", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader("file:target/browse", "B", Exchange.FILE_NAME, "foo/b.txt");

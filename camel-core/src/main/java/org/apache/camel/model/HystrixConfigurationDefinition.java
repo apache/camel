@@ -20,6 +20,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -50,7 +51,7 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     // Fluent API
     // -------------------------------------------------------------------------
 
-   /**
+    /**
      * Sets the group key to use. The default value is CamelHystrix.
      */
     public HystrixConfigurationDefinition groupKey(String groupKey) {

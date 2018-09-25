@@ -18,12 +18,14 @@ package org.apache.camel.language.simple;
 
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
+import org.junit.Test;
 
 /**
  *
  */
 public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
 
+    @Test
     public void testSimpleUnbalanceFunction() throws Exception {
         SimpleExpressionParser parser = new SimpleExpressionParser("${body is a nice day", true);
         try {
@@ -34,6 +36,7 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
         }
     }
 
+    @Test
     public void testSimpleNestedUnbalanceFunction() throws Exception {
         SimpleExpressionParser parser = new SimpleExpressionParser("${body${foo}", true);
         try {
@@ -44,6 +47,7 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
         }
     }
 
+    @Test
     public void testSimpleUnknownFunction() throws Exception {
         SimpleExpressionParser parser = new SimpleExpressionParser("Hello ${foo} how are you?", true);
         try {
@@ -54,6 +58,7 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
         }
     }
 
+    @Test
     public void testSimpleNestedUnknownFunction() throws Exception {
         SimpleExpressionParser parser = new SimpleExpressionParser("Hello ${bodyAs(${foo})} how are you?", true);
         try {
@@ -66,6 +71,7 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
         }
     }
     
+    @Test
     public void testNoEndFunction() throws Exception {
         SimpleExpressionParser parser = new SimpleExpressionParser("Hello ${body", true);
         try {

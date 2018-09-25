@@ -15,18 +15,20 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.processor;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.RuntimeCamelException;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringDoubleLoadBalancerMisconfigurationTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         try {
             super.setUp();
             fail("Should have thrown exception");
@@ -37,6 +39,7 @@ public class SpringDoubleLoadBalancerMisconfigurationTest extends ContextTestSup
         }
     }
 
+    @Test
     public void testDummy() {
         // noop
     }

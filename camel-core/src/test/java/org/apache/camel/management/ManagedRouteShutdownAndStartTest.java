@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
-
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -24,6 +24,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -31,11 +33,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class ManagedRouteShutdownAndStartTest extends ManagementTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/managed");
         super.setUp();
     }
 
+    @Test
     public void testShutdownAndStartRoute() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

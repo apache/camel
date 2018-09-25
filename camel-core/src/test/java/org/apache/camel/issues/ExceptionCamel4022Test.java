@@ -20,12 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class ExceptionCamel4022Test extends ContextTestSupport {
 
+    @Test
     public void testExceptionWithFatalException() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:b").expectedMessageCount(1);

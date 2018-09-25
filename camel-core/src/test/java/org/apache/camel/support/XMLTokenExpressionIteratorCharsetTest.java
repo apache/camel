@@ -30,12 +30,13 @@ import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  *
  */
-public class XMLTokenExpressionIteratorCharsetTest extends TestCase {
+public class XMLTokenExpressionIteratorCharsetTest extends Assert {
     private static final String DATA_TEMPLATE = 
         "<?xml version=\"1.0\" encoding=\"{0}\"?>"
         + "<Statements xmlns=\"http://www.apache.org/xml/test\">"
@@ -63,6 +64,7 @@ public class XMLTokenExpressionIteratorCharsetTest extends TestCase {
         return null;
     }
     
+    @Test
     public void testTokenzeWithUTF8() throws Exception {
         XMLTokenExpressionIterator xtei = new XMLTokenExpressionIterator("//statement", 'i');
         xtei.setNamespaces(NSMAP);
@@ -70,6 +72,7 @@ public class XMLTokenExpressionIteratorCharsetTest extends TestCase {
         invokeAndVerify(xtei.createIterator(new ByteArrayInputStream(DATA_UTF8), "utf-8"));
     }
 
+    @Test
     public void testTokenizeWithISOLatin() throws Exception {
         XMLTokenExpressionIterator xtei = new XMLTokenExpressionIterator("//statement", 'i');
         xtei.setNamespaces(NSMAP);
@@ -77,6 +80,7 @@ public class XMLTokenExpressionIteratorCharsetTest extends TestCase {
         invokeAndVerify(xtei.createIterator(new ByteArrayInputStream(DATA_ISOLATIN), "iso-8859-1"));
     }
 
+    @Test
     public void testTokenizeWithReader() throws Exception {
         XMLTokenExpressionIterator xtei = new XMLTokenExpressionIterator("//statement", 'i');
         xtei.setNamespaces(NSMAP);

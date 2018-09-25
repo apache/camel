@@ -37,6 +37,11 @@ public class KinesisComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the aws-kinesis component. This
+     * is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The AWS S3 default configuration
      */
     private KinesisConfigurationNestedConfiguration configuration;
@@ -103,17 +108,59 @@ public class KinesisComponentConfiguration
 
     public static class KinesisConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.aws.kinesis.KinesisConfiguration.class;
+        /**
+         * Amazon Kinesis client to use for all requests for this endpoint
+         */
         private AmazonKinesis amazonKinesisClient;
+        /**
+         * Maximum number of records that will be fetched in each poll
+         */
         private Integer maxResultsPerRequest = 1;
+        /**
+         * Name of the stream
+         */
         private String streamName;
+        /**
+         * Defines where in the Kinesis stream to start getting records
+         */
         private ShardIteratorType iteratorType = ShardIteratorType.TRIM_HORIZON;
+        /**
+         * Defines which shardId in the Kinesis stream to get records from
+         */
         private String shardId;
+        /**
+         * The sequence number to start polling from. Required if iteratorType
+         * is set to AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER
+         */
         private String sequenceNumber;
+        /**
+         * Define what will be the behavior in case of shard closed. Possible
+         * value are ignore, silent and fail.In case of ignore a message will be
+         * logged and the consumer will restart from the beginning,in case of
+         * silent there will be no logging and the consumer will start from the
+         * beginning,in case of fail a ReachedClosedStateException will be
+         * raised
+         */
         private KinesisShardClosedStrategyEnum shardClosed = KinesisShardClosedStrategyEnum.ignore;
+        /**
+         * Amazon AWS Access Key
+         */
         private String accessKey;
+        /**
+         * Amazon AWS Secret Key
+         */
         private String secretKey;
+        /**
+         * The region in which Kinesis client needs to work
+         */
         private String region;
+        /**
+         * To define a proxy host when instantiating the DDBStreams client
+         */
         private String proxyHost;
+        /**
+         * To define a proxy port when instantiating the DDBStreams client
+         */
         private Integer proxyPort;
 
         public AmazonKinesis getAmazonKinesisClient() {

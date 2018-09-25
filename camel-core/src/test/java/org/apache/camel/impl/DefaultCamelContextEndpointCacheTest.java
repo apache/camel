@@ -17,17 +17,20 @@
 package org.apache.camel.impl;
 
 import java.util.Collection;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class DefaultCamelContextEndpointCacheTest extends ContextTestSupport {
 
+    @Test
     public void testCacheEndpoints() throws Exception {
         // test that we cache at most 1000 endpoints in camel context to avoid it eating to much memory
         for (int i = 0; i < 1234; i++) {

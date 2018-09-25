@@ -24,12 +24,14 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class PolicyPerRouteTest extends ContextTestSupport {
 
+    @Test
     public void testPolicy() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:foo").expectedHeaderReceived("foo", "was wrapped");

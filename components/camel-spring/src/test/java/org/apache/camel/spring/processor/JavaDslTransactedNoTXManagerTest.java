@@ -20,12 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class JavaDslTransactedNoTXManagerTest extends ContextTestSupport {
 
+    @Test
     public void testTransactedNoTXManager() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

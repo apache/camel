@@ -44,6 +44,7 @@ import org.apache.camel.converter.jaxp.StaxConverter;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +62,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
     }
 
     public XMLTokenExpressionIterator(String path, char mode, int group) {
-        ObjectHelper.notEmpty(path, "path");
+        StringHelper.notEmpty(path, "path");
         this.path = path;
         this.mode = mode;
         this.group = group > 1 ? group : 1;
@@ -464,7 +465,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                     depth++;
                     QName name = reader.getName();
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("se={}; depth={}; trackdepth={}", new Object[]{name, depth, trackdepth});
+                        LOG.trace("se={}; depth={}; trackdepth={}", name, depth, trackdepth);
                     }
                     
                     String token = getCurrentText();

@@ -19,12 +19,14 @@ package org.apache.camel.component.seda;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class SedaInOutWithErrorTest extends ContextTestSupport {
 
+    @Test
     public void testInOutWithError() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 

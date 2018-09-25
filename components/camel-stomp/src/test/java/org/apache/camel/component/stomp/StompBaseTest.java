@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.stomp;
-
 import javax.net.ssl.SSLContext;
 
 import org.apache.activemq.broker.BrokerService;
@@ -28,6 +27,8 @@ import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.camel.util.jsse.TrustManagersParameters;
 import org.fusesource.stomp.client.Stomp;
+import org.junit.After;
+import org.junit.Before;
 
 public abstract class StompBaseTest extends CamelTestSupport {
 
@@ -71,6 +72,7 @@ public abstract class StompBaseTest extends CamelTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         port = AvailablePortFinder.getNextAvailable(61613);
 
@@ -101,6 +103,7 @@ public abstract class StompBaseTest extends CamelTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         if (brokerService != null) {

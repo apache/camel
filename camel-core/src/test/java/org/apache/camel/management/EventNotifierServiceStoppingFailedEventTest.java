@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
-
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -29,6 +28,8 @@ import org.apache.camel.management.event.CamelContextStoppedEvent;
 import org.apache.camel.management.event.CamelContextStoppingEvent;
 import org.apache.camel.management.event.ServiceStopFailureEvent;
 import org.apache.camel.support.EventNotifierSupport;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -39,6 +40,7 @@ public class EventNotifierServiceStoppingFailedEventTest extends ContextTestSupp
     private static String stopOrder;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         events.clear();
         super.setUp();
@@ -71,6 +73,7 @@ public class EventNotifierServiceStoppingFailedEventTest extends ContextTestSupp
         return context;
     }
 
+    @Test
     public void testStopWithFailure() throws Exception {
         stopOrder = "";
 

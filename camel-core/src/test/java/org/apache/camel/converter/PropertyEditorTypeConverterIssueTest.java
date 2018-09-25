@@ -18,12 +18,14 @@ package org.apache.camel.converter;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.util.StopWatch;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class PropertyEditorTypeConverterIssueTest extends ContextTestSupport {
 
+    @Test
     public void testPropertyEditorTypeConverter() throws Exception {
         // test that converters a custom object (MyBean) to a String which causes
         // PropertyEditorTypeConverter to be used. And this test times how fast

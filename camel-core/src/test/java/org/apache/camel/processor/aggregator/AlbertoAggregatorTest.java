@@ -28,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
 /**
  * @version 
@@ -37,6 +38,7 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
     private static final String TYPE_HEADER = "type";
     private static final String BROTHERS_TYPE = "brothers";
 
+    @Test
     public void testAggregator() throws Exception {
 
         String allNames = "Harpo Marx,Fiodor Karamazov,Chico Marx,Ivan Karamazov,Groucho Marx,Alexei Karamazov,Dimitri Karamazov";

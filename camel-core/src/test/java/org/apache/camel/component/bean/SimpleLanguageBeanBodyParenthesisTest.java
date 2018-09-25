@@ -18,12 +18,14 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class SimpleLanguageBeanBodyParenthesisTest extends ContextTestSupport {
 
+    @Test
     public void testNo() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(1);
@@ -33,6 +35,7 @@ public class SimpleLanguageBeanBodyParenthesisTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testYes() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:other").expectedMessageCount(0);

@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *
@@ -26,11 +27,13 @@ import org.apache.camel.builder.RouteBuilder;
 public class FileConsumeRunLoggingLevelTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/files");
         super.setUp();
     }
 
+    @Test
     public void testRunLoggingLevel() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

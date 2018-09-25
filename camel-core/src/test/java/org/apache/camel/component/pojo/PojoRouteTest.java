@@ -16,17 +16,19 @@
  */
 package org.apache.camel.component.pojo;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.ProxyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class PojoRouteTest extends TestCase {
+public class PojoRouteTest extends Assert {
 
+    @Test
     public void testPojoRoutes() throws Exception {
         CamelContext camelContext = new DefaultCamelContext();
 

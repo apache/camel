@@ -23,12 +23,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.InflightRepository;
+import org.junit.Test;
 
 /**
  * @version
  */
 public class InflightRepositoryBrowseTest extends ContextTestSupport {
 
+    @Test
     public void testInflight() throws Exception {
         assertEquals(0, context.getInflightRepository().browse().size());
 

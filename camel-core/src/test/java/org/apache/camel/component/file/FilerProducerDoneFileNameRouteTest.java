@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +24,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test for writing done files
@@ -34,7 +35,8 @@ public class FilerProducerDoneFileNameRouteTest extends ContextTestSupport {
     private Properties myProp = new Properties();
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/done");
         super.setUp();
     }
@@ -46,6 +48,7 @@ public class FilerProducerDoneFileNameRouteTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testProducerPlaceholderPrefixDoneFileName() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

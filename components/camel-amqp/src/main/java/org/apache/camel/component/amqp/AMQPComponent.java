@@ -18,6 +18,7 @@ package org.apache.camel.component.amqp;
 
 import java.net.MalformedURLException;
 import java.util.Set;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
@@ -56,7 +57,9 @@ public class AMQPComponent extends JmsComponent {
         if (connectionDetails.size() == 1) {
             AMQPConnectionDetails details = connectionDetails.iterator().next();
             JmsConnectionFactory connectionFactory = new JmsConnectionFactory(details.username(), details.password(), details.uri());
-            connectionFactory.setTopicPrefix("topic://");
+            if (details.setTopicPrefix()) {
+                connectionFactory.setTopicPrefix("topic://");
+            }
             setConnectionFactory(connectionFactory);
         }
         super.doStart();

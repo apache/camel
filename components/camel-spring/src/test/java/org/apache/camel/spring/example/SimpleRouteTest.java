@@ -18,7 +18,7 @@ package org.apache.camel.spring.example;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
-
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -28,6 +28,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class SimpleRouteTest extends SpringTestSupport {
     protected Object expectedBody = "<hello>world!</hello>";
 
+    @Test
     public void testSimpleRoute() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived(expectedBody);

@@ -81,14 +81,14 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
         loggedIn = false;
         if (isStopping() || isStopped()) {
             // if we are stopping then ignore any exception during a poll
-            log.debug("Exception occurred during stopping: " + exception.getMessage());
+            log.debug("Exception occurred during stopping: {}", exception.getMessage());
         } else {
-            log.warn("Writing file failed with: " + exception.getMessage());
+            log.warn("Writing file failed with: {}", exception.getMessage());
             try {
                 disconnect();
             } catch (Exception e) {
                 // ignore exception
-                log.debug("Ignored exception during disconnect: " + e.getMessage());
+                log.debug("Ignored exception during disconnect: {}", e.getMessage());
             }
             // rethrow the original exception*/
             throw exception;
@@ -189,7 +189,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
             InterruptedException ie = ObjectHelper.getException(InterruptedException.class, e);
             if (ie != null) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Interrupted during connect to: " + getEndpoint(), ie);
+                    log.debug("Interrupted during connect to: {}", getEndpoint(), ie);
                 }
                 throw ie;
             }
@@ -228,7 +228,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
             if (!loggedIn) {
                 return;
             }
-            log.debug("Connected and logged in to: " + getEndpoint());
+            log.debug("Connected and logged in to: {}", getEndpoint());
         }
     }
 

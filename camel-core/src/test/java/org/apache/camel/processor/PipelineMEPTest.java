@@ -22,6 +22,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Unit test for pipeline keeping the MEP (CAMEL-1233)
@@ -30,6 +31,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class PipelineMEPTest extends ContextTestSupport {
 
+    @Test
     public void testInOnly() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived(3);
@@ -47,6 +49,7 @@ public class PipelineMEPTest extends ContextTestSupport {
         assertEquals(ExchangePattern.InOnly, mock.getExchanges().get(0).getPattern());
     }
 
+    @Test
     public void testInOut() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived(3);

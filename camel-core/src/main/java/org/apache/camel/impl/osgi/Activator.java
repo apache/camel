@@ -254,7 +254,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
         // it may be running outside real OSGi container such as when unit testing with camel-test-blueprint
         // then we need to use a different canSee algorithm that works outside real OSGi
-        if (bundle.getBundleId() > 0) {
+        if (bundle.getBundleId() >= 0) {
             Bundle root = bundle.getBundleContext().getBundle(0);
             if (root != null && "org.apache.felix.connect".equals(root.getSymbolicName())) {
                 return checkCompat(bundle, clazz);
@@ -415,7 +415,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                 Set<String> packages = getConverterPackages(bundle.getEntry(META_INF_TYPE_CONVERTER));
 
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Found {} {} packages: {}", new Object[]{packages.size(), META_INF_TYPE_CONVERTER, packages});
+                    LOG.trace("Found {} {} packages: {}", packages.size(), META_INF_TYPE_CONVERTER, packages);
                 }
                 // if we only have camel-core on the classpath then we have already pre-loaded all its type converters
                 // but we exposed the "org.apache.camel.core" package in camel-core. This ensures there is at least one

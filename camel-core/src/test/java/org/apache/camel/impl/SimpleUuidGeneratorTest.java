@@ -16,16 +16,18 @@
  */
 package org.apache.camel.impl;
 
-import junit.framework.TestCase;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
+import org.junit.Assert;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SimpleUuidGeneratorTest extends TestCase {
+public class SimpleUuidGeneratorTest extends Assert {
     
     private static final Logger LOG = LoggerFactory.getLogger(SimpleUuidGeneratorTest.class);
 
+    @Test
     public void testGenerateUUID() {
         SimpleUuidGenerator uuidGenerator = new SimpleUuidGenerator();
 
@@ -33,6 +35,7 @@ public class SimpleUuidGeneratorTest extends TestCase {
         assertEquals("2", uuidGenerator.generateUuid());
     }
 
+    @Test
     public void testPerformance() {
         SimpleUuidGenerator uuidGenerator = new SimpleUuidGenerator();
         StopWatch watch = new StopWatch();

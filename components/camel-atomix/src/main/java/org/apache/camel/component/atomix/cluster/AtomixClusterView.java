@@ -178,7 +178,7 @@ final class AtomixClusterView extends AbstractCamelClusterView {
             if (member == null && group != null) {
                 String id = getClusterService().getId();
                 if (ObjectHelper.isEmpty(id) || configuration.isEphemeral()) {
-                    LOGGER.debug("Joining group: {} ", group);
+                    LOGGER.debug("Joining group: {}", group);
                     member = group.join().join();
                     LOGGER.debug("Group {} joined with id {}", group, member.id());
                 } else {

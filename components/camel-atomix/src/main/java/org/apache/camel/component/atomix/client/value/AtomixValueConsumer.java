@@ -56,7 +56,7 @@ final class AtomixValueConsumer extends AbstractAtomixClientConsumer<AtomixValue
             .join();
 
 
-        LOGGER.debug("Subscribe to events for queue: {}", resourceName);
+        LOGGER.debug("Subscribe to events for value: {}", resourceName);
         this.listeners.add(this.value.onChange(this::onEvent).join());
     }
 

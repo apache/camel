@@ -21,9 +21,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
+import org.junit.Test;
 
 public class AggregateExpressionTest extends ContextTestSupport {
 
+    @Test
     public void testAggregateExpressionSize() throws Exception {
         MockEndpoint result =  getMockEndpoint("mock:result");
         result.expectedBodiesReceived("A+A", "B+B", "Z");

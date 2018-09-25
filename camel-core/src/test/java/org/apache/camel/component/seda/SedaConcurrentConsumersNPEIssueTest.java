@@ -20,12 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version
  */
 public class SedaConcurrentConsumersNPEIssueTest extends ContextTestSupport {
 
+    @Test
     public void testSendToSeda() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -43,6 +45,7 @@ public class SedaConcurrentConsumersNPEIssueTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testStartThird() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

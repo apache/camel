@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import java.io.File;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -27,6 +26,8 @@ import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.FileUtil;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -68,11 +69,13 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/mail/backup");
         super.setUp();
     }
 
+    @Test
     public void testOk() throws Exception {
         template.sendBodyAndHeader("direct:confirm", "bumper", "to", "someone@somewhere.org");
 
@@ -81,6 +84,7 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
         assertEquals("There should be one file", 1, files.length);
     }
 
+    @Test
     public void testRollback() throws Exception {
         try {
             template.sendBodyAndHeader("direct:confirm", "bumper", "to", "FATAL");

@@ -55,6 +55,11 @@ public class FilterDefinition extends ExpressionNode {
     }
     
     @Override
+    public String getShortName() {
+        return "filter";
+    }
+
+    @Override
     public String getLabel() {
         return "filter[" + getExpression() + "]";
     }

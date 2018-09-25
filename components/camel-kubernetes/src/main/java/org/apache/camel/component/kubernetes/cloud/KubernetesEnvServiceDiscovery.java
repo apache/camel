@@ -40,8 +40,15 @@ public class KubernetesEnvServiceDiscovery extends KubernetesServiceDiscovery {
             final int port = ctx.getTypeConverter().tryConvertTo(int.class, num);
 
             return Collections.singletonList(new DefaultServiceDefinition(name, host, port));
+        } catch (IllegalArgumentException e) {
+            return Collections.emptyList();
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "KubernetesEnvServiceDiscovery";
     }
 }

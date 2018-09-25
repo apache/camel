@@ -20,9 +20,11 @@ import java.io.ByteArrayInputStream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class StreamCachingRoutingSlipTest extends ContextTestSupport {
 
+    @Test
     public void testByteArrayInputStream() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("<hello/>");
         getMockEndpoint("mock:bar").expectedBodiesReceived("<hello/>");

@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.22.0-SNAPSHOT</version>
+    <version>2.23.0-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -45,6 +45,10 @@
     <module>camel-example-cdi</module>
     <module>camel-example-cdi-aws-s3</module>
     <module>camel-example-cdi-cassandraql</module>
+    <module>camel-example-fhir</module>
+    <module>camel-example-fhir-auth-tx-spring-boot</module>
+    <module>camel-example-fhir-osgi</module>
+    <module>camel-example-fhir-spring-boot</module>
     <module>camel-example-cdi-kubernetes</module>
     <module>camel-example-cdi-metrics</module>
     <module>camel-example-cdi-osgi</module>
@@ -52,12 +56,12 @@
     <module>camel-example-cdi-rest-servlet</module>
     <module>camel-example-cdi-test</module>
     <module>camel-example-cdi-xml</module>
-    <module>camel-example-ceylon</module>
     <module>camel-example-cxf</module>
     <module>camel-example-cxf-blueprint</module>
     <module>camel-example-cxf-proxy</module>
     <module>camel-example-cxf-tomcat</module>
     <module>camel-example-console</module>
+    <module>camel-example-ehcache-blueprint</module>
     <module>camel-example-ftp</module>
     <module>camel-example-google-pubsub</module>
     <module>camel-example-guice-jms</module>
@@ -116,6 +120,7 @@
     <module>camel-example-spring-boot-supervising-route-controller</module>
     <module>camel-example-spring-boot-xml</module>
     <module>camel-example-spring-cloud-servicecall</module>
+    <module>camel-example-spring-cloud-serviceregistry</module>
     <module>camel-example-spring-javaconfig</module>
     <module>camel-example-spring-jms</module>
     <module>camel-example-spring-ws</module>

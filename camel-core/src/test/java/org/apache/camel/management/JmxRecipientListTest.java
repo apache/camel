@@ -21,12 +21,14 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class JmxRecipientListTest extends ManagementTestSupport {
 
+    @Test
     public void testJmxEndpointsAddedDynamicallyDefaultRegister() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -66,6 +68,7 @@ public class JmxRecipientListTest extends ManagementTestSupport {
         assertTrue("Should be registered", mbeanServer.isRegistered(name));
     }
 
+    @Test
     public void testJmxEndpointsAddedDynamicallyAlwaysRegister() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

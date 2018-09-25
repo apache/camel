@@ -28,13 +28,10 @@ import org.apache.camel.component.jms.JmsMessageType;
 import org.apache.camel.component.jms.JmsProviderMetadata;
 import org.apache.camel.component.jms.MessageCreatedStrategy;
 import org.apache.camel.component.jms.MessageListenerContainerFactory;
-import org.apache.camel.component.jms.QueueBrowseStrategy;
 import org.apache.camel.component.jms.ReplyToType;
-import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.support.converter.MessageConverter;
@@ -55,6 +52,11 @@ public class JmsComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the jms component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use a shared JMS configuration
      */
     private JmsConfigurationNestedConfiguration configuration;
@@ -73,7 +75,7 @@ public class JmsComponentConfiguration
      * Whether the DefaultMessageListenerContainer used in the reply managers
      * for request-reply messaging allow the
      * DefaultMessageListenerContainer.runningAllowed flag to quick stop in case
-     * JmsConfigurationisAcceptMessagesWhileStopping is enabled, and
+     * JmsConfiguration#isAcceptMessagesWhileStopping is enabled, and
      * org.apache.camel.CamelContext is currently being stopped. This quick stop
      * ability is enabled by default in the regular JMS consumers but to enable
      * for reply managers you must enable this flag.
@@ -147,9 +149,10 @@ public class JmsComponentConfiguration
     private Integer replyToConcurrentConsumers = 1;
     /**
      * The connection factory to be use. A connection factory must be configured
-     * either on the component or endpoint.
+     * either on the component or endpoint. The option is a
+     * javax.jms.ConnectionFactory type.
      */
-    private ConnectionFactory connectionFactory;
+    private String connectionFactory;
     /**
      * Username to use with the ConnectionFactory. You can also configure
      * username/password directly on the ConnectionFactory.
@@ -177,9 +180,10 @@ public class JmsComponentConfiguration
     private String durableSubscriptionName;
     /**
      * Specifies the JMS Exception Listener that is to be notified of any
-     * underlying JMS exceptions.
+     * underlying JMS exceptions. The option is a javax.jms.ExceptionListener
+     * type.
      */
-    private ExceptionListener exceptionListener;
+    private String exceptionListener;
     /**
      * Specifies a org.springframework.util.ErrorHandler to be invoked in case
      * of any uncaught exceptions thrown while processing a Message. By default
@@ -187,10 +191,10 @@ public class JmsComponentConfiguration
      * been configured. You can configure logging level and whether stack traces
      * should be logged using errorHandlerLoggingLevel and
      * errorHandlerLogStackTrace options. This makes it much easier to
-     * configure, than having to code a custom errorHandler.
+     * configure, than having to code a custom errorHandler. The option is a
+     * org.springframework.util.ErrorHandler type.
      */
-    @NestedConfigurationProperty
-    private ErrorHandler errorHandler;
+    private String errorHandler;
     /**
      * Allows to configure the default errorHandler logging level for logging
      * uncaught exceptions.
@@ -258,10 +262,10 @@ public class JmsComponentConfiguration
     /**
      * To use a custom Spring
      * org.springframework.jms.support.converter.MessageConverter so you can be
-     * in control how to map to/from a javax.jms.Message.
+     * in control how to map to/from a javax.jms.Message. The option is a
+     * org.springframework.jms.support.converter.MessageConverter type.
      */
-    @NestedConfigurationProperty
-    private MessageConverter messageConverter;
+    private String messageConverter;
     /**
      * Specifies whether Camel should auto map the received JMS message to a
      * suited payload type, such as javax.jms.TextMessage to a String etc. See
@@ -315,10 +319,10 @@ public class JmsComponentConfiguration
      */
     private Long recoveryInterval = 5000L;
     /**
-     * Allows you to specify a custom task executor for consuming messages.
+     * Allows you to specify a custom task executor for consuming messages. The
+     * option is a org.springframework.core.task.TaskExecutor type.
      */
-    @NestedConfigurationProperty
-    private TaskExecutor taskExecutor;
+    private String taskExecutor;
     /**
      * When sending messages, specifies the time-to-live of the message (in
      * milliseconds).
@@ -334,10 +338,10 @@ public class JmsComponentConfiguration
      */
     private Boolean lazyCreateTransactionManager = true;
     /**
-     * The Spring transaction manager to use.
+     * The Spring transaction manager to use. The option is a
+     * org.springframework.transaction.PlatformTransactionManager type.
      */
-    @NestedConfigurationProperty
-    private PlatformTransactionManager transactionManager;
+    private String transactionManager;
     /**
      * The name of the transaction to use.
      */
@@ -422,31 +426,30 @@ public class JmsComponentConfiguration
     /**
      * If enabled and you are using Request Reply messaging (InOut) and an
      * Exchange failed with a SOAP fault (not exception) on the consumer side,
-     * then the fault flag on link org.apache.camel.MessageisFault() will be
-     * send back in the response as a JMS header with the key link
-     * JmsConstantsJMS_TRANSFER_FAULT. If the client is Camel, the returned
-     * fault flag will be set on the link
-     * org.apache.camel.MessagesetFault(boolean). You may want to enable this
-     * when using Camel components that support faults such as SOAP based such
-     * as cxf or spring-ws.
+     * then the fault flag on org.apache.camel.Message#isFault() will be send
+     * back in the response as a JMS header with the key
+     * JmsConstants#JMS_TRANSFER_FAULT. If the client is Camel, the returned
+     * fault flag will be set on the org.apache.camel.Message#setFault(boolean).
+     * You may want to enable this when using Camel components that support
+     * faults such as SOAP based such as cxf or spring-ws.
      */
     private Boolean transferFault = false;
     /**
      * Allows you to use your own implementation of the
      * org.springframework.jms.core.JmsOperations interface. Camel uses
      * JmsTemplate as default. Can be used for testing purpose, but not used
-     * much as stated in the spring API docs.
+     * much as stated in the spring API docs. The option is a
+     * org.springframework.jms.core.JmsOperations type.
      */
-    @NestedConfigurationProperty
-    private JmsOperations jmsOperations;
+    private String jmsOperations;
     /**
      * A pluggable
      * org.springframework.jms.support.destination.DestinationResolver that
      * allows you to use your own resolver (for example, to lookup the real
-     * destination in a JNDI registry).
+     * destination in a JNDI registry). The option is a
+     * org.springframework.jms.support.destination.DestinationResolver type.
      */
-    @NestedConfigurationProperty
-    private DestinationResolver destinationResolver;
+    private String destinationResolver;
     /**
      * Allows for explicitly specifying which kind of strategy to use for
      * replyTo queues when doing request/reply over JMS. Possible values are:
@@ -522,10 +525,10 @@ public class JmsComponentConfiguration
      * key as is. Can be used for JMS brokers which do not care whether JMS
      * header keys contain illegal characters. You can provide your own
      * implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy
-     * and refer to it using the notation.
+     * and refer to it using the # notation. The option is a
+     * org.apache.camel.component.jms.JmsKeyFormatStrategy type.
      */
-    @NestedConfigurationProperty
-    private JmsKeyFormatStrategy jmsKeyFormatStrategy;
+    private String jmsKeyFormatStrategy;
     /**
      * This option is used to allow additional headers which may have values
      * that are invalid according to JMS specification. For example some message
@@ -536,17 +539,17 @@ public class JmsComponentConfiguration
      */
     private String allowAdditionalHeaders;
     /**
-     * To use a custom QueueBrowseStrategy when browsing queues
+     * To use a custom QueueBrowseStrategy when browsing queues. The option is a
+     * org.apache.camel.component.jms.QueueBrowseStrategy type.
      */
-    @NestedConfigurationProperty
-    private QueueBrowseStrategy queueBrowseStrategy;
+    private String queueBrowseStrategy;
     /**
      * To use the given MessageCreatedStrategy which are invoked when Camel
      * creates new instances of javax.jms.Message objects when Camel is sending
-     * a JMS message.
+     * a JMS message. The option is a
+     * org.apache.camel.component.jms.MessageCreatedStrategy type.
      */
-    @NestedConfigurationProperty
-    private MessageCreatedStrategy messageCreatedStrategy;
+    private String messageCreatedStrategy;
     /**
      * Number of times to wait for provisional correlation id to be updated to
      * the actual correlation id when doing request/reply over JMS and when the
@@ -617,10 +620,10 @@ public class JmsComponentConfiguration
     private Boolean formatDateHeadersToIso8601 = false;
     /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
-     * header to and from Camel message.
+     * header to and from Camel message. The option is a
+     * org.apache.camel.spi.HeaderFilterStrategy type.
      */
-    @NestedConfigurationProperty
-    private HeaderFilterStrategy headerFilterStrategy;
+    private String headerFilterStrategy;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -734,11 +737,11 @@ public class JmsComponentConfiguration
         this.replyToConcurrentConsumers = replyToConcurrentConsumers;
     }
 
-    public ConnectionFactory getConnectionFactory() {
+    public String getConnectionFactory() {
         return connectionFactory;
     }
 
-    public void setConnectionFactory(ConnectionFactory connectionFactory) {
+    public void setConnectionFactory(String connectionFactory) {
         this.connectionFactory = connectionFactory;
     }
 
@@ -782,19 +785,19 @@ public class JmsComponentConfiguration
         this.durableSubscriptionName = durableSubscriptionName;
     }
 
-    public ExceptionListener getExceptionListener() {
+    public String getExceptionListener() {
         return exceptionListener;
     }
 
-    public void setExceptionListener(ExceptionListener exceptionListener) {
+    public void setExceptionListener(String exceptionListener) {
         this.exceptionListener = exceptionListener;
     }
 
-    public ErrorHandler getErrorHandler() {
+    public String getErrorHandler() {
         return errorHandler;
     }
 
-    public void setErrorHandler(ErrorHandler errorHandler) {
+    public void setErrorHandler(String errorHandler) {
         this.errorHandler = errorHandler;
     }
 
@@ -881,11 +884,11 @@ public class JmsComponentConfiguration
         this.maxMessagesPerTask = maxMessagesPerTask;
     }
 
-    public MessageConverter getMessageConverter() {
+    public String getMessageConverter() {
         return messageConverter;
     }
 
-    public void setMessageConverter(MessageConverter messageConverter) {
+    public void setMessageConverter(String messageConverter) {
         this.messageConverter = messageConverter;
     }
 
@@ -962,11 +965,11 @@ public class JmsComponentConfiguration
         this.recoveryInterval = recoveryInterval;
     }
 
-    public TaskExecutor getTaskExecutor() {
+    public String getTaskExecutor() {
         return taskExecutor;
     }
 
-    public void setTaskExecutor(TaskExecutor taskExecutor) {
+    public void setTaskExecutor(String taskExecutor) {
         this.taskExecutor = taskExecutor;
     }
 
@@ -995,12 +998,11 @@ public class JmsComponentConfiguration
         this.lazyCreateTransactionManager = lazyCreateTransactionManager;
     }
 
-    public PlatformTransactionManager getTransactionManager() {
+    public String getTransactionManager() {
         return transactionManager;
     }
 
-    public void setTransactionManager(
-            PlatformTransactionManager transactionManager) {
+    public void setTransactionManager(String transactionManager) {
         this.transactionManager = transactionManager;
     }
 
@@ -1093,19 +1095,19 @@ public class JmsComponentConfiguration
         this.transferFault = transferFault;
     }
 
-    public JmsOperations getJmsOperations() {
+    public String getJmsOperations() {
         return jmsOperations;
     }
 
-    public void setJmsOperations(JmsOperations jmsOperations) {
+    public void setJmsOperations(String jmsOperations) {
         this.jmsOperations = jmsOperations;
     }
 
-    public DestinationResolver getDestinationResolver() {
+    public String getDestinationResolver() {
         return destinationResolver;
     }
 
-    public void setDestinationResolver(DestinationResolver destinationResolver) {
+    public void setDestinationResolver(String destinationResolver) {
         this.destinationResolver = destinationResolver;
     }
 
@@ -1166,12 +1168,11 @@ public class JmsComponentConfiguration
         this.defaultTaskExecutorType = defaultTaskExecutorType;
     }
 
-    public JmsKeyFormatStrategy getJmsKeyFormatStrategy() {
+    public String getJmsKeyFormatStrategy() {
         return jmsKeyFormatStrategy;
     }
 
-    public void setJmsKeyFormatStrategy(
-            JmsKeyFormatStrategy jmsKeyFormatStrategy) {
+    public void setJmsKeyFormatStrategy(String jmsKeyFormatStrategy) {
         this.jmsKeyFormatStrategy = jmsKeyFormatStrategy;
     }
 
@@ -1183,20 +1184,19 @@ public class JmsComponentConfiguration
         this.allowAdditionalHeaders = allowAdditionalHeaders;
     }
 
-    public QueueBrowseStrategy getQueueBrowseStrategy() {
+    public String getQueueBrowseStrategy() {
         return queueBrowseStrategy;
     }
 
-    public void setQueueBrowseStrategy(QueueBrowseStrategy queueBrowseStrategy) {
+    public void setQueueBrowseStrategy(String queueBrowseStrategy) {
         this.queueBrowseStrategy = queueBrowseStrategy;
     }
 
-    public MessageCreatedStrategy getMessageCreatedStrategy() {
+    public String getMessageCreatedStrategy() {
         return messageCreatedStrategy;
     }
 
-    public void setMessageCreatedStrategy(
-            MessageCreatedStrategy messageCreatedStrategy) {
+    public void setMessageCreatedStrategy(String messageCreatedStrategy) {
         this.messageCreatedStrategy = messageCreatedStrategy;
     }
 
@@ -1266,12 +1266,11 @@ public class JmsComponentConfiguration
         this.formatDateHeadersToIso8601 = formatDateHeadersToIso8601;
     }
 
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
+    public String getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
 
-    public void setHeaderFilterStrategy(
-            HeaderFilterStrategy headerFilterStrategy) {
+    public void setHeaderFilterStrategy(String headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
@@ -1302,8 +1301,8 @@ public class JmsComponentConfiguration
         /**
          * Sets the default connection factory to be used if a connection
          * factory is not specified for either
-         * {@link #setTemplateConnectionFactory(ConnectionFactory)} or
-         * {@link #setListenerConnectionFactory(ConnectionFactory)}
+         * setTemplateConnectionFactory(ConnectionFactory) or
+         * setListenerConnectionFactory(ConnectionFactory)
          */
         private ConnectionFactory connectionFactory;
         /**
@@ -1341,15 +1340,22 @@ public class JmsComponentConfiguration
          * avoid this its recommended to enable this option.
          */
         private Boolean acceptMessagesWhileStopping = false;
+        /**
+         * Whether the DefaultMessageListenerContainer used in the reply
+         * managers for request-reply messaging allow the
+         * DefaultMessageListenerContainer#runningAllowed() flag to quick stop
+         * in case JmsConfiguration#isAcceptMessagesWhileStopping() is enabled,
+         * and org.apache.camel.CamelContext is currently being stopped. This
+         * quick stop ability is enabled by default in the regular JMS consumers
+         * but to enable for reply managers you must enable this flag.
+         */
         private Boolean allowReplyManagerQuickStop = false;
         /**
          * Sets the JMS client ID to use. Note that this value, if specified,
          * must be unique and can only be used by a single JMS connection
          * instance. It is typically only required for durable topic
-         * subscriptions.
-         * <p>
-         * If using Apache ActiveMQ you may prefer to use Virtual Topics
-         * instead.
+         * subscriptions. If using Apache ActiveMQ you may prefer to use Virtual
+         * Topics instead.
          */
         private String clientId;
         /**
@@ -1405,9 +1411,7 @@ public class JmsComponentConfiguration
          * Specifies the default number of concurrent consumers when consuming
          * from JMS (not for request/reply over JMS). See also the
          * maxMessagesPerTask option to control dynamic scaling up/down of
-         * threads.
-         * <p>
-         * When doing request/reply over JMS then the option
+         * threads. When doing request/reply over JMS then the option
          * replyToConcurrentConsumers is used to control number of concurrent
          * consumers on the reply message listener.
          */
@@ -1420,7 +1424,7 @@ public class JmsComponentConfiguration
         private Integer replyToConcurrentConsumers = 1;
         /**
          * The number of messages per task. -1 is unlimited. If you use a range
-         * for concurrent consumers (eg min < max), then this option can be used
+         * for concurrent consumers (eg min max), then this option can be used
          * to set a value to eg 100 to control how fast the consumers will
          * shrink when less work is required.
          */
@@ -1489,9 +1493,7 @@ public class JmsComponentConfiguration
          * Specifies the maximum number of concurrent consumers when consuming
          * from JMS (not for request/reply over JMS). See also the
          * maxMessagesPerTask option to control dynamic scaling up/down of
-         * threads.
-         * <p>
-         * When doing request/reply over JMS then the option
+         * threads. When doing request/reply over JMS then the option
          * replyToMaxConcurrentConsumers is used to control number of concurrent
          * consumers on the reply message listener.
          */
@@ -1627,7 +1629,6 @@ public class JmsComponentConfiguration
          * this is not required and Camel will auto-detect the provider metadata
          * from the underlying provider.
          */
-        @NestedConfigurationProperty
         private JmsProviderMetadata providerMetadata;
         /**
          * Sets the {@link JmsOperations} used to deduce the
@@ -1652,7 +1653,7 @@ public class JmsComponentConfiguration
         /**
          * The timeout for waiting for a reply when using the InOut Exchange
          * Pattern (in milliseconds). The default is 20 seconds. You can include
-         * the header "CamelJmsRequestTimeout" to override this endpoint
+         * the header CamelJmsRequestTimeout to override this endpoint
          * configured timeout value, and thus have per message individual
          * timeout values. See also the requestTimeoutCheckerInterval option.
          */
@@ -1723,9 +1724,9 @@ public class JmsComponentConfiguration
         private Boolean transferExchange = false;
         /**
          * Controls whether or not to include serialized headers. Applies only
-         * when {@link #isTransferExchange()} is {@code true} . This requires
-         * that the objects are serializable. Camel will exclude any
-         * non-serializable objects and log it at WARN level.
+         * when isTransferExchange() is true. This requires that the objects are
+         * serializable. Camel will exclude any non-serializable objects and log
+         * it at WARN level.
          */
         private Boolean allowSerializedHeaders = false;
         /**
@@ -1744,15 +1745,13 @@ public class JmsComponentConfiguration
         /**
          * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed with a SOAP fault (not exception) on the consumer
-         * side, then the fault flag on
-         * {@link org.apache.camel.Message#isFault()} will be send back in the
-         * response as a JMS header with the key
-         * {@link JmsConstants#JMS_TRANSFER_FAULT} . If the client is Camel, the
-         * returned fault flag will be set on the
-         * {@link org.apache.camel.Message#setFault(boolean)} .
-         * <p>
-         * You may want to enable this when using Camel components that support
-         * faults such as SOAP based such as cxf or spring-ws.
+         * side, then the fault flag on org.apache.camel.Message#isFault() will
+         * be send back in the response as a JMS header with the key
+         * JmsConstants#JMS_TRANSFER_FAULT. If the client is Camel, the returned
+         * fault flag will be set on the
+         * org.apache.camel.Message#setFault(boolean). You may want to enable
+         * this when using Camel components that support faults such as SOAP
+         * based such as cxf or spring-ws.
          */
         private Boolean transferFault = false;
         /**
@@ -1865,9 +1864,9 @@ public class JmsComponentConfiguration
          * ThreadPoolTaskExecutor with optimal values - cached threadpool-like).
          * If not set, it defaults to the previous behaviour, which uses a
          * cached thread pool for consumer endpoints and SimpleAsync for reply
-         * consumers. The use of ThreadPool is recommended to reduce
-         * "thread trash" in elastic configurations with dynamically increasing
-         * and decreasing concurrent consumers.
+         * consumers. The use of ThreadPool is recommended to reduce thread
+         * trash in elastic configurations with dynamically increasing and
+         * decreasing concurrent consumers.
          */
         private DefaultTaskExecutorType defaultTaskExecutorType;
         /**
@@ -1879,8 +1878,8 @@ public class JmsComponentConfiguration
         private Boolean includeAllJMSXProperties = false;
         /**
          * To use the given MessageCreatedStrategy which are invoked when Camel
-         * creates new instances of <tt>javax.jms.Message</tt> objects when
-         * Camel is sending a JMS message.
+         * creates new instances of javax.jms.Message objects when Camel is
+         * sending a JMS message.
          */
         private MessageCreatedStrategy messageCreatedStrategy;
         /**
@@ -1899,53 +1898,43 @@ public class JmsComponentConfiguration
         private String correlationProperty;
         /**
          * This option is used to allow additional headers which may have values
-         * that are invalid according to JMS specification. + For example some
+         * that are invalid according to JMS specification. For example some
          * message systems such as WMQ do this with header names using prefix
          * JMS_IBM_MQMD_ containing values with byte array or other invalid
-         * types. + You can specify multiple header names separated by comma,
-         * and use * as suffix for wildcard matching.
+         * types. You can specify multiple header names separated by comma, and
+         * use as suffix for wildcard matching.
          */
         private String allowAdditionalHeaders;
         /**
          * Set whether to make the subscription durable. The durable
          * subscription name to be used can be specified through the
-         * "subscriptionName" property.
-         * <p>
-         * Default is "false". Set this to "true" to register a durable
-         * subscription, typically in combination with a "subscriptionName"
-         * value (unless your message listener class name is good enough as
-         * subscription name).
-         * <p>
-         * Only makes sense when listening to a topic (pub-sub domain),
-         * therefore this method switches the "pubSubDomain" flag as well.
+         * subscriptionName property. Default is false. Set this to true to
+         * register a durable subscription, typically in combination with a
+         * subscriptionName value (unless your message listener class name is
+         * good enough as subscription name). Only makes sense when listening to
+         * a topic (pub-sub domain), therefore this method switches the
+         * pubSubDomain flag as well.
          */
         private Boolean subscriptionDurable = false;
         /**
          * Set whether to make the subscription shared. The shared subscription
-         * name to be used can be specified through the "subscriptionName"
-         * property.
-         * <p>
-         * Default is "false". Set this to "true" to register a shared
-         * subscription, typically in combination with a "subscriptionName"
-         * value (unless your message listener class name is good enough as
+         * name to be used can be specified through the subscriptionName
+         * property. Default is false. Set this to true to register a shared
+         * subscription, typically in combination with a subscriptionName value
+         * (unless your message listener class name is good enough as
          * subscription name). Note that shared subscriptions may also be
          * durable, so this flag can (and often will) be combined with
-         * "subscriptionDurable" as well.
-         * <p>
-         * Only makes sense when listening to a topic (pub-sub domain),
-         * therefore this method switches the "pubSubDomain" flag as well.
-         * <p>
-         * <b>Requires a JMS 2.0 compatible message broker.</b>
+         * subscriptionDurable as well. Only makes sense when listening to a
+         * topic (pub-sub domain), therefore this method switches the
+         * pubSubDomain flag as well. Requires a JMS 2.0 compatible message
+         * broker.
          */
         private Boolean subscriptionShared = false;
         /**
          * Set the name of a subscription to create. To be applied in case of a
-         * topic (pub-sub domain) with a shared or durable subscription.
-         * <p>
-         * The subscription name needs to be unique within this client's JMS
-         * client id. Default is the class name of the specified message
-         * listener.
-         * <p>
+         * topic (pub-sub domain) with a shared or durable subscription. The
+         * subscription name needs to be unique within this client's JMS client
+         * id. Default is the class name of the specified message listener.
          * Note: Only 1 concurrent consumer (which is the default of this
          * message listener container) is allowed for each subscription, except
          * for a shared subscription (which requires JMS 2.0).

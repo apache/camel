@@ -27,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.management.event.RouteAddedEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.util.FileUtil;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
@@ -50,6 +51,7 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testAddNewRoute() throws Exception {
         deleteDirectory("target/dummy");
         createDirectory("target/dummy");
@@ -74,6 +76,7 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testUpdateExistingRoute() throws Exception {
         deleteDirectory("target/dummy");
         createDirectory("target/dummy");
@@ -129,6 +132,7 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testUpdateXmlRoute() throws Exception {
         deleteDirectory("target/dummy");
         createDirectory("target/dummy");

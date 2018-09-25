@@ -62,7 +62,7 @@ public class DefaultTraceEventHandler implements TraceEventHandler, Service {
 
     private synchronized Producer getTraceEventProducer(Exchange exchange) throws Exception {
         if (traceEventProducer == null) {
-            // create producer when we have access the the camel context (we dont in doStart)
+            // create producer when we have access the camel context (we dont in doStart)
             Endpoint endpoint = tracer.getDestination() != null ? tracer.getDestination() : exchange.getContext().getEndpoint(tracer.getDestinationUri());
             traceEventProducer = endpoint.createProducer();
             ServiceHelper.startService(traceEventProducer);
@@ -118,7 +118,7 @@ public class DefaultTraceEventHandler implements TraceEventHandler, Service {
                 getTraceEventProducer(exchange).process(event);
             } catch (Exception e) {
                 // log and ignore this as the original Exchange should be allowed to continue
-                LOG.error("Error processing trace event (original Exchange will continue): " + event, e);
+                LOG.error("Error processing trace event (original Exchange will continue): {}", event, e);
             }
         }
     }

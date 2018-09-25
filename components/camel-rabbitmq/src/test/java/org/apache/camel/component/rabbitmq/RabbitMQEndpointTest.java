@@ -19,7 +19,11 @@ package org.apache.camel.component.rabbitmq;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeoutException;
@@ -29,7 +33,6 @@ import com.rabbitmq.client.Address;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.impl.LongStringHelper;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -342,6 +345,12 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
     public void createEndpointWithExclusiveEnabled() throws Exception {
         RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?exclusive=true", RabbitMQEndpoint.class);
         assertTrue(endpoint.isExclusive());
+    }
+
+    @Test
+    public void createEndpointWithExclusiveConsumerEnabled() throws Exception {
+        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?exclusiveConsumer=true", RabbitMQEndpoint.class);
+        assertTrue(endpoint.isExclusiveConsumer());
     }
 
     @Test

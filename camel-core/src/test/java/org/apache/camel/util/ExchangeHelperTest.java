@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.util;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +28,8 @@ import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.NoSuchPropertyException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -37,11 +38,13 @@ public class ExchangeHelperTest extends ContextTestSupport {
 
     protected Exchange exchange;
 
+    @Test
     public void testValidProperty() throws Exception {
         String value = ExchangeHelper.getMandatoryProperty(exchange, "foo", String.class);
         assertEquals("foo property", "123", value);
     }
 
+    @Test
     public void testMissingProperty() throws Exception {
         try {
             String value = ExchangeHelper.getMandatoryProperty(exchange, "bar", String.class);
@@ -51,6 +54,7 @@ public class ExchangeHelperTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testPropertyOfIncompatibleType() throws Exception {
         try {
             List<?> value = ExchangeHelper.getMandatoryProperty(exchange, "foo", List.class);
@@ -60,6 +64,7 @@ public class ExchangeHelperTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testMissingHeader() throws Exception {
         try {
             String value = ExchangeHelper.getMandatoryHeader(exchange, "unknown", String.class);
@@ -69,6 +74,7 @@ public class ExchangeHelperTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testHeaderOfIncompatibleType() throws Exception {
         exchange.getIn().setHeader("foo", 123);
         try {
@@ -79,6 +85,7 @@ public class ExchangeHelperTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testNoSuchBean() throws Exception {
         try {
             ExchangeHelper.lookupMandatoryBean(exchange, "foo");
@@ -89,6 +96,7 @@ public class ExchangeHelperTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testNoSuchBeanType() throws Exception {
         try {
             ExchangeHelper.lookupMandatoryBean(exchange, "foo", String.class);
@@ -99,6 +107,7 @@ public class ExchangeHelperTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testGetExchangeById() throws Exception {
         List<Exchange> list = new ArrayList<>();
         Exchange e1 = context.getEndpoint("mock:foo").createExchange();
@@ -111,6 +120,7 @@ public class ExchangeHelperTest extends ContextTestSupport {
         assertEquals(e2, ExchangeHelper.getExchangeById(list, e2.getExchangeId()));
     }
 
+    @Test
     public void testPopulateVariableMap() throws Exception {
         exchange.setPattern(ExchangePattern.InOut);
         exchange.getOut().setBody("bar");
@@ -130,6 +140,7 @@ public class ExchangeHelperTest extends ContextTestSupport {
         assertSame(exchange.getContext(), map.get("camelContext"));
     }
 
+    @Test
     public void testCreateVariableMap() throws Exception {
         exchange.setPattern(ExchangePattern.InOut);
         exchange.getOut().setBody("bar");
@@ -148,6 +159,7 @@ public class ExchangeHelperTest extends ContextTestSupport {
         assertSame(exchange.getContext(), map.get("camelContext"));
     }
 
+    @Test
     public void testCreateVariableMapNoExistingOut() throws Exception {
         exchange.setPattern(ExchangePattern.InOut);
         exchange.getIn().setBody("bar");
@@ -172,16 +184,19 @@ public class ExchangeHelperTest extends ContextTestSupport {
         assertFalse(exchange.hasOut());
     }
 
+    @Test
     public void testGetContentType() throws Exception {
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/xml");
         assertEquals("text/xml", ExchangeHelper.getContentType(exchange));
     }
 
+    @Test
     public void testGetContentEncoding() throws Exception {
         exchange.getIn().setHeader(Exchange.CONTENT_ENCODING, "iso-8859-1");
         assertEquals("iso-8859-1", ExchangeHelper.getContentEncoding(exchange));
     }
 
+    @Test
     public void testIsStreamCaching() throws Exception {
         assertFalse(ExchangeHelper.isStreamCachingEnabled(exchange));
         exchange.getContext().getStreamCachingStrategy().setEnabled(true);
@@ -189,7 +204,8 @@ public class ExchangeHelperTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         exchange = new DefaultExchange(new DefaultCamelContext());
         exchange.setProperty("foo", 123);

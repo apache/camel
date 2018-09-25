@@ -20,13 +20,15 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  *
  */
-public class SizedScheduledExecutorServiceTest extends TestCase {
+public class SizedScheduledExecutorServiceTest extends Assert {
     
+    @Test
     public void testSizedScheduledExecutorService() throws Exception {
         ScheduledThreadPoolExecutor delegate = new ScheduledThreadPoolExecutor(5);
         

@@ -48,14 +48,10 @@ public class HttpServletResolveConsumerStrategy implements ServletResolveConsume
         HttpConsumer answer = consumers.get(path);
 
         List<HttpConsumer> candidates = resolveCandidates(request, method, consumers);
+        // extra filter by restrict
+        candidates = candidates.stream().filter(c -> matchRestMethod(method, c.getEndpoint().getHttpMethodRestrict())).collect(Collectors.toList());
         if (candidates.size() == 1) {
             answer = candidates.get(0);
-        } else {
-            // extra filter by restrict
-            candidates = candidates.stream().filter(c -> matchRestMethod(method, c.getEndpoint().getHttpMethodRestrict())).collect(Collectors.toList());
-            if (candidates.size() == 1) {
-                answer = candidates.get(0);
-            }
         }
 
         return answer;
@@ -81,6 +77,5 @@ public class HttpServletResolveConsumerStrategy implements ServletResolveConsume
     private static boolean matchRestMethod(String method, String restrict) {
         return restrict == null || restrict.toLowerCase(Locale.ENGLISH).contains(method.toLowerCase(Locale.ENGLISH));
     }
-
 
 }

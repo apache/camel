@@ -46,6 +46,8 @@ public class ServletEndpoint extends HttpCommonEndpoint {
     private String servletName;
     @UriParam(label = "consumer,advanced")
     private boolean attachmentMultipartBinding;
+    @UriParam(label = "consumer,advanced")
+    private String fileNameExtWhitelist;
 
     public ServletEndpoint() {
     }
@@ -70,6 +72,7 @@ public class ServletEndpoint extends HttpCommonEndpoint {
             } else {
                 this.binding = new DefaultHttpBinding();
             }
+            this.binding.setFileNameExtWhitelist(getFileNameExtWhitelist());
             this.binding.setTransferException(isTransferException());
             if (getComponent() != null) {
                 this.binding.setAllowJavaSerializedObject(getComponent().isAllowJavaSerializedObject());
@@ -125,6 +128,19 @@ public class ServletEndpoint extends HttpCommonEndpoint {
      */
     public void setAttachmentMultipartBinding(boolean attachmentMultipartBinding) {
         this.attachmentMultipartBinding = attachmentMultipartBinding;
+    }
+
+    public String getFileNameExtWhitelist() {
+        return fileNameExtWhitelist;
+    }
+
+    /**
+     * Whitelist of accepted filename extensions for accepting uploaded files.
+     * <p/>
+     * Multiple extensions can be separated by comma, such as txt,xml.
+     */
+    public void setFileNameExtWhitelist(String fileNameExtWhitelist) {
+        this.fileNameExtWhitelist = fileNameExtWhitelist;
     }
 
     @Override

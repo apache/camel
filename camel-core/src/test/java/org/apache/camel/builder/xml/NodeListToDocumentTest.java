@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.junit.Ignore;
 //import com.sun.org.apache.xerces.internal.dom.ElementNSImpl;
+import org.junit.Test;
 
 @Ignore("For manual testing CAMEL-6922")
 public class NodeListToDocumentTest extends ContextTestSupport {
@@ -29,6 +30,7 @@ public class NodeListToDocumentTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testXPathNodeResultToDocument() throws Exception {
         // TODO: uses an internal nexus class which can only be tested on some platforms
         /*

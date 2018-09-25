@@ -33,7 +33,6 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.search.SearchTerm;
 
 import com.sun.mail.imap.SortTerm;
-
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
@@ -141,6 +140,11 @@ public final class MailConverters {
         return null;
     }
 
+    /**
+     * Converters the simple search term builder to search term.
+     *
+     * This should not be a @Converter method
+     */
     public static SearchTerm toSearchTerm(SimpleSearchTerm simple, TypeConverter typeConverter) throws ParseException, NoTypeConversionAvailableException {
         SearchTermBuilder builder = new SearchTermBuilder();
         if (simple.isUnseen()) {
@@ -214,9 +218,9 @@ public final class MailConverters {
     }
 
     /*
-     * Converts from comma separated list of sort terms to SortTerm obj array
+     * Converts from comma separated list of sort terms to SortTerm obj array.
+     * This should not be a @Converter method
      */
-    @Converter
     public static SortTerm[] toSortTerm(String sortTerm) {
         ArrayList<SortTerm> result = new ArrayList<>();
         

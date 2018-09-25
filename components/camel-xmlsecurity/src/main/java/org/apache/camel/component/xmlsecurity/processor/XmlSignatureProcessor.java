@@ -129,7 +129,7 @@ public abstract class XmlSignatureProcessor implements Processor {
         if (schemaResourceUri == null) {
             schemaResourceUri = getConfiguration().getSchemaResourceUri();
         }
-        LOG.debug("schema resource URI: {} ", getConfiguration().getSchemaResourceUri());
+        LOG.debug("schema resource URI: {}", getConfiguration().getSchemaResourceUri());
         return schemaResourceUri;
     }
 

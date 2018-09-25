@@ -22,12 +22,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version
  */
 public class RollbackTest extends ContextTestSupport {
 
+    @Test
     public void testOk() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:rollback").expectedMessageCount(0);
@@ -37,6 +39,7 @@ public class RollbackTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRollback() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:rollback").expectedMessageCount(1);
@@ -51,6 +54,7 @@ public class RollbackTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRollbackWithExchange() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:rollback").expectedMessageCount(1);

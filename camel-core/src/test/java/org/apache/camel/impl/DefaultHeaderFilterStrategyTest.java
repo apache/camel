@@ -21,12 +21,14 @@ import java.util.Set;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
 
+    @Test
     public void testSimpleDefaultHeaderFilterStrategy() {
         DefaultHeaderFilterStrategy comp = new DefaultHeaderFilterStrategy();
 
@@ -40,6 +42,7 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
         assertEquals(true, comp.isCaseInsensitive());
     }
 
+    @Test
     public void testInFilterDefaultHeaderFilterStrategy() {
         DefaultHeaderFilterStrategy comp = new DefaultHeaderFilterStrategy();
 
@@ -50,6 +53,7 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
         assertEquals(set, comp.getInFilter());
     }
 
+    @Test
     public void testInFilterDoFilterDefaultHeaderFilterStrategy() {
         DefaultHeaderFilterStrategy comp = new DefaultHeaderFilterStrategy();
 
@@ -65,6 +69,7 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
         assertTrue(comp.applyFilterToExternalHeaders("foo", "cheese", exchange));
     }
 
+    @Test
     public void testOutFilterDefaultHeaderFilterStrategy() {
         DefaultHeaderFilterStrategy comp = new DefaultHeaderFilterStrategy();
 
@@ -75,6 +80,7 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
         assertEquals(set, comp.getOutFilter());
     }
 
+    @Test
     public void testOutFilterDoFilterDefaultHeaderFilterStrategy() {
         DefaultHeaderFilterStrategy comp = new DefaultHeaderFilterStrategy();
 
@@ -90,6 +96,7 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
         assertTrue(comp.applyFilterToCamelHeaders("foo", "cheese", exchange));
     }
     
+    @Test
     public void testCaseInsensitiveHeaderNameDoFilterDefaultHeaderFilterStrategy() {
         DefaultHeaderFilterStrategy comp = new DefaultHeaderFilterStrategy();
         comp.setCaseInsensitive(true);

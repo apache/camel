@@ -21,7 +21,6 @@ import org.apache.avro.Protocol;
 import org.apache.camel.component.avro.AvroTransport;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Working with Apache Avro for data serialization.
@@ -34,6 +33,11 @@ public class AvroComponentConfiguration
         extends
             ComponentConfigurationPropertiesCommon {
 
+    /**
+     * Whether to enable auto configuration of the avro component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
     /**
      * To use a shared AvroConfiguration to configure options once
      */
@@ -76,8 +80,10 @@ public class AvroComponentConfiguration
         /**
          * Avro protocol to use
          */
-        @NestedConfigurationProperty
         private Protocol protocol;
+        /**
+         * Transport to use, can be either http or netty
+         */
         private AvroTransport transport;
         /**
          * Avro protocol location

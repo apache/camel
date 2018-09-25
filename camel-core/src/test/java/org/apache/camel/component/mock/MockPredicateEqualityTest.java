@@ -18,20 +18,25 @@ package org.apache.camel.component.mock;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class MockPredicateEqualityTest extends ContextTestSupport {
 
+    @Test
     public void testByteArray() throws Exception {
         doTest(new byte[]{(byte) 0xde, (byte) 0xed, (byte) 0xbe, (byte) 0xef});
     }
 
+    @Test
     public void testIntArray() throws Exception {
         doTest(new int[]{121, 122, 123});
     }
 
+    @Test
     public void testCharArray() throws Exception {
         doTest("forbar".toCharArray());
     }
+    @Test
     public void testStringArray() throws Exception {
         doTest(new String[]{"this", "is", "an", "array"});
     }

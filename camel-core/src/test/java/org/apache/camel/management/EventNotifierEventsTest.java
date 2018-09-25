@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
-
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -42,6 +41,8 @@ import org.apache.camel.management.event.RouteRemovedEvent;
 import org.apache.camel.management.event.RouteStartedEvent;
 import org.apache.camel.management.event.RouteStoppedEvent;
 import org.apache.camel.support.EventNotifierSupport;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -51,6 +52,7 @@ public class EventNotifierEventsTest extends ContextTestSupport {
     private static List<EventObject> events = new ArrayList<>();
 
     @Override
+    @Before
     public void setUp() throws Exception {
         events.clear();
         super.setUp();
@@ -79,6 +81,7 @@ public class EventNotifierEventsTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testExchangeDone() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -112,6 +115,7 @@ public class EventNotifierEventsTest extends ContextTestSupport {
         assertIsInstanceOf(CamelContextStoppedEvent.class, events.get(19));
     }
 
+    @Test
     public void testExchangeFailed() throws Exception {
         try {
             template.sendBody("direct:fail", "Hello World");
@@ -145,6 +149,7 @@ public class EventNotifierEventsTest extends ContextTestSupport {
         assertIsInstanceOf(CamelContextStoppedEvent.class, events.get(15));
     }
 
+    @Test
     public void testSuspendResume() throws Exception {
         assertEquals(6, events.size());
         assertIsInstanceOf(CamelContextStartingEvent.class, events.get(0));

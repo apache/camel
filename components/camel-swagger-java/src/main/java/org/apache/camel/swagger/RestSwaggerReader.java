@@ -21,6 +21,7 @@ import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -39,8 +40,13 @@ import io.swagger.models.Operation;
 import io.swagger.models.Path;
 import io.swagger.models.RefModel;
 import io.swagger.models.Response;
+import io.swagger.models.SecurityRequirement;
 import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
+import io.swagger.models.auth.ApiKeyAuthDefinition;
+import io.swagger.models.auth.BasicAuthDefinition;
+import io.swagger.models.auth.In;
+import io.swagger.models.auth.OAuth2Definition;
 import io.swagger.models.parameters.AbstractSerializableParameter;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.FormParameter;
@@ -65,6 +71,12 @@ import org.apache.camel.model.rest.RestOperationResponseHeaderDefinition;
 import org.apache.camel.model.rest.RestOperationResponseMsgDefinition;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.model.rest.RestPropertyDefinition;
+import org.apache.camel.model.rest.RestSecuritiesDefinition;
+import org.apache.camel.model.rest.RestSecurityApiKey;
+import org.apache.camel.model.rest.RestSecurityBasicAuth;
+import org.apache.camel.model.rest.RestSecurityDefinition;
+import org.apache.camel.model.rest.RestSecurityOAuth2;
+import org.apache.camel.model.rest.SecurityDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.FileUtil;
@@ -85,8 +97,9 @@ public class RestSwaggerReader {
      * @param config            the swagger configuration
      * @param classResolver     class resolver to use
      * @return the swagger model
+     * @throws ClassNotFoundException 
      */
-    public Swagger read(List<RestDefinition> rests, String route, BeanConfig config, String camelContextId, ClassResolver classResolver) {
+    public Swagger read(List<RestDefinition> rests, String route, BeanConfig config, String camelContextId, ClassResolver classResolver) throws ClassNotFoundException {
         Swagger swagger = new Swagger();
 
         for (RestDefinition rest : rests) {
@@ -106,7 +119,7 @@ public class RestSwaggerReader {
         return swagger;
     }
 
-    private void parse(Swagger swagger, RestDefinition rest, String camelContextId, ClassResolver classResolver) {
+    private void parse(Swagger swagger, RestDefinition rest, String camelContextId, ClassResolver classResolver) throws ClassNotFoundException {
         List<VerbDefinition> verbs = new ArrayList<>(rest.getVerbs());
         // must sort the verbs by uri so we group them together when an uri has multiple operations
         Collections.sort(verbs, new VerbOrdering());
@@ -121,6 +134,48 @@ public class RestSwaggerReader {
             tag.description(summary);
             tag.name(pathAsTag);
             swagger.addTag(tag);
+        }
+
+        // setup security definitions
+        RestSecuritiesDefinition sd = rest.getSecurityDefinitions();
+        if (sd != null) {
+            for (RestSecurityDefinition def : sd.getSecurityDefinitions()) {
+                if (def instanceof RestSecurityBasicAuth) {
+                    BasicAuthDefinition auth = new BasicAuthDefinition();
+                    auth.setDescription(def.getDescription());
+                    swagger.addSecurityDefinition(def.getKey(), auth);
+                } else if (def instanceof RestSecurityApiKey) {
+                    RestSecurityApiKey rs = (RestSecurityApiKey) def;
+                    ApiKeyAuthDefinition auth = new ApiKeyAuthDefinition();
+                    auth.setDescription(rs.getDescription());
+                    auth.setName(rs.getName());
+                    if (rs.getInHeader() != null && rs.getInHeader()) {
+                        auth.setIn(In.HEADER);
+                    } else {
+                        auth.setIn(In.QUERY);
+                    }
+                    swagger.addSecurityDefinition(def.getKey(), auth);
+                } else if (def instanceof RestSecurityOAuth2) {
+                    RestSecurityOAuth2 rs = (RestSecurityOAuth2) def;
+                    OAuth2Definition auth = new OAuth2Definition();
+                    auth.setDescription(rs.getDescription());
+                    String flow = rs.getFlow();
+                    if (flow == null) {
+                        if (rs.getAuthorizationUrl() != null && rs.getTokenUrl() != null) {
+                            flow = "accessCode";
+                        } else if (rs.getTokenUrl() == null && rs.getAuthorizationUrl() != null) {
+                            flow = "implicit";
+                        }
+                    }
+                    auth.setFlow(flow);
+                    auth.setAuthorizationUrl(rs.getAuthorizationUrl());
+                    auth.setTokenUrl(rs.getTokenUrl());
+                    for (RestPropertyDefinition scope : rs.getScopes()) {
+                        auth.addScope(scope.getKey(), scope.getValue());
+                    }
+                    swagger.addSecurityDefinition(def.getKey(), auth);
+                }
+            }
         }
 
         // gather all types in use
@@ -169,7 +224,7 @@ public class RestSwaggerReader {
 
         // use annotation scanner to find models (annotated classes)
         for (String type : types) {
-            Class<?> clazz = classResolver.resolveClass(type);
+            Class<?> clazz = classResolver.resolveMandatoryClass(type);
             appendModels(clazz, swagger);
         }
 
@@ -238,6 +293,19 @@ public class RestSwaggerReader {
 
             if (verb.getDescriptionText() != null) {
                 op.summary(verb.getDescriptionText());
+            }
+
+            // security
+            for (SecurityDefinition sd : verb.getSecurity()) {
+                List<String> scopes = new ArrayList<>();
+                if (sd.getScopes() != null) {
+                    Iterator<Object> it = ObjectHelper.createIterator(sd.getScopes());
+                    while (it.hasNext()) {
+                        String scope = it.next().toString();
+                        scopes.add(scope);
+                    }
+                }
+                op.addSecurity(sd.getKey(), scopes);
             }
 
             for (RestOperationParamDefinition param : verb.getParams()) {

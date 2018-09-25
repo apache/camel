@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
@@ -31,6 +32,7 @@ public class FromEndpointTest extends ContextTestSupport {
     private MockEndpoint results;
     private Object expectedBody = "<hello>world!</hello>";
 
+    @Test
     public void testReceivedMessageHasFromEndpointSet() throws Exception {
         results = getMockEndpoint("mock:results");
         results.expectedBodiesReceived(expectedBody);

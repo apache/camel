@@ -23,6 +23,7 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.junit.Test;
 
 /**
  * Based on CAMEL-1546
@@ -31,10 +32,12 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
  */
 public class AggregatorExceptionInPredicateTest extends ContextTestSupport {
 
+    @Test
     public void testExceptionInAggregationStrategy() throws Exception {
         testExceptionInFlow("direct:start");
     }
     
+    @Test
     public void testExceptionInPredicate() throws Exception {
         testExceptionInFlow("direct:predicate");
     }

@@ -21,6 +21,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
@@ -34,6 +35,7 @@ public class ManagedSanitizeTest extends ManagementTestSupport {
         return context;
     }
 
+    @Test
     public void testSanitize() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 

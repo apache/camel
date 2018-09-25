@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -54,6 +55,11 @@ public class OnFallbackDefinition extends OutputDefinition<OnFallbackDefinition>
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         return this.createChildProcessor(routeContext, false);
+    }
+
+    @Override
+    public String getShortName() {
+        return "onFallback";
     }
 
     @Override

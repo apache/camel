@@ -17,6 +17,7 @@
 package org.apache.camel.management;
 
 import java.util.List;
+
 import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -30,10 +31,12 @@ import org.apache.camel.model.OtherwiseDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.WhenDefinition;
+import org.junit.Test;
 
 public class BacklogTracerIdOnAllNodesTest extends ManagementTestSupport {
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testBacklogTracerEventMessage() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

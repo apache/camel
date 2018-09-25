@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.validator;
-
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,6 +27,8 @@ import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.validation.NoXmlHeaderValidationException;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ValidatorRouteTest extends ContextTestSupport {
 
@@ -35,6 +36,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
     protected MockEndpoint finallyEndpoint;
     protected MockEndpoint invalidEndpoint;
 
+    @Test
     public void testValidMessage() throws Exception {
         validEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
@@ -45,6 +47,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
 
+    @Test
     public void testValidMessageInHeader() throws Exception {
         validEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
@@ -57,6 +60,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
 
+    @Test
     public void testInvalidMessage() throws Exception {
         invalidEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
@@ -67,6 +71,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
 
+    @Test
     public void testInvalidMessageInHeader() throws Exception {
         invalidEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
@@ -79,6 +84,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
 
+    @Test
     public void testNullHeaderNoFail() throws Exception {
         validEndpoint.expectedMessageCount(1);
 
@@ -87,6 +93,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(validEndpoint);
     }
 
+    @Test
     public void testNullHeader() throws Exception {
         validEndpoint.setExpectedMessageCount(0);
 
@@ -105,6 +112,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
         assertTrue("Exception should mention missing header", exception.getMessage().contains("headerToValidate"));
     }
 
+    @Test
     public void testInvalideBytesMessage() throws Exception {
         invalidEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
@@ -115,6 +123,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
 
+    @Test
     public void testInvalidBytesMessageInHeader() throws Exception {
         invalidEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
@@ -127,6 +136,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
 
+    @Test
     public void testUseNotASharedSchema() throws Exception {
         validEndpoint.expectedMessageCount(1);
 
@@ -135,6 +145,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
     
+    @Test
     public void testConcurrentUseNotASharedSchema() throws Exception {
         validEndpoint.expectedMessageCount(10);
         // latch for the 10 exchanges we expect
@@ -161,7 +172,8 @@ public class ValidatorRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         validEndpoint = resolveMandatoryEndpoint("mock:valid", MockEndpoint.class);

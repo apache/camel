@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.ahc;
-
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;

@@ -16,11 +16,12 @@
  */
 package org.apache.camel.processor;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.util.CamelLogger;
+import org.junit.Assert;
+import org.junit.Test;
 import org.slf4j.Logger;
 
 import static org.hamcrest.Matchers.startsWith;
@@ -29,8 +30,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
-public class ThroughPutLoggerTest extends TestCase {
+public class ThroughPutLoggerTest extends Assert {
 
+    @Test
     public void testLogStringDurationIsNotZero() throws Exception {
         CamelContext camel = new DefaultCamelContext();
         camel.start();

@@ -135,7 +135,7 @@ public class SignedDataVerifier extends CryptoCmsUnmarshaller {
         int i = 0;
         for (SignerInformation signer : signers.getSigners()) {
             i++;
-            LOG.debug("    Signer {}: {} ", new Object[] {i, signerInformationToString(signer)});
+            LOG.debug("    Signer {}: {}", new Object[] {i, signerInformationToString(signer)});
             if (signer.getSignedAttributes() != null) {
                 @SuppressWarnings("unchecked")
                 Hashtable<String, Attribute> authAttTable = signer.getSignedAttributes().toHashtable();
@@ -159,7 +159,7 @@ public class SignedDataVerifier extends CryptoCmsUnmarshaller {
 
         Collection<X509Certificate> allowedVerifyCerts = conf.getCertificates(exchange);
         if (allowedVerifyCerts.isEmpty()) {
-            throw new CryptoCmsNoCertificateForSignerInfosException("Cannot verify the signatures of the the PKCS7/CMS Signed Data object: No verifier certificate is configured.");
+            throw new CryptoCmsNoCertificateForSignerInfosException("Cannot verify the signatures of the PKCS7/CMS Signed Data object: No verifier certificate is configured.");
         }
 
         JcaCertStore certStore = new JcaCertStore(allowedVerifyCerts);

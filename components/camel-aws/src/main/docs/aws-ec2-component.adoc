@@ -26,7 +26,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS EC2 component supports 5 options which are listed below.
+The AWS EC2 component supports 5 options, which are listed below.
 
 
 
@@ -79,6 +79,32 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 12 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.aws-ec2.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-ec2.configuration.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-ec2.configuration.amazon-ec2-client* | To use a existing configured AmazonEC2Client as client |  | AmazonEC2Client
+| *camel.component.aws-ec2.configuration.operation* | The operation to perform. It can be createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags or deleteTags |  | EC2Operations
+| *camel.component.aws-ec2.configuration.proxy-host* | To define a proxy host when instantiating the EC2 client |  | String
+| *camel.component.aws-ec2.configuration.proxy-port* | To define a proxy port when instantiating the EC2 client |  | Integer
+| *camel.component.aws-ec2.configuration.region* | The region in which EC2 client needs to work |  | String
+| *camel.component.aws-ec2.configuration.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-ec2.enabled* | Enable aws-ec2 component | true | Boolean
+| *camel.component.aws-ec2.region* | The region in which EC2 client needs to work |  | String
+| *camel.component.aws-ec2.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.aws-ec2.secret-key* | Amazon AWS Secret Key |  | String
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

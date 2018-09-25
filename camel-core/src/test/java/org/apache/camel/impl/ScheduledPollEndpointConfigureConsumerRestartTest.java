@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
@@ -35,6 +36,7 @@ public class ScheduledPollEndpointConfigureConsumerRestartTest extends ContextTe
     private MyEndpoint my;
     private Map<String, Object> props = new HashMap<>();
 
+    @Test
     public void testRestart() throws Exception {
         getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
 

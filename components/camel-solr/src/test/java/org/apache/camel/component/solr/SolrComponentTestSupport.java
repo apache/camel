@@ -38,23 +38,21 @@ import org.junit.runners.Parameterized.Parameters;
 public abstract class SolrComponentTestSupport extends SolrTestSupport {
     protected static final String TEST_ID = "test1";
     protected static final String TEST_ID2 = "test2";
-   
+
     private SolrFixtures solrFixtures;
 
     public SolrComponentTestSupport(SolrFixtures.TestServerType serverToTest) {
         this.solrFixtures = new SolrFixtures(serverToTest);
     }
-    
 
     protected void solrInsertTestEntry() {
         solrInsertTestEntry(TEST_ID);
     }
-    
+
     protected static Collection<Object[]> secureOrNot() {
         return Arrays.asList(new Object[][] {{true}, {false}});
     }
 
-    
     String solrRouteUri() {
         return solrFixtures.solrRouteUri();
     }
@@ -74,14 +72,14 @@ public abstract class SolrComponentTestSupport extends SolrTestSupport {
         SolrQuery solrQuery = new SolrQuery();
         solrQuery.setQuery(query);
         SolrClient solrServer = solrFixtures.getServer();
-        return solrServer.query(solrQuery);
+        return solrServer.query("collection1", solrQuery);
     }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
         SolrFixtures.createSolrFixtures();
     }
- 
+
     @AfterClass
     public static void afterClass() throws Exception {
         SolrFixtures.teardownSolrFixtures();
@@ -102,7 +100,7 @@ public abstract class SolrComponentTestSupport extends SolrTestSupport {
             }
         };
     }
-    
+
     @Parameters
     public static Collection<Object[]> serverTypes() {
         Object[][] serverTypes = {{SolrFixtures.TestServerType.USE_CLOUD},

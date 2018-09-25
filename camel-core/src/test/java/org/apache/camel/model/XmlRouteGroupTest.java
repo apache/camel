@@ -18,8 +18,11 @@ package org.apache.camel.model;
 
 import javax.xml.bind.JAXBException;
 
+import org.junit.Test;
+
 public class XmlRouteGroupTest extends XmlTestSupport {
 
+    @Test
     public void testXmlRouteGroup() throws JAXBException {
         RouteContainer context = assertParseAsJaxb("routeGroup.xml");
         RouteDefinition route = assertOneElement(context.getRoutes());

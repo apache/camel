@@ -18,11 +18,13 @@ package org.apache.camel.spring.processor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.junit.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringThreadsCorePoolTest extends ContextTestSupport {
 
+    @Test
     public void testThreadsCorePool() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -31,6 +33,7 @@ public class SpringThreadsCorePoolTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testThreadsCorePoolBuilder() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

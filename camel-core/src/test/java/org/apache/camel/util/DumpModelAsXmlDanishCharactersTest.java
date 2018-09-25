@@ -21,6 +21,7 @@ import org.apache.camel.MyBarSingleton;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.ModelHelper;
+import org.junit.Test;
 
 /**
  *
@@ -34,6 +35,7 @@ public class DumpModelAsXmlDanishCharactersTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testDumpModelAsXml() throws Exception {
         String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);

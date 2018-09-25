@@ -19,12 +19,14 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class LogProcessorTest extends ContextTestSupport {
 
+    @Test
     public void testLogProcessorFoo() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
 
@@ -33,6 +35,7 @@ public class LogProcessorTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testLogProcessorBar() throws Exception {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
 
@@ -41,6 +44,7 @@ public class LogProcessorTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testLogProcessorBaz() throws Exception {
         getMockEndpoint("mock:baz").expectedMessageCount(1);
 
@@ -49,6 +53,7 @@ public class LogProcessorTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testLogProcessorMarker() throws Exception {
         getMockEndpoint("mock:wombat").expectedMessageCount(1);
 
@@ -57,6 +62,7 @@ public class LogProcessorTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNoLog() throws Exception {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
 

@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
@@ -32,6 +33,7 @@ public class ReduceStacksNeededDuringRoutingTest extends ContextTestSupport {
         return true;
     }
 
+    @Test
     public void testReduceStacksNeeded() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

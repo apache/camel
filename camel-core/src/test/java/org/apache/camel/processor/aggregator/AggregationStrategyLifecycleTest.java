@@ -25,11 +25,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.junit.Test;
 
 public class AggregationStrategyLifecycleTest extends ContextTestSupport {
 
     private MyCompletionStrategy strategy = new MyCompletionStrategy();
 
+    @Test
     public void testAggregateLifecycle() throws Exception {
         assertTrue("Should be started", strategy.isStarted());
         assertSame(context, strategy.getCamelContext());

@@ -25,12 +25,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class SedaQueueTest extends ContextTestSupport {
 
+    @Test
     public void testQueue() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World", "Goodday World", "Bar");
@@ -40,6 +42,7 @@ public class SedaQueueTest extends ContextTestSupport {
         template.sendBody("seda:foo?concurrentConsumers=5", "Goodday World");
         template.sendBody("seda:bar", "Bar");
     }
+    @Test
     public void testQueueRef() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

@@ -20,6 +20,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * 
@@ -28,6 +29,7 @@ public class XsltTransformingExceptionTest extends ContextTestSupport {
     private static final String GOOD_XML_STRING = "<name>Camel</name>";
     private static final String BAD_XML_STRING = "<staff><programmer></programmer></staff>";
 
+    @Test
     public void testXsltException() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -43,6 +45,7 @@ public class XsltTransformingExceptionTest extends ContextTestSupport {
 
     // As the transformer is turned into security processing mode,
     // This test behavior is changed.
+    @Test
     public void testXsltWithoutException() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);

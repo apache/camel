@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class AmbiguousMethodCallExceptionSimplifiedTest extends ContextTestSupport {
 
@@ -50,6 +51,7 @@ public class AmbiguousMethodCallExceptionSimplifiedTest extends ContextTestSuppo
         };
     }
 
+    @Test
     public void testAmbiguousMethodCallException() throws Exception {
         MockEndpoint out = getMockEndpoint("mock:out");
         out.expectedMessageCount(1);

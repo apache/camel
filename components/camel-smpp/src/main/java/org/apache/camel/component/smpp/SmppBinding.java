@@ -203,10 +203,10 @@ public class SmppBinding {
                         optParams.put(valueOfTag.toString(), null);
                     }
                 } else {
-                    LOG.debug("Skipping optional parameter with tag {} because it was not recogized", optPara.tag);
+                    LOG.debug("Skipping optional parameter with tag {} because it was not recognized", optPara.tag);
                 }
             } catch (IllegalArgumentException e) {
-                LOG.debug("Skipping optional parameter with tag {} due " + e.getMessage(), optPara.tag);
+                LOG.debug("Skipping optional parameter with tag {} due to {}", optPara.tag, e.getMessage());
             }
         }
 

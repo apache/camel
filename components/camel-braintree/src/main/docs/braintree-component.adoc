@@ -36,7 +36,7 @@ for this component:
 
 
 // component options: START
-The Braintree component supports 2 options which are listed below.
+The Braintree component supports 2 options, which are listed below.
 
 
 
@@ -94,6 +94,34 @@ with the following path and query parameters:
 | *proxyPort* (proxy) | The proxy port |  | Integer
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 14 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.braintree.configuration.access-token* | The access token granted by a merchant to another in order to process transactions on their behalf. Used in place of environment, merchant id, public key and private key fields. |  | String
+| *camel.component.braintree.configuration.api-name* | What kind of operation to perform |  | BraintreeApiName
+| *camel.component.braintree.configuration.environment* | The environment Either SANDBOX or PRODUCTION |  | String
+| *camel.component.braintree.configuration.http-log-level* | Set logging level for http calls, see java.util.logging.Level |  | Level
+| *camel.component.braintree.configuration.http-log-name* | Set log category to use to log http calls, default "Braintree" |  | String
+| *camel.component.braintree.configuration.http-read-timeout* | Set read timeout for http calls. |  | Integer
+| *camel.component.braintree.configuration.merchant-id* | The merchant id provided by Braintree. |  | String
+| *camel.component.braintree.configuration.method-name* | What sub operation to use for the selected operation |  | String
+| *camel.component.braintree.configuration.private-key* | The private key provided by Braintree. |  | String
+| *camel.component.braintree.configuration.proxy-host* | The proxy host |  | String
+| *camel.component.braintree.configuration.proxy-port* | The proxy port |  | Integer
+| *camel.component.braintree.configuration.public-key* | The public key provided by Braintree. |  | String
+| *camel.component.braintree.enabled* | Enable braintree component | true | Boolean
+| *camel.component.braintree.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 ### URI format
@@ -115,10 +143,13 @@ Endpoint prefix can be one of:
 * creditCardverification
 * customer
 * discount
+* dispute
+* documentUpload
 * merchantAccount
 * paymentmethod
 * paymentmethodNonce
 * plan
+* report
 * settlementBatchSummary
 * subscription
 * transaction
@@ -357,6 +388,90 @@ braintree://discount/endpoint
 
  +
 
+#### Endpoint prefix _dispute_
+
+The following endpoints can be invoked with the prefix *dispute* as
+follows:
+
+[source,java]
+----------------------------------------------
+braintree://dispute/endpoint?[options]
+----------------------------------------------
+
+[cols="<,<,<,<",options="header",]
+|=======================================================================
+|Endpoint |Shorthand Alias |Options |Result Body Type
+|accept |  |id
+|com.braintreegateway.Result
+
+|addFileEvidence |  |disputeId, documentId
+|com.braintreegateway.Result<DisputeEvidence>
+
+|addFileEvidence |  |disputeId, fileEvidenceRequest
+|com.braintreegateway.Result<DisputeEvidence>
+
+|addTextEvidence |  |disputeId, content
+|com.braintreegateway.Result<DisputeEvidence>
+
+|addTextEvidence |  |disputeId, textEvidenceRequest
+|com.braintreegateway.Result<DisputeEvidence>
+
+|finalize |  |id
+|com.braintreegateway.Result
+
+|find |  |id
+|com.braintreegateway.Dispute
+
+|removeEvidence |  |id
+|com.braintreegateway.Result
+
+|search |  | disputeSearchRequest
+|com.braintreegateway.PaginatedCollection<com.braintreegateway.Dispute>
+|=======================================================================
+
+[[Braintree-URIOptionsfordispute]]
+URI Options for _dispute_
+
+[cols="<,<",options="header",]
+|==========================================================
+|Name |Type
+|id |String
+|disputeId |String
+|documentId |String
+|fileEvidenceRequest |com.braintreegateway.FileEvidenceRequest
+|content |String |
+|textEvidenceRequest |com.braintreegateway.TextEvidenceRequest
+|disputeSearchRequest |com.braintreegateway.DisputeSearchRequest
+|==========================================================
+
+
+#### Endpoint prefix _documentUpload_
+
+The following endpoints can be invoked with the prefix *documentUpload* as
+follows:
+
+[source,java]
+----------------------------------------------
+braintree://documentUpload/endpoint?[options]
+----------------------------------------------
+
+[cols="<,<,<,<",options="header",]
+|=======================================================================
+|Endpoint |Shorthand Alias |Options |Result Body Type
+|create |  |request
+|com.braintreegateway.Result<com.braintreegateway.DocumentUpload>
+|=======================================================================
+
+[[Braintree-URIOptionsfordocumentUpload]]
+URI Options for _documentUpload_
+
+[cols="<,<",options="header",]
+|==========================================================
+|Name |Type
+|request |com.braintreegateway.DocumentUploadRequest
+|==========================================================
+
+
 #### Endpoint prefix _merchantAccount_
 
 The following endpoints can be invoked with the
@@ -482,7 +597,32 @@ braintree://plan/endpoint
 |all |  |  |List<com.braintreegateway.Plan>
 |====================================================
 
- 
+
+#### Endpoint prefix _report_
+
+The following endpoints can be invoked with the prefix *report* as
+follows:
+
+[source,java]
+---------------------------------
+braintree://plan/report?[options]
+---------------------------------
+
+[cols="<,<,<,<",options="header",]
+|==============================================================================================================
+|Endpoint |Shorthand Alias |Options |Result Body Type
+|transactionLevelFees |  | request |com.braintreegateway.Result<com.braintreegateway.TransactionLevelFeeReport>
+|==============================================================================================================
+
+[[Braintree-URIOptionsfortreport]]
+URI Options for _report_
+
+[cols="<,<",options="header",]
+|==============================================================
+|Name |Type
+|request |com.braintreegateway.TransactionLevelFeeReportRequest
+|==============================================================
+
 
 #### Endpoint prefix _settlementBatchSummary_
 

@@ -18,12 +18,14 @@ package org.apache.camel.language;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class BeanLanguageOGNLTest extends ContextTestSupport {
 
+    @Test
     public void testBeanLanguageOGNL() throws Exception {
         String reply = template.requestBody("direct:start", "World", String.class);
         assertEquals("Hello World", reply);

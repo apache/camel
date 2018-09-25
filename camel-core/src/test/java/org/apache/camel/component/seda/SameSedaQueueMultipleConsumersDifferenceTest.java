@@ -19,12 +19,14 @@ package org.apache.camel.component.seda;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class SameSedaQueueMultipleConsumersDifferenceTest extends ContextTestSupport {
 
+    @Test
     public void testSameOptions() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
@@ -34,6 +36,7 @@ public class SameSedaQueueMultipleConsumersDifferenceTest extends ContextTestSup
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSameOptionsProducerStillOkay() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
@@ -43,6 +46,7 @@ public class SameSedaQueueMultipleConsumersDifferenceTest extends ContextTestSup
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAddConsumer() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {

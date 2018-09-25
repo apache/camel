@@ -25,20 +25,24 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.processor.DefaultExchangeFormatter;
+import org.junit.Test;
 
 /**
  * Logger formatter test.
  */
 public class DefaultExchangeFormatterTest extends ContextTestSupport {
 
+    @Test
     public void testSendMessageToLogDefault() throws Exception {
         template.sendBody("log:org.apache.camel.TEST", "Hello World");
     }
 
+    @Test
     public void testSendMessageToLogAllOff() throws Exception {
         template.sendBody("log:org.apache.camel.TEST?showBody=false&showBodyType=false&showExchangePattern=false", "Hello World");
     }
 
+    @Test
     public void testSendMessageToLogSingleOptions() throws Exception {
         template.sendBody("log:org.apache.camel.TEST?showExchangeId=true", "Hello World");
         template.sendBody("log:org.apache.camel.TEST?showExchangePattern=true", "Hello World");
@@ -65,23 +69,28 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
         }));
     }
 
+    @Test
     public void testSendMessageToLogMultiOptions() throws Exception {
         template.sendBody("log:org.apache.camel.TEST?showHeaders=true&showOut=true", "Hello World");
         template.sendBody("log:org.apache.camel.TEST?showProperties=true&showHeaders=true&showOut=true", "Hello World");
     }
 
+    @Test
     public void testSendMessageToLogShowFalse() throws Exception {
         template.sendBody("log:org.apache.camel.TEST?showBodyType=false", "Hello World");
     }
 
+    @Test
     public void testSendMessageToLogMultiLine() throws Exception {
         template.sendBody("log:org.apache.camel.TEST?multiline=true", "Hello World");
     }
 
+    @Test
     public void testSendByteArrayMessageToLogDefault() throws Exception {
         template.sendBody("log:org.apache.camel.TEST", "Hello World".getBytes());
     }
 
+    @Test
     public void testSendMessageToLogMaxChars() throws Exception {
         template.sendBody("log:org.apache.camel.TEST",
                 "Hello World this is a very long string that is NOT going to be chopped by maxchars");
@@ -93,6 +102,7 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
                 "Hello World this is a very long string that is going to be chopped by maxchars");
     }
 
+    @Test
     public void testSendExchangeWithOut() throws Exception {
         Endpoint endpoint = resolveMandatoryEndpoint("log:org.apache.camel.TEST?showAll=true&multiline=true");
         Exchange exchange = endpoint.createExchange();
@@ -105,6 +115,7 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
         producer.stop();
     }
 
+    @Test
     public void testSendExchangeWithException() throws Exception {
         Endpoint endpoint = resolveMandatoryEndpoint("log:org.apache.camel.TEST?showException=true");
         Exchange exchange = endpoint.createExchange();
@@ -117,6 +128,7 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
         producer.stop();
     }
 
+    @Test
     public void testSendCaughtExchangeWithException() throws Exception {
         Endpoint endpoint = resolveMandatoryEndpoint("log:org.apache.camel.TEST?showCaughtException=true");
         Exchange exchange = endpoint.createExchange();
@@ -129,6 +141,7 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
         producer.stop();
     }
 
+    @Test
     public void testSendCaughtExchangeWithExceptionAndMultiline() throws Exception {
         Endpoint endpoint = resolveMandatoryEndpoint("log:org.apache.camel.TEST?showCaughtException=true&multiline=true");
         Exchange exchange = endpoint.createExchange();
@@ -141,6 +154,7 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
         producer.stop();
     }
 
+    @Test
     public void testSendExchangeWithExceptionAndStackTrace() throws Exception {
         Endpoint endpoint = resolveMandatoryEndpoint("log:org.apache.camel.TEST?showException=true&showStackTrace=true");
         Exchange exchange = endpoint.createExchange();
@@ -153,6 +167,7 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
         producer.stop();
     }
 
+    @Test
     public void testSendCaughtExchangeWithExceptionAndStackTrace() throws Exception {
         Endpoint endpoint = resolveMandatoryEndpoint("log:org.apache.camel.TEST?showCaughtException=true&showStackTrace=true");
         Exchange exchange = endpoint.createExchange();
@@ -165,6 +180,7 @@ public class DefaultExchangeFormatterTest extends ContextTestSupport {
         producer.stop();
     }
 
+    @Test
     public void testConfiguration() {
         DefaultExchangeFormatter formatter = new DefaultExchangeFormatter();
 

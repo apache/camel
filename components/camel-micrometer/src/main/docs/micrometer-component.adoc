@@ -16,8 +16,8 @@ The **micrometer:** component allows to collect various metrics directly
 from Camel routes. Supported metric types
 are link:#MicrometerComponent-counter[counter], link:#MicrometerComponent-distributionSummary[summary],
 and link:#MicrometerComponent-timer[timer]. http://micrometer.io/[Micrometer] provides
-simple way to measure behaviour of application. Configurable
-reporting backends (via Micrometer registries) is enabling different integration options for
+simple way to measure the behaviour of an application. Configurable
+reporting backends (via Micrometer registries) enable different integration options for
 collecting and visualizing statistics.
 
 The component also provides
@@ -48,7 +48,7 @@ micrometer:[ counter | summary | timer ]:metricname[?options]
 ### Options
 
 // component options: START
-The Micrometer component supports 2 options which are listed below.
+The Micrometer component supports 2 options, which are listed below.
 
 
 
@@ -65,7 +65,7 @@ The Micrometer component supports 2 options which are listed below.
 The Micrometer endpoint is configured using URI syntax:
 
 ----
-micrometer:metricsType:meterName
+micrometer:metricsType:metricsName
 ----
 
 with the following path and query parameters:
@@ -95,6 +95,23 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.micrometer.enabled* | Whether to enable auto configuration of the micrometer component. This is enabled by default. |  | Boolean
+| *camel.component.micrometer.metrics-registry* | To use a custom configured MetricRegistry. The option is a io.micrometer.core.instrument.MeterRegistry type. |  | String
+| *camel.component.micrometer.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 
@@ -126,7 +143,7 @@ public static class MyConfig extends SingleRouteCamelConfiguration {
 
     @Bean(name = MicrometerComponent.METRICS_REGISTRY_NAME)
     public MeterRegistry getMeterRegistry() {
-        ComponentMeterRegistry registry = ...;
+        CompositeMeterRegistry registry = ...;
         registry.add(...);
         // ...
         return registry;
@@ -150,7 +167,7 @@ class MyBean extends RouteBuilder {
     // If multiple MetricRegistry beans
     // @Named(MicrometerComponent.METRIC_REGISTRY_NAME)
     MetricRegistry registry() {
-        ComponentMeterRegistry registry = ...;
+        CompositeMeterRegistry registry = ...;
         registry.add(...);
         // ...
         return registry;
@@ -474,7 +491,7 @@ The following options is supported on the factory:
 At runtime the metrics can be accessed from Java API or JMX which allows
 to gather the data as json output.
 
-From Java code you can do get the service from the CamelContext as
+From Java code you can get the service from the CamelContext as
 shown:
 
 [source,java]
@@ -524,7 +541,7 @@ See more details at Advanced configuration of CamelContext using Spring.
 
 ### Exposing Micrometer statistics in JMX
 
-Micrometer uses Registry implementations in order to publish statistics. While in production scenarios
+Micrometer uses `MeterRegistry` implementations in order to publish statistics. While in production scenarios
 it is advisable to select a dedicated backend like Prometheus or Graphite, it may be sufficient for
 test or local deployments to publish statistics to JMX.
 
@@ -546,7 +563,7 @@ and add a `JmxMeterRegistry` instance:
 
     @Bean(name = MicrometerComponent.METRICS_REGISTRY_NAME)
     public MeterRegistry getMeterRegistry() {
-        ComponentMeterRegistry meterRegistry = new CompositeMeterRegistry();
+        CompositeMeterRegistry meterRegistry = new CompositeMeterRegistry();
         meterRegistry.add(...);
         meterRegistry.add(new JmxMeterRegistry(
            CamelJmxConfig.DEFAULT,
@@ -563,4 +580,4 @@ an MBean name.
 ### Example
 
 `camel-example-micrometer` provides an example how to set up Micrometer monitoring with
-Camel using String Java configuration and a Prometheus backend.
+Camel using Java configuration and a Prometheus backend.

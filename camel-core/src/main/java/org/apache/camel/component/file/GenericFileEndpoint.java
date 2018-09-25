@@ -1397,7 +1397,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     protected String createDoneFileName(String fileName) {
         String pattern = getDoneFileName();
-        ObjectHelper.notEmpty(pattern, "doneFileName", pattern);
+        StringHelper.notEmpty(pattern, "doneFileName", pattern);
 
         // we only support ${file:name} or ${file:name.noext} as dynamic placeholders for done files
         String path = FileUtil.onlyPath(fileName);
@@ -1437,7 +1437,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     protected boolean isDoneFile(String fileName) {
         String pattern = getDoneFileName();
-        ObjectHelper.notEmpty(pattern, "doneFileName", pattern);
+        StringHelper.notEmpty(pattern, "doneFileName", pattern);
 
         if (!StringHelper.hasStartToken(pattern, "simple")) {
             // no tokens, so just match names directly

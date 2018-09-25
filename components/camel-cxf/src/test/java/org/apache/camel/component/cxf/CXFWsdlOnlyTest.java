@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf;
-
 import java.net.URL;
 
 import javax.xml.namespace.QName;

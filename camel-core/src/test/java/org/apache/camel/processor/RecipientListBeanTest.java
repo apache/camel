@@ -23,6 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * @version 
@@ -36,6 +37,7 @@ public class RecipientListBeanTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testRecipientListWithBean() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello c");
@@ -46,6 +48,7 @@ public class RecipientListBeanTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRecipientListWithParams() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello b");

@@ -19,12 +19,14 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Testing http://camel.apache.org/dsl.html
  */
 public class InterceptFromPredicateProceedAndStopTest extends ContextTestSupport {
 
+    @Test
     public void testInterceptorNoPredicate() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
@@ -45,6 +47,7 @@ public class InterceptFromPredicateProceedAndStopTest extends ContextTestSupport
         mockOk.assertIsSatisfied();
     }
 
+    @Test
     public void testInterceptorNoPredicateAndProceed() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
@@ -65,6 +68,7 @@ public class InterceptFromPredicateProceedAndStopTest extends ContextTestSupport
         mockOk.assertIsSatisfied();
     }
 
+    @Test
     public void testInterceptorNoPredicateAndStop() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
@@ -85,6 +89,7 @@ public class InterceptFromPredicateProceedAndStopTest extends ContextTestSupport
         mockOk.assertIsSatisfied();
     }
 
+    @Test
     public void testInterceptorWithPredicate() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
@@ -105,6 +110,7 @@ public class InterceptFromPredicateProceedAndStopTest extends ContextTestSupport
         mockOk.assertIsSatisfied();
     }
 
+    @Test
     public void testInterceptorWithPredicateAndProceed() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
@@ -125,6 +131,7 @@ public class InterceptFromPredicateProceedAndStopTest extends ContextTestSupport
         mockOk.assertIsSatisfied();
     }
 
+    @Test
     public void testInterceptorWithPredicateAndStop() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {

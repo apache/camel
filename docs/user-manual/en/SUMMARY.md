@@ -15,6 +15,7 @@
     * [Camel Core](camel-core.adoc)
     * [CamelContext](camelcontext.adoc)
     * [CEP](cep.adoc)
+    * [Component](component.adoc)
     * [Debugger](debugger.adoc)
     * [Delay Interceptor](delay-interceptor.adoc)
     * [Dependency Injection](dependency-injection.adoc)
@@ -39,16 +40,15 @@
     * [Inversion Of Control With Smart Defaults](inversion-of-control-with-smart-defaults.adoc)
     * [Lifecycle](lifecycle.adoc)
     * [OnCompletion](oncompletion.adoc)
+    * [Predicate](predicate.adoc)
     * [Registry](registry.adoc)
-    * [Scala DSL](scala-dsl.adoc)
+    * [RouteBuilder](route-builder.adoc)
+    * [Routes](routes.adoc)
 
 <!--
     * [Pluggable Class Resolvers](.adoc)
-    * [Predicate](.adoc)
     * [Processor](.adoc)
-    * [RouteBuilder](.adoc)
     * [RoutePolicy](.adoc)
-    * [Routes](.adoc)
     * [ServicePool](.adoc)
     * [Stream caching](.adoc)
     * [ToAsync](.adoc)
@@ -129,6 +129,7 @@
 	* [Apache Flink](flink-component.adoc)
 	* [Apache Spark](spark-component.adoc)
 	* [APNS](apns-component.adoc)
+	* [AS2](as2-component.adoc)
 	* [Asterisk](asterisk-component.adoc)
 	* [Atmos](atmos-component.adoc)
 	* [Atmosphere Websocket](atmosphere-websocket-component.adoc)
@@ -144,6 +145,7 @@
 	* [AWS DynamoDB](aws-ddb-component.adoc)
 	* [AWS DynamoDB Streams](aws-ddbstream-component.adoc)
 	* [AWS EC2](aws-ec2-component.adoc)
+	* [AWS IAM](aws-iam-component.adoc)
 	* [AWS Kinesis](aws-kinesis-component.adoc)
 	* [AWS Kinesis Firehose](aws-kinesis-firehose-component.adoc)
 	* [AWS KMS](aws-kms-component.adoc)
@@ -196,6 +198,7 @@
 	* [etcd](etcd-component.adoc)
 	* [Exec](exec-component.adoc)
 	* [Facebook](facebook-component.adoc)
+	* [FHIR](fhir-component.adoc)
 	* [Flatpack](flatpack-component.adoc)
 	* [FOP](fop-component.adoc)
 	* [Freemarker](freemarker-component.adoc)
@@ -207,8 +210,10 @@
 	* [GitHub](github-component.adoc)
 	* [Google BigQuery](google-bigquery-component.adoc)
 	* [Google Calendar](google-calendar-component.adoc)
+	* [Google Calendar Stream](google-calendar-stream-component.adoc)
 	* [Google Drive](google-drive-component.adoc)
 	* [Google Mail](google-mail-component.adoc)
+	* [Google Mail Stream](google-mail-stream-component.adoc)
 	* [Google Pubsub](google-pubsub-component.adoc)
 	* [Gora](gora-component.adoc)
 	* [Grape](grape-component.adoc)
@@ -269,6 +274,8 @@
 	* [Kubernetes](kubernetes-component.adoc)
 	* [Kubernetes ConfigMap](kubernetes-config-maps-component.adoc)
 	* [Kubernetes Deployments](kubernetes-deployments-component.adoc)
+	* [Kubernetes HPA](kubernetes-hpa-component.adoc)
+	* [Kubernetes Job](kubernetes-job-component.adoc)
 	* [Kubernetes Namespaces](kubernetes-namespaces-component.adoc)
 	* [Kubernetes Nodes](kubernetes-nodes-component.adoc)
 	* [Kubernetes Persistent Volume](kubernetes-persistent-volumes-component.adoc)
@@ -340,6 +347,7 @@
 	* [SAP NetWeaver](sap-netweaver-component.adoc)
 	* [Schematron](schematron-component.adoc)
 	* [SCP](scp-component.adoc)
+	* [Service](service-component.adoc)
 	* [ServiceNow](servicenow-component.adoc)
 	* [Servlet](servlet-component.adoc)
 	* [SFTP](sftp-component.adoc)
@@ -379,7 +387,7 @@
 	* [Velocity](velocity-component.adoc)
 	* [Vert.x](vertx-component.adoc)
 	* [Weather](weather-component.adoc)
-	* [web3j](web3j-component.adoc)
+	* [Web3j Ethereum Blockchain](web3j-component.adoc)
 	* [Wordpress](wordpress-component.adoc)
 	* [XChange](xchange-component.adoc)
 	* [XML RPC](xmlrpc-component.adoc)
@@ -398,7 +406,6 @@
 
 <!-- others: START -->
 * Miscellaneous Components
-	* [As2 Parent](as2-parent.adoc)
 	* [BAM](bam.adoc)
 	* [Blueprint](blueprint.adoc)
 	* [CDI](cdi.adoc)
@@ -425,7 +432,9 @@
 	* [Shiro](shiro.adoc)
 	* [Spring Boot](spring-boot.adoc)
 	* [Spring Cloud](spring-cloud.adoc)
+	* [Spring Cloud Consul](spring-cloud-consul.adoc)
 	* [Spring Cloud Netflix](spring-cloud-netflix.adoc)
+	* [Spring Cloud Zookeeper](spring-cloud-zookeeper.adoc)
 	* [Spring Java Configuration](spring-javaconfig.adoc)
 	* [Spring Security](spring-security.adoc)
 	* [Swagger](swagger.adoc)
@@ -435,6 +444,8 @@
 	* [Test CDI](test-cdi.adoc)
 	* [Test Karaf](test-karaf.adoc)
 	* [Test Spring](test-spring.adoc)
+	* [Testcontainers](testcontainers.adoc)
+	* [Testcontainers Spring](testcontainers-spring.adoc)
 	* [TestNG](testng.adoc)
 	* [URLRewrite](urlrewrite.adoc)
 	* [XRay](aws-xray.adoc)
@@ -456,8 +467,6 @@
 	* [Castor](castor-dataformat.adoc)
 	* [Crypto (Java Cryptographic Extension)](crypto-dataformat.adoc)
 	* [CSV](csv-dataformat.adoc)
-	* [FHIR JSon](fhirJson-dataformat.adoc)
-	* [FHIR XML](fhirXml-dataformat.adoc)
 	* [Flatpack](flatpack-dataformat.adoc)
 	* [GZip](gzip-dataformat.adoc)
 	* [Hessian](hessian-dataformat.adoc)
@@ -535,14 +544,42 @@
 
 
 
-* Example
+* [Examples](examples.adoc)
     * [BAM Example](bam-example.adoc)
+    * [Guice JMS Example](guice-jms-example.adoc)
 
 * User Guide
-    * [Karaf](karaf.adoc)
+
+    * [Camel JAR Dependencies](camel-jar-dependencies.adoc)
+    * [Camel Boot](camel-boot.adoc)
+    * [Working with Camel and CDI](../../../components/camel-cdi/src/main/docs/cdi.adoc)
+    * [Working with Camel and Spring](spring.adoc)
+    * [Working with Camel and Guice](guice.adoc)
+    * [Working with Camel and Karaf](karaf.adoc)
+    * [How Do I Configure Endpoints?]
+    * [Bean Integration](bean-integration.adoc)
+    * [Configuring Camel]
+    * [Configuring route startup ordering and autostartup]
+    * [Graceful Shutdown]
+    * [AsyncProcessorAwaitManager] for insight into the routing engine when it has been forced to block threads while exchanges are being processed asynchronous.
+    * [Error handling in Camel](error-handling-in-camel.adoc)
+    * [How to use Camel property placeholders](using-propertyplaceholder.adoc)
+    * [Tutorials]
+    * [Examples](examples.adoc)
     * [Testing](testing.adoc)
         * [Test](test.adoc)
         * [Blueprint Testing](test-blueprint.adoc)
         * [CDI Testing](test-cdi.adoc)
         * [Spring Testing](test-spring.adoc)
+    * [Xml Configuration]
+    * [Using CamelProxy] for how to use proxies for clients to easily invoke camel routes without them knowing
+    * [Camel Maven Plugin] for running Camel from a Maven goal
+    * [Guice Maven Plugin] for working with [Guice](guice.adoc)
+    * [Camel Maven Archetypes]
+    * [Creating a new Spring based Camel Route]
+    * [Camel JMX]
+    * [How to run Camel in a osgi container]
+    * [Using OSGi blueprint with Camel]
+    * [Working with Camel and SCR]
+    * Working with REST and [Rest DSL]
     * [JSSE Utility](camel-configuration-utilities.adoc)

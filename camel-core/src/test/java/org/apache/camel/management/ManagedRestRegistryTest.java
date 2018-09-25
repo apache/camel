@@ -17,6 +17,7 @@
 package org.apache.camel.management;
 
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
@@ -27,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
+import org.junit.Test;
 
 public class ManagedRestRegistryTest extends ManagementTestSupport {
 
@@ -37,6 +39,7 @@ public class ManagedRestRegistryTest extends ManagementTestSupport {
         return new DefaultCamelContext(registry);
     }
 
+    @Test
     public void testRestRegistry() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

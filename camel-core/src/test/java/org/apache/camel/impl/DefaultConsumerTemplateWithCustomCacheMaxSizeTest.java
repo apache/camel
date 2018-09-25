@@ -21,6 +21,7 @@ import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.junit.Test;
 
 /**
  * @version 
@@ -34,6 +35,7 @@ public class DefaultConsumerTemplateWithCustomCacheMaxSizeTest extends ContextTe
         return context;
     }
 
+    @Test
     public void testCacheConsumers() throws Exception {
         ConsumerTemplate template = context.createConsumerTemplate();
 
@@ -55,6 +57,7 @@ public class DefaultConsumerTemplateWithCustomCacheMaxSizeTest extends ContextTe
         assertEquals("Size should be 0", 0, template.getCurrentCacheSize());
     }
 
+    @Test
     public void testInvalidSizeABC() {
         context.getGlobalOptions().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "ABC");
         try {
@@ -65,6 +68,7 @@ public class DefaultConsumerTemplateWithCustomCacheMaxSizeTest extends ContextTe
         }
     }
 
+    @Test
     public void testInvalidSizeZero() {
         context.getGlobalOptions().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "0");
         try {

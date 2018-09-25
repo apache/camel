@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.junit.Test;
 
 /**
  * Unit test to verify that error handling using async() also works as expected.
@@ -34,6 +35,7 @@ public class AsyncDeadLetterChannelExecutorServiceRefTest extends ContextTestSup
         return false;
     }
 
+    @Test
     public void testAsyncErrorHandlerWait() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

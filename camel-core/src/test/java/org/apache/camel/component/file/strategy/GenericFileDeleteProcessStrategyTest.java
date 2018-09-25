@@ -25,6 +25,7 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.util.FileUtil;
+import org.junit.Test;
 
 /**
  * Unit test about retrying deleting processed file, that can be a bit more tricky
@@ -98,6 +99,7 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testTroubleDeletingFile() throws Exception {
         deleteCounter = 0;
         existsCounter = 0;
@@ -116,6 +118,7 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
         assertEquals("Should have tried to delete file 2 times", 2, existsCounter);
     }
 
+    @Test
     public void testCannotDeleteFile() throws Exception {
         deleteCounter = 0;
         existsCounter = 0;

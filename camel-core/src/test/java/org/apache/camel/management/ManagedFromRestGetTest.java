@@ -28,6 +28,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.RestParamType;
+import org.junit.Test;
 
 public class ManagedFromRestGetTest extends ManagementTestSupport {
 
@@ -38,6 +39,7 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
         return new DefaultCamelContext(registry);
     }
 
+    @Test
     public void testFromRestModel() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

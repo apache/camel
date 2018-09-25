@@ -235,7 +235,8 @@ public final class CamelJavaParserHelper {
                             String routeId = getLiteralValue(clazz, block, (Expression) arg);
                             if (!Strings.isBlank(routeId)) {
                                 int position = ((Expression) arg).getStartPosition();
-                                uris.add(new ParserResult(name, position, routeId));
+                                int len = ((Expression) arg).getLength();
+                                uris.add(new ParserResult(name, position, len, routeId));
                             }
                         }
                     }
@@ -344,6 +345,7 @@ public final class CamelJavaParserHelper {
             String uri = getLiteralValue(clazz, block, (Expression) arg);
             if (!Strings.isBlank(uri)) {
                 int position = ((Expression) arg).getStartPosition();
+                int len = ((Expression) arg).getLength();
 
                 // if the node is fromF or toF, then replace all %X with {{%X}} as we cannot parse that value
                 if ("fromF".equals(node) || "toF".equals(node)) {
@@ -352,7 +354,7 @@ public final class CamelJavaParserHelper {
                     uri = uri.replaceAll("\\%b", "\\{\\{\\%b\\}\\}");
                 }
 
-                uris.add(new ParserResult(node, position, uri));
+                uris.add(new ParserResult(node, position, len, uri));
                 return;
             }
         }
@@ -381,7 +383,8 @@ public final class CamelJavaParserHelper {
                     String uri = CamelJavaParserHelper.getLiteralValue(clazz, block, exp);
                     if (!Strings.isBlank(uri)) {
                         int position = ((SimpleName) arg).getStartPosition();
-                        uris.add(new ParserResult(node, position, uri));
+                        int len = ((SimpleName) arg).getLength();
+                        uris.add(new ParserResult(node, position, len, uri));
                     }
                 } else {
                     // the field may be initialized using variables, so we need to evaluate those expressions
@@ -392,7 +395,8 @@ public final class CamelJavaParserHelper {
                         if (!Strings.isBlank(uri)) {
                             // we want the position of the field, and not in the route
                             int position = ((VariableDeclaration) fi).getStartPosition();
-                            uris.add(new ParserResult(node, position, uri));
+                            int len = ((VariableDeclaration) fi).getLength();
+                            uris.add(new ParserResult(node, position, len, uri));
                         }
                     }
                 }
@@ -400,7 +404,7 @@ public final class CamelJavaParserHelper {
         }
 
         // cannot parse it so add a failure
-        uris.add(new ParserResult(node, -1, arg.toString(), false));
+        uris.add(new ParserResult(node, -1, -1, arg.toString(), false));
     }
 
     public static List<ParserResult> parseCamelSimpleExpressions(MethodSource<JavaClassSource> method) {
@@ -481,7 +485,8 @@ public final class CamelJavaParserHelper {
                     }
 
                     int position = ((Expression) arg).getStartPosition();
-                    ParserResult result = new ParserResult(node, position, simple);
+                    int len = ((Expression) arg).getLength();
+                    ParserResult result = new ParserResult(node, position, len, simple);
                     result.setPredicate(predicate);
                     expressions.add(result);
                 }

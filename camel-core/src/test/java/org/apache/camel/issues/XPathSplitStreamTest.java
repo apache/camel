@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.issues;
-
 import org.xml.sax.InputSource;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -31,7 +32,8 @@ public class XPathSplitStreamTest extends ContextTestSupport {
     private static int size = 100;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/file/xpathsplit");
         super.setUp();
 
@@ -46,6 +48,7 @@ public class XPathSplitStreamTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/file/xpathsplit", sb.toString(), Exchange.FILE_NAME, "bigfile.xml");
     }
 
+    @Test
     public void testXPathSplitStream() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:splitted");
         mock.expectedMessageCount(size);

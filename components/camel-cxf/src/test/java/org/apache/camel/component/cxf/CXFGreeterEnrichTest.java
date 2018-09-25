@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf;
-
 import javax.xml.ws.Endpoint;
 
 import org.apache.hello_world_soap_http.GreeterImpl;

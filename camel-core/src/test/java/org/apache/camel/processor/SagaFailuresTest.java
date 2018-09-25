@@ -22,11 +22,13 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.saga.InMemorySagaService;
+import org.junit.Test;
 
 public class SagaFailuresTest extends ContextTestSupport {
 
     private AtomicInteger maxFailures;
 
+    @Test
     public void testCompensationAfterFailures() throws Exception {
         maxFailures = new AtomicInteger(2);
 
@@ -38,6 +40,7 @@ public class SagaFailuresTest extends ContextTestSupport {
         compensate.assertIsSatisfied();
     }
 
+    @Test
     public void testNoCompensationAfterMaxFailures() throws Exception {
         maxFailures = new AtomicInteger(3);
 
@@ -50,6 +53,7 @@ public class SagaFailuresTest extends ContextTestSupport {
         compensate.assertIsNotSatisfied();
     }
 
+    @Test
     public void testCompletionAfterFailures() throws Exception {
         maxFailures = new AtomicInteger(2);
 
@@ -65,6 +69,7 @@ public class SagaFailuresTest extends ContextTestSupport {
         end.assertIsSatisfied();
     }
 
+    @Test
     public void testNoCompletionAfterMaxFailures() throws Exception {
         maxFailures = new AtomicInteger(3);
 

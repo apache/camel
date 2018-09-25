@@ -20,7 +20,6 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.event.CacheEventListener;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -153,7 +152,7 @@ public class CacheEndpoint extends DefaultEndpoint {
             cacheManager.addCache(cache);
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Added a new cache: " + cache.getName());
+                LOG.debug("Added a new cache: {}", cache.getName());
             }
         }
 

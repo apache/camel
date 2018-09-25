@@ -27,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
@@ -38,6 +39,7 @@ public class ReduceStacksNeededDuringRoutingSendProcessorTest extends ContextTes
         return true;
     }
 
+    @Test
     public void testReduceStacksNeeded() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

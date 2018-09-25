@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.util.Collections;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -61,6 +62,11 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
         return "DynamicRouter[" + getExpression() + "]";
     }
     
+    @Override
+    public String getShortName() {
+        return "dynamicRouter";
+    }
+
     @Override
     public String getLabel() {
         return "dynamicRouter[" + getExpression() + "]";

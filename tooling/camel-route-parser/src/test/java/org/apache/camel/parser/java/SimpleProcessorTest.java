@@ -20,9 +20,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 public class SimpleProcessorTest extends CamelTestSupport {
 
+    @Test
     public void testProcess() throws Exception {
         String out = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);

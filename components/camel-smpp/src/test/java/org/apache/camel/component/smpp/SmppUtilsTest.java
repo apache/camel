@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.smpp;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;

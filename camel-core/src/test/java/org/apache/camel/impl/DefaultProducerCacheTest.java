@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
+import org.junit.Test;
 
 /**
  * @version 
@@ -35,6 +36,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
     private final AtomicInteger stopCounter = new AtomicInteger();
     private final AtomicInteger shutdownCounter = new AtomicInteger();
 
+    @Test
     public void testCacheProducerAcquireAndRelease() throws Exception {
         ProducerCache cache = new ProducerCache(this, context);
         cache.start();
@@ -55,6 +57,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         cache.stop();
     }
 
+    @Test
     public void testCacheStopExpired() throws Exception {
         ProducerCache cache = new ProducerCache(this, context, 5);
         cache.start();
@@ -84,6 +87,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         assertEquals(8, stopCounter.get());
     }
 
+    @Test
     public void testReleaseProducerInvokesStopAndShutdownByNonSingletonProducers() throws Exception {
         ProducerCache cache = new ProducerCache(this, context, 1);
         cache.start();
@@ -113,6 +117,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         assertEquals(3, shutdownCounter.get());
     }
 
+    @Test
     public void testExtendedStatistics() throws Exception {
         ProducerCache cache = new ProducerCache(this, context, 5);
         cache.setExtendedStatistics(true);

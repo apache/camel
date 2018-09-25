@@ -17,14 +17,10 @@
 package org.apache.camel.component.properties.springboot;
 
 import java.util.List;
-import java.util.Properties;
 import javax.annotation.Generated;
 import org.apache.camel.component.properties.PropertiesLocation;
-import org.apache.camel.component.properties.PropertiesParser;
-import org.apache.camel.component.properties.PropertiesResolver;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The properties component is used for using property placeholders in endpoint
@@ -39,6 +35,11 @@ public class PropertiesComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the properties component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * A list of locations to load properties. This option will override any
      * default locations and only use the locations from this option.
      */
@@ -52,20 +53,20 @@ public class PropertiesComponentConfiguration
     /**
      * Encoding to use when loading properties file from the file system or
      * classpath. If no encoding has been set, then the properties files is
-     * loaded using ISO-8859-1 encoding (latin-1) as documented by link
-     * java.util.Propertiesload(java.io.InputStream)
+     * loaded using ISO-8859-1 encoding (latin-1) as documented by
+     * java.util.Properties#load(java.io.InputStream)
      */
     private String encoding;
     /**
-     * To use a custom PropertiesResolver
+     * To use a custom PropertiesResolver. The option is a
+     * org.apache.camel.component.properties.PropertiesResolver type.
      */
-    @NestedConfigurationProperty
-    private PropertiesResolver propertiesResolver;
+    private String propertiesResolver;
     /**
-     * To use a custom PropertiesParser
+     * To use a custom PropertiesParser. The option is a
+     * org.apache.camel.component.properties.PropertiesParser type.
      */
-    @NestedConfigurationProperty
-    private PropertiesParser propertiesParser;
+    private String propertiesParser;
     /**
      * Whether or not to cache loaded properties. The default value is true.
      */
@@ -96,26 +97,27 @@ public class PropertiesComponentConfiguration
     private Boolean ignoreMissingLocation = false;
     /**
      * Sets the value of the prefix token used to identify properties to
-     * replace. Setting a value of null restores the default token (link link
+     * replace. Setting a value of null restores the default token (link
      * DEFAULT_PREFIX_TOKEN).
      */
     private String prefixToken = "{{";
     /**
      * Sets the value of the suffix token used to identify properties to
-     * replace. Setting a value of null restores the default token (link link
+     * replace. Setting a value of null restores the default token (link
      * DEFAULT_SUFFIX_TOKEN).
      */
     private String suffixToken = "}}";
     /**
      * Sets initial properties which will be used before any locations are
-     * resolved.
+     * resolved. The option is a java.util.Properties type.
      */
-    private Properties initialProperties;
+    private String initialProperties;
     /**
      * Sets a special list of override properties that take precedence and will
-     * use first, if a property exist.
+     * use first, if a property exist. The option is a java.util.Properties
+     * type.
      */
-    private Properties overrideProperties;
+    private String overrideProperties;
     /**
      * Sets the system property mode.
      */
@@ -151,19 +153,19 @@ public class PropertiesComponentConfiguration
         this.encoding = encoding;
     }
 
-    public PropertiesResolver getPropertiesResolver() {
+    public String getPropertiesResolver() {
         return propertiesResolver;
     }
 
-    public void setPropertiesResolver(PropertiesResolver propertiesResolver) {
+    public void setPropertiesResolver(String propertiesResolver) {
         this.propertiesResolver = propertiesResolver;
     }
 
-    public PropertiesParser getPropertiesParser() {
+    public String getPropertiesParser() {
         return propertiesParser;
     }
 
-    public void setPropertiesParser(PropertiesParser propertiesParser) {
+    public void setPropertiesParser(String propertiesParser) {
         this.propertiesParser = propertiesParser;
     }
 
@@ -232,19 +234,19 @@ public class PropertiesComponentConfiguration
         this.suffixToken = suffixToken;
     }
 
-    public Properties getInitialProperties() {
+    public String getInitialProperties() {
         return initialProperties;
     }
 
-    public void setInitialProperties(Properties initialProperties) {
+    public void setInitialProperties(String initialProperties) {
         this.initialProperties = initialProperties;
     }
 
-    public Properties getOverrideProperties() {
+    public String getOverrideProperties() {
         return overrideProperties;
     }
 
-    public void setOverrideProperties(Properties overrideProperties) {
+    public void setOverrideProperties(String overrideProperties) {
         this.overrideProperties = overrideProperties;
     }
 

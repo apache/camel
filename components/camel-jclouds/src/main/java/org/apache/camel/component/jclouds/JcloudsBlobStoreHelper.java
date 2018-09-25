@@ -23,7 +23,6 @@ import java.util.List;
 import javax.ws.rs.core.MediaType;
 
 import com.google.common.base.Strings;
-
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.util.BlobStoreUtils;
@@ -76,7 +75,7 @@ public final class JcloudsBlobStoreHelper {
     }
 
     /**
-     * Writes {@link Payload} to the the {@link BlobStore}.
+     * Writes {@link Payload} to the {@link BlobStore}.
      */
     public static void writeBlob(BlobStore blobStore, String container, String blobName, Payload payload) {
         if (blobName != null && payload != null) {

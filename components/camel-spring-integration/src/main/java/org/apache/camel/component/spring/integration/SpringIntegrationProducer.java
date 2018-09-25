@@ -21,6 +21,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.support.channel.BeanFactoryChannelResolver;
 import org.springframework.messaging.Message;
@@ -61,7 +62,7 @@ public class SpringIntegrationProducer extends DefaultProducer implements Proces
                 outputChannelName = getEndpoint().getInputChannel();
             }
 
-            ObjectHelper.notEmpty(outputChannelName, "OutputChannelName", getEndpoint());
+            StringHelper.notEmpty(outputChannelName, "OutputChannelName", getEndpoint());
             outputChannel = destinationResolver.resolveDestination(outputChannelName);
         } else {
             outputChannel = getEndpoint().getMessageChannel();
@@ -74,7 +75,7 @@ public class SpringIntegrationProducer extends DefaultProducer implements Proces
         // if we do in-out we need to setup the input channel as well
         if (getEndpoint().isInOut()) {
             // we need to setup right inputChannel for further processing
-            ObjectHelper.notEmpty(getEndpoint().getInputChannel(), "InputChannel", getEndpoint());
+            StringHelper.notEmpty(getEndpoint().getInputChannel(), "InputChannel", getEndpoint());
             inputChannel = (DirectChannel)destinationResolver.resolveDestination(getEndpoint().getInputChannel());
 
             if (inputChannel == null) {

@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.properties;
-
 import org.apache.camel.CamelContext;
+import org.junit.After;
 
 /**
  * @version 
@@ -35,7 +35,8 @@ public class PropertiesComponentLocationWithTwoJvmPropertyTest extends Propertie
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         System.clearProperty("propPath");
     }

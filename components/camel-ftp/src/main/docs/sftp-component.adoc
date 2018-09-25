@@ -51,7 +51,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (115 parameters):
+==== Query Parameters (116 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -97,6 +97,7 @@ with the following path and query parameters:
 | *keepLastModified* (producer) | Will keep the last modified timestamp from the source file (if any). Will use the Exchange.FILE_LAST_MODIFIED header to located the timestamp. This header can contain either a java.util.Date or long with the timestamp. If the timestamp exists and the option is enabled it will set this timestamp on the written file. Note: This option only applies to the file producer. You cannot use this option with any of the ftp producers. | false | boolean
 | *sendNoop* (producer) | Whether to send a noop command as a pre-write check before uploading files to the FTP server. This is enabled by default as a validation of the connection is still valid, which allows to silently re-connect to be able to upload the file. However if this causes problems, you can turn this option off. | true | boolean
 | *autoCreate* (advanced) | Automatically create missing directories in the file's pathname. For the file consumer, that means creating the starting directory. For the file producer, it means the directory the files should be written to. | true | boolean
+| *bindAddress* (advanced) | Specifies the address of the local interface against which the connection should bind. |  | String
 | *bufferSize* (advanced) | Write buffer sized in bytes. | 131072 | int
 | *bulkRequests* (advanced) | Specifies how many requests may be outstanding at any one time. Increasing this value may slightly improve file transfer speed but will increase memory usage. |  | Integer
 | *compression* (advanced) | To use compression. Specify a level from 1 to 10. Important: You must manually add the needed JSCH zlib JAR to the classpath for compression support. |  | int

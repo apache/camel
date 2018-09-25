@@ -27,6 +27,7 @@ import org.apache.camel.ServicePoolAware;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.ServicePool;
+import org.junit.Test;
 
 /**
  * Unit test for a custom ServicePool for producer.
@@ -123,6 +124,7 @@ public class CustomProducerServicePoolTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testCustomProducerServicePool() throws Exception {
         MyPool pool = new MyPool();
         pool.start();
@@ -155,6 +157,7 @@ public class CustomProducerServicePoolTest extends ContextTestSupport {
         assertIsInstanceOf(MyPool.class, context.getProducerServicePool());
     }
 
+    @Test
     public void testCustomProducerServicePoolInRoute() throws Exception {
         context.addEndpoint("my", new MyEndpoint("my", context));
 

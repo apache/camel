@@ -16,17 +16,20 @@
  */
 package org.apache.camel;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class ExchangePatternTest extends TestCase {
+public class ExchangePatternTest extends Assert {
+    @Test
     public void testExchangePattern() throws Exception {
         ExchangePattern mep = ExchangePattern.InOut;
         assertEquals("WSDL Uri", "http://www.w3.org/ns/wsdl/in-out", mep.getWsdlUri());
     }
 
+    @Test
     public void testStringToMEP() throws Exception {
         ExchangePattern mep = ExchangePattern.fromWsdlUri("http://www.w3.org/ns/wsdl/in-only");
         assertEquals("MEP", ExchangePattern.InOnly, mep);

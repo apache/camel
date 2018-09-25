@@ -35,6 +35,8 @@ public class CamelTwilioTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelTwilioTest.class))
+                .systemProperty("camel.component.twilio.username", "aaa")
+                .systemProperty("camel.component.twilio.password", "bbb")
                 .build();
     }
 

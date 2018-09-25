@@ -18,9 +18,11 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class SplitterWithScannerIoExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testSplitterStreamingWithError() throws Exception {
         if (isPlatform("aix") || isJavaVendor("ibm")) {
             return;

@@ -42,7 +42,7 @@ _znode_) that will be the target of the endpoint:
 ### Options
 
 // component options: START
-The ZooKeeper component supports 2 options which are listed below.
+The ZooKeeper component supports 2 options, which are listed below.
 
 
 
@@ -94,6 +94,77 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 57 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.zookeeper.cluster.service.attributes* | Custom service attributes. |  | Map
+| *camel.component.zookeeper.cluster.service.auth-info-list* |  |  | List
+| *camel.component.zookeeper.cluster.service.base-path* |  |  | String
+| *camel.component.zookeeper.cluster.service.connection-timeout* |  |  | Long
+| *camel.component.zookeeper.cluster.service.connection-timeout-unit* |  |  | TimeUnit
+| *camel.component.zookeeper.cluster.service.curator-framework* |  |  | CuratorFramework
+| *camel.component.zookeeper.cluster.service.enabled* | Sets if the zookeeper cluster service should be enabled or not, default is false. | false | Boolean
+| *camel.component.zookeeper.cluster.service.id* | Cluster Service ID |  | String
+| *camel.component.zookeeper.cluster.service.max-close-wait* |  |  | Long
+| *camel.component.zookeeper.cluster.service.max-close-wait-unit* |  |  | TimeUnit
+| *camel.component.zookeeper.cluster.service.namespace* |  |  | String
+| *camel.component.zookeeper.cluster.service.nodes* |  |  | List
+| *camel.component.zookeeper.cluster.service.order* | Service lookup order/priority. |  | Integer
+| *camel.component.zookeeper.cluster.service.reconnect-base-sleep-time* |  |  | Long
+| *camel.component.zookeeper.cluster.service.reconnect-base-sleep-time-unit* |  |  | TimeUnit
+| *camel.component.zookeeper.cluster.service.reconnect-max-retries* |  |  | Integer
+| *camel.component.zookeeper.cluster.service.reconnect-max-sleep-time* |  |  | Long
+| *camel.component.zookeeper.cluster.service.reconnect-max-sleep-time-unit* |  |  | TimeUnit
+| *camel.component.zookeeper.cluster.service.retry-policy* |  |  | RetryPolicy
+| *camel.component.zookeeper.cluster.service.session-timeout* |  |  | Long
+| *camel.component.zookeeper.cluster.service.session-timeout-unit* |  |  | TimeUnit
+| *camel.component.zookeeper.configuration.await-existence* | Not in use | true | Boolean
+| *camel.component.zookeeper.configuration.backoff* | The time interval to backoff for after an error before retrying. | 5000 | Long
+| *camel.component.zookeeper.configuration.create* | Should the endpoint create the node if it does not currently exist. | false | Boolean
+| *camel.component.zookeeper.configuration.create-mode* | The create mode that should be used for the newly created node | EPHEMERAL | String
+| *camel.component.zookeeper.configuration.list-children* | Whether the children of the node should be listed | false | Boolean
+| *camel.component.zookeeper.configuration.path* | The node in the ZooKeeper server (aka znode) |  | String
+| *camel.component.zookeeper.configuration.repeat* | Should changes to the znode be 'watched' and repeatedly processed. | false | Boolean
+| *camel.component.zookeeper.configuration.send-empty-message-on-delete* | Upon the delete of a znode, should an empty message be send to the consumer | true | Boolean
+| *camel.component.zookeeper.configuration.servers* | The zookeeper server hosts |  | List
+| *camel.component.zookeeper.configuration.timeout* | The time interval to wait on connection before timing out. | 5000 | Integer
+| *camel.component.zookeeper.enabled* | Enable zookeeper component | true | Boolean
+| *camel.component.zookeeper.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.zookeeper.service-registry.attributes* | Custom service attributes. |  | Map
+| *camel.component.zookeeper.service-registry.auth-info-list* |  |  | List
+| *camel.component.zookeeper.service-registry.base-path* |  |  | String
+| *camel.component.zookeeper.service-registry.connection-timeout* |  |  | Long
+| *camel.component.zookeeper.service-registry.connection-timeout-unit* |  |  | TimeUnit
+| *camel.component.zookeeper.service-registry.curator-framework* |  |  | CuratorFramework
+| *camel.component.zookeeper.service-registry.deregister-services-on-stop* |  |  | Boolean
+| *camel.component.zookeeper.service-registry.enabled* | Sets if the zookeeper service registry should be enabled or not, default is false. | false | Boolean
+| *camel.component.zookeeper.service-registry.id* | Service Registry ID |  | String
+| *camel.component.zookeeper.service-registry.max-close-wait* |  |  | Long
+| *camel.component.zookeeper.service-registry.max-close-wait-unit* |  |  | TimeUnit
+| *camel.component.zookeeper.service-registry.namespace* |  |  | String
+| *camel.component.zookeeper.service-registry.nodes* |  |  | List
+| *camel.component.zookeeper.service-registry.order* | Service lookup order/priority. |  | Integer
+| *camel.component.zookeeper.service-registry.override-service-host* |  |  | Boolean
+| *camel.component.zookeeper.service-registry.reconnect-base-sleep-time* |  |  | Long
+| *camel.component.zookeeper.service-registry.reconnect-base-sleep-time-unit* |  |  | TimeUnit
+| *camel.component.zookeeper.service-registry.reconnect-max-retries* |  |  | Integer
+| *camel.component.zookeeper.service-registry.reconnect-max-sleep-time* |  |  | Long
+| *camel.component.zookeeper.service-registry.reconnect-max-sleep-time-unit* |  |  | TimeUnit
+| *camel.component.zookeeper.service-registry.retry-policy* |  |  | RetryPolicy
+| *camel.component.zookeeper.service-registry.service-host* |  |  | String
+| *camel.component.zookeeper.service-registry.session-timeout* |  |  | Long
+| *camel.component.zookeeper.service-registry.session-timeout-unit* |  |  | TimeUnit
+|===
+// spring-boot-auto-configure options: END
+
 
 
 ### Use cases

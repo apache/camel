@@ -19,12 +19,14 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.toolbox.AggregationStrategies;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class MulticastKeepOriginalMessageUnchangedTest extends ContextTestSupport {
 
+    @Test
     public void testUnchanged() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:a").message(0).header("foo").isNull();

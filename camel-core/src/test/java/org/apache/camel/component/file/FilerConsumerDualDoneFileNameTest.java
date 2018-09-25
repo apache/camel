@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test for writing done files
@@ -26,11 +27,13 @@ import org.apache.camel.builder.RouteBuilder;
 public class FilerConsumerDualDoneFileNameTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/done");
         super.setUp();
     }
 
+    @Test
     public void testTwoDoneFile() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
 
@@ -40,6 +43,7 @@ public class FilerConsumerDualDoneFileNameTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOneDoneFileMissing() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 

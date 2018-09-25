@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
@@ -30,6 +31,7 @@ public class DynamicRouterTest extends ContextTestSupport {
     private static int invoked;
     private static List<String> bodies = new ArrayList<>();
 
+    @Test
     public void testDynamicRouter() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");

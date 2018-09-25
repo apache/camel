@@ -42,10 +42,12 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.spi.RestProducerFactoryHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -256,7 +258,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         URI endpointUri = URISupport.createRemainingURI(uriHttpUriAddress, httpClientParameters);
 
         // the endpoint uri should use the component name as scheme, so we need to re-create it once more
-        String scheme = ObjectHelper.before(uri, "://");
+        String scheme = StringHelper.before(uri, "://");
         endpointUri = URISupport.createRemainingURI(
                 new URI(scheme,
                         endpointUri.getUserInfo(),
@@ -402,7 +404,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         if (localConnectionsPerRoute > 0) {
             answer.setDefaultMaxPerRoute(localConnectionsPerRoute);
         }
-        LOG.info("Created ClientConnectionManager " + answer);
+        LOG.info("Created ClientConnectionManager {}", answer);
 
         return answer;
     }
@@ -453,6 +455,12 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         if (!query.isEmpty()) {
             url = url + "?" + query;
         }
+
+        // there are cases where we might end up here without component being created beforehand
+        // we need to abide by the component properties specified in the parameters when creating
+        // the component, one such case is when we switch from "http4" to "https4" component name
+        RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.get("component"));
+
         HttpEndpoint endpoint = camelContext.getEndpoint(url, HttpEndpoint.class);
         if (parameters != null && !parameters.isEmpty()) {
             setProperties(camelContext, endpoint, parameters);
@@ -653,7 +661,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     public void doStop() throws Exception {
         // shutdown connection manager
         if (clientConnectionManager != null) {
-            LOG.info("Shutting down ClientConnectionManager: " + clientConnectionManager);
+            LOG.info("Shutting down ClientConnectionManager: {}", clientConnectionManager);
             clientConnectionManager.shutdown();
             clientConnectionManager = null;
         }

@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
 /**
  * @version 
@@ -34,6 +35,7 @@ public class LifecycleStrategyFailOnStartupTest extends TestSupport {
         return context;
     }
 
+    @Test
     public void testLifecycleStrategyFailOnStartup() throws Exception {
         CamelContext context = createCamelContext();
         try {

@@ -240,7 +240,7 @@ public class ElasticsearchProducer extends DefaultProducer {
 
     private void startClient() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, UnknownHostException {
         if (client == null) {
-            LOG.info("Connecting to the ElasticSearch cluster: " + configuration.getClusterName());
+            LOG.info("Connecting to the ElasticSearch cluster: {}", configuration.getClusterName());
             if (configuration.getHostAddressesList() != null
                 && !configuration.getHostAddressesList().isEmpty()) {
                 client = createClient();

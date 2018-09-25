@@ -21,6 +21,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
+import org.junit.Test;
 
 /**
  * @version 
@@ -32,6 +33,7 @@ public class AggregateIgnoreInvalidCorrelationKeysTest extends ContextTestSuppor
         return false;
     }
 
+    @Test
     public void testAggregateIgnoreInvalidCorrelationKeys() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -56,6 +58,7 @@ public class AggregateIgnoreInvalidCorrelationKeysTest extends ContextTestSuppor
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAggregateNotIgnoreInvalidCorrelationKeys() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

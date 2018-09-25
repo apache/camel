@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -26,11 +27,13 @@ import org.apache.camel.ContextTestSupport;
 public class FileProducerFilenameConstantTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/constant");
         super.setUp();
     }
 
+    @Test
     public void testFileProducerFilenameConstant() throws Exception {
         template.sendBody("file://target/constant?fileName=header.txt", "Hello World");
 

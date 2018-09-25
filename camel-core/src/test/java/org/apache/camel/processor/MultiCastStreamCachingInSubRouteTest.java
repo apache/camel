@@ -27,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
 public class MultiCastStreamCachingInSubRouteTest extends ContextTestSupport {
 
@@ -56,6 +57,7 @@ public class MultiCastStreamCachingInSubRouteTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testWithAggregationStrategyAndStreamCacheInSubRoute() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Test Message 1Test Message 2");
@@ -64,6 +66,7 @@ public class MultiCastStreamCachingInSubRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNestedMultiCastWithCachedStreamInAggregationStrategy() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resultNested");
         mock.expectedBodiesReceived("Test Message 1Test Message 2");

@@ -18,12 +18,14 @@ package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class StopRouteShouldNotStopContextScopedErrorHandlerIssueTest extends ContextTestSupport {
 
+    @Test
     public void testIssue() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(1);
 

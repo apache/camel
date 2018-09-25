@@ -19,12 +19,14 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class AdviceWithMockEndpointsTest extends ContextTestSupport {
 
+    @Test
     public void testNoAdvised() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
@@ -35,6 +37,7 @@ public class AdviceWithMockEndpointsTest extends ContextTestSupport {
 
     // START SNIPPET: e1
     // tag::e1[]
+    @Test
     public void testAdvisedMockEndpoints() throws Exception {
         // advice the first route using the inlined AdviceWith route builder
         // which has extended capabilities than the regular route builder
@@ -70,6 +73,7 @@ public class AdviceWithMockEndpointsTest extends ContextTestSupport {
 
     // START SNIPPET: e2
     // tag::e2[]
+    @Test
     public void testAdvisedMockEndpointsWithPattern() throws Exception {
         // advice the first route using the inlined AdviceWith route builder
         // which has extended capabilities than the regular route builder

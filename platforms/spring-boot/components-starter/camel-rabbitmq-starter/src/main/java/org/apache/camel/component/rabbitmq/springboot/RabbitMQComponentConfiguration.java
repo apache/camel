@@ -16,13 +16,9 @@
  */
 package org.apache.camel.component.rabbitmq.springboot;
 
-import java.util.Map;
 import javax.annotation.Generated;
-import javax.net.ssl.TrustManager;
-import com.rabbitmq.client.ConnectionFactory;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The rabbitmq component allows you produce and consume messages from RabbitMQ
@@ -37,7 +33,12 @@ public class RabbitMQComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * The hostname of the running rabbitmq instance or cluster.
+     * Whether to enable auto configuration of the rabbitmq component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
+     * The hostname of the running RabbitMQ instance or cluster.
      */
     private String hostname;
     /**
@@ -65,10 +66,9 @@ public class RabbitMQComponentConfiguration
     /**
      * To use a custom RabbitMQ connection factory. When this option is set, all
      * connection options (connectionTimeout, requestedChannelMax...) set on URI
-     * are not used
+     * are not used. The option is a com.rabbitmq.client.ConnectionFactory type.
      */
-    @NestedConfigurationProperty
-    private ConnectionFactory connectionFactory;
+    private String connectionFactory;
     /**
      * The consumer uses a Thread Pool Executor with a fixed number of threads.
      * This setting allows you to set that number of threads.
@@ -88,7 +88,7 @@ public class RabbitMQComponentConfiguration
     /**
      * Connection requested channel max (max number of channels offered)
      */
-    private Integer requestedChannelMax = 0;
+    private Integer requestedChannelMax = 2047;
     /**
      * Connection requested frame max (max size of frame offered)
      */
@@ -199,23 +199,25 @@ public class RabbitMQComponentConfiguration
      * different prefix is required for each: Exchange: arg.exchange. Queue:
      * arg.queue. Binding: arg.binding. For example to declare a queue with
      * message ttl argument:
-     * http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000
+     * http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000.
+     * The option is a java.util.Map<java.lang.String,java.lang.Object> type.
      */
-    private Map<String, Object> args;
+    private String args;
     /**
      * Connection client properties (client info used in negotiating with the
-     * server)
+     * server). The option is a java.util.Map<java.lang.String,java.lang.Object>
+     * type.
      */
-    private Map<String, Object> clientProperties;
+    private String clientProperties;
     /**
      * Enables SSL on connection, accepted value are true, TLS and 'SSLv3
      */
     private String sslProtocol;
     /**
      * Configure SSL trust manager, SSL should be enabled for this option to be
-     * effective
+     * effective. The option is a javax.net.ssl.TrustManager type.
      */
-    private TrustManager trustManager;
+    private String trustManager;
     /**
      * If messages should be auto acknowledged
      */
@@ -234,6 +236,12 @@ public class RabbitMQComponentConfiguration
      * deleted when that connection closes.
      */
     private Boolean exclusive = false;
+    /**
+     * Request exclusive access to the queue (meaning only this consumer can
+     * access the queue). This is useful when you want a long-lived shared queue
+     * to be temporarily accessible by just one consumer.
+     */
+    private Boolean exclusiveConsumer = false;
     /**
      * Passive queues depend on the queue already to be available at RabbitMQ.
      */
@@ -273,6 +281,10 @@ public class RabbitMQComponentConfiguration
      * The type of the dead letter exchange
      */
     private String deadLetterExchangeType = "direct";
+    /**
+     * Allow pass null values to header
+     */
+    private Boolean allowNullHeaders = false;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -328,11 +340,11 @@ public class RabbitMQComponentConfiguration
         this.addresses = addresses;
     }
 
-    public ConnectionFactory getConnectionFactory() {
+    public String getConnectionFactory() {
         return connectionFactory;
     }
 
-    public void setConnectionFactory(ConnectionFactory connectionFactory) {
+    public void setConnectionFactory(String connectionFactory) {
         this.connectionFactory = connectionFactory;
     }
 
@@ -523,19 +535,19 @@ public class RabbitMQComponentConfiguration
         this.immediate = immediate;
     }
 
-    public Map<String, Object> getArgs() {
+    public String getArgs() {
         return args;
     }
 
-    public void setArgs(Map<String, Object> args) {
+    public void setArgs(String args) {
         this.args = args;
     }
 
-    public Map<String, Object> getClientProperties() {
+    public String getClientProperties() {
         return clientProperties;
     }
 
-    public void setClientProperties(Map<String, Object> clientProperties) {
+    public void setClientProperties(String clientProperties) {
         this.clientProperties = clientProperties;
     }
 
@@ -547,11 +559,11 @@ public class RabbitMQComponentConfiguration
         this.sslProtocol = sslProtocol;
     }
 
-    public TrustManager getTrustManager() {
+    public String getTrustManager() {
         return trustManager;
     }
 
-    public void setTrustManager(TrustManager trustManager) {
+    public void setTrustManager(String trustManager) {
         this.trustManager = trustManager;
     }
 
@@ -585,6 +597,14 @@ public class RabbitMQComponentConfiguration
 
     public void setExclusive(Boolean exclusive) {
         this.exclusive = exclusive;
+    }
+
+    public Boolean getExclusiveConsumer() {
+        return exclusiveConsumer;
+    }
+
+    public void setExclusiveConsumer(Boolean exclusiveConsumer) {
+        this.exclusiveConsumer = exclusiveConsumer;
     }
 
     public Boolean getPassive() {
@@ -657,6 +677,14 @@ public class RabbitMQComponentConfiguration
 
     public void setDeadLetterExchangeType(String deadLetterExchangeType) {
         this.deadLetterExchangeType = deadLetterExchangeType;
+    }
+
+    public Boolean getAllowNullHeaders() {
+        return allowNullHeaders;
+    }
+
+    public void setAllowNullHeaders(Boolean allowNullHeaders) {
+        this.allowNullHeaders = allowNullHeaders;
     }
 
     public Boolean getResolvePropertyPlaceholders() {

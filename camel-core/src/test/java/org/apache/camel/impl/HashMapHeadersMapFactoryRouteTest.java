@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class HashMapHeadersMapFactoryRouteTest extends ContextTestSupport {
 
@@ -32,6 +33,7 @@ public class HashMapHeadersMapFactoryRouteTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testHashMapHeaders() throws Exception {
         getMockEndpoint("mock:result").expectedHeaderReceived("foo", 123);
         getMockEndpoint("mock:result").expectedHeaderReceived("FOO", 456);

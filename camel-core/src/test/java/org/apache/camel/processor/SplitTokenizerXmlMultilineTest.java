@@ -18,12 +18,14 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class SplitTokenizerXmlMultilineTest extends ContextTestSupport {
 
+    @Test
     public void testSingleLine() throws Exception {
         String payload = "<Parent>\n"
                 + "\t<Child A=\"1\" B=\"2\"/>\n"
@@ -36,6 +38,7 @@ public class SplitTokenizerXmlMultilineTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMultipleLines() throws Exception {
         String payload = "<Parent>\n"
                 + "\t<Child A=\"1\"\n"

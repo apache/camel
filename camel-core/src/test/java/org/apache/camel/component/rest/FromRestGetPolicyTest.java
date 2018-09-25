@@ -23,6 +23,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
+import org.junit.Test;
 
 public class FromRestGetPolicyTest extends ContextTestSupport {
 
@@ -33,6 +34,7 @@ public class FromRestGetPolicyTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testFromRestModel() throws Exception {
         assertEquals(1, context.getRoutes().size());
 

@@ -73,7 +73,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.test.junit4.TestSupport;
-
 import org.junit.Before;
 import org.junit.Test;
 

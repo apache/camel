@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
 import org.apache.camel.TypeConverter;
+import org.junit.Test;
 
 /**
  * Tests the lazy loading property of the camel context. The default behavior is to
@@ -30,17 +31,20 @@ public class DefaultCamelContextLazyLoadTypeConvertersTest extends TestSupport {
     private CamelContext context = new DefaultCamelContext();
 
     @SuppressWarnings("deprecation")
+    @Test
     public void testLazyLoadDefault() throws Exception {
         assertFalse("Default setting should have been true", context.isLazyLoadTypeConverters());
     }
 
     @SuppressWarnings("deprecation")
+    @Test
     public void testConvertLoadUpFront() throws Exception {
         context.setLazyLoadTypeConverters(false);
         doConvertTest();
     }
 
     @SuppressWarnings("deprecation")
+    @Test
     public void testConvertLazyLoad() throws Exception {
         context.setLazyLoadTypeConverters(true);
         doConvertTest();

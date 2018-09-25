@@ -23,12 +23,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class BeanInfoOverloadedTest extends ContextTestSupport {
 
+    @Test
     public void testBeanInfoOverloaded() throws Exception {
         BeanInfo beanInfo = new BeanInfo(context, Bean.class);
 

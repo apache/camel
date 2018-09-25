@@ -77,7 +77,7 @@ options related to UDP transport.
 
 
 // component options: START
-The Netty HTTP component supports 7 options which are listed below.
+The Netty HTTP component supports 7 options, which are listed below.
 
 
 
@@ -144,7 +144,7 @@ with the following path and query parameters:
 | *channelGroup* (consumer) | To use a explicit ChannelGroup. |  | ChannelGroup
 | *chunkedMaxContentLength* (consumer) | Value in bytes the max content length per chunked frame received on the Netty HTTP server. | 1048576 | int
 | *compression* (consumer) | Allow using gzip/deflate for compression on the Netty HTTP server if the client supports it from the HTTP headers. | false | boolean
-| *disableStreamCache* (consumer) | Determines whether or not the raw input stream from Netty HttpRequestgetContent() is cached or not (Camel will read the stream into a in light-weight memory based Stream caching) cache. By default Camel will cache the Netty input stream to support reading it multiple times to ensure it Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream, such as streaming it directly to a file or other persistent store. Mind that if you enable this option, then you cannot read the Netty stream multiple times out of the box, and you would need manually to reset the reader index on the Netty raw stream. | false | boolean
+| *disableStreamCache* (consumer) | Determines whether or not the raw input stream from Netty HttpRequest#getContent() is cached or not (Camel will read the stream into a in light-weight memory based Stream caching) cache. By default Camel will cache the Netty input stream to support reading it multiple times to ensure it Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream, such as streaming it directly to a file or other persistent store. Mind that if you enable this option, then you cannot read the Netty stream multiple times out of the box, and you would need manually to reset the reader index on the Netty raw stream. | false | boolean
 | *disconnectOnNoReply* (consumer) | If sync is enabled then this option dictates NettyConsumer if it should disconnect where there is no reply to send back. | true | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
@@ -189,9 +189,9 @@ with the following path and query parameters:
 | *transferException* (advanced) | If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is, instead of the HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
 | *transferExchange* (advanced) | Only used for TCP. You can transfer the exchange over the wire instead of just the body. The following fields are transferred: In body, Out body, fault body, In headers, Out headers, fault headers, exchange properties, exchange exception. This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level. | false | boolean
 | *decoder* (codec) | *Deprecated* To use a single decoder. This options is deprecated use encoders instead. |  | ChannelHandler
-| *decoders* (codec) | A list of decoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with so Camel knows it should lookup. |  | String
+| *decoders* (codec) | A list of decoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | String
 | *encoder* (codec) | *Deprecated* To use a single encoder. This options is deprecated use encoders instead. |  | ChannelHandler
-| *encoders* (codec) | A list of encoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with so Camel knows it should lookup. |  | String
+| *encoders* (codec) | A list of encoders to be used. You can use a String which have values separated by comma, and have the values be looked up in the Registry. Just remember to prefix the value with # so Camel knows it should lookup. |  | String
 | *enabledProtocols* (security) | Which protocols to enable when using SSL | TLSv1,TLSv1.1,TLSv1.2 | String
 | *keyStoreFile* (security) | Client side certificate keystore to be used for encryption |  | File
 | *keyStoreFormat* (security) | Keystore format to be used for payload encryption. Defaults to JKS if not set | JKS | String
@@ -209,6 +209,51 @@ with the following path and query parameters:
 | *trustStoreResource* (security) | Server side certificate keystore to be used for encryption. Is loaded by default from classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems. |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 31 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.netty-http.configuration.allow-default-codec* |  |  | Boolean
+| *camel.component.netty-http.configuration.bridge-endpoint* | If the option is true, the producer will ignore the Exchange.HTTP_URI header, and use the endpoint's URI for request. You may also set the throwExceptionOnFailure to be false to let the producer send all the fault response back. The consumer working in the bridge mode will skip the gzip compression and WWW URL form encoding (by adding the Exchange.SKIP_GZIP_ENCODING and Exchange.SKIP_WWW_FORM_URLENCODED headers to the consumed exchange). | false | Boolean
+| *camel.component.netty-http.configuration.chunked-max-content-length* | Value in bytes the max content length per chunked frame received on the Netty HTTP server. | 1048576 | Integer
+| *camel.component.netty-http.configuration.compression* | Allow using gzip/deflate for compression on the Netty HTTP server if the client supports it from the HTTP headers. | false | Boolean
+| *camel.component.netty-http.configuration.disable-stream-cache* | Determines whether or not the raw input stream from Netty HttpRequest#getContent() is cached or not (Camel will read the stream into a in light-weight memory based Stream caching) cache. By default Camel will cache the Netty input stream to support reading it multiple times to ensure it Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream, such as streaming it directly to a file or other persistent store. Mind that if you enable this option, then you cannot read the Netty stream multiple times out of the box, and you would need manually to reset the reader index on the Netty raw stream. | false | Boolean
+| *camel.component.netty-http.configuration.host* | The local hostname such as localhost, or 0.0.0.0 when being a consumer. The remote HTTP server hostname when using producer. |  | String
+| *camel.component.netty-http.configuration.map-headers* | If this option is enabled, then during binding from Netty to Camel Message then the headers will be mapped as well (eg added as header to the Camel Message as well). You can turn off this option to disable this. The headers can still be accessed from the org.apache.camel.component.netty.http.NettyHttpMessage message with the method getHttpRequest() that returns the Netty HTTP request org.jboss.netty.handler.codec.http.HttpRequest instance. | true | Boolean
+| *camel.component.netty-http.configuration.match-on-uri-prefix* | Whether or not Camel should try to find a target consumer by matching the URI prefix if no exact match is found. | false | Boolean
+| *camel.component.netty-http.configuration.max-header-size* | The maximum length of all headers. If the sum of the length of each header exceeds this value, a TooLongFrameException will be raised. | 8192 | Integer
+| *camel.component.netty-http.configuration.ok-status-code-range* | The status codes which are considered a success response. The values are inclusive. Multiple ranges can be defined, separated by comma, e.g. 200-204,209,301-304. Each range must be a single number or from-to with the dash included. The default range is 200-299 | 200-299 | String
+| *camel.component.netty-http.configuration.path* | Resource path |  | String
+| *camel.component.netty-http.configuration.port* | The port number. Is default 80 for http and 443 for https. |  | Integer
+| *camel.component.netty-http.configuration.protocol* | The protocol to use which is either http or https |  | String
+| *camel.component.netty-http.configuration.send503when-suspended* | Whether to send back HTTP status code 503 when the consumer has been suspended. If the option is false then the Netty Acceptor is unbound when the consumer is suspended, so clients cannot connect anymore. | true | Boolean
+| *camel.component.netty-http.configuration.throw-exception-on-failure* | Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code. | true | Boolean
+| *camel.component.netty-http.configuration.transfer-exception* | If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is, instead of the HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | Boolean
+| *camel.component.netty-http.configuration.url-decode-headers* | If this option is enabled, then during binding from Netty to Camel Message then the header values will be URL decoded (eg %20 will be a space character. Notice this option is used by the default org.apache.camel.component.netty.http.NettyHttpBinding and therefore if you implement a custom org.apache.camel.component.netty.http.NettyHttpBinding then you would need to decode the headers accordingly to this option. | false | Boolean
+| *camel.component.netty-http.configuration.use-relative-path* | Sets whether to use a relative path in HTTP requests. Some third party backend systems such as IBM Datapower do not support absolute URIs in HTTP POSTs, and setting this option to true can work around this problem. | false | Boolean
+| *camel.component.netty-http.enabled* | Enable netty-http component | true | Boolean
+| *camel.component.netty-http.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter headers. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
+| *camel.component.netty-http.maximum-pool-size* | The core pool size for the ordered thread pool, if its in use. The default value is 16. | 16 | Integer
+| *camel.component.netty-http.netty-http-binding* | To use a custom org.apache.camel.component.netty.http.NettyHttpBinding for binding to/from Netty and Camel Message API. The option is a org.apache.camel.component.netty.http.NettyHttpBinding type. |  | String
+| *camel.component.netty-http.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.netty-http.security-configuration.authenticate* | Whether to enable authentication <p/> This is by default enabled. |  | Boolean
+| *camel.component.netty-http.security-configuration.constraint* | The supported restricted. <p/> Currently only Basic is supported. |  | String
+| *camel.component.netty-http.security-configuration.login-denied-logging-level* | Sets a logging level to use for logging denied login attempts (incl stacktraces) <p/> This level is by default DEBUG. |  | LoggingLevel
+| *camel.component.netty-http.security-configuration.realm* | Sets the name of the realm to use. |  | String
+| *camel.component.netty-http.security-configuration.role-class-name* |  |  | String
+| *camel.component.netty-http.security-configuration.security-authenticator* | Sets the {@link SecurityAuthenticator} to use for authenticating the {@link HttpPrincipal} . |  | SecurityAuthenticator
+| *camel.component.netty-http.security-configuration.security-constraint* | Sets a {@link SecurityConstraint} to use for checking if a web resource is restricted or not <p/> By default this is <tt>null</tt>, which means all resources is restricted. |  | SecurityConstraint
+| *camel.component.netty-http.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

@@ -18,6 +18,7 @@ package org.apache.camel.component.controlbus;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
@@ -29,6 +30,7 @@ public class ControlBusStatsTest extends ContextTestSupport {
         return true;
     }
 
+    @Test
     public void testControlBusRouteStat() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
 
@@ -45,6 +47,7 @@ public class ControlBusStatsTest extends ContextTestSupport {
         assertTrue(xml.contains("exchangesCompleted=\"1\""));
     }
 
+    @Test
     public void testControlBusCurrentRouteStat() throws Exception {
         getMockEndpoint("mock:current").expectedBodiesReceived("Hello World");
 
@@ -61,6 +64,7 @@ public class ControlBusStatsTest extends ContextTestSupport {
         assertTrue(xml.contains("exchangesCompleted=\"1\""));
     }
 
+    @Test
     public void testControlBusContextStat() throws Exception {
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
 

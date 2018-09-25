@@ -31,7 +31,6 @@ import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.hello_world_soap_http.Greeter;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

@@ -71,6 +71,11 @@ public class SetExchangePatternDefinition extends NoOutputDefinition<SetExchange
     }
 
     @Override
+    public String getShortName() {
+        return "setExchangePattern";
+    }
+
+    @Override
     public String getLabel() {
         return "setExchangePattern[" + pattern + "]";
     }

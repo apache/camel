@@ -8,8 +8,8 @@ https://azure.microsoft.com/services/storage/queues/[Azure Storage Queue] servic
 
 Prerequisites
 
-You must have a valid Windows Azure Storage account. More information is available at
-https://docs.microsoft.com/azure/[Azure Documentation Portal].
+You must have a valid Microsoft Azure account. More information is available at
+https://azure.microsoft.com/en-us/free/[Azure Portal].
 
 ### URI Format
 
@@ -85,6 +85,22 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.azure-queue.enabled* | Enable azure-queue component | true | Boolean
+| *camel.component.azure-queue.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 
@@ -117,6 +133,27 @@ You have to provide the containerAndQueue URI  and the credentials.
 |Header |Type |Description
 | | |
 |=======================================================================
+
+
+
+#### Azure Queue Service operations
+
+[width="100%",cols="20%,80%",options="header",]
+|===
+|Operation |Description
+
+|`listQueues`  |List the queues.
+|`createQueue`  |Create the queue.
+|`deleteQueue`  |Delete the queue.
+|`addMessage`  |Add a message to the queue.
+|`retrieveMessage`  |Retrieve a message from the queue.
+|`peekMessage`  |View the message inside the queue, for example, to determine whether the message arrived at the correct queue.
+|`updateMessage`  |Update the message in the queue.
+|`deleteMessage`  |Delete the message in the queue.
+
+|===
+
+
 
 #### Azure Queue Client configuration
 

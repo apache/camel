@@ -17,10 +17,12 @@
 package org.apache.camel.management;
 
 import java.util.concurrent.TimeUnit;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
@@ -34,6 +36,7 @@ public class ManagedRouteLoadstatisticsTest extends ManagementTestSupport {
         return false;
     }
 
+    @Test
     public void testLoadStatisticsAreDisabledByDefault() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -69,6 +72,7 @@ public class ManagedRouteLoadstatisticsTest extends ManagementTestSupport {
         assertEquals("", load15);
     }
 
+    @Test
     public void testEnableLoadStatistics() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

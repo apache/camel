@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.interceptor;
-
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -31,6 +30,8 @@ import org.apache.camel.management.event.ExchangeFailedEvent;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Condition;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -42,7 +43,8 @@ public class DebugExceptionEventBreakpointTest extends ContextTestSupport {
     private Breakpoint breakpoint;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         breakpoint = new BreakpointSupport() {
@@ -60,6 +62,7 @@ public class DebugExceptionEventBreakpointTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testDebug() throws Exception {
         context.getDebugger().addBreakpoint(breakpoint, exceptionCondition);
 

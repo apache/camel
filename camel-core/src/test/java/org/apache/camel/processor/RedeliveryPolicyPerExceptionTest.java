@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -24,6 +23,8 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -32,6 +33,7 @@ public class RedeliveryPolicyPerExceptionTest extends ContextTestSupport {
     protected MockEndpoint a;
     protected MockEndpoint b;
 
+    @Test
     public void testUsingCustomExceptionHandlerAndOneRedelivery() throws Exception {
         a.expectedMessageCount(1);
 
@@ -50,6 +52,7 @@ public class RedeliveryPolicyPerExceptionTest extends ContextTestSupport {
         assertMessageHeader(in, Exchange.REDELIVERED, true);
     }
 
+    @Test
     public void testUsingCustomExceptionHandlerWithNoRedeliveries() throws Exception {
         b.expectedMessageCount(1);
 
@@ -69,7 +72,8 @@ public class RedeliveryPolicyPerExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         a = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
         b = resolveMandatoryEndpoint("mock:b", MockEndpoint.class);

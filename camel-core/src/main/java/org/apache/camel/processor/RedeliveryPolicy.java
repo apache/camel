@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +45,7 @@ import org.slf4j.LoggerFactory;
  *   <li>useCollisionAvoidance = false</li>
  *   <li>retriesExhaustedLogLevel = LoggingLevel.ERROR</li>
  *   <li>retryAttemptedLogLevel = LoggingLevel.DEBUG</li>
+ *   <li>retryAttemptedLogInterval = 1</li>
  *   <li>logRetryAttempted = true</li>
  *   <li>logRetryStackTrace = false</li>
  *   <li>logStackTrace = true</li>
@@ -92,6 +94,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     protected boolean useCollisionAvoidance;
     protected LoggingLevel retriesExhaustedLogLevel = LoggingLevel.ERROR;
     protected LoggingLevel retryAttemptedLogLevel = LoggingLevel.DEBUG;
+    protected int retryAttemptedLogInterval = 1;
     protected boolean logStackTrace = true;
     protected boolean logRetryStackTrace;
     protected boolean logHandled;
@@ -118,6 +121,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
             + ", allowRedeliveryWhileStopping=" + allowRedeliveryWhileStopping
             + ", retriesExhaustedLogLevel=" + retriesExhaustedLogLevel
             + ", retryAttemptedLogLevel=" + retryAttemptedLogLevel
+            + ", retryAttemptedLogInterval=" + retryAttemptedLogInterval
             + ", logRetryAttempted=" + logRetryAttempted
             + ", logStackTrace=" + logStackTrace
             + ", logRetryStackTrace=" + logRetryStackTrace
@@ -248,8 +252,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         // find the group where the redelivery counter matches
         long answer = 0;
         for (String group : groups) {
-            long delay = Long.valueOf(ObjectHelper.after(group, ":"));
-            int count = Integer.valueOf(ObjectHelper.before(group, ":"));
+            long delay = Long.valueOf(StringHelper.after(group, ":"));
+            int count = Integer.valueOf(StringHelper.before(group, ":"));
             if (count > redeliveryCounter) {
                 break;
             } else {
@@ -348,6 +352,14 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
      */    
     public RedeliveryPolicy retryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
         setRetryAttemptedLogLevel(retryAttemptedLogLevel);
+        return this;
+    }
+
+    /**
+     * Sets the interval to log retry attempts
+     */
+    public RedeliveryPolicy retryAttemptedLogInterval(int logRetryAttemptedInterval) {
+        setRetryAttemptedLogInterval(logRetryAttemptedInterval);
         return this;
     }
 
@@ -607,6 +619,17 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
 
     public LoggingLevel getRetryAttemptedLogLevel() {
         return retryAttemptedLogLevel;
+    }
+
+    public int getRetryAttemptedLogInterval() {
+        return retryAttemptedLogInterval;
+    }
+
+    /**
+     * Sets the interval to log retry attempts
+     */
+    public void setRetryAttemptedLogInterval(int retryAttemptedLogInterval) {
+        this.retryAttemptedLogInterval = retryAttemptedLogInterval;
     }
 
     public String getDelayPattern() {

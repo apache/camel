@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.ServiceSupport;
+import org.junit.Test;
 
 /**
  * Test that data format receives callback if its a service / CamelContextAware
@@ -36,6 +37,7 @@ public class DataFormatServiceTest extends ContextTestSupport {
 
     protected final MyDataFormat my = new MyDataFormat();
 
+    @Test
     public void testMarshal() throws Exception {
         assertEquals(true, my.isStarted());
         assertSame(context, my.getCamelContext());
@@ -52,6 +54,7 @@ public class DataFormatServiceTest extends ContextTestSupport {
         assertSame(context, my.getCamelContext());
     }
 
+    @Test
     public void testUnmarshal() throws Exception {
         assertEquals(true, my.isStarted());
         assertSame(context, my.getCamelContext());

@@ -18,6 +18,7 @@ package org.apache.camel.component.spring.ws;
 
 import java.io.IOException;
 import java.io.StringReader;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;

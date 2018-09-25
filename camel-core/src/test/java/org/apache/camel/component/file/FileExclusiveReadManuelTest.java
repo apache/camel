@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test to verify exclusive read by for manual testing.
@@ -28,12 +29,14 @@ public class FileExclusiveReadManuelTest extends ContextTestSupport {
     private String fileUrl = "file://target/exclusiveread?readLock=fileLock&initialDelay=0&delay=10";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/exclusiveread");
         disableJMX();
         super.setUp();
     }
 
+    @Test
     public void testManually() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         // this is used for manual testing where you can copy/lock files etc. while this test runs

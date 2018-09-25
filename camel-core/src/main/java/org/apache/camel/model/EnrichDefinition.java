@@ -72,6 +72,11 @@ public class EnrichDefinition extends NoOutputExpressionNode {
     }
     
     @Override
+    public String getShortName() {
+        return "enrich";
+    }
+
+    @Override
     public String getLabel() {
         return "enrich[" + getExpression() + "]";
     }

@@ -18,12 +18,14 @@ package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class InterceptFromWhenWithChoiceTest extends ContextTestSupport {
 
+    @Test
     public void testInterceptorHelloWorld() throws Exception {
         getMockEndpoint("mock:goofy").expectedMessageCount(0);
         getMockEndpoint("mock:hello").expectedMessageCount(0);
@@ -35,6 +37,7 @@ public class InterceptFromWhenWithChoiceTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInterceptorHelloGoofy() throws Exception {
         getMockEndpoint("mock:goofy").expectedMessageCount(0);
         getMockEndpoint("mock:hello").expectedMessageCount(1);
@@ -46,6 +49,7 @@ public class InterceptFromWhenWithChoiceTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInterceptorByeGoofy() throws Exception {
         getMockEndpoint("mock:goofy").expectedMessageCount(1);
         getMockEndpoint("mock:hello").expectedMessageCount(0);

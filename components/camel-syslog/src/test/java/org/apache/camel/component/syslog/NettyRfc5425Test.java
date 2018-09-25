@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.syslog;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;

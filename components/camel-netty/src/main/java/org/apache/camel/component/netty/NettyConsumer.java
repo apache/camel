@@ -73,7 +73,7 @@ public class NettyConsumer extends DefaultConsumer implements Suspendable {
 
         ServiceHelper.startServices(nettyServerBootstrapFactory);
 
-        LOG.info("Netty consumer bound to: " + configuration.getAddress());
+        LOG.info("Netty consumer bound to: {}", configuration.getAddress());
     }
 
     @Override
@@ -82,7 +82,7 @@ public class NettyConsumer extends DefaultConsumer implements Suspendable {
 
         ServiceHelper.stopService(nettyServerBootstrapFactory);
 
-        LOG.info("Netty consumer unbound from: " + configuration.getAddress());
+        LOG.info("Netty consumer unbound from: {}", configuration.getAddress());
 
         super.doStop();
     }

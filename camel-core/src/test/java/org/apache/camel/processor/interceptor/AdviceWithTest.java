@@ -19,12 +19,14 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class AdviceWithTest extends ContextTestSupport {
 
+    @Test
     public void testNoAdvised() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -35,6 +37,7 @@ public class AdviceWithTest extends ContextTestSupport {
     }
 
     // START SNIPPET: e1
+    @Test
     public void testAdvised() throws Exception {
         // advice the first route using the inlined route builder
         context.getRouteDefinitions().get(0).adviceWith(context, new RouteBuilder() {
@@ -58,6 +61,7 @@ public class AdviceWithTest extends ContextTestSupport {
     }
     // END SNIPPET: e1
 
+    @Test
     public void testAdvisedNoNewRoutesAllowed() throws Exception {
         try {
             context.getRouteDefinitions().get(0).adviceWith(context, new RouteBuilder() {
@@ -77,6 +81,7 @@ public class AdviceWithTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testAdvisedThrowException() throws Exception {
         context.getRouteDefinitions().get(0).adviceWith(context, new RouteBuilder() {
             @Override

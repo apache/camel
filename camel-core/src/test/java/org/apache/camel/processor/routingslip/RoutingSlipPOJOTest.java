@@ -22,9 +22,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.RoutingSlip;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class RoutingSlipPOJOTest extends ContextTestSupport {
     
+    @Test
     public void testRoutingSlipPOJO() throws Exception {
         MockEndpoint foo = getMockEndpoint("mock:foo");
         MockEndpoint result = getMockEndpoint("mock:result");

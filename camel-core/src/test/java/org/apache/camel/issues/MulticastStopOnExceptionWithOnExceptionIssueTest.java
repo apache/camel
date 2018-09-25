@@ -21,12 +21,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class MulticastStopOnExceptionWithOnExceptionIssueTest extends ContextTestSupport {
 
+    @Test
     public void testEnd1FailureTest() throws Exception {
         MockEndpoint end1 = getMockEndpoint("mock:end1");
         end1.whenAnyExchangeReceived(new Processor() {
@@ -45,6 +47,7 @@ public class MulticastStopOnExceptionWithOnExceptionIssueTest extends ContextTes
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testEnd2FailureTest() throws Exception {
         MockEndpoint end2 = getMockEndpoint("mock:end2");
         end2.whenAnyExchangeReceived(new Processor() {
@@ -63,6 +66,7 @@ public class MulticastStopOnExceptionWithOnExceptionIssueTest extends ContextTes
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testEnd3FailureTest() throws Exception {
         MockEndpoint end3 = getMockEndpoint("mock:end3");
         end3.whenAnyExchangeReceived(new Processor() {
@@ -81,6 +85,7 @@ public class MulticastStopOnExceptionWithOnExceptionIssueTest extends ContextTes
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOK() throws Exception {
         getMockEndpoint("mock:end1").expectedMessageCount(1);
         getMockEndpoint("mock:end2").expectedMessageCount(1);

@@ -17,6 +17,7 @@
 package org.apache.camel.component.mail;
 
 import java.util.Properties;
+
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;

@@ -24,6 +24,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
@@ -39,6 +40,7 @@ public class ExceptionThrownFromOnExceptionNoEndlessLoopTest extends ContextTest
         return false;
     }
 
+    @Test
     public void testExceptionThrownFromOnExceptionNoEndlessLoopTest() throws Exception {
         RETRY.set(0);
         ON_EXCEPTION_RETRY.set(0);

@@ -38,6 +38,7 @@ import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.spi.RestProducerFactoryHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.IntrospectionSupport;
@@ -445,11 +446,20 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             }
         }
 
+        if (host.startsWith("https:")) {
+            map.put("ssl", true);
+        }
+
         // get the endpoint
         String query = URISupport.createQueryString(map);
         if (!query.isEmpty()) {
             url = url + "?" + query;
         }
+
+        // there are cases where we might end up here without component being created beforehand
+        // we need to abide by the component properties specified in the parameters when creating
+        // the component
+        RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.get("component"));
 
         NettyHttpEndpoint endpoint = camelContext.getEndpoint(url, NettyHttpEndpoint.class);
         if (parameters != null && !parameters.isEmpty()) {

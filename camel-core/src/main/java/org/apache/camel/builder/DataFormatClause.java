@@ -1027,6 +1027,56 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         return dataFormat(xsdf);
     }
     
+    
+    /**
+     * Uses the XML Security data format
+     */
+    public T secureXML(String secureTag, boolean secureTagContents, byte[] passPhraseByte) {
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
+        xsdf.setSecureTag(secureTag);
+        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setPassPhraseByte(passPhraseByte);
+        return dataFormat(xsdf);
+    }
+    
+    /**
+     * Uses the XML Security data format
+     */
+    public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents, byte[] passPhraseByte) {
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
+        xsdf.setSecureTag(secureTag);
+        xsdf.setNamespaces(namespaces);
+        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setPassPhraseByte(passPhraseByte);
+        return dataFormat(xsdf);
+    }
+    
+    /**
+     * Uses the XML Security data format
+     */
+    public T secureXML(String secureTag, boolean secureTagContents, byte[] passPhraseByte, String xmlCipherAlgorithm) {
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
+        xsdf.setSecureTag(secureTag);
+        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setPassPhraseByte(passPhraseByte);
+        xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        return dataFormat(xsdf);
+    }
+    
+    
+    /**
+     * Uses the XML Security data format
+     */
+    public T secureXML(String secureTag, Map<String, String> namespaces, boolean secureTagContents, byte[] passPhraseByte, String xmlCipherAlgorithm) {
+        XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat();
+        xsdf.setSecureTag(secureTag);
+        xsdf.setNamespaces(namespaces);
+        xsdf.setSecureTagContents(secureTagContents);
+        xsdf.setPassPhraseByte(passPhraseByte);
+        xsdf.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        return dataFormat(xsdf);
+    }
+    
     /**
      * @deprecated Use {@link #secureXML(String, Map, boolean, String, String, String, String)} instead.
      * Uses the XML Security data format
@@ -1214,6 +1264,19 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         return dataFormat(jsonDataFormat);
     }
 
+    public T fhirJson(boolean prettyPrint) {
+        FhirJsonDataFormat jsonDataFormat = new FhirJsonDataFormat();
+        jsonDataFormat.setPrettyPrint(prettyPrint);
+        return dataFormat(jsonDataFormat);
+    }
+
+    public T fhirJson(String version, boolean prettyPrint) {
+        FhirJsonDataFormat jsonDataFormat = new FhirJsonDataFormat();
+        jsonDataFormat.setPrettyPrint(prettyPrint);
+        jsonDataFormat.setFhirVersion(version);
+        return dataFormat(jsonDataFormat);
+    }
+
     /**
      * Uses the FHIR XML data format
      */
@@ -1225,6 +1288,19 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     public T fhirXml(String version) {
         FhirXmlDataFormat fhirXmlDataFormat = new FhirXmlDataFormat();
         fhirXmlDataFormat.setFhirVersion(version);
+        return dataFormat(fhirXmlDataFormat);
+    }
+
+    public T fhirXml(boolean prettyPrint) {
+        FhirXmlDataFormat fhirXmlDataFormat = new FhirXmlDataFormat();
+        fhirXmlDataFormat.setPrettyPrint(prettyPrint);
+        return dataFormat(fhirXmlDataFormat);
+    }
+
+    public T fhirXml(String version, boolean prettyPrint) {
+        FhirXmlDataFormat fhirXmlDataFormat = new FhirXmlDataFormat();
+        fhirXmlDataFormat.setFhirVersion(version);
+        fhirXmlDataFormat.setPrettyPrint(prettyPrint);
         return dataFormat(fhirXmlDataFormat);
     }
 

@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.After;
+import org.junit.Before;
 
 /**
  * @version 
@@ -28,13 +29,15 @@ public class OnCompletionGlobalCustomPoolTest extends OnCompletionGlobalTest {
 
     private ExecutorService pool; 
     
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // use a pool with 2 concurrent tasks so we cannot run too fast
         pool = Executors.newFixedThreadPool(2);
         super.setUp();
     }
     
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         pool.shutdownNow();
     }

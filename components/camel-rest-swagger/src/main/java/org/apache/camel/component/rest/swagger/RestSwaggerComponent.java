@@ -21,9 +21,11 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.util.jsse.SSLContextParameters;
 
 import static org.apache.camel.component.rest.swagger.RestSwaggerHelper.isHostParam;
 import static org.apache.camel.component.rest.swagger.RestSwaggerHelper.isMediaRange;
@@ -74,7 +76,7 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  * from(...).to("petstore:getPetById")
  * </pre>
  */
-public final class RestSwaggerComponent extends DefaultComponent {
+public final class RestSwaggerComponent extends DefaultComponent implements SSLContextParametersAware {
     public static final String DEFAULT_BASE_PATH = "/";
 
     static final URI DEFAULT_SPECIFICATION_URI = URI.create(RestSwaggerComponent.DEFAULT_SPECIFICATION_URI_STR);
@@ -123,6 +125,14 @@ public final class RestSwaggerComponent extends DefaultComponent {
         + " configuration.", defaultValue = DEFAULT_SPECIFICATION_URI_STR, label = "producer", required = "false")
     private URI specificationUri;
 
+    @Metadata(description = "Customize TLS parameters used by the component. If not set defaults to the TLS parameters"
+        + " set in the Camel context ", label = "security", required = "false")
+    private SSLContextParameters sslContextParameters;
+
+    @Metadata(description = "Enable usage of global SSL context parameters.", label = "security",
+        defaultValue = "false")
+    private boolean useGlobalSslContextParameters;
+
     public RestSwaggerComponent() {
     }
 
@@ -154,6 +164,15 @@ public final class RestSwaggerComponent extends DefaultComponent {
         return specificationUri;
     }
 
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    @Override
+    public boolean isUseGlobalSslContextParameters() {
+        return useGlobalSslContextParameters;
+    }
+
     public void setBasePath(final String basePath) {
         this.basePath = notEmpty(basePath, "basePath");
     }
@@ -176,6 +195,15 @@ public final class RestSwaggerComponent extends DefaultComponent {
 
     public void setSpecificationUri(final URI specificationUri) {
         this.specificationUri = notNull(specificationUri, "specificationUri");
+    }
+
+    public void setSslContextParameters(final SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
+
+    @Override
+    public void setUseGlobalSslContextParameters(final boolean useGlobalSslContextParameters) {
+        this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
     @Override

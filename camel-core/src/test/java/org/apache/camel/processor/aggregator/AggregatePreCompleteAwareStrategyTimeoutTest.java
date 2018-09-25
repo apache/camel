@@ -19,12 +19,14 @@ package org.apache.camel.processor.aggregator;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInPreCompleteAggregatingStrategy;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class AggregatePreCompleteAwareStrategyTimeoutTest extends ContextTestSupport {
 
+    @Test
     public void testAggregatePreCompleteTimeout() throws Exception {
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C", "X+D+E", "X+F");
 
@@ -40,6 +42,7 @@ public class AggregatePreCompleteAwareStrategyTimeoutTest extends ContextTestSup
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAggregatePreCompleteTimeoutOnlyOneInLastGroup() throws Exception {
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C", "X+D+E", "X");
 
@@ -54,6 +57,7 @@ public class AggregatePreCompleteAwareStrategyTimeoutTest extends ContextTestSup
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAggregatePreCompleteTimeoutOnlyOneInFirstGroup() throws Exception {
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("X");
 

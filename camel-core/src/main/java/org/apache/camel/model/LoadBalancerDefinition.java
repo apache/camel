@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
@@ -28,7 +29,7 @@ import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Balances message processing among a number of nodes
@@ -102,7 +103,7 @@ public class LoadBalancerDefinition extends IdentifiedType implements OtherAttri
      * Factory method to create the load balancer from the loadBalancerTypeName
      */
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
-        ObjectHelper.notEmpty(loadBalancerTypeName, "loadBalancerTypeName", this);
+        StringHelper.notEmpty(loadBalancerTypeName, "loadBalancerTypeName", this);
 
         LoadBalancer answer = null;
         if (loadBalancerTypeName != null) {

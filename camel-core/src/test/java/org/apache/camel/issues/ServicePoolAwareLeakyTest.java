@@ -37,6 +37,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.ServiceSupport;
+import org.junit.Test;
 
 public class ServicePoolAwareLeakyTest extends ContextTestSupport {
 
@@ -122,6 +123,7 @@ public class ServicePoolAwareLeakyTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testForMemoryLeak() throws Exception {
         registerLeakyComponent();
 

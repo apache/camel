@@ -22,41 +22,51 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class SetExchangePatternTest extends ContextTestSupport {
 
+    @Test
     public void testInOut() throws Exception {
         assertMessageReceivedWithPattern("direct:testInOut", ExchangePattern.InOut);
     }
 
+    @Test
     public void testInOnly() throws Exception {
         assertMessageReceivedWithPattern("direct:testInOnly", ExchangePattern.InOnly);
     }
 
+    @Test
     public void testSetToInOnlyThenTo() throws Exception {
         assertMessageReceivedWithPattern("direct:testSetToInOnlyThenTo", ExchangePattern.InOnly);
     }
 
+    @Test
     public void testSetToInOutThenTo() throws Exception {
         assertMessageReceivedWithPattern("direct:testSetToInOutThenTo", ExchangePattern.InOut);
     }
 
+    @Test
     public void testToWithInOnlyParam() throws Exception {
         assertMessageReceivedWithPattern("direct:testToWithInOnlyParam", ExchangePattern.InOnly);
     }
 
+    @Test
     public void testToWithInOutParam() throws Exception {
         assertMessageReceivedWithPattern("direct:testToWithInOutParam", ExchangePattern.InOut);
     }
 
+    @Test
     public void testToWithRobustInOnlyParam() throws Exception {
         assertMessageReceivedWithPattern("direct:testToWithRobustInOnlyParam", ExchangePattern.RobustInOnly);
     }
 
+    @Test
     public void testSetExchangePatternInOnly() throws Exception {
         assertMessageReceivedWithPattern("direct:testSetExchangePatternInOnly", ExchangePattern.InOnly);
     }
 
+    @Test
     public void testPreserveOldMEPInOut() throws Exception {
         // the mock should get an InOut MEP
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -78,6 +88,7 @@ public class SetExchangePatternTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPreserveOldMEPInOnly() throws Exception {
         // the mock should get an InOnly MEP
         getMockEndpoint("mock:result").expectedMessageCount(1);

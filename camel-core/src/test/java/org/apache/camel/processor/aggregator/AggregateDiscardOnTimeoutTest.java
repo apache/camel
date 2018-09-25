@@ -22,12 +22,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class AggregateDiscardOnTimeoutTest extends ContextTestSupport {
 
+    @Test
     public void testAggregateDiscardOnTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
         mock.expectedMessageCount(0);

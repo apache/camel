@@ -18,12 +18,14 @@ package org.apache.camel.component.seda;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class SedaInOnlyTest extends ContextTestSupport {
 
+    @Test
     public void testInOnly() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 

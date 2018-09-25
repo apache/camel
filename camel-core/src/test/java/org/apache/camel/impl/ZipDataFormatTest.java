@@ -29,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.camel.spi.DataFormat;
+import org.junit.Test;
 
 /**
  * Unit test of the zip data format.
@@ -53,6 +54,7 @@ public class ZipDataFormatTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testMarshalMandatoryConversionFailed() throws Exception {
         DataFormat dataFormat = new ZipDataFormat();
 
@@ -64,6 +66,7 @@ public class ZipDataFormatTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testMarshalTextToZipBestCompression() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -77,6 +80,7 @@ public class ZipDataFormatTest extends ContextTestSupport {
         sendText();
     }
 
+    @Test
     public void testMarshalTextToZipBestSpeed() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -91,6 +95,7 @@ public class ZipDataFormatTest extends ContextTestSupport {
 
     }
 
+    @Test
     public void testMarshalTextToZipDefaultCompression() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -104,6 +109,7 @@ public class ZipDataFormatTest extends ContextTestSupport {
         sendText();
     }
 
+    @Test
     public void testUnMarshalTextToZip() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -123,6 +129,7 @@ public class ZipDataFormatTest extends ContextTestSupport {
         assertTrue(exchangeList.get(0).getIn().getBody() instanceof byte[]);
     }
 
+    @Test
     public void testStreamCacheUnzip() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {

@@ -21,7 +21,7 @@ for this component:
 
 
 // component options: START
-The IEC 60870 Server component supports 2 options which are listed below.
+The IEC 60870 Server component supports 2 options, which are listed below.
 
 
 
@@ -74,7 +74,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (19 parameters):
+==== Query Parameters (20 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -95,9 +95,31 @@ with the following path and query parameters:
 | *timeout1* (connection) | Timeout T1 in milliseconds. | 15000 | int
 | *timeout2* (connection) | Timeout T2 in milliseconds. | 10000 | int
 | *timeout3* (connection) | Timeout T3 in milliseconds. | 20000 | int
+| *causeSourceAddress* (data) | Whether to include the source address | true | boolean
 | *ignoreBackgroundScan* (data) | Whether background scan transmissions should be ignored. | true | boolean
 | *ignoreDaylightSavingTime* (data) | Whether to ignore or respect DST | false | boolean
 | *timeZone* (data) | The timezone to use. May be any Java time zone string | UTC | TimeZone
 | *connectionId* (id) | An identifier grouping connection instances |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 7 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.iec60870-server.default-connection-options.background-scan-period* | The period in "ms" between background transmission cycles. <p> If this is set to zero or less, background transmissions will be disabled. </p> |  | Integer
+| *camel.component.iec60870-server.default-connection-options.booleans-with-timestamp* | Send booleans with timestamps |  | Boolean
+| *camel.component.iec60870-server.default-connection-options.buffering-period* | A time period in "ms" the protocol layer will buffer change events in order to send out aggregated change messages |  | Integer
+| *camel.component.iec60870-server.default-connection-options.floats-with-timestamp* | Send floats with timestamps |  | Boolean
+| *camel.component.iec60870-server.default-connection-options.spontaneous-duplicates* | Number of spontaneous events to keep in the buffer. <p> When there are more than this number of spontaneous in events in the buffer, then events will be dropped in order to maintain the buffer size. </p> |  | Integer
+| *camel.component.iec60870-server.enabled* | Whether to enable auto configuration of the iec60870-server component. This is enabled by default. |  | Boolean
+| *camel.component.iec60870-server.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+

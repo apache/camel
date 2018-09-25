@@ -22,6 +22,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
 /**
  * Unit test to verify that Splitter aggregator clear the filtered history in case
@@ -32,6 +33,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 public class FilterBeforeSplitTest extends ContextTestSupport {
 
+    @Test
     public void testFilterBeforeSplit() throws Exception {
         getMockEndpoint("mock:good").expectedBodiesReceived("Hello World how are you?");
 
@@ -46,6 +48,7 @@ public class FilterBeforeSplitTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFiltered() throws Exception {
         getMockEndpoint("mock:good").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:before").expectedBodiesReceived("I will be filtered", "Hello World");

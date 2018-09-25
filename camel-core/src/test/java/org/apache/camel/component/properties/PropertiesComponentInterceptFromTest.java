@@ -19,12 +19,14 @@ package org.apache.camel.component.properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class PropertiesComponentInterceptFromTest extends ContextTestSupport {
 
+    @Test
     public void testPropertiesComponentInterceptFrom() throws Exception {
         getMockEndpoint("mock:bar").expectedBodiesReceived("World");
         getMockEndpoint("mock:cool").expectedBodiesReceived("Bye Camel");

@@ -22,7 +22,7 @@ for this component:
 
 
 // component options: START
-The OPC UA Client component supports 6 options which are listed below.
+The OPC UA Client component supports 6 options, which are listed below.
 
 
 
@@ -132,6 +132,44 @@ with the following path and query parameters:
 | *sessionTimeout* (client) | Session timeout in milliseconds |  | Long
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 24 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.milo-client.application-name* | Default application name |  | String
+| *camel.component.milo-client.application-uri* | Default application URI |  | String
+| *camel.component.milo-client.default-configuration.allowed-security-policies* | A set of allowed security policy URIs. Default is to accept all and use the highest. |  | Set
+| *camel.component.milo-client.default-configuration.application-name* | The application name | Apache Camel adapter for Eclipse Milo | String
+| *camel.component.milo-client.default-configuration.application-uri* | The application URI | http://camel.apache.org/EclipseMilo/Client | String
+| *camel.component.milo-client.default-configuration.channel-lifetime* | Channel lifetime in milliseconds |  | Long
+| *camel.component.milo-client.default-configuration.client-id* | A virtual client id to force the creation of a new connection instance |  | String
+| *camel.component.milo-client.default-configuration.discovery-endpoint-suffix* | A suffix for endpoint URI when discovering |  | String
+| *camel.component.milo-client.default-configuration.discovery-endpoint-uri* | An alternative discovery URI |  | String
+| *camel.component.milo-client.default-configuration.key-alias* | The name of the key in the keystore file |  | String
+| *camel.component.milo-client.default-configuration.key-password* | The key password |  | String
+| *camel.component.milo-client.default-configuration.key-store-password* | The keystore password |  | String
+| *camel.component.milo-client.default-configuration.key-store-type* | The key store type |  | String
+| *camel.component.milo-client.default-configuration.max-pending-publish-requests* | The maximum number of pending publish requests |  | Long
+| *camel.component.milo-client.default-configuration.max-response-message-size* | The maximum number of bytes a response message may have |  | Long
+| *camel.component.milo-client.default-configuration.override-host* | Override the server reported endpoint host with the host from the endpoint URI. | false | Boolean
+| *camel.component.milo-client.default-configuration.product-uri* | The product URI | http://camel.apache.org/EclipseMilo | String
+| *camel.component.milo-client.default-configuration.request-timeout* | Request timeout in milliseconds |  | Long
+| *camel.component.milo-client.default-configuration.session-name* | Session name |  | String
+| *camel.component.milo-client.default-configuration.session-timeout* | Session timeout in milliseconds |  | Long
+| *camel.component.milo-client.enabled* | Enable milo-client component | true | Boolean
+| *camel.component.milo-client.product-uri* | Default product URI |  | String
+| *camel.component.milo-client.reconnect-timeout* | Default reconnect timeout |  | Long
+| *camel.component.milo-client.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

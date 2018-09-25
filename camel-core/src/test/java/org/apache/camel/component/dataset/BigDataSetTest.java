@@ -17,12 +17,14 @@
 package org.apache.camel.component.dataset;
 
 import java.util.concurrent.TimeUnit;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * @version 
@@ -31,6 +33,7 @@ import org.junit.Ignore;
 public class BigDataSetTest extends ContextTestSupport {
     protected SimpleDataSet dataSet = new SimpleDataSet(20000);
 
+    @Test
     public void testDataSet() throws Exception {
         // data set will itself set its assertions so we should just
         // assert that all mocks is ok

@@ -15,4 +15,6 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.google.mail.springboot.GoogleMailComponentAutoConfiguration
+org.apache.camel.component.google.mail.springboot.GoogleMailComponentAutoConfiguration,\
+org.apache.camel.component.google.mail.stream.springboot.GoogleMailStreamComponentAutoConfiguration
+

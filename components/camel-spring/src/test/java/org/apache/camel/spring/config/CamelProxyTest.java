@@ -20,6 +20,7 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.IOHelper;
+import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -28,6 +29,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class CamelProxyTest extends TestSupport {
 
+    @Test
     public void testCamelProxy() throws Exception {
         AbstractApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelProxyTest.xml");
 

@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
@@ -33,6 +34,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.junit.Assert;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
@@ -43,6 +45,7 @@ public class XsltUriResolverFactoryTest extends ContextTestSupport {
 
     private JndiRegistry registry;
 
+    @Test
     public void testConfigurationOnEndpoint() throws Exception {
         String endpointUri = "xslt:xslt/staff/staff.xsl?uriResolverFactory=#uriResolverFactory";
         String directStart = "direct:start";
@@ -53,6 +56,7 @@ public class XsltUriResolverFactoryTest extends ContextTestSupport {
         execute(endpointUri, directStart);
     }
 
+    @Test
     public void testConfigurationOnComponent() throws Exception {
 
         XsltComponent xsltComponent = new XsltComponent();

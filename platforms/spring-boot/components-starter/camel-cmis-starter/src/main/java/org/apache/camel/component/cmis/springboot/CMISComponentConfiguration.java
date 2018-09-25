@@ -17,10 +17,8 @@
 package org.apache.camel.component.cmis.springboot;
 
 import javax.annotation.Generated;
-import org.apache.camel.component.cmis.CMISSessionFacadeFactory;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The cmis component uses the Apache Chemistry client API and allows you to
@@ -35,11 +33,16 @@ public class CMISComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * To use a custom CMISSessionFacadeFactory to create the CMISSessionFacade
-     * instances
+     * Whether to enable auto configuration of the cmis component. This is
+     * enabled by default.
      */
-    @NestedConfigurationProperty
-    private CMISSessionFacadeFactory sessionFacadeFactory;
+    private Boolean enabled;
+    /**
+     * To use a custom CMISSessionFacadeFactory to create the CMISSessionFacade
+     * instances. The option is a
+     * org.apache.camel.component.cmis.CMISSessionFacadeFactory type.
+     */
+    private String sessionFacadeFactory;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -47,12 +50,11 @@ public class CMISComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public CMISSessionFacadeFactory getSessionFacadeFactory() {
+    public String getSessionFacadeFactory() {
         return sessionFacadeFactory;
     }
 
-    public void setSessionFacadeFactory(
-            CMISSessionFacadeFactory sessionFacadeFactory) {
+    public void setSessionFacadeFactory(String sessionFacadeFactory) {
         this.sessionFacadeFactory = sessionFacadeFactory;
     }
 

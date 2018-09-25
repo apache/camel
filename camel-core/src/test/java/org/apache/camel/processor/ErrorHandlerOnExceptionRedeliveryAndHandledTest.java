@@ -24,6 +24,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
@@ -32,6 +33,7 @@ public class ErrorHandlerOnExceptionRedeliveryAndHandledTest extends ContextTest
 
     private static String counter = "";
 
+    @Test
     public void testRedeliveryCounterIsResetWhenHandled() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(0);

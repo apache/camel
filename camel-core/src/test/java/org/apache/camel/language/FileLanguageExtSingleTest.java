@@ -24,6 +24,7 @@ import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.GenericFile;
+import org.junit.Test;
 
 /**
  * Unit test for File Language.
@@ -36,6 +37,7 @@ public class FileLanguageExtSingleTest extends LanguageTestSupport {
         return "file";
     }
 
+    @Test
     public void testFileNoSingleExt() throws Exception {
         assertExpression("${file:name}", "test" + File.separator + "bye.def.txt");
         assertExpression("${file:name.noext}", "test" + File.separator + "bye");

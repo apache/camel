@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.22.0-SNAPSHOT</version>
+    <version>2.23.0-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -691,6 +691,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-micrometer</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-milo</artifactId>
     </dependency>
     <dependency>
@@ -911,6 +915,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-service</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-servicenow</artifactId>
     </dependency>
     <dependency>
@@ -991,7 +999,15 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring-cloud-consul</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-cloud-netflix</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring-cloud-zookeeper</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -1084,6 +1100,14 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-spring</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-testcontainers</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-testcontainers-spring</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -1217,6 +1241,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-apns-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-as2-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -1755,6 +1784,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jclouds-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-jcr-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -1936,6 +1970,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-metrics-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-micrometer-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -2185,6 +2224,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-service-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-servicenow-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -2275,7 +2319,17 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring-cloud-consul-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-cloud-netflix-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring-cloud-zookeeper-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

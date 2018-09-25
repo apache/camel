@@ -19,12 +19,14 @@ package org.apache.camel.component.properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class PropertiesComponentEIPRoutingSlipTest extends ContextTestSupport {
 
+    @Test
     public void testRoutingSlip() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);

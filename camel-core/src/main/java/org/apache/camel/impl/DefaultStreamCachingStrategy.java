@@ -310,12 +310,12 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
             }
         }
 
-        LOG.debug("StreamCaching configuration {}", this.toString());
+        LOG.debug("StreamCaching configuration {}", this);
 
         if (spoolDirectory != null) {
-            LOG.info("StreamCaching in use with spool directory: {} and rules: {}", spoolDirectory.getPath(), spoolRules.toString());
+            LOG.info("StreamCaching in use with spool directory: {} and rules: {}", spoolDirectory.getPath(), spoolRules);
         } else {
-            LOG.info("StreamCaching in use with rules: {}", spoolRules.toString());
+            LOG.info("StreamCaching in use with rules: {}", spoolRules);
         }
     }
 
@@ -327,7 +327,7 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
         }
 
         if (LOG.isDebugEnabled() && statistics.isStatisticsEnabled()) {
-            LOG.debug("Stopping StreamCachingStrategy with statistics: {}", statistics.toString());
+            LOG.debug("Stopping StreamCachingStrategy with statistics: {}", statistics);
         }
 
         statistics.reset();
@@ -386,7 +386,7 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
                     long u = heapUsage.getHeapMemoryUsage().getUsed();
                     long c = heapUsage.getHeapMemoryUsage().getCommitted();
                     long m = heapUsage.getHeapMemoryUsage().getMax();
-                    LOG.trace("Heap memory: [used={}M ({}%), committed={}M, max={}M]", new Object[]{u >> 20, percentage, c >> 20, m >> 20});
+                    LOG.trace("Heap memory: [used={}M ({}%), committed={}M, max={}M]", u >> 20, percentage, c >> 20, m >> 20);
                 }
 
                 if (percentage > spoolUsedHeapMemoryThreshold) {

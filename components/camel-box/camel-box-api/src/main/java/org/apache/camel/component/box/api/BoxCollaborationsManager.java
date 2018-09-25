@@ -63,7 +63,7 @@ public class BoxCollaborationsManager {
      */
     public Collection<BoxCollaboration.Info> getFolderCollaborations(String folderId) {
         try {
-            LOG.debug("Getting collaborations for folder(id=" + folderId + ")");
+            LOG.debug("Getting collaborations for folder(id={})", folderId);
             if (folderId == null) {
                 throw new IllegalArgumentException("Parameter 'folderId' can not be null");
             }
@@ -155,7 +155,7 @@ public class BoxCollaborationsManager {
      */
     public BoxCollaboration.Info getCollaborationInfo(String collaborationId) {
         try {
-            LOG.debug("Getting info for collaboration(id=" + collaborationId + ")");
+            LOG.debug("Getting info for collaboration(id={})", collaborationId);
             if (collaborationId == null) {
                 throw new IllegalArgumentException("Parameter 'collaborationId' can not be null");
             }
@@ -178,7 +178,7 @@ public class BoxCollaborationsManager {
      */
     public BoxCollaboration updateCollaborationInfo(String collaborationId, BoxCollaboration.Info info) {
         try {
-            LOG.debug("Updating info for collaboration(id=" + collaborationId + ")");
+            LOG.debug("Updating info for collaboration(id={})", collaborationId);
             if (collaborationId == null) {
                 throw new IllegalArgumentException("Parameter 'collaborationId' can not be null");
             }
@@ -198,11 +198,10 @@ public class BoxCollaborationsManager {
      * 
      * @param collaborationId
      *            - the id of comment to change.
-     * @return The comment with changed message.
      */
     public void deleteCollaboration(String collaborationId) {
         try {
-            LOG.debug("Deleting collaboration(id=" + collaborationId + ")");
+            LOG.debug("Deleting collaboration(id={})", collaborationId);
             if (collaborationId == null) {
                 throw new IllegalArgumentException("Parameter 'collaborationId' can not be null");
             }

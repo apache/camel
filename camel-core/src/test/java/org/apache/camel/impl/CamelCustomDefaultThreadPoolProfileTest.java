@@ -21,6 +21,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.junit.Test;
 
 /**
  * @version 
@@ -43,6 +44,7 @@ public class CamelCustomDefaultThreadPoolProfileTest extends ContextTestSupport 
         return camel;
     }
 
+    @Test
     public void testCamelCustomDefaultThreadPoolProfile() throws Exception {
         DefaultExecutorServiceManager manager = (DefaultExecutorServiceManager)context.getExecutorServiceManager();
         ThreadPoolProfile profile = manager.getDefaultThreadPoolProfile();

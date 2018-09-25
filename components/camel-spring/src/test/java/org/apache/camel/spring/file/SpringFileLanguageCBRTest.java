@@ -15,9 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.file;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -32,11 +33,13 @@ public class SpringFileLanguageCBRTest extends SpringTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/cbr");
         super.setUp();
     }
 
+    @Test
     public void testTxt() throws Exception {
         getMockEndpoint("mock:txt").expectedMessageCount(1);
         getMockEndpoint("mock:dat").expectedMessageCount(0);
@@ -47,6 +50,7 @@ public class SpringFileLanguageCBRTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testDat() throws Exception {
         getMockEndpoint("mock:txt").expectedMessageCount(0);
         getMockEndpoint("mock:dat").expectedMessageCount(1);
@@ -57,6 +61,7 @@ public class SpringFileLanguageCBRTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOther() throws Exception {
         getMockEndpoint("mock:txt").expectedMessageCount(0);
         getMockEndpoint("mock:dat").expectedMessageCount(0);

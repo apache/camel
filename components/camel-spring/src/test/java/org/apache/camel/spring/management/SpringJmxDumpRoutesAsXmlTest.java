@@ -20,6 +20,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -42,6 +43,7 @@ public class SpringJmxDumpRoutesAsXmlTest extends SpringTestSupport {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
+    @Test
     public void testJmxDumpRoutesAsXml() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 

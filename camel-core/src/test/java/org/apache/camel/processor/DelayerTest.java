@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 import static org.apache.camel.processor.ExchangeAwareDelayCalcBean.BEAN_DELAYER_HEADER;
 
@@ -31,6 +32,7 @@ public class DelayerTest extends ContextTestSupport {
 
     private ExchangeAwareDelayCalcBean exchangeAwareBean = new ExchangeAwareDelayCalcBean();
 
+    @Test
     public void testSendingMessageGetsDelayed() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
 
@@ -47,6 +49,7 @@ public class DelayerTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testDelayConstant() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
@@ -56,6 +59,7 @@ public class DelayerTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testDelayBean() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
@@ -65,6 +69,7 @@ public class DelayerTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testExchangeAwareDelayBean() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);

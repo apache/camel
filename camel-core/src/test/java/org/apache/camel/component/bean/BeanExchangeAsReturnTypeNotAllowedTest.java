@@ -24,12 +24,14 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
 /**
  * Unit test to demonstrate that bean invocation must no return Exchange.
  */
 public class BeanExchangeAsReturnTypeNotAllowedTest extends ContextTestSupport {
 
+    @Test
     public void testExchangeAsReturnTypeNotAllowed() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(0);

@@ -19,12 +19,14 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class ShutdownSedaAndDirectEndpointTest extends ContextTestSupport {
 
+    @Test
     public void testShutdownSedaAndDirectEndpoint() throws Exception {
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMessageCount(5);

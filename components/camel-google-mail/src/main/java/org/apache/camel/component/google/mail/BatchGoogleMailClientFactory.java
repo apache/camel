@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.google.mail;
 
-import java.util.Collection;
-
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -39,12 +37,12 @@ public class BatchGoogleMailClientFactory implements GoogleMailClientFactory {
     }
 
     @Override
-    public Gmail makeClient(String clientId, String clientSecret, Collection<String> scopes, String applicationName, String refreshToken, String accessToken) {
+    public Gmail makeClient(String clientId, String clientSecret, String applicationName, String refreshToken, String accessToken) {
         if (clientId == null || clientSecret == null) {
             throw new IllegalArgumentException("clientId and clientSecret are required to create Gmail client.");
         }
         try {
-            Credential credential = authorize(clientId, clientSecret, scopes);
+            Credential credential = authorize(clientId, clientSecret);
 
             if (refreshToken != null && !"".equals(refreshToken)) {
                 credential.setRefreshToken(refreshToken);
@@ -59,7 +57,7 @@ public class BatchGoogleMailClientFactory implements GoogleMailClientFactory {
     }
 
     // Authorizes the installed application to access user's protected data.
-    private Credential authorize(String clientId, String clientSecret, Collection<String> scopes) throws Exception {
+    private Credential authorize(String clientId, String clientSecret) throws Exception {
         // authorize
         return new GoogleCredential.Builder().setJsonFactory(jsonFactory).setTransport(transport).setClientSecrets(clientId, clientSecret).build();
     }

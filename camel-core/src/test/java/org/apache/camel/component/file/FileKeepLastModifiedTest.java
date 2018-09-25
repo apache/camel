@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -29,11 +30,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileKeepLastModifiedTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/keep");
         super.setUp();
     }
 
+    @Test
     public void testKeepLastModified() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -59,6 +62,7 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
         assertEquals("Timestamp should have been kept", t1, t2);
     }
 
+    @Test
     public void testDoNotKeepLastModified() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -84,6 +88,7 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
         assertNotSame("Timestamp should NOT have been kept", t1, t2);
     }
 
+    @Test
     public void testDoNotKeepLastModifiedIsDefault() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

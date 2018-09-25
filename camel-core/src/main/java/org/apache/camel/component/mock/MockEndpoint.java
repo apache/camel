@@ -434,7 +434,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             // did not throw expected error... fail!
             failed = true;
         } catch (AssertionError e) {
-            LOG.info("Caught expected failure: " + e);
+            LOG.info("Caught expected failure: {}", e);
         }
         if (failed) {
             // fail() throws the AssertionError to indicate the test failed. 
@@ -455,7 +455,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             // did not throw expected error... fail!
             failed = true;
         } catch (AssertionError e) {
-            LOG.info("Caught expected failure: " + e);
+            LOG.info("Caught expected failure: {}", e);
         }
         if (failed) { 
             // fail() throws the AssertionError to indicate the test failed. 
@@ -1488,7 +1488,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             List<Exchange> list = getReceivedExchanges();
             int index = 0;
             for (Exchange exchange : list) {
-                LOG.debug("{} failed and received[{}]: {}", new Object[]{getEndpointUri(), ++index, exchange});
+                LOG.debug("{} failed and received[{}]: {}", getEndpointUri(), ++index, exchange);
             }
         }
         throw new AssertionError(getEndpointUri() + " " + message);

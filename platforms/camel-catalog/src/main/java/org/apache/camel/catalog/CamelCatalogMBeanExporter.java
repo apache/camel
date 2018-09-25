@@ -25,6 +25,7 @@ import javax.management.ObjectName;
 /**
  * MBean exporter to register the {@link CamelCatalog} in JMX.
  */
+@Deprecated
 public class CamelCatalogMBeanExporter {
 
     public static final String MBEAN_NAME = "org.apache.camel.catalog:type=catalog,name=catalog";

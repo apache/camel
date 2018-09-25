@@ -34,9 +34,7 @@ import javax.management.ObjectName;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.Mockito;
-
 import quickfix.Acceptor;
 import quickfix.ConfigError;
 import quickfix.DefaultMessageFactory;
@@ -71,7 +69,6 @@ import quickfix.fix42.Email;
 import quickfix.mina.ProtocolFactory;
 
 import static org.apache.camel.util.ObjectHelper.equal;
-
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;

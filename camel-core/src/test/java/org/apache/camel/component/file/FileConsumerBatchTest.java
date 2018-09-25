@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test for consuming a batch of files (multiple files in one consume)
@@ -27,7 +28,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileConsumerBatchTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/file-batch");
         super.setUp();
     }
@@ -42,6 +44,7 @@ public class FileConsumerBatchTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testConsumeBatch() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");

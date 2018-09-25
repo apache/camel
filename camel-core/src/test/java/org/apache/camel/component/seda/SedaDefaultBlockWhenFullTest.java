@@ -19,6 +19,7 @@ package org.apache.camel.component.seda;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * Tests that a Seda component properly set blockWhenFull on endpoints.
@@ -57,11 +58,13 @@ public class SedaDefaultBlockWhenFullTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testSedaEndpoints() {
         assertFalse(context.getEndpoint(DEFAULT_URI, SedaEndpoint.class).isBlockWhenFull());
         assertTrue(context.getEndpoint(BLOCK_WHEN_FULL_URI, SedaEndpoint.class).isBlockWhenFull());
     }
 
+    @Test
     public void testSedaDefaultWhenFull() throws Exception {
         try {
             SedaEndpoint seda = context.getEndpoint(DEFAULT_URI, SedaEndpoint.class);
@@ -75,6 +78,7 @@ public class SedaDefaultBlockWhenFullTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testSedaBlockingWhenFull() throws Exception {
         getMockEndpoint(MOCK_URI).setExpectedMessageCount(QUEUE_SIZE + 2);
         
@@ -85,6 +89,7 @@ public class SedaDefaultBlockWhenFullTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testAsyncSedaBlockingWhenFull() throws Exception {
         getMockEndpoint(MOCK_URI).setExpectedMessageCount(QUEUE_SIZE + 1);
         getMockEndpoint(MOCK_URI).setResultWaitTime(DELAY_LONG * 3);

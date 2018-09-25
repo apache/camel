@@ -47,6 +47,7 @@ public class EndpointValidationResult implements Serializable {
     private Set<String> notConsumerOnly;
     private Set<String> notProducerOnly;
     private Set<String> required;
+    private Set<String> deprecated;
     private Map<String, String> invalidEnum;
     private Map<String, String[]> invalidEnumChoices;
     private Map<String, String[]> invalidEnumSuggestions;
@@ -137,6 +138,15 @@ public class EndpointValidationResult implements Serializable {
         if (!required.contains(name)) {
             required.add(name);
             errors++;
+        }
+    }
+
+    public void addDeprecated(String name) {
+        if (deprecated == null) {
+            deprecated = new LinkedHashSet<>();
+        }
+        if (!deprecated.contains(name)) {
+            deprecated.add(name);
         }
     }
 
@@ -259,6 +269,10 @@ public class EndpointValidationResult implements Serializable {
         return required;
     }
 
+    public Set<String> getDeprecated() {
+        return deprecated;
+    }
+
     public Map<String, String> getInvalidEnum() {
         return invalidEnum;
     }
@@ -309,11 +323,29 @@ public class EndpointValidationResult implements Serializable {
     /**
      * A human readable summary of the validation errors.
      *
-     * @param includeHeader whether to include a header
+     * @param includeHeader    whether to include a header
      * @return the summary, or <tt>null</tt> if no validation errors
      */
     public String summaryErrorMessage(boolean includeHeader) {
-        if (isSuccess()) {
+        return summaryErrorMessage(includeHeader, true);
+    }
+
+    /**
+     * A human readable summary of the validation errors.
+     *
+     * @param includeHeader    whether to include a header
+     * @param ignoreDeprecated whether to ignore deprecated options in use as an error or not
+     * @return the summary, or <tt>null</tt> if no validation errors
+     */
+    public String summaryErrorMessage(boolean includeHeader, boolean ignoreDeprecated) {
+        boolean ok = isSuccess();
+
+        // special check if we should ignore deprecated options being used
+        if (ok && !ignoreDeprecated) {
+            ok = deprecated == null;
+        }
+
+        if (ok) {
             return null;
         }
 
@@ -355,6 +387,11 @@ public class EndpointValidationResult implements Serializable {
         if (required != null) {
             for (String name : required) {
                 options.put(name, "Missing required option");
+            }
+        }
+        if (deprecated != null) {
+            for (String name : deprecated) {
+                options.put(name, "Deprecated option");
             }
         }
         if (invalidEnum != null) {

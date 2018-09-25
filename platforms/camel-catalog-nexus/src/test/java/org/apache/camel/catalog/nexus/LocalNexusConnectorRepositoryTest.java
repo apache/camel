@@ -19,12 +19,12 @@ package org.apache.camel.catalog.nexus;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.TestCase;
 import org.apache.camel.catalog.connector.CamelConnectorCatalog;
 import org.apache.camel.catalog.connector.DefaultCamelConnectorCatalog;
+import org.junit.Assert;
 import org.junit.Test;
 
-public class LocalNexusConnectorRepositoryTest extends TestCase {
+public class LocalNexusConnectorRepositoryTest extends Assert {
 
     private CamelConnectorCatalog catalog = new DefaultCamelConnectorCatalog();
 

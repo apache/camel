@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class ThrottlerTest extends ContextTestSupport {
     private static final int INTERVAL = 500;
@@ -34,6 +35,7 @@ public class ThrottlerTest extends ContextTestSupport {
         return !isPlatform("windows");
     }
 
+    @Test
     public void testSendLotsOfMessagesButOnly3GetThroughWithin2Seconds() throws Exception {
         if (!canTest()) {
             return;
@@ -52,6 +54,7 @@ public class ThrottlerTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testSendLotsOfMessagesWithRejectExecution() throws Exception {
         if (!canTest()) {
             return;
@@ -72,6 +75,7 @@ public class ThrottlerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendLotsOfMessagesSimultaneouslyButOnly3GetThrough() throws Exception {
         if (!canTest()) {
             return;
@@ -82,6 +86,7 @@ public class ThrottlerTest extends ContextTestSupport {
         assertThrottlerTiming(elapsed, 5, INTERVAL, MESSAGE_COUNT);
     }
 
+    @Test
     public void testConfigurationWithConstantExpression() throws Exception {
         if (!canTest()) {
             return;
@@ -92,6 +97,7 @@ public class ThrottlerTest extends ContextTestSupport {
         assertThrottlerTiming(elapsed, 5, INTERVAL, MESSAGE_COUNT);
     }
 
+    @Test
     public void testConfigurationWithHeaderExpression() throws Exception {
         if (!canTest()) {
             return;
@@ -108,6 +114,7 @@ public class ThrottlerTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testConfigurationWithChangingHeaderExpression() throws Exception {
         if (!canTest()) {
             return;
@@ -140,7 +147,7 @@ public class ThrottlerTest extends ContextTestSupport {
         long maximum = calculateMaximum(intervalMs, throttle, messageCount) + 50;
         // add 500 in case running on slow CI boxes
         maximum += 500;
-        log.info("Sent {} exchanges in {}ms, with throttle rate of {} per {}ms. Calculated min {}ms and max {}ms", new Object[]{messageCount, elapsedTimeMs, throttle, intervalMs, minimum, maximum});
+        log.info("Sent {} exchanges in {}ms, with throttle rate of {} per {}ms. Calculated min {}ms and max {}ms", messageCount, elapsedTimeMs, throttle, intervalMs, minimum, maximum);
 
         assertTrue("Should take at least " + minimum + "ms, was: " + elapsedTimeMs, elapsedTimeMs >= minimum);
         assertTrue("Should take at most " + maximum + "ms, was: " + elapsedTimeMs, elapsedTimeMs <= maximum + TOLERANCE);

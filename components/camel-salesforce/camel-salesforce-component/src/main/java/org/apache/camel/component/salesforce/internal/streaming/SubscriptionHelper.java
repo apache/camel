@@ -40,6 +40,7 @@ import org.apache.camel.support.ServiceSupport;
 import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.client.BayeuxClient;
+import org.cometd.client.BayeuxClient.State;
 import org.cometd.client.transport.ClientTransport;
 import org.cometd.client.transport.LongPollingTransport;
 import org.eclipse.jetty.client.api.Request;
@@ -175,8 +176,7 @@ public class SubscriptionHelper extends ServiceSupport {
 
                         LOG.debug("Refreshing subscriptions to {} channels on reconnect", listenerMap.size());
                         // reconnected to Salesforce, subscribe to existing channels
-                        final Map<SalesforceConsumer, ClientSessionChannel.MessageListener> map =
-                                new HashMap<>();
+                        final Map<SalesforceConsumer, ClientSessionChannel.MessageListener> map = new HashMap<>();
                         map.putAll(listenerMap);
                         listenerMap.clear();
                         for (Map.Entry<SalesforceConsumer, ClientSessionChannel.MessageListener> entry : map.entrySet()) {
@@ -321,9 +321,11 @@ public class SubscriptionHelper extends ServiceSupport {
         client.getChannel(META_CONNECT).removeListener(connectListener);
         client.getChannel(META_HANDSHAKE).removeListener(handshakeListener);
 
-        boolean disconnected = client.disconnect(timeout);
+        client.disconnect();
+        boolean disconnected = client.waitFor(timeout, State.DISCONNECTED);
         if (!disconnected) {
             LOG.warn("Could not disconnect client connected to: {} after: {} msec.", getEndpointUrl(component), timeout);
+            client.abort();
         }
 
         client = null;
@@ -457,8 +459,25 @@ public class SubscriptionHelper extends ServiceSupport {
             .filter(Objects::nonNull).findFirst();
     }
 
-    static String getChannelName(String topicName) {
-        return "/topic/" + topicName;
+    static String getChannelName(final String topicName) {
+        final StringBuilder channelName = new StringBuilder();
+        if (topicName.charAt(0) != '/') {
+            channelName.append('/');
+        }
+
+        if (topicName.indexOf('/', 1) > 0) {
+            channelName.append(topicName);
+        } else {
+            channelName.append("topic/");
+            channelName.append(topicName);
+        }
+
+        final int typeIdx = channelName.indexOf("/", 1);
+        if ("event".equals(channelName.substring(1, typeIdx)) && !topicName.endsWith("__e")) {
+            channelName.append("__e");
+        }
+
+        return channelName.toString();
     }
 
     public void unsubscribe(String topicName, SalesforceConsumer consumer) throws CamelException {

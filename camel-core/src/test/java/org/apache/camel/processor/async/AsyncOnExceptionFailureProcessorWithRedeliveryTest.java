@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
@@ -31,6 +32,7 @@ public class AsyncOnExceptionFailureProcessorWithRedeliveryTest extends ContextT
     private static String beforeThreadName;
     private static String afterThreadName;
 
+    @Test
     public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(0);

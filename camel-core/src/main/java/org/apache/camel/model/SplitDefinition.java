@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.concurrent.ExecutorService;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -89,6 +90,11 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     @Override
     public String toString() {
         return "Split[" + getExpression() + " -> " + getOutputs() + "]";
+    }
+
+    @Override
+    public String getShortName() {
+        return "split";
     }
 
     @Override

@@ -18,12 +18,14 @@ package org.apache.camel.component.seda;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class SedaMultipleConsumersTest extends ContextTestSupport {
 
+    @Test
     public void testSedaMultipleConsumers() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
         getMockEndpoint("mock:b").expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
@@ -34,6 +36,7 @@ public class SedaMultipleConsumersTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testSedaMultipleConsumersNewAdded() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
         getMockEndpoint("mock:b").expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");

@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Unit test based on user forum problem - CAMEL-1463.
@@ -29,6 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class ChoiceNoErrorHandlerTest extends ContextTestSupport {
 
+    @Test
     public void testChoiceNoErrorHandler() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

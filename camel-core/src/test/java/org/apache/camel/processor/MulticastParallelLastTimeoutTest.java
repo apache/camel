@@ -21,12 +21,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class MulticastParallelLastTimeoutTest extends ContextTestSupport {
 
+    @Test
     public void testMulticastParallelLastTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         // C will timeout so we only get A and B

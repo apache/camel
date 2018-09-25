@@ -23,9 +23,11 @@ import java.util.stream.Stream;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class AggregateDslTest extends ContextTestSupport {
 
+    @Test
     public void testAggregate() throws Exception {
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("0,3", "1,4", "2,5");
         getMockEndpoint("mock:aggregated-supplier").expectedBodiesReceived("0,3,6", "1,4,7", "2,5,8");

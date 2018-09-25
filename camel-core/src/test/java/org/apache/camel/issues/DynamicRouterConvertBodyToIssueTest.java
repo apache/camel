@@ -25,6 +25,7 @@ import org.apache.camel.ExchangeProperties;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Ignore;
+import org.junit.Test;
 
 @Ignore("CAMEL-8086: used for manual testing a memory issue")
 public class DynamicRouterConvertBodyToIssueTest extends ContextTestSupport implements Processor {
@@ -32,6 +33,7 @@ public class DynamicRouterConvertBodyToIssueTest extends ContextTestSupport impl
     private static final int MAX_ITERATIONS = 1000;
     private static int counter;
 
+    @Test
     public void testIssue() throws Exception {
         template.sendBody("seda:foo", "Hello World");
 

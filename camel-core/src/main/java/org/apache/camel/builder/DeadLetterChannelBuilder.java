@@ -26,7 +26,7 @@ import org.apache.camel.processor.FatalFallbackErrorHandler;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelLogger;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -90,7 +90,7 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
 
     protected void validateDeadLetterUri(RouteContext routeContext) {
         if (deadLetter == null) {
-            ObjectHelper.notEmpty(deadLetterUri, "deadLetterUri", this);
+            StringHelper.notEmpty(deadLetterUri, "deadLetterUri", this);
             deadLetter = routeContext.getCamelContext().getEndpoint(deadLetterUri);
             if (deadLetter == null) {
                 throw new NoSuchEndpointException(deadLetterUri);

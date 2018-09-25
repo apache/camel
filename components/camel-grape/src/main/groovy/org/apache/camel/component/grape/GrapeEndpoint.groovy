@@ -34,7 +34,7 @@ import static org.apache.camel.component.grape.MavenCoordinates.parseMavenCoordi
 @UriEndpoint(firstVersion = "2.16.0", scheme = "grape", syntax = "grape:defaultCoordinates", title = "Grape", producerOnly = true, label = "management,deployment")
 class GrapeEndpoint extends DefaultEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath(description = "Maven coordinates to use as default to grab if the message body is empty") @Metadata(required = "true")
     private final String defaultCoordinates
 
     GrapeEndpoint(String endpointUri, String defaultCoordinates, GrapeComponent component) {

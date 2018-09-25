@@ -19,7 +19,6 @@ package org.apache.camel.issues;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27,16 +26,19 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  *
  */
-public class StopCamelFromRouteTest extends TestCase {
+public class StopCamelFromRouteTest extends Assert {
 
     // START SNIPPET: e1
     // use a latch as signal when to stop Camel
     private final CountDownLatch latch = new CountDownLatch(1);
     
+    @Test
     public void testStopCamelFromRoute() throws Exception {
         // create camel, add routes, and start camel
         CamelContext context = new DefaultCamelContext();

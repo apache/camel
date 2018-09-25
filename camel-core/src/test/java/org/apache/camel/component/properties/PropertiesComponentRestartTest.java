@@ -23,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
+import org.junit.Test;
 
 /**
  * @version 
@@ -31,6 +32,7 @@ public class PropertiesComponentRestartTest extends ContextTestSupport {
 
     private int resolvedCount;
 
+    @Test
     public void testPropertiesComponentCacheClearedOnStop() throws Exception {
 
         context.start();

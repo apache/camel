@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.component.linkedin.api;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+
 import javax.ws.rs.WebApplicationException;
 
 import org.apache.camel.component.linkedin.api.model.Error;

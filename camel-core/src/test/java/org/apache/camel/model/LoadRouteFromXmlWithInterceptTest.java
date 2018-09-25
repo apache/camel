@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import java.io.InputStream;
 
 import org.apache.camel.ContextTestSupport;
+import org.junit.Test;
 
 /**
  * @version 
@@ -30,6 +31,7 @@ public class LoadRouteFromXmlWithInterceptTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testLoadRouteFromXmlWithIntercept() throws Exception {
         InputStream is = getClass().getResourceAsStream("barInterceptorRoute.xml");
         RoutesDefinition routes = context.loadRoutesDefinition(is);

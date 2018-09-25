@@ -18,12 +18,14 @@ package org.apache.camel.language.simple;
 
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
+import org.junit.Test;
 
 /**
  *
  */
 public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
 
+    @Test
     public void testSimpleEqFunctionInvalid() throws Exception {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("high", true);
@@ -37,6 +39,7 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
         }
     }
 
+    @Test
     public void testSimpleInvalidSymbol() throws Exception {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("high", true);
@@ -50,6 +53,7 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
         }
     }
 
+    @Test
     public void testSimpleUnevenSingleQuote() throws Exception {
         exchange.getIn().setBody("foo");
 
@@ -62,6 +66,7 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
         }
     }
 
+    @Test
     public void testSimpleUnevenDoubleQuote() throws Exception {
         exchange.getIn().setBody("foo");
 
@@ -74,6 +79,7 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
         }
     }
 
+    @Test
     public void testSimpleTwoAnd() throws Exception {
         exchange.getIn().setBody("foo");
 
@@ -86,6 +92,7 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
         }
     }
 
+    @Test
     public void testSimpleTwoOr() throws Exception {
         exchange.getIn().setBody("foo");
 
@@ -98,6 +105,7 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
         }
     }
 
+    @Test
     public void testSimpleTwoEq() throws Exception {
         exchange.getIn().setBody("foo");
 

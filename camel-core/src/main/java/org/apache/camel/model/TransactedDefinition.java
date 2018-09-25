@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -49,6 +50,7 @@ import org.slf4j.LoggerFactory;
 public class TransactedDefinition extends OutputDefinition<TransactedDefinition> {
 
     // TODO: Align this code with PolicyDefinition
+    // TODO: Camel 3 should be NoOutputDefinition
 
     // JAXB does not support changing the ref attribute from required to optional
     // if we extend PolicyDefinition so we must make a copy of the class
@@ -89,6 +91,11 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
         } else {
             return "";
         }
+    }
+
+    @Override
+    public String getShortName() {
+        return "transacted";
     }
 
     @Override

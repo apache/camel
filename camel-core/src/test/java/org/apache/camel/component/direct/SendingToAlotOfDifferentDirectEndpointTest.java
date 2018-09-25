@@ -18,12 +18,14 @@ package org.apache.camel.component.direct;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class SendingToAlotOfDifferentDirectEndpointTest extends ContextTestSupport {
 
+    @Test
     public void testDirect() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(3);
 

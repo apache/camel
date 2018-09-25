@@ -166,6 +166,22 @@ public class KubernetesServiceDiscoveryFactory implements ServiceDiscoveryFactor
         configuration.setDnsDomain(dnsDomain);
     }
 
+    public String getPortName() {
+        return configuration.getPortName();
+    }
+
+    public void setPortName(String portName) {
+        configuration.setPortName(portName);
+    }
+
+    public String getPortProtocol() {
+        return configuration.getPortProtocol();
+    }
+
+    public void setPortProtocol(String portProtocol) {
+        configuration.setPortProtocol(portProtocol);
+    }
+
     public String getLookup() {
         return lookup;
     }
@@ -182,6 +198,8 @@ public class KubernetesServiceDiscoveryFactory implements ServiceDiscoveryFactor
     public ServiceDiscovery newInstance(CamelContext camelContext) throws Exception {
         if (ObjectHelper.equal("dns", lookup)) {
             return new KubernetesDnsServiceDiscovery(configuration);
+        } else if (ObjectHelper.equal("dnssrv", lookup)) {
+            return new KubernetesDnsSrvServiceDiscovery(configuration);
         } else if (ObjectHelper.equal("client", lookup)) {
             return new KubernetesClientServiceDiscovery(configuration);
         }

@@ -18,10 +18,8 @@ package org.apache.camel.component.solr;
 
 import java.util.Arrays;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("Need refactoring in SolrComponentTestSupport, with new schema and solr-config from solr 5.2.1 and new Cloud Solr cluster instantiation")
 public class SolrDeleteTest extends SolrComponentTestSupport {
 
     public SolrDeleteTest(SolrFixtures.TestServerType serverToTest) {

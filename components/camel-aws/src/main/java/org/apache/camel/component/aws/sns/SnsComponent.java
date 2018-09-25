@@ -18,6 +18,7 @@ package org.apache.camel.component.aws.sns;
 
 import java.util.Map;
 
+import com.amazonaws.regions.Regions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
@@ -54,7 +55,12 @@ public class SnsComponent extends DefaultComponent {
             throw new IllegalArgumentException("Topic name must be specified.");
         }
         if (remaining.startsWith("arn:")) {
+            String[] parts = remaining.split(":");
+            if (parts.length != 6 || !parts[2].equals("sns")) {
+                throw new IllegalArgumentException("Topic arn must be in format arn:aws:sns:region:account:name.");
+            }
             configuration.setTopicArn(remaining);
+            configuration.setRegion(Regions.fromName(parts[3]).toString());
         } else {
             configuration.setTopicName(remaining);
         }

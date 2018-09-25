@@ -26,7 +26,7 @@ For more information you can look at <<ftp-component,FTP component>>
 The options below are exclusive for the FTPS component.
 
 // component options: START
-The FTPS component supports 2 options which are listed below.
+The FTPS component supports 2 options, which are listed below.
 
 
 
@@ -184,7 +184,24 @@ with the following path and query parameters:
 | *isImplicit* (security) | Set the security mode(Implicit/Explicit). true - Implicit Mode / False - Explicit Mode | false | boolean
 | *password* (security) | Password to use for login |  | String
 | *securityProtocol* (security) | Set the underlying security protocol. | TLS | String
-| *sslContextParameters* (security) | Gets the JSSE configuration that overrides any settings in link FtpsEndpointftpClientKeyStoreParameters, link ftpClientTrustStoreParameters, and link FtpsConfigurationgetSecurityProtocol(). |  | SSLContextParameters
+| *sslContextParameters* (security) | Gets the JSSE configuration that overrides any settings in FtpsEndpoint#ftpClientKeyStoreParameters, ftpClientTrustStoreParameters, and FtpsConfiguration#getSecurityProtocol(). |  | SSLContextParameters
 | *username* (security) | Username to use for login |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.ftps.enabled* | Enable ftps component | true | Boolean
+| *camel.component.ftps.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.ftps.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+

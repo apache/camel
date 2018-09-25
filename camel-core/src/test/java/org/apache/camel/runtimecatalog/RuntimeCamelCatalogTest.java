@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.runtimecatalog;
-
 import java.util.HashMap;
 import java.util.Map;
 

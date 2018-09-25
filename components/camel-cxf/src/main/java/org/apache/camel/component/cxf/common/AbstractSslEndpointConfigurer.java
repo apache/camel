@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf.common;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+
 import javax.net.ssl.SSLSocketFactory;
 
 import org.apache.camel.CamelContext;

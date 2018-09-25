@@ -24,12 +24,14 @@ import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
+import org.junit.Test;
 
 /**
  *
  */
 public class TransactedPropertyPlaceholderIssueTest extends ContextTestSupport {
 
+    @Test
     public void testPropertyPlaceholder() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Camel");
         template.sendBody("seda:foo", "Hello World");

@@ -38,11 +38,27 @@ Since the 9th of October, an Api Key is required to access the
 openweather service. This key is passed as parameter to the URI
 definition of the weather endpoint using the appid param !
 
+### Geolocation provider
+
+Since July 2018 FreegeoIP is no longer available. The camel-weather component was using this API.
+We switch to https://github.com/apilayer/freegeoip#readme[IPstack] so you'll need to specify and Access Key and the IP 
+from where you're using the API now on.
+
 ### Options
 
 
 // component options: START
-The Weather component has no options.
+The Weather component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *geolocationAccessKey* (common) | The geolocation service now needs an accessKey to be used |  | String
+| *geolocationRequestHost IP* (common) | The geolocation service now needs to specify the IP associated to the accessKey you're using |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
 // component options: END
 
 
@@ -66,7 +82,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (43 parameters):
+==== Query Parameters (45 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -115,8 +131,28 @@ with the following path and query parameters:
 | *proxyAuthUsername* (proxy) | Username for proxy authentication |  | String
 | *proxyHost* (proxy) | The proxy host name |  | String
 | *proxyPort* (proxy) | The proxy port number |  | Integer
+| *geolocationAccessKey* (security) | *Required* The geolocation service now needs an accessKey to be used |  | String
+| *geolocationRequestHostIP* (security) | *Required* The geolocation service now needs to specify the IP associated to the accessKey you're using |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.weather.enabled* | Enable weather component | true | Boolean
+| *camel.component.weather.geolocation-access-key* | The geolocation service now needs an accessKey to be used |  | String
+| *camel.component.weather.geolocation-request-host-i-p* | The geolocation service now needs to specify the IP associated to the accessKey you're using |  | String
+| *camel.component.weather.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 You can append query options to the URI in the following format,
@@ -145,7 +181,7 @@ In this sample we find the 7 day weather forecast for Madrid, Spain:
 
 [source,java]
 ---------------------------------------------------------------------------------------------
-from("weather:foo?location=Madrid,Spain&period=7 days&appid=APIKEY").to("jms:queue:weather");
+from("weather:foo?location=Madrid,Spain&period=7 days&appid=APIKEY&geolocationAccessKey=IPSTACK_ACCESS_KEY&geolocationRequestHostIP=LOCAL_IP").to("jms:queue:weather");
 ---------------------------------------------------------------------------------------------
 
 To just find the current weather for your current location you can use
@@ -153,7 +189,7 @@ this:
 
 [source,java]
 ---------------------------------------------------------
-from("weather:foo?appid=APIKEY").to("jms:queue:weather");
+from("weather:foo?appid=APIKEY&geolocationAccessKey=IPSTACK_ACCESS_KEY&geolocationRequestHostIP=LOCAL_IP").to("jms:queue:weather");
 ---------------------------------------------------------
 
 And to find the weather using the producer we do:
@@ -161,7 +197,7 @@ And to find the weather using the producer we do:
 [source,java]
 --------------------------------------------------------
 from("direct:start")
-  .to("weather:foo?location=Madrid,Spain&appid=APIKEY");
+  .to("weather:foo?location=Madrid,Spain&appid=APIKEY&geolocationAccessKey=IPSTACK_ACCESS_KEY&geolocationRequestHostIP=LOCAL_IP");
 --------------------------------------------------------
 
 And we can send in a message with a header to get the weather for any

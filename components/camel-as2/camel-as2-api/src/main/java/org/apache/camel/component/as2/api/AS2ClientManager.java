@@ -21,8 +21,10 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 
 import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
+import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeEntity;
 import org.apache.camel.component.as2.api.entity.EntityParser;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
+import org.apache.camel.component.as2.api.util.EncryptingUtils;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.SigningUtils;
 import org.apache.http.HttpException;
@@ -31,6 +33,8 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicHttpEntityEnclosingRequest;
 import org.apache.http.protocol.HttpCoreContext;
 import org.apache.http.util.Args;
+import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
+import org.bouncycastle.operator.OutputEncryptor;
 
 /**
  * AS2 Client Manager
@@ -46,7 +50,7 @@ public class AS2ClientManager {
     //
 
     /**
-     * Prefix for all AS2 HTTP Context Attributes used by the Http Client
+     * Prefix for all AS2 HTTP Context Attributes used by the AS2 Client
      * Manager.
      */
     public static final String CAMEL_AS2_CLIENT_PREFIX = "camel-as2.client.";
@@ -135,6 +139,24 @@ public class AS2ClientManager {
     public static final String SIGNING_PRIVATE_KEY = CAMEL_AS2_CLIENT_PREFIX + "signing-private-key";
 
     /**
+     * The HTTP Context Attribute containing the algorithm name used to encrypt EDI
+     * message
+     */
+    public static final String ENCRYPTING_ALGORITHM = CAMEL_AS2_CLIENT_PREFIX + "encrypting-algorithm-name";
+
+    /**
+     * The HTTP Context Attribute containing the certificate used to encrypt
+     * EDI message
+     */
+    public static final String ENCRYPTING_CERTIFICATE_CHAIN = CAMEL_AS2_CLIENT_PREFIX + "encrypting-certificate-chain";
+
+    /**
+     * The HTTP Context Attribute containing the private key used to encrypt EDI
+     * message
+     */
+    public static final String ENCRYPTING_PRIVATE_KEY = CAMEL_AS2_CLIENT_PREFIX + "encrypting-private-key";
+
+    /**
      * The HTTP Context Attribute containing the internet e-mail address of
      * sending system requesting a message disposition notification.
      */
@@ -172,6 +194,9 @@ public class AS2ClientManager {
      * @param signingPrivateKey - the private key used to sign EDI message
      * @param dispositionNotificationTo - an RFC2822 address to request a receipt or <code>null</code> if no receipt requested
      * @param signedReceiptMicAlgorithms - the senders list of signing algorithms for signing receipt, in preferred order,  or <code>null</code> if requesting an unsigned receipt.
+     * @param encryptingAlgorithm - the algorithm used to encrypt the message or <code>null</code> if sending EDI message unencrypted
+     * @param encryptingCertificateChain - the chain of certificates used to encrypt the message or <code>null</code> if sending EDI message unencrypted
+     * @param encryptingPrivateKey - the private key used to encrypt EDI message
      * @return {@link HttpCoreContext} containing request and response used to send EDI message
      * @throws HttpException when things go wrong.
      */
@@ -187,7 +212,10 @@ public class AS2ClientManager {
                                 Certificate[] signingCertificateChain,
                                 PrivateKey signingPrivateKey,
                                 String dispositionNotificationTo,
-                                String[] signedReceiptMicAlgorithms)
+                                String[] signedReceiptMicAlgorithms,
+                                AS2EncryptionAlgorithm encryptingAlgorithm,
+                                Certificate[] encryptingCertificateChain,
+                                PrivateKey encryptingPrivateKey)
             throws HttpException {
 
         Args.notNull(ediMessage, "EDI Message");
@@ -209,6 +237,9 @@ public class AS2ClientManager {
         httpContext.setAttribute(AS2ClientManager.SIGNING_PRIVATE_KEY, signingPrivateKey);
         httpContext.setAttribute(AS2ClientManager.DISPOSITION_NOTIFICATION_TO, dispositionNotificationTo);
         httpContext.setAttribute(AS2ClientManager.SIGNED_RECEIPT_MIC_ALGORITHMS, signedReceiptMicAlgorithms);
+        httpContext.setAttribute(AS2ClientManager.ENCRYPTING_ALGORITHM, encryptingAlgorithm);
+        httpContext.setAttribute(AS2ClientManager.ENCRYPTING_CERTIFICATE_CHAIN, encryptingCertificateChain);
+        httpContext.setAttribute(AS2ClientManager.ENCRYPTING_PRIVATE_KEY, encryptingPrivateKey);
 
         BasicHttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest("POST", requestUri);
         httpContext.setAttribute(HTTP_REQUEST, request);
@@ -238,7 +269,10 @@ public class AS2ClientManager {
             }
             break;
         case ENCRYPTED:
-            // TODO : Add code here to add application/pkcs7-mime entity when encryption facility available.
+            CMSEnvelopedDataGenerator envelopedDataGenerator = createEncryptingGenerator(httpContext);
+            OutputEncryptor encryptor = createEncryptor(httpContext);
+            ApplicationPkcs7MimeEntity pkcs7MimeEntity = new ApplicationPkcs7MimeEntity(applicationEDIEntity, envelopedDataGenerator, encryptor, AS2TransferEncoding.BASE64, true);
+            EntityUtils.setMessageEntity(request, pkcs7MimeEntity);
             break;
         case ENCRYPTED_SIGNED:
             // TODO : Add code here to add application/pkcs7-mime entity when encryption facility available.
@@ -273,6 +307,27 @@ public class AS2ClientManager {
 
         return SigningUtils.createSigningGenerator(certificateChain, privateKey);
 
+    }
+
+    public CMSEnvelopedDataGenerator createEncryptingGenerator(HttpCoreContext httpContext) throws HttpException {
+
+        Certificate[] certificateChain = httpContext.getAttribute(ENCRYPTING_CERTIFICATE_CHAIN, Certificate[].class);
+        if (certificateChain == null) {
+            throw new HttpException("Encrypting certificate chain missing");
+        }
+
+        return EncryptingUtils.createEnvelopDataGenerator(certificateChain);
+
+    }
+    
+    public OutputEncryptor createEncryptor(HttpCoreContext httpContext) throws HttpException {
+        
+        AS2EncryptionAlgorithm encryptionAlgorithm = httpContext.getAttribute(ENCRYPTING_ALGORITHM, AS2EncryptionAlgorithm.class);
+        if (encryptionAlgorithm == null) {
+            throw new HttpException("Encrypting algorithm missing");
+        }
+
+        return EncryptingUtils.createEncryptor(encryptionAlgorithm);
     }
 
 }

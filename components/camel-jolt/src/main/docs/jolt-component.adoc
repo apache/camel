@@ -4,7 +4,7 @@
 *Available as of Camel version 2.16*
 
 The *jolt:* component allows you to process a JSON messages using an
-http://bazaarvoice.github.io/jolt/[JOLT] specification. This can be
+https://github.com/bazaarvoice/jolt[JOLT] specification. This can be
 ideal when doing JSON to JSON transformation.
 
 Maven users will need to add the following dependency to
@@ -42,7 +42,7 @@ format, `?option=value&option=value&...`
 
 
 // component options: START
-The JOLT component supports 2 options which are listed below.
+The JOLT component supports 2 options, which are listed below.
 
 
 
@@ -91,6 +91,23 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.jolt.enabled* | Enable jolt component | true | Boolean
+| *camel.component.jolt.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.jolt.transform* | Explicitly sets the Transform to use. If not set a Transform specified by the transformDsl will be created. The option is a com.bazaarvoice.jolt.Transform type. |  | String
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

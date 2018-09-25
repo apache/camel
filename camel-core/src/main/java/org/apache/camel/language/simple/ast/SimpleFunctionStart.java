@@ -16,12 +16,13 @@
  */
 package org.apache.camel.language.simple.ast;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
-import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -30,10 +31,10 @@ import org.apache.camel.util.StringHelper;
 public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
 
     // use caches to avoid re-parsing the same expressions over and over again
-    private final LRUCache<String, Expression> cacheExpression;
+    private final Map<String, Expression> cacheExpression;
     private final CompositeNodes block;
 
-    public SimpleFunctionStart(SimpleToken token, LRUCache<String, Expression> cacheExpression) {
+    public SimpleFunctionStart(SimpleToken token, Map<String, Expression> cacheExpression) {
         super(token);
         this.block = new CompositeNodes(token);
         this.cacheExpression = cacheExpression;

@@ -18,12 +18,14 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class MulticastFineGrainedErrorHandlingTest extends ContextTestSupport {
 
+    @Test
     public void testMulticastOk() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -48,6 +50,7 @@ public class MulticastFineGrainedErrorHandlingTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMulticastError() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

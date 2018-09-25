@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -67,6 +68,11 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
     @Override
     public String toString() {
         return "InterceptSendToEndpoint[" + uri + " -> " + getOutputs() + "]";
+    }
+
+    @Override
+    public String getShortName() {
+        return "interceptSendToEndpoint";
     }
 
     @Override

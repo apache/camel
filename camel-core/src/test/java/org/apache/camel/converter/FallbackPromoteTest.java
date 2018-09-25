@@ -18,6 +18,7 @@ package org.apache.camel.converter;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.TypeConverter;
+import org.junit.Test;
 
 /**
  * @version 
@@ -29,6 +30,7 @@ public class FallbackPromoteTest extends ContextTestSupport {
         return true;
     }
 
+    @Test
     public void testFallbackPromote() throws Exception {
         MyCoolBean cool = new MyCoolBean();
         cool.setCool("Camel rocks");

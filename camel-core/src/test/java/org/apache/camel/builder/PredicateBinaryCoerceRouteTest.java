@@ -18,12 +18,14 @@ package org.apache.camel.builder;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.WaitForTaskToComplete;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
 
+    @Test
     public void testNoHeader() throws Exception {
         getMockEndpoint("mock:123").expectedMessageCount(0);
         getMockEndpoint("mock:456").expectedMessageCount(0);
@@ -34,6 +36,7 @@ public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHeaderAsNumber123() throws Exception {
         getMockEndpoint("mock:123").expectedMessageCount(1);
         getMockEndpoint("mock:456").expectedMessageCount(0);
@@ -44,6 +47,7 @@ public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHeaderAsNumber456() throws Exception {
         getMockEndpoint("mock:123").expectedMessageCount(0);
         getMockEndpoint("mock:456").expectedMessageCount(1);
@@ -54,6 +58,7 @@ public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHeaderAsNumber999() throws Exception {
         getMockEndpoint("mock:123").expectedMessageCount(0);
         getMockEndpoint("mock:456").expectedMessageCount(0);
@@ -64,6 +69,7 @@ public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHeaderAsString123() throws Exception {
         getMockEndpoint("mock:123").expectedMessageCount(1);
         getMockEndpoint("mock:456").expectedMessageCount(0);
@@ -74,6 +80,7 @@ public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHeaderAsString456() throws Exception {
         getMockEndpoint("mock:123").expectedMessageCount(0);
         getMockEndpoint("mock:456").expectedMessageCount(1);
@@ -84,6 +91,7 @@ public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHeaderAsString999() throws Exception {
         getMockEndpoint("mock:123").expectedMessageCount(0);
         getMockEndpoint("mock:456").expectedMessageCount(0);
@@ -94,6 +102,7 @@ public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHeaderAsEnum() throws Exception {
         getMockEndpoint("mock:enum").expectedMessageCount(1);
 
@@ -102,6 +111,7 @@ public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHeaderAsEnumString() throws Exception {
         getMockEndpoint("mock:enum").expectedMessageCount(1);
 
@@ -110,6 +120,7 @@ public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOtherMax() throws Exception {
         getMockEndpoint("mock:max").expectedMessageCount(1);
         getMockEndpoint("mock:min").expectedMessageCount(0);
@@ -119,6 +130,7 @@ public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOtherMin() throws Exception {
         getMockEndpoint("mock:max").expectedMessageCount(0);
         getMockEndpoint("mock:min").expectedMessageCount(1);
@@ -128,6 +140,7 @@ public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOtherAlways() throws Exception {
         getMockEndpoint("mock:max").expectedMessageCount(0);
         getMockEndpoint("mock:min").expectedMessageCount(0);
@@ -138,6 +151,7 @@ public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOtherNewer() throws Exception {
         getMockEndpoint("mock:max").expectedMessageCount(0);
         getMockEndpoint("mock:min").expectedMessageCount(0);
@@ -149,6 +163,7 @@ public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOtherIfReplyExpected() throws Exception {
         getMockEndpoint("mock:max").expectedMessageCount(0);
         getMockEndpoint("mock:min").expectedMessageCount(0);

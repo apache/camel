@@ -19,12 +19,14 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class BatchResequencerAllowDuplicatesTest extends ContextTestSupport {
 
+    @Test
     public void testBatchResequencerAllowDuplicate() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("1A", "1B", "2C", "2D", "2E", "2F", "3G", "4H");

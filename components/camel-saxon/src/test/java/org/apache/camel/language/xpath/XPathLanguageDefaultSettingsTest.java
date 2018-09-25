@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.language.xpath;
-
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -34,6 +35,7 @@ public class XPathLanguageDefaultSettingsTest extends CamelSpringTestSupport {
     private String oldPropertyValue;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         if (!isJavaVendor("ibm")) {
             // Force using the JAXP default implementation, because having Saxon in the classpath will automatically make JAXP use it
@@ -46,6 +48,7 @@ public class XPathLanguageDefaultSettingsTest extends CamelSpringTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         if (oldPropertyValue != null) {
             System.setProperty(KEY, oldPropertyValue);

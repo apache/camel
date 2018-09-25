@@ -18,12 +18,14 @@ package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class ExceptionPolicyIssueTest extends ContextTestSupport {
 
+    @Test
     public void testOnExceptionWithGenericException() throws Exception {
         getMockEndpoint("mock:exception").expectedMessageCount(0);
         getMockEndpoint("mock:ue").expectedMessageCount(1);

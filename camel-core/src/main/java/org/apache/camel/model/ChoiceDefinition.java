@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -28,6 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionClause;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.AsPredicate;
@@ -133,6 +135,17 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         List<FilterProcessor> filters = new ArrayList<>();
         for (WhenDefinition whenClause : whenClauses) {
+            // also resolve properties and constant fields on embedded expressions in the when clauses
+            ExpressionNode exp = whenClause;
+            ExpressionDefinition expressionDefinition = exp.getExpression();
+            if (expressionDefinition != null) {
+                // resolve properties before we create the processor
+                ProcessorDefinitionHelper.resolvePropertyPlaceholders(routeContext.getCamelContext(), expressionDefinition);
+
+                // resolve constant fields (eg Exchange.FILE_NAME)
+                ProcessorDefinitionHelper.resolveKnownConstantFields(expressionDefinition);
+            }
+
             FilterProcessor filter = (FilterProcessor) createProcessor(routeContext, whenClause);
             filters.add(filter);
         }
@@ -230,6 +243,11 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
 
     // Properties
     // -------------------------------------------------------------------------
+
+    @Override
+    public String getShortName() {
+        return "choice";
+    }
 
     @Override
     public String getLabel() {

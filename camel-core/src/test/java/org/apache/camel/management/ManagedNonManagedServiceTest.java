@@ -17,6 +17,7 @@
 package org.apache.camel.management;
 
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -24,12 +25,14 @@ import org.apache.camel.NonManagedService;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.support.ServiceSupport;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class ManagedNonManagedServiceTest extends ManagementTestSupport {
 
+    @Test
     public void testService() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -51,6 +54,7 @@ public class ManagedNonManagedServiceTest extends ManagementTestSupport {
         assertEquals(11, set.size());
     }
 
+    @Test
     public void testNonManagedService() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

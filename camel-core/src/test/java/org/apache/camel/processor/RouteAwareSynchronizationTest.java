@@ -25,11 +25,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.SynchronizationRouteAware;
+import org.junit.Test;
 
 public class RouteAwareSynchronizationTest extends ContextTestSupport {
 
     private static final List<String> EVENTS = new ArrayList<>();
 
+    @Test
     public void testRouteAwareSynchronization() throws Exception {
         EVENTS.clear();
         assertEquals(0, EVENTS.size());

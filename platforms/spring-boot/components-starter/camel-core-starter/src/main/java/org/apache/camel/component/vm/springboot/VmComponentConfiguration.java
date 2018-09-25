@@ -17,11 +17,8 @@
 package org.apache.camel.component.vm.springboot;
 
 import javax.annotation.Generated;
-import org.apache.camel.Exchange;
-import org.apache.camel.component.seda.BlockingQueueFactory;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The vm component provides asynchronous call to another endpoint from the same
@@ -36,19 +33,25 @@ public class VmComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the vm component. This is enabled
+     * by default.
+     */
+    private Boolean enabled;
+    /**
      * Sets the default maximum capacity of the SEDA queue (i.e., the number of
      * messages it can hold).
      */
-    private Integer queueSize;
+    private Integer queueSize = 1000;
     /**
      * Sets the default number of concurrent threads processing exchanges.
      */
     private Integer concurrentConsumers = 1;
     /**
-     * Sets the default queue factory.
+     * Sets the default queue factory. The option is a
+     * org.apache.camel.component
+     * .seda.BlockingQueueFactory<org.apache.camel.Exchange> type.
      */
-    @NestedConfigurationProperty
-    private BlockingQueueFactory<Exchange> defaultQueueFactory;
+    private String defaultQueueFactory;
     /**
      * Whether a thread that sends messages to a full SEDA queue will block
      * until the queue's capacity is no longer exhausted. By default, an
@@ -57,6 +60,14 @@ public class VmComponentConfiguration
      * can be accepted.
      */
     private Boolean defaultBlockWhenFull = false;
+    /**
+     * Whether a thread that sends messages to a full SEDA queue will block
+     * until the queue's capacity is no longer exhausted. By default, an
+     * exception will be thrown stating that the queue is full. By enabling this
+     * option, where a configured timeout can be added to the block case.
+     * Utilizing the .offer(timeout) method of the underlining java queue
+     */
+    private Long defaultOfferTimeout;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -80,12 +91,11 @@ public class VmComponentConfiguration
         this.concurrentConsumers = concurrentConsumers;
     }
 
-    public BlockingQueueFactory<Exchange> getDefaultQueueFactory() {
+    public String getDefaultQueueFactory() {
         return defaultQueueFactory;
     }
 
-    public void setDefaultQueueFactory(
-            BlockingQueueFactory<Exchange> defaultQueueFactory) {
+    public void setDefaultQueueFactory(String defaultQueueFactory) {
         this.defaultQueueFactory = defaultQueueFactory;
     }
 
@@ -95,6 +105,14 @@ public class VmComponentConfiguration
 
     public void setDefaultBlockWhenFull(Boolean defaultBlockWhenFull) {
         this.defaultBlockWhenFull = defaultBlockWhenFull;
+    }
+
+    public Long getDefaultOfferTimeout() {
+        return defaultOfferTimeout;
+    }
+
+    public void setDefaultOfferTimeout(Long defaultOfferTimeout) {
+        this.defaultOfferTimeout = defaultOfferTimeout;
     }
 
     public Boolean getResolvePropertyPlaceholders() {

@@ -17,6 +17,7 @@
 package org.apache.camel.spring.config;
 
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -30,6 +31,7 @@ public class SpringCamelContextNoDependsOnTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringCamelContextNoDependsOnTest.xml");
     }
 
+    @Test
     public void testNoDependsOn() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

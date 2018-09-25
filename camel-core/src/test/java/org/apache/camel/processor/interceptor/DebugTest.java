@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.interceptor;
-
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -32,6 +31,8 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Condition;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -45,7 +46,8 @@ public class DebugTest extends ContextTestSupport {
     private Breakpoint breakpoint;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         breakpoint = new BreakpointSupport() {
@@ -85,6 +87,7 @@ public class DebugTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testDebug() throws Exception {
         context.getDebugger().addBreakpoint(breakpoint, camelCondition);
 
@@ -100,6 +103,7 @@ public class DebugTest extends ContextTestSupport {
         assertEquals("Breakpoint at To[mock:result] with body: Hello Camel", logs.get(1));
     }
 
+    @Test
     public void testDebugEvent() throws Exception {
         context.getDebugger().addBreakpoint(breakpoint, doneCondition);
 
@@ -115,6 +119,7 @@ public class DebugTest extends ContextTestSupport {
         assertEquals("Breakpoint event ExchangeCompletedEvent with body: Hello Camel", logs.get(1));
     }
 
+    @Test
     public void testDebugSuspended() throws Exception {
         context.getDebugger().addBreakpoint(breakpoint, mockCondition, camelCondition);
 
@@ -147,6 +152,7 @@ public class DebugTest extends ContextTestSupport {
         assertEquals("Breakpoint at To[mock:result] with body: Hello Camel", logs.get(0));
     }
 
+    @Test
     public void testDebugRemoveBreakpoint() throws Exception {
         context.getDebugger().addBreakpoint(breakpoint);
 

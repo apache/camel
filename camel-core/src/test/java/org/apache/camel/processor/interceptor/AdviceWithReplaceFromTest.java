@@ -22,12 +22,14 @@ import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Advice with match multiple ids test
  */
 public class AdviceWithReplaceFromTest extends ContextTestSupport {
 
+    @Test
     public void testReplaceFromUri() throws Exception {
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
@@ -45,6 +47,7 @@ public class AdviceWithReplaceFromTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testReplaceFromEndpoint() throws Exception {
         final Endpoint endpoint = context.getEndpoint("seda:foo");
 
@@ -64,6 +67,7 @@ public class AdviceWithReplaceFromTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testReplaceFromInvalidUri() throws Exception {
         try {
             context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {

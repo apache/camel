@@ -66,6 +66,11 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
     }
 
     @Override
+    public String getShortName() {
+        return "idempotentConsumer";
+    }
+
+    @Override
     public String getLabel() {
         return "idempotentConsumer[" + getExpression() + "]";
     }
@@ -85,7 +90,7 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
     }
 
     /**
-     * Sets the the message id repository for the idempotent consumer
+     * Sets the message id repository for the idempotent consumer
      *
      * @param idempotentRepository the repository instance of idempotent
      * @return builder

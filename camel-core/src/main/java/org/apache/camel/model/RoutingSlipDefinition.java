@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.util.Collections;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -74,6 +75,11 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
     @Override
     public String toString() {
         return "RoutingSlip[" + getExpression() + "]";
+    }
+
+    @Override
+    public String getShortName() {
+        return "routingSlip";
     }
 
     @Override

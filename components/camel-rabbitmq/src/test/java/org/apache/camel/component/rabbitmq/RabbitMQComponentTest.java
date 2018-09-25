@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.rabbitmq.client.ConnectionFactory;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
@@ -44,6 +43,8 @@ public class RabbitMQComponentTest {
         assertEquals(true, endpoint.isAutoAck());
         assertEquals(true, endpoint.isAutoDelete());
         assertEquals(true, endpoint.isDurable());
+        assertEquals(false, endpoint.isExclusiveConsumer());
+        assertEquals(false, endpoint.isAllowNullHeaders());
         assertEquals("direct", endpoint.getExchangeType());
         assertEquals(ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT, endpoint.getConnectionTimeout());
         assertEquals(ConnectionFactory.DEFAULT_CHANNEL_MAX, endpoint.getRequestedChannelMax());
@@ -68,6 +69,8 @@ public class RabbitMQComponentTest {
         params.put("requestedChannelMax", 456);
         params.put("requestedFrameMax", 789);
         params.put("requestedHeartbeat", 321);
+        params.put("exclusiveConsumer", true);
+        params.put("allowNullHeaders", true);
 
         RabbitMQEndpoint endpoint = createEndpoint(params);
 
@@ -86,6 +89,8 @@ public class RabbitMQComponentTest {
         assertEquals(456, endpoint.getRequestedChannelMax());
         assertEquals(789, endpoint.getRequestedFrameMax());
         assertEquals(321, endpoint.getRequestedHeartbeat());
+        assertEquals(true, endpoint.isExclusiveConsumer());
+        assertEquals(true, endpoint.isAllowNullHeaders());
     }
 
     private RabbitMQEndpoint createEndpoint(Map<String, Object> params) throws Exception {

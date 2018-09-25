@@ -23,6 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
@@ -47,6 +48,7 @@ public class CBRCustomPredicateAsFilterTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testCBRCustomPredicateAsFilter() throws Exception {
         getMockEndpoint("mock:good").expectedBodiesReceived("Hello World", "Bye World");
         getMockEndpoint("mock:secret").expectedBodiesReceived("secret");

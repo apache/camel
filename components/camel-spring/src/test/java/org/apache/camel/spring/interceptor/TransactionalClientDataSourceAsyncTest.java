@@ -22,12 +22,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.async.MyAsyncComponent;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
+import org.junit.Test;
 
 /**
  * Unit test to demonstrate the transactional client pattern.
  */
 public class TransactionalClientDataSourceAsyncTest extends TransactionalClientDataSourceTest {
 
+    @Test
     public void testTransactionRollback() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:error");
         mock.expectedMessageCount(1);

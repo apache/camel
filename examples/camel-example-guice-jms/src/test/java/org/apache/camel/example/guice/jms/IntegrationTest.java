@@ -16,14 +16,16 @@
  */
 package org.apache.camel.example.guice.jms;
 
-import junit.framework.TestCase;
 import org.apache.camel.guice.Main;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class IntegrationTest extends TestCase {
+public class IntegrationTest extends Assert {
 
+    @Test
     public void testCamelRulesDeployCorrectlyInGuice() throws Exception {
         // let's boot up the Guicey JNDI context for 2 seconds to check that it works OK
         Main.main("-duration", "2s", "-o", "target/site/cameldoc", "-j", "/guicejndi.properties");

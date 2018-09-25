@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.properties;
-
+import org.junit.After;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -27,7 +27,8 @@ public class SpringPropertiesComponentCacheDisabledTest extends BaseSpringProper
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         PropertiesComponent component = context.getComponent("properties", PropertiesComponent.class);
         assertFalse("Cache should be disabled", component.isCache());
 

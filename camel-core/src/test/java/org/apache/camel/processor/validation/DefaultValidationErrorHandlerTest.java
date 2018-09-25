@@ -27,12 +27,14 @@ import org.xml.sax.SAXParseException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class DefaultValidationErrorHandlerTest extends ContextTestSupport {
 
+    @Test
     public void testWarning() throws Exception {
         DefaultValidationErrorHandler eh = new DefaultValidationErrorHandler();
 
@@ -42,6 +44,7 @@ public class DefaultValidationErrorHandlerTest extends ContextTestSupport {
         assertEquals(true, eh.isValid());
     }
 
+    @Test
     public void testError() throws Exception {
         DefaultValidationErrorHandler eh = new DefaultValidationErrorHandler();
 
@@ -50,6 +53,7 @@ public class DefaultValidationErrorHandlerTest extends ContextTestSupport {
         assertEquals(false, eh.isValid());
     }
 
+    @Test
     public void testFatalError() throws Exception {
         DefaultValidationErrorHandler eh = new DefaultValidationErrorHandler();
 
@@ -58,6 +62,7 @@ public class DefaultValidationErrorHandlerTest extends ContextTestSupport {
         assertEquals(false, eh.isValid());
     }
 
+    @Test
     public void testReset() throws Exception {
         DefaultValidationErrorHandler eh = new DefaultValidationErrorHandler();
 
@@ -70,6 +75,7 @@ public class DefaultValidationErrorHandlerTest extends ContextTestSupport {
         assertEquals(true, eh.isValid());
     }
 
+    @Test
     public void testHandleErrors() throws Exception {
         DefaultValidationErrorHandler eh = new DefaultValidationErrorHandler();
 
@@ -100,6 +106,7 @@ public class DefaultValidationErrorHandlerTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testHandleErrorsResult() throws Exception {
         DefaultValidationErrorHandler eh = new DefaultValidationErrorHandler();
 

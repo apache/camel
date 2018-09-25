@@ -17,6 +17,7 @@
 package org.apache.camel.spring.processor;
 
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -30,6 +31,7 @@ public class SpringRouteContextProduceBeanTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringRouteContextProduceBeanTest.xml");
     }
 
+    @Test
     public void testRouteContextProduceBean() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

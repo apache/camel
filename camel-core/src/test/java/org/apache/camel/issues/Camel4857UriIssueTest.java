@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.issues;
-
 import java.util.Map;
 
 import org.apache.camel.Consumer;
@@ -25,6 +24,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * CAMEL-4857 issue test
@@ -78,11 +79,13 @@ public class Camel4857UriIssueTest extends ContextTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         context.addComponent("my", new MyComponent());
     }
 
+    @Test
     public void testExclamationInUri() {
         // %3F is not an ?, it's part of tube name.
         MyEndpoint endpoint = context.getEndpoint("my:host:11303/tube1+tube%2B+tube%3F", MyEndpoint.class);
@@ -90,6 +93,7 @@ public class Camel4857UriIssueTest extends ContextTestSupport {
         assertEquals("my:host:11303/tube1+tube%2B+tube%3F", endpoint.getUri());
     }
 
+    @Test
     public void testPath() {
          // Here a tube name is "tube+" and written in URI as "tube%2B", but it gets
          // normalized, so that an endpoint sees "tube1+tube+"

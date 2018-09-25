@@ -18,6 +18,7 @@ package org.apache.camel.dataformat.xmlsecurity;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -164,6 +165,19 @@ public class TestHelper {
     
     protected void testDecryption(CamelContext context) throws Exception {
         testDecryption(XML_FRAGMENT, context);
+    }
+    
+    protected void testDecryptionNoEncryptedKey(CamelContext context) throws Exception {
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:decrypted", MockEndpoint.class);
+        resultEndpoint.setExpectedMessageCount(1);
+        context.start();
+        resultEndpoint.assertIsSatisfied(100);
+        Exchange exchange = resultEndpoint.getExchanges().get(0);
+        Document inDoc = getDocumentForInMessage(exchange);
+        XmlConverter converter = new XmlConverter();
+        String xmlStr = converter.toString(inDoc, exchange);
+        log.info(xmlStr);
+        Assert.assertFalse("The XML message has encrypted data.", hasEncryptedData(inDoc));
     }
     
     private boolean hasEncryptedData(Document doc) throws Exception {

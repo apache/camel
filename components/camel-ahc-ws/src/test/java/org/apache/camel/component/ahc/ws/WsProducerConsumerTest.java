@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.ahc.ws;
-
 import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -26,6 +25,8 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -60,12 +61,14 @@ public class WsProducerConsumerTest extends CamelTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         startTestServer();
         super.setUp();
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         stopTestServer();

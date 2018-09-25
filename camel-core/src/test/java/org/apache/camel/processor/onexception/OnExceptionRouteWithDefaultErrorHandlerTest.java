@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.onexception;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test inspired by user forum.
@@ -30,6 +31,7 @@ public class OnExceptionRouteWithDefaultErrorHandlerTest extends ContextTestSupp
     private MyOwnHandlerBean myOwnHandlerBean;
     private MyServiceBean myServiceBean;
 
+    @Test
     public void testNoError() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -39,6 +41,7 @@ public class OnExceptionRouteWithDefaultErrorHandlerTest extends ContextTestSupp
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFunctionalError() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -49,6 +52,7 @@ public class OnExceptionRouteWithDefaultErrorHandlerTest extends ContextTestSupp
         assertEquals("<order><type>myType</type><user>Func</user></order>", myOwnHandlerBean.getPayload());
     }
 
+    @Test
     public void testTechnicalError() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -60,6 +64,7 @@ public class OnExceptionRouteWithDefaultErrorHandlerTest extends ContextTestSupp
         assertNull(myOwnHandlerBean.getPayload());
     }
 
+    @Test
     public void testErrorWhileHandlingException() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -77,7 +82,8 @@ public class OnExceptionRouteWithDefaultErrorHandlerTest extends ContextTestSupp
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         myOwnHandlerBean = new MyOwnHandlerBean();
         myServiceBean = new MyServiceBean();
         super.setUp();

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.google.pubsub.integration;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

@@ -17,6 +17,7 @@
 package org.apache.camel.component.infinispan.embedded;
 
 import java.util.Set;
+
 import org.apache.camel.component.infinispan.InfinispanConsumer;
 import org.infinispan.notifications.Listener;
 

@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.FileUtil;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -29,11 +30,13 @@ import org.apache.camel.util.FileUtil;
 public class FileProducerFileExistFailTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/file");
         super.setUp();
     }
 
+    @Test
     public void testFail() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

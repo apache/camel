@@ -15,19 +15,21 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class DeadLetterChannelUseOriginalInBodyWithFileTest extends ContextTestSupport {
 
+    @Test
     public void testOriginalInBodyIsFile() throws Exception {
         MockEndpoint dead = getMockEndpoint("mock:dead");
         dead.expectedMessageCount(1);
@@ -40,7 +42,8 @@ public class DeadLetterChannelUseOriginalInBodyWithFileTest extends ContextTestS
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/originalexchange");
         super.setUp();
     }

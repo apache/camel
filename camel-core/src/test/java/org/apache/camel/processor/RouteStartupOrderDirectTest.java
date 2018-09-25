@@ -23,12 +23,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class RouteStartupOrderDirectTest extends ContextTestSupport {
 
+    @Test
     public void testRouteStartupOrder() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

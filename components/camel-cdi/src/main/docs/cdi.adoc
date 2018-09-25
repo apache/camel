@@ -1,3 +1,4 @@
+[[cdi-component]]
 == Camel CDI
 
 The Camel CDI component provides auto-configuration for Apache Camel
@@ -608,7 +609,7 @@ void onRouteStarted(@Observes @ContextName("foo") RouteStartedEvent event) {
 }
  
 void onContextStarted(@Observes @Manual CamelContextStartedEvent event) {
-    // Called after the the Camel context qualified with '@Manual' has started
+    // Called after the Camel context qualified with '@Manual' has started
 }
 ----
 

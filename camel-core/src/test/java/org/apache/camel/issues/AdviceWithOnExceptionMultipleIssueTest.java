@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
@@ -45,6 +46,7 @@ public class AdviceWithOnExceptionMultipleIssueTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testSimpleMultipleAdvice() throws Exception {
         context.addRoutes(createRouteBuilder());
 
@@ -72,6 +74,7 @@ public class AdviceWithOnExceptionMultipleIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMultipleAdviceWithExceptionThrown() throws Exception {
         context.addRoutes(createRouteBuilder());
 
@@ -94,6 +97,7 @@ public class AdviceWithOnExceptionMultipleIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMultipleAdvice() throws Exception {
         context.addRoutes(createRouteBuilder());
 

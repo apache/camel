@@ -19,12 +19,14 @@ package org.apache.camel.component.direct;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class DirectQueueTest extends ContextTestSupport {
 
+    @Test
     public void testQueue() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World", "Bar");

@@ -22,9 +22,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchProviderException;
 
 import org.apache.camel.CamelContext;
+import org.junit.Test;
 
 public class KeyStoreParametersTest extends AbstractJsseParametersTest {
     
@@ -37,6 +39,7 @@ public class KeyStoreParametersTest extends AbstractJsseParametersTest {
         return ksp;
     }
     
+    @Test
     public void testPropertyPlaceholders() throws Exception {
         
         CamelContext context = this.createPropertiesPlaceholderAwareContext();
@@ -53,6 +56,7 @@ public class KeyStoreParametersTest extends AbstractJsseParametersTest {
         assertNotNull(ks.getCertificate("server"));
     }
     
+    @Test
     public void testValidParameters() throws GeneralSecurityException, IOException, URISyntaxException {
         KeyStoreParameters ksp = this.createMinimalKeyStoreParameters();
         
@@ -73,6 +77,7 @@ public class KeyStoreParametersTest extends AbstractJsseParametersTest {
         assertNotNull(ks.getCertificate("server"));
     }
     
+    @Test
     public void testExplicitType() throws Exception {
         KeyStoreParameters ksp = this.createMinimalKeyStoreParameters();
         ksp.setType("jks");
@@ -81,6 +86,7 @@ public class KeyStoreParametersTest extends AbstractJsseParametersTest {
         assertNotNull(ks.getCertificate("server"));
     }
     
+    @Test
     public void testExplicitProvider() throws Exception {
         KeyStoreParameters ksp = this.createMinimalKeyStoreParameters();
         ksp.setProvider(ksp.createKeyStore().getProvider().getName());
@@ -89,6 +95,7 @@ public class KeyStoreParametersTest extends AbstractJsseParametersTest {
         assertNotNull(ks.getCertificate("server"));
     }
     
+    @Test
     public void testExplicitInvalidProvider() throws Exception {
         KeyStoreParameters ksp = this.createMinimalKeyStoreParameters();
         ksp.setProvider("sdfdsfgfdsgdsfg");
@@ -101,13 +108,24 @@ public class KeyStoreParametersTest extends AbstractJsseParametersTest {
         }
     }
     
+    @Test
     public void testExplicitInvalidType() throws Exception {
-        if (getJavaMajorVersion() == 9) {
+        KeyStoreParameters ksp = this.createMinimalKeyStoreParameters();
+        ksp.setType("1234");
+        
+        try {
+            ksp.createKeyStore();
+            fail();
+        } catch (KeyStoreException e) {
+            // expected
+        }
+        
+        if (getJavaMajorVersion() >= 9) {
             //checkout http://openjdk.java.net/jeps/229
             return;
         }
         
-        KeyStoreParameters ksp = this.createMinimalKeyStoreParameters();
+        ksp = this.createMinimalKeyStoreParameters();
         ksp.setType("pkcs12");
         
         try {
@@ -118,6 +136,7 @@ public class KeyStoreParametersTest extends AbstractJsseParametersTest {
         }
     }
     
+    @Test
     public void testIncorrectPassword() throws Exception {
         KeyStoreParameters ksp = this.createMinimalKeyStoreParameters();
         ksp.setPassword("");
@@ -130,6 +149,7 @@ public class KeyStoreParametersTest extends AbstractJsseParametersTest {
         }
     }
     
+    @Test
     public void testIncorrectResource() throws Exception {
         KeyStoreParameters ksp = this.createMinimalKeyStoreParameters();
         ksp.setResource("");

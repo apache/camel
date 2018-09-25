@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +25,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test for the file filter option using directories
@@ -43,11 +44,13 @@ public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/directoryfilter");
         super.setUp();
     }
 
+    @Test
     public void testFilterFilesWithARegularFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

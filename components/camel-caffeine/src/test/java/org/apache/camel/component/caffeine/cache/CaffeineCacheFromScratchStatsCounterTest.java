@@ -17,7 +17,6 @@
 package org.apache.camel.component.caffeine.cache;
 
 import com.codahale.metrics.MetricRegistry;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.caffeine.CaffeineConstants;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -52,8 +51,8 @@ public class CaffeineCacheFromScratchStatsCounterTest extends CamelTestSupport {
 
         fluentTemplate().withHeader(CaffeineConstants.ACTION, CaffeineConstants.ACTION_GET).withHeader(CaffeineConstants.KEY, 12).withBody(3).to("direct://get").send();
 
-        assertEquals(2, metricRegistry.meter("camelcache.hits").getCount());
-        assertEquals(1, metricRegistry.meter("camelcache.misses").getCount());
+        assertEquals(2, metricRegistry.counter("camelcache.hits").getCount());
+        assertEquals(1, metricRegistry.counter("camelcache.misses").getCount());
 
     }
 

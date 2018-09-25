@@ -19,9 +19,11 @@ package org.apache.camel.component.bean;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class BeanOverloadsWithAssignableParamTest extends ContextTestSupport {
 
+    @Test
     public void testToStringWithStringParam() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:stringParamResult");
         mock.expectedBodiesReceived("toString(String) was called");

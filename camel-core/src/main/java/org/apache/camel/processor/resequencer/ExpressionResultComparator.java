@@ -28,7 +28,7 @@ import org.apache.camel.Expression;
 public interface ExpressionResultComparator extends SequenceElementComparator<Exchange> {
 
     /**
-     * Set the expression sed for comparing {@link Exchange}s.
+     * Set the expression used for comparing {@link Exchange}s.
      * 
      * @param expression the expression
      */

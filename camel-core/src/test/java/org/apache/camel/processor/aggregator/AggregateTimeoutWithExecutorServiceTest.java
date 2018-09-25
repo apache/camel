@@ -23,6 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.junit.Test;
 
 /**
  * Unit test to verify that aggregate by timeout only also works.
@@ -33,6 +34,7 @@ public class AggregateTimeoutWithExecutorServiceTest extends ContextTestSupport 
 
     public static final int NUM_AGGREGATORS = 20;
 
+    @Test
     public void testThreadNotUsedForEveryAggregatorWithCustomExecutorService() throws Exception {
         assertTrue("There should not be a thread for every aggregator when using a shared thread pool", 
                 aggregateThreadsCount() < NUM_AGGREGATORS);

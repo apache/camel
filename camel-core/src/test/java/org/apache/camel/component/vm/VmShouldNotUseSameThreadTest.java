@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Unit test to verify continuing using NOT same thread on the consumer side.
@@ -29,6 +30,7 @@ public class VmShouldNotUseSameThreadTest extends AbstractVmTestSupport {
     private static long id;
     private final ThreadLocal<String> local = new ThreadLocal<>();
 
+    @Test
     public void testNotUseSameThread() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

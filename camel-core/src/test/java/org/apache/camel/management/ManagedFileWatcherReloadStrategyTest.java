@@ -21,12 +21,14 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.FileWatcherReloadStrategy;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class ManagedFileWatcherReloadStrategyTest extends ManagementTestSupport {
 
+    @Test
     public void testReloadStrategy() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

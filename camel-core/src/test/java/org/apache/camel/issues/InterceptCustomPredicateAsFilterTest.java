@@ -23,6 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 import static org.apache.camel.builder.PredicateBuilder.not;
 
@@ -49,6 +50,7 @@ public class InterceptCustomPredicateAsFilterTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testInterceptCustomPredicateAsFilter() throws Exception {
         getMockEndpoint("mock:good").expectedBodiesReceived("Hello World", "Bye World");
         getMockEndpoint("mock:secret").expectedBodiesReceived("secret");

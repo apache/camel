@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.processor.idempotent;
-
 import java.io.File;
 
 import org.apache.camel.CamelContext;
@@ -24,6 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.FileUtil;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
@@ -37,7 +38,8 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/fileidempotent");
 
         super.setUp();
@@ -45,6 +47,7 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
     }
 
 
+    @Test
     public void testIdempotent() throws Exception {
         // send a file
         template.sendBodyAndHeader("file://target/fileidempotent/", "Hello World", Exchange.FILE_NAME, "report.txt");

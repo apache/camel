@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
@@ -34,6 +35,7 @@ public class TypeConverterRegistryStatsPerformanceTest extends ContextTestSuppor
         return context;
     }
 
+    @Test
     public void testTransform() throws Exception {
         long noop = context.getTypeConverterRegistry().getStatistics().getNoopCounter();
         long attempt = context.getTypeConverterRegistry().getStatistics().getAttemptCounter();
@@ -55,11 +57,11 @@ public class TypeConverterRegistryStatsPerformanceTest extends ContextTestSuppor
         long hit2 = context.getTypeConverterRegistry().getStatistics().getHitCounter();
         long miss2 = context.getTypeConverterRegistry().getStatistics().getMissCounter();
 
-        log.info("Noop: before={}, after={}, delta={}", new Object[]{noop, noop2, noop2 - noop});
-        log.info("Attempt: before={}, after={}, delta={}", new Object[]{attempt, attempt2, attempt2 - attempt});
-        log.info("Failed: before={}, after={}, delta={}", new Object[]{failed, failed2, failed2 - failed});
-        log.info("Hit: before={}, after={}, delta={}", new Object[]{hit, hit2, hit2 - hit});
-        log.info("Miss: before={}, after={}, delta={}", new Object[]{miss, miss2, miss2 - miss});
+        log.info("Noop: before={}, after={}, delta={}", noop, noop2, noop2 - noop);
+        log.info("Attempt: before={}, after={}, delta={}", attempt, attempt2, attempt2 - attempt);
+        log.info("Failed: before={}, after={}, delta={}", failed, failed2, failed2 - failed);
+        log.info("Hit: before={}, after={}, delta={}", hit, hit2, hit2 - hit);
+        log.info("Miss: before={}, after={}, delta={}", miss, miss2, miss2 - miss);
     }
 
     protected RouteBuilder createRouteBuilder() {

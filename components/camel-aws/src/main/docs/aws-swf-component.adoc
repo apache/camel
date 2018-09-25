@@ -26,7 +26,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The AWS Simple Workflow component supports 5 options which are listed below.
+The AWS Simple Workflow component supports 5 options, which are listed below.
 
 
 
@@ -101,6 +101,52 @@ with the following path and query parameters:
 | *secretKey* (security) | Amazon AWS Secret Key. |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 32 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.aws-swf.access-key* | Amazon AWS Access Key. |  | String
+| *camel.component.aws-swf.configuration.access-key* | Amazon AWS Access Key. |  | String
+| *camel.component.aws-swf.configuration.activity-list* | The list name to consume activities from. |  | String
+| *camel.component.aws-swf.configuration.activity-scheduling-options* | Activity scheduling options |  | ActivityScheduling Options
+| *camel.component.aws-swf.configuration.activity-thread-pool-size* | Maximum number of threads in work pool for activity. | 100 | Integer
+| *camel.component.aws-swf.configuration.activity-type-execution-options* | Activity execution options |  | ActivityTypeExecution Options
+| *camel.component.aws-swf.configuration.activity-type-registration-options* | Activity registration options |  | ActivityType RegistrationOptions
+| *camel.component.aws-swf.configuration.amazon-s-w-client* | To use the given AmazonSimpleWorkflowClient as client |  | AmazonSimpleWorkflow Client
+| *camel.component.aws-swf.configuration.child-policy* | The policy to use on child workflows when terminating a workflow. |  | String
+| *camel.component.aws-swf.configuration.client-configuration-parameters* | To configure the ClientConfiguration using the key/values from the Map. |  | Map
+| *camel.component.aws-swf.configuration.data-converter* | An instance of com.amazonaws.services.simpleworkflow.flow.DataConverter to use for serializing/deserializing the data. |  | DataConverter
+| *camel.component.aws-swf.configuration.domain-name* | The workflow domain to use. |  | String
+| *camel.component.aws-swf.configuration.event-name* | The workflow or activity event name to use. |  | String
+| *camel.component.aws-swf.configuration.execution-start-to-close-timeout* | Set the execution start to close timeout. | 3600 | String
+| *camel.component.aws-swf.configuration.operation* | Workflow operation | START | String
+| *camel.component.aws-swf.configuration.region* | Amazon AWS Region. |  | String
+| *camel.component.aws-swf.configuration.s-w-client-parameters* | To configure the AmazonSimpleWorkflowClient using the key/values from the Map. |  | Map
+| *camel.component.aws-swf.configuration.secret-key* | Amazon AWS Secret Key. |  | String
+| *camel.component.aws-swf.configuration.signal-name* | The name of the signal to send to the workflow. |  | String
+| *camel.component.aws-swf.configuration.start-workflow-options-parameters* | To configure the StartWorkflowOptions using the key/values from the Map. |  | Map
+| *camel.component.aws-swf.configuration.state-result-type* | The type of the result when a workflow state is queried. |  | String
+| *camel.component.aws-swf.configuration.task-start-to-close-timeout* | Set the task start to close timeout. | 600 | String
+| *camel.component.aws-swf.configuration.termination-details* | Details for terminating a workflow. |  | String
+| *camel.component.aws-swf.configuration.termination-reason* | The reason for terminating a workflow. |  | String
+| *camel.component.aws-swf.configuration.type* | Activity or workflow |  | String
+| *camel.component.aws-swf.configuration.version* | The workflow or activity event version to use. |  | String
+| *camel.component.aws-swf.configuration.workflow-list* | The list name to consume workflows from. |  | String
+| *camel.component.aws-swf.configuration.workflow-type-registration-options* | Workflow registration options |  | WorkflowType RegistrationOptions
+| *camel.component.aws-swf.enabled* | Enable aws-swf component | true | Boolean
+| *camel.component.aws-swf.region* | Amazon AWS Region. |  | String
+| *camel.component.aws-swf.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.aws-swf.secret-key* | Amazon AWS Secret Key. |  | String
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

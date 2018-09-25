@@ -22,12 +22,14 @@ import java.io.InputStream;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class LogInputStreamTest extends ContextTestSupport {
 
+    @Test
     public void testA() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:a");
         mock.expectedBodiesReceived("Hello World");
@@ -38,6 +40,7 @@ public class LogInputStreamTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testB() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:b");
         mock.expectedMessageCount(1);
@@ -49,6 +52,7 @@ public class LogInputStreamTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testC() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:c");
         mock.expectedMessageCount(1);
@@ -60,6 +64,7 @@ public class LogInputStreamTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testD() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:d");
         mock.expectedMessageCount(1);

@@ -32,7 +32,7 @@ public class TwoTimerWithJMXIssue extends ContextTestSupport {
     private static int counter;
 
     @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         enableJMX(); // the bug was in the JMX so it must be enabled
         super.setUp();
     }

@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.junit.Test;
 
 /**
  * Based on CAMEL-1546
@@ -30,6 +31,7 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
  */
 public class AggregatorExceptionHandleTest extends ContextTestSupport {
 
+    @Test
     public void testOk() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
@@ -43,6 +45,7 @@ public class AggregatorExceptionHandleTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHandled() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:handled");
         mock.expectedBodiesReceived("Damn");

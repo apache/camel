@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -318,6 +319,11 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
     public LoadBalanceDefinition topic() {
         setLoadBalancerType(new TopicLoadBalancerDefinition());
         return this;
+    }
+
+    @Override
+    public String getShortName() {
+        return "loadBalance";
     }
 
     @Override

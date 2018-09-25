@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * @version 
@@ -40,6 +41,7 @@ public class LoadRouteFromXmlWithOnExceptionTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testLoadRouteFromXmlWitOnException() throws Exception {
         InputStream is = getClass().getResourceAsStream("barOnExceptionRoute.xml");
         RoutesDefinition routes = context.loadRoutesDefinition(is);

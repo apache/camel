@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -28,11 +29,13 @@ public class FileConsumeWithDollarInPathTest extends ContextTestSupport {
     private String dir = "target/data/edi$/dev1";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory(dir);
         super.setUp();
     }
 
+    @Test
     public void testPathWithDollar() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

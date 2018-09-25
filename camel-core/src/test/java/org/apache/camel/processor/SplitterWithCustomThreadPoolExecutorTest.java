@@ -26,11 +26,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.SplitDefinition;
+import org.junit.Test;
 
 public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport {
 
     protected ThreadPoolExecutor customThreadPoolExecutor = new ThreadPoolExecutor(8, 16, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
 
+    @Test
     public void testSplitterWithCustomThreadPoolExecutor() throws Exception {
         ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) getSplitter().getExecutorService();
         if (threadPoolExecutor == null) {

@@ -17,7 +17,6 @@
 package org.apache.camel.component.hdfs2.springboot;
 
 import javax.annotation.Generated;
-import javax.security.auth.login.Configuration;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -33,9 +32,15 @@ public class HdfsComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * To use the given configuration for security with JAAS.
+     * Whether to enable auto configuration of the hdfs2 component. This is
+     * enabled by default.
      */
-    private Configuration jAASConfiguration;
+    private Boolean enabled;
+    /**
+     * To use the given configuration for security with JAAS. The option is a
+     * javax.security.auth.login.Configuration type.
+     */
+    private String jAASConfiguration;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -43,11 +48,11 @@ public class HdfsComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public Configuration getJAASConfiguration() {
+    public String getJAASConfiguration() {
         return jAASConfiguration;
     }
 
-    public void setJAASConfiguration(Configuration jAASConfiguration) {
+    public void setJAASConfiguration(String jAASConfiguration) {
         this.jAASConfiguration = jAASConfiguration;
     }
 

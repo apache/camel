@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.Comparator;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -62,6 +63,11 @@ public class SortDefinition<T> extends NoOutputExpressionNode {
         return "sort[" + getExpression() + " by: " + (comparatorRef != null ? "ref:" + comparatorRef : comparator) + "]";
     }
     
+    @Override
+    public String getShortName() {
+        return "sort";
+    }
+
     @Override
     public String getLabel() {
         return "sort[" + getExpression() + "]";

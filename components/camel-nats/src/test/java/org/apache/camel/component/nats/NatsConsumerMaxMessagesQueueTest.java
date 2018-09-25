@@ -21,19 +21,15 @@ import java.io.IOException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("Require a running Nats server")
-public class NatsConsumerMaxMessagesQueueTest extends CamelTestSupport {
+public class NatsConsumerMaxMessagesQueueTest extends NatsTestSupport {
 
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint mockResultEndpoint;
 
     @Test
     public void testMaxConsumer() throws InterruptedException, IOException {
-        mockResultEndpoint.expectedBodiesReceivedInAnyOrder("{Subject=test;Reply=null;Payload=<test>}", "{Subject=test;Reply=null;Payload=<test1>}");
         mockResultEndpoint.setExpectedMessageCount(2);
         
         template.sendBody("direct:send", "test");
@@ -47,9 +43,9 @@ public class NatsConsumerMaxMessagesQueueTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:send").to("nats://localhost:4222?topic=test");
-                from("nats://localhost:4222?topic=test&maxMessages=5&queueName=test").routeId("cons1").to(mockResultEndpoint);
-                from("nats://localhost:4222?topic=test&maxMessages=6&queueName=test").routeId("cons2").to(mockResultEndpoint);
+                from("direct:send").to("nats://" + getNatsUrl() + "?topic=test");
+                from("nats://"  + getNatsUrl() +  "?topic=test&maxMessages=5&queueName=test").routeId("cons1").to(mockResultEndpoint);
+                from("nats://" + getNatsUrl() + "?topic=test&maxMessages=6&queueName=test").routeId("cons2").to(mockResultEndpoint);
             }
         };
     }

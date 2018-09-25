@@ -161,6 +161,7 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
                     interruptedCounter.incrementAndGet();
                 }
                 exchange.setException(new RejectedExecutionException("Interrupted while waiting for asynchronous callback for exchangeId: " + exchange.getExchangeId()));
+                exchange.setProperty(Exchange.INTERRUPTED, Boolean.TRUE);
                 entry.getLatch().countDown();
             }
         }
@@ -196,7 +197,7 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
             }
 
             if (isInterruptThreadsWhileStopping()) {
-                LOG.warn("The following threads are blocked and will be interrupted so the threads are released:\n" + sb.toString());
+                LOG.warn("The following threads are blocked and will be interrupted so the threads are released:\n{}", sb);
                 for (AwaitThread entry : threads) {
                     try {
                         interrupt(entry.getExchange());
@@ -205,7 +206,7 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
                     }
                 }
             } else {
-                LOG.warn("The following threads are blocked, and may reside in the JVM:\n" + sb.toString());
+                LOG.warn("The following threads are blocked, and may reside in the JVM:\n{}", sb);
             }
         } else {
             LOG.debug("Shutting down with no inflight threads.");

@@ -17,12 +17,14 @@
 package org.apache.camel.management;
 
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version
@@ -38,6 +40,7 @@ public class ManagedProducerRouteAddRemoveRegisterAlwaysTest extends ManagementT
         return context;
     }
 
+    @Test
     public void testRouteAddRemoteRouteWithRecipientList() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);

@@ -24,7 +24,6 @@ import org.apache.camel.component.twitter.TwitterConstants;
 import org.apache.camel.component.twitter.TwitterEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.Status;

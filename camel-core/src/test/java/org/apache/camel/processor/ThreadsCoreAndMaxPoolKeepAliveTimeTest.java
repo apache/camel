@@ -20,12 +20,14 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class ThreadsCoreAndMaxPoolKeepAliveTimeTest extends ContextTestSupport {
 
+    @Test
     public void testThreadsCoreAndMaxPoolKeepAliveTime() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

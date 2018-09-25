@@ -33,6 +33,11 @@ public class HessianDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the hessian data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Define if Whitelist feature is enabled or not
      */
     private Boolean whitelistEnabled = true;

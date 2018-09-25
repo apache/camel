@@ -18,12 +18,14 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class LoopCopyTest extends ContextTestSupport {
 
+    @Test
     public void testLoopCopy() throws Exception {
         getMockEndpoint("mock:loop").expectedBodiesReceived("AB", "AB", "AB");
         getMockEndpoint("mock:result").expectedBodiesReceived("AB");

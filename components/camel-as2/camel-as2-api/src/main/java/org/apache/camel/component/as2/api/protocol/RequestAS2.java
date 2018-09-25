@@ -22,7 +22,7 @@ import org.apache.camel.component.as2.api.AS2ClientManager;
 import org.apache.camel.component.as2.api.AS2Constants;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.InvalidAS2NameException;
-import org.apache.camel.component.as2.api.Util;
+import org.apache.camel.component.as2.api.util.AS2Utils;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
@@ -61,7 +61,7 @@ public class RequestAS2 implements HttpRequestInterceptor {
         /* AS2-From header */
         String as2From = coreContext.getAttribute(AS2ClientManager.AS2_FROM, String.class);
         try {
-            Util.validateAS2Name(as2From);
+            AS2Utils.validateAS2Name(as2From);
         } catch (InvalidAS2NameException e) {
             throw new HttpException("Invalid AS-From name", e);
         }
@@ -70,7 +70,7 @@ public class RequestAS2 implements HttpRequestInterceptor {
         /* AS2-To header */
         String as2To = coreContext.getAttribute(AS2ClientManager.AS2_TO, String.class);
         try {
-            Util.validateAS2Name(as2To);
+            AS2Utils.validateAS2Name(as2To);
         } catch (InvalidAS2NameException e) {
             throw new HttpException("Invalid AS-To name", e);
         }
@@ -78,7 +78,7 @@ public class RequestAS2 implements HttpRequestInterceptor {
 
         /* Message-Id header*/
         // SHOULD be set to aid in message reconciliation
-        request.addHeader(AS2Header.MESSAGE_ID, Util.createMessageId(clientFQDN));
+        request.addHeader(AS2Header.MESSAGE_ID, AS2Utils.createMessageId(clientFQDN));
     }
 
 }

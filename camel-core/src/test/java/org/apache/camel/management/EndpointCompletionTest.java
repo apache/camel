@@ -24,14 +24,15 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EndpointCompletionTest extends ManagementTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(EndpointCompletionTest.class);
 
+    @Test
     public void testEndpointCompletion() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -54,6 +55,7 @@ public class EndpointCompletionTest extends ManagementTestSupport {
         assertCompletion(mbeanServer, on, componentName, properties, "/usr/local/b");
     }
 
+    @Test
     public void testEndpointConfigurationJson() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

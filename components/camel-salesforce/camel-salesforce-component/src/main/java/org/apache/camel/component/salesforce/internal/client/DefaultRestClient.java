@@ -438,6 +438,10 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
     @Override
     public void limits(Map<String, List<String>> headers, final ResponseCallback responseCallback) {
+        if (format != PayloadFormat.JSON) {
+            throw new IllegalArgumentException("Using XML format for the Limits API, to use it set the `format` endpoint property to JSON");
+        }
+
         final Request get = getRequest(HttpMethod.GET, versionUrl() + "limits/", headers);
 
         // requires authorization token

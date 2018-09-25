@@ -16,13 +16,9 @@
  */
 package org.apache.camel.component.xquery.springboot;
 
-import java.util.Map;
 import javax.annotation.Generated;
-import net.sf.saxon.Configuration;
-import net.sf.saxon.lib.ModuleURIResolver;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Transforms the message using a XQuery template using Saxon.
@@ -36,19 +32,25 @@ public class XQueryComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * To use the custom ModuleURIResolver
+     * Whether to enable auto configuration of the xquery component. This is
+     * enabled by default.
      */
-    @NestedConfigurationProperty
-    private ModuleURIResolver moduleURIResolver;
+    private Boolean enabled;
     /**
-     * To use a custom Saxon configuration
+     * To use the custom ModuleURIResolver. The option is a
+     * net.sf.saxon.lib.ModuleURIResolver type.
      */
-    @NestedConfigurationProperty
-    private Configuration configuration;
+    private String moduleURIResolver;
     /**
-     * To set custom Saxon configuration properties
+     * To use a custom Saxon configuration. The option is a
+     * net.sf.saxon.Configuration type.
      */
-    private Map<String, Object> configurationProperties;
+    private String configuration;
+    /**
+     * To set custom Saxon configuration properties. The option is a
+     * java.util.Map<java.lang.String,java.lang.Object> type.
+     */
+    private String configurationProperties;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -56,28 +58,27 @@ public class XQueryComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public ModuleURIResolver getModuleURIResolver() {
+    public String getModuleURIResolver() {
         return moduleURIResolver;
     }
 
-    public void setModuleURIResolver(ModuleURIResolver moduleURIResolver) {
+    public void setModuleURIResolver(String moduleURIResolver) {
         this.moduleURIResolver = moduleURIResolver;
     }
 
-    public Configuration getConfiguration() {
+    public String getConfiguration() {
         return configuration;
     }
 
-    public void setConfiguration(Configuration configuration) {
+    public void setConfiguration(String configuration) {
         this.configuration = configuration;
     }
 
-    public Map<String, Object> getConfigurationProperties() {
+    public String getConfigurationProperties() {
         return configurationProperties;
     }
 
-    public void setConfigurationProperties(
-            Map<String, Object> configurationProperties) {
+    public void setConfigurationProperties(String configurationProperties) {
         this.configurationProperties = configurationProperties;
     }
 

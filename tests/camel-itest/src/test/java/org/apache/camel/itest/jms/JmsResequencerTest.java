@@ -17,6 +17,7 @@
 package org.apache.camel.itest.jms;
 
 import java.util.List;
+
 import javax.jms.ConnectionFactory;
 import javax.naming.Context;
 

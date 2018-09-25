@@ -17,17 +17,20 @@
 package org.apache.camel.processor;
 
 import java.io.StringReader;
+
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class StreamCachingOnlyRouteTest extends ContextTestSupport {
 
+    @Test
     public void testStreamCachingPerRoute() throws Exception {
         MockEndpoint c = getMockEndpoint("mock:c");
         c.expectedMessageCount(1);

@@ -23,12 +23,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class AdviceWithTransactedTest extends ContextTestSupport {
 
+    @Test
     public void testAdviceTransacted() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:advice").expectedMessageCount(1);

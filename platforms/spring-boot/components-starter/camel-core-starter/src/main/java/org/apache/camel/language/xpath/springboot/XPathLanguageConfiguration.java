@@ -32,6 +32,11 @@ public class XPathLanguageConfiguration
             LanguageConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the xpath language. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Name of class for document type The default value is org.w3c.dom.Document
      */
     private String documentType;

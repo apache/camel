@@ -18,12 +18,14 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class SplitterPropertyContinuedTest extends ContextTestSupport {
     
+    @Test
     public void testSplitterPropertyContinued() throws Exception {
         getMockEndpoint("mock:end").expectedBodiesReceived("A,Kaboom,B,C");
         getMockEndpoint("mock:end").message(0).exchangeProperty("errorCode").isNull();

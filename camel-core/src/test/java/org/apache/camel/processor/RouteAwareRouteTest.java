@@ -23,9 +23,11 @@ import org.apache.camel.Route;
 import org.apache.camel.RouteAware;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.ServiceSupport;
+import org.junit.Test;
 
 public class RouteAwareRouteTest extends ContextTestSupport {
 
+    @Test
     public void testRouteAware() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("foo");
 

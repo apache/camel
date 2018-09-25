@@ -17,6 +17,7 @@
 package org.apache.camel.spring.processor;
 
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -30,6 +31,7 @@ public class SpringErrorHandlerRedeliveryPolicyProfileTest extends SpringTestSup
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringErrorHandlerRedeliveryPolicyProfileTest.xml");
     }
 
+    @Test
     public void testErrorHandlerRedeliveryPolicyProfile() throws Exception {
         try {
             template.sendBody("direct:start", "Hello World");

@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+
 import javax.management.Descriptor;
 import javax.management.IntrospectionException;
 import javax.management.JMException;
@@ -42,6 +43,7 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +59,7 @@ public class MBeanInfoAssembler implements Service {
     // use a cache to speedup gathering JMX MBeanInfo for known classes
     // use a weak cache as we dont want the cache to keep around as it reference classes
     // which could prevent classloader to unload classes if being referenced from this cache
-    private LRUCache<Class<?>, MBeanAttributesAndOperations> cache;
+    private Map<Class<?>, MBeanAttributesAndOperations> cache;
 
     public MBeanInfoAssembler() {
     }
@@ -75,8 +77,9 @@ public class MBeanInfoAssembler implements Service {
     @Override
     public void stop() throws Exception {
         if (cache != null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Clearing cache[size={}, hits={}, misses={}, evicted={}]", new Object[]{cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted()});
+            if (LOG.isDebugEnabled() && cache instanceof LRUCache) {
+                LRUCache cache = (LRUCache) this.cache;
+                LOG.debug("Clearing cache[size={}, hits={}, misses={}, evicted={}]", cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted());
             }
             cache.clear();
         }
@@ -221,7 +224,7 @@ public class MBeanInfoAssembler implements Service {
                 }
 
                 // they key must be capitalized
-                key = ObjectHelper.capitalize(key);
+                key = StringHelper.capitalize(key);
 
                 // lookup first
                 ManagedAttributeInfo info = attributes.get(key);

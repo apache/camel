@@ -24,12 +24,14 @@ import javax.management.ObjectName;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class ManagedRouteStopWithAbortAfterTimeoutTest extends ManagementTestSupport {
 
+    @Test
     public void testStopRouteWithAbortAfterTimeoutTrue() throws Exception {
         // JMX tests dont work well on AIX or windows CI servers (hangs them)
         if (isPlatform("aix") || isPlatform("windows")) {
@@ -71,6 +73,7 @@ public class ManagedRouteStopWithAbortAfterTimeoutTest extends ManagementTestSup
         mockEP.assertIsSatisfied();
     }
 
+    @Test
     public void testStopRouteWithAbortAfterTimeoutFalse() throws Exception {
         // JMX tests dont work well on AIX or windows CI servers (hangs them)
         if (isPlatform("aix") || isPlatform("windows")) {

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.example;
-
 import java.io.File;
 
 import javax.xml.bind.JAXBContext;
@@ -25,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -33,6 +33,7 @@ import org.junit.Test;
 public class ExplicitFileEncodingTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/charset");
         super.setUp();

@@ -20,9 +20,11 @@ import java.io.ByteArrayInputStream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class MockStreamCachingTest extends ContextTestSupport {
 
+    @Test
     public void testMockStreamCaching() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").message(0).body(String.class).contains("Camel");
@@ -35,6 +37,7 @@ public class MockStreamCachingTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMockStreamCachingConvertTo() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").message(0).body().convertToString().contains("Camel");

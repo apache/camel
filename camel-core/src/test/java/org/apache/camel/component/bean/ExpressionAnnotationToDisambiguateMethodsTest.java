@@ -24,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.language.Simple;
 import org.apache.camel.processor.BeanRouteTest;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,12 +36,14 @@ public class ExpressionAnnotationToDisambiguateMethodsTest extends ContextTestSu
     protected MyBean myBean = new MyBean();
     protected MyOtherBean myOtherBean = new MyOtherBean();
 
+    @Test
     public void testSendMessage() throws Exception {
         template.sendBodyAndHeader("direct:in", "<hello>world!</hello>", "foo", "bar");
 
         assertEquals("bean body: " + myBean, "bar", myBean.bar);
     }
 
+    @Test
     public void testSendMessageHandler() throws Exception {
         template.sendBodyAndHeader("direct:other", "<hello>world!</hello>", "foo", "bar");
 

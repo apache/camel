@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.RoutingSlip;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * @version 
@@ -33,6 +34,7 @@ public class AsyncEndpointRoutingSlipBean2Test extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testAsyncEndpoint() throws Exception {
         String reply = template.requestBody("direct:start", "Hello Camel", String.class);
         assertEquals("Bye World", reply);

@@ -19,9 +19,11 @@ package org.apache.camel.converter;
 import java.sql.Timestamp;
 
 import org.apache.camel.ContextTestSupport;
+import org.junit.Test;
 
 public class SQLConverterTest extends ContextTestSupport {
 
+    @Test
     public void testTimestamp() {
         long value = System.currentTimeMillis();
         Timestamp ts = context.getTypeConverter().convertTo(Timestamp.class, value);
@@ -29,6 +31,7 @@ public class SQLConverterTest extends ContextTestSupport {
         assertEquals(expected, ts);
     }
 
+    @Test
     public void testToLong() {
         long value = System.currentTimeMillis();
         Timestamp ts = new Timestamp(value);

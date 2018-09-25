@@ -18,12 +18,14 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NoSuchEndpointException;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class SendToNonExistingEndpointTest extends ContextTestSupport {
 
+    @Test
     public void testSendToNonExistingEndpoint() throws Exception {
         try {
             template.sendBody("thisUriDoesNotExist", "<hello>world!</hello>");

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -24,6 +23,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
@@ -43,6 +44,7 @@ public class WireTapBeanAsProcessorTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testBeanAsProcessor() throws Exception {
         assertNull(myBean.getTapped());
 
@@ -58,7 +60,8 @@ public class WireTapBeanAsProcessorTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         result = getMockEndpoint("mock:result");
     }

@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
@@ -30,6 +31,7 @@ public class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testValid() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -51,6 +53,7 @@ public class RouteMustHaveOutputOnExceptionTest extends ContextTestSupport {
         context.start();
     }
 
+    @Test
     public void testInValid() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

@@ -36,7 +36,7 @@ from("aws-s3:helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&prefix=
 
 
 // component options: START
-The AWS S3 Storage Service component supports 5 options which are listed below.
+The AWS S3 Storage Service component supports 5 options, which are listed below.
 
 
 
@@ -88,7 +88,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *amazonS3Client* (common) | Reference to a com.amazonaws.services.sqs.AmazonS3 in the link:registry.htmlRegistry. |  | AmazonS3
 | *pathStyleAccess* (common) | Whether or not the S3 client should use path style access | false | boolean
-| *policy* (common) | The policy for this queue to set in the com.amazonaws.services.s3.AmazonS3setBucketPolicy() method. |  | String
+| *policy* (common) | The policy for this queue to set in the com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method. |  | String
 | *proxyHost* (common) | To define a proxy host when instantiating the SQS client |  | String
 | *proxyPort* (common) | Specify a proxy port to be used inside the client definition. |  | Integer
 | *region* (common) | The region in which S3 client needs to work |  | String
@@ -96,7 +96,7 @@ with the following path and query parameters:
 | *encryptionMaterials* (common) | The encryption materials to use in case of Symmetric/Asymmetric client usage |  | EncryptionMaterials
 | *useEncryption* (common) | Define if encryption must be used or not | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *deleteAfterRead* (consumer) | Delete objects from S3 after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs, the object is not deleted. If this option is false, then the same objects will be retrieve over and over again on the polls. Therefore you need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the link S3ConstantsBUCKET_NAME and link S3ConstantsKEY headers, or only the link S3ConstantsKEY header. | true | boolean
+| *deleteAfterRead* (consumer) | Delete objects from S3 after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs, the object is not deleted. If this option is false, then the same objects will be retrieve over and over again on the polls. Therefore you need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the S3Constants#BUCKET_NAME and S3Constants#KEY headers, or only the S3Constants#KEY header. | true | boolean
 | *fileName* (consumer) | To get the object from the bucket with the given file name |  | String
 | *includeBody* (consumer) | If it is true, the exchange body will be set to a stream to the contents of the file. If false, the headers will be set with the S3 object metadata, but the body will be null. This option is strongly related to autocloseBody option. In case of setting includeBody to true and autocloseBody to false, it will be up to the caller to close the S3Object stream. Setting autocloseBody to true, will close the S3Object stream automatically. | true | boolean
 | *maxConnections* (consumer) | Set the maxConnections parameter in the S3 client configuration | 60 | int
@@ -138,6 +138,54 @@ with the following path and query parameters:
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 34 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.aws-s3.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-s3.configuration.accelerate-mode-enabled* | Define if Accelerate Mode enabled is true or false | false | Boolean
+| *camel.component.aws-s3.configuration.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-s3.configuration.amazon-s3-client* | Reference to a com.amazonaws.services.sqs.AmazonS3 in the link:registry.htmlRegistry. |  | AmazonS3
+| *camel.component.aws-s3.configuration.autoclose-body* | If this option is true and includeBody is true, then the S3Object.close() method will be called on exchange completion. This option is strongly related to includeBody option. In case of setting includeBody to true and autocloseBody to false, it will be up to the caller to close the S3Object stream. Setting autocloseBody to true, will close the S3Object stream automatically. | true | Boolean
+| *camel.component.aws-s3.configuration.aws-k-m-s-key-id* | Define the id of KMS key to use in case KMS is enabled |  | String
+| *camel.component.aws-s3.configuration.bucket-name* | Name of the bucket. The bucket will be created if it doesn't already exists. |  | String
+| *camel.component.aws-s3.configuration.chunked-encoding-disabled* | Define if disabled Chunked Encoding is true or false | false | Boolean
+| *camel.component.aws-s3.configuration.delete-after-read* | Delete objects from S3 after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs, the object is not deleted. If this option is false, then the same objects will be retrieve over and over again on the polls. Therefore you need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the S3Constants#BUCKET_NAME and S3Constants#KEY headers, or only the S3Constants#KEY header. | true | Boolean
+| *camel.component.aws-s3.configuration.delete-after-write* | Delete file object after the S3 file has been uploaded | false | Boolean
+| *camel.component.aws-s3.configuration.dualstack-enabled* | Define if Dualstack enabled is true or false | false | Boolean
+| *camel.component.aws-s3.configuration.encryption-materials* | The encryption materials to use in case of Symmetric/Asymmetric client usage |  | EncryptionMaterials
+| *camel.component.aws-s3.configuration.file-name* | To get the object from the bucket with the given file name |  | String
+| *camel.component.aws-s3.configuration.force-global-bucket-access-enabled* | Define if Force Global Bucket Access enabled is true or false | false | Boolean
+| *camel.component.aws-s3.configuration.include-body* | If it is true, the exchange body will be set to a stream to the contents of the file. If false, the headers will be set with the S3 object metadata, but the body will be null. This option is strongly related to autocloseBody option. In case of setting includeBody to true and autocloseBody to false, it will be up to the caller to close the S3Object stream. Setting autocloseBody to true, will close the S3Object stream automatically. | true | Boolean
+| *camel.component.aws-s3.configuration.multi-part-upload* | If it is true, camel will upload the file with multi part format, the part size is decided by the option of partSize | false | Boolean
+| *camel.component.aws-s3.configuration.operation* | The operation to do in case the user don't want to do only an upload |  | S3Operations
+| *camel.component.aws-s3.configuration.part-size* | Setup the partSize which is used in multi part upload, the default size is 25M. | 26214400 | Long
+| *camel.component.aws-s3.configuration.path-style-access* | Whether or not the S3 client should use path style access | false | Boolean
+| *camel.component.aws-s3.configuration.payload-signing-enabled* | Define if Payload Signing enabled is true or false | false | Boolean
+| *camel.component.aws-s3.configuration.policy* | The policy for this queue to set in the com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method. |  | String
+| *camel.component.aws-s3.configuration.prefix* | The prefix which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are interested in. |  | String
+| *camel.component.aws-s3.configuration.proxy-host* | To define a proxy host when instantiating the SQS client |  | String
+| *camel.component.aws-s3.configuration.proxy-port* | Specify a proxy port to be used inside the client definition. |  | Integer
+| *camel.component.aws-s3.configuration.region* | The region in which S3 client needs to work |  | String
+| *camel.component.aws-s3.configuration.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-s3.configuration.server-side-encryption* | Sets the server-side encryption algorithm when encrypting the object using AWS-managed keys. For example use AES256. |  | String
+| *camel.component.aws-s3.configuration.storage-class* | The storage class to set in the com.amazonaws.services.s3.model.PutObjectRequest request. |  | String
+| *camel.component.aws-s3.configuration.use-aws-k-m-s* | Define if KMS must be used or not | false | Boolean
+| *camel.component.aws-s3.configuration.use-encryption* | Define if encryption must be used or not | false | Boolean
+| *camel.component.aws-s3.enabled* | Enable aws-s3 component | true | Boolean
+| *camel.component.aws-s3.region* | The region where the bucket is located. This option is used in the com.amazonaws.services.s3.model.CreateBucketRequest. |  | String
+| *camel.component.aws-s3.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.aws-s3.secret-key* | Amazon AWS Secret Key |  | String
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

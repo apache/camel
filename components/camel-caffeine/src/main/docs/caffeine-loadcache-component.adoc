@@ -33,7 +33,7 @@ format, `?option=value&option=#beanRef&...`
 
 
 // component options: START
-The Caffeine LoadCache component supports 2 options which are listed below.
+The Caffeine LoadCache component supports 2 options, which are listed below.
 
 
 
@@ -77,7 +77,7 @@ with the following path and query parameters:
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *action* (producer) | To configure the default cache action. If an action is set in the message header, then the operation from the header takes precedence. |  | String
-| *cache* (producer) | To configure the default an already instantianted cache to be used |  | Cache
+| *cache* (producer) | To configure an already instantiated cache to be used |  | Cache
 | *cacheLoader* (producer) | To configure a CacheLoader in case of a LoadCache use |  | CacheLoader
 | *evictionType* (producer) | Set the eviction Type for this cache | SIZE_BASED | EvictionType
 | *expireAfterAccessTime* (producer) | Set the expire After Access Time in case of time based Eviction (in seconds) | 300 | int
@@ -93,3 +93,34 @@ with the following path and query parameters:
 | *valueType* (advanced) | The cache value type, default java.lang.Object | java.lang.Object | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 17 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.caffeine-loadcache.configuration.action* | To configure the default cache action. If an action is set in the message header, then the operation from the header takes precedence. |  | String
+| *camel.component.caffeine-loadcache.configuration.cache* | To configure an already instantiated cache to be used |  | Cache
+| *camel.component.caffeine-loadcache.configuration.cache-loader* | To configure a CacheLoader in case of a LoadCache use |  | CacheLoader
+| *camel.component.caffeine-loadcache.configuration.create-cache-if-not-exist* | Configure if a cache need to be created if it does exist or can't be pre-configured. | true | Boolean
+| *camel.component.caffeine-loadcache.configuration.eviction-type* | Set the eviction Type for this cache |  | EvictionType
+| *camel.component.caffeine-loadcache.configuration.expire-after-access-time* | Set the expire After Access Time in case of time based Eviction (in seconds) | 300 | Integer
+| *camel.component.caffeine-loadcache.configuration.expire-after-write-time* | Set the expire After Access Write in case of time based Eviction (in seconds) | 300 | Integer
+| *camel.component.caffeine-loadcache.configuration.initial-capacity* | Set the initial Capacity for the cache | 10000 | Integer
+| *camel.component.caffeine-loadcache.configuration.key* | To configure the default action key. If a key is set in the message header, then the key from the header takes precedence. |  | Object
+| *camel.component.caffeine-loadcache.configuration.key-type* | The cache key type, default java.lang.Object | java.lang.Object | String
+| *camel.component.caffeine-loadcache.configuration.maximum-size* | Set the maximum size for the cache | 10000 | Integer
+| *camel.component.caffeine-loadcache.configuration.removal-listener* | Set a specific removal Listener for the cache |  | RemovalListener
+| *camel.component.caffeine-loadcache.configuration.stats-counter* | Set a specific Stats Counter for the cache stats |  | StatsCounter
+| *camel.component.caffeine-loadcache.configuration.stats-enabled* | To enable stats on the cache | false | Boolean
+| *camel.component.caffeine-loadcache.configuration.value-type* | The cache value type, default java.lang.Object | java.lang.Object | String
+| *camel.component.caffeine-loadcache.enabled* | Whether to enable auto configuration of the caffeine-loadcache component. This is enabled by default. |  | Boolean
+| *camel.component.caffeine-loadcache.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+

@@ -21,12 +21,14 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class SetBodyTryCatchIssueTest extends ContextTestSupport {
 
+    @Test
     public void testSetBody() throws Exception {
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:result").expectedBodiesReceived("123");

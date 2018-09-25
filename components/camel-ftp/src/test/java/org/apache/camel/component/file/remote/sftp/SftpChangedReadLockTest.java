@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.remote.sftp;
-
 import java.io.File;
 import java.io.FileOutputStream;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +38,7 @@ public class SftpChangedReadLockTest extends SftpServerTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/changed");
         super.setUp();

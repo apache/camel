@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
-
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.After;
+import org.junit.Test;
 
 /**
  * @version 
@@ -37,6 +38,7 @@ public class TwoManagedCamelContextTest extends TestSupport {
         return context;
     }
 
+    @Test
     public void testTwoManagedCamelContext() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -65,7 +67,8 @@ public class TwoManagedCamelContextTest extends TestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         if (camel1 != null) {
             camel1.stop();
         }

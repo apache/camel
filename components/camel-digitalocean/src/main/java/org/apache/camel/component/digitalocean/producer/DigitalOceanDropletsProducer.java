@@ -158,7 +158,7 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
 
     private void getDroplet(Exchange exchange) throws Exception {
         Droplet droplet = getEndpoint().getDigitalOceanClient().getDropletInfo(dropletId);
-        LOG.trace("Droplet {} ", droplet);
+        LOG.trace("Droplet {}", droplet);
         exchange.getOut().setBody(droplet);
     }
 
@@ -208,7 +208,7 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
 
     private void deleteDroplet(Exchange exchange) throws Exception {
         Delete delete = getEndpoint().getDigitalOceanClient().deleteDroplet(dropletId);
-        LOG.trace("Delete Droplet {} ", delete);
+        LOG.trace("Delete Droplet {}", delete);
         exchange.getOut().setBody(delete);
     }
 
@@ -268,12 +268,12 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.NAMES))) {
             droplet.setNames((List<String>) in.getHeader(DigitalOceanHeaders.NAMES));
             Droplets droplets = getEndpoint().getDigitalOceanClient().createDroplets(droplet);
-            LOG.trace("Droplets created {} ", droplets);
+            LOG.trace("Droplets created {}", droplets);
             exchange.getOut().setBody(droplets.getDroplets());
         } else if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.NAME))) {
             droplet.setName(in.getHeader(DigitalOceanHeaders.NAME, String.class));
             droplet = getEndpoint().getDigitalOceanClient().createDroplet(droplet);
-            LOG.trace("Droplet created {} ", droplet);
+            LOG.trace("Droplet created {}", droplet);
             exchange.getOut().setBody(droplet);
         } else {
             throw new IllegalArgumentException(DigitalOceanHeaders.NAMES + " or " + DigitalOceanHeaders.NAME + " must be specified");
@@ -330,7 +330,7 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
         }
 
         Action action = getEndpoint().getDigitalOceanClient().changeDropletKernel(dropletId, exchange.getIn().getHeader(DigitalOceanHeaders.KERNEL_ID, Integer.class));
-        LOG.trace("Rename Droplet {} : [{}] ", dropletId, action);
+        LOG.trace("Change Droplet {} : [{}] ", dropletId, action);
         exchange.getOut().setBody(action);
     }
 

@@ -18,12 +18,14 @@ package org.apache.camel.util;
 
 import java.text.DecimalFormatSymbols;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 import static org.apache.camel.util.UnitUtils.printUnitFromBytes;
 
-public class UnitUtilsTest extends TestCase {
+public class UnitUtilsTest extends Assert {
 
+    @Test
     public void testPrintUnitFromBytes() throws Exception {
 
         // needed for the locales that have a decimal separator other than comma

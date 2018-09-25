@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
+import org.junit.Test;
 
 /**
  * Using a custom interceptor which is not a {@link org.apache.camel.AsyncProcessor} which Camel
@@ -40,6 +41,7 @@ public class AsyncEndpointCustomInterceptorTest extends ContextTestSupport {
     private static String afterThreadName;
     private MyInterceptor interceptor = new MyInterceptor();
 
+    @Test
     public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:after").expectedBodiesReceived("Bye Camel");

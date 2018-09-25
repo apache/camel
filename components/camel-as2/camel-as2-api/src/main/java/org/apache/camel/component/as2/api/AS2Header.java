@@ -103,14 +103,10 @@ public interface AS2Header {
     /**
      * Message Header name for Receipt Address
      */
-    public static final String RECEIPT_ADDRESS = "Receipt-Address";
+    public static final String RECIPIENT_ADDRESS = "Recipient-Address";
     /**
      * Message Header name for Disposition Notification Options
      */
     public static final String DISPOSITION_NOTIFICATION_OPTIONS = "Disposition-Notification-Options";
-    /**
-     * Message Header name for Disposition Notification Options
-     */
-    public static final String REPORT_TYPE = "Report-Type";
 
 }

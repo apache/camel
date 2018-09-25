@@ -58,7 +58,7 @@ public abstract class XmlTestSupport extends TestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
         jaxbContext = createJaxbContext();
     }

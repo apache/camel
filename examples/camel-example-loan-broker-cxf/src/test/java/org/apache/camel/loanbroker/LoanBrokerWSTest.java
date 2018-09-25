@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.loanbroker;
-
 import java.io.File;
 import java.io.FileOutputStream;
 

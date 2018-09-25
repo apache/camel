@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Unit test the pipeline in concurrent conditions.
@@ -33,6 +34,7 @@ public class PipelineConcurrentTest extends ContextTestSupport {
 
     private String uri = "seda:in?size=2000&concurrentConsumers=10";
 
+    @Test
     public void testConcurrentPipeline() throws Exception {
         int total = 200;
         final int group = total / 20;

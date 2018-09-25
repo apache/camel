@@ -17,6 +17,7 @@
 package org.apache.camel.spring.config;
 
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -26,6 +27,7 @@ public class CamelPropertiesTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelPropertiesTest.xml");
     }
 
+    @Test
     public void testProperties() throws Exception {
         assertNotNull(context.getGlobalOptions());
         assertEquals(2, context.getGlobalOptions().size());

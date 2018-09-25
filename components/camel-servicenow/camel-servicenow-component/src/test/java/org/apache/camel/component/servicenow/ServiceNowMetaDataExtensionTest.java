@@ -51,10 +51,11 @@ public class ServiceNowMetaDataExtensionTest extends ServiceNowTestSupport {
     // *********************************
 
     @Test
-    public void testMetaData() throws Exception {
+    public void testTableMetaData() throws Exception {
         Map<String, Object> parameters = getParameters();
         parameters.put("objectType", "table");
         parameters.put("objectName", "incident");
+        parameters.put("metaType", "definition");
         //parameters.put("object.sys_user.fields", "first_name,last_name");
         //parameters.put("object.incident.fields", "caller_id,severity,resolved_at,sys_id");
         //parameters.put("object.incident.fields", "^sys_.*$");
@@ -73,6 +74,26 @@ public class ServiceNowMetaDataExtensionTest extends ServiceNowTestSupport {
         Assert.assertEquals("http://json-schema.org/schema#", result.getPayload(JsonNode.class).get("$schema").asText());
         Assert.assertNotNull(result.getPayload(JsonNode.class).get("id"));
         Assert.assertNotNull(result.getPayload(JsonNode.class).get("type"));
+
+        LOGGER.debug(
+            new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(result.getPayload())
+        );
+    }
+
+    @Test
+    public void testImportMetaData() throws Exception {
+        Map<String, Object> parameters = getParameters();
+        parameters.put("objectType", "import");
+        parameters.put("metaType", "list");
+        //parameters.put("object.sys_user.fields", "first_name,last_name");
+        //parameters.put("object.incident.fields", "caller_id,severity,resolved_at,sys_id");
+        //parameters.put("object.incident.fields", "^sys_.*$");
+        //parameters.put("object.task.fields", "");
+
+        MetaDataExtension.MetaData result = getExtension().meta(parameters).orElseThrow(RuntimeException::new);
+
+        Assert.assertEquals("application/json", result.getAttribute(MetaDataExtension.MetaData.CONTENT_TYPE));
+        Assert.assertEquals(JsonNode.class, result.getAttribute(MetaDataExtension.MetaData.JAVA_TYPE));
 
         LOGGER.debug(
             new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(result.getPayload())

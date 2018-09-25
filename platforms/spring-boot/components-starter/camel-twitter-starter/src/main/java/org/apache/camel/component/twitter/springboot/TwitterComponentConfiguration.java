@@ -33,6 +33,11 @@ public class TwitterComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the twitter component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The access token
      */
     private String accessToken;

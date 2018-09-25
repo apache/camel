@@ -18,12 +18,14 @@ package org.apache.camel.language;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Unit test routing with simple language using random function which will reuse cached expressions.
  */
 public class SimpleLanguageTransformRandomTest extends ContextTestSupport {
 
+    @Test
     public void testSimpleTransform() throws Exception {
         int out = template.requestBodyAndHeader("direct:start", "Random number", "max", "5", int.class);
         assertTrue(out <= 5);

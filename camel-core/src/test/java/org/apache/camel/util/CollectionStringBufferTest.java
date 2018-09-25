@@ -16,13 +16,15 @@
  */
 package org.apache.camel.util;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class CollectionStringBufferTest extends TestCase {
+public class CollectionStringBufferTest extends Assert {
 
+    @Test
     public void testCollectionStringBufferDefault() {
         CollectionStringBuffer buf = new CollectionStringBuffer();
         assertEquals(", ", buf.getSeparator());
@@ -33,6 +35,7 @@ public class CollectionStringBufferTest extends TestCase {
         assertEquals("foo, bar", buf.toString());
     }
 
+    @Test
     public void testCollectionStringBufferSeparator() {
         CollectionStringBuffer buf = new CollectionStringBuffer("#");
         assertEquals("#", buf.getSeparator());
@@ -43,6 +46,7 @@ public class CollectionStringBufferTest extends TestCase {
         assertEquals("foo#bar", buf.toString());
     }
 
+    @Test
     public void testCollectionStringBufferSetSeparator() {
         CollectionStringBuffer buf = new CollectionStringBuffer();
         buf.setSeparator("#");

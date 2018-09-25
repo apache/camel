@@ -25,6 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.interceptor.TraceEventMessage;
 import org.apache.camel.processor.interceptor.Tracer;
+import org.junit.Test;
 
 /**
  * @version 
@@ -38,6 +39,7 @@ public class OnCompletionGlobalTraceTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testSynchronizeComplete() throws Exception {
         getMockEndpoint("mock:sync").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:sync").expectedPropertyReceived(Exchange.ON_COMPLETION, true);
@@ -68,6 +70,7 @@ public class OnCompletionGlobalTraceTest extends ContextTestSupport {
         assertEquals("mock://sync", msg4.getToNode());
     }
 
+    @Test
     public void testSynchronizeFailure() throws Exception {
         getMockEndpoint("mock:sync").expectedMessageCount(1);
         getMockEndpoint("mock:sync").expectedPropertyReceived(Exchange.ON_COMPLETION, true);

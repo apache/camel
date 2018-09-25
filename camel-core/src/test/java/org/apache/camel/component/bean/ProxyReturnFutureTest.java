@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
@@ -28,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class ProxyReturnFutureTest extends ContextTestSupport {
 
     // START SNIPPET: e2
+    @Test
     public void testFutureEcho() throws Exception {
         Echo service = ProxyHelper.createProxy(context.getEndpoint("direct:echo"), Echo.class);
 
@@ -40,6 +42,7 @@ public class ProxyReturnFutureTest extends ContextTestSupport {
     }
     // END SNIPPET: e2
 
+    @Test
     public void testFutureEchoCallTwoTimes() throws Exception {
         Echo service = ProxyHelper.createProxy(context.getEndpoint("direct:echo"), Echo.class);
 

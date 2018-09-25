@@ -18,12 +18,14 @@ package org.apache.camel.component.timer;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class TimerMultipleConsumerStopRouteTest extends ContextTestSupport {
     
+    @Test
     public void testMultipleConsumers() throws Exception {
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(1);
         getMockEndpoint("mock:bar").expectedMinimumMessageCount(1);

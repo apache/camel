@@ -21,11 +21,13 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.toolbox.AggregationStrategies;
+import org.junit.Test;
 
 public class AggregationStrategyBeanAdapterWithHeadersTest extends ContextTestSupport {
 
     private MyBodyAppender appender = new MyBodyAppender();
 
+    @Test
     public void testAggregate() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("ABC");
         getMockEndpoint("mock:result").expectedHeaderReceived("count", 6);

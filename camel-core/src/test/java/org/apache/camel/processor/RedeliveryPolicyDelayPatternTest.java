@@ -16,15 +16,17 @@
  */
 package org.apache.camel.processor;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  *  @version 
  */
-public class RedeliveryPolicyDelayPatternTest extends TestCase {
+public class RedeliveryPolicyDelayPatternTest extends Assert {
 
     private RedeliveryPolicy policy = new RedeliveryPolicy();
 
+    @Test
     public void testDelayPattern() throws Exception {
         policy.setDelayPattern("3:1000;5:3000;10:5000;20:10000");
 

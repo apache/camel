@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Test;
 
 /**
  * @version 
@@ -44,6 +45,7 @@ public class PublishEventNotifierTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testExchangeDone() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:event").expectedMessageCount(9);
@@ -53,6 +55,7 @@ public class PublishEventNotifierTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testExchangeFailed() throws Exception {
         getMockEndpoint("mock:event").expectedMessageCount(5);
 

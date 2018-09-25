@@ -19,6 +19,7 @@ package org.apache.camel.component.bean;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * @version 
@@ -37,6 +38,7 @@ public class BeanEndpointTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testBeanEndpointCtr() throws Exception {
         final BeanEndpoint endpoint = new BeanEndpoint();
         endpoint.setCamelContext(context);
@@ -62,6 +64,7 @@ public class BeanEndpointTest extends ContextTestSupport {
         assertEquals("Hello World", out);
     }
 
+    @Test
     public void testBeanEndpointCtrComponent() throws Exception {
         final BeanComponent comp = context.getComponent("bean", BeanComponent.class);
         final BeanEndpoint endpoint = new BeanEndpoint("bean:foo", comp);
@@ -87,6 +90,7 @@ public class BeanEndpointTest extends ContextTestSupport {
         assertEquals("Hello World", out);
     }
 
+    @Test
     public void testBeanEndpointCtrComponentBeanProcessor() throws Exception {
         final BeanComponent comp = context.getComponent("bean", BeanComponent.class);
 
@@ -114,6 +118,7 @@ public class BeanEndpointTest extends ContextTestSupport {
         assertEquals("Hello World", out);
     }
 
+    @Test
     public void testBeanEndpointCtrWithMethod() throws Exception {
         final BeanEndpoint endpoint = new BeanEndpoint();
         endpoint.setCamelContext(context);
@@ -139,6 +144,7 @@ public class BeanEndpointTest extends ContextTestSupport {
         assertEquals("Hello World", out);
     }
 
+    @Test
     public void testBeanEndpointCtrWithMethodAndCache() throws Exception {
         final BeanEndpoint endpoint = new BeanEndpoint();
         endpoint.setCamelContext(context);
@@ -169,6 +175,7 @@ public class BeanEndpointTest extends ContextTestSupport {
         assertEquals("Hello Moon", out);
     }
 
+    @Test
     public void testBeanEndpointCtrWithBeanHolder() throws Exception {
         final BeanEndpoint endpoint = new BeanEndpoint();
         endpoint.setCamelContext(context);

@@ -24,7 +24,7 @@ Where *loggingCategory* is the name of the logging category to use. You
 can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-INFO:*Using Logger instance from the the Registry*
+INFO:*Using Logger instance from the Registry*
 As of *Camel 2.12.4/2.13.1*, if there's single instance
 of `org.slf4j.Logger` found in the Registry, the *loggingCategory* is no
 longer used to create logger instance. The registered instance is used
@@ -55,7 +55,7 @@ LogEIP.
 
 
 // component options: START
-The Log component supports 2 options which are listed below.
+The Log component supports 2 options, which are listed below.
 
 
 
@@ -108,7 +108,7 @@ with the following path and query parameters:
 | *showAll* (formatting) | Quick option for turning all options on. (multiline, maxChars has to be manually set if to be used) | false | boolean
 | *showBody* (formatting) | Show the message body. | true | boolean
 | *showBodyType* (formatting) | Show the body Java type. | true | boolean
-| *showCaughtException* (formatting) | f the exchange has a caught exception, show the exception message (no stack trace). A caught exception is stored as a property on the exchange (using the key link org.apache.camel.ExchangeEXCEPTION_CAUGHT and for instance a doCatch can catch exceptions. | false | boolean
+| *showCaughtException* (formatting) | f the exchange has a caught exception, show the exception message (no stack trace). A caught exception is stored as a property on the exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT and for instance a doCatch can catch exceptions. | false | boolean
 | *showException* (formatting) | If the exchange has an exception, show the exception message (no stacktrace) | false | boolean
 | *showExchangeId* (formatting) | Show the unique exchange ID. | false | boolean
 | *showExchangePattern* (formatting) | Shows the Message Exchange Pattern (or MEP for short). | true | boolean

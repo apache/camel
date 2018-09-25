@@ -28,9 +28,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultAttachment;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
 public class BeanMethodWithExchangeTest extends ContextTestSupport {
     
+    @Test
     public void testBeanWithAnnotationAndExchangeTest() throws Exception {
         Exchange result = template.request("direct:start1", new Processor() {
 

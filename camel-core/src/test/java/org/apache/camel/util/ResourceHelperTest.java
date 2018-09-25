@@ -16,7 +16,11 @@
  */
 package org.apache.camel.util;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -27,12 +31,14 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
+import org.junit.Test;
 
 /**
  *
  */
 public class ResourceHelperTest extends TestSupport {
 
+    @Test
     public void testLoadFile() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
@@ -48,6 +54,7 @@ public class ResourceHelperTest extends TestSupport {
         context.stop();
     }
 
+    @Test
     public void testLoadFileWithSpace() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
@@ -66,6 +73,7 @@ public class ResourceHelperTest extends TestSupport {
         context.stop();
     }
 
+    @Test
     public void testLoadClasspath() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
@@ -81,6 +89,7 @@ public class ResourceHelperTest extends TestSupport {
         context.stop();
     }
 
+    @Test
     public void testLoadRegistry() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
         registry.put("myBean", "This is a log4j logging configuration file");
@@ -99,6 +108,7 @@ public class ResourceHelperTest extends TestSupport {
         context.stop();
     }
 
+    @Test
     public void testLoadBeanDoubleColon() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
         registry.put("myBean", new AtomicReference<InputStream>(new ByteArrayInputStream("a".getBytes())));
@@ -117,6 +127,7 @@ public class ResourceHelperTest extends TestSupport {
         context.stop();
     }
 
+    @Test
     public void testLoadBeanDoubleColonLong() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
         registry.put("my.company.MyClass", new AtomicReference<InputStream>(new ByteArrayInputStream("a".getBytes())));
@@ -135,6 +146,7 @@ public class ResourceHelperTest extends TestSupport {
         context.stop();
     }
 
+    @Test
     public void testLoadBeanDot() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
         registry.put("myBean", new AtomicReference<InputStream>(new ByteArrayInputStream("a".getBytes())));
@@ -153,6 +165,7 @@ public class ResourceHelperTest extends TestSupport {
         context.stop();
     }
 
+    @Test
     public void testLoadClasspathDefault() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
@@ -168,6 +181,7 @@ public class ResourceHelperTest extends TestSupport {
         context.stop();
     }
 
+    @Test
     public void testLoadFileNotFound() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
@@ -182,6 +196,7 @@ public class ResourceHelperTest extends TestSupport {
         context.stop();
     }
 
+    @Test
     public void testLoadClasspathNotFound() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
@@ -196,6 +211,7 @@ public class ResourceHelperTest extends TestSupport {
         context.stop();
     }
 
+    @Test
     public void testLoadFileAsUrl() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
@@ -210,6 +226,7 @@ public class ResourceHelperTest extends TestSupport {
         context.stop();
     }
 
+    @Test
     public void testLoadClasspathAsUrl() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
@@ -224,6 +241,7 @@ public class ResourceHelperTest extends TestSupport {
         context.stop();
     }
 
+    @Test
     public void testLoadCustomUrlasInputStream() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
@@ -241,6 +259,7 @@ public class ResourceHelperTest extends TestSupport {
         context.stop();
     }
 
+    @Test
     public void testLoadCustomUrlasInputStreamFail() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
@@ -255,6 +274,7 @@ public class ResourceHelperTest extends TestSupport {
         context.stop();
     }
 
+    @Test
     public void testLoadCustomUrl() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
@@ -273,6 +293,7 @@ public class ResourceHelperTest extends TestSupport {
         context.stop();
     }
 
+    @Test
     public void testLoadCustomUrlFail() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
@@ -286,6 +307,7 @@ public class ResourceHelperTest extends TestSupport {
         context.stop();
     }
 
+    @Test
     public void testIsHttp() throws Exception {
         assertFalse(ResourceHelper.isHttpUri("direct:foo"));
         assertFalse(ResourceHelper.isHttpUri(""));
@@ -295,6 +317,7 @@ public class ResourceHelperTest extends TestSupport {
         assertTrue(ResourceHelper.isHttpUri("https://camel.apache.org"));
     }
 
+    @Test
     public void testGetScheme() throws Exception {
         assertEquals("file:", ResourceHelper.getScheme("file:myfile.txt"));
         assertEquals("classpath:", ResourceHelper.getScheme("classpath:myfile.txt"));
@@ -303,6 +326,7 @@ public class ResourceHelperTest extends TestSupport {
         assertEquals(null, ResourceHelper.getScheme("myfile.txt"));
     }
 
+    @Test
     public void testAppendParameters() throws Exception {
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("foo", 123);

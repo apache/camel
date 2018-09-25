@@ -18,6 +18,7 @@ package org.apache.camel.spring.config;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -26,6 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class OneRouteRefReverseOnExceptionTest extends SpringTestSupport {
 
+    @Test
     public void testOneRouteRefReverseNoOnException() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:handled").expectedMessageCount(0);
@@ -41,6 +43,7 @@ public class OneRouteRefReverseOnExceptionTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOneRouteRefReverseOnException() throws Exception {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:handled").expectedMessageCount(1);

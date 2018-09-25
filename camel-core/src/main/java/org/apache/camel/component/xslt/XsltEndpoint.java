@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
@@ -416,7 +417,6 @@ public class XsltEndpoint extends ProcessorEndpoint {
         if (source == null) {
             throw new IOException("Cannot load schema resource " + resourceUri);
         } else {
-            source.setSystemId(resourceUri);
             xslt.setTransformerSource(source);
         }
         // now loaded so clear flag

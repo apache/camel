@@ -28,7 +28,7 @@ you can construct the syntax as follows:
 
 
 // language options: START
-The OGNL language supports 1 options which are listed below.
+The OGNL language supports 1 options, which are listed below.
 
 
 
@@ -38,6 +38,22 @@ The OGNL language supports 1 options which are listed below.
 | trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
 |===
 // language options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.language.ognl.enabled* | Enable ognl language | true | Boolean
+| *camel.language.ognl.trim* | Whether to trim the value to remove leading and trailing whitespaces and line breaks | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

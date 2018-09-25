@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -31,7 +32,8 @@ public class FileAbsoluteAndRelativeConsumerTest extends ContextTestSupport {
     private String base;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/filerelative");
         deleteDirectory("target/fileabsolute");
         // use current dir as base as aboslute path
@@ -39,6 +41,7 @@ public class FileAbsoluteAndRelativeConsumerTest extends ContextTestSupport {
         super.setUp();
     }
 
+    @Test
     public void testRelative() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:relative");
         mock.expectedMessageCount(1);
@@ -51,6 +54,7 @@ public class FileAbsoluteAndRelativeConsumerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAbsolute() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:absolute");
         mock.expectedMessageCount(1);

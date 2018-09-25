@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.undertow;
-
 import java.net.URL;
+
 import javax.annotation.Resource;
 
 import org.apache.camel.EndpointInject;

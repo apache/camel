@@ -19,12 +19,14 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class AOPAroundTest extends ContextTestSupport {
 
+    @Test
     public void testAOPAround() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:after").expectedBodiesReceived("Bye World");

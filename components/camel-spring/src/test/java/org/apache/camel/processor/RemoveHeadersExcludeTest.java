@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -30,6 +31,7 @@ public class RemoveHeadersExcludeTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/processor/camel-context.xml");
     }
 
+    @Test
     public void testRemoveHeadersWithExcludePatterns() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(1);

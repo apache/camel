@@ -119,12 +119,15 @@ public class AvroConfiguration implements Cloneable {
     }
 
     /**
-     * Transport to use
+     * Transport to use, can be either http or netty
      */
     public void setTransport(String transport) {
         this.transport = AvroTransport.valueOf(transport);
     }
 
+    /**
+     * Transport to use, can be either http or netty
+     */
     public void setTransport(AvroTransport transport) {
         this.transport = transport;
     }

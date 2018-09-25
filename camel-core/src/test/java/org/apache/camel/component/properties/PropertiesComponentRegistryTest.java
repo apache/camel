@@ -22,6 +22,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.bean.MyDummyBean;
 import org.apache.camel.component.bean.MyFooBean;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * @version 
@@ -58,6 +59,7 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testPropertiesComponentRegistryPlain() throws Exception {
         context.start();
 
@@ -66,6 +68,7 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
         assertNull(context.getRegistry().lookupByName("unknown"));
     }
 
+    @Test
     public void testPropertiesComponentRegistryLookupName() throws Exception {
         context.start();
 
@@ -81,6 +84,7 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testPropertiesComponentRegistryLookupNameAndType() throws Exception {
         context.start();
 

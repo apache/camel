@@ -22,11 +22,13 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class MethodFilterTest extends ContextTestSupport {
+    @Test
     public void testSendMatchingMessage() throws Exception {
         String body = "<person name='James' city='London'/>";
         getMockEndpoint("mock:result").expectedBodiesReceived(body);
@@ -36,6 +38,7 @@ public class MethodFilterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendNotMatchingMessage() throws Exception {
         String body = "<person name='Hiram' city='Tampa'/>";
         getMockEndpoint("mock:result").expectedMessageCount(0);

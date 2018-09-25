@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Service;
 import org.apache.camel.TestSupport;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
 /**
  * @version 
@@ -34,6 +35,7 @@ public class LifecycleStrategyServiceTest extends TestSupport {
         return context;
     }
 
+    @Test
     public void testLifecycleStrategyService() throws Exception {
         assertEquals(false, dummy1.isStarted());
 

@@ -16,7 +16,7 @@ Recipient List.
 
 
 // component options: START
-The XQuery component supports 4 options which are listed below.
+The XQuery component supports 4 options, which are listed below.
 
 
 
@@ -91,7 +91,27 @@ with the following path and query parameters:
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
 
+
+The component supports 8 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.xquery.configuration* | To use a custom Saxon configuration. The option is a net.sf.saxon.Configuration type. |  | String
+| *camel.component.xquery.configuration-properties* | To set custom Saxon configuration properties. The option is a java.util.Map<java.lang.String,java.lang.Object> type. |  | String
+| *camel.component.xquery.enabled* | Enable xquery component | true | Boolean
+| *camel.component.xquery.module-u-r-i-resolver* | To use the custom ModuleURIResolver. The option is a net.sf.saxon.lib.ModuleURIResolver type. |  | String
+| *camel.component.xquery.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.language.xquery.enabled* | Enable xquery language | true | Boolean
+| *camel.language.xquery.trim* | Whether to trim the value to remove leading and trailing whitespaces and line breaks | true | Boolean
+| *camel.language.xquery.type* | Sets the class name of the result type (type from output) The default result type is NodeSet |  | String
+|===
+// spring-boot-auto-configure options: END
 
 ### Examples
 
@@ -227,12 +247,12 @@ Currently custom functions in XQuery might result in a NullPointerException (Cam
 ### Examples
 
 Here is a simple
-http://svn.apache.org/repos/asf/camel/trunk/components/camel-saxon/src/test/java/org/apache/camel/builder/saxon/XQueryFilterTest.java[example]
+https://github.com/apache/camel/tree/master/components/camel-saxon/src/test/java/org/apache/camel/builder/saxon/XQueryFilterTest.java[example]
 using an XQuery expression as a predicate in a
 Message Filter
 
 This
-http://svn.apache.org/repos/asf/camel/trunk/components/camel-saxon/src/test/java/org/apache/camel/builder/saxon/XQueryWithNamespacesFilterTest.java[example]
+https://github.com/apache/camel/tree/master/components/camel-saxon/src/test/java/org/apache/camel/builder/saxon/XQueryWithNamespacesFilterTest.java[example]
 uses XQuery with namespaces as a predicate in a
 Message Filter
 

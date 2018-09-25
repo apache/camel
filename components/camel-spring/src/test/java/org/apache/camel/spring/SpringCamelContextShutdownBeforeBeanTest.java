@@ -17,6 +17,7 @@
 package org.apache.camel.spring;
 
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -27,6 +28,7 @@ public class SpringCamelContextShutdownBeforeBeanTest extends SpringTestSupport 
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/SpringCamelContextShutdownBeforeBeanTest.xml");
     }
 
+    @Test
     public void testShutdown() throws Exception {
         ShutdownOrderBean order = (ShutdownOrderBean) context.getRegistry().lookupByName("order");
 

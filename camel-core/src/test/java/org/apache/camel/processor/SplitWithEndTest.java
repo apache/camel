@@ -24,12 +24,14 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class SplitWithEndTest extends ContextTestSupport {
 
+    @Test
     public void testRouteIsCorrectAtRuntime() throws Exception {
         // use navigate to find that the end works as expected
         Navigate<Processor> nav = context.getRoutes().get(0).navigate();
@@ -46,6 +48,7 @@ public class SplitWithEndTest extends ContextTestSupport {
         assertIsInstanceOf(SendProcessor.class, unwrapChannel(node.get(3)).getNextProcessor());
     }
 
+    @Test
     public void testSplit() throws Exception {
         getMockEndpoint("mock:start").expectedBodiesReceived("Hello,World,Moon");
         getMockEndpoint("mock:last").expectedBodiesReceived("last hi Hello@hi World@hi Moon");

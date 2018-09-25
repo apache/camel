@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.22.0-SNAPSHOT</version>
+    <version>2.23.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-ftp</artifactId>
@@ -108,7 +108,13 @@
     <!-- for testing sftp -->
     <dependency>
       <groupId>org.apache.sshd</groupId>
-      <artifactId>sshd-core</artifactId>
+      <artifactId>sshd-sftp</artifactId>
+      <version>${sshd-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.sshd</groupId>
+      <artifactId>sshd-scp</artifactId>
       <version>${sshd-version}</version>
       <scope>test</scope>
     </dependency>

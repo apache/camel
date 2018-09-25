@@ -70,7 +70,7 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
     private volatile Marshaller<W> marshaller;
 
     // We're using a ThreadLocal for the parser settings because in order to retrieve the headers we need to change the
-    // settings each time we're parsing...
+    // settings each time we're parsing
     private volatile ThreadLocal<CPS> parserSettings;
     private final Object parserSettingsToken = new Object();
     private volatile Unmarshaller<P> unmarshaller;
@@ -116,15 +116,13 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
             }
         }
 
+        HeaderRowProcessor headerRowProcessor = new HeaderRowProcessor();
+        CPS settings = parserSettings.get();
+        settings.setProcessor(headerRowProcessor);
+        P parser = createParser(settings);
+        // univocity-parsers is responsible for closing the reader, even in case of error
         Reader reader = new InputStreamReader(stream, getCharsetName(exchange));
-        try {
-            HeaderRowProcessor headerRowProcessor = new HeaderRowProcessor();
-            CPS settings = parserSettings.get();
-            settings.setRowProcessor(headerRowProcessor);
-            return unmarshaller.unmarshal(reader, createParser(settings), headerRowProcessor);
-        } finally {
-            reader.close();
-        }
+        return unmarshaller.unmarshal(reader, parser, headerRowProcessor);
     }
 
     /**
@@ -314,7 +312,7 @@ public abstract class AbstractUniVocityDataFormat<F extends Format, CWS extends 
      *
      * @param numberOfRecordsToRead the number of records to read
      * @return current data format instance, fluent API
-     * @see com.univocity.parsers.common.CommonParserSettings#setNumberOfRecordsToRead(int)
+     * @see com.univocity.parsers.common.CommonParserSettings#setNumberOfRecordsToRead(long)
      */
     public DF setNumberOfRecordsToRead(Integer numberOfRecordsToRead) {
         this.numberOfRecordsToRead = numberOfRecordsToRead;

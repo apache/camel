@@ -24,7 +24,7 @@ annotate the bean to extract headers or other expressions such as
 === Bean Options
 
 // language options: START
-The Bean method language supports 5 options which are listed below.
+The Bean method language supports 5 options, which are listed below.
 
 
 

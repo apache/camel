@@ -16,14 +16,9 @@
  */
 package org.apache.camel.component.websocket.springboot;
 
-import java.util.Map;
 import javax.annotation.Generated;
-import org.apache.camel.component.websocket.WebSocketFactory;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.apache.camel.util.jsse.SSLContextParameters;
-import org.eclipse.jetty.util.thread.ThreadPool;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The websocket component provides websocket endpoints with Jetty for
@@ -37,6 +32,11 @@ public class WebsocketComponentConfiguration
         extends
             ComponentConfigurationPropertiesCommon {
 
+    /**
+     * Whether to enable auto configuration of the websocket component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
     /**
      * Set a resource path for static resources (such as .html files etc). The
      * resources can be loaded from classpath, if you prefix with classpath:,
@@ -85,15 +85,15 @@ public class WebsocketComponentConfiguration
     private Integer maxThreads;
     /**
      * To use a custom thread pool for the server. MaxThreads/minThreads or
-     * threadPool fields are required due to switch to Jetty9.
+     * threadPool fields are required due to switch to Jetty9. The option is a
+     * org.eclipse.jetty.util.thread.ThreadPool type.
      */
-    @NestedConfigurationProperty
-    private ThreadPool threadPool;
+    private String threadPool;
     /**
-     * To configure security using SSLContextParameters
+     * To configure security using SSLContextParameters. The option is a
+     * org.apache.camel.util.jsse.SSLContextParameters type.
      */
-    @NestedConfigurationProperty
-    private SSLContextParameters sslContextParameters;
+    private String sslContextParameters;
     /**
      * Enable usage of global SSL context parameters.
      */
@@ -101,9 +101,11 @@ public class WebsocketComponentConfiguration
     /**
      * To configure a map which contains custom WebSocketFactory for sub
      * protocols. The key in the map is the sub protocol. The default key is
-     * reserved for the default implementation.
+     * reserved for the default implementation. The option is a
+     * java.util.Map<java
+     * .lang.String,org.apache.camel.component.websocket.WebSocketFactory> type.
      */
-    private Map<String, WebSocketFactory> socketFactory;
+    private String socketFactory;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -183,20 +185,19 @@ public class WebsocketComponentConfiguration
         this.maxThreads = maxThreads;
     }
 
-    public ThreadPool getThreadPool() {
+    public String getThreadPool() {
         return threadPool;
     }
 
-    public void setThreadPool(ThreadPool threadPool) {
+    public void setThreadPool(String threadPool) {
         this.threadPool = threadPool;
     }
 
-    public SSLContextParameters getSslContextParameters() {
+    public String getSslContextParameters() {
         return sslContextParameters;
     }
 
-    public void setSslContextParameters(
-            SSLContextParameters sslContextParameters) {
+    public void setSslContextParameters(String sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
 
@@ -209,11 +210,11 @@ public class WebsocketComponentConfiguration
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
-    public Map<String, WebSocketFactory> getSocketFactory() {
+    public String getSocketFactory() {
         return socketFactory;
     }
 
-    public void setSocketFactory(Map<String, WebSocketFactory> socketFactory) {
+    public void setSocketFactory(String socketFactory) {
         this.socketFactory = socketFactory;
     }
 

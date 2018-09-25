@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
-
 import java.util.EventObject;
 
 import javax.management.MBeanServer;
@@ -24,6 +23,8 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.EventNotifierSupport;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -34,7 +35,8 @@ public class ManagedCamelContextRestartTest extends ManagementTestSupport {
     private int stops;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
 
         super.setUp();
 
@@ -58,6 +60,7 @@ public class ManagedCamelContextRestartTest extends ManagementTestSupport {
         });
     }
 
+    @Test
     public void testManagedCamelContext() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

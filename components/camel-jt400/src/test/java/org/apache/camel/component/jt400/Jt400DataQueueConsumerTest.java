@@ -19,9 +19,9 @@ package org.apache.camel.component.jt400;
 import java.io.InputStream;
 import java.util.Properties;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -36,7 +36,7 @@ import org.junit.Test;
  * </p>
  */
 @Ignore("Test manual")
-public class Jt400DataQueueConsumerTest extends TestCase {
+public class Jt400DataQueueConsumerTest extends Assert {
 
     /**
      * The deviation of the actual timeout value that we permit in our timeout

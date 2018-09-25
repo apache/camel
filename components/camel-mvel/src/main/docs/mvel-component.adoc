@@ -74,6 +74,24 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.mvel.enabled* | Enable mvel component | true | Boolean
+| *camel.component.mvel.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.language.mvel.enabled* | Enable mvel language | true | Boolean
+| *camel.language.mvel.trim* | Whether to trim the value to remove leading and trailing whitespaces and line breaks | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

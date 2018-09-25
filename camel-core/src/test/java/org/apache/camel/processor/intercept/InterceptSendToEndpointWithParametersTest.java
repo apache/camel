@@ -19,12 +19,14 @@ package org.apache.camel.processor.intercept;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class InterceptSendToEndpointWithParametersTest extends ContextTestSupport {
 
+    @Test
     public void testInterceptSendToEndpoint() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         route.adviceWith(context, new RouteBuilder() {

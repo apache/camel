@@ -16,17 +16,19 @@
  */
 package org.apache.camel.component.bean;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class BeanLookupUsingJndiRegistryIssueTest extends TestCase {
+public class BeanLookupUsingJndiRegistryIssueTest extends Assert {
 
+    @Test
     public void testCamelWithJndi() throws Exception {
         JndiContext jndi = new JndiContext();
         jndi.bind("foo", new MyOtherDummyBean());

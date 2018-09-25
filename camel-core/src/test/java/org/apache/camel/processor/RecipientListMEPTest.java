@@ -18,9 +18,11 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class RecipientListMEPTest extends ContextTestSupport {
 
+    @Test
     public void testMEPInOnly() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World", "Hello Again");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World", "Bye World");
@@ -31,6 +33,7 @@ public class RecipientListMEPTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMEPInOutOnly() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World", "Hello Again");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World", "Bye World");

@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.SedaConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,16 +36,18 @@ import org.slf4j.LoggerFactory;
  */
 public class SedaComponent extends UriEndpointComponent {
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    protected final int maxConcurrentConsumers = 500;
+    protected final int maxConcurrentConsumers = SedaConstants.MAX_CONCURRENT_CONSUMERS;
 
-    @Metadata(label = "consumer", defaultValue = "1")
-    protected int concurrentConsumers = 1;
-    @Metadata(label = "advanced")
-    protected int queueSize;
+    @Metadata(label = "consumer", defaultValue = "" + SedaConstants.CONCURRENT_CONSUMERS)
+    protected int concurrentConsumers = SedaConstants.CONCURRENT_CONSUMERS;
+    @Metadata(label = "advanced", defaultValue = "" + SedaConstants.QUEUE_SIZE)
+    protected int queueSize = SedaConstants.QUEUE_SIZE;
     @Metadata(label = "advanced")
     protected BlockingQueueFactory<Exchange> defaultQueueFactory = new LinkedBlockingQueueFactory<>();
     @Metadata(label = "producer")
     private boolean defaultBlockWhenFull;
+    @Metadata(label = "producer")
+    private long defaultOfferTimeout;
 
     private final Map<String, QueueReference> queues = new HashMap<>();
 
@@ -101,6 +104,20 @@ public class SedaComponent extends UriEndpointComponent {
     public void setDefaultBlockWhenFull(boolean defaultBlockWhenFull) {
         this.defaultBlockWhenFull = defaultBlockWhenFull;
     }
+    
+    
+    public long getDefaultOfferTimeout() {
+        return defaultOfferTimeout;
+    }
+    
+    /**
+     * Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted.
+     * By default, an exception will be thrown stating that the queue is full.
+     * By enabling this option, where a configured timeout can be added to the block case.  Utilizing the .offer(timeout) method of the underlining java queue
+     */
+    public void setDefaultOfferTimeout(long defaultOfferTimeout) {
+        this.defaultOfferTimeout = defaultOfferTimeout;
+    }
 
     /**
      * @deprecated use
@@ -128,13 +145,13 @@ public class SedaComponent extends UriEndpointComponent {
             if (size != null && !size.equals(ref.getSize())) {
                 // there is already a queue, so make sure the size matches
                 throw new IllegalArgumentException("Cannot use existing queue " + key + " as the existing queue size "
-                        + (ref.getSize() != null ? ref.getSize() : Integer.MAX_VALUE) + " does not match given queue size " + size);
+                        + (ref.getSize() != null ? ref.getSize() : SedaConstants.QUEUE_SIZE) + " does not match given queue size " + size);
             }
             // add the reference before returning queue
             ref.addReference(endpoint);
 
             if (log.isDebugEnabled()) {
-                log.debug("Reusing existing queue {} with size {} and reference count {}", new Object[]{key, size, ref.getCount()});
+                log.debug("Reusing existing queue {} with size {} and reference count {}", key, size, ref.getCount());
             }
             return ref;
         }
@@ -206,8 +223,11 @@ public class SedaComponent extends UriEndpointComponent {
         }
 
         // if blockWhenFull is set on endpoint, defaultBlockWhenFull is ignored.
-        boolean blockWhenFull = getAndRemoveParameter(parameters, "blockWhenFull", boolean.class, defaultBlockWhenFull);
-
+        boolean blockWhenFull = getAndRemoveParameter(parameters, "blockWhenFull", Boolean.class, defaultBlockWhenFull);
+        // if offerTimeout is set on endpoint, defaultOfferTimeout is ignored.
+        long offerTimeout = getAndRemoveParameter(parameters, "offerTimeout", long.class, defaultOfferTimeout);
+        
+        answer.setOfferTimeout(offerTimeout);
         answer.setBlockWhenFull(blockWhenFull);
         answer.configureProperties(parameters);
         answer.setConcurrentConsumers(consumers);

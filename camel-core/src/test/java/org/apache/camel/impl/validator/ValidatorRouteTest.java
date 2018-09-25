@@ -35,6 +35,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Validator;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
     protected static final Logger LOG = LoggerFactory.getLogger(ValidatorRouteTest.class);
     private static final String VALIDATOR_INVOKED = "validator-invoked";
 
+    @Test
     public void testPredicateValidator() throws Exception {
         Exchange exchange = new DefaultExchange(context, ExchangePattern.InOut);
         exchange.getIn().setBody("{name:XOrder}");
@@ -56,6 +58,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
         assertEquals("{name:XOrderResponse}", answerEx.getIn().getBody(String.class));
     }
 
+    @Test
     public void testEndpointValidator() throws Exception {
         Exchange exchange = new DefaultExchange(context, ExchangePattern.InOut);
         exchange.getIn().setBody("<XOrder/>");
@@ -67,6 +70,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
         assertEquals(MyXmlEndpoint.class, answerEx.getProperty(VALIDATOR_INVOKED));
     }
 
+    @Test
     public void testCustomValidator() throws Exception {
         Exchange exchange = new DefaultExchange(context, ExchangePattern.InOut);
         exchange.getIn().setBody("name=XOrder");

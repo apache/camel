@@ -19,6 +19,7 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
+import org.junit.Test;
 
 /**
  * Based on user form issue
@@ -27,6 +28,7 @@ import org.apache.camel.model.RouteDefinition;
  */
 public class ErrorHandlerAdviceIssueTest extends ContextTestSupport {
 
+    @Test
     public void testErrorHandlerAdvice() throws Exception {
         RouteDefinition foo = context.getRouteDefinition("foo");
         foo.adviceWith(context, new RouteBuilder() {

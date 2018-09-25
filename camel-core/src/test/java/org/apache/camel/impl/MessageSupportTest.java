@@ -22,12 +22,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class MessageSupportTest extends ContextTestSupport {
 
+    @Test
     public void testSetBodyType() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Message in = exchange.getIn();
@@ -36,6 +38,7 @@ public class MessageSupportTest extends ContextTestSupport {
         assertIsInstanceOf(Integer.class, in.getBody());
     }
 
+    @Test
     public void testGetMandatoryBody() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Message in = exchange.getIn();
@@ -52,6 +55,7 @@ public class MessageSupportTest extends ContextTestSupport {
         assertEquals("Hello World", in.getMandatoryBody());
     }
 
+    @Test
     public void testGetMessageId() {
         context.setUuidGenerator(new SimpleUuidGenerator());
         Exchange exchange = new DefaultExchange(context);
@@ -60,12 +64,14 @@ public class MessageSupportTest extends ContextTestSupport {
         assertEquals("1", in.getMessageId());
     }
     
+    @Test
     public void testGetMessageIdWithoutAnExchange() {
         Message in = new DefaultMessage(context);
         
         assertNotNull(in.getMessageId());
     }
 
+    @Test
     public void testCopyFromSameHeadersInstance() {
         Exchange exchange = new DefaultExchange(context);
 
@@ -83,4 +89,19 @@ public class MessageSupportTest extends ContextTestSupport {
         assertEquals(123, in.getHeader("foo"));
         assertEquals(123, out.getHeader("foo"));
     }
+
+    @Test
+    public void testCopyOverExchange() throws Exception {
+        Exchange exchange = new DefaultExchange(context);
+        Message in = exchange.getIn();
+        in.setBody("Bye World");
+
+        Message two = in.copy();
+        assertSame(exchange, two.getExchange());
+
+        Message three = new DefaultMessage(context);
+        three.copyFrom(two);
+        assertSame(exchange, three.getExchange());
+    }
+
 }

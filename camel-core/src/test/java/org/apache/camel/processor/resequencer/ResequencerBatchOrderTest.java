@@ -19,6 +19,7 @@ package org.apache.camel.processor.resequencer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,7 @@ public class ResequencerBatchOrderTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testResequencerBatch() throws Exception {
         for (int i = 0; i < 100; i++) {
             testIteration(i);

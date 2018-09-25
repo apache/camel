@@ -17,6 +17,7 @@
 package org.apache.camel.component.lumberjack;
 
 import java.util.concurrent.ThreadFactory;
+
 import javax.net.ssl.SSLContext;
 
 import org.apache.camel.Exchange;

@@ -21,12 +21,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class SedaInOutChainedTimeoutTest extends ContextTestSupport {
 
+    @Test
     public void testSedaInOutChainedTimeout() throws Exception {
         // time timeout after 2 sec should trigger a immediately reply
         StopWatch watch = new StopWatch();

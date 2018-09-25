@@ -17,16 +17,19 @@
 package org.apache.camel.management;
 
 import java.util.Map;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.ServiceStatus;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class ManagedUnregisterCamelContextTest extends ManagementTestSupport {
 
+    @Test
     public void testUnregisterCamelContext() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

@@ -17,7 +17,6 @@
 package org.apache.camel.component.rabbitmq.reply;
 
 import com.rabbitmq.client.AMQP;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.slf4j.Logger;
@@ -52,7 +51,7 @@ public class TemporaryQueueReplyHandler implements ReplyHandler {
     }
 
     public void onReply(String correlationId, AMQP.BasicProperties properties, byte[] reply) {
-        // create holder object with the the reply
+        // create holder object with the reply
         log.debug("onReply with correlationId: {}", correlationId);
         ReplyHolder holder = new ReplyHolder(exchange, callback, originalCorrelationId, correlationId, properties, reply);
         // process the reply

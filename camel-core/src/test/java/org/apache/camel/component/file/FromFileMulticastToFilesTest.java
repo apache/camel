@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -27,11 +28,13 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FromFileMulticastToFilesTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/multicast");
         super.setUp();
     }
 
+    @Test
     public void testFromFileMulticastToFiles() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -71,6 +74,7 @@ public class FromFileMulticastToFilesTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFromFileMulticastParallelToFiles() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

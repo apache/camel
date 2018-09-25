@@ -19,13 +19,16 @@ package org.apache.camel.language;
 import org.apache.camel.Exchange;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.language.property.ExchangePropertyLanguage;
+import org.junit.Test;
 
 public class PropertyTest extends LanguageTestSupport {
 
+    @Test
     public void testPropertyExpressions() throws Exception {
         assertExpression("quote", "Camel rocks");
     }
 
+    @Test
     public void testPredicates() throws Exception {
         assertPredicate("quote");
     }
@@ -34,6 +37,7 @@ public class PropertyTest extends LanguageTestSupport {
         return "exchangeProperty";
     }
 
+    @Test
     public void testSingleton() {
         ExchangePropertyLanguage prop = new ExchangePropertyLanguage();
         assertTrue(prop.isSingleton());

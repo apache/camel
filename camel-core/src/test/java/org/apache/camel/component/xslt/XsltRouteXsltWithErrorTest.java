@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.ObjectHelper;
+import org.junit.Test;
 
 public class XsltRouteXsltWithErrorTest extends ContextTestSupport {
 
@@ -30,6 +31,7 @@ public class XsltRouteXsltWithErrorTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testXsltWithError() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

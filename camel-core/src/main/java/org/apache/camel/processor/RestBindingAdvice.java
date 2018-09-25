@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
@@ -59,16 +60,21 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
     private final String produces;
     private final String bindingMode;
     private final boolean skipBindingOnErrorCode;
+    private final boolean clientRequestValidation;
     private final boolean enableCORS;
     private final Map<String, String> corsHeaders;
     private final Map<String, String> queryDefaultValues;
+    private final boolean requiredBody;
+    private final Set<String> requiredQueryParameters;
+    private final Set<String> requiredHeaders;
 
     public RestBindingAdvice(CamelContext camelContext, DataFormat jsonDataFormat, DataFormat xmlDataFormat,
                              DataFormat outJsonDataFormat, DataFormat outXmlDataFormat,
                              String consumes, String produces, String bindingMode,
-                             boolean skipBindingOnErrorCode, boolean enableCORS,
+                             boolean skipBindingOnErrorCode, boolean clientRequestValidation, boolean enableCORS,
                              Map<String, String> corsHeaders,
-                             Map<String, String> queryDefaultValues) throws Exception {
+                             Map<String, String> queryDefaultValues,
+                             boolean requiredBody, Set<String> requiredQueryParameters, Set<String> requiredHeaders) throws Exception {
 
         if (jsonDataFormat != null) {
             this.jsonUnmarshal = new UnmarshalProcessor(jsonDataFormat);
@@ -113,10 +119,13 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         this.produces = produces;
         this.bindingMode = bindingMode;
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+        this.clientRequestValidation = clientRequestValidation;
         this.enableCORS = enableCORS;
         this.corsHeaders = corsHeaders;
         this.queryDefaultValues = queryDefaultValues;
-
+        this.requiredBody = requiredBody;
+        this.requiredQueryParameters = requiredQueryParameters;
+        this.requiredHeaders = requiredHeaders;
     }
     
     @Override
@@ -182,7 +191,29 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
             isJson = bindingMode.equals("auto") || bindingMode.contains("json");
         }
 
-        state.put(STATE_KEY_ACCEPT, exchange.getIn().getHeader("Accept", String.class));
+        String accept = exchange.getMessage().getHeader("Accept", String.class);
+        state.put(STATE_KEY_ACCEPT, accept);
+
+        // perform client request validation
+        if (clientRequestValidation) {
+            // check if the content-type is accepted according to consumes
+            if (!isValidOrAcceptedContentType(consumes, contentType)) {
+                // the content-type is not something we can process so its a HTTP_ERROR 415
+                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 415);
+                // stop routing and return
+                exchange.setProperty(Exchange.ROUTE_STOP, true);
+                return;
+            }
+
+            // check if what is produces is accepted by the client
+            if (!isValidOrAcceptedContentType(produces, accept)) {
+                // the response type is not accepted by the client so its a HTTP_ERROR 406
+                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 406);
+                // stop routing and return
+                exchange.setProperty(Exchange.ROUTE_STOP, true);
+                return;
+            }
+        }
 
         String body = null;
         if (exchange.getIn().getBody() != null) {
@@ -215,6 +246,44 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
                 if (exchange.getIn().getHeader(entry.getKey()) == null) {
                     exchange.getIn().setHeader(entry.getKey(), entry.getValue());
                 }
+            }
+        }
+
+        // check for required
+        if (clientRequestValidation) {
+            if (requiredBody) {
+                // the body is required so we need to know if we have a body or not
+                // so force reading the body as a String which we can work with
+                if (body == null) {
+                    body = MessageHelper.extractBodyAsString(exchange.getIn());
+                    if (body != null) {
+                        exchange.getIn().setBody(body);
+                    }
+                }
+                if (body == null) {
+                    // this is a bad request, the client did not include a message body
+                    exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
+                    exchange.getOut().setBody("The request body is missing.");
+                    // stop routing and return
+                    exchange.setProperty(Exchange.ROUTE_STOP, true);
+                    return;
+                }
+            }
+            if (requiredQueryParameters != null && !exchange.getIn().getHeaders().keySet().containsAll(requiredQueryParameters)) {
+                // this is a bad request, the client did not include some of the required query parameters
+                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
+                exchange.getOut().setBody("Some of the required query parameters are missing.");
+                // stop routing and return
+                exchange.setProperty(Exchange.ROUTE_STOP, true);
+                return;
+            }
+            if (requiredHeaders != null && !exchange.getIn().getHeaders().keySet().containsAll(requiredHeaders)) {
+                // this is a bad request, the client did not include some of the required http headers
+                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
+                exchange.getOut().setBody("Some of the required HTTP headers are missing.");
+                // stop routing and return
+                exchange.setProperty(Exchange.ROUTE_STOP, true);
+                return;
             }
         }
 
@@ -431,6 +500,26 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         if (allowCredentials != null) {
             msg.setHeader("Access-Control-Allow-Credentials", allowCredentials);
         }
+    }
+
+    private static boolean isValidOrAcceptedContentType(String valid, String target) {
+        if (valid == null || target == null) {
+            return true;
+        }
+
+        boolean isXml = valid.toLowerCase(Locale.ENGLISH).contains("xml");
+        boolean isJson = valid.toLowerCase(Locale.ENGLISH).contains("json");
+
+        String type = target.toLowerCase(Locale.ENGLISH);
+
+        if (isXml && !type.contains("xml")) {
+            return false;
+        }
+        if (isJson && !type.contains("json")) {
+            return false;
+        }
+
+        return true;
     }
 
 }

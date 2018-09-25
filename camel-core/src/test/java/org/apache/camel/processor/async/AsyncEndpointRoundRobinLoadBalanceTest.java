@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
@@ -29,6 +30,7 @@ public class AsyncEndpointRoundRobinLoadBalanceTest extends ContextTestSupport {
     private static String beforeThreadName;
     private static String afterThreadName;
 
+    @Test
     public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel", "Hello World");
         getMockEndpoint("mock:after").expectedBodiesReceived("Bye Camel", "Bye World");

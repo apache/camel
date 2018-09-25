@@ -200,14 +200,16 @@ public final class ObjectConverter {
      */
     @Converter
     public static BigInteger toBigInteger(Object value) {
+        if (value instanceof String) {
+            return new BigInteger((String) value);
+        }
+
         Long num = null;
         if (value instanceof Long) {
             num = (Long) value;
         } else if (value instanceof Number) {
             Number number = (Number) value;
             num = number.longValue();
-        } else if (value instanceof String) {
-            num = Long.valueOf((String) value);
         }
         if (num != null) {
             return BigInteger.valueOf(num);

@@ -21,11 +21,13 @@ import javax.naming.Context;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.language.XPath;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
 public class BeanWithXPathInjectionUsingResultTypeTest extends ContextTestSupport {
 
     protected MyBean myBean = new MyBean();
 
+    @Test
     public void testSendMessage() throws Exception {
         template.sendBody("bean:myBean", "<a><b>12</b></a>");
         assertEquals("bean ab: " + myBean, "12", myBean.ab);

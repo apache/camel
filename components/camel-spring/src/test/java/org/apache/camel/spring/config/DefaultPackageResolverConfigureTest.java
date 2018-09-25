@@ -18,6 +18,7 @@ package org.apache.camel.spring.config;
 
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -27,6 +28,7 @@ public class DefaultPackageResolverConfigureTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/PackageResolverTest.xml");
     }
 
+    @Test
     public void testSetAcceptableSchema() throws Exception {
         DefaultPackageScanClassResolver resolver = (DefaultPackageScanClassResolver)context.getPackageScanClassResolver();
         assertNotNull(resolver);

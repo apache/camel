@@ -27,16 +27,15 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-
+import org.junit.Test;
 import org.slf4j.MDC;
-
-import static org.junit.Assert.assertNotEquals;
 
 /**
  * @version 
  */
 public class MDCAsyncTest extends ContextTestSupport {
 
+    @Test
     public void testMdcPreservedAfterAsyncEndpoint() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:end");
         mock.expectedMessageCount(1);

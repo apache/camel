@@ -19,13 +19,15 @@ package org.apache.camel.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class DefaultHeadersMapFactoryTest extends TestCase {
+public class DefaultHeadersMapFactoryTest extends Assert {
 
+    @Test
     public void testLookupCaseAgnostic() {
         Map<String, Object> map = new DefaultHeadersMapFactory().newMap();
         assertNull(map.get("foo"));
@@ -37,6 +39,7 @@ public class DefaultHeadersMapFactoryTest extends TestCase {
         assertEquals("cheese", map.get("FOO"));
     }
 
+    @Test
     public void testConstructFromOther() {
         Map<String, Object> other = new DefaultHeadersMapFactory().newMap();
         other.put("Foo", "cheese");
@@ -53,6 +56,7 @@ public class DefaultHeadersMapFactoryTest extends TestCase {
         assertEquals(123, map.get("BaR"));
     }
 
+    @Test
     public void testIsInstance() {
         Map<String, Object> map = new DefaultHeadersMapFactory().newMap();
 

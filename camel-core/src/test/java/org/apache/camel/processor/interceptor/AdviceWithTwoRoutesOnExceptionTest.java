@@ -21,12 +21,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testAdviceWithA() throws Exception {
         RouteDefinition route = context.getRouteDefinition("a");
         route.adviceWith(context, new AdviceWithRouteBuilder() {
@@ -47,6 +49,7 @@ public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAdviceWithB() throws Exception {
         RouteDefinition route = context.getRouteDefinition("b");
         route.adviceWith(context, new AdviceWithRouteBuilder() {
@@ -67,6 +70,7 @@ public class AdviceWithTwoRoutesOnExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAdviceWithAB() throws Exception {
         RouteDefinition route = context.getRouteDefinition("a");
         route.adviceWith(context, new AdviceWithRouteBuilder() {

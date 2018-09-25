@@ -20,11 +20,9 @@ import javax.annotation.Generated;
 import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
 import org.apache.camel.component.cache.CacheEventListenerRegistry;
 import org.apache.camel.component.cache.CacheLoaderRegistry;
-import org.apache.camel.component.cache.CacheManagerFactory;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The cache component enables you to perform caching operations using EHCache
@@ -39,10 +37,16 @@ public class CacheComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * To use the given CacheManagerFactory for creating the CacheManager. By
-     * default the DefaultCacheManagerFactory is used.
+     * Whether to enable auto configuration of the cache component. This is
+     * enabled by default.
      */
-    private CacheManagerFactory cacheManagerFactory;
+    private Boolean enabled;
+    /**
+     * To use the given CacheManagerFactory for creating the CacheManager. By
+     * default the DefaultCacheManagerFactory is used. The option is a
+     * org.apache.camel.component.cache.CacheManagerFactory type.
+     */
+    private String cacheManagerFactory;
     /**
      * Sets the Cache configuration
      */
@@ -59,11 +63,11 @@ public class CacheComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public CacheManagerFactory getCacheManagerFactory() {
+    public String getCacheManagerFactory() {
         return cacheManagerFactory;
     }
 
-    public void setCacheManagerFactory(CacheManagerFactory cacheManagerFactory) {
+    public void setCacheManagerFactory(String cacheManagerFactory) {
         this.cacheManagerFactory = cacheManagerFactory;
     }
 
@@ -107,13 +111,9 @@ public class CacheComponentConfiguration
         /**
          * Which eviction strategy to use when maximum number of elements in
          * memory is reached. The strategy defines which elements to be removed.
-         * <ul>
-         * <li>LRU - Lest Recently Used</li>
-         * <li>LFU - Lest Frequently Used</li>
-         * <li>FIFO - First In First Out</li>
-         * </ul>
+         * LRU - Lest Recently Used LFU - Lest Frequently Used FIFO - First In
+         * First Out
          */
-        @NestedConfigurationProperty
         private MemoryStoreEvictionPolicy memoryStoreEvictionPolicy;
         /**
          * Specifies whether cache may overflow to disk
@@ -150,12 +150,10 @@ public class CacheComponentConfiguration
         /**
          * To configure event listeners using the CacheEventListenerRegistry
          */
-        @NestedConfigurationProperty
         private CacheEventListenerRegistry eventListenerRegistry;
         /**
          * To configure cache loader using the CacheLoaderRegistry
          */
-        @NestedConfigurationProperty
         private CacheLoaderRegistry cacheLoaderRegistry;
         /**
          * Whether to turn on allowing to store non serializable objects in the

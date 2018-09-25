@@ -18,6 +18,7 @@ package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Unit tests on the conditional skip support on InterceptSendToEndpoint.
@@ -26,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class InterceptSendToEndpointConditionalSkip2Test extends ContextTestSupport {
 
+    @Test
     public void testInterceptSendToEndpointNone() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:detour1").expectedMessageCount(0);
@@ -37,6 +39,7 @@ public class InterceptSendToEndpointConditionalSkip2Test extends ContextTestSupp
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInterceptSendToEndpoint1() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:detour1").expectedMessageCount(1);
@@ -48,6 +51,7 @@ public class InterceptSendToEndpointConditionalSkip2Test extends ContextTestSupp
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInterceptSendToEndpoint2() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:detour1").expectedMessageCount(0);
@@ -59,6 +63,7 @@ public class InterceptSendToEndpointConditionalSkip2Test extends ContextTestSupp
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInterceptSendToEndpointBoth() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:detour1").expectedMessageCount(1);

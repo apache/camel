@@ -18,12 +18,14 @@ package org.apache.camel.component.bean.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class TransformerIssueTest extends ContextTestSupport {
 
+    @Test
     public void testTransformer() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("test");
 

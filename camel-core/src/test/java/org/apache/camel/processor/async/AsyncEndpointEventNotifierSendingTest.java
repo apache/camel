@@ -27,6 +27,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
+import org.junit.Test;
 
 /**
  * @version 
@@ -35,6 +36,7 @@ public class AsyncEndpointEventNotifierSendingTest extends ContextTestSupport {
 
     private final List<EventObject> events = new ArrayList<>();
 
+    @Test
     public void testAsyncEndpointEventNotifier() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");

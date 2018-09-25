@@ -16,13 +16,15 @@
  */
 package org.apache.camel.util;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Unit tests for {@link AntPathMatcher}.
  */
-public class AntPathMatcherTest extends TestCase {
+public class AntPathMatcherTest extends Assert {
 
+    @Test
     public void test() {
         AntPathMatcher matcher = new AntPathMatcher();
         assertTrue(matcher.match("*.txt", "blah.txt"));
@@ -39,6 +41,7 @@ public class AntPathMatcherTest extends TestCase {
         assertFalse(matcher.match("foo/**/*.txt", "blah/blah.txt"));
     }
 
+    @Test
     public void testCaseSensitive() {
         AntPathMatcher matcher = new AntPathMatcher();
         assertTrue(matcher.match("foo/**/*.txt", "foo/blah.txt", true));

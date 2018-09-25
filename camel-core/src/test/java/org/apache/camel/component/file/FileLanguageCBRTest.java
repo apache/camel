@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -26,11 +27,13 @@ import org.apache.camel.builder.RouteBuilder;
 public class FileLanguageCBRTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/cbr");
         super.setUp();
     }
 
+    @Test
     public void testTxt() throws Exception {
         getMockEndpoint("mock:txt").expectedMessageCount(1);
         getMockEndpoint("mock:dat").expectedMessageCount(0);
@@ -41,6 +44,7 @@ public class FileLanguageCBRTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testDat() throws Exception {
         getMockEndpoint("mock:txt").expectedMessageCount(0);
         getMockEndpoint("mock:dat").expectedMessageCount(1);
@@ -51,6 +55,7 @@ public class FileLanguageCBRTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOther() throws Exception {
         getMockEndpoint("mock:txt").expectedMessageCount(0);
         getMockEndpoint("mock:dat").expectedMessageCount(0);

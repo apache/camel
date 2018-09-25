@@ -22,12 +22,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  *
  */
 public class EvaluateExpressionProcessorTest extends ContextTestSupport {
 
+    @Test
     public void testOk() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("World");
@@ -38,6 +40,7 @@ public class EvaluateExpressionProcessorTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFail() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);

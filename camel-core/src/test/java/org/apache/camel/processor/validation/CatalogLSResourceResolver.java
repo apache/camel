@@ -21,6 +21,7 @@ import java.io.Reader;
 
 import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.LSResourceResolver;
+
 import org.xml.sax.InputSource;
 
 import org.apache.xml.resolver.tools.CatalogResolver;

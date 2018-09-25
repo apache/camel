@@ -22,6 +22,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.ExpressionAdapter;
+import org.junit.Test;
 
 /**
  * @version 
@@ -36,6 +37,7 @@ public class CustomParameterMappingStrategyTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testExchange() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("You said: Hello Claus");
         template.sendBody("direct:a", "Claus");

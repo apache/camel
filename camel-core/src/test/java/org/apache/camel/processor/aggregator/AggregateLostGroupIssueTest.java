@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
 /**
  * Based on user forum issue
@@ -32,6 +33,7 @@ public class AggregateLostGroupIssueTest extends ContextTestSupport {
 
     private int messageIndex;
 
+    @Test
     public void testAggregateLostGroupIssue() throws Exception {
         messageIndex = 0;
 

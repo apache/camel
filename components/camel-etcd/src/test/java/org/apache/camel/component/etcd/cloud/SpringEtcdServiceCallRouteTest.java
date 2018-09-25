@@ -16,7 +16,6 @@
  */
 
 package org.apache.camel.component.etcd.cloud;
-
 import java.net.URI;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -24,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import mousio.etcd4j.EtcdClient;
 import org.apache.camel.component.etcd.EtcdHelper;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.junit.After;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -69,6 +69,7 @@ public class SpringEtcdServiceCallRouteTest extends CamelSpringTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         CLIENT.deleteDir("/etcd-services-1/").recursive().send().get();

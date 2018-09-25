@@ -18,7 +18,6 @@ package org.apache.camel.util;
 
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -44,7 +43,6 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.Scanner;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -932,9 +930,6 @@ public final class ObjectHelper {
             // this code is optimized to only use a Scanner if needed, eg there is a delimiter
 
             if (delimiter != null && (pattern || s.contains(delimiter))) {
-                // use a scanner if it contains the delimiter or is a pattern
-                final Scanner scanner = new Scanner((String)value);
-
                 if (DEFAULT_DELIMITER.equals(delimiter)) {
                     // we use the default delimiter which is a comma, then cater for bean expressions with OGNL
                     // which may have balanced parentheses pairs as well.
@@ -948,7 +943,8 @@ public final class ObjectHelper {
                     // http://stackoverflow.com/questions/1516090/splitting-a-title-into-separate-parts
                     delimiter = ",(?!(?:[^\\(,]|[^\\)],[^\\)])+\\))";
                 }
-                scanner.useDelimiter(delimiter);
+                // use a scanner if it contains the delimiter or is a pattern
+                final Scanner scanner = new Scanner((String) value, delimiter);
 
                 return new Iterable<Object>() {
                     @Override
@@ -1226,7 +1222,7 @@ public final class ObjectHelper {
      * @return the class, or null if it could not be loaded
      */
     private static Class<?> doLoadClass(String name, ClassLoader loader) {
-        ObjectHelper.notEmpty(name, "name");
+        StringHelper.notEmpty(name, "name");
         if (loader == null) {
             return null;
         }
@@ -1938,9 +1934,10 @@ public final class ObjectHelper {
      *
      * @param exchange  the current exchange
      * @param value     the value, typically the message IN body
+     * @param delimiter the delimiter pattern to use
      * @return the scanner, is newer <tt>null</tt>
      */
-    public static Scanner getScanner(Exchange exchange, Object value) {
+    public static Scanner getScanner(Exchange exchange, Object value, String delimiter) {
         if (value instanceof WrappedFile) {
             WrappedFile<?> gf = (WrappedFile<?>) value;
             Object body = gf.getBody();
@@ -1949,41 +1946,33 @@ public final class ObjectHelper {
                 value = body;
             } else {
                 // generic file is just a wrapper for the real file so call again with the real file
-                return getScanner(exchange, gf.getFile());
+                return getScanner(exchange, gf.getFile(), delimiter);
             }
         }
 
-        String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
-
-        Scanner scanner = null;
+        Scanner scanner;
         if (value instanceof Readable) {
-            scanner = new Scanner((Readable)value);
-        } else if (value instanceof InputStream) {
-            scanner = charset == null ? new Scanner((InputStream)value) : new Scanner((InputStream)value, charset);
-        } else if (value instanceof File) {
-            try {
-                scanner = charset == null ? new Scanner((File)value) : new Scanner((File)value, charset);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeCamelException(e);
-            }
+            scanner = new Scanner((Readable) value, delimiter);
         } else if (value instanceof String) {
-            scanner = new Scanner((String)value);
-        } else if (value instanceof ReadableByteChannel) {
-            scanner = charset == null ? new Scanner((ReadableByteChannel)value) : new Scanner((ReadableByteChannel)value, charset);
-        }
-
-        if (scanner == null) {
-            // value is not a suitable type, try to convert value to a string
-            String text = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, value);
-            if (text != null) {
-                scanner = new Scanner(text);
+            scanner = new Scanner((String) value, delimiter);
+        } else {
+            String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+            if (value instanceof File) {
+                try {
+                    scanner = new Scanner((File) value, charset, delimiter);
+                } catch (IOException e) {
+                    throw new RuntimeCamelException(e);
+                }
+            } else if (value instanceof InputStream) {
+                scanner = new Scanner((InputStream) value, charset, delimiter);
+            } else if (value instanceof ReadableByteChannel) {
+                scanner = new Scanner((ReadableByteChannel) value, charset, delimiter);
+            } else {
+                // value is not a suitable type, try to convert value to a string
+                String text = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, value);
+                scanner = new Scanner(text, delimiter);
             }
         }
-
-        if (scanner == null) {
-            scanner = new Scanner("");
-        }
-
         return scanner;
     }
 

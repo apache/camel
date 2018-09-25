@@ -30,6 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.junit.Test;
 
 public class EndpointWithRawUriParameterTest extends ContextTestSupport {
 
@@ -100,6 +101,7 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testRawUriParameter() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedHeaderReceived("username", "scott");
@@ -110,6 +112,7 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testUriParameterLines() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -123,6 +126,7 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
         assertEquals("def", lines.get(1));
     }
 
+    @Test
     public void testRawUriParameterLines() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

@@ -20,9 +20,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bar.BarComponent;
 import org.apache.camel.component.bar.BarConstants;
+import org.junit.Test;
 
 public class ToDynamicSendDynamicAwareTest extends ContextTestSupport {
 
+    @Test
     public void testToDynamic() throws Exception {
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello Camel ordered beer", "Hello World ordered wine");
         // the post-processor should remove the header

@@ -16,5 +16,5 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.spring.cloud.netflix.CamelCloudNetflixAutoConfiguration,\
-org.apache.camel.spring.cloud.netflix.CamelCloudNetflixRibbonAutoConfiguration
+    org.apache.camel.spring.cloud.netflix.CamelCloudNetflixAutoConfiguration,\
+    org.apache.camel.spring.cloud.netflix.CamelCloudNetflixServiceLoadBalancerAutoConfiguration

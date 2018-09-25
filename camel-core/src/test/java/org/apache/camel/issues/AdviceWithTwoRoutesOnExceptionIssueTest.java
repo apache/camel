@@ -21,12 +21,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class AdviceWithTwoRoutesOnExceptionIssueTest extends ContextTestSupport {
 
+    @Test
     public void testAdviceWith() throws Exception {
         context.getRouteDefinition("a").adviceWith(context, new AdviceWithRouteBuilder() {
             @Override

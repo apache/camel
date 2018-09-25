@@ -16,9 +16,7 @@
  */
 package org.apache.camel.example.springboot.geocoder;
 
-
-import com.google.code.geocoder.model.GeocodeResponse;
-import com.google.code.geocoder.model.GeocoderStatus;
+import com.google.maps.model.GeocodingResult;
 import org.apache.camel.CamelContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,8 +30,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -47,13 +45,10 @@ public class ApplicationTest {
 
     @Test
     public void geocoderAddressTest() {
-        ResponseEntity<GeocodeResponse> response = restTemplate.exchange("/camel/geocoder?address=Paris",
-            HttpMethod.GET, null, new ParameterizedTypeReference<GeocodeResponse>() { });
+        ResponseEntity<GeocodingResult[]> response = restTemplate.exchange("/camel/geocoder?address=Paris",
+            HttpMethod.GET, null, new ParameterizedTypeReference<GeocodingResult[]>() { });
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        GeocodeResponse res = response.getBody();
-        assertThat(res.getStatus()).isEqualTo(GeocoderStatus.OK);
-        assertThat(res.getResults()).isNotEmpty();
-        assertThat(res.getResults()).element(0)
-            .hasFieldOrPropertyWithValue("formattedAddress", "Paris, France");
+        GeocodingResult[] res = response.getBody();
+        assertNotNull(res);
     }
 }

@@ -24,6 +24,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Test;
 
 /**
  * @version 
@@ -38,6 +39,7 @@ public class CollectionProducerTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testCollectionProducer() throws Exception {
         Queue<Exchange> queue = new ArrayBlockingQueue<>(10);
 

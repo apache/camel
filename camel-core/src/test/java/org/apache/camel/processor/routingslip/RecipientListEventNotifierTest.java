@@ -24,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
+import org.junit.Test;
 
 public class RecipientListEventNotifierTest extends ContextTestSupport {
 
@@ -36,6 +37,7 @@ public class RecipientListEventNotifierTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testRecipientListEventNotifier() throws Exception {
         getMockEndpoint("mock:x").expectedMessageCount(1);
         getMockEndpoint("mock:y").expectedMessageCount(1);

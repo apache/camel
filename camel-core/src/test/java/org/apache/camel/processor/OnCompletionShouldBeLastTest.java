@@ -21,12 +21,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class OnCompletionShouldBeLastTest extends ContextTestSupport {
 
+    @Test
     public void testOnCompletionShouldBeLast() throws Exception {
         getMockEndpoint("mock:sync").expectedBodiesReceived("C", "B", "A", "Hello World");
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");

@@ -374,7 +374,7 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
                 reply.setJMSCorrelationID(correlationID);
 
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", new Object[]{endpoint, correlationID, reply});
+                    LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", endpoint, correlationID, reply);
                 }
                 return reply;
             }
@@ -394,7 +394,7 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
                 reply.setJMSCorrelationID(correlationID);
 
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", new Object[]{endpoint, correlationID, reply});
+                    LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", endpoint, correlationID, reply);
                 }
                 return reply;
             }

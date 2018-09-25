@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.strategy;
-
 import java.io.File;
 import java.io.FileOutputStream;
 
@@ -23,6 +22,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,12 +35,14 @@ public class FileChangedReadLockTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(FileChangedReadLockTest.class);
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/changed/");
         createDirectory("target/changed/in");
         super.setUp();
     }
 
+    @Test
     public void testChangedReadLock() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

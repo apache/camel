@@ -18,12 +18,14 @@ package org.apache.camel.component.vm;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class VmMultipleContextsStartStopTest extends AbstractVmTestSupport {
 
+    @Test
     public void testStartStop() throws Exception {
         /* Check that contexts are communicated */
         MockEndpoint mock = context2.getEndpoint("mock:result", MockEndpoint.class);

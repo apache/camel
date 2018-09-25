@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -23,6 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test for the FileRenameStrategy using preMoveExpression and expression options
@@ -30,13 +31,15 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/inprogress");
         deleteDirectory("target/done");
         deleteDirectory("target/reports");
         super.setUp();
     }
 
+    @Test
     public void testRenameSuccess() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedMessageCount(1);
@@ -48,6 +51,7 @@ public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends Cont
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testIllegalOptions() throws Exception {
         try {
             context.getEndpoint("file://target?move=../done/${file:name}&delete=true").createConsumer(new Processor() {

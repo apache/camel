@@ -23,6 +23,7 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Synchronization;
+import org.junit.Test;
 
 /**
  * Unit test to verify unit of work with seda. That the UnitOfWork is able to route using seda
@@ -37,6 +38,7 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
     private volatile String sync;
     private volatile String lastOne;
 
+    @Test
     public void testSedaUOW() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
 
@@ -53,6 +55,7 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
         assertEquals("Should have propagated the header inside the Synchronization.onComplete() callback", "bar", foo);
     }
 
+    @Test
     public void testSedaUOWWithException() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
 

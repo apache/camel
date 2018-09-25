@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test for consuming from an absolute path
@@ -31,7 +32,8 @@ public class FileConsumerAbsolutePathWithRelativeMoveTest extends ContextTestSup
     private String base;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/reports");
         deleteDirectory("target/done");
         // use current dir as base as absolute path
@@ -39,6 +41,7 @@ public class FileConsumerAbsolutePathWithRelativeMoveTest extends ContextTestSup
         super.setUp();
     }
 
+    @Test
     public void testConsumeFromAbsolutePath() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Paris");

@@ -18,10 +18,12 @@ package org.apache.camel.management;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
@@ -30,6 +32,7 @@ import static org.awaitility.Awaitility.await;
  */
 public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
 
+    @Test
     public void testPerformanceCounterStats() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

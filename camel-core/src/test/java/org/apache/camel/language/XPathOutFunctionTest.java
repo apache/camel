@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.language;
-
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.ContextTestSupport;
@@ -23,6 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
@@ -36,6 +37,7 @@ public class XPathOutFunctionTest extends ContextTestSupport {
     protected MockEndpoint z;
     protected MockEndpoint end;
 
+    @Test
     public void testCheckHeader() throws Exception {
         String body = "<one/>";
         x.expectedBodiesReceived(body);
@@ -46,6 +48,7 @@ public class XPathOutFunctionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testCheckBody() throws Exception {
         String body = "<two/>";
         y.expectedBodiesReceived(body);
@@ -56,6 +59,7 @@ public class XPathOutFunctionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSetXpathProperty() throws Exception {
         String body = "<soapenv:Body xmlns:ns=\"http://myNamesapce\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">"
             + "<ns:Addresses> <Address>address1</Address>"
@@ -81,7 +85,8 @@ public class XPathOutFunctionTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         x = getMockEndpoint("mock:x");

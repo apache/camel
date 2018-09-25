@@ -16,7 +16,16 @@
  */
 package org.apache.camel.component.nats;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.concurrent.ExecutorService;
+
+import javax.net.ssl.SSLContext;
+
+import io.nats.client.Connection;
+import io.nats.client.Nats;
+import io.nats.client.Options;
+import io.nats.client.Options.Builder;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -60,5 +69,15 @@ public class NatsEndpoint extends DefaultEndpoint {
     
     public NatsConfiguration getNatsConfiguration() {
         return configuration;
+    }
+    
+    public Connection getConnection() throws InterruptedException, IllegalArgumentException, GeneralSecurityException, IOException {
+        Builder builder = getNatsConfiguration().createOptions();
+        if (getNatsConfiguration().getSslContextParameters() != null && getNatsConfiguration().isSecure()) {
+            SSLContext sslCtx = getNatsConfiguration().getSslContextParameters().createSSLContext(getCamelContext()); 
+            builder.sslContext(sslCtx);
+        }
+        Options options = builder.build();
+        return Nats.connect(options);
     }
 }

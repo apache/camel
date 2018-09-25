@@ -24,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.junit.Test;
 
 public class ProducerCacheNonSingletonTest extends ContextTestSupport {
 
@@ -32,6 +33,7 @@ public class ProducerCacheNonSingletonTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testNonSingleton() throws Exception {
         context.addComponent("dummy", new MyDummyComponent());
 

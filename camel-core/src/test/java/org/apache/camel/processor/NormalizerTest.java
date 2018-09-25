@@ -22,9 +22,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
 public class NormalizerTest extends ContextTestSupport {
    
+    @Test
     public void testSendToFirstWhen() throws Exception {
         String employeeBody1 = "<employee><name>Jon</name></employee>";
         String employeeBody2 = "<employee><name>Hadrian</name></employee>";

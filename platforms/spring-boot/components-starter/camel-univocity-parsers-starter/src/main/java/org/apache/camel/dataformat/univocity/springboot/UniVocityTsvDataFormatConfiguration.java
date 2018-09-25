@@ -33,6 +33,11 @@ public class UniVocityTsvDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the univocity-tsv data format.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The escape character.
      */
     private String escapeChar = "\\";
@@ -84,7 +89,7 @@ public class UniVocityTsvDataFormatConfiguration
      */
     private String normalizedLineSeparator;
     /**
-     * The comment symbol. The default value is
+     * The comment symbol. The default value is #
      */
     private String comment = "#";
     /**

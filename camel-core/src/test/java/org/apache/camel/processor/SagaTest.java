@@ -30,6 +30,7 @@ import org.apache.camel.impl.saga.InMemorySagaService;
 import org.apache.camel.model.SagaPropagation;
 import org.apache.camel.saga.CamelSagaService;
 import org.junit.Assert;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.equalTo;
@@ -40,6 +41,7 @@ public class SagaTest extends ContextTestSupport {
 
     private CreditService creditService;
 
+    @Test
     public void testCreditExhausted() throws Exception {
         // total credit is 100
         buy(20, false, false);
@@ -51,6 +53,7 @@ public class SagaTest extends ContextTestSupport {
         await().until(() -> creditService.getCredit(), equalTo(5));
     }
 
+    @Test
     public void testTotalCompensation() throws Exception {
         // total credit is 100
         for (int i = 0; i < 10; i++) {

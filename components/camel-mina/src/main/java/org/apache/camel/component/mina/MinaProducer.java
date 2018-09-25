@@ -213,7 +213,7 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
         SocketAddress address = getEndpoint().getAddress();
         connector = getEndpoint().getConnector();
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating connector to address: {} using connector: {} timeout: {} millis.", new Object[]{address, connector, timeout});
+            LOG.debug("Creating connector to address: {} using connector: {} timeout: {} millis.", address, connector, timeout);
         }
         IoHandler ioHandler = new ResponseHandler(getEndpoint());
         // connect and wait until the connection is established

@@ -26,6 +26,7 @@ import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
 /**
  * @version 
@@ -34,6 +35,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
 
     private MyBean bean;
 
+    @Test
     public void testEcho() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("echo Hello World");
@@ -45,6 +47,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
                    mock.getExchanges().get(0).getIn().getHeader(Exchange.BEAN_METHOD_NAME));
     }
     
+    @Test
     public void testEchoWithMethodHeaderHi() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("hi Hello World");
@@ -57,6 +60,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testMixedBeanEndpoints() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("hi hi Hello World");
@@ -69,6 +73,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHi() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("hi Hello World");
@@ -78,6 +83,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFail() throws Exception {
         try {
             template.sendBody("direct:fail", "Hello World");
@@ -89,6 +95,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testMethodNotExists() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -105,6 +112,7 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testMethodNotExistsOnInstance() throws Exception {
         final MyBean myBean = new MyBean();
         try {

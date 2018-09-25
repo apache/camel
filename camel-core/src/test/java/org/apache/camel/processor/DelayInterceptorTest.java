@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Delay interceptor unit test.
@@ -28,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class DelayInterceptorTest extends ContextTestSupport {
 
+    @Test
     public void testDelayer() throws Exception {
         long start = System.currentTimeMillis();
         for (int i = 0; i < 10; i++) {

@@ -18,9 +18,7 @@ package org.apache.camel.component.mybatis.springboot;
 
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Performs a query, poll, insert, update or delete in a relational database
@@ -35,10 +33,15 @@ public class MyBatisComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * To use the SqlSessionFactory
+     * Whether to enable auto configuration of the mybatis component. This is
+     * enabled by default.
      */
-    @NestedConfigurationProperty
-    private SqlSessionFactory sqlSessionFactory;
+    private Boolean enabled;
+    /**
+     * To use the SqlSessionFactory. The option is a
+     * org.apache.ibatis.session.SqlSessionFactory type.
+     */
+    private String sqlSessionFactory;
     /**
      * Location of MyBatis xml configuration file. The default value is:
      * SqlMapConfig.xml loaded from the classpath
@@ -51,11 +54,11 @@ public class MyBatisComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public SqlSessionFactory getSqlSessionFactory() {
+    public String getSqlSessionFactory() {
         return sqlSessionFactory;
     }
 
-    public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
+    public void setSqlSessionFactory(String sqlSessionFactory) {
         this.sqlSessionFactory = sqlSessionFactory;
     }
 

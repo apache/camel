@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty4;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Collection;
@@ -23,7 +22,6 @@ import java.util.Properties;
 
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.util.ResourceLeakDetector;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.converter.IOConverter;

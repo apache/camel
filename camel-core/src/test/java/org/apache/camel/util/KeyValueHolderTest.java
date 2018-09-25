@@ -16,13 +16,15 @@
  */
 package org.apache.camel.util;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class KeyValueHolderTest extends TestCase {
+public class KeyValueHolderTest extends Assert {
 
+    @Test
     public void testKeyValueHolder() {
         KeyValueHolder<String, Integer> foo = new KeyValueHolder<>("foo", 123);
 
@@ -30,6 +32,7 @@ public class KeyValueHolderTest extends TestCase {
         assertEquals(123, foo.getValue().intValue());
     }
 
+    @Test
     public void testEqualsAndHashCodeOnEqualObjects() {
         KeyValueHolder<String, Integer> foo1 = new KeyValueHolder<>("foo", 123);
         KeyValueHolder<String, Integer> foo2 = new KeyValueHolder<>("foo", 123);
@@ -38,6 +41,7 @@ public class KeyValueHolderTest extends TestCase {
         assertTrue("Hash code should be equal", foo1.hashCode() == foo2.hashCode());
     }
 
+    @Test
     public void testEqualsAndHashCodeOnUnequalObjects() {
         KeyValueHolder<String, Integer> foo = new KeyValueHolder<>("foo", 123);
         KeyValueHolder<String, Integer> bar = new KeyValueHolder<>("bar", 678);
@@ -46,6 +50,7 @@ public class KeyValueHolderTest extends TestCase {
         assertFalse("Hash code should not be equal", foo.hashCode() == bar.hashCode());
     }
 
+    @Test
     public void testEqualsAndHashCodeOnUnequalObjectsWithSameKeys() {
         KeyValueHolder<String, Integer> foo1 = new KeyValueHolder<>("foo", 123);
         KeyValueHolder<String, Integer> foo2 = new KeyValueHolder<>("foo", 678);
@@ -54,6 +59,7 @@ public class KeyValueHolderTest extends TestCase {
         assertFalse("Hash code should not be equal", foo1.hashCode() == foo2.hashCode());
     }
 
+    @Test
     public void testEqualsAndHashCodeOnUnequalObjectsWithSameValues() {
         KeyValueHolder<String, Integer> foo = new KeyValueHolder<>("foo", 123);
         KeyValueHolder<String, Integer> bar = new KeyValueHolder<>("bar", 123);
@@ -62,6 +68,7 @@ public class KeyValueHolderTest extends TestCase {
         assertFalse("Hash code should not be equal", foo.hashCode() == bar.hashCode());
     }
 
+    @Test
     public void testToString() {
         KeyValueHolder<String, Integer> foo = new KeyValueHolder<>("foo", 123);
 

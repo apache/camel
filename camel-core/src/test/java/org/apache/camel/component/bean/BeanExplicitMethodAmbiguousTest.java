@@ -21,6 +21,7 @@ import java.io.ByteArrayInputStream;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * @version 
@@ -34,6 +35,7 @@ public class BeanExplicitMethodAmbiguousTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testBeanExplicitMethodAmbiguous() throws Exception {
         try {
             template.requestBody("direct:hello", "Camel");
@@ -44,16 +46,19 @@ public class BeanExplicitMethodAmbiguousTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testBeanExplicitMethodHandler() throws Exception {
         String out = template.requestBody("direct:bye", "Camel", String.class);
         assertEquals("Bye Camel", out);
     }
     
+    @Test
     public void testBeanExplicitMethodInvocationStringBody() throws Exception {
         String out = template.requestBody("direct:foo", "Camel", String.class);
         assertEquals("String", out);
     }
     
+    @Test
     public void testBeanExplicitMethodInvocationInputStreamBody() throws Exception {
         String out = template.requestBody("direct:foo", new ByteArrayInputStream("Camel".getBytes()), String.class);
         assertEquals("InputStream", out);

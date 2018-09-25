@@ -20,9 +20,10 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.LRUCacheFactory;
-import org.apache.camel.util.LRUSoftCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,11 @@ public class BeanComponent extends UriEndpointComponent {
     // use an internal soft cache for BeanInfo as they are costly to introspect
     // for example the bean language using OGNL expression runs much faster reusing the BeanInfo from this cache
     @SuppressWarnings("unchecked")
-    private final LRUSoftCache<BeanInfoCacheKey, BeanInfo> cache = LRUCacheFactory.newLRUSoftCache(1000);
+    private final Map<BeanInfoCacheKey, BeanInfo> beanInfoCache = LRUCacheFactory.newLRUSoftCache(1000);
+
+    @Metadata(label = "advanced", description = "If enabled, Camel will cache the result of the first Registry look-up."
+        + " Cache can be enabled if the bean in the Registry is defined as a singleton scope.")
+    private Boolean cache;
 
     public BeanComponent() {
         super(BeanEndpoint.class);
@@ -50,6 +55,7 @@ public class BeanComponent extends UriEndpointComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         BeanEndpoint endpoint = new BeanEndpoint(uri, this);
         endpoint.setBeanName(remaining);
+        endpoint.setCache(cache);
         setProperties(endpoint, parameters);
 
         // the bean.xxx options is for the bean
@@ -59,18 +65,31 @@ public class BeanComponent extends UriEndpointComponent {
     }
     
     BeanInfo getBeanInfoFromCache(BeanInfoCacheKey key) {
-        return cache.get(key);
+        return beanInfoCache.get(key);
     }
 
     void addBeanInfoToCache(BeanInfoCacheKey key, BeanInfo beanInfo) {
-        cache.put(key, beanInfo);
+        beanInfoCache.put(key, beanInfo);
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Clearing BeanInfo cache[size={}, hits={}, misses={}, evicted={}]", new Object[]{cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted()});
+        if (LOG.isDebugEnabled() && beanInfoCache instanceof LRUCache) {
+            LRUCache cache = (LRUCache) this.beanInfoCache;
+            LOG.debug("Clearing BeanInfo cache[size={}, hits={}, misses={}, evicted={}]", cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted());
         }
-        cache.clear();
+        beanInfoCache.clear();
+    }
+
+    public Boolean getCache() {
+        return cache;
+    }
+
+    /**
+     * If enabled, Camel will cache the result of the first Registry look-up.
+     * Cache can be enabled if the bean in the Registry is defined as a singleton scope.
+     */
+    public void setCache(Boolean cache) {
+        this.cache = cache;
     }
 }

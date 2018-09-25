@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import java.io.File;
 
 import org.apache.camel.StringSource;
 import org.apache.camel.processor.validation.ValidatingProcessor;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test of ValidatingProcessor.
@@ -27,7 +28,8 @@ import org.apache.camel.processor.validation.ValidatingProcessor;
 public class ValidatingProcessorFromSourceTest extends ValidatingProcessorTest {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         File file = new File("src/test/resources/org/apache/camel/processor/ValidatingProcessor.xsd");
@@ -41,6 +43,7 @@ public class ValidatingProcessorFromSourceTest extends ValidatingProcessorTest {
     }
 
     @Override
+    @Test
     public void testValidatingOptions() throws Exception {
         assertNotNull(validating.getErrorHandler());
         assertNotNull(validating.getSchema());

@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
-import junit.framework.TestCase;
 import org.apache.camel.builder.Builder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ValueBuilder;
@@ -29,41 +28,57 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.ErrorHandlerSupport;
 import org.apache.camel.util.PredicateAssertHelper;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Assume;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TestName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A bunch of useful testing methods
  */
-public abstract class TestSupport extends TestCase {
+public abstract class TestSupport extends Assert {
 
     protected static final String LS = System.lineSeparator();
     private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class);
 
-    protected Logger log = LoggerFactory.getLogger(getClass());
-    // Builder methods for expressions used when testing
-    // -------------------------------------------------------------------------
+    @Rule
+    public TestName name = new TestName();
 
-    /**
-     * Runs the bare test sequence only if this platform is supported
-     *
-     * @throws Throwable if any exception is thrown
-     */
+    protected Logger log = LoggerFactory.getLogger(getClass());
+
     @Override
-    public void runBare() throws Throwable {
-        if (canRunOnThisPlatform()) {
-            //start with a clean slate
-            DefaultCamelContext.setContextCounter(0);
-            TestSupportNodeIdFactory.resetCounters();
-            super.runBare();
-            // make sure we cleanup the platform mbean server
-            TestSupportJmxCleanup.removeMBeans(null);
-        }
+    public String toString() {
+        return getName() + "(" + getClass().getName() + ")";
+    }
+
+    public String getName() {
+        return name.getMethodName();
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        //start with a clean slate
+        DefaultCamelContext.setContextCounter(0);
+        TestSupportNodeIdFactory.resetCounters();
+        Assume.assumeTrue(canRunOnThisPlatform());
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        // make sure we cleanup the platform mbean server
+        TestSupportJmxCleanup.removeMBeans(null);
     }
 
     protected boolean canRunOnThisPlatform() {
         return true;
     }
+
+    // Builder methods for expressions used when testing
+    // -------------------------------------------------------------------------
 
     /**
      * Returns a value builder for the given header

@@ -20,6 +20,7 @@ import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Test;
 
 /**
  * @version 
@@ -28,6 +29,7 @@ public class BeanParameterInfoTest extends ContextTestSupport {
 
     protected CamelContext camelContext = new DefaultCamelContext();
 
+    @Test
     public void testMethodPatternUsingMethodAnnotations() throws Exception {
         Class<?> foo = Foo.class.getClass();
         ParameterInfo info = new ParameterInfo(1, foo.getClass(), foo.getAnnotations(), null);

@@ -22,11 +22,13 @@ import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
+import org.junit.Test;
 
 public class ScheduledPollConsumerGreedyTest extends ContextTestSupport {
 
     private final AtomicInteger polled = new AtomicInteger();
 
+    @Test
     public void test321Greedy() throws Exception {
         polled.set(0);
 
@@ -55,6 +57,7 @@ public class ScheduledPollConsumerGreedyTest extends ContextTestSupport {
         consumer.stop();
     }
 
+    @Test
     public void test321NotGreedy() throws Exception {
         polled.set(0);
 

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -23,6 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -32,11 +33,13 @@ public class FromFileDoNotDeleteFileIfProcessFailsTest extends ContextTestSuppor
     private String body = "Hello World this file will NOT be deleted";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/deletefile");
         super.setUp();
     }
 
+    @Test
     public void testPollFileAndShouldNotBeDeleted() throws Exception {
         template.sendBodyAndHeader("file://target/deletefile", body, Exchange.FILE_NAME, "hello.txt");
 

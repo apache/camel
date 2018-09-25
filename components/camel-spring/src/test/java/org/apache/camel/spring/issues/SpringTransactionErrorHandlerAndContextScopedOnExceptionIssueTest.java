@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.issues;
-
 import javax.sql.DataSource;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -31,7 +32,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest extends SpringTestSupport {
     protected JdbcTemplate jdbc;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         // create database and insert dummy data
@@ -44,6 +46,7 @@ public class SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest e
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest.xml");
     }
 
+    @Test
     public void testSpringTXOnExceptionIssueCommit() throws Exception {
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals("Number of books", 1, count);
@@ -61,6 +64,7 @@ public class SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest e
         assertEquals("Number of books", 2, count);
     }
 
+    @Test
     public void testSpringTXOnExceptionIssueRollback() throws Exception {
         int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals("Number of books", 1, count);

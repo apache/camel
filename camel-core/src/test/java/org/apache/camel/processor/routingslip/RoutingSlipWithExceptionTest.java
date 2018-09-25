@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.routingslip;
-
 import java.util.concurrent.TimeUnit;
 
 import javax.naming.Context;
@@ -26,6 +25,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Before;
+import org.junit.Test;
 
 public class RoutingSlipWithExceptionTest extends ContextTestSupport {
 
@@ -37,6 +38,7 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
     private MockEndpoint exceptionSettingEndpoint;
     private MockEndpoint aEndpoint;
 
+    @Test
     public void testNoException() throws Exception {
         endEndpoint.expectedMessageCount(1);
         exceptionEndpoint.expectedMessageCount(0);
@@ -47,6 +49,7 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
         assertEndpointsSatisfied();
     }
 
+    @Test
     public void testWithExceptionThrowingComponentFirstInList() throws Exception {
         endEndpoint.expectedMessageCount(0);
         exceptionEndpoint.expectedMessageCount(1);
@@ -57,6 +60,7 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
         assertEndpointsSatisfied();
     }
 
+    @Test
     public void testWithExceptionThrowingComponentSecondInList() throws Exception {
         endEndpoint.expectedMessageCount(0);
         exceptionEndpoint.expectedMessageCount(1);
@@ -67,6 +71,7 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
         assertEndpointsSatisfied();
     }
 
+    @Test
     public void testWithExceptionSettingComponentFirstInList() throws Exception {
         endEndpoint.expectedMessageCount(0);
         exceptionEndpoint.expectedMessageCount(1);
@@ -77,6 +82,7 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
         assertEndpointsSatisfied();
     }
 
+    @Test
     public void testWithExceptionSettingComponentSecondInList() throws Exception {
         endEndpoint.expectedMessageCount(0);
         exceptionEndpoint.expectedMessageCount(1);
@@ -118,7 +124,8 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         endEndpoint = resolveMandatoryEndpoint("mock:noexception", MockEndpoint.class);

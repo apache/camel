@@ -61,7 +61,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Exception caught at Channel: " + ctx.channel(), cause);
+            LOG.trace("Exception caught at Channel: {}", ctx.channel(), cause);
         }
 
         if (exceptionHandled) {
@@ -126,7 +126,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
                 // and could not return a response. We should count down to stop waiting for a response
                 String address = configuration.getAddress();
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Channel closed but no message received from address: {}", address);
+                    LOG.debug("Channel is inactive but no message received from address: {}", address);
                 }
                 // don't fail the exchange if we actually specify to disconnect
                 if (!configuration.isDisconnect()) {
@@ -233,7 +233,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
         Object body = message;
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Channel: {} received body: {}", new Object[]{ctx.channel(), body});
+            LOG.debug("Channel: {} received body: {}", ctx.channel(), body);
         }
 
         // if textline enabled then covert to a String which must be used for textline

@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.util.Collections;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
@@ -34,7 +35,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
  * @version 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class NoOutputExpressionNode extends ExpressionNode {
+public abstract class NoOutputExpressionNode extends ExpressionNode {
 
     public NoOutputExpressionNode() {
     }

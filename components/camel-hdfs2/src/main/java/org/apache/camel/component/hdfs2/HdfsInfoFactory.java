@@ -17,6 +17,7 @@
 package org.apache.camel.component.hdfs2;
 
 import java.io.IOException;
+
 import javax.security.auth.login.Configuration;
 
 public final class HdfsInfoFactory {

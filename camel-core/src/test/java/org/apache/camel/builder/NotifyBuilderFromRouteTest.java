@@ -26,12 +26,14 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class NotifyBuilderFromRouteTest extends ContextTestSupport {
 
+    @Test
     public void testDoneFromRoute() throws Exception {
         // notify when exchange is done
         NotifyBuilder builder =

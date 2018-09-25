@@ -26,6 +26,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.InterceptStrategy;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +66,7 @@ public class SplitWithInterceptorTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testSplitOne() throws Exception {
         interceptStrategy.reset();
 
@@ -77,6 +79,7 @@ public class SplitWithInterceptorTest extends ContextTestSupport {
         assertEquals("Done method shall be called only once", 1, MyInterceptStrategy.doneCount);
     }
 
+    @Test
     public void testSplitTwo() throws Exception {
         interceptStrategy.reset();
 

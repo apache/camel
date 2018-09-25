@@ -21,6 +21,7 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Test;
 
 /**
  * @version
@@ -29,6 +30,7 @@ public class SimpleBuilderTest extends TestSupport {
 
     protected Exchange exchange = new DefaultExchange(new DefaultCamelContext());
 
+    @Test
     public void testPredicate() throws Exception {
         exchange.getIn().setBody("foo");
 
@@ -36,6 +38,7 @@ public class SimpleBuilderTest extends TestSupport {
         assertFalse(SimpleBuilder.simple("${body} == 'bar'").matches(exchange));
     }
 
+    @Test
     public void testExpression() throws Exception {
         exchange.getIn().setBody("foo");
 
@@ -43,6 +46,7 @@ public class SimpleBuilderTest extends TestSupport {
         assertNull(SimpleBuilder.simple("${header.cheese}").evaluate(exchange, String.class));
     }
 
+    @Test
     public void testFormatExpression() throws Exception {
         exchange.getIn().setHeader("head", "foo");
 
@@ -50,12 +54,14 @@ public class SimpleBuilderTest extends TestSupport {
         assertNull(SimpleBuilder.simple("${header.cheese}").evaluate(exchange, String.class));
     }
 
+    @Test
     public void testFormatExpressionWithResultType() throws Exception {
         exchange.getIn().setHeader("head", "200");
 
         assertEquals(200, SimpleBuilder.simpleF("${header.%s}", Integer.class, "head").evaluate(exchange, Object.class));
     }
 
+    @Test
     public void testResultType() throws Exception {
         exchange.getIn().setBody("foo");
         exchange.getIn().setHeader("cool", true);
@@ -83,6 +89,7 @@ public class SimpleBuilderTest extends TestSupport {
         assertEquals(11, SimpleBuilder.simple("11", int.class).evaluate(exchange, Object.class));
     }
 
+    @Test
     public void testRegexAllWithPlaceHolders() {
         exchange.getIn().setHeader("activateUrl", "http://some/rest/api/(id)/activate");
         assertEquals("http://some/rest/api/12/activate", SimpleBuilder.simple("${header.activateUrl.replaceAll(\"\\(id\\)\",\"12\")}").evaluate(exchange, String.class));

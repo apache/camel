@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
@@ -31,6 +32,7 @@ public class PropertiesComponentEndpointTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testPropertiesComponentEndpoint() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -47,6 +49,7 @@ public class PropertiesComponentEndpointTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPropertiesComponentEndpoints() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -65,6 +68,7 @@ public class PropertiesComponentEndpointTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPropertiesComponentMandatory() throws Exception {
         context.removeComponent("properties");
         try {

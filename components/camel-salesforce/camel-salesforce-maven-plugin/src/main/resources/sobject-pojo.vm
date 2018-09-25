@@ -128,6 +128,25 @@ public class $desc.Name extends AbstractDescribedSObjectBase {
         this.$propertyName = $propertyName;
     }
 
+#if ( $utility.isLookup($field) )## IS LOOKUP
+#foreach ( $reference in $field.getReferenceTo() )## REFERENCE LOOP
+#foreach ( $externalIds in $utility.externalIdsOf($reference) )## EXTERNAL ID LOOP
+#set( $relationshipAsFieldName = $field.getRelationshipName() )
+#set( $lookupObjectType = $reference )
+    private ${lookupObjectType}_Lookup $relationshipAsFieldName;
+
+    @JsonProperty("$relationshipAsFieldName")
+    public ${lookupObjectType}_Lookup get$relationshipAsFieldName() {
+        return this.$relationshipAsFieldName;
+    }
+
+    @JsonProperty("$relationshipAsFieldName")
+    public void set$relationshipAsFieldName(${lookupObjectType}_Lookup $relationshipAsFieldName) {
+        this.$relationshipAsFieldName = $relationshipAsFieldName;
+    }
+#end## END REFERENCE LOOP
+#end## END EXTERNAL ID LOOP
+#end## END IS LOOKUP
 #end
 #end
 

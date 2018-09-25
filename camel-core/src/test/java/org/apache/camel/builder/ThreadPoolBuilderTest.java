@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * @version 
@@ -38,6 +39,7 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testThreadPoolBuilderDefault() throws Exception {
         ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
         ExecutorService executor = builder.build(this, "myPool");
@@ -48,6 +50,7 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         assertEquals(true, executor.isShutdown());
     }
 
+    @Test
     public void testThreadPoolBuilderMaxQueueSize() throws Exception {
         ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
         ExecutorService executor = builder.maxQueueSize(2000).build(this, "myPool");
@@ -58,6 +61,7 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         assertEquals(true, executor.isShutdown());
     }
 
+    @Test
     public void testThreadPoolBuilderMax() throws Exception {
         ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
         ExecutorService executor = builder.maxPoolSize(100).build(this, "myPool");
@@ -68,6 +72,7 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         assertEquals(true, executor.isShutdown());
     }
 
+    @Test
     public void testThreadPoolBuilderCoreAndMax() throws Exception {
         ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
         ExecutorService executor = builder.poolSize(50).maxPoolSize(100).build(this, "myPool");
@@ -78,6 +83,7 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         assertEquals(true, executor.isShutdown());
     }
 
+    @Test
     public void testThreadPoolBuilderKeepAlive() throws Exception {
         ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
         ExecutorService executor = builder.keepAliveTime(30).build(this, "myPool");
@@ -88,6 +94,7 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         assertEquals(true, executor.isShutdown());
     }
 
+    @Test
     public void testThreadPoolBuilderKeepAliveTimeUnit() throws Exception {
         ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
         ExecutorService executor = builder.keepAliveTime(20000, TimeUnit.MILLISECONDS).build(this, "myPool");
@@ -98,6 +105,7 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         assertEquals(true, executor.isShutdown());
     }
 
+    @Test
     public void testThreadPoolBuilderAll() throws Exception {
         ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
         ExecutorService executor = builder.poolSize(50).maxPoolSize(100).maxQueueSize(2000)
@@ -111,6 +119,7 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         assertEquals(true, executor.isShutdown());
     }
 
+    @Test
     public void testThreadPoolBuilderTwoPoolsDefault() throws Exception {
         ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
         ExecutorService executor = builder.build(this, "myPool");
@@ -126,6 +135,7 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         assertEquals(true, executor2.isShutdown());
     }
 
+    @Test
     public void testThreadPoolBuilderScheduled() throws Exception {
         ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
         ScheduledExecutorService executor = builder.poolSize(5).maxQueueSize(2000)
@@ -137,6 +147,7 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         assertEquals(true, executor.isShutdown());
     }
 
+    @Test
     public void testThreadPoolBuilderScheduledName() throws Exception {
         ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
         ScheduledExecutorService executor = builder.poolSize(5).maxQueueSize(2000)
@@ -149,6 +160,7 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
     }
 
 
+    @Test
     public void testThreadPoolBuilderScheduledSourceName() throws Exception {
         ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
         ScheduledExecutorService executor = builder.poolSize(5).maxQueueSize(2000)

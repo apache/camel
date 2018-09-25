@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ExpressionAdapter;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -56,6 +57,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
         
     }
 
+    @Test
     public void testUseConstant() throws Exception {
         MyValueClass value = new MyValueClass("value1", "value2");
         context.addRoutes(new RouteBuilder() {
@@ -75,6 +77,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testUseConstantParameter() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
@@ -89,6 +92,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testUseExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
@@ -105,6 +109,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testUseHeaderExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
@@ -119,6 +124,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testUseHeaderXpathExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
@@ -133,6 +139,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testUseBodyExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
@@ -147,6 +154,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testUseBodyAsTypeExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
@@ -162,7 +170,8 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         expected = getMockEndpoint("mock:result");

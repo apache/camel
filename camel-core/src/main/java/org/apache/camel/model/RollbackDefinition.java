@@ -57,6 +57,11 @@ public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
     }
 
     @Override
+    public String getShortName() {
+        return "rollback";
+    }
+
+    @Override
     public String getLabel() {
         return "rollback";
     }

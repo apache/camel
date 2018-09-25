@@ -98,7 +98,7 @@ public class SimpleBuilder implements Predicate, Expression {
             // resolve property placeholders
             String resolve = exchange.getContext().resolvePropertyPlaceholders(text);
             // and optional it be refer to an external script on the file/classpath
-            resolve = ResourceHelper.resolveOptionalExternalScript(exchange.getContext(), resolve);
+            resolve = ResourceHelper.resolveOptionalExternalScript(exchange.getContext(), exchange, resolve);
             return simple.createPredicate(resolve);
         } catch (Exception e) {
             throw ObjectHelper.wrapCamelExecutionException(exchange, e);
@@ -111,7 +111,7 @@ public class SimpleBuilder implements Predicate, Expression {
             // resolve property placeholders
             String resolve = exchange.getContext().resolvePropertyPlaceholders(text);
             // and optional it be refer to an external script on the file/classpath
-            resolve = ResourceHelper.resolveOptionalExternalScript(exchange.getContext(), resolve);
+            resolve = ResourceHelper.resolveOptionalExternalScript(exchange.getContext(), exchange, resolve);
             return simple.createExpression(resolve, resultType);
         } catch (Exception e) {
             throw ObjectHelper.wrapCamelExecutionException(exchange, e);

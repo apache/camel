@@ -15,16 +15,19 @@
  * limitations under the License.
  */
 package org.apache.camel.component.wordpress.api.service.impl;
-
 import java.util.List;
+
+import org.apache.camel.component.wordpress.api.auth.WordpressBasicAuthentication;
 import org.apache.camel.component.wordpress.api.model.Content;
 import org.apache.camel.component.wordpress.api.model.Format;
 import org.apache.camel.component.wordpress.api.model.Post;
 import org.apache.camel.component.wordpress.api.model.PostSearchCriteria;
 import org.apache.camel.component.wordpress.api.service.WordpressServicePosts;
 import org.apache.camel.component.wordpress.api.test.WordpressMockServerTestSupport;
+import org.apache.camel.component.wordpress.api.test.WordpressServerHttpRequestHandler;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -39,6 +42,7 @@ public class WordpressServicePostsAdapterTest extends WordpressMockServerTestSup
     @BeforeClass
     public static void before() {
         servicePosts = serviceProvider.getService(WordpressServicePosts.class);
+        servicePosts.setWordpressAuthentication(new WordpressBasicAuthentication(WordpressServerHttpRequestHandler.USERNAME, WordpressServerHttpRequestHandler.PASSWORD));
     }
 
     @Test

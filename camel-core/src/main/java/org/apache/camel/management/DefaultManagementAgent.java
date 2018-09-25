@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
@@ -50,6 +51,7 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -429,7 +431,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             try {
                 unregister(name);
             } catch (Exception e) {
-                LOG.info("Exception unregistering MBean with name " + name, e);
+                LOG.info("Exception unregistering MBean with name {}", name, e);
                 caught++;
             }
         }
@@ -493,7 +495,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
                     hostName = InetAddressUtil.getLocalHostName();
                 }
             } catch (UnknownHostException uhe) {
-                LOG.info("Cannot determine localhost name or address. Using default: " + DEFAULT_REGISTRY_PORT, uhe);
+                LOG.info("Cannot determine localhost name or address. Using default: {}", DEFAULT_REGISTRY_PORT, uhe);
                 hostName = DEFAULT_HOST;
             }
         } else {
@@ -535,7 +537,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     }
 
     protected void createJmxConnector(String host) throws IOException {
-        ObjectHelper.notEmpty(serviceUrlPath, "serviceUrlPath");
+        StringHelper.notEmpty(serviceUrlPath, "serviceUrlPath");
         ObjectHelper.notNull(registryPort, "registryPort");
 
         try {

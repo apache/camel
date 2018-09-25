@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -162,6 +163,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     
     protected String description() {
         return getExpression() != null ? getExpression().getLabel() : "";
+    }
+
+    @Override
+    public String getShortName() {
+        return "aggregate";
     }
 
     @Override

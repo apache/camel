@@ -21,12 +21,14 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.interceptor.Tracer;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class TracerConfigurationTest extends ContextTestSupport {
 
+    @Test
     public void testTracerConfiguration() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

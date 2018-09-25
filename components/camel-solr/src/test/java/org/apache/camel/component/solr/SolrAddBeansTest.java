@@ -20,10 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.solr.client.solrj.beans.Field;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("Need refactoring in SolrComponentTestSupport, with new schema and solr-config from solr 5.2.1 and new Cloud Solr cluster instantiation")
 public class SolrAddBeansTest extends SolrComponentTestSupport {
 
     public SolrAddBeansTest(SolrFixtures.TestServerType serverToTest) {

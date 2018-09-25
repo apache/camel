@@ -59,6 +59,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.rest.swagger.RestSwaggerHelper.isHostParam;
 import static org.apache.camel.component.rest.swagger.RestSwaggerHelper.isMediaRange;
@@ -74,6 +76,8 @@ import static org.apache.camel.util.StringHelper.notEmpty;
 @UriEndpoint(firstVersion = "2.19.0", scheme = "rest-swagger", title = "REST Swagger",
     syntax = "rest-swagger:specificationUri#operationId", label = "rest,swagger,http", producerOnly = true)
 public final class RestSwaggerEndpoint extends DefaultEndpoint {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RestSwaggerEndpoint.class);
 
     /**
      * Remaining parameters specified in the Endpoint URI.
@@ -329,10 +333,12 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
             parameters.put("host", host);
         }
 
+        final RestSwaggerComponent component = component();
+
         // what we consume is what the API defined by Swagger specification
         // produces
         final String determinedConsumes = determineOption(swagger.getProduces(), operation.getProduces(),
-            component().getConsumes(), consumes);
+            component.getConsumes(), consumes);
 
         if (isNotEmpty(determinedConsumes)) {
             parameters.put("consumes", determinedConsumes);
@@ -341,7 +347,7 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         // what we produce is what the API defined by Swagger specification
         // consumes
         final String determinedProducers = determineOption(swagger.getConsumes(), operation.getConsumes(),
-            component().getProduces(), produces);
+            component.getProduces(), produces);
 
         if (isNotEmpty(determinedProducers)) {
             parameters.put("produces", determinedProducers);
@@ -351,6 +357,26 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
             .map(this::queryParameter).collect(Collectors.joining("&"));
         if (isNotEmpty(queryParameters)) {
             parameters.put("queryParameters", queryParameters);
+        }
+
+        // pass properties that might be applied if the delegate component is created, i.e. if it's not
+        // present in the Camel Context already
+        final Map<String, Object> componentParameters = new HashMap<>();
+
+        if (component.isUseGlobalSslContextParameters()) {
+            // by default it's false
+            componentParameters.put("useGlobalSslContextParameters", component.isUseGlobalSslContextParameters());
+        }
+        if (component.getSslContextParameters() != null) {
+            componentParameters.put("sslContextParameters", component.getSslContextParameters());
+        }
+
+        if (!componentParameters.isEmpty()) {
+            final Map<Object, Object> nestedParameters = new HashMap<>();
+            nestedParameters.put("component", componentParameters);
+
+            // we're trying to set RestEndpoint.parameters['component']
+            parameters.put("parameters", nestedParameters);
         }
 
         return parameters;

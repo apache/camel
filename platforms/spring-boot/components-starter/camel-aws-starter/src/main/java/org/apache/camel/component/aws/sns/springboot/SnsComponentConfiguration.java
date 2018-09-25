@@ -34,6 +34,11 @@ public class SnsComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the aws-sns component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The AWS SNS default configuration
      */
     private SnsConfigurationNestedConfiguration configuration;
@@ -133,8 +138,17 @@ public class SnsComponentConfiguration
          * The message structure to use such as json
          */
         private String messageStructure;
+        /**
+         * To define a proxy host when instantiating the SNS client
+         */
         private String proxyHost;
+        /**
+         * To define a proxy port when instantiating the SNS client
+         */
         private Integer proxyPort;
+        /**
+         * The region in which SNS client needs to work
+         */
         private String region;
 
         public String getSubject() {

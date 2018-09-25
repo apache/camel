@@ -23,6 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
@@ -33,6 +34,7 @@ public class PendingExchangesTwoRouteShutdownGracefulTest extends ContextTestSup
     private static String bar = "";
     private static CountDownLatch latch = new CountDownLatch(2);
 
+    @Test
     public void testShutdownGraceful() throws Exception {
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(1);
         getMockEndpoint("mock:bar").expectedMinimumMessageCount(1);

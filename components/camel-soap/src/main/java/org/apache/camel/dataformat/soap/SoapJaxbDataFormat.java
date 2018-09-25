@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.xml.bind.JAXBContext;
@@ -212,7 +213,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         for (Object bodyObj : bodyParts) {
             QName name = elementNameStrategy.findQNameForSoapActionOrType(soapAction, bodyObj.getClass());
             if (name == null) {
-                LOG.warn("Could not find QName for class " + bodyObj.getClass().getName());
+                LOG.warn("Could not find QName for class {}", bodyObj.getClass().getName());
                 continue;
             } else {
                 bodyElements.add(getElement(bodyObj, name));
@@ -222,7 +223,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         for (Object headerObj : headerParts) {
             QName name = elementNameStrategy.findQNameForSoapActionOrType(soapAction, headerObj.getClass());
             if (name == null) {
-                LOG.warn("Could not find QName for class " + headerObj.getClass().getName());
+                LOG.warn("Could not find QName for class {}", headerObj.getClass().getName());
                 continue;
             } else {
                 JAXBElement<?> headerElem = getElement(headerObj, name);

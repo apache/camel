@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregator;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -29,6 +28,8 @@ import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * To test CAMEL-4037 that a restart of aggregator can re-initialize the timeout map
@@ -45,11 +46,13 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         executorService = Executors.newSingleThreadExecutor();
     }
 
+    @Test
     public void testAggregateProcessorTimeoutRestart() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+B");
@@ -93,6 +96,7 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
         ap.shutdown();
     }
 
+    @Test
     public void testAggregateProcessorTimeoutExpressionRestart() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+B");
@@ -138,6 +142,7 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
         ap.shutdown();
     }
 
+    @Test
     public void testAggregateProcessorTwoTimeoutExpressionRestart() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("C+D", "A+B");

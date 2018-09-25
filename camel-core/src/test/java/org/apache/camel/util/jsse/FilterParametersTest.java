@@ -21,9 +21,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
+import org.junit.Test;
 
 public class FilterParametersTest extends AbstractJsseParametersTest {
     
+    @Test
     public void testPropertyPlaceholders() throws Exception {
         CamelContext context = this.createPropertiesPlaceholderAwareContext();
         
@@ -50,6 +52,7 @@ public class FilterParametersTest extends AbstractJsseParametersTest {
         assertTrue(excludeMatcher.matches());
     }
     
+    @Test
     public void testGetIncludePatterns() {
         FilterParameters filter = new FilterParameters();
         filter.getInclude().add("asdfsadfsadfsadf");
@@ -69,6 +72,7 @@ public class FilterParametersTest extends AbstractJsseParametersTest {
         assertTrue(matcher.matches());
     }
     
+    @Test
     public void testGetExcludePatterns() {
         FilterParameters filter = new FilterParameters();
         filter.getExclude().add("asdfsadfsadfsadf");
@@ -88,6 +92,7 @@ public class FilterParametersTest extends AbstractJsseParametersTest {
         assertTrue(matcher.matches());
     }
     
+    @Test
     public void test() {
         FilterParameters filter = new FilterParameters();
         filter.getInclude().add("asdf.*");

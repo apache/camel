@@ -18,6 +18,7 @@ package org.apache.camel.component.log;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -28,6 +29,7 @@ public class SpringLogMarkerTest extends SpringTestSupport {
     protected Object expectedBody = "Hello there!";
     protected String uri = "direct:start";
 
+    @Test
     public void testSendingCamelExchangeToEndpointResultsInValidApplicationEventAfterTheRefreshEvent() throws Exception {
         MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         result.expectedMessageCount(1);

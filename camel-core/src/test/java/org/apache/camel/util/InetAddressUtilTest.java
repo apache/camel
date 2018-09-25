@@ -18,13 +18,15 @@ package org.apache.camel.util;
 
 import java.net.UnknownHostException;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class InetAddressUtilTest extends TestCase {
+public class InetAddressUtilTest extends Assert {
 
+    @Test
     public void testGetLocalHostName() throws Exception {
         try {
             String name = InetAddressUtil.getLocalHostName();

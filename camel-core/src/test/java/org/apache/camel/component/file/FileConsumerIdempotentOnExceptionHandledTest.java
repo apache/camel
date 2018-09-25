@@ -15,19 +15,22 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
 public class FileConsumerIdempotentOnExceptionHandledTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/messages/input");
         super.setUp();
     }
 
+    @Test
     public void testIdempotent() throws Exception {
         getMockEndpoint("mock:invalid").expectedMessageCount(1);
 

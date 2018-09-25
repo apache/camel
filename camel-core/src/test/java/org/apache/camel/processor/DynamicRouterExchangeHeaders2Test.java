@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Header;
 import org.apache.camel.Headers;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
@@ -34,6 +35,7 @@ public class DynamicRouterExchangeHeaders2Test extends ContextTestSupport {
     private static List<String> bodies = new ArrayList<>();
     private static List<String> previouses = new ArrayList<>();
 
+    @Test
     public void testDynamicRouter() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:a").expectedHeaderReceived("invoked", 1);

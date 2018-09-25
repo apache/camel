@@ -23,6 +23,7 @@ import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
@@ -34,6 +35,7 @@ public class MultipleConsumersSupportTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testNotMultipleConsumersSupport() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -57,6 +59,7 @@ public class MultipleConsumersSupportTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testYesMultipleConsumersSupport() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

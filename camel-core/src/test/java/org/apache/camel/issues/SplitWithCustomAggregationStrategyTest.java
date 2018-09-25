@@ -21,12 +21,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class SplitWithCustomAggregationStrategyTest extends ContextTestSupport {
 
+    @Test
     public void testSplitWithCustomAggregatorStrategy() throws Exception {
         int files = 10;
         MockEndpoint mock = getMockEndpoint("mock:result");

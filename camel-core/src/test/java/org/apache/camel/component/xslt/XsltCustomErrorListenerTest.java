@@ -25,6 +25,7 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
+import org.junit.Test;
 
 /**
  *
@@ -67,6 +68,7 @@ public class XsltCustomErrorListenerTest extends TestSupport {
         }
     }
 
+    @Test
     public void testErrorListener() throws Exception {
         try {
             SimpleRegistry registry = new SimpleRegistry();

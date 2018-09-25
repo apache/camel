@@ -53,7 +53,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Jetty 9 component supports 33 options which are listed below.
+The Jetty 9 component supports 33 options, which are listed below.
 
 
 
@@ -185,7 +185,53 @@ with the following path and query parameters:
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
 
+
+The component supports 34 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.jetty.allow-java-serialized-object* | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | Boolean
+| *camel.component.jetty.continuation-timeout* | Allows to set a timeout in millis when using Jetty as consumer (server). By default Jetty uses 30000. You can use a value of = 0 to never expire. If a timeout occurs then the request will be expired and Jetty will return back a http error 503 to the client. This option is only in use when using Jetty with the Asynchronous Routing Engine. | 30000 | Long
+| *camel.component.jetty.enable-jmx* | If this option is true, Jetty JMX support will be enabled for this endpoint. | false | Boolean
+| *camel.component.jetty.enabled* | Enable jetty component | true | Boolean
+| *camel.component.jetty.error-handler* | This option is used to set the ErrorHandler that Jetty server uses. The option is a org.eclipse.jetty.server.handler.ErrorHandler type. |  | String
+| *camel.component.jetty.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
+| *camel.component.jetty.http-binding* | Not to be used - use JettyHttpBinding instead. The option is a org.apache.camel.http.common.HttpBinding type. |  | String
+| *camel.component.jetty.http-client-max-threads* | To set a value for maximum number of threads in HttpClient thread pool. Notice that both a min and max size must be configured. |  | Integer
+| *camel.component.jetty.http-client-min-threads* | To set a value for minimum number of threads in HttpClient thread pool. Notice that both a min and max size must be configured. |  | Integer
+| *camel.component.jetty.http-configuration* | Jetty component does not use HttpConfiguration. The option is a org.apache.camel.http.common.HttpConfiguration type. |  | String
+| *camel.component.jetty.jetty-http-binding* | To use a custom org.apache.camel.component.jetty.JettyHttpBinding, which are used to customize how a response should be written for the producer. The option is a org.apache.camel.component.jetty.JettyHttpBinding type. |  | String
+| *camel.component.jetty.keystore* | Specifies the location of the Java keystore file, which contains the Jetty server's own X.509 certificate in a key entry. |  | String
+| *camel.component.jetty.max-threads* | To set a value for maximum number of threads in server thread pool. Notice that both a min and max size must be configured. |  | Integer
+| *camel.component.jetty.mb-container* | To use a existing configured org.eclipse.jetty.jmx.MBeanContainer if JMX is enabled that Jetty uses for registering mbeans. The option is a org.eclipse.jetty.jmx.MBeanContainer type. |  | String
+| *camel.component.jetty.min-threads* | To set a value for minimum number of threads in server thread pool. Notice that both a min and max size must be configured. |  | Integer
+| *camel.component.jetty.proxy-host* | To use a http proxy to configure the hostname. |  | String
+| *camel.component.jetty.proxy-port* | To use a http proxy to configure the port number. |  | Integer
+| *camel.component.jetty.request-buffer-size* | Allows to configure a custom value of the request buffer size on the Jetty connectors. |  | Integer
+| *camel.component.jetty.request-header-size* | Allows to configure a custom value of the request header size on the Jetty connectors. |  | Integer
+| *camel.component.jetty.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.jetty.response-buffer-size* | Allows to configure a custom value of the response buffer size on the Jetty connectors. |  | Integer
+| *camel.component.jetty.response-header-size* | Allows to configure a custom value of the response header size on the Jetty connectors. |  | Integer
+| *camel.component.jetty.send-server-version* | If the option is true, jetty server will send the date header to the client which sends the request. NOTE please make sure there is no any other camel-jetty endpoint is share the same port, otherwise this option may not work as expected. | true | Boolean
+| *camel.component.jetty.socket-connector-properties* | A map which contains general HTTP connector properties. Uses the same principle as sslSocketConnectorProperties. The option is a java.util.Map<java.lang.String,java.lang.Object> type. |  | String
+| *camel.component.jetty.socket-connectors* | A map which contains per port number specific HTTP connectors. Uses the same principle as sslSocketConnectors. The option is a java.util.Map<java.lang.Integer,org.eclipse.jetty.server.Connector> type. |  | String
+| *camel.component.jetty.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.util.jsse.SSLContextParameters type. |  | String
+| *camel.component.jetty.ssl-key-password* | The key password, which is used to access the certificate's key entry in the keystore (this is the same password that is supplied to the keystore command's -keypass option). |  | String
+| *camel.component.jetty.ssl-password* | The ssl password, which is required to access the keystore file (this is the same password that is supplied to the keystore command's -storepass option). |  | String
+| *camel.component.jetty.ssl-socket-connector-properties* | A map which contains general SSL connector properties. The option is a java.util.Map<java.lang.String,java.lang.Object> type. |  | String
+| *camel.component.jetty.ssl-socket-connectors* | A map which contains per port number specific SSL connectors. The option is a java.util.Map<java.lang.Integer,org.eclipse.jetty.server.Connector> type. |  | String
+| *camel.component.jetty.thread-pool* | To use a custom thread pool for the server. This option should only be used in special circumstances. The option is a org.eclipse.jetty.util.thread.ThreadPool type. |  | String
+| *camel.component.jetty.use-continuation* | Whether or not to use Jetty continuations for the Jetty Server. | true | Boolean
+| *camel.component.jetty.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters | false | Boolean
+| *camel.component.jetty.use-x-forwarded-for-header* | To use the X-Forwarded-For header in HttpServletRequest.getRemoteAddr. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
 
 
 

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mongodb;
-
 import java.util.Formatter;
 
 import com.mongodb.BasicDBObject;
@@ -30,6 +29,7 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.junit.After;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -68,6 +68,7 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         testCollection.drop();
         dynamicCollection.drop();

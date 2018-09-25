@@ -43,6 +43,19 @@ public class RestUndertowHttpOptionsTest extends BaseUndertowTest {
         assertEquals("", exchange.getIn().getBody(String.class));
     }
 
+    @Test
+    public void testMultipleHttpOptions() {
+        Exchange exchange = template.request("undertow:http://localhost:" + getPort() + "/users/v1/options", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS");
+            }
+        });
+        assertEquals(200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("GET,POST,OPTIONS", exchange.getOut().getHeader("ALLOW"));
+        assertEquals("", exchange.getOut().getBody(String.class));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -56,7 +69,11 @@ public class RestUndertowHttpOptionsTest extends BaseUndertowTest {
                     .get("v1/customers")
                         .to("mock:customers")
                     .put("v1/{id}")
-                        .to("mock:id");
+                        .to("mock:id")
+                    .get("v1/options")
+                        .to("mock:options")
+                    .post("v1/options")
+                        .to("mock:options");
             }
         };
     }

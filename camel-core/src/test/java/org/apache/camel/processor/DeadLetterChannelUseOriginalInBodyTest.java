@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Unit test for useOriginalnBody option on DeadLetterChannel
@@ -30,6 +31,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class DeadLetterChannelUseOriginalInBodyTest extends ContextTestSupport {
 
+    @Test
     public void testUseOriginalnBody() throws Exception {
         MockEndpoint dead = getMockEndpoint("mock:a");
         dead.expectedBodiesReceived("Hello");
@@ -39,6 +41,7 @@ public class DeadLetterChannelUseOriginalInBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testDoNotUseOriginalInBody() throws Exception {
         MockEndpoint dead = getMockEndpoint("mock:b");
         dead.expectedBodiesReceived("Hello World");

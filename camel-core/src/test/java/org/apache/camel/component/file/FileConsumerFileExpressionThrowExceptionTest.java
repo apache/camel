@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -27,6 +26,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
@@ -41,7 +42,8 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
     private static final CountDownLatch LATCH = new CountDownLatch(1);
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/filelanguage");
         super.setUp();
     }
@@ -59,6 +61,7 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
         return jndi;
     }
 
+    @Test
     public void testConsumeExpressionThrowException() throws Exception {
         template.sendBodyAndHeader("file://target/filelanguage/bean", "Bye World", Exchange.FILE_NAME, "123.txt");
 

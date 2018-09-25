@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -38,6 +39,14 @@ public final class CamelJmsTestHelper {
 
     public static PooledConnectionFactory createPooledConnectionFactory() {
         ConnectionFactory cf = createConnectionFactory(null, null);
+        PooledConnectionFactory pooled = new PooledConnectionFactory();
+        pooled.setConnectionFactory(cf);
+        pooled.setMaxConnections(8);
+        return pooled;
+    }
+
+    public static PooledConnectionFactory createPooledPersistentConnectionFactory() {
+        ConnectionFactory cf = createPersistentConnectionFactory();
         PooledConnectionFactory pooled = new PooledConnectionFactory();
         pooled.setConnectionFactory(cf);
         pooled.setMaxConnections(8);

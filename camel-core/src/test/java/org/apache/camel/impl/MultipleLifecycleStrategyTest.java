@@ -24,6 +24,7 @@ import org.apache.camel.Component;
 import org.apache.camel.TestSupport;
 import org.apache.camel.component.log.LogComponent;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
 /**
  * @version 
@@ -40,6 +41,7 @@ public class MultipleLifecycleStrategyTest extends TestSupport {
         return context;
     }
 
+    @Test
     public void testMultipleLifecycleStrategies() throws Exception {
         CamelContext context = createCamelContext();
         context.start();

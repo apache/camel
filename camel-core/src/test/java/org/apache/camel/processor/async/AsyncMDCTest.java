@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-
+import org.junit.Test;
 import org.slf4j.MDC;
 
 import static org.apache.camel.impl.MDCUnitOfWork.MDC_BREADCRUMB_ID;
@@ -34,6 +34,7 @@ import static org.apache.camel.impl.MDCUnitOfWork.MDC_ROUTE_ID;
  */
 public class AsyncMDCTest extends ContextTestSupport {
 
+    @Test
     public void testMDC() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye Camel");
@@ -43,6 +44,7 @@ public class AsyncMDCTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testThreeMessagesMDC() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye Camel", "Bye Camel", "Bye Camel");

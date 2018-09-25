@@ -24,12 +24,14 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class AdviceWithPolicyTest extends ContextTestSupport {
 
+    @Test
     public void testAdviceWithPolicy() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         route.adviceWith(context, new AdviceWithRouteBuilder() {

@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BeanRouteTest;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,10 +34,12 @@ public class BeanMethodWithMultipleParametersTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
     protected MyBean myBean = new MyBean();
 
+    @Test
     public void testDummy() throws Exception {
 
     }
 
+    @Test
     public void testSendMessageWithURI() throws Exception {
         Object[] args = {"abc", 5, "def"};
         template.sendBody("bean:myBean?method=myMethod&multiParameterArray=true", args);
@@ -46,6 +49,7 @@ public class BeanMethodWithMultipleParametersTest extends ContextTestSupport {
         assertEquals("bean.x", "def", myBean.x);
     }
 
+    @Test
     public void testSendMessageWithSettingHeader() throws Exception {
         Object[] args = {"hello", 123, "world"};
         template.sendBodyAndHeader("direct:in", args, Exchange.BEAN_MULTI_PARAMETER_ARRAY, true);

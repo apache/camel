@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms.async;
 
 import java.util.concurrent.TimeUnit;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;

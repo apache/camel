@@ -11,7 +11,7 @@ This is particular useable in XML DSLs.
 === Ref Language options
 
 // language options: START
-The Ref language supports 1 options which are listed below.
+The Ref language supports 1 options, which are listed below.
 
 
 

@@ -47,23 +47,6 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
     public CxfSpringEndpoint() {
     }
 
-    /**
-     * 
-     * A help to get the service class.  The serviceClass classname in URI 
-     * query takes precedence over the serviceClass in CxfEndpointBean.
-     */
-    private Class<?> getSEIClass() throws ClassNotFoundException {
-        
-        // get service class
-        Class<?> answer = null;
-        if (getServiceClass() != null) {
-            // classname is specified in URI which overrides the bean properties
-            answer = getServiceClass();
-        }
-        return answer;
-    }
-    
-
     // Package private methods
     // -------------------------------------------------------------------------
 
@@ -74,7 +57,7 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
     Client createClient() throws Exception {
         
         // get service class
-        Class<?> cls = getSEIClass();    
+        Class<?> cls = getServiceClass();    
         
         if (getDataFormat().equals(DataFormat.POJO)) { 
             ObjectHelper.notNull(cls, CxfConstants.SERVICE_CLASS);
@@ -88,61 +71,44 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
             if (getDataFormat().equals(DataFormat.PAYLOAD)) { 
                 setSkipPayloadMessagePartCheck(true);
             }
-            cls = getSEIClass();
+            cls = getServiceClass();
         }
         
+        ClientFactoryBean factoryBean;
         if (cls != null) {
             // create client factory bean
-            ClientFactoryBean factoryBean = createClientFactoryBean(cls);
-
-            // setup client factory bean
-            setupClientFactoryBean(factoryBean, cls);
-
-            // fill in values that have not been filled.
-            QName serviceQName = null;
-            try {
-                serviceQName = factoryBean.getServiceName();
-            } catch (IllegalStateException e) {
-                // It throws IllegalStateException if serviceName has not been set.
-            }
-
-            if (serviceQName == null && getServiceLocalName() != null) {
-                factoryBean.setServiceName(new QName(getServiceNamespace(), getServiceLocalName()));
-            }
-            if (factoryBean.getEndpointName() == null && getEndpointLocalName() != null) {
-                factoryBean.setEndpointName(new QName(getEndpointNamespace(), getEndpointLocalName()));
-            }
-
-            Client client = factoryBean.create();
-            // setup the handlers
-            setupHandlers(factoryBean, client);
-            return client;
+            factoryBean = createClientFactoryBean(cls);
         } else {
-            
-            ClientFactoryBean factoryBean = createClientFactoryBean();
+            factoryBean = createClientFactoryBean();
+        }
 
-            // setup client factory bean
-            setupClientFactoryBean(factoryBean, null);
-            
-            // fill in values that have not been filled.
-            QName serviceQName = null;
-            try {
-                serviceQName = factoryBean.getServiceName();
-            } catch (IllegalStateException e) {
-                // It throws IllegalStateException if serviceName has not been set.
-            }
-            
-            if (serviceQName == null && getServiceLocalName() != null) {
-                factoryBean.setServiceName(new QName(getServiceNamespace(), getServiceLocalName()));
-            }
-            if (factoryBean.getEndpointName() == null && getEndpointLocalName() != null) {
-                factoryBean.setEndpointName(new QName(getEndpointNamespace(), getEndpointLocalName()));
-            }
-            
+        // setup client factory bean
+        setupClientFactoryBean(factoryBean, cls);
+
+        // fill in values that have not been filled.
+        QName serviceQName = null;
+        try {
+            serviceQName = factoryBean.getServiceName();
+        } catch (IllegalStateException e) {
+            // It throws IllegalStateException if serviceName has not been set.
+        }
+
+        if (serviceQName == null && getServiceLocalName() != null) {
+            factoryBean.setServiceName(new QName(getServiceNamespace(), getServiceLocalName()));
+        }
+        if (factoryBean.getEndpointName() == null && getEndpointLocalName() != null) {
+            factoryBean.setEndpointName(new QName(getEndpointNamespace(), getEndpointLocalName()));
+        }
+        
+        if (cls == null) {
             checkName(factoryBean.getEndpointName(), "endpoint/port name");
             checkName(factoryBean.getServiceName(), "service name");
-            return factoryBean.create();
         }
+
+        Client client = factoryBean.create();
+        // setup the handlers
+        setupHandlers(factoryBean, client);
+        return client;
     }
 
 
@@ -153,7 +119,7 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
     ServerFactoryBean createServerFactoryBean() throws Exception  {
         
         // get service class
-        Class<?> cls = getSEIClass();                
+        Class<?> cls = getServiceClass();                
         
         if (getWsdlURL() == null && cls == null) {
             // no WSDL and serviceClass specified, set our default serviceClass
@@ -170,11 +136,7 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
 
         if (cls == null) {
             if (!getDataFormat().equals(DataFormat.POJO)) {
-                answer = new JaxWsServerFactoryBean(new WSDLServiceFactoryBean()) {
-                    {
-                        doInit = false;
-                    }
-                };
+                answer = new JaxWsServerFactoryBean(new WSDLServiceFactoryBean());
                 cls = Provider.class;
             } else {
                 ObjectHelper.notNull(cls, CxfConstants.SERVICE_CLASS);
@@ -286,6 +248,7 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
         applicationContext = ctx;
 
         if (bus == null) {
+            createBus = true;
             bus = BusWiringBeanFactoryPostProcessor.addDefaultBus(ctx);
         }
     }

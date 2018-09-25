@@ -18,9 +18,11 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class CorrectRouteIdTest extends ContextTestSupport {
 
+    @Test
     public void testCorrectRouteId() throws Exception {
         getMockEndpoint("mock:foo").expectedHeaderReceived("foo", "foo");
         getMockEndpoint("mock:bar").expectedHeaderReceived("bar", "bar");

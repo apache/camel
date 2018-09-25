@@ -22,6 +22,7 @@ import javax.management.ObjectName;
 import org.w3c.dom.Document;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version
@@ -30,6 +31,7 @@ public class ManagedRouteDumpStatsAsXmlCustomDomainTest extends ManagementTestSu
 
     private static final String CUSTOM_DOMAIN_NAME = "custom";
 
+    @Test
     public void testPerformanceCounterStats() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

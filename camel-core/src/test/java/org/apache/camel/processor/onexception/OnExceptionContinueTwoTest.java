@@ -20,12 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class OnExceptionContinueTwoTest extends ContextTestSupport {
 
+    @Test
     public void testContinuedTwo() throws Exception {
         getMockEndpoint("mock:start").expectedMessageCount(1);
         getMockEndpoint("mock:middle").expectedMessageCount(1);

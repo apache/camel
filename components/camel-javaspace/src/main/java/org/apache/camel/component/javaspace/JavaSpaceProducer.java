@@ -85,7 +85,7 @@ public class JavaSpaceProducer extends DefaultProducer {
             tnx = transactionHelper.getJiniTransaction(transactionTimeout).transaction;
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Writing body : " + entry);
+            LOG.debug("Writing body : {}", entry);
         }
         javaSpace.write(entry, tnx, Lease.FOREVER);
 

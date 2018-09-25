@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
-
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -28,11 +29,13 @@ import org.apache.camel.builder.RouteBuilder;
 public class GzipDataFormatFileDeleteTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/gzip");
         super.setUp();
     }
 
+    @Test
     public void testGzipFileDelete() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

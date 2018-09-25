@@ -59,16 +59,20 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 import org.apache.camel.BytesSource;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.StringSource;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,7 +92,9 @@ public class XmlConverter {
     public static String defaultCharset = ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
 
     private static final String JDK_FALLBACK_TRANSFORMER_FACTORY = "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl";
+    private static final String XALAN_TRANSFORMER_FACTORY = "org.apache.xalan.processor.TransformerFactoryImpl";
     private static final Logger LOG = LoggerFactory.getLogger(XmlConverter.class);
+    private static final ErrorHandler DOCUMENT_BUILDER_LOGGING_ERROR_HANDLER = new DocumentBuilderLoggingErrorHandler();
 
     private volatile DocumentBuilderFactory documentBuilderFactory;
     private volatile TransformerFactory transformerFactory;
@@ -131,6 +137,11 @@ public class XmlConverter {
             throw new TransformerException("Could not create a transformer - JAXP is misconfigured!");
         }
         transformer.setOutputProperties(outputProperties);
+        if (this.transformerFactory.getClass().getName().equals(XALAN_TRANSFORMER_FACTORY)
+            && (source instanceof StAXSource)) {
+            //external xalan can't handle StAXSource, so convert StAXSource to SAXSource.
+            source = new StAX2SAXSource(((StAXSource) source).getXMLStreamReader());
+        }
         transformer.transform(source, result);
     }
 
@@ -169,8 +180,6 @@ public class XmlConverter {
 
     /**
      * Converts the given Node to a Source
-     * @throws TransformerException
-     * @throws ParserConfigurationException
      * @deprecated  use toDOMSource instead
      */
     @Deprecated
@@ -180,8 +189,6 @@ public class XmlConverter {
 
     /**
      * Converts the given Node to a Source
-     * @throws TransformerException
-     * @throws ParserConfigurationException
      */
     @Converter
     public DOMSource toDOMSource(Node node) throws ParserConfigurationException, TransformerException {
@@ -656,7 +663,7 @@ public class XmlConverter {
     public DOMSource toDOMSource(InputStream is, Exchange exchange) throws ParserConfigurationException, IOException, SAXException {
         InputSource source = new InputSource(is);
         String systemId = source.getSystemId();
-        DocumentBuilder builder = getDocumentBuilderFactory(exchange).newDocumentBuilder();
+        DocumentBuilder builder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
         Document document = builder.parse(source);
         return new DOMSource(document, systemId);
     }
@@ -688,7 +695,7 @@ public class XmlConverter {
         Document document;
         String systemId = source.getSystemId();
 
-        DocumentBuilder builder = getDocumentBuilderFactory(exchange).newDocumentBuilder();
+        DocumentBuilder builder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
         Reader reader = source.getReader();
         if (reader != null) {
             document = builder.parse(new InputSource(reader));
@@ -838,7 +845,7 @@ public class XmlConverter {
      */
     @Converter
     public Document toDOMDocument(byte[] data, Exchange exchange) throws IOException, SAXException, ParserConfigurationException {
-        DocumentBuilder documentBuilder = getDocumentBuilderFactory(exchange).newDocumentBuilder();
+        DocumentBuilder documentBuilder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
         return documentBuilder.parse(new ByteArrayInputStream(data));
     }
 
@@ -863,12 +870,19 @@ public class XmlConverter {
      */
     @Converter
     public Document toDOMDocument(InputStream in, Exchange exchange) throws IOException, SAXException, ParserConfigurationException {
-        DocumentBuilder documentBuilder = getDocumentBuilderFactory(exchange).newDocumentBuilder();
-        return documentBuilder.parse(in);
+        DocumentBuilder documentBuilder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
+        if (in instanceof IOConverter.EncodingInputStream) {
+            // DocumentBuilder detects encoding from XML declaration, so we need to
+            // revert the converted encoding for the input stream
+            IOConverter.EncodingInputStream encIn = (IOConverter.EncodingInputStream) in;
+            return documentBuilder.parse(encIn.toOriginalInputStream());
+        } else {
+            return documentBuilder.parse(in);
+        }
     }
 
     /**
-     * Converts the given {@link InputStream} to a DOM document
+     * Converts the given {@link Reader} to a DOM document
      *
      * @param in is the data to be parsed
      * @return the parsed document
@@ -880,7 +894,7 @@ public class XmlConverter {
     }
     
     /**
-     * Converts the given {@link InputStream} to a DOM document
+     * Converts the given {@link Reader} to a DOM document
      *
      * @param in is the data to be parsed
      * @param exchange is the exchange to be used when calling the converter
@@ -912,7 +926,7 @@ public class XmlConverter {
      */
     @Converter
     public Document toDOMDocument(InputSource in, Exchange exchange) throws IOException, SAXException, ParserConfigurationException {
-        DocumentBuilder documentBuilder = getDocumentBuilderFactory(exchange).newDocumentBuilder();
+        DocumentBuilder documentBuilder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
         return documentBuilder.parse(in);
     }
 
@@ -961,7 +975,7 @@ public class XmlConverter {
      */
     @Converter
     public Document toDOMDocument(File file, Exchange exchange) throws IOException, SAXException, ParserConfigurationException {
-        DocumentBuilder documentBuilder = getDocumentBuilderFactory(exchange).newDocumentBuilder();
+        DocumentBuilder documentBuilder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
         return documentBuilder.parse(file);
     }
 
@@ -1083,13 +1097,13 @@ public class XmlConverter {
         for (Map.Entry<Object, Object> prop : properties.entrySet()) {
             String key = (String) prop.getKey();
             if (key.startsWith(XmlConverter.DOCUMENT_BUILDER_FACTORY_FEATURE)) {
-                String uri = ObjectHelper.after(key, ":");
+                String uri = StringHelper.after(key, ":");
                 Boolean value = Boolean.valueOf((String)prop.getValue());
                 try {
                     factory.setFeature(uri, value);
                     features.add("feature " + uri + " value " + value);
                 } catch (ParserConfigurationException e) {
-                    LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.", new Object[]{uri, value, e});
+                    LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.", uri, value, e);
                 }
             }
         }
@@ -1102,7 +1116,7 @@ public class XmlConverter {
                 }
                 featureString.append(feature);
             }
-            LOG.info("DocumentBuilderFactory has been set with features {{}}.", featureString.toString());
+            LOG.info("DocumentBuilderFactory has been set with features {{}}.", featureString);
         }
 
     }
@@ -1149,8 +1163,13 @@ public class XmlConverter {
     }
 
     public DocumentBuilder createDocumentBuilder() throws ParserConfigurationException {
-        DocumentBuilderFactory factory = getDocumentBuilderFactory();
-        return factory.newDocumentBuilder();
+        return createDocumentBuilder(getDocumentBuilderFactory());
+    }
+
+    public DocumentBuilder createDocumentBuilder(DocumentBuilderFactory factory) throws ParserConfigurationException {
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        builder.setErrorHandler(DOCUMENT_BUILDER_LOGGING_ERROR_HANDLER);
+        return builder;
     }
 
     public Document createDocument() throws ParserConfigurationException {
@@ -1193,7 +1212,7 @@ public class XmlConverter {
         try {
             factory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
         } catch (TransformerConfigurationException e) {
-            LOG.warn("TransformerFactory doesn't support the feature {} with value {}, due to {}.", new Object[]{javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e});
+            LOG.warn("TransformerFactory doesn't support the feature {} with value {}, due to {}.", javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e);
         }
         factory.setErrorListener(new XmlErrorListener());
         configureSaxonTransformerFactory(factory);
@@ -1246,7 +1265,7 @@ public class XmlConverter {
         try {
             sfactory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
         } catch (Exception e) {
-            LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.", new Object[]{javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e});
+            LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.", javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e);
         }
         try {
             sfactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
@@ -1256,5 +1275,23 @@ public class XmlConverter {
         }
         sfactory.setNamespaceAware(true);
         return sfactory;
+    }
+
+    private static class DocumentBuilderLoggingErrorHandler implements ErrorHandler {
+
+        @Override
+        public void warning(SAXParseException exception) throws SAXException {
+            LOG.warn(exception.getMessage(), exception);
+        }
+
+        @Override
+        public void error(SAXParseException exception) throws SAXException {
+            LOG.error(exception.getMessage(), exception);
+        }
+
+        @Override
+        public void fatalError(SAXParseException exception) throws SAXException {
+            LOG.error(exception.getMessage(), exception);
+        }
     }
 }

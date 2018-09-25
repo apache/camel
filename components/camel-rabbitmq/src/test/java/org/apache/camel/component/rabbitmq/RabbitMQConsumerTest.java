@@ -23,7 +23,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import com.rabbitmq.client.AlreadyClosedException;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
-
 import com.rabbitmq.client.Consumer;
 import org.apache.camel.Processor;
 import org.junit.Test;

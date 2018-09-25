@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
-
 import java.util.List;
 
 import javax.management.InstanceNotFoundException;
@@ -23,6 +22,9 @@ import javax.management.MBeanServer;
 import javax.management.MBeanServerConnection;
 import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * This test verifies the system property to un-select platform mbean server.
@@ -37,12 +39,14 @@ public class JmxInstrumentationUsingPlatformMBSTest extends JmxInstrumentationUs
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         System.setProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS, "false");
         super.setUp();
     }
 
     @Override
+    @Test
     public void testMBeanServerType() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

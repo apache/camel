@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class DefaultCamelContextAllowUseOriginalMessageTrueTest extends ContextTestSupport {
 
@@ -29,6 +30,7 @@ public class DefaultCamelContextAllowUseOriginalMessageTrueTest extends ContextT
         return context;
     }
 
+    @Test
     public void testUseOriginalMessageTrue() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:result").expectedHeaderReceived("HasOriginal", "true");

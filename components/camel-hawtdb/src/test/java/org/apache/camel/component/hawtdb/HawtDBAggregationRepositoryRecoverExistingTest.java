@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hawtdb;
-
 import java.io.File;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 
 public class HawtDBAggregationRepositoryRecoverExistingTest extends CamelTestSupport {
@@ -28,6 +28,7 @@ public class HawtDBAggregationRepositoryRecoverExistingTest extends CamelTestSup
     private HawtDBFile hawtDBFile;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("target/data");

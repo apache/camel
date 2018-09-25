@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.junit.Test;
 
 /**
  * @version 
@@ -33,6 +34,7 @@ public class SedaWaitForTaskNewerOnCompletionTest extends ContextTestSupport {
     private static String done = "";
     private final CountDownLatch latch = new CountDownLatch(1);
 
+    @Test
     public void testNever() throws Exception {
         getMockEndpoint("mock:dead").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(1);

@@ -19,7 +19,6 @@ import java.util.concurrent.ThreadFactory;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.SuspendableService;
 

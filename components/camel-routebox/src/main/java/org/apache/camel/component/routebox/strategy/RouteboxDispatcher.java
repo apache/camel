@@ -115,7 +115,7 @@ public class RouteboxDispatcher {
         }
         
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Dispatch URI set to: " + dispatchUri.toASCIIString());
+            LOG.debug("Dispatch URI set to: {}", dispatchUri.toASCIIString());
         }
         
         return dispatchUri;

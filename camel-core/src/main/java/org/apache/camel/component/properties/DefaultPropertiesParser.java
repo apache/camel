@@ -21,6 +21,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -227,7 +228,7 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
                                     + " returned null value which is not allowed, from input: " + input);
                         } else {
                             if (log.isDebugEnabled()) {
-                                log.debug("Property with key [{}] applied by function [{}] -> {}", new Object[]{key, function.getName(), value});
+                                log.debug("Property with key [{}] applied by function [{}] -> {}", key, function.getName(), value);
                             }
                             return value;
                         }
@@ -238,8 +239,8 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
             // they key may have a get or else expression
             String defaultValue = null;
             if (defaultFallbackEnabled && key.contains(GET_OR_ELSE_TOKEN)) {
-                defaultValue = ObjectHelper.after(key, GET_OR_ELSE_TOKEN);
-                key = ObjectHelper.before(key, GET_OR_ELSE_TOKEN);
+                defaultValue = StringHelper.after(key, GET_OR_ELSE_TOKEN);
+                key = StringHelper.before(key, GET_OR_ELSE_TOKEN);
             }
 
             String augmentedKey = getAugmentedKey(key);

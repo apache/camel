@@ -470,7 +470,7 @@ public final class FileUtil {
         int count = 0;
         while (!renamed && count < 3) {
             if (LOG.isDebugEnabled() && count > 0) {
-                LOG.debug("Retrying attempt {} to rename file from: {} to: {}", new Object[]{count, from, to});
+                LOG.debug("Retrying attempt {} to rename file from: {} to: {}", count, from, to);
             }
 
             renamed = from.renameTo(to);
@@ -493,7 +493,7 @@ public final class FileUtil {
         }
 
         if (LOG.isDebugEnabled() && count > 0) {
-            LOG.debug("Tried {} to rename file: {} to: {} with result: {}", new Object[]{count, from, to, renamed});
+            LOG.debug("Tried {} to rename file: {} to: {} with result: {}", count, from, to, renamed);
         }
         return renamed;
     }
@@ -568,7 +568,7 @@ public final class FileUtil {
 
 
         if (LOG.isDebugEnabled() && count > 0) {
-            LOG.debug("Tried {} to delete file: {} with result: {}", new Object[]{count, file, deleted});
+            LOG.debug("Tried {} to delete file: {} with result: {}", count, file, deleted);
         }
         return deleted;
     }

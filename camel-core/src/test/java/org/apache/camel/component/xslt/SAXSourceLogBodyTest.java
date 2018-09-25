@@ -18,6 +18,7 @@ package org.apache.camel.component.xslt;
 
 import java.io.File;
 import java.io.InputStream;
+
 import javax.xml.transform.sax.SAXSource;
 
 import org.xml.sax.InputSource;
@@ -29,12 +30,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class SAXSourceLogBodyTest extends ContextTestSupport {
 
+    @Test
     public void testSAXSource() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

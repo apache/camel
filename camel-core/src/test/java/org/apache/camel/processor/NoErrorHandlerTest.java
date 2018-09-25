@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -31,7 +32,8 @@ public class NoErrorHandlerTest extends ContextTestSupport {
     private static boolean jmx = true;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         counter = 0;
 
         // we must enable/disable JMX in this setUp
@@ -44,10 +46,12 @@ public class NoErrorHandlerTest extends ContextTestSupport {
         super.setUp();
     }
 
+    @Test
     public void testNoErrorHandler() throws Exception {
         doTest();
     }
 
+    @Test
     public void testNoErrorHandlerJMXDisabled() throws Exception {
         doTest();
     }

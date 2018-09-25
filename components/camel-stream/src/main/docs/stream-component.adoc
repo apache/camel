@@ -19,7 +19,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+=== URI format
 
 [source,java]
 -----------------------
@@ -44,7 +44,7 @@ producers (that is, it cannot appear in `from()`).
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+=== Options
 
 
 // component options: START
@@ -72,7 +72,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (18 parameters):
+==== Query Parameters (22 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -82,12 +82,13 @@ with the following path and query parameters:
 | *fileName* (common) | When using the stream:file URI format, this option specifies the filename to stream to/from. |  | String
 | *url* (common) | When using the stream:url URI format, this option specifies the URL to stream to/from. The input/output stream will be opened using the JDK URLConnection facility. |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *fileWatcher* (consumer) | To use JVM file watcher to listen for file change events to support re-loading files that may be overwritten, somewhat like tail --retry | false | boolean
 | *groupLines* (consumer) | To group X number of lines in the consumer. For example to group 10 lines and therefore only spit out an Exchange with 10 lines, instead of 1 Exchange per line. |  | int
 | *groupStrategy* (consumer) | Allows to use a custom GroupStrategy to control how to group lines. |  | GroupStrategy
 | *initialPromptDelay* (consumer) | Initial delay in milliseconds before showing the message prompt. This delay occurs only once. Can be used during system startup to avoid message prompts being written while other logging is done to the system out. | 2000 | long
 | *promptDelay* (consumer) | Optional delay in milliseconds before showing the message prompt. |  | long
 | *promptMessage* (consumer) | Message prompt to use when reading from stream:in; for example, you could set this to Enter a command: |  | String
-| *retry* (consumer) | Will retry opening the file if it's overwritten, somewhat like tail --retry | false | boolean
+| *retry* (consumer) | Will retry opening the stream if it's overwritten, somewhat like tail --retry If reading from files then you should also enable the fileWatcher option, to make it work reliable. | false | boolean
 | *scanStream* (consumer) | To be used for continuously reading a stream such as the unix tail command. | false | boolean
 | *scanStreamDelay* (consumer) | Delay in milliseconds between read attempts when using scanStream. |  | long
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
@@ -95,12 +96,31 @@ with the following path and query parameters:
 | *autoCloseCount* (producer) | Number of messages to process before closing stream on Producer side. Never close stream by default (only when Producer is stopped). If more messages are sent, the stream is reopened for another autoCloseCount batch. |  | int
 | *closeOnDone* (producer) | This option is used in combination with Splitter and streaming to the same file. The idea is to keep the stream open and only close when the Splitter is done, to improve performance. Mind this requires that you only stream to the same file, and not 2 or more files. | false | boolean
 | *delay* (producer) | Initial delay in milliseconds before producing the stream. |  | long
+| *connectTimeout* (advanced) | Sets a specified timeout value, in milliseconds, to be used when opening a communications link to the resource referenced by this URLConnection. If the timeout expires before the connection can be established, a java.net.SocketTimeoutException is raised. A timeout of zero is interpreted as an infinite timeout. |  | int
+| *httpHeaders* (advanced) | Optional http headers to use in request when using HTTP URL. |  | Map
+| *readTimeout* (advanced) | Sets the read timeout to a specified timeout, in milliseconds. A non-zero value specifies the timeout when reading from Input stream when a connection is established to a resource. If the timeout expires before there is data available for read, a java.net.SocketTimeoutException is raised. A timeout of zero is interpreted as an infinite timeout. |  | int
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
 
 
-### Message content
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.stream.enabled* | Enable stream component | true | Boolean
+| *camel.component.stream.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+=== Message content
 
 The *stream:* component supports either `String` or `byte[]` for writing
 to streams. Just add either `String` or `byte[]` content to the
@@ -113,13 +133,13 @@ add a `java.io.OutputStream` object to `message.in.header` in the key
 `header`. +
  See samples for an example.
 
-### Samples
+=== Samples
 
 In the following sample we route messages from the `direct:in` endpoint
 to the `System.out` stream:
 
 [source,java]
----------------------------------------------------------------
+----
 // Route messages to the standard output.
 from("direct:in").to("stream:out");
 
@@ -130,7 +150,7 @@ template.sendBody("direct:in", "Hello Text World");
 // Send byte[] payload to the standard output.
 // No newline will be added after the message.
 template.sendBody("direct:in", "Hello Bytes World".getBytes());
----------------------------------------------------------------
+----
 
 The following sample demonstrates how the header type can be used to
 determine which stream to use. In the sample we use our own output
@@ -140,18 +160,15 @@ The following sample demonstrates how to continuously read a file stream
 (analogous to the UNIX `tail` command):
 
 [source,java]
-------------------------------------------------------------------------------------------------------------------------------------
-from("stream:file?fileName=/server/logs/server.log&scanStream=true&scanStreamDelay=1000").to("bean:logService?method=parseLogLine");
-------------------------------------------------------------------------------------------------------------------------------------
+----
+from("stream:file?fileName=/server/logs/server.log&scanStream=true&scanStreamDelay=1000")
+  .to("bean:logService?method=parseLogLine");
+----
 
-One gotcha with scanStream (pre Camel 2.7) or scanStream + retry is the
-file will be re-opened and scanned with each iteration of
-scanStreamDelay. Until NIO2 is available we cannot reliably detect when
-a file is deleted/recreated.
+If you want to re-load the file if it rollover/rewritten then you should also turn on the `fileWatcher` and `retry` options.
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
+[source,java]
+----
+from("stream:file?fileName=/server/logs/server.log&scanStream=true&scanStreamDelay=1000&retry=true&fileWatcher=true")
+  .to("bean:logService?method=parseLogLine");
+----

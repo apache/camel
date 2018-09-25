@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -33,6 +34,7 @@ public class SpringCamelContextThreadPoolProfilesTest extends SpringTestSupport 
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringCamelContextThreadPoolProfilesTest.xml");
     }
 
+    @Test
     public void testLowProfile() throws Exception {
         CamelContext context = getMandatoryBean(CamelContext.class, "camel-C");
 
@@ -53,6 +55,7 @@ public class SpringCamelContextThreadPoolProfilesTest extends SpringTestSupport 
         assertEquals("CallerRuns", tp.getRejectedExecutionHandler().toString());
     }
 
+    @Test
     public void testBigProfile() throws Exception {
         CamelContext context = getMandatoryBean(CamelContext.class, "camel-C");
 

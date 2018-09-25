@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.naming.Context;
@@ -23,6 +22,8 @@ import javax.naming.Context;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Before;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +34,7 @@ public class BeanRecipientListTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanRecipientListTest.class);
     protected MyBean myBean = new MyBean();
 
+    @Test
     public void testSendMessage() throws Exception {
         final String expectedBody = "Wibble";
 
@@ -45,7 +47,8 @@ public class BeanRecipientListTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         checkBean();
     }

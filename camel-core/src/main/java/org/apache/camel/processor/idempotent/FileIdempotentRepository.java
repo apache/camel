@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -35,6 +34,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.Scanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -289,22 +289,15 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
             return false;
         }
 
-        Scanner scanner = null;
-        try {
-            scanner = new Scanner(fileStore);
-            scanner.useDelimiter(STORE_DELIMITER);
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
+        try (Scanner scanner = new Scanner(fileStore, null, STORE_DELIMITER)) {
+            while (scanner.hasNext()) {
+                String line = scanner.next();
                 if (line.equals(key)) {
                     return true;
                 }
             }
         } catch (IOException e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
-        } finally {
-            if (scanner != null) {
-                scanner.close();
-            }
         }
         return false;
     }
@@ -352,10 +345,9 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
         boolean found = false;
         Scanner scanner = null;
         try {
-            scanner = new Scanner(fileStore);
-            scanner.useDelimiter(STORE_DELIMITER);
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
+            scanner = new Scanner(fileStore, null, STORE_DELIMITER);
+            while (scanner.hasNext()) {
+                String line = scanner.next();
                 if (key.equals(line)) {
                     found = true;
                 } else {
@@ -416,10 +408,9 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
         Scanner scanner = null;
         int count = 0;
         try {
-            scanner = new Scanner(fileStore);
-            scanner.useDelimiter(STORE_DELIMITER);
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
+            scanner = new Scanner(fileStore, null, STORE_DELIMITER);
+            while (scanner.hasNext()) {
+                String line = scanner.next();
                 count++;
                 if (count > dropOldestFileStore) {
                     lines.add(line);
@@ -485,20 +476,13 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
         LOG.trace("Loading to 1st level cache from idempotent filestore: {}", fileStore);
 
         cache.clear();
-        Scanner scanner = null;
-        try {
-            scanner = new Scanner(fileStore);
-            scanner.useDelimiter(STORE_DELIMITER);
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
+        try (Scanner scanner = new Scanner(fileStore, null, STORE_DELIMITER)) {
+            while (scanner.hasNext()) {
+                String line = scanner.next();
                 cache.put(line, line);
             }
         } catch (IOException e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
-        } finally {
-            if (scanner != null) {
-                scanner.close();
-            }
         }
 
         LOG.debug("Loaded {} to the 1st level cache from idempotent filestore: {}", cache.size(), fileStore);

@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.StopWatch;
+import org.junit.Test;
 
 public class SplitterParallelAggregateTest extends ContextTestSupport {
 
@@ -52,6 +53,7 @@ public class SplitterParallelAggregateTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void test1() throws Exception {
         if (!enabled) {
             return;
@@ -60,6 +62,7 @@ public class SplitterParallelAggregateTest extends ContextTestSupport {
         timeSplitRoutes(numberOfRequests);
     }
 
+    @Test
     public void test2() throws Exception {
         if (!enabled) {
             return;
@@ -68,6 +71,7 @@ public class SplitterParallelAggregateTest extends ContextTestSupport {
         timeSplitRoutes(numberOfRequests);
     }
 
+    @Test
     public void test4() throws Exception {
         if (!enabled) {
             return;

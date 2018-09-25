@@ -19,9 +19,11 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class SendExchangePatternOptionTest extends ContextTestSupport {
 
+    @Test
     public void testExchangePatternOptionInOnly() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").message(0).exchangePattern().isEqualTo(ExchangePattern.InOnly);
@@ -34,6 +36,7 @@ public class SendExchangePatternOptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testExchangePatternOptionInOut() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").message(0).exchangePattern().isEqualTo(ExchangePattern.InOut);

@@ -23,6 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.DataFormat;
+import org.junit.Test;
 
 /**
  * Unit test of the string data format.
@@ -36,6 +37,7 @@ public class RefDataFormatTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testMarshalRef() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("CBA");
 
@@ -44,6 +46,7 @@ public class RefDataFormatTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testUnmarshalRef() throws Exception {
         getMockEndpoint("mock:b").expectedBodiesReceived("ABC");
 

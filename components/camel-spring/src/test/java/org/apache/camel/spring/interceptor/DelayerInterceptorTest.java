@@ -18,6 +18,7 @@ package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -31,6 +32,7 @@ public class DelayerInterceptorTest extends SpringTestSupport {
                 "/org/apache/camel/spring/interceptor/delayerInterceptorTest.xml");
     }
 
+    @Test
     public void testDelayer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(10);

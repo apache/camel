@@ -32,6 +32,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.StopWatch;
+import org.junit.Test;
 
 /**
  * Test showing how you can use pipeline to group together statistics and implement your own event listener.
@@ -40,6 +41,7 @@ public class PipelineStepWithEventTest extends ContextTestSupport {
 
     private final MyStepEventListener listener = new MyStepEventListener();
 
+    @Test
     public void testPipelineStep() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:a2").expectedMessageCount(1);

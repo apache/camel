@@ -18,13 +18,15 @@ package org.apache.camel.util;
 
 import java.io.File;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class FileUtilTest extends TestCase {
+public class FileUtilTest extends Assert {
 
+    @Test
     public void testNormalizePath() {
         if (FileUtil.isWindows()) {
             assertEquals("foo\\bar", FileUtil.normalizePath("foo/bar"));
@@ -37,6 +39,7 @@ public class FileUtilTest extends TestCase {
         }
     }
 
+    @Test
     public void testStripLeadingSeparator() {
         assertEquals(null, FileUtil.stripLeadingSeparator(null));
         assertEquals("foo", FileUtil.stripLeadingSeparator("foo"));
@@ -47,6 +50,7 @@ public class FileUtilTest extends TestCase {
         assertEquals("foo/bar", FileUtil.stripLeadingSeparator("///foo/bar"));
     }
 
+    @Test
     public void testHasLeadingSeparator() {
         assertEquals(false, FileUtil.hasLeadingSeparator(null));
         assertEquals(false, FileUtil.hasLeadingSeparator("foo"));
@@ -57,6 +61,7 @@ public class FileUtilTest extends TestCase {
         assertEquals(true, FileUtil.hasLeadingSeparator("///foo/bar"));
     }
 
+    @Test
     public void testStripFirstLeadingSeparator() {
         assertEquals(null, FileUtil.stripFirstLeadingSeparator(null));
         assertEquals("foo", FileUtil.stripFirstLeadingSeparator("foo"));
@@ -67,6 +72,7 @@ public class FileUtilTest extends TestCase {
         assertEquals("//foo/bar", FileUtil.stripFirstLeadingSeparator("///foo/bar"));
     }
 
+    @Test
     public void testStripTrailingSeparator() {
         assertEquals(null, FileUtil.stripTrailingSeparator(null));
         assertEquals("foo", FileUtil.stripTrailingSeparator("foo"));
@@ -84,6 +90,7 @@ public class FileUtilTest extends TestCase {
         assertEquals("//", FileUtil.stripTrailingSeparator("//"));
     }
 
+    @Test
     public void testStripPath() {
         assertEquals(null, FileUtil.stripPath(null));
         assertEquals("", FileUtil.stripPath("/"));
@@ -93,6 +100,7 @@ public class FileUtilTest extends TestCase {
         assertEquals("bar", FileUtil.stripPath("/foo/bar"));
     }
 
+    @Test
     public void testStripPathWithMixedSeparators() {
         assertEquals(null, FileUtil.stripPath(null));
         assertEquals("", FileUtil.stripPath("/"));
@@ -103,6 +111,7 @@ public class FileUtilTest extends TestCase {
         assertEquals("baz", FileUtil.stripPath("/foo\\bar/baz"));
     }
 
+    @Test
     public void testStripExt() {
         assertEquals(null, FileUtil.stripExt(null));
         assertEquals("foo", FileUtil.stripExt("foo"));
@@ -110,6 +119,7 @@ public class FileUtilTest extends TestCase {
         assertEquals("/foo/bar", FileUtil.stripExt("/foo/bar.xml"));
     }
 
+    @Test
     public void testOnlyExt() {
         assertEquals(null, FileUtil.onlyExt(null));
         assertEquals(null, FileUtil.onlyExt("foo"));
@@ -119,6 +129,7 @@ public class FileUtilTest extends TestCase {
         assertEquals("tar.gz", FileUtil.onlyExt("/foo.bar/bigfile.tar.gz"));
     }
 
+    @Test
     public void testOnlyPath() {
         assertEquals(null, FileUtil.onlyPath(null));
         assertEquals(null, FileUtil.onlyPath("foo"));
@@ -130,6 +141,7 @@ public class FileUtilTest extends TestCase {
         assertEquals("/bar", FileUtil.onlyPath("/bar/foo.xml"));
     }
 
+    @Test
     public void testOnlyPathWithMixedSeparators() {
         assertEquals(null, FileUtil.onlyPath(null));
         assertEquals(null, FileUtil.onlyPath("foo"));
@@ -141,6 +153,7 @@ public class FileUtilTest extends TestCase {
         assertEquals("/bar", FileUtil.onlyPath("/bar\\foo.xml"));
     }
 
+    @Test
     public void testCompactPath() {
         assertEquals(null, FileUtil.compactPath(null));
         if (FileUtil.isWindows()) {
@@ -184,12 +197,14 @@ public class FileUtilTest extends TestCase {
         }
     }
 
+    @Test
     public void testCompactWindowsStylePath() {
         String path = "E:\\workspace\\foo\\bar\\some-thing\\.\\target\\processes\\2";
         String expected = "E:\\workspace\\foo\\bar\\some-thing\\target\\processes\\2";
         assertEquals(expected, FileUtil.compactPath(path, '\\'));
     }
 
+    @Test
     public void testCompactPathSeparator() {
         assertEquals(null, FileUtil.compactPath(null, '\''));
         assertEquals("..\\foo", FileUtil.compactPath("..\\foo", '\\'));
@@ -199,24 +214,28 @@ public class FileUtilTest extends TestCase {
         assertEquals("..\\foo\\bar", FileUtil.compactPath("../foo\\bar", '\\'));
     }
 
+    @Test
     public void testDefaultTempFileSuffixAndPrefix() throws Exception {
         File tmp = FileUtil.createTempFile("tmp-", ".tmp");
         assertNotNull(tmp);
         assertTrue("Should be a file", tmp.isFile());
     }
 
+    @Test
     public void testDefaultTempFile() throws Exception {
         File tmp = FileUtil.createTempFile(null, null);
         assertNotNull(tmp);
         assertTrue("Should be a file", tmp.isFile());
     }
 
+    @Test
     public void testDefaultTempFileParent() throws Exception {
         File tmp = FileUtil.createTempFile(null, null, new File("target"));
         assertNotNull(tmp);
         assertTrue("Should be a file", tmp.isFile());
     }
 
+    @Test
     public void testCreateNewFile() throws Exception {
         File file = new File("target/foo.txt");
         if (file.exists()) {
@@ -227,6 +246,7 @@ public class FileUtilTest extends TestCase {
         assertTrue("A new file should be created " + file, FileUtil.createNewFile(file));
     }
 
+    @Test
     public void testShutdown() throws Exception {
         File tmpFile = FileUtil.createTempFile(null, null);
         File tmpDir = tmpFile.getParentFile();
@@ -236,6 +256,7 @@ public class FileUtilTest extends TestCase {
         assertFalse(tmpDir.exists());
     }
 
+    @Test
     public void testRenameUsingDelete() throws Exception {
         File file = new File("target/foo.txt");
         if (!file.exists()) {

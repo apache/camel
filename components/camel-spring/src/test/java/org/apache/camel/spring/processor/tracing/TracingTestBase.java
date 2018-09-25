@@ -22,6 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.interceptor.TraceHandlerTestHandler;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 
 public abstract class TracingTestBase extends SpringTestSupport {
 
@@ -49,6 +50,7 @@ public abstract class TracingTestBase extends SpringTestSupport {
         return getTracedMessages().size();
     }
 
+    @Test
     public void testTracerExceptionInOut() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         ((Tracer) context.getDefaultTracer()).setTraceOutExchanges(true);

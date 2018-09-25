@@ -23,12 +23,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class RouteStartupOrderSuspendResumeNoAutoStartupTest extends ContextTestSupport {
 
+    @Test
     public void testRouteStartupOrderSuspendResumeNoAutoStartup() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -53,6 +55,7 @@ public class RouteStartupOrderSuspendResumeNoAutoStartupTest extends ContextTest
         assertEquals("direct://bar", order.get(2).getRoute().getEndpoint().getEndpointUri());
     }
 
+    @Test
     public void testRouteStartupOrderSuspendResumeStartC() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

@@ -138,35 +138,35 @@ public class SnsConfiguration implements Cloneable {
         this.messageStructure = messageStructure;
     }
     
-    /**
-     * To define a proxy host when instantiating the SNS client
-     */
     public String getProxyHost() {
         return proxyHost;
     }
 
+    /**
+     * To define a proxy host when instantiating the SNS client
+     */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
     }
 
     /**
      * To define a proxy port when instantiating the SNS client
      */
-    public Integer getProxyPort() {
-        return proxyPort;
-    }
-
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
     
-    /**
-     * The region in which SNS client needs to work
-     */
     public String getRegion() {
         return region;
     }
 
+    /**
+     * The region in which SNS client needs to work
+     */
     public void setRegion(String region) {
         this.region = region;
     }

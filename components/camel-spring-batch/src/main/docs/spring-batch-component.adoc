@@ -41,7 +41,7 @@ statement.
 
 
 // component options: START
-The Spring Batch component supports 3 options which are listed below.
+The Spring Batch component supports 3 options, which are listed below.
 
 
 
@@ -92,6 +92,24 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.spring-batch.enabled* | Enable spring-batch component | true | Boolean
+| *camel.component.spring-batch.job-launcher* | Explicitly specifies a JobLauncher to be used. The option is a org.springframework.batch.core.launch.JobLauncher type. |  | String
+| *camel.component.spring-batch.job-registry* | Explicitly specifies a JobRegistry to be used. The option is a org.springframework.batch.core.configuration.JobRegistry type. |  | String
+| *camel.component.spring-batch.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

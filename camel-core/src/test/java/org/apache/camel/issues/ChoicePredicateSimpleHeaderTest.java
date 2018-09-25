@@ -18,12 +18,14 @@ package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class ChoicePredicateSimpleHeaderTest extends ContextTestSupport {
 
+    @Test
     public void testAAE() throws Exception {
         getMockEndpoint("mock:aae").expectedMessageCount(1);
         getMockEndpoint("mock:pca").expectedMessageCount(0);
@@ -34,6 +36,7 @@ public class ChoicePredicateSimpleHeaderTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPCA() throws Exception {
         getMockEndpoint("mock:aae").expectedMessageCount(0);
         getMockEndpoint("mock:pca").expectedMessageCount(1);
@@ -44,6 +47,7 @@ public class ChoicePredicateSimpleHeaderTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testError() throws Exception {
         getMockEndpoint("mock:aae").expectedMessageCount(0);
         getMockEndpoint("mock:pca").expectedMessageCount(0);
@@ -54,6 +58,7 @@ public class ChoicePredicateSimpleHeaderTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNoHeader() throws Exception {
         getMockEndpoint("mock:aae").expectedMessageCount(0);
         getMockEndpoint("mock:pca").expectedMessageCount(0);

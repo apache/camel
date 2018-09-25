@@ -21,9 +21,11 @@ import java.util.Map;
 
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.Expression;
+import org.junit.Test;
 
 public class SimpleParserExpressionTest extends ExchangeTestSupport {
 
+    @Test
     public void testSimpleParserEol() throws Exception {
         SimpleExpressionParser parser = new SimpleExpressionParser("Hello", true);
         Expression exp = parser.parseExpression();
@@ -31,6 +33,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals("Hello", exp.evaluate(exchange, String.class));
     }
 
+    @Test
     public void testSimpleSingleQuote() throws Exception {
         SimpleExpressionParser parser = new SimpleExpressionParser("'Hello'", true);
         Expression exp = parser.parseExpression();
@@ -38,6 +41,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals("'Hello'", exp.evaluate(exchange, String.class));
     }
     
+    @Test
     public void testSimpleStringList() throws Exception {
         SimpleExpressionParser parser = new SimpleExpressionParser("\"Hello\" \"World\"", true);
         Expression exp = parser.parseExpression();
@@ -46,6 +50,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     }
     
 
+    @Test
     public void testSimpleSingleQuoteWithFunction() throws Exception {
         exchange.getIn().setBody("World");
         SimpleExpressionParser parser = new SimpleExpressionParser("'Hello ${body} how are you?'", true);
@@ -54,6 +59,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals("'Hello World how are you?'", exp.evaluate(exchange, String.class));
     }
 
+    @Test
     public void testSimpleSingleQuoteWithFunctionBodyAs() throws Exception {
         exchange.getIn().setBody("World");
         SimpleExpressionParser parser = new SimpleExpressionParser("'Hello ${bodyAs(String)} how are you?'", true);
@@ -62,6 +68,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals("'Hello World how are you?'", exp.evaluate(exchange, String.class));
     }
 
+    @Test
     public void testSimpleSingleQuoteEol() throws Exception {
         SimpleExpressionParser parser = new SimpleExpressionParser("'Hello' World", true);
         Expression exp = parser.parseExpression();
@@ -69,6 +76,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals("'Hello' World", exp.evaluate(exchange, String.class));
     }
 
+    @Test
     public void testSimpleFunction() throws Exception {
         exchange.getIn().setBody("World");
         SimpleExpressionParser parser = new SimpleExpressionParser("${body}", true);
@@ -77,6 +85,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals("World", exp.evaluate(exchange, String.class));
     }
 
+    @Test
     public void testSimpleSingleQuoteDollar() throws Exception {
         SimpleExpressionParser parser = new SimpleExpressionParser("Pay 200$ today", true);
         Expression exp = parser.parseExpression();
@@ -84,6 +93,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals("Pay 200$ today", exp.evaluate(exchange, String.class));
     }
 
+    @Test
     public void testSimpleSingleQuoteDollarEnd() throws Exception {
         SimpleExpressionParser parser = new SimpleExpressionParser("Pay 200$", true);
         Expression exp = parser.parseExpression();
@@ -91,6 +101,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals("Pay 200$", exp.evaluate(exchange, String.class));
     }
 
+    @Test
     public void testSimpleUnaryInc() throws Exception {
         exchange.getIn().setBody("122");
         SimpleExpressionParser parser = new SimpleExpressionParser("${body}++", true);
@@ -99,6 +110,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals("123", exp.evaluate(exchange, String.class));
     }
 
+    @Test
     public void testSimpleUnaryDec() throws Exception {
         exchange.getIn().setBody("122");
         SimpleExpressionParser parser = new SimpleExpressionParser("${body}--", true);
@@ -107,6 +119,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals("121", exp.evaluate(exchange, String.class));
     }
 
+    @Test
     public void testSimpleUnaryIncInt() throws Exception {
         exchange.getIn().setBody(122);
         SimpleExpressionParser parser = new SimpleExpressionParser("${body}++", true);
@@ -115,6 +128,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals(Integer.valueOf(123), exp.evaluate(exchange, Integer.class));
     }
 
+    @Test
     public void testSimpleUnaryDecInt() throws Exception {
         exchange.getIn().setBody(122);
         SimpleExpressionParser parser = new SimpleExpressionParser("${body}--", true);
@@ -123,6 +137,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals(Integer.valueOf(121), exp.evaluate(exchange, Integer.class));
     }
 
+    @Test
     public void testHeaderNestedFunction() throws Exception {
         exchange.getIn().setBody("foo");
         exchange.getIn().setHeader("foo", "abc");
@@ -134,6 +149,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals("abc", obj);
     }
 
+    @Test
     public void testBodyAsNestedFunction() throws Exception {
         exchange.getIn().setBody("123");
         exchange.getIn().setHeader("foo", "Integer");
@@ -146,6 +162,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals(123, num.intValue());
     }
 
+    @Test
     public void testThreeNestedFunctions() throws Exception {
         exchange.getIn().setBody("123");
         exchange.getIn().setHeader("foo", "Int");
@@ -160,6 +177,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals(123, num.intValue());
     }
 
+    @Test
     public void testNestedNestedFunctions() throws Exception {
         exchange.getIn().setBody("123");
         exchange.getIn().setHeader("foo", "Integer");
@@ -173,6 +191,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals(123, num.intValue());
     }
 
+    @Test
     public void testSimpleMap() throws Exception {
         Map<String, String> map = new HashMap<>();
         map.put("foo", "123");
@@ -189,6 +208,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals("456", exp.evaluate(exchange, Object.class));
     }
 
+    @Test
     public void testUnaryLenient() throws Exception {
         exchange.getIn().setHeader("JMSMessageID", "JMSMessageID-123");
         exchange.getIn().setBody("THE MSG ID ${header.JMSMessageID} isA --");
@@ -199,6 +219,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals("THE MSG ID JMSMessageID-123 isA --", exp.evaluate(exchange, String.class));
     }
 
+    @Test
     public void testUnaryLenient2() throws Exception {
         exchange.getIn().setHeader("JMSMessageID", "JMSMessageID-123");
         exchange.getIn().setBody("------------THE MSG ID ${header.JMSMessageID}------------");
@@ -209,6 +230,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals("------------THE MSG ID JMSMessageID-123------------", exp.evaluate(exchange, String.class));
     }
 
+    @Test
     public void testUnaryLenient3() throws Exception {
         exchange.getIn().setHeader("JMSMessageID", "JMSMessageID-123");
         exchange.getIn().setBody("------------ THE MSG ID ${header.JMSMessageID} ------------");

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.crypto.cms;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

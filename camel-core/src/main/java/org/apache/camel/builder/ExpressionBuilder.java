@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicReference;
@@ -71,6 +70,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
+import org.apache.camel.util.Scanner;
 import org.apache.camel.util.SkipIterator;
 import org.apache.camel.util.StringHelper;
 
@@ -1558,8 +1558,7 @@ public final class ExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 String text = simpleExpression(token).evaluate(exchange, String.class);
                 Object value = expression.evaluate(exchange, Object.class);
-                Scanner scanner = ObjectHelper.getScanner(exchange, value);
-                scanner.useDelimiter(text);
+                Scanner scanner = ObjectHelper.getScanner(exchange, value, text);
                 return scanner;
             }
 
@@ -1605,17 +1604,17 @@ public final class ExpressionBuilder {
      * Returns an {@link TokenXMLExpressionIterator} expression
      */
     public static Expression tokenizeXMLExpression(String tagName, String inheritNamespaceTagName) {
-        ObjectHelper.notEmpty(tagName, "tagName");
+        StringHelper.notEmpty(tagName, "tagName");
         return new TokenXMLExpressionIterator(tagName, inheritNamespaceTagName);
     }
 
     public static Expression tokenizeXMLAwareExpression(String path, char mode) {
-        ObjectHelper.notEmpty(path, "path");
+        StringHelper.notEmpty(path, "path");
         return new XMLTokenExpressionIterator(path, mode);
     }
 
     public static Expression tokenizeXMLAwareExpression(String path, char mode, int group) {
-        ObjectHelper.notEmpty(path, "path");
+        StringHelper.notEmpty(path, "path");
         return new XMLTokenExpressionIterator(path, mode, group);
     }
 
@@ -1625,18 +1624,16 @@ public final class ExpressionBuilder {
      */
     public static Expression regexTokenizeExpression(final Expression expression,
                                                      final String regexTokenizer) {
-        final Pattern pattern = Pattern.compile(regexTokenizer);
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 Object value = expression.evaluate(exchange, Object.class);
-                Scanner scanner = ObjectHelper.getScanner(exchange, value);
-                scanner.useDelimiter(pattern);
+                Scanner scanner = ObjectHelper.getScanner(exchange, value, regexTokenizer);
                 return scanner;
             }
 
             @Override
             public String toString() {
-                return "regexTokenize(" + expression + ", " + pattern.pattern() + ")";
+                return "regexTokenize(" + expression + ", " + regexTokenizer + ")";
             }
         };
     }
@@ -2508,7 +2505,7 @@ public final class ExpressionBuilder {
                 return null;
             }
             // the remainder is the rest of the ognl without the key
-            String remainder = ObjectHelper.after(ognl, key + keySuffix);
+            String remainder = StringHelper.after(ognl, key + keySuffix);
             return new MethodCallExpression(property, remainder).evaluate(exchange);
         }
 

@@ -21,12 +21,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class SedaWaitForTaskNewerTest extends ContextTestSupport {
 
+    @Test
     public void testInOut() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
@@ -37,6 +39,7 @@ public class SedaWaitForTaskNewerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInOnly() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 

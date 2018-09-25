@@ -15,14 +15,15 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.interceptor;
-
+import org.junit.Before;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class TransactionalClientDataSourceWithSpringRouteBuilderTest extends TransactionalClientDataSourceTest {
     
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         setUseRouteBuilder(false);
         super.setUp();        
     }

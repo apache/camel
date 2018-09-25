@@ -22,12 +22,14 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class ProxyReturnFutureExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testFutureEchoException() throws Exception {
         Echo service = ProxyHelper.createProxy(context.getEndpoint("direct:echo"), Echo.class);
 

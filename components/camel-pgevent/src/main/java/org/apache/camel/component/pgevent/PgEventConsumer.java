@@ -54,7 +54,7 @@ public class PgEventConsumer extends DefaultConsumer implements PGNotificationLi
 
     public void notification(int processId, String channel, String payload) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Notification processId: {}, channel: {}, payload: {}", new Object[]{processId, channel, payload});
+            LOG.debug("Notification processId: {}, channel: {}, payload: {}", processId, channel, payload);
         }
 
         Exchange exchange = endpoint.createExchange();

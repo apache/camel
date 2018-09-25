@@ -18,10 +18,8 @@ package org.apache.camel.component.restlet.springboot;
 
 import java.util.List;
 import javax.annotation.Generated;
-import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Component for consuming and producing Restful resources using Restlet.
@@ -35,6 +33,11 @@ public class RestletComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the restlet component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Indicates if the controller thread should be a daemon (not blocking JVM
      * exit).
      */
@@ -45,10 +48,10 @@ public class RestletComponentConfiguration
     private Integer controllerSleepTimeMs;
     /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
-     * header to and from Camel message.
+     * header to and from Camel message. The option is a
+     * org.apache.camel.spi.HeaderFilterStrategy type.
      */
-    @NestedConfigurationProperty
-    private HeaderFilterStrategy headerFilterStrategy;
+    private String headerFilterStrategy;
     /**
      * The size of the buffer when reading messages.
      */
@@ -100,7 +103,7 @@ public class RestletComponentConfiguration
     private Boolean useForwardedForHeader;
     /**
      * Enable/disable the SO_REUSEADDR socket option. See
-     * java.io.ServerSocketreuseAddress property for additional details.
+     * java.io.ServerSocket#reuseAddress property for additional details.
      */
     private Boolean reuseAddress;
     /**
@@ -144,6 +147,11 @@ public class RestletComponentConfiguration
      */
     private Boolean useGlobalSslContextParameters = false;
     /**
+     * To configure security using SSLContextParameters. The option is a
+     * org.apache.camel.util.jsse.SSLContextParameters type.
+     */
+    private String sslContextParameters;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
@@ -166,12 +174,11 @@ public class RestletComponentConfiguration
         this.controllerSleepTimeMs = controllerSleepTimeMs;
     }
 
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
+    public String getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
 
-    public void setHeaderFilterStrategy(
-            HeaderFilterStrategy headerFilterStrategy) {
+    public void setHeaderFilterStrategy(String headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
@@ -318,6 +325,14 @@ public class RestletComponentConfiguration
     public void setUseGlobalSslContextParameters(
             Boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
+    public String getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    public void setSslContextParameters(String sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     public Boolean getResolvePropertyPlaceholders() {

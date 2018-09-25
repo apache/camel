@@ -85,6 +85,13 @@ public interface KubernetesOperations {
     String LIST_NODES_BY_LABELS_OPERATION = "listNodesByLabels";
     String GET_NODE_OPERATION = "getNode";
     
+    // HPA
+    String LIST_HPA = "listHPA";
+    String LIST_HPA_BY_LABELS_OPERATION = "listHPAByLabels";
+    String GET_HPA_OPERATION = "getHPA";
+    String CREATE_HPA_OPERATION = "createHPA";
+    String DELETE_HPA_OPERATION = "deleteHPA";
+    
     // Deployments
     String LIST_DEPLOYMENTS = "listDeployments";
     String LIST_DEPLOYMENTS_BY_LABELS_OPERATION = "listDeploymentsByLabels";
@@ -109,4 +116,11 @@ public interface KubernetesOperations {
     String LIST_BUILD_CONFIGS = "listBuildConfigs";
     String LIST_BUILD_CONFIGS_BY_LABELS_OPERATION = "listBuildConfigsByLabels";
     String GET_BUILD_CONFIG_OPERATION = "getBuildConfig";
+    
+    // Secrets
+    String LIST_JOB = "listJob";
+    String LIST_JOB_BY_LABELS_OPERATION = "listJobByLabels";
+    String GET_JOB_OPERATION = "getJob";
+    String CREATE_JOB_OPERATION = "createJob";
+    String DELETE_JOB_OPERATION = "deleteJob";
 }

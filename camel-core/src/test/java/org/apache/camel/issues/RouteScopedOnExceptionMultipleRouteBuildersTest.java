@@ -21,10 +21,12 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Test;
 
 
 public class RouteScopedOnExceptionMultipleRouteBuildersTest extends ContextTestSupport {
 
+    @Test
     public void testOnExceptionErrorHandlerRef() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:handled").expectedMessageCount(0);
@@ -36,6 +38,7 @@ public class RouteScopedOnExceptionMultipleRouteBuildersTest extends ContextTest
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOnExceptionErrorHandlerRefFoo() throws Exception {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:handled").expectedMessageCount(1);

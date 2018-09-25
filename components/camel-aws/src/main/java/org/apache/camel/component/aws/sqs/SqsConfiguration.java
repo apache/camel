@@ -337,47 +337,47 @@ public class SqsConfiguration implements Cloneable {
         this.region = region;
     }
 
-    /**
-     * Allows you to use multiple threads to poll the sqs queue to increase throughput
-     */
     public int getConcurrentConsumers() {
         return concurrentConsumers;
     }
 
+    /**
+     * Allows you to use multiple threads to poll the sqs queue to increase throughput
+     */
     public void setConcurrentConsumers(int concurrentConsumers) {
         this.concurrentConsumers = concurrentConsumers;
     }
 
-    /**
-     *  To define the queueUrl explicitly. All other parameters, which would influence the queueUrl, are ignored.
-     *  This parameter is intended to be used, to connect to a mock implementation of SQS, for testing purposes.
-     */
     public String getQueueUrl() {
         return queueUrl;
     }
 
+    /**
+     * To define the queueUrl explicitly. All other parameters, which would influence the queueUrl, are ignored.
+     * This parameter is intended to be used, to connect to a mock implementation of SQS, for testing purposes.
+     */
     public void setQueueUrl(String queueUrl) {
         this.queueUrl = queueUrl;
+    }
+
+    public String getProxyHost() {
+        return proxyHost;
     }
 
     /**
      * To define a proxy host when instantiating the SQS client
      */
-    public String getProxyHost() {
-        return proxyHost;
-    }
-
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
     }
 
     /**
      * To define a proxy port when instantiating the SQS client
      */
-    public Integer getProxyPort() {
-        return proxyPort;
-    }
-
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }

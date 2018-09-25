@@ -177,7 +177,7 @@ public class MQProducer extends DefaultProducer {
         try {
             result = mqClient.rebootBroker(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("Delete Broker command returned the error code {}", ase.getErrorCode());
+            LOG.trace("Reboot Broker command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);

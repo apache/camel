@@ -22,12 +22,14 @@ import java.util.Properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class PropertiesResolverTest extends ContextTestSupport {
 
+    @Test
     public void testPropertiesResolver() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

@@ -25,12 +25,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.spi.IdAware;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class SimpleProcessorIdAwareTest extends ContextTestSupport {
 
+    @Test
     public void testIdAware() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

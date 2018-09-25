@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
+import org.junit.Test;
 
 /**
  * @version 
@@ -28,6 +29,7 @@ public class ThrottlingInflightRoutePolicyTest extends ContextTestSupport {
     private String url = "seda:foo?concurrentConsumers=20";
     private int size = 100;
 
+    @Test
     public void testThrottlingRoutePolicy() throws Exception {
         // we use seda which are not persistent and hence can loose a message
         // when we get graceful shutdown support we can prevent this

@@ -20,12 +20,14 @@ import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
+import org.junit.Test;
 
 public class ScheduledPollConsumerBackoffTest extends ContextTestSupport {
 
     private static int commits;
     private static int errors;
 
+    @Test
     public void testBackoffIdle() throws Exception {
 
         final Endpoint endpoint = getMockEndpoint("mock:foo");
@@ -74,6 +76,7 @@ public class ScheduledPollConsumerBackoffTest extends ContextTestSupport {
         consumer.stop();
     }
 
+    @Test
     public void testBackoffError() throws Exception {
 
         final Endpoint endpoint = getMockEndpoint("mock:foo");

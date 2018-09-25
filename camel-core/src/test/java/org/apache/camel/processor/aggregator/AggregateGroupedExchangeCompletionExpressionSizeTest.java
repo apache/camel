@@ -19,12 +19,14 @@ package org.apache.camel.processor.aggregator;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Unit test for aggregate grouped exchanges.
  */
 public class AggregateGroupedExchangeCompletionExpressionSizeTest extends ContextTestSupport {
 
+    @Test
     public void testGrouped() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(2);

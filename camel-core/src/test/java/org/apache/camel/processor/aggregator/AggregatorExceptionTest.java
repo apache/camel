@@ -22,9 +22,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.junit.Test;
 
 public class AggregatorExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testAggregateAndOnException() throws Exception {
         // all goes to error
         MockEndpoint mock = getMockEndpoint("mock:error");

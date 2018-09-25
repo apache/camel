@@ -36,7 +36,7 @@ Where *name* is the name you want to assign the component.
 
 
 // component options: START
-The MQTT component supports 4 options which are listed below.
+The MQTT component supports 4 options, which are listed below.
 
 
 
@@ -107,7 +107,7 @@ with the following path and query parameters:
 | *sendWaitInSeconds* (common) | The maximum time the Component will wait for a receipt from the MQTT broker to acknowledge a published message before throwing an exception | 5 | int
 | *sslContext* (common) | To configure security using SSLContext configuration |  | SSLContext
 | *subscribeTopicName* (common) | *Deprecated* These are set on the Endpoint - together with properties inherited from MQTT |  | String
-| *subscribeTopicNames* (common) | A comma-delimited list of Topics to subscribe to for messages. Note that each item of this list can contain MQTT wildcards ( and/or ), in order to subscribe to topics matching a certain pattern within a hierarchy. For example, is a wildcard for all topics at a level within the hierarchy, so if a broker has topics topics/one and topics/two, then topics/ can be used to subscribe to both. A caveat to consider here is that if the broker adds topics/three, the route would also begin to receive messages from that topic. |  | String
+| *subscribeTopicNames* (common) | A comma-delimited list of Topics to subscribe to for messages. Note that each item of this list can contain MQTT wildcards ( and/or #), in order to subscribe to topics matching a certain pattern within a hierarchy. For example, is a wildcard for all topics at a level within the hierarchy, so if a broker has topics topics/one and topics/two, then topics/ can be used to subscribe to both. A caveat to consider here is that if the broker adds topics/three, the route would also begin to receive messages from that topic. |  | String
 | *trafficClass* (common) | Sets traffic class or type-of-service octet in the IP header for packets sent from the transport. Defaults to 8 which means the traffic should be optimized for throughput. | 8 | int
 | *version* (common) | Set to 3.1.1 to use MQTT version 3.1.1. Otherwise defaults to the 3.1 protocol version. | 3.1 | String
 | *willMessage* (common) | The Will message to send. Defaults to a zero length message. |  | String
@@ -121,6 +121,25 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.mqtt.enabled* | Enable mqtt component | true | Boolean
+| *camel.component.mqtt.host* | The URI of the MQTT broker to connect too - this component also supports SSL - e.g. ssl://127.0.0.1:8883 |  | String
+| *camel.component.mqtt.password* | Password to be used for authentication against the MQTT broker |  | String
+| *camel.component.mqtt.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.mqtt.user-name* | Username to be used for authentication against the MQTT broker |  | String
+|===
+// spring-boot-auto-configure options: END
+
 
 
 

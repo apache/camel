@@ -18,10 +18,7 @@ package org.apache.camel.component.spring.batch.springboot;
 
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.springframework.batch.core.configuration.JobRegistry;
-import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The spring-batch component allows to send messages to Spring Batch for
@@ -36,15 +33,20 @@ public class SpringBatchComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Explicitly specifies a JobLauncher to be used.
+     * Whether to enable auto configuration of the spring-batch component. This
+     * is enabled by default.
      */
-    @NestedConfigurationProperty
-    private JobLauncher jobLauncher;
+    private Boolean enabled;
     /**
-     * Explicitly specifies a JobRegistry to be used.
+     * Explicitly specifies a JobLauncher to be used. The option is a
+     * org.springframework.batch.core.launch.JobLauncher type.
      */
-    @NestedConfigurationProperty
-    private JobRegistry jobRegistry;
+    private String jobLauncher;
+    /**
+     * Explicitly specifies a JobRegistry to be used. The option is a
+     * org.springframework.batch.core.configuration.JobRegistry type.
+     */
+    private String jobRegistry;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -52,19 +54,19 @@ public class SpringBatchComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public JobLauncher getJobLauncher() {
+    public String getJobLauncher() {
         return jobLauncher;
     }
 
-    public void setJobLauncher(JobLauncher jobLauncher) {
+    public void setJobLauncher(String jobLauncher) {
         this.jobLauncher = jobLauncher;
     }
 
-    public JobRegistry getJobRegistry() {
+    public String getJobRegistry() {
         return jobRegistry;
     }
 
-    public void setJobRegistry(JobRegistry jobRegistry) {
+    public void setJobRegistry(String jobRegistry) {
         this.jobRegistry = jobRegistry;
     }
 

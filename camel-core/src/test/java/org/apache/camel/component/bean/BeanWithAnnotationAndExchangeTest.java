@@ -25,12 +25,14 @@ import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
 /**
  * Unit test to demonstrate annotations combined with Exchange parameter.
  */
 public class BeanWithAnnotationAndExchangeTest extends ContextTestSupport {
 
+    @Test
     public void testBeanWithAnnotationAndExchangeTest() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("StartMyBean");

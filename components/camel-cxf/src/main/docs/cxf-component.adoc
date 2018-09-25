@@ -109,7 +109,7 @@ cxf:bean:cxfEndpoint?wsdlURL=wsdl/hello_world.wsdl&dataFormat=PAYLOAD
 
 
 // component options: START
-The CXF component supports 4 options which are listed below.
+The CXF component supports 4 options, which are listed below.
 
 
 
@@ -161,8 +161,8 @@ with the following path and query parameters:
 | *cookieHandler* (producer) | Configure a cookie handler to maintain a HTTP session |  | CookieHandler
 | *defaultOperationName* (producer) | This option will set the default operationName that will be used by the CxfProducer which invokes the remote service. |  | String
 | *defaultOperationNamespace* (producer) | This option will set the default operationNamespace that will be used by the CxfProducer which invokes the remote service. |  | String
-| *hostnameVerifier* (producer) | The hostname verifier to be used. Use the notation to reference a HostnameVerifier from the registry. |  | HostnameVerifier
-| *sslContextParameters* (producer) | The Camel SSL setting reference. Use the notation to reference the SSL Context. |  | SSLContextParameters
+| *hostnameVerifier* (producer) | The hostname verifier to be used. Use the # notation to reference a HostnameVerifier from the registry. |  | HostnameVerifier
+| *sslContextParameters* (producer) | The Camel SSL setting reference. Use the # notation to reference the SSL Context. |  | SSLContextParameters
 | *wrapped* (producer) | Which kind of operation that CXF endpoint producer will invoke | false | boolean
 | *allowStreaming* (advanced) | This option controls whether the CXF component, when running in PAYLOAD mode, will DOM parse the incoming messages into DOM Elements or keep the payload as a javax.xml.transform.Source object that would allow streaming in some cases. |  | Boolean
 | *bus* (advanced) | To use a custom configured CXF Bus. |  | Bus
@@ -189,6 +189,25 @@ with the following path and query parameters:
 | *wsdlURL* (service) | The location of the WSDL. Can be on the classpath, file system, or be hosted remotely. |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.cxf.allow-streaming* | This option controls whether the CXF component, when running in PAYLOAD mode, will DOM parse the incoming messages into DOM Elements or keep the payload as a javax.xml.transform.Source object that would allow streaming in some cases. |  | Boolean
+| *camel.component.cxf.enabled* | Enable cxf component | true | Boolean
+| *camel.component.cxf.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
+| *camel.component.cxf.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.cxf.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 The `serviceName` and `portName` are
@@ -758,7 +777,7 @@ may need to throw the SOAP Fault from the camel context. +
 Then throw it as you like
 
 If your CXF endpoint is working in the `MESSAGE` data format, you could
-set the the SOAP Fault message in the message body and set the response
+set the SOAP Fault message in the message body and set the response
 code in the message header.
 
 Same for using POJO data format. You can set the SOAPFault on the out

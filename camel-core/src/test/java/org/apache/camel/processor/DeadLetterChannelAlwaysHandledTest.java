@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.ExceptionHandler;
+import org.junit.Test;
 
 public class DeadLetterChannelAlwaysHandledTest extends ContextTestSupport {
 
@@ -35,6 +36,7 @@ public class DeadLetterChannelAlwaysHandledTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testDeadLetterChannelAlwaysHandled() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);

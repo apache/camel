@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.ServicePoolAware;
 import org.apache.camel.spi.ServicePool;
+import org.junit.Test;
 
 /**
  * @version 
@@ -57,6 +58,7 @@ public class CamelContextSharedProducerServicePoolTest extends ContextTestSuppor
         }
     }
 
+    @Test
     public void testSharedProducerServicePool() throws Exception {
         // the default capacity
         assertEquals(100, context.getProducerServicePool().getCapacity());
@@ -66,6 +68,7 @@ public class CamelContextSharedProducerServicePoolTest extends ContextTestSuppor
         assertEquals(25, context.getProducerServicePool().getCapacity());
     }
 
+    @Test
     public void testSharedProducerServicePoolHitMax() throws Exception {
         // the default capacity
         assertEquals(100, context.getProducerServicePool().getCapacity());

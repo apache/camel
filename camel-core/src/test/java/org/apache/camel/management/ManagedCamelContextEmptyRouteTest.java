@@ -22,6 +22,7 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StringHelper;
+import org.junit.Test;
 
 /**
  * @version 
@@ -36,6 +37,7 @@ public class ManagedCamelContextEmptyRouteTest extends ManagementTestSupport {
         return context;
     }
 
+    @Test
     public void testManagedCamelContextCreateRouteStaticEndpointJson() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

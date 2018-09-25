@@ -18,12 +18,10 @@ package org.apache.camel.component.netty4.http;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.netty4.NettyConsumer;
 import org.apache.camel.component.netty4.NettyServerBootstrapConfiguration;
 import org.apache.camel.component.netty4.SingleTCPNettyServerBootstrapFactory;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

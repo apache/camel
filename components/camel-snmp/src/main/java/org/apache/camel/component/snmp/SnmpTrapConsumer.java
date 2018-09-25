@@ -91,7 +91,7 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
                 LOG.debug("Stopping trap consumer on {}", this.endpoint.getAddress());
             }
             this.transport.close();
-            LOG.info("Stopped trap consumer on " + this.endpoint.getAddress());
+            LOG.info("Stopped trap consumer on {}", this.endpoint.getAddress());
         }
         
         super.doStop();

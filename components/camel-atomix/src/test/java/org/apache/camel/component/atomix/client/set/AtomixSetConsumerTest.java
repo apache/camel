@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.atomix.client.set;
-
 import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
@@ -28,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.atomix.client.AtomixClientConstants;
 import org.apache.camel.component.atomix.client.AtomixClientTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.After;
 import org.junit.Test;
 
 public class AtomixSetConsumerTest extends AtomixClientTestSupport {
@@ -54,6 +54,7 @@ public class AtomixSetConsumerTest extends AtomixClientTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         set.close();
 

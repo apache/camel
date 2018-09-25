@@ -36,6 +36,11 @@ public class MllpComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the mllp component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Set the component to log PHI data.
      */
     private Boolean logPhi = true;
@@ -110,28 +115,19 @@ public class MllpComponentConfiguration
          * message and handled by the routing Error Handler. If disabled, the
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions by logging them at WARN or ERROR level and ignored.
-         * 
-         * @param bridgeErrorHandler
          */
         private Boolean bridgeErrorHandler = true;
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
-         * 
-         * @param exchangePattern
          */
         private ExchangePattern exchangePattern = ExchangePattern.InOut;
         /**
          * Sets whether synchronous processing should be strictly used (this
          * component only supports synchronous operations).
-         * 
-         * @param synchronous
          */
         private Boolean synchronous = true;
         /**
          * Set the CamelCharsetName property on the exchange
-         * 
-         * @param charsetName
-         *            the charset
          */
         private String charsetName;
         /**
@@ -151,39 +147,24 @@ public class MllpComponentConfiguration
          */
         private Integer bindRetryInterval = 5000;
         /**
-         * Timeout (in milliseconds) while waiting for a TCP connection
-         * <p/>
-         * TCP Server Only
-         * 
-         * @param acceptTimeout
-         *            timeout in milliseconds
+         * Timeout (in milliseconds) while waiting for a TCP connection TCP
+         * Server Only
          */
         private Integer acceptTimeout = 60000;
         /**
          * TCP Server Only - Allow the endpoint to start before the TCP
          * ServerSocket is bound. In some environments, it may be desirable to
          * allow the endpoint to start before the TCP ServerSocket is bound.
-         * 
-         * @param lenientBind
-         *            if true, the ServerSocket will be bound asynchronously;
-         *            otherwise the ServerSocket will be bound synchronously.
          */
         private Boolean lenientBind = false;
         /**
-         * Timeout (in milliseconds) for establishing for a TCP connection
-         * <p/>
-         * TCP Client only
-         * 
-         * @param connectTimeout
-         *            timeout in milliseconds
+         * Timeout (in milliseconds) for establishing for a TCP connection TCP
+         * Client only
          */
         private Integer connectTimeout = 30000;
         /**
          * The SO_TIMEOUT value (in milliseconds) used when waiting for the
          * start of an MLLP frame
-         * 
-         * @param receiveTimeout
-         *            timeout in milliseconds
          */
         private Integer receiveTimeout = 15000;
         /**
@@ -191,23 +172,11 @@ public class MllpComponentConfiguration
          * be allowed. If a new connection is received and the maximum is number
          * are already established, the new connection will be reset
          * immediately.
-         * 
-         * @param maxConcurrentConsumers
-         *            the maximum number of concurrent consumer connections
-         *            allowed
          */
         private Integer maxConcurrentConsumers = 5;
         /**
          * The maximum number of timeouts (specified by receiveTimeout) allowed
          * before the TCP Connection will be reset.
-         * 
-         * @param maxReceiveTimeouts
-         *            maximum number of receiveTimeouts
-         * @deprecated Use the idleTimeout URI parameter. For backward
-         *             compibility, setting this parameter will result in an
-         *             idle timeout of maxReceiveTimeouts * receiveTimeout. If
-         *             idleTimeout is also specified, this parameter will be
-         *             ignored.
          */
         @Deprecated
         private Integer maxReceiveTimeouts;
@@ -215,85 +184,49 @@ public class MllpComponentConfiguration
          * The approximate idle time allowed before the Client TCP Connection
          * will be reset. A null value or a value less than or equal to zero
          * will disable the idle timeout.
-         * 
-         * @param idleTimeout
-         *            timeout in milliseconds
          */
         private Integer idleTimeout;
         /**
          * The SO_TIMEOUT value (in milliseconds) used after the start of an
          * MLLP frame has been received
-         * 
-         * @param readTimeout
-         *            timeout in milliseconds
          */
         private Integer readTimeout = 5000;
         /**
          * Enable/disable the SO_KEEPALIVE socket option.
-         * 
-         * @param keepAlive
-         *            enable SO_KEEPALIVE when true; disable SO_KEEPALIVE when
-         *            false; use system default when null
          */
         private Boolean keepAlive = true;
         /**
          * Enable/disable the TCP_NODELAY socket option.
-         * 
-         * @param tcpNoDelay
-         *            enable TCP_NODELAY when true; disable TCP_NODELAY when
-         *            false; use system default when null
          */
         private Boolean tcpNoDelay = true;
         /**
          * Enable/disable the SO_REUSEADDR socket option.
-         * 
-         * @param reuseAddress
-         *            enable SO_REUSEADDR when true; disable SO_REUSEADDR when
-         *            false; use system default when null
          */
         private Boolean reuseAddress = false;
         /**
          * Sets the SO_RCVBUF option to the specified value (in bytes)
-         * 
-         * @param receiveBufferSize
-         *            the SO_RCVBUF option value. If null, the system default is
-         *            used
          */
         private Integer receiveBufferSize = 8192;
         /**
          * Sets the SO_SNDBUF option to the specified value (in bytes)
-         * 
-         * @param sendBufferSize
-         *            the SO_SNDBUF option value. If null, the system default is
-         *            used
          */
         private Integer sendBufferSize = 8192;
         /**
          * Enable/Disable the automatic generation of a MLLP Acknowledgement
          * MLLP Consumers only
-         * 
-         * @param autoAck
-         *            enabled if true, otherwise disabled
          */
         private Boolean autoAck = true;
         /**
          * Enable/Disable the automatic generation of message headers from the
          * HL7 Message MLLP Consumers only
-         * 
-         * @param hl7Headers
-         *            enabled if true, otherwise disabled
          */
         private Boolean hl7Headers = true;
         /**
          * Enable/Disable strict compliance to the MLLP standard. The MLLP
-         * standard specifies [START_OF_BLOCK]hl7
-         * payload[END_OF_BLOCK][END_OF_DATA], however, some systems do not send
-         * the final END_OF_DATA byte. This setting controls whether or not the
-         * final END_OF_DATA byte is required or optional.
-         * 
-         * @param requireEndOfData
-         *            the trailing END_OF_DATA byte is required if true;
-         *            optional otherwise
+         * standard specifies START_OF_BLOCKhl7 payloadEND_OF_BLOCKEND_OF_DATA,
+         * however, some systems do not send the final END_OF_DATA byte. This
+         * setting controls whether or not the final END_OF_DATA byte is
+         * required or optional.
          */
         private Boolean requireEndOfData = true;
         /**
@@ -304,9 +237,6 @@ public class MllpComponentConfiguration
          * set, the value of MSH-18 will be used to determine th appropriate
          * character set. If MSH-18 is not set, then the default ISO-8859-1
          * character set will be use.
-         * 
-         * @param stringPayload
-         *            enabled if true, otherwise disabled
          */
         private Boolean stringPayload = true;
         /**
@@ -316,18 +246,11 @@ public class MllpComponentConfiguration
          * validation). If and invalid payload is detected, a
          * MllpInvalidMessageException (for consumers) or a
          * MllpInvalidAcknowledgementException will be thrown.
-         * 
-         * @param validatePayload
-         *            enabled if true, otherwise disabled
          */
         private Boolean validatePayload = false;
         /**
          * Enable/Disable the buffering of HL7 payloads before writing to the
          * socket.
-         * 
-         * @deprecated the parameter will be ignored
-         * @param bufferWrites
-         *            enabled if true, otherwise disabled
          */
         @Deprecated
         private Boolean bufferWrites = false;

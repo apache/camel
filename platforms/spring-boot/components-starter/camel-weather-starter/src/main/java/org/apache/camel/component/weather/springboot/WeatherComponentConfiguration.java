@@ -32,11 +32,41 @@ public class WeatherComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the weather component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
+     * The geolocation service now needs an accessKey to be used
+     */
+    private String geolocationAccessKey;
+    /**
+     * The geolocation service now needs to specify the IP associated to the
+     * accessKey you're using
+     */
+    private String geolocationRequestHostIP;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
      */
     private Boolean resolvePropertyPlaceholders = true;
+
+    public String getGeolocationAccessKey() {
+        return geolocationAccessKey;
+    }
+
+    public void setGeolocationAccessKey(String geolocationAccessKey) {
+        this.geolocationAccessKey = geolocationAccessKey;
+    }
+
+    public String getGeolocationRequestHostIP() {
+        return geolocationRequestHostIP;
+    }
+
+    public void setGeolocationRequestHostIP(String geolocationRequestHostIP) {
+        this.geolocationRequestHostIP = geolocationRequestHostIP;
+    }
 
     public Boolean getResolvePropertyPlaceholders() {
         return resolvePropertyPlaceholders;

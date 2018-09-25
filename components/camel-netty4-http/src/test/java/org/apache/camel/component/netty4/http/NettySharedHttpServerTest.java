@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty4.http;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.After;
 import org.junit.Test;
 
 public class NettySharedHttpServerTest extends BaseNettyTest {
@@ -46,6 +46,7 @@ public class NettySharedHttpServerTest extends BaseNettyTest {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         nettySharedHttpServer.stop();
         super.tearDown();

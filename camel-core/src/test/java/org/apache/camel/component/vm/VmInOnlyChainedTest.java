@@ -18,12 +18,14 @@ package org.apache.camel.component.vm;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class VmInOnlyChainedTest extends AbstractVmTestSupport {
 
+    @Test
     public void testInOnlyVmChained() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("start");
         resolveMandatoryEndpoint(context2, "mock:b", MockEndpoint.class).expectedBodiesReceived("start-a");

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.interceptor;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -25,6 +24,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.InterceptStrategy;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -34,11 +35,13 @@ public class AuditInterceptorAsyncDelegateIssueTest extends ContextTestSupport {
     private MyIntercepStrategy strategy;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         strategy = new MyIntercepStrategy();
         super.setUp();
     }
 
+    @Test
     public void testOk() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:handled").expectedMessageCount(0);
@@ -52,6 +55,7 @@ public class AuditInterceptorAsyncDelegateIssueTest extends ContextTestSupport {
         assertEquals(true, strategy.isInvoked());
     }
 
+    @Test
     public void testILE() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:handled").expectedMessageCount(1);

@@ -18,15 +18,18 @@ package org.apache.camel.converter.jaxp;
 
 import java.io.InputStream;
 import java.io.Reader;
+
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.ContextTestSupport;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class StreamSourceConverterTest extends ContextTestSupport {
 
+    @Test
     public void testToInputStream() throws Exception {
         StreamSource source = context.getTypeConverter().convertTo(StreamSource.class, "<foo>bar</foo>");
 
@@ -35,6 +38,7 @@ public class StreamSourceConverterTest extends ContextTestSupport {
         assertEquals("<foo>bar</foo>", context.getTypeConverter().convertTo(String.class, out));
     }
 
+    @Test
     public void testToReader() throws Exception {
         StreamSource source = context.getTypeConverter().convertTo(StreamSource.class, "<foo>bar</foo>");
 

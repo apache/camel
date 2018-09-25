@@ -20,12 +20,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class PropertiesComponentEIPChoiceConvertBodyToTest extends ContextTestSupport {
 
+    @Test
     public void testConvertToBytesCharset() throws Exception {
         byte[] body = "Hello World".getBytes("iso-8859-1");
 
@@ -38,6 +40,7 @@ public class PropertiesComponentEIPChoiceConvertBodyToTest extends ContextTestSu
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNullBody() throws Exception {
         getMockEndpoint("mock:null").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);

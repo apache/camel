@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
 
@@ -47,6 +48,7 @@ public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testFileConsumerThreadsInProgressIssue() throws Exception {
         // give longer timeout for stopping
         context.getShutdownStrategy().setTimeout(180);

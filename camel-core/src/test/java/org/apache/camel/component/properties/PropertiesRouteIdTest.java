@@ -19,12 +19,14 @@ package org.apache.camel.component.properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class PropertiesRouteIdTest extends ContextTestSupport {
 
+    @Test
     public void testPropertiesRouteId() throws Exception {
         assertEquals(1, context.getRoutes().size());
         assertNotNull("Route with name Camel should exist", context.getRoute("Camel"));

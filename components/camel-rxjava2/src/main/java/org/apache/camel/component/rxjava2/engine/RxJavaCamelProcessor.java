@@ -21,11 +21,11 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
-import hu.akarnokd.rxjava2.processors.MulticastProcessor;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.FlowableEmitter;
 import io.reactivex.processors.FlowableProcessor;
+import io.reactivex.processors.MulticastProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsDiscardedException;

@@ -15,10 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.processor;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
+
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringEnricherRefTest extends ContextTestSupport {
@@ -26,11 +28,13 @@ public class SpringEnricherRefTest extends ContextTestSupport {
     private MockEndpoint mock;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         mock = getMockEndpoint("mock:result");
     }
 
+    @Test
     public void testEnrich() throws Exception {
         mock.expectedBodiesReceived("test:blah");
         template.sendBody("direct:start", "test");

@@ -24,6 +24,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
+import org.junit.Test;
 
 /**
  * Based on user forum issue
@@ -32,6 +33,7 @@ import org.apache.camel.model.RouteDefinition;
  */
 public class RouteScopedErrorHandlerAndOnExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testOnException() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         route.adviceWith(context, new RouteBuilder() {
@@ -59,6 +61,7 @@ public class RouteScopedErrorHandlerAndOnExceptionTest extends ContextTestSuppor
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testErrorHandler() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         route.adviceWith(context, new RouteBuilder() {

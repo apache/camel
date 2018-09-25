@@ -33,6 +33,11 @@ public class FlatpackDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the flatpack data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The flatpack pzmap configuration file. Can be omitted in simpler
      * situations, but its preferred to use the pzmap.
      */

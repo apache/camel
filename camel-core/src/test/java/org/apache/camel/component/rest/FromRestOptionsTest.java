@@ -23,6 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.rest.OptionsVerbDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.junit.Test;
 
 public class FromRestOptionsTest extends ContextTestSupport {
     
@@ -35,6 +36,7 @@ public class FromRestOptionsTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testRestOptionsModel() throws Exception {
         
         RestDefinition rest = context.getRestDefinitions().get(0);

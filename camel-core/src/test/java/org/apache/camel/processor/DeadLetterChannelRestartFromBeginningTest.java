@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RecipientList;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  *
@@ -35,6 +36,7 @@ public class DeadLetterChannelRestartFromBeginningTest extends ContextTestSuppor
         return jndi;
     }
 
+    @Test
     public void testRestartFromBeginning() throws Exception {
         // 1 original + 4 redeliveries
         getMockEndpoint("mock:start").expectedBodiesReceived("Camel", "Camel", "Camel", "Camel", "Camel");

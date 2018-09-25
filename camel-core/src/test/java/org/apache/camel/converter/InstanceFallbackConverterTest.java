@@ -25,6 +25,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Test;
 
 /**
  * @version 
@@ -36,6 +37,7 @@ public class InstanceFallbackConverterTest extends ContextTestSupport {
         return true;
     }
 
+    @Test
     public void testInstanceFallbackConverter() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Currency cur = Currency.getInstance(Locale.US);
@@ -44,6 +46,7 @@ public class InstanceFallbackConverterTest extends ContextTestSupport {
         assertEquals("Money talks says " + context.getName(), money);
     }
 
+    @Test
     public void testInstanceFallbackMandatoryConverter() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Currency cur = Currency.getInstance(Locale.US);
@@ -52,6 +55,7 @@ public class InstanceFallbackConverterTest extends ContextTestSupport {
         assertEquals("Money talks says " + context.getName(), money);
     }
 
+    @Test
     public void testInstanceFallbackMandatoryFailed() throws Exception {
         Exchange exchange = new DefaultExchange(context);
 
@@ -63,6 +67,7 @@ public class InstanceFallbackConverterTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testInstanceFallbackFailed() throws Exception {
         Exchange exchange = new DefaultExchange(context);
 

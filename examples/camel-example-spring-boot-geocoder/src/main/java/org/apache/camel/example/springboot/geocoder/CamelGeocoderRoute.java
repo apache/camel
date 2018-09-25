@@ -16,7 +16,7 @@
  */
 package org.apache.camel.example.springboot.geocoder;
 
-import com.google.code.geocoder.model.GeocodeResponse;
+import com.google.maps.model.GeocodingResult;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
@@ -36,11 +36,11 @@ public class CamelGeocoderRoute extends RouteBuilder {
             .consumes("application/json")
             .produces("application/json")
 
-            .get().description("Geocoder address lookup").outType(GeocodeResponse.class)
+            .get().description("Geocoder address lookup").outType(GeocodingResult[].class)
                 .param().name("address").type(query).description("The address to lookup").dataType("string").endParam()
                 .responseMessage().code(200).message("Geocoder successful").endResponseMessage()
                 // call the geocoder to lookup details from the provided address
-                .toD("geocoder:address:${header.address}");
+                .toD("geocoder:address:${header.address})");
     }
 
 }

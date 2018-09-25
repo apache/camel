@@ -17,6 +17,7 @@
 package org.apache.camel.component.undertow;
 
 import java.net.URI;
+import java.util.Objects;
 
 public class HttpHandlerRegistrationInfo {
 
@@ -46,6 +47,25 @@ public class HttpHandlerRegistrationInfo {
     @Override
     public String toString() {
         return uri + "?matchOnUriPrefix=" + matchOnUriPrefix + "&methodRestrict=" + methodRestrict;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        HttpHandlerRegistrationInfo that = (HttpHandlerRegistrationInfo) o;
+        return Objects.equals(matchOnUriPrefix, that.matchOnUriPrefix)
+            && Objects.equals(methodRestrict, that.methodRestrict)
+            && Objects.equals(uri, that.uri);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(matchOnUriPrefix, methodRestrict, uri);
     }
 
 }

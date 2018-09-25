@@ -28,12 +28,14 @@ import org.apache.camel.model.SendDefinition;
 import org.apache.camel.processor.interceptor.DefaultChannel;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
+import org.junit.Test;
 
 /**
  * A crude unit test to navigate the route and build a Java DSL from the route definition
  */
 public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
 
+    @Test
     public void testNavigateRouteAsJavaDSLWithNavigate() throws Exception {
         // this one navigate using the runtime route using the Navigate<Processor>
 
@@ -52,6 +54,7 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
         assertEquals("from(\"direct://start\").loadBalance().random().to(\"mock://x\").to(\"mock://y\").to(\"mock://z\")", sb.toString());
     }
 
+    @Test
     public void testNavigateRouteAsJavaDSL() throws Exception {
         // this one navigate using the route definition
 

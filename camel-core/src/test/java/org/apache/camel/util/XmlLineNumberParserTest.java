@@ -24,10 +24,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class XmlLineNumberParserTest extends TestCase {
+public class XmlLineNumberParserTest extends Assert {
 
+    @Test
     public void testParse() throws Exception {
         InputStream fis = Files.newInputStream(Paths.get("src/test/resources/org/apache/camel/util/camel-context.xml"));
         Document dom = XmlLineNumberParser.parseXml(fis);
@@ -44,6 +46,7 @@ public class XmlLineNumberParserTest extends TestCase {
         assertEquals("49", lineNumberEnd);
     }
 
+    @Test
     public void testParseCamelContext() throws Exception {
         InputStream fis = Files.newInputStream(Paths.get("src/test/resources/org/apache/camel/util/camel-context.xml"));
         Document dom = XmlLineNumberParser.parseXml(fis, null, "camelContext", null);
@@ -60,6 +63,7 @@ public class XmlLineNumberParserTest extends TestCase {
         assertEquals("47", lineNumberEnd);
     }
 
+    @Test
     public void testParseCamelContextForceNamespace() throws Exception {
         InputStream fis = Files.newInputStream(Paths.get("src/test/resources/org/apache/camel/util/camel-context.xml"));
         Document dom = XmlLineNumberParser.parseXml(fis, null, "camelContext", "http://camel.apache.org/schema/spring");

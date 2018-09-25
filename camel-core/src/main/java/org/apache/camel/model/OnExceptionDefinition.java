@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -127,6 +128,11 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     
     protected String description() {
         return getExceptionClasses() + (onWhen != null ? " " + onWhen : "");
+    }
+
+    @Override
+    public String getShortName() {
+        return "onException";
     }
 
     @Override

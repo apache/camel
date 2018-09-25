@@ -26,12 +26,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.spi.TracedRouteNodes;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class TraceableUnitOfWorkTest extends ContextTestSupport {
 
+    @Test
     public void testSendingSomeMessages() throws Exception {
         Object out = template.requestBody("direct:start", "Hello London");
         assertEquals("Failed at: sendTo(bean://bar)", out);

@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -157,6 +158,11 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         } else {
             return "Route[" + inputs + " -> " + outputs + "]";
         }
+    }
+
+    @Override
+    public String getShortName() {
+        return "route";
     }
 
     /**
@@ -769,7 +775,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
 
     /**
      * Declare the expected data type of the output message with content validation enabled.
-     * If the actual message type is different at runtime, camel look for a required
+     * If the actual message type is different at runtime, Camel look for a required
      * {@link Transformer} and apply if exists, and then applies {@link Validator} as well.
      * The type name consists of two parts, 'scheme' and 'name' connected with ':'. For Java type 'name'
      * is a fully qualified class name. For example {@code java:java.lang.String}, {@code json:ABCOrder}.

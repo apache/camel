@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
+import org.junit.Test;
 
 /**
  *
@@ -33,6 +34,7 @@ public class ParentChildInterceptStrategyTest extends ContextTestSupport {
 
     protected static final List<String> LIST = new ArrayList<>();
 
+    @Test
     public void testParentChild() throws Exception {
         getMockEndpoint("mock:done").expectedMessageCount(1);
         getMockEndpoint("mock:a").expectedMessageCount(1);

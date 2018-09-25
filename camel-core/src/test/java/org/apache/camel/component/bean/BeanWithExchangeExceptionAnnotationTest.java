@@ -23,9 +23,11 @@ import org.apache.camel.ExchangeException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
 public class BeanWithExchangeExceptionAnnotationTest extends ContextTestSupport {
 
+    @Test
     public void testBeanWithAnnotationAndExchangeTest() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         MockEndpoint error = getMockEndpoint("mock:error");

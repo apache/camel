@@ -27,6 +27,7 @@ import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
+import org.junit.Test;
 
 /**
  * @version 
@@ -36,6 +37,7 @@ public class EndpointHelperTest extends ContextTestSupport {
     private Endpoint foo;
     private Endpoint bar;
 
+    @Test
     public void testPollEndpoint() throws Exception {
         template.sendBody("seda:foo", "Hello World");
         template.sendBody("seda:foo", "Bye World");
@@ -53,6 +55,7 @@ public class EndpointHelperTest extends ContextTestSupport {
         assertEquals("Bye World", bodies.get(1));
     }
 
+    @Test
     public void testPollEndpointTimeout() throws Exception {
         template.sendBody("seda:foo", "Hello World");
         template.sendBody("seda:foo", "Bye World");
@@ -83,12 +86,14 @@ public class EndpointHelperTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testLookupEndpointRegistryId() throws Exception {
         assertEquals("foo", EndpointHelper.lookupEndpointRegistryId(foo));
         assertEquals("coolbar", EndpointHelper.lookupEndpointRegistryId(bar));
         assertEquals(null, EndpointHelper.lookupEndpointRegistryId(context.getEndpoint("mock:cheese")));
     }
 
+    @Test
     public void testLookupEndpointRegistryIdUsingRef() throws Exception {
         foo = context.getEndpoint("ref:foo");
         bar = context.getEndpoint("ref:coolbar");
@@ -98,12 +103,14 @@ public class EndpointHelperTest extends ContextTestSupport {
         assertEquals(null, EndpointHelper.lookupEndpointRegistryId(context.getEndpoint("mock:cheese")));
     }
 
+    @Test
     public void testResolveReferenceParameter() throws Exception {
         Endpoint endpoint = EndpointHelper.resolveReferenceParameter(context, "coolbar", Endpoint.class);
         assertNotNull(endpoint);
         assertSame(bar, endpoint);
     }
 
+    @Test
     public void testResolveAndConvertReferenceParameter() throws Exception {
         // The registry value is a java.lang.String
         Integer number = EndpointHelper.resolveReferenceParameter(context, "numbar", Integer.class);
@@ -111,11 +118,13 @@ public class EndpointHelperTest extends ContextTestSupport {
         assertEquals(12345, (int) number);
     }
 
+    @Test
     public void testResolveAndConvertMissingReferenceParameter() throws Exception {
         Integer number = EndpointHelper.resolveReferenceParameter(context, "misbar", Integer.class, false);
         assertNull(number);
     }
 
+    @Test
     public void testMandatoryResolveAndConvertMissingReferenceParameter() throws Exception {
         try {
             EndpointHelper.resolveReferenceParameter(context, "misbar", Integer.class, true);
@@ -125,6 +134,7 @@ public class EndpointHelperTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testResolveParameter() throws Exception {
         Endpoint endpoint = EndpointHelper.resolveParameter(context, "#coolbar", Endpoint.class);
         assertNotNull(endpoint);

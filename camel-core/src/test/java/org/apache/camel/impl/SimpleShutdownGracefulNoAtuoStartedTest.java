@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
@@ -28,6 +29,7 @@ public class SimpleShutdownGracefulNoAtuoStartedTest extends ContextTestSupport 
 
     private static String foo = "";
 
+    @Test
     public void testShutdownGraceful() throws Exception {
         context.startRoute("foo");
 

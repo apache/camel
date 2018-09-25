@@ -102,7 +102,7 @@ public class Mina2Consumer extends DefaultConsumer {
             ConnectFuture future = connector.connect(address);
             future.awaitUninterruptibly();
             session = future.getSession();
-            LOG.info("Connected to server address: {} using connector: {} timeout: {} millis.", new Object[]{address, connector, configuration.getTimeout()});
+            LOG.info("Connected to server address: {} using connector: {} timeout: {} millis.", address, connector, configuration.getTimeout());
         } else {
             acceptor.setHandler(new ReceiveHandler());
             acceptor.bind(address);
@@ -300,7 +300,7 @@ public class Mina2Consumer extends DefaultConsumer {
             codecFactory = new Mina2UdpProtocolCodecFactory(this.getEndpoint().getCamelContext());
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("{}: Using CodecFactory: {}", new Object[]{type, codecFactory});
+                LOG.debug("{}: Using CodecFactory: {}", type, codecFactory);
             }
         }
 

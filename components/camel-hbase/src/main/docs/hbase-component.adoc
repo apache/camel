@@ -102,7 +102,7 @@ The supported operations are:
 
 
 // component options: START
-The HBase component supports 3 options which are listed below.
+The HBase component supports 3 options, which are listed below.
 
 
 
@@ -163,6 +163,24 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.hbase.configuration* | To use the shared configuration. The option is a org.apache.hadoop.conf.Configuration type. |  | String
+| *camel.component.hbase.enabled* | Enable hbase component | true | Boolean
+| *camel.component.hbase.pool-max-size* | Maximum number of references to keep for each table in the HTable pool. The default value is 10. | 10 | Integer
+| *camel.component.hbase.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 
@@ -348,7 +366,7 @@ The route above assumes that a pojo is with properties firstName and
 lastName is passed as the message body, it takes those properties and
 adds them as part of the message headers. The default mapping strategy
 will create a model object that will map the headers to HBase columns
-and will pass that model the the ModelAwareColumnMatchingFilter. The
+and will pass that model the ModelAwareColumnMatchingFilter. The
 filter will filter out any rows, that do not contain columns that match
 the model. It is like query by example.
 

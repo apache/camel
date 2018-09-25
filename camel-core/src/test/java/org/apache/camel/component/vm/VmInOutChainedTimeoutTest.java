@@ -20,12 +20,14 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class VmInOutChainedTimeoutTest extends AbstractVmTestSupport {
 
+    @Test
     public void testVmInOutChainedTimeout() throws Exception {
         StopWatch watch = new StopWatch();
         

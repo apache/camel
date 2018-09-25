@@ -18,6 +18,7 @@ package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.interceptor.AdviceWithTwoRoutesOnExceptionTest;
+
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**

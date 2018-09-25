@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jgroups;
-
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -23,6 +22,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.ReceiverAdapter;
+import org.junit.After;
 import org.junit.Test;
 
 public class JGroupsProducerTest extends CamelTestSupport {
@@ -65,6 +65,7 @@ public class JGroupsProducerTest extends CamelTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         channel.close();
         super.tearDown();

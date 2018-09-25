@@ -20,12 +20,14 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class AOPAroundFinallyTest extends ContextTestSupport {
 
+    @Test
     public void testAOPAroundFinally() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:after").message(0).body().isEqualTo("Bye World");
@@ -38,6 +40,7 @@ public class AOPAroundFinallyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAOPAroundFinallyWithException() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Kaboom");
         getMockEndpoint("mock:after").message(0).body().isEqualTo("Kaboom the World");

@@ -27,12 +27,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.XPath;
+import org.junit.Test;
 
 public class ClaimCheckTest extends ContextTestSupport {
 
     // in memory data store for testing only!
     public static Map<String, Object> dataStore = new HashMap<>();
     
+    @Test
     public void testClaimCheck() throws Exception {
         String body = "<order custId=\"123\"><lotsOfContent/></order>";
         

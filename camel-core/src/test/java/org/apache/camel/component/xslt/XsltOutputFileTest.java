@@ -24,12 +24,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  *
  */
 public class XsltOutputFileTest extends ContextTestSupport {
 
+    @Test
     public void testXsltOutput() throws Exception {
         createDirectory("target/xslt");
 
@@ -43,6 +45,7 @@ public class XsltOutputFileTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testXsltOutputFileMissingHeader() throws Exception {
         try {
             template.sendBody("direct:start", "<hello>world!</hello>");

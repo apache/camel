@@ -25,6 +25,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Registry;
+import org.junit.Test;
 
 /**
  * @version 
@@ -38,18 +39,21 @@ public class DefaultParameterMappingStrategyTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testExchange() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Exchange");
         template.sendBody("direct:a", "Hello");
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMessage() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Message");
         template.sendBody("direct:b", "Hello");
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testException() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Exception");
         template.send("direct:c", new Processor() {
@@ -61,18 +65,21 @@ public class DefaultParameterMappingStrategyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTypeConverter() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("TypeConverter");
         template.sendBody("direct:d", "Hello");
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRegistry() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Registry");
         template.sendBody("direct:e", "Hello");
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testCamelContext() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("CamelContext");
         template.sendBody("direct:f", "Hello");

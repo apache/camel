@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
-
 import java.lang.management.ManagementFactory;
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -25,6 +25,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -39,6 +41,7 @@ public class JmxInstrumentationOnlyRegisterProcessorWithCustomIdTest extends Con
         return true;
     }
 
+    @Test
     public void testCustomId() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -77,7 +80,8 @@ public class JmxInstrumentationOnlyRegisterProcessorWithCustomIdTest extends Con
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         server = ManagementFactory.getPlatformMBeanServer();
     }

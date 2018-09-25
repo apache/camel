@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -30,11 +31,13 @@ public class ChannelTest extends ContextTestSupport {
     private static int counter;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         disableJMX();
         super.setUp();
     }
 
+    @Test
     public void testChannel() throws Exception {
         counter = 0;
 

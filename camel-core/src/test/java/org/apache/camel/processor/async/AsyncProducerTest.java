@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
@@ -30,6 +31,7 @@ public class AsyncProducerTest extends ContextTestSupport {
     private static String beforeThreadName;
     private static String afterThreadName;
 
+    @Test
     public void testAsyncProducer() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:after").expectedBodiesReceived("Bye Camel");

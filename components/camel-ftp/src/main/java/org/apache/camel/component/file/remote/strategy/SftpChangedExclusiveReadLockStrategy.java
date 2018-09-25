@@ -49,7 +49,7 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
     public boolean acquireExclusiveReadLock(GenericFileOperations<ChannelSftp.LsEntry> operations, GenericFile<ChannelSftp.LsEntry> file, Exchange exchange) throws Exception {
         boolean exclusive = false;
 
-        LOG.trace("Waiting for exclusive read lock to file: " + file);
+        LOG.trace("Waiting for exclusive read lock to file: {}", file);
 
         long lastModified = Long.MIN_VALUE;
         long length = Long.MIN_VALUE;
@@ -135,7 +135,7 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
     }
 
     private boolean sleep() {
-        LOG.trace("Exclusive read lock not granted. Sleeping for " + checkInterval + " millis.");
+        LOG.trace("Exclusive read lock not granted. Sleeping for {} millis.", checkInterval);
         try {
             Thread.sleep(checkInterval);
             return false;

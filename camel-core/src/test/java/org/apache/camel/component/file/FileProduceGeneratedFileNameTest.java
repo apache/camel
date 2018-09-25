@@ -22,12 +22,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Unit test that FileProducer can use message id as the filename.
  */
 public class FileProduceGeneratedFileNameTest extends ContextTestSupport {
 
+    @Test
     public void testGeneratedFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint("direct:a");
         FileEndpoint fileEndpoint = resolveMandatoryEndpoint("file://target", FileEndpoint.class);

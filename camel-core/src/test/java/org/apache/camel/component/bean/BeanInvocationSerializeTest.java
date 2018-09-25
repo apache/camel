@@ -23,12 +23,14 @@ import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
 
 import org.apache.camel.TestSupport;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class BeanInvocationSerializeTest extends TestSupport {
 
+    @Test
     public void testSerialize() throws Exception {
         Method method = getClass().getMethod("cheese", String.class, String.class);
         BeanInvocation invocation = new BeanInvocation(method, new Object[] {"a", "b"});
@@ -43,6 +45,7 @@ public class BeanInvocationSerializeTest extends TestSupport {
         log.debug("Received " + actual);
     }
 
+    @Test
     public void testSerializeCtr() throws Exception {
         Method method = getClass().getMethod("cheese", String.class, String.class);
         BeanInvocation invocation = new BeanInvocation();

@@ -27,6 +27,7 @@ import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
 /**
  * Test inheritance of parameter binding annotations from superclasses and
@@ -34,6 +35,7 @@ import org.apache.camel.util.jndi.JndiContext;
  */
 public class BeanWithAnnotationInheritedTest extends ContextTestSupport {
 
+    @Test
     public void testWithAnnotationsFromOneInterface() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("x1y1");
@@ -41,6 +43,7 @@ public class BeanWithAnnotationInheritedTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testWithAnnotationsFromTwoInterfaces() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("x2y2");
@@ -48,6 +51,7 @@ public class BeanWithAnnotationInheritedTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testWithAnnotationsFromSuperclassAndInterface() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("x3y3");
@@ -55,6 +59,7 @@ public class BeanWithAnnotationInheritedTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testWithAnnotationsFromImplementationClassAndInterface() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("x4y4");
@@ -62,6 +67,7 @@ public class BeanWithAnnotationInheritedTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testWithAnnotationsFromOneInterfaceInheritedByProxy() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("x5y5");

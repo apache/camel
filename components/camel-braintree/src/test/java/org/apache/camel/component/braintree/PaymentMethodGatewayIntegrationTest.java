@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.braintree;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +27,7 @@ import com.braintreegateway.PaymentMethodRequest;
 import com.braintreegateway.Result;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.PaymentMethodGatewayApiMethod;
+import org.junit.After;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +66,7 @@ public class PaymentMethodGatewayIntegrationTest extends AbstractBraintreeTestSu
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         if (this.gateway != null) {
             for (String token : this.paymentMethodsTokens) {

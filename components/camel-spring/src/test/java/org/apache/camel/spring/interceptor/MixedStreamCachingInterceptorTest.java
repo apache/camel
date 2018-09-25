@@ -17,6 +17,7 @@
 package org.apache.camel.spring.interceptor;
 
 import java.io.StringReader;
+
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.CamelContext;
@@ -24,6 +25,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
+
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
@@ -31,6 +34,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  */
 public class MixedStreamCachingInterceptorTest extends ContextTestSupport {
 
+    @Test
     public void testStreamCaching() throws Exception {
         MockEndpoint a = getMockEndpoint("mock:a");
         a.expectedMessageCount(1);
@@ -47,6 +51,7 @@ public class MixedStreamCachingInterceptorTest extends ContextTestSupport {
         assertNotSame(message, cache);
     }
 
+    @Test
     public void testNoStreamCaching() throws Exception {
         MockEndpoint b = getMockEndpoint("mock:b");
         b.expectedMessageCount(1);

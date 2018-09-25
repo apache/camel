@@ -24,6 +24,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.junit.Test;
 
 /**
  *
@@ -39,6 +40,7 @@ public class DataFormatContextAwareTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testLanguageCamelContextAware() throws Exception {
         DataFormat df = context.resolveDataFormat("my");
         assertNotNull(df);

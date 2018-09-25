@@ -21,12 +21,14 @@ import javax.naming.Context;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
 /**
  * Unit test to demonstrate beans in pipelines.
  */
 public class BeanInPipelineTest extends ContextTestSupport {
 
+    @Test
     public void testBeanInPipeline() throws Exception {
         Object response = template.requestBody("direct:start", "Start:");
         assertEquals("Start:onetwothree", response);

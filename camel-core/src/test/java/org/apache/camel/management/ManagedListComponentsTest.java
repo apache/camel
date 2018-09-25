@@ -22,6 +22,7 @@ import javax.management.openmbean.TabularData;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
@@ -36,6 +37,7 @@ public class ManagedListComponentsTest extends ManagementTestSupport {
         return context;
     }
 
+    @Test
     public void testListComponents() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

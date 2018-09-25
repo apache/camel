@@ -19,17 +19,20 @@ package org.apache.camel.management;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class ManagedEndpointRegistryTest extends ManagementTestSupport {
 
+    @Test
     public void testManageEndpointRegistry() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

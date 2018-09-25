@@ -24,12 +24,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultMessage;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class BeanProcessorSpecializedMessageTest extends ContextTestSupport {
 
+    @Test
     public void testBeanSpecializedMessage() throws Exception {
         MockEndpoint foo = getMockEndpoint("mock:foo");
         foo.expectedBodiesReceived("Hello World");

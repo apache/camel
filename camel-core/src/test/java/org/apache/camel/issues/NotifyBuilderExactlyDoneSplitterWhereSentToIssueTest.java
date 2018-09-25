@@ -21,12 +21,14 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version
  */
 public class NotifyBuilderExactlyDoneSplitterWhereSentToIssueTest extends ContextTestSupport {
 
+    @Test
     public void testReceiveTiAnalyticsArrayOfJsonEvents() {
         NotifyBuilder notifier = new NotifyBuilder(context)
                 .wereSentTo("stub:direct:somewhere")

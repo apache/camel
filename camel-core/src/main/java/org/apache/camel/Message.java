@@ -19,6 +19,7 @@ package org.apache.camel;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
+
 import javax.activation.DataHandler;
 
 import org.apache.camel.spi.HeadersMapFactory;
@@ -270,7 +271,10 @@ public interface Message {
 
     /**
      * Creates a copy of this message so that it can be used and possibly
-     * modified further in another exchange
+     * modified further in another exchange.
+     * <p/>
+     * The returned {@link Message} copy will have its {@link Exchange} set
+     * to the same {@link Exchange} instance as from the source.
      *
      * @return a new message instance copied from this message
      */
@@ -281,6 +285,9 @@ public interface Message {
      * <p/>
      * If you need to do a copy and then set a new body,
      * then use {@link #copyFromWithNewBody(Message, Object)} method instead.
+     * <p/>
+     * The returned {@link Message} copy will have its {@link Exchange} set
+     * to the same {@link Exchange} instance as from the source.
      *
      * @param message the other message
      * @see #copyFromWithNewBody(Message, Object)
@@ -289,6 +296,9 @@ public interface Message {
     
     /**
      * Copies the contents (except the body) of the other message into this message and uses the provided new body instead
+     * <p/>
+     * The returned {@link Message} copy will have its {@link Exchange} set
+     * to the same {@link Exchange} instance as from the source.
      *
      * @param message the other message
      * @param newBody the new body to use

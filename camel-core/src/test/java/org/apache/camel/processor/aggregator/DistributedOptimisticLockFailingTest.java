@@ -34,6 +34,7 @@ import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
+import org.junit.Test;
 
 /**
  * @version
@@ -64,6 +65,7 @@ public class DistributedOptimisticLockFailingTest extends AbstractDistributedTes
     }
     private EverySecondOneFailsRepository sharedRepository = new EverySecondOneFailsRepository();
 
+    @Test
     public void testAlwaysFails() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -90,6 +92,7 @@ public class DistributedOptimisticLockFailingTest extends AbstractDistributedTes
         mock2.assertIsSatisfied();
     }
 
+    @Test
     public void testEverySecondOneFails() throws Exception {
         int size = 200;
         ExecutorService service = Executors.newFixedThreadPool(10);

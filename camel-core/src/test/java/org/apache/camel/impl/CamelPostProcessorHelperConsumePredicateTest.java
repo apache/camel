@@ -20,12 +20,14 @@ import java.lang.reflect.Method;
 
 import org.apache.camel.Consume;
 import org.apache.camel.ContextTestSupport;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class CamelPostProcessorHelperConsumePredicateTest extends ContextTestSupport {
 
+    @Test
     public void testConsumePredicate() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 
@@ -48,6 +50,7 @@ public class CamelPostProcessorHelperConsumePredicateTest extends ContextTestSup
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testConsumePredicateDrop() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 

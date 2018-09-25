@@ -45,6 +45,7 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.Transformer;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +56,7 @@ public class TransformerRouteTest extends ContextTestSupport {
 
     protected static final Logger LOG = LoggerFactory.getLogger(TransformerRouteTest.class);
 
+    @Test
     public void testJavaTransformer() throws Exception {
         MockEndpoint abcresult = getMockEndpoint("mock:abcresult");
         abcresult.expectedMessageCount(1);
@@ -87,6 +89,7 @@ public class TransformerRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testDataFormatTransformer() throws Exception {
         MockEndpoint xyzresult = getMockEndpoint("mock:xyzresult");
         xyzresult.expectedMessageCount(1);
@@ -108,6 +111,7 @@ public class TransformerRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testEndpointTransformer() throws Exception {
         MockEndpoint xyzresult = getMockEndpoint("mock:xyzresult");
         xyzresult.expectedMessageCount(1);
@@ -129,6 +133,7 @@ public class TransformerRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testCustomTransformer() throws Exception {
         MockEndpoint xyzresult = getMockEndpoint("mock:xyzresult");
         xyzresult.expectedMessageCount(1);

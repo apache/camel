@@ -130,7 +130,7 @@ In the same manner you can umarshal using the avro data format.
 ### Avro Dataformat Options
 
 // dataformat options: START
-The Avro dataformat supports 2 options which are listed below.
+The Avro dataformat supports 2 options, which are listed below.
 
 
 
@@ -141,3 +141,32 @@ The Avro dataformat supports 2 options which are listed below.
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 15 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.avro.configuration.host* | Hostname to use |  | String
+| *camel.component.avro.configuration.message-name* | The name of the message to send. |  | String
+| *camel.component.avro.configuration.port* | Port number to use |  | Integer
+| *camel.component.avro.configuration.protocol* | Avro protocol to use |  | Protocol
+| *camel.component.avro.configuration.protocol-class-name* | Avro protocol to use defined by the FQN class name |  | String
+| *camel.component.avro.configuration.protocol-location* | Avro protocol location |  | String
+| *camel.component.avro.configuration.reflection-protocol* | If protocol object provided is reflection protocol. Should be used only with protocol parameter because for protocolClassName protocol type will be auto detected | false | Boolean
+| *camel.component.avro.configuration.single-parameter* | If true, consumer parameter won't be wrapped into array. Will fail if protocol specifies more then 1 parameter for the message | false | Boolean
+| *camel.component.avro.configuration.transport* | Transport to use, can be either http or netty |  | AvroTransport
+| *camel.component.avro.configuration.uri-authority* | Authority to use (username and password) |  | String
+| *camel.component.avro.enabled* | Enable avro component | true | Boolean
+| *camel.component.avro.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.dataformat.avro.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.avro.enabled* | Enable avro dataformat | true | Boolean
+| *camel.dataformat.avro.instance-class-name* | Class name to use for marshal and unmarshalling |  | String
+|===
+// spring-boot-auto-configure options: END
+ND

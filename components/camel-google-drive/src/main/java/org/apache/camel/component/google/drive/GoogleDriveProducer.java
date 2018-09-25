@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiName;

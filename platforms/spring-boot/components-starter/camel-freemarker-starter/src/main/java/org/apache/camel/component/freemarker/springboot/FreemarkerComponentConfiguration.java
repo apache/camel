@@ -17,7 +17,6 @@
 package org.apache.camel.component.freemarker.springboot;
 
 import javax.annotation.Generated;
-import freemarker.template.Configuration;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -33,10 +32,15 @@ public class FreemarkerComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * To use an existing freemarker.template.Configuration instance as the
-     * configuration.
+     * Whether to enable auto configuration of the freemarker component. This is
+     * enabled by default.
      */
-    private Configuration configuration;
+    private Boolean enabled;
+    /**
+     * To use an existing freemarker.template.Configuration instance as the
+     * configuration. The option is a freemarker.template.Configuration type.
+     */
+    private String configuration;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -44,11 +48,11 @@ public class FreemarkerComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public Configuration getConfiguration() {
+    public String getConfiguration() {
         return configuration;
     }
 
-    public void setConfiguration(Configuration configuration) {
+    public void setConfiguration(String configuration) {
         this.configuration = configuration;
     }
 

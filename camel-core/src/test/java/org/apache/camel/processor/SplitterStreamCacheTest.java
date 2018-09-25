@@ -17,12 +17,14 @@
 package org.apache.camel.processor;
 
 import java.io.InputStream;
+
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
@@ -32,6 +34,7 @@ public class SplitterStreamCacheTest extends ContextTestSupport {
     private static final String TEST_FILE = "org/apache/camel/converter/stream/test.xml";
     protected int numMessages = 200;
     
+    @Test
     public void testSendStreamSource() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(numMessages);

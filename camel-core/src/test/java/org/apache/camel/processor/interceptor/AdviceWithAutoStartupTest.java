@@ -19,12 +19,14 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class AdviceWithAutoStartupTest extends ContextTestSupport {
 
+    @Test
     public void testAdvised() throws Exception {
         assertFalse(context.getRouteStatus("foo").isStarted());
         assertFalse(context.getRouteStatus("bar").isStarted());

@@ -18,6 +18,7 @@ package org.apache.camel.spring.issues;
 
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -31,6 +32,7 @@ public class SpringAdviceWithContextScopedErrorHandlerIssueTest extends SpringTe
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/SpringAdviceWithContextScopedErrorHandlerIssueTest.xml");
     }
 
+    @Test
     public void testAdviceWith() throws Exception {
         context.getRouteDefinition("route-a").adviceWith(context, new AdviceWithRouteBuilder() {
             @Override

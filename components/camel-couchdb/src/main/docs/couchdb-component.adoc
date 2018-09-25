@@ -10,8 +10,8 @@ has the following features:
 
 * As a consumer, monitors couch changesets for inserts, updates and
 deletes and publishes these as messages into camel routes.
-* As a producer, can save, update and from Camel 2.18 delete (by using CouchDbMethod with DELETE value) 
-documents into couch.
+* As a producer, can save, update, from Camel 2.18 delete (by using CouchDbMethod with DELETE value) 
+documents and from Camel 2.22 get document by id (by using CouchDbMethod with GET value) into couch.
 * Can support as many endpoints as required, eg for multiple databases
 across multiple instances.
 * Ability to have events trigger for only deletes, only inserts/updates
@@ -90,6 +90,22 @@ with the following path and query parameters:
 | *username* (security) | Username in case of authenticated databases |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.couchdb.enabled* | Enable couchdb component | true | Boolean
+| *camel.component.couchdb.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 ### Headers
 

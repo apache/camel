@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * @version 
@@ -40,6 +41,7 @@ public class MockAsBeanTest extends ContextTestSupport {
     }
 
     // START SNIPPET: e1
+    @Test
     public void testMockAsBeanWithWhenAnyExchangeReceived() throws Exception {
         // we should expect to receive the transformed message
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
@@ -75,7 +77,8 @@ public class MockAsBeanTest extends ContextTestSupport {
     }
     // END SNIPPET: e2
     
-   // START SNIPPET: e3
+    // START SNIPPET: e3
+    @Test
     public void testMockAsBeanWithReplyBody() throws Exception {
         // we should expect to receive the transformed message
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
@@ -88,7 +91,8 @@ public class MockAsBeanTest extends ContextTestSupport {
     }
     // END SNIPPET: e3
     
-   // START SNIPPET: e4
+    // START SNIPPET: e4
+    @Test
     public void testMockAsBeanWithReplyHeader() throws Exception {
         // we should expect to receive the transformed message
         getMockEndpoint("mock:result").expectedHeaderReceived("myHeader", "Bye World");

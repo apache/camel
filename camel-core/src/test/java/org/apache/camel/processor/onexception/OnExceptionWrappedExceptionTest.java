@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.TypeConverterSupport;
+import org.junit.Test;
 
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
@@ -28,6 +29,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  */
 public class OnExceptionWrappedExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testWrappedException() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:wrapped").expectedMessageCount(1);

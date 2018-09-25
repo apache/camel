@@ -22,12 +22,14 @@ import org.w3c.dom.Element;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ModelHelper;
+import org.junit.Test;
 
 public class DumpModelAsXmlNamespaceTest extends ContextTestSupport {
 
     private static final String URL_FOO = "http://foo.com";
     private static final String URL_BAR = "http://bar.com";
 
+    @Test
     public void testDumpModelAsXml() throws Exception {
         String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);

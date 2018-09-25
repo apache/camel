@@ -19,12 +19,14 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class AdviceWithOnCompletionTest extends ContextTestSupport {
 
+    @Test
     public void testAdviceOnCompletion() throws Exception {
         getMockEndpoint("mock:done").expectedMessageCount(1);
         getMockEndpoint("mock:advice").expectedMessageCount(1);

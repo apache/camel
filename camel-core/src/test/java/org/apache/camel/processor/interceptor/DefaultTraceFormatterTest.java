@@ -21,16 +21,19 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class DefaultTraceFormatterTest extends ContextTestSupport {
 
+    @Test
     public void testDefaultTraceFormatter() {
         getFormatter();
     }
 
+    @Test
     public void testFormat() throws Exception {
         Tracer tracer = new Tracer();
         tracer.setFormatter(getFormatter());
@@ -52,6 +55,7 @@ public class DefaultTraceFormatterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testWithException() throws Exception {
         Tracer tracer = new Tracer();
         tracer.setFormatter(getFormatter());
@@ -65,6 +69,7 @@ public class DefaultTraceFormatterTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testNoShow() throws Exception {
         DefaultTraceFormatter formatter = getFormatter();
         formatter.setShowBreadCrumb(false);

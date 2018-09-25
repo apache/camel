@@ -21,12 +21,14 @@ import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class BeanInvokeStaticTest extends ContextTestSupport {
 
+    @Test
     public void testA() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -44,6 +46,7 @@ public class BeanInvokeStaticTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testB() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

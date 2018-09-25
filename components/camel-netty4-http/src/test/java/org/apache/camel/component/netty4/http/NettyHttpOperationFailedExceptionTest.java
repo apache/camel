@@ -17,7 +17,6 @@
 package org.apache.camel.component.netty4.http;
 
 import io.netty.handler.codec.http.DefaultLastHttpContent;
-
 import org.junit.Test;
 
 import static org.hamcrest.core.IsNot.not;

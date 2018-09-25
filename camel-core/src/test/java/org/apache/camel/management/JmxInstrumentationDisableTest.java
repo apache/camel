@@ -22,6 +22,7 @@ import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * A unit test which verifies disabling of JMX instrumentation.
@@ -36,6 +37,7 @@ public class JmxInstrumentationDisableTest extends JmxInstrumentationUsingProper
     }
 
     @Override
+    @Test
     public void testMBeansRegistered() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

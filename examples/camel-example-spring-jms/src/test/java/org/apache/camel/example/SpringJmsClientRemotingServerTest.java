@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.example;
-
 import java.io.File;
 import java.io.FileOutputStream;
 

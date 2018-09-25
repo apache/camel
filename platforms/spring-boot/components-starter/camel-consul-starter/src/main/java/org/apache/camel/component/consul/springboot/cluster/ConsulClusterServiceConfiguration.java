@@ -24,7 +24,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "camel.component.consul.cluster.service")
 public class ConsulClusterServiceConfiguration extends ConsulClusterConfiguration {
     /**
-     * Sets if the zookeeper cluster service should be enabled or not, default is false.
+     * Sets if the consul cluster service should be enabled or not, default is false.
      */
     private boolean enabled;
 

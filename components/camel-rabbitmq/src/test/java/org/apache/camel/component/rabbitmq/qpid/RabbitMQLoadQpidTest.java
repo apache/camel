@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.rabbitmq.qpid;
-
 import org.apache.camel.component.rabbitmq.RabbitMQLoadIntTest;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

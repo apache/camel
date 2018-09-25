@@ -26,6 +26,7 @@ import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Test;
 
 /**
  * The new Async API version of doing async routing based on the old AsyncProcessor API
@@ -38,6 +39,7 @@ public class SedaAsyncProducerTest extends ContextTestSupport {
 
     private String route = "";
 
+    @Test
     public void testAsyncProducer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -57,6 +59,7 @@ public class SedaAsyncProducerTest extends ContextTestSupport {
         assertEquals("Bye World", response);
     }
 
+    @Test
     public void testAsyncProducerWait() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

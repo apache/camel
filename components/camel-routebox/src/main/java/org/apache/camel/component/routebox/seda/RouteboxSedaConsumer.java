@@ -102,7 +102,7 @@ public class RouteboxSedaConsumer extends RouteboxServiceSupport implements Rout
                 }
             } else {
                 if (LOG.isWarnEnabled()) {
-                    LOG.warn("This consumer is stopped during polling an exchange, so putting it back on the seda queue: " + exchange);
+                    LOG.warn("This consumer is stopped during polling an exchange, so putting it back on the seda queue: {}", exchange);
                 }                
                 queue.put(exchange);
             }

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
@@ -26,6 +25,9 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test of the string data format.
@@ -35,18 +37,21 @@ public class StringDataFormatTest extends TestSupport {
     private CamelContext context;
     private ProducerTemplate template;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         context = new DefaultCamelContext();
         context.setTracing(true);
         template = context.createProducerTemplate();
         template.start();
     }
 
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         template.stop();
         context.stop();
     }
 
+    @Test
     public void testMarshalUTF8() throws Exception {
         // NOTE: We are using a processor to do the assertions as the mock endpoint (Camel) does not yet support
         // type conversion using byte and strings where you can set a charset encoding
@@ -67,6 +72,7 @@ public class StringDataFormatTest extends TestSupport {
         template.sendBody("direct:start", book);
     }
 
+    @Test
     public void testMarshalNoEncoding() throws Exception {
         // NOTE: We are using a processor to do the assertions as the mock endpoint (Camel) does not yet support
         // type conversion using byte and strings where you can set a charset encoding
@@ -87,6 +93,7 @@ public class StringDataFormatTest extends TestSupport {
     }
 
 
+    @Test
     public void testUnmarshalUTF8() throws Exception {
         // NOTE: Here we can use a MockEndpoint as we unmarshal the inputstream to String
 
@@ -110,6 +117,7 @@ public class StringDataFormatTest extends TestSupport {
         mock.expectedBodiesReceived(title);
     }
 
+    @Test
     public void testUnmarshalNoEncoding() throws Exception {
         // NOTE: Here we can use a MockEndpoint as we unmarshal the inputstream to String
 

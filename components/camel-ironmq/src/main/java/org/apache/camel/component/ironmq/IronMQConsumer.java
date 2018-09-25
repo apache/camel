@@ -150,7 +150,7 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
     protected void processRollback(Exchange exchange) {
         Exception cause = exchange.getException();
         if (cause != null) {
-            LOG.warn("Exchange failed, so rolling back message status: " + exchange, cause);
+            LOG.warn("Exchange failed, so rolling back message status: {}", exchange, cause);
         } else {
             LOG.warn("Exchange failed, so rolling back message status: {}", exchange);
         }

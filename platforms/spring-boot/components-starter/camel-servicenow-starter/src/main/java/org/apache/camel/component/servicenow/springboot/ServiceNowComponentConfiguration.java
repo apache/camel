@@ -26,7 +26,6 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.cxf.configuration.security.ProxyAuthorizationPolicy;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The servicenow component is used to integrate Camel with ServiceNow cloud
@@ -40,6 +39,11 @@ public class ServiceNowComponentConfiguration
         extends
             ComponentConfigurationPropertiesCommon {
 
+    /**
+     * Whether to enable auto configuration of the servicenow component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
     /**
      * The ServiceNow instance name
      */
@@ -359,7 +363,6 @@ public class ServiceNowComponentConfiguration
         /**
          * Sets Jackson's ObjectMapper to use for request/reply
          */
-        @NestedConfigurationProperty
         private ObjectMapper mapper;
         /**
          * The ServiceNow release to target, default to Helsinki See
@@ -374,17 +377,14 @@ public class ServiceNowComponentConfiguration
          * To configure security using SSLContextParameters. See
          * http://camel.apache.org/camel-configuration-utilities.html
          */
-        @NestedConfigurationProperty
         private SSLContextParameters sslContextParameters;
         /**
          * To configure http-client
          */
-        @NestedConfigurationProperty
         private HTTPClientPolicy httpClientPolicy;
         /**
          * To configure proxy authentication
          */
-        @NestedConfigurationProperty
         private ProxyAuthorizationPolicy proxyAuthorizationPolicy;
         /**
          * The proxy host name
@@ -414,6 +414,9 @@ public class ServiceNowComponentConfiguration
          * The date-time format used for Json serialization/deserialization
          */
         private String dateTimeFormat = "yyyy-MM-dd HH:mm:ss";
+        /**
+         * Defines both request and response models
+         */
         private Map models;
         /**
          * Defines the response model

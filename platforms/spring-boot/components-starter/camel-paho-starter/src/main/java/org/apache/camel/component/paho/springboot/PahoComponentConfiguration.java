@@ -18,9 +18,7 @@ package org.apache.camel.component.paho.springboot;
 
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Component for communicating with MQTT M2M message brokers using Eclipse Paho
@@ -35,6 +33,11 @@ public class PahoComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the paho component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The URL of the MQTT broker.
      */
     private String brokerUrl;
@@ -43,10 +46,10 @@ public class PahoComponentConfiguration
      */
     private String clientId;
     /**
-     * Client connection options
+     * Client connection options. The option is a
+     * org.eclipse.paho.client.mqttv3.MqttConnectOptions type.
      */
-    @NestedConfigurationProperty
-    private MqttConnectOptions connectOptions;
+    private String connectOptions;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -70,11 +73,11 @@ public class PahoComponentConfiguration
         this.clientId = clientId;
     }
 
-    public MqttConnectOptions getConnectOptions() {
+    public String getConnectOptions() {
         return connectOptions;
     }
 
-    public void setConnectOptions(MqttConnectOptions connectOptions) {
+    public void setConnectOptions(String connectOptions) {
         this.connectOptions = connectOptions;
     }
 

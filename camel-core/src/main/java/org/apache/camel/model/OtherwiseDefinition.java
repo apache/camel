@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -47,6 +48,11 @@ public class OtherwiseDefinition extends OutputDefinition<OtherwiseDefinition> {
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         return this.createChildProcessor(routeContext, false);
+    }
+
+    @Override
+    public String getShortName() {
+        return "otherwise";
     }
 
     @Override

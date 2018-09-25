@@ -21,12 +21,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class SedaInOutChainedWithOnCompletionTest extends ContextTestSupport {
 
+    @Test
     public void testInOutSedaChainedWithCustomOnCompletion() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("start");
         getMockEndpoint("mock:b").expectedBodiesReceived("start-a");

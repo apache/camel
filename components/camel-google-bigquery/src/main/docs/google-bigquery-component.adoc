@@ -59,7 +59,7 @@ Service Account Email and Service Account Key can be found in the GCP JSON crede
 ### Options
 
 // component options: START
-The Google BigQuery component supports 4 options which are listed below.
+The Google BigQuery component supports 4 options, which are listed below.
 
 
 
@@ -105,6 +105,24 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.google-bigquery.dataset-id* | BigQuery Dataset Id |  | String
+| *camel.component.google-bigquery.enabled* | Whether to enable auto configuration of the google-bigquery component. This is enabled by default. |  | Boolean
+| *camel.component.google-bigquery.project-id* | Google Cloud Project Id |  | String
+| *camel.component.google-bigquery.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 ### Message Headers
 

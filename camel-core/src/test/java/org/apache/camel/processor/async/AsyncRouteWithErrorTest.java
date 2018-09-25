@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.async;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -30,11 +31,13 @@ public class AsyncRouteWithErrorTest extends ContextTestSupport {
     private static String route = "";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         route = "";
     }
 
+    @Test
     public void testAsyncRouteWithError() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:result").expectedMessageCount(0);
@@ -56,6 +59,7 @@ public class AsyncRouteWithErrorTest extends ContextTestSupport {
         assertEquals("BA", route);
     }
 
+    @Test
     public void testAsyncRouteWithTypeConverted() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:result").expectedMessageCount(0);

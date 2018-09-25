@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.TimerListener;
 import org.apache.camel.management.mbean.LoadTriplet;
 import org.apache.camel.support.TimerListenerManager;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
@@ -34,6 +35,7 @@ public class LoadTimerTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testTimer() throws Exception {
         TimerListenerManager myTimer = new TimerListenerManager();
         myTimer.setCamelContext(context);

@@ -54,7 +54,7 @@ do
     echo "*******************************************************************"
     echo "Running test $testname"
     echo "*******************************************************************"
-    if mvn test -Dtest=$testname ; then
+    if ../../mvnw clean test -Dtest=$testname ; then
       echo "\n"
       echo "*******************************************************************"
       echo "Test success: $testname"

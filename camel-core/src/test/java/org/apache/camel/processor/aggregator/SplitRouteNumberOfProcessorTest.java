@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
 /**
  * @version 
@@ -37,6 +38,7 @@ public class SplitRouteNumberOfProcessorTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testOneProcessor() throws Exception {
         failed.set(false);
 
@@ -79,6 +81,7 @@ public class SplitRouteNumberOfProcessorTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testThreeProcessors() throws Exception {
         failed.set(false);
 

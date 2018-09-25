@@ -35,6 +35,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toSet;
 
 import javax.enterprise.inject.CreationException;
+import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.xml.bind.JAXBException;
@@ -87,16 +88,16 @@ final class XmlCdiBeanFactory {
         return new XmlCdiBeanFactory(manager, environment, extension);
     }
 
-    Set<SyntheticBean<?>> beansFrom(String path) throws JAXBException, IOException {
-        URL url = getResource(path);
+    Set<SyntheticBean<?>> beansFrom(String path, AnnotatedType<?> annotatedType) throws JAXBException, IOException {
+        URL url = getResource(path, annotatedType.getJavaClass().getClassLoader());
         if (url == null) {
             logger.warn("Unable to locate resource [{}] for import!", path);
             return emptySet();
         }
-        return beansFrom(url);
+        return beansFrom(url, annotatedType);
     }
 
-    Set<SyntheticBean<?>> beansFrom(URL url) throws JAXBException, IOException {
+    Set<SyntheticBean<?>> beansFrom(URL url, AnnotatedType<?> annotatedType) throws JAXBException, IOException {
         try (InputStream xml = url.openStream()) {
             Object node = XmlCdiJaxbContexts.CAMEL_CDI.instance()
                 .createUnmarshaller()
@@ -119,7 +120,7 @@ final class XmlCdiBeanFactory {
                     // Get the base URL as imports are relative to this
                     String path = url.getFile().substring(0, url.getFile().lastIndexOf('/'));
                     String base = url.getProtocol() + "://" + url.getHost() + path;
-                    beans.addAll(beansFrom(base + "/" + definition.getResource()));
+                    beans.addAll(beansFrom(base + "/" + definition.getResource(), annotatedType));
                 }
                 for (RestContextDefinition factory : app.getRestContexts()) {
                     beans.add(restContextBean(factory, url));

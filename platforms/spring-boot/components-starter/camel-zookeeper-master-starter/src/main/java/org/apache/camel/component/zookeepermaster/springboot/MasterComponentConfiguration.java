@@ -17,11 +17,8 @@
 package org.apache.camel.component.zookeepermaster.springboot;
 
 import javax.annotation.Generated;
-import org.apache.camel.component.zookeepermaster.ContainerIdFactory;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.apache.curator.framework.CuratorFramework;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Represents an endpoint which only becomes active when it obtains the master
@@ -36,10 +33,15 @@ public class MasterComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * To use a custom ContainerIdFactory for creating container ids.
+     * Whether to enable auto configuration of the zookeeper-master component.
+     * This is enabled by default.
      */
-    @NestedConfigurationProperty
-    private ContainerIdFactory containerIdFactory;
+    private Boolean enabled;
+    /**
+     * To use a custom ContainerIdFactory for creating container ids. The option
+     * is a org.apache.camel.component.zookeepermaster.ContainerIdFactory type.
+     */
+    private String containerIdFactory;
     /**
      * The root path to use in zookeeper where information is stored which nodes
      * are master/slave etc. Will by default use:
@@ -48,10 +50,10 @@ public class MasterComponentConfiguration
     private String zkRoot = "/camel/zookeepermaster/clusters/master";
     /**
      * To use a custom configured CuratorFramework as connection to zookeeper
-     * ensemble.
+     * ensemble. The option is a org.apache.curator.framework.CuratorFramework
+     * type.
      */
-    @NestedConfigurationProperty
-    private CuratorFramework curator;
+    private String curator;
     /**
      * Timeout in millis to use when connecting to the zookeeper ensemble
      */
@@ -71,11 +73,11 @@ public class MasterComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public ContainerIdFactory getContainerIdFactory() {
+    public String getContainerIdFactory() {
         return containerIdFactory;
     }
 
-    public void setContainerIdFactory(ContainerIdFactory containerIdFactory) {
+    public void setContainerIdFactory(String containerIdFactory) {
         this.containerIdFactory = containerIdFactory;
     }
 
@@ -87,11 +89,11 @@ public class MasterComponentConfiguration
         this.zkRoot = zkRoot;
     }
 
-    public CuratorFramework getCurator() {
+    public String getCurator() {
         return curator;
     }
 
-    public void setCurator(CuratorFramework curator) {
+    public void setCurator(String curator) {
         this.curator = curator;
     }
 

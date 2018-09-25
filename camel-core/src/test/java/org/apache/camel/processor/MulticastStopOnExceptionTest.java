@@ -22,12 +22,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class MulticastStopOnExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testMulticastStopOnExceptionOk() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello");
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello");
@@ -39,6 +41,7 @@ public class MulticastStopOnExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMulticastStopOnExceptionStop() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Kaboom");
         getMockEndpoint("mock:bar").expectedMessageCount(0);

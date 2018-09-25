@@ -17,11 +17,13 @@
 package org.apache.camel.component.mail;
 
 import java.util.Date;
+
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
 import static org.apache.camel.component.mail.SearchTermBuilder.Comparison;
@@ -30,8 +32,9 @@ import static org.apache.camel.component.mail.SearchTermBuilder.Op.or;
 /**
  *
  */
-public class SearchTermBuilderTest extends TestCase {
+public class SearchTermBuilderTest extends Assert {
 
+    @Test
     public void testSearchTermBuilderFromAndSubject() throws Exception {
         SearchTermBuilder build = new SearchTermBuilder();
         SearchTerm st = build.from("someone@somewhere.com").subject("Camel").build();
@@ -55,6 +58,7 @@ public class SearchTermBuilderTest extends TestCase {
         assertFalse("Should not match message, as from doesn't match", st.match(msg2));
     }
 
+    @Test
     public void testSearchTermBuilderFromOrSubject() throws Exception {
         SearchTermBuilder build = new SearchTermBuilder();
         SearchTerm st = build.subject("Camel").from(or, "admin@apache.org").build();
@@ -78,6 +82,7 @@ public class SearchTermBuilderTest extends TestCase {
         assertTrue("Should match message, as its from admin", st.match(msg2));
     }
 
+    @Test
     public void testSearchTermSentLast24Hours() throws Exception {
         SearchTermBuilder build = new SearchTermBuilder();
         long offset = -1 * (24 * 60 * 60 * 1000L);
@@ -108,6 +113,7 @@ public class SearchTermBuilderTest extends TestCase {
         assertFalse("Should not match message as its too old", st.match(msg2));
     }
 
+    @Test
     public void testComparison() throws Exception {
         assertEquals(1, Comparison.LE.asNum());
         assertEquals(2, Comparison.LT.asNum());

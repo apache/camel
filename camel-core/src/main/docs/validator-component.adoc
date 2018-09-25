@@ -53,7 +53,7 @@ provided directly in the camel-core.
 === Options
 
 // component options: START
-The Validator component supports 2 options which are listed below.
+The Validator component supports 2 options, which are listed below.
 
 
 
@@ -95,8 +95,8 @@ with the following path and query parameters:
 | *failOnNullHeader* (producer) | Whether to fail if no header exists when validating against a header. | true | boolean
 | *headerName* (producer) | To validate against a header instead of the message body. |  | String
 | *errorHandler* (advanced) | To use a custom org.apache.camel.processor.validation.ValidatorErrorHandler. The default error handler captures the errors and throws an exception. |  | ValidatorErrorHandler
-| *resourceResolver* (advanced) | To use a custom LSResourceResolver. See also link setResourceResolverFactory(ValidatorResourceResolverFactory) |  | LSResourceResolver
-| *resourceResolverFactory* (advanced) | For creating a resource resolver which depends on the endpoint resource URI. Must not be used in combination with method link setResourceResolver(LSResourceResolver). If not set then DefaultValidatorResourceResolverFactory is used |  | ValidatorResource ResolverFactory
+| *resourceResolver* (advanced) | To use a custom LSResourceResolver. See also setResourceResolverFactory(ValidatorResourceResolverFactory) |  | LSResourceResolver
+| *resourceResolverFactory* (advanced) | For creating a resource resolver which depends on the endpoint resource URI. Must not be used in combination with method setResourceResolver(LSResourceResolver). If not set then DefaultValidatorResourceResolverFactory is used |  | ValidatorResource ResolverFactory
 | *schemaFactory* (advanced) | To use a custom javax.xml.validation.SchemaFactory |  | SchemaFactory
 | *schemaLanguage* (advanced) | Configures the W3C XML Schema Namespace URI. | http://www.w3.org/2001/XMLSchema | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean

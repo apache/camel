@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test that file consumer will not match directories (CAMEL-920)
@@ -29,7 +30,8 @@ public class FileConsumerDirectoryNotMatchedTest extends ContextTestSupport {
     private String fileUrl = "file://target/dirnotmatched/?initialDelay=0&delay=10&recursive=true&include=.*txt$";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/dirnotmatched");
         super.setUp();
 
@@ -46,6 +48,7 @@ public class FileConsumerDirectoryNotMatchedTest extends ContextTestSupport {
             Exchange.FILE_NAME, "report2008.txt");
     }
 
+    @Test
     public void testSkipDirectories() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);

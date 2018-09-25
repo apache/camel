@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Unit test to verify that using DLC with redelivery and delays with blocking threads.
@@ -36,6 +37,7 @@ public class DeadLetterChannelRedeliverWithDelayBlockingTest extends ContextTest
 
     private static int counter;
 
+    @Test
     public void testRedeliverWithDelay() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
 

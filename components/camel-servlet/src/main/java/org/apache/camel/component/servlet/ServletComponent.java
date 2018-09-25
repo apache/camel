@@ -30,6 +30,7 @@ import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonComponent;
 import org.apache.camel.http.common.HttpConsumer;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
@@ -44,9 +45,18 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
 
     private static final Logger LOG = LoggerFactory.getLogger(ServletComponent.class);
 
+    @Metadata(label = "consumer", defaultValue = "CamelServlet", description = "Default name of servlet to use. The default name is CamelServlet.")
     private String servletName = "CamelServlet";
+    @Metadata(label = "consumer,advanced", description = "To use a custom org.apache.camel.component.servlet.HttpRegistry.")
     private HttpRegistry httpRegistry;
+    @Metadata(label = "consumer,advanced", description = "Whether to automatic bind multipart/form-data as attachments on the Camel Exchange}."
+        + " The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together."
+        + " Remove disableStreamCache to use AttachmentMultipartBinding."
+        + " This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's.")
     private boolean attachmentMultipartBinding;
+    @Metadata(label = "consumer,advanced", description = "Whitelist of accepted filename extensions for accepting uploaded files."
+        + " Multiple extensions can be separated by comma, such as txt,xml.")
+    private String fileNameExtWhitelist;
 
     public ServletComponent() {
         super(ServletEndpoint.class);
@@ -89,6 +99,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
 
         ServletEndpoint endpoint = createServletEndpoint(uri, this, httpUri);
         endpoint.setServletName(servletName);
+        endpoint.setFileNameExtWhitelist(fileNameExtWhitelist);
         if (async != null) {
             endpoint.setAsync(async);
         }
@@ -189,7 +200,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
     }
 
     /**
-     * Default name of servlet to use. The default name is <tt>CamelServlet</tt>.
+     * Default name of servlet to use. The default name is CamelServlet.
      */
     public void setServletName(String servletName) {
         this.servletName = servletName;
@@ -200,7 +211,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
     }
 
     /**
-     * To use a custom {@link org.apache.camel.component.servlet.HttpRegistry}.
+     * To use a custom org.apache.camel.component.servlet.HttpRegistry.
      */
     public void setHttpRegistry(HttpRegistry httpRegistry) {
         this.httpRegistry = httpRegistry;
@@ -220,6 +231,19 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
      */
     public void setAttachmentMultipartBinding(boolean attachmentMultipartBinding) {
         this.attachmentMultipartBinding = attachmentMultipartBinding;
+    }
+
+    public String getFileNameExtWhitelist() {
+        return fileNameExtWhitelist;
+    }
+
+    /**
+     * Whitelist of accepted filename extensions for accepting uploaded files.
+     * <p/>
+     * Multiple extensions can be separated by comma, such as txt,xml.
+     */
+    public void setFileNameExtWhitelist(String fileNameExtWhitelist) {
+        this.fileNameExtWhitelist = fileNameExtWhitelist;
     }
 
     @Override
@@ -296,7 +320,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         ServletEndpoint endpoint = camelContext.getEndpoint(url, ServletEndpoint.class);
         setProperties(camelContext, endpoint, parameters);
 
-        if (!map.containsKey("httpBindingRef")) {
+        if (!map.containsKey("httpBinding")) {
             // use the rest binding, if not using a custom http binding
             HttpBinding binding = new ServletRestHttpBinding();
             binding.setHeaderFilterStrategy(endpoint.getHeaderFilterStrategy());

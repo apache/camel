@@ -63,7 +63,7 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
     private String[] failureFields;
     private String[] errorFields;
     private String[] warningFields;
-    private Map<String, String> extensionFields = new HashMap<String, String>();
+    private Map<String, String> extensionFields = new HashMap<>();
     private ReceivedContentMic receivedContentMic;
 
     public AS2MessageDispositionNotificationEntity(HttpEntityEnclosingRequest request,
@@ -219,8 +219,7 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
             if (dispositionModifier != null) {
                 as2Disposition = as2Disposition + "/" + dispositionModifier.toString();
             }
-            Header as2DispositionField = new BasicHeader(AS2_DISPOSITION,
-                    dispositionMode.toString() + ";" + dispositionType.toString());
+            Header as2DispositionField = new BasicHeader(AS2_DISPOSITION, as2Disposition);
             canonicalOutstream.writeln(as2DispositionField.toString());
 
             if (failureFields != null) {

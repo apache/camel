@@ -17,15 +17,18 @@
 package org.apache.camel.management;
 
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class ManagedRouteDirectWhileIssueLeakTest extends ManagementTestSupport {
 
+    @Test
     public void testInflightLeak() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

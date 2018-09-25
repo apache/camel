@@ -24,6 +24,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.camel.CamelContext;
+import org.junit.Test;
 
 public class TrustManagersParametersTest extends AbstractJsseParametersTest {
     
@@ -43,6 +44,7 @@ public class TrustManagersParametersTest extends AbstractJsseParametersTest {
         return tmp;
     }
     
+    @Test
     public void testPropertyPlaceholders() throws Exception {
         CamelContext context = this.createPropertiesPlaceholderAwareContext();
         
@@ -65,6 +67,7 @@ public class TrustManagersParametersTest extends AbstractJsseParametersTest {
         validateTrustManagers(tms);
     }
 
+    @Test
     public void testCustomTrustManager() throws Exception {
         TrustManager myTm = new TrustManager() {
             // noop
@@ -77,6 +80,7 @@ public class TrustManagersParametersTest extends AbstractJsseParametersTest {
         assertSame(myTm, tms[0]);
     }
 
+    @Test
     public void testCreateTrustManagers() throws Exception {
         TrustManagersParameters tmp = this.createMinimalTrustManagersParameters();
         
@@ -84,6 +88,7 @@ public class TrustManagersParametersTest extends AbstractJsseParametersTest {
         validateTrustManagers(tms);
     }
     
+    @Test
     public void testExplicitAlgorithm() throws Exception {
         TrustManagersParameters tmp = this.createMinimalTrustManagersParameters();
         tmp.setAlgorithm(KeyManagerFactory.getDefaultAlgorithm());
@@ -92,6 +97,7 @@ public class TrustManagersParametersTest extends AbstractJsseParametersTest {
         validateTrustManagers(tms);
     }
     
+    @Test
     public void testExplicitProvider() throws Exception {
         TrustManagersParameters tmp = this.createMinimalTrustManagersParameters();
         tmp.setProvider(KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
@@ -101,6 +107,7 @@ public class TrustManagersParametersTest extends AbstractJsseParametersTest {
         validateTrustManagers(tms);
     }
     
+    @Test
     public void testInvalidExplicitAlgorithm() throws Exception {
         TrustManagersParameters tmp = this.createMinimalTrustManagersParameters();
         tmp.setAlgorithm("dsfsdfsdfdsfdsF");
@@ -113,6 +120,7 @@ public class TrustManagersParametersTest extends AbstractJsseParametersTest {
         }
     }
     
+    @Test
     public void testInvalidExplicitProvider() throws Exception {
         TrustManagersParameters tmp = this.createMinimalTrustManagersParameters();
         tmp.setProvider("dsfsdfsdfdsfdsF");

@@ -26,17 +26,21 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 public class XsltRouteTest extends ContextTestSupport {
     
+    @Test
     public void testSendStringMessage() throws Exception {
         sendMessageAndHaveItTransformed("<mail><subject>Hey</subject><body>Hello world!</body></mail>");
     }
     
+    @Test
     public void testSendBytesMessage() throws Exception {
         sendMessageAndHaveItTransformed("<mail><subject>Hey</subject><body>Hello world!</body></mail>".getBytes());
     }
     
+    @Test
     public void testSendDomMessage() throws Exception {
         XmlConverter  converter = new XmlConverter();
         Document body = converter.toDOMDocument("<mail><subject>Hey</subject><body>Hello world!</body></mail>");

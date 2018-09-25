@@ -167,7 +167,7 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
                 break;
             }
 
-            LOG.debug("Received BlueprintEvent[replay={} type={} bundle={}] %s", event.isReplay(), eventTypeString, event.getBundle().getSymbolicName(), event.toString());
+            LOG.debug("Received BlueprintEvent[replay={} type={} bundle={}] %s", event.isReplay(), eventTypeString, event.getBundle().getSymbolicName(), event);
         }
 
         if (!event.isReplay() && this.getBundleContext().getBundle().getBundleId() == event.getBundle().getBundleId()) {
@@ -176,14 +176,14 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
                     LOG.info("Attempting to start CamelContext: {}", this.getName());
                     this.maybeStart();
                 } catch (Exception startEx) {
-                    LOG.error("Error occurred during starting CamelContext: " + this.getName(), startEx);
+                    LOG.error("Error occurred during starting CamelContext: {}", this.getName(), startEx);
                 }
             } else if (event.getType() == BlueprintEvent.DESTROYING) {
                 try {
                     LOG.info("Stopping CamelContext: {}", this.getName());
                     this.stop();
                 } catch (Exception stopEx) {
-                    LOG.error("Error occurred during stopping CamelContext: " + this.getName(), stopEx);
+                    LOG.error("Error occurred during stopping CamelContext: {}", this.getName(), stopEx);
                 }
             }
         }
@@ -213,7 +213,7 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
             }
 
             // use trace logging as this is very noisy
-            LOG.trace("Service: {} changed to: {}", event.toString(), eventTypeString);
+            LOG.trace("Service: {} changed to: {}", event, eventTypeString);
         }
     }
 

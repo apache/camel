@@ -17,6 +17,7 @@
 package org.apache.camel.language;
 
 import org.apache.camel.CamelContext;
+import org.junit.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
@@ -30,6 +31,7 @@ public class SpringXMLTokenSplitTest extends XMLTokenSplitTest {
     }
 
     @Override
+    @Test
     public void testXMLToken2() throws Exception {
         // noop
     }

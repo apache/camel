@@ -19,6 +19,7 @@ package org.apache.camel.processor.aggregator;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
+import org.junit.Test;
 
 /**
  * @version 
@@ -30,6 +31,7 @@ public class AggregateParallelProcessingTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testAggregateParallelProcessing() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -55,6 +57,7 @@ public class AggregateParallelProcessingTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAggregateNotParallelProcessing() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

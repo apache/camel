@@ -22,12 +22,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Unit test for try .. handle with multiple exceptions.
  */
 public class TryProcessorMultipleExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testIOException() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:catch").expectedMessageCount(1);
@@ -38,6 +40,7 @@ public class TryProcessorMultipleExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testIllegalStateException() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:catch").expectedMessageCount(1);
@@ -48,6 +51,7 @@ public class TryProcessorMultipleExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOk() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:catch").expectedMessageCount(0);

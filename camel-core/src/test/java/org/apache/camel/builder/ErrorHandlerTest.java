@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.builder;
-
 import java.util.List;
 
 import org.apache.camel.Channel;
@@ -29,25 +28,27 @@ import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.LoggingErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.SendProcessor;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class ErrorHandlerTest extends TestSupport {
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // make SEDA testing faster
         System.setProperty("CamelSedaPollTimeout", "10");
-        super.setUp();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         System.clearProperty("CamelSedaPollTimeout");
-        super.tearDown();
     }
 
+    @Test
     public void testOverloadingTheDefaultErrorHandler() throws Exception {
         // START SNIPPET: e1
         RouteBuilder builder = new RouteBuilder() {
@@ -77,6 +78,7 @@ public class ErrorHandlerTest extends TestSupport {
         }
     }
 
+    @Test
     public void testOverloadingTheHandlerOnASingleRoute() throws Exception {
 
         // START SNIPPET: e2
@@ -99,6 +101,7 @@ public class ErrorHandlerTest extends TestSupport {
         assertEquals("Number routes created" + list, 2, list.size());
     }
 
+    @Test
     public void testConfigureDeadLetterChannel() throws Exception {
         // START SNIPPET: e3
         RouteBuilder builder = new RouteBuilder() {
@@ -126,6 +129,7 @@ public class ErrorHandlerTest extends TestSupport {
     }
 
 
+    @Test
     public void testConfigureDeadLetterChannelWithCustomRedeliveryPolicy() throws Exception {
         // START SNIPPET: e4
         RouteBuilder builder = new RouteBuilder() {
@@ -158,6 +162,7 @@ public class ErrorHandlerTest extends TestSupport {
         }
     }
 
+    @Test
     public void testLoggingErrorHandler() throws Exception {
 
         // START SNIPPET: e5

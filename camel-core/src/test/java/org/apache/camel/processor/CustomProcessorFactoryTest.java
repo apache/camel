@@ -27,6 +27,7 @@ import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.RouteContext;
+import org.junit.Test;
 
 /**
  * @version 
@@ -44,6 +45,7 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
     // END SNIPPET: e1
 
     // START SNIPPET: e2
+    @Test
     public void testAlterDefinitionUsingProcessorFactory() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("body was altered");
 
@@ -52,6 +54,7 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAlterDefinitionUsingProcessorFactoryWithChild() throws Exception {
         getMockEndpoint("mock:split").expectedBodiesReceived("body was altered", "body was altered");
         getMockEndpoint("mock:extra").expectedBodiesReceived("body was altered", "body was altered");

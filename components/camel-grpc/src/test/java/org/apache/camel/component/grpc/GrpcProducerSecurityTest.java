@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.grpc;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -121,7 +120,7 @@ public class GrpcProducerSecurityTest extends CamelTestSupport {
         PingRequest pingRequest = PingRequest.newBuilder().setPingName(GRPC_TEST_PING_VALUE).setPingId(GRPC_TEST_PING_ID).build();
         
         try {
-            Object pongResponse = template.requestBody("direct:grpc-incorrect-jwt", pingRequest);
+            template.requestBody("direct:grpc-incorrect-jwt", pingRequest);
         } catch (Exception e) {
             assertNotNull(e);
             assertTrue(e.getCause().getCause() instanceof StatusRuntimeException);

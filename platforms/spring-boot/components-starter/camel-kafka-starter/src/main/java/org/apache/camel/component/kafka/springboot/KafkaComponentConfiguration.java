@@ -18,13 +18,13 @@ package org.apache.camel.component.kafka.springboot;
 
 import java.util.concurrent.ExecutorService;
 import javax.annotation.Generated;
-import org.apache.camel.component.kafka.KafkaManualCommitFactory;
+import org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer;
+import org.apache.camel.component.kafka.serde.KafkaHeaderSerializer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.StateRepository;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The kafka component allows messages to be sent to (or consumed from) Apache
@@ -38,6 +38,11 @@ public class KafkaComponentConfiguration
         extends
             ComponentConfigurationPropertiesCommon {
 
+    /**
+     * Whether to enable auto configuration of the kafka component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
     /**
      * Allows to pre-configure the Kafka component with common options that the
      * endpoints will reuse.
@@ -55,9 +60,10 @@ public class KafkaComponentConfiguration
      * kafka server has acknowledge the message that was sent to it from
      * KafkaProducer using asynchronous non-blocking processing. If using this
      * option then you must handle the lifecycle of the thread pool to shut the
-     * pool down when no longer needed.
+     * pool down when no longer needed. The option is a
+     * java.util.concurrent.ExecutorService type.
      */
-    private ExecutorService workerPool;
+    private String workerPool;
     /**
      * Enable usage of global SSL context parameters.
      */
@@ -84,10 +90,10 @@ public class KafkaComponentConfiguration
      * Factory to use for creating KafkaManualCommit instances. This allows to
      * plugin a custom factory to create custom KafkaManualCommit instances in
      * case special logic is needed when doing manual commits that deviates from
-     * the default implementation that comes out of the box.
+     * the default implementation that comes out of the box. The option is a
+     * org.apache.camel.component.kafka.KafkaManualCommitFactory type.
      */
-    @NestedConfigurationProperty
-    private KafkaManualCommitFactory kafkaManualCommitFactory;
+    private String kafkaManualCommitFactory;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -112,11 +118,11 @@ public class KafkaComponentConfiguration
         this.brokers = brokers;
     }
 
-    public ExecutorService getWorkerPool() {
+    public String getWorkerPool() {
         return workerPool;
     }
 
-    public void setWorkerPool(ExecutorService workerPool) {
+    public void setWorkerPool(String workerPool) {
         this.workerPool = workerPool;
     }
 
@@ -145,12 +151,11 @@ public class KafkaComponentConfiguration
         this.allowManualCommit = allowManualCommit;
     }
 
-    public KafkaManualCommitFactory getKafkaManualCommitFactory() {
+    public String getKafkaManualCommitFactory() {
         return kafkaManualCommitFactory;
     }
 
-    public void setKafkaManualCommitFactory(
-            KafkaManualCommitFactory kafkaManualCommitFactory) {
+    public void setKafkaManualCommitFactory(String kafkaManualCommitFactory) {
         this.kafkaManualCommitFactory = kafkaManualCommitFactory;
     }
 
@@ -226,12 +231,10 @@ public class KafkaComponentConfiguration
          */
         private Boolean autoCommitEnable = true;
         /**
-         * Whether to allow doing manual commits via {@link KafkaManualCommit} .
-         * <p/>
-         * If this option is enabled then an instance of
-         * {@link KafkaManualCommit} is stored on the {@link Exchange} message
-         * header, which allows end users to access this API and perform manual
-         * offset commits via the Kafka consumer.
+         * Whether to allow doing manual commits via KafkaManualCommit. If this
+         * option is enabled then an instance of KafkaManualCommit is stored on
+         * the Exchange message header, which allows end users to access this
+         * API and perform manual offset commits via the Kafka consumer.
          */
         private Boolean allowManualCommit = false;
         /**
@@ -251,6 +254,16 @@ public class KafkaComponentConfiguration
          * that much data to accumulate before answering the request.
          */
         private Integer fetchMinBytes = 1;
+        /**
+         * The maximum amount of data the server should return for a fetch
+         * request This is not an absolute maximum, if the first message in the
+         * first non-empty partition of the fetch is larger than this value, the
+         * message will still be returned to ensure that the consumer can make
+         * progress. The maximum message size accepted by the broker is defined
+         * via message.max.bytes (broker config) or max.message.bytes (topic
+         * config). Note that the consumer performs multiple fetches in
+         * parallel.
+         */
         private Integer fetchMaxBytes = 52428800;
         /**
          * The maximum amount of time the server will block before answering the
@@ -260,9 +273,9 @@ public class KafkaComponentConfiguration
         private Integer fetchWaitMaxMs = 500;
         /**
          * What to do when there is no initial offset in ZooKeeper or if an
-         * offset is out of range: smallest : automatically reset the offset to
-         * the smallest offset largest : automatically reset the offset to the
-         * largest offset fail: throw exception to the consumer
+         * offset is out of range: earliest : automatically reset the offset to
+         * the earliest offset latest : automatically reset the offset to the
+         * latest offset fail: throw exception to the consumer
          */
         private String autoOffsetReset = "latest";
         /**
@@ -274,29 +287,27 @@ public class KafkaComponentConfiguration
         private String autoCommitOnStop = "sync";
         /**
          * This options controls what happens when a consumer is processing an
-         * exchange and it fails. If the option is <tt>false</tt> then the
-         * consumer continues to the next message and processes it. If the
-         * option is <tt>true</tt> then the consumer breaks out, and will seek
-         * back to offset of the message that caused a failure, and then
-         * re-attempt to process this message. However this can lead to endless
-         * processing of the same message if its bound to fail every time, eg a
-         * poison message. Therefore its recommended to deal with that for
-         * example by using Camel's error handler.
+         * exchange and it fails. If the option is false then the consumer
+         * continues to the next message and processes it. If the option is true
+         * then the consumer breaks out, and will seek back to offset of the
+         * message that caused a failure, and then re-attempt to process this
+         * message. However this can lead to endless processing of the same
+         * message if its bound to fail every time, eg a poison message.
+         * Therefore its recommended to deal with that for example by using
+         * Camel's error handler.
          */
         private Boolean breakOnFirstError = false;
         /**
          * URL of the Kafka brokers to use. The format is
          * host1:port1,host2:port2, and the list can be a subset of brokers or a
-         * VIP pointing to a subset of brokers.
-         * <p/>
-         * This option is known as <tt>bootstrap.servers</tt> in the Kafka
-         * documentation.
+         * VIP pointing to a subset of brokers. This option is known as
+         * bootstrap.servers in the Kafka documentation.
          */
         private String brokers;
         /**
          * This parameter allows you to specify the compression codec for all
-         * data generated by this producer. Valid values are "none", "gzip" and
-         * "snappy".
+         * data generated by this producer. Valid values are none, gzip and
+         * snappy.
          */
         private String compressionCodec = "none";
         /**
@@ -354,11 +365,10 @@ public class KafkaComponentConfiguration
          * (typically operating system usernames). The rules are evaluated in
          * order and the first rule that matches a principal name is used to map
          * it to a short name. Any later rules in the list are ignored. By
-         * default, principal names of the form {username}/{hostname}@{REALM}
-         * are mapped to {username}. For more details on the format please see
-         * <a href=\"#security_authz\"> security authorization and acls</a>.
-         * <p/>
-         * Multiple values can be separated by comma
+         * default, principal names of the form username/hostnameREALM are
+         * mapped to username. For more details on the format please see
+         * security authorization and acls. Multiple values can be separated by
+         * comma
          */
         private String kerberosPrincipalToLocalRules = "DEFAULT";
         /**
@@ -420,16 +430,14 @@ public class KafkaComponentConfiguration
         private String saslKerberosServiceName;
         /**
          * The Simple Authentication and Security Layer (SASL) Mechanism used.
-         * For the valid values see <a href=
-         * "http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml"
-         * >http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.
-         * xhtml</a>
+         * For the valid values see
+         * http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml
          */
         private String saslMechanism = "GSSAPI";
         /**
          * Expose the kafka sasl.jaas.config parameter Example:
          * org.apache.kafka.common.security.plain.PlainLoginModule required
-         * username="USERNAME" password="PASSWORD";
+         * username=USERNAME password=PASSWORD;
          */
         private String saslJaasConfig;
         /**
@@ -438,10 +446,9 @@ public class KafkaComponentConfiguration
          */
         private String securityProtocol = "PLAINTEXT";
         /**
-         * SSL configuration using a Camel {@link SSLContextParameters} object.
-         * If configured it's applied before the other SSL endpoint parameters.
+         * SSL configuration using a Camel SSLContextParameters object. If
+         * configured it's applied before the other SSL endpoint parameters.
          */
-        @NestedConfigurationProperty
         private SSLContextParameters sslContextParameters;
         /**
          * The password of the private key in the key store file. This is
@@ -481,13 +488,13 @@ public class KafkaComponentConfiguration
         /**
          * The record key (or null if no key is specified). If this option has
          * been configured then it take precedence over header
-         * {@link KafkaConstants#KEY}
+         * KafkaConstants#KEY
          */
         private String key;
         /**
          * The partition to which the record will be sent (or null if no
          * partition was specified). If this option has been configured then it
-         * take precedence over header {@link KafkaConstants#PARTITION_KEY}
+         * take precedence over header KafkaConstants#PARTITION_KEY
          */
         private Integer partitionKey;
         /**
@@ -546,7 +553,7 @@ public class KafkaComponentConfiguration
          * occurs only under load when records arrive faster than they can be
          * sent out. However in some circumstances the client may want to reduce
          * the number of requests even under moderate load. This setting
-         * accomplishes this by adding a small amount of artificial delay—that
+         * accomplishes this by adding a small amount of artificial delaythat
          * is, rather than immediately sending out a record the producer will
          * wait for up to the given delay to allow other records to be sent so
          * that the sends can be batched together. This can be thought of as
@@ -631,7 +638,7 @@ public class KafkaComponentConfiguration
         private Integer heartbeatIntervalMs = 3000;
         /**
          * The maximum amount of data per-partition the server will return. The
-         * maximum total memory used for a request will be #partitions *
+         * maximum total memory used for a request will be #partitions
          * max.partition.fetch.bytes. This size must be at least as large as the
          * maximum message size the server allows or else it is possible for the
          * producer to send messages larger than the consumer can fetch. If that
@@ -698,41 +705,38 @@ public class KafkaComponentConfiguration
          */
         private String seekTo;
         /**
-         * To use a custom worker pool for continue routing {@link Exchange}
-         * after kafka server has acknowledge the message that was sent to it
-         * from {@link KafkaProducer} using asynchronous non-blocking
-         * processing.
+         * To use a custom worker pool for continue routing Exchange after kafka
+         * server has acknowledge the message that was sent to it from
+         * KafkaProducer using asynchronous non-blocking processing.
          */
         private ExecutorService workerPool;
         /**
          * Number of core threads for the worker pool for continue routing
-         * {@link Exchange} after kafka server has acknowledge the message that
-         * was sent to it from {@link KafkaProducer} using asynchronous
-         * non-blocking processing.
+         * Exchange after kafka server has acknowledge the message that was sent
+         * to it from KafkaProducer using asynchronous non-blocking processing.
          */
         private Integer workerPoolCoreSize = 10;
         /**
          * Maximum number of threads for the worker pool for continue routing
-         * {@link Exchange} after kafka server has acknowledge the message that
-         * was sent to it from {@link KafkaProducer} using asynchronous
-         * non-blocking processing.
+         * Exchange after kafka server has acknowledge the message that was sent
+         * to it from KafkaProducer using asynchronous non-blocking processing.
          */
         private Integer workerPoolMaxSize = 20;
         /**
-         * Whether the producer should store the {@link RecordMetadata} results
-         * from sending to Kafka. The results are stored in a {@link List}
-         * containing the {@link RecordMetadata} metadata's. The list is stored
-         * on a header with the key {@link KafkaConstants#KAFKA_RECORDMETA}
+         * Whether the producer should store the RecordMetadata results from
+         * sending to Kafka. The results are stored in a List containing the
+         * RecordMetadata metadata's. The list is stored on a header with the
+         * key KafkaConstants#KAFKA_RECORDMETA
          */
         private Boolean recordMetadata = true;
         /**
          * Sets interceptors for producer or consumers. Producer interceptors
          * have to be classes implementing
-         * {@link org.apache.kafka.clients.producer.ProducerInterceptor}
-         * Consumer interceptors have to be classes implementing
-         * {@link org.apache.kafka.clients.consumer.ConsumerInterceptor} Note
-         * that if you use Producer interceptor on a consumer it will throw a
-         * class cast exception in runtime
+         * org.apache.kafka.clients.producer.ProducerInterceptor Consumer
+         * interceptors have to be classes implementing
+         * org.apache.kafka.clients.consumer.ConsumerInterceptor Note that if
+         * you use Producer interceptor on a consumer it will throw a class cast
+         * exception in runtime
          */
         private String interceptorClasses;
         /**
@@ -757,6 +761,16 @@ public class KafkaComponentConfiguration
          * Camel message.
          */
         private HeaderFilterStrategy headerFilterStrategy;
+        /**
+         * Sets custom KafkaHeaderDeserializer for deserialization kafka headers
+         * values to camel headers values.
+         */
+        private KafkaHeaderDeserializer kafkaHeaderDeserializer;
+        /**
+         * Sets custom KafkaHeaderDeserializer for serialization camel headers
+         * values to kafka headers values.
+         */
+        private KafkaHeaderSerializer kafkaHeaderSerializer;
 
         public Boolean getTopicIsPattern() {
             return topicIsPattern;
@@ -1466,6 +1480,24 @@ public class KafkaComponentConfiguration
         public void setHeaderFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
             this.headerFilterStrategy = headerFilterStrategy;
+        }
+
+        public KafkaHeaderDeserializer getKafkaHeaderDeserializer() {
+            return kafkaHeaderDeserializer;
+        }
+
+        public void setKafkaHeaderDeserializer(
+                KafkaHeaderDeserializer kafkaHeaderDeserializer) {
+            this.kafkaHeaderDeserializer = kafkaHeaderDeserializer;
+        }
+
+        public KafkaHeaderSerializer getKafkaHeaderSerializer() {
+            return kafkaHeaderSerializer;
+        }
+
+        public void setKafkaHeaderSerializer(
+                KafkaHeaderSerializer kafkaHeaderSerializer) {
+            this.kafkaHeaderSerializer = kafkaHeaderSerializer;
         }
     }
 }

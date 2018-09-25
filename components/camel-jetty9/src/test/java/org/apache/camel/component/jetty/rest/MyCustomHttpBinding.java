@@ -17,6 +17,7 @@
 package org.apache.camel.component.jetty.rest;
 
 import java.io.IOException;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Exchange;

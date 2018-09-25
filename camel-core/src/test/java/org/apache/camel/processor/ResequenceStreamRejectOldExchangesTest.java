@@ -19,12 +19,14 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.resequencer.MessageRejectedException;
+import org.junit.Test;
 
 /**
  *
  */
 public class ResequenceStreamRejectOldExchangesTest extends ContextTestSupport {
 
+    @Test
     public void testInSequenceAfterCapacityReached() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("A", "B", "C", "E");
         getMockEndpoint("mock:error").expectedMessageCount(0);
@@ -37,6 +39,7 @@ public class ResequenceStreamRejectOldExchangesTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testDuplicateAfterCapacityReached() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("A", "B", "C");
         getMockEndpoint("mock:error").expectedMessageCount(0);
@@ -49,6 +52,7 @@ public class ResequenceStreamRejectOldExchangesTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOutOfSequenceAfterCapacityReachedSimple() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("B", "C", "D");
         getMockEndpoint("mock:error").expectedBodiesReceived("A");
@@ -61,6 +65,7 @@ public class ResequenceStreamRejectOldExchangesTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOutOfSequenceAfterCapacityReachedComplex() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("A", "D", "E", "F");
         getMockEndpoint("mock:error").expectedBodiesReceived("B", "C");

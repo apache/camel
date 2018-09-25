@@ -20,9 +20,11 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class RoutingSlipCreateProducerFailedTest extends ContextTestSupport {
 
+    @Test
     public void testRoutingSlipCreateProducerFailed() throws Exception {
         // no inflight
         assertEquals(0, context.getInflightRepository().size());

@@ -19,6 +19,7 @@ package org.apache.camel.spring.aop;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -34,6 +35,7 @@ public class SpringAopClassLevelCamelBeanTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/aop/SpringAopClassLevelCamelBeanTest.xml");
     }
 
+    @Test
     public void testSpringAopOk() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
@@ -44,6 +46,7 @@ public class SpringAopClassLevelCamelBeanTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSpringAopException() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);

@@ -27,6 +27,7 @@ import org.apache.camel.component.rest.DummyRestProcessorFactory;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.junit.Test;
 
 /**
  * @version
@@ -41,6 +42,7 @@ public class LoadRestFromXmlTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testLoadRestFromXml() throws Exception {
         assertNotNull("Existing foo route should be there", context.getRoute("foo"));
 

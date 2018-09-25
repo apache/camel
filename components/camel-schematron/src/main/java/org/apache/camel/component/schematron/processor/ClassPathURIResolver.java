@@ -17,6 +17,7 @@
 package org.apache.camel.component.schematron.processor;
 
 import java.io.InputStream;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;

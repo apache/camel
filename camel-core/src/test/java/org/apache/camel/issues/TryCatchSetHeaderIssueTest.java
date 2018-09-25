@@ -18,12 +18,14 @@ package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class TryCatchSetHeaderIssueTest extends ContextTestSupport {
 
+    @Test
     public void testTryCatchSetHeaderIssue() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -48,6 +50,7 @@ public class TryCatchSetHeaderIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTryCatchTwoSetHeaderIssue() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

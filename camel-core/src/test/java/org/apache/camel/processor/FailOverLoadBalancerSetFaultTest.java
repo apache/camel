@@ -22,12 +22,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class FailOverLoadBalancerSetFaultTest extends ContextTestSupport {
     
+    @Test
     public void testFailOverSetFault() throws Exception {
         getMockEndpoint("mock:failover1").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:failover2").expectedBodiesReceived("Hello World");

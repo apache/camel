@@ -31,7 +31,7 @@ public abstract class MultipartMimeEntity extends MimeEntity {
 
     protected String boundary;
 
-    private final List<MimeEntity> parts = new ArrayList<MimeEntity>();
+    private final List<MimeEntity> parts = new ArrayList<>();
 
     public MultipartMimeEntity(ContentType contentType) {
         this(contentType, false, null);

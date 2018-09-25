@@ -25,6 +25,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
+import org.junit.Test;
 
 /**
  * Default error handler test
@@ -33,6 +34,7 @@ import org.apache.camel.impl.EventDrivenConsumerRoute;
  */
 public class DefaultErrorHandlerTest extends ContextTestSupport {
 
+    @Test
     public void testRoute() {
         Route route = context.getRoutes().get(0);
         EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
@@ -48,6 +50,7 @@ public class DefaultErrorHandlerTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testOk() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
@@ -57,6 +60,7 @@ public class DefaultErrorHandlerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testWithError() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);

@@ -27,7 +27,8 @@ import org.apache.zookeeper.server.ServerCnxnFactory;
 import org.apache.zookeeper.server.ZooKeeperServer;
 import org.junit.rules.ExternalResource;
 
-import static org.apache.camel.component.kafka.embedded.TestUtils.*;
+import static org.apache.camel.component.kafka.embedded.TestUtils.constructTempDir;
+import static org.apache.camel.component.kafka.embedded.TestUtils.perTest;
 
 public class EmbeddedZookeeper extends ExternalResource {
     private int port = -1;

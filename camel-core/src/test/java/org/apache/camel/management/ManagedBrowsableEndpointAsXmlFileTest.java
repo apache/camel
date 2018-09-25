@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
-
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -28,11 +29,13 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedBrowsableEndpointAsXmlFileTest extends ManagementTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/files");
         super.setUp();
     }
 
+    @Test
     public void testBrowseableEndpointAsXmlAllIncludeBody() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

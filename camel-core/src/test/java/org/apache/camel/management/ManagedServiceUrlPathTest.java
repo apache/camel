@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
-
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
@@ -24,6 +23,8 @@ import javax.management.remote.JMXServiceURL;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.After;
+import org.junit.Test;
 
 /**
  * @version 
@@ -53,7 +54,8 @@ public class ManagedServiceUrlPathTest extends ManagementTestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         try {
             if (clientConnector != null) {
@@ -64,6 +66,7 @@ public class ManagedServiceUrlPathTest extends ManagementTestSupport {
         }
     }
 
+    @Test
     public void testConnectToJmx() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

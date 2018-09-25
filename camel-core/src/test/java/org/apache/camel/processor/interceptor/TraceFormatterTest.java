@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.ProcessorDefinition;
+import org.junit.Test;
 
 /**
  * @version 
@@ -33,6 +34,7 @@ public class TraceFormatterTest extends ContextTestSupport {
 
     private List<String> tracedBodies = new ArrayList<>();
 
+    @Test
     public void testSendingSomeMessagesBeingTraced() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Bye World");

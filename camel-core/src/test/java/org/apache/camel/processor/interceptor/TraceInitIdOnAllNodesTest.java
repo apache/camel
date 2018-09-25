@@ -24,6 +24,7 @@ import org.apache.camel.model.OtherwiseDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.WhenDefinition;
+import org.junit.Test;
 
 /**
  * Tests that when tracing is enabled the ids of all the nodes is forced assigned
@@ -31,6 +32,7 @@ import org.apache.camel.model.WhenDefinition;
  */
 public class TraceInitIdOnAllNodesTest extends ContextTestSupport {
 
+    @Test
     public void testInitIdsOnAllNodes() throws Exception {
         getMockEndpoint("mock:camel").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:other").expectedBodiesReceived("Hello World");

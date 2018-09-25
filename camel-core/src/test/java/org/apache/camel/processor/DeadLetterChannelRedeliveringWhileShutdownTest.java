@@ -21,12 +21,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Unit test for shutting down while DLC is sleeping in a redelivery.
  */
 public class DeadLetterChannelRedeliveringWhileShutdownTest extends ContextTestSupport {
 
+    @Test
     public void testDLCRedelivery() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

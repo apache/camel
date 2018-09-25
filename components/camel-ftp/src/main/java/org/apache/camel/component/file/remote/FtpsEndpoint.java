@@ -178,7 +178,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
             // and we want to keep data timeout so we can log it later
             timeout = localParameters.remove("dataTimeout");
             if (timeout != null) {
-                dataTimeout = getCamelContext().getTypeConverter().convertTo(int.class, dataTimeout);
+                dataTimeout = getCamelContext().getTypeConverter().convertTo(int.class, timeout);
             }
             setProperties(client, localParameters);
         }
@@ -197,7 +197,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Created FTPClient [connectTimeout: {}, soTimeout: {}, dataTimeout: {}, bufferSize: {}"
+            log.debug("Created FTPSClient [connectTimeout: {}, soTimeout: {}, dataTimeout: {}, bufferSize: {}"
                             + ", receiveDataSocketBufferSize: {}, sendDataSocketBufferSize: {}]: {}",
                     new Object[]{client.getConnectTimeout(), getSoTimeout(), dataTimeout, client.getBufferSize(),
                             client.getReceiveDataSocketBufferSize(), client.getSendDataSocketBufferSize(), client});

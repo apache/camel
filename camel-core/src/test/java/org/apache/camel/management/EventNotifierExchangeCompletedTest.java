@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EventObject;
@@ -27,6 +26,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.support.EventNotifierSupport;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -36,6 +37,7 @@ public class EventNotifierExchangeCompletedTest extends ContextTestSupport {
     private static List<EventObject> events = new ArrayList<>();
 
     @Override
+    @Before
     public void setUp() throws Exception {
         events.clear();
         super.setUp();
@@ -68,6 +70,7 @@ public class EventNotifierExchangeCompletedTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testExchangeCompleted() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

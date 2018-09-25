@@ -21,9 +21,11 @@ import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 
 import org.apache.camel.CamelContext;
+import org.junit.Test;
 
 public class SecureRandomParametersTest extends AbstractJsseParametersTest {
     
+    @Test
     public void testPropertyPlaceholders() throws Exception {
         if (canTest()) {
             CamelContext context = this.createPropertiesPlaceholderAwareContext();
@@ -38,6 +40,7 @@ public class SecureRandomParametersTest extends AbstractJsseParametersTest {
         }
     }
     
+    @Test
     public void testCreateSecureRandom() throws Exception {
         
         if (this.canTest()) {
@@ -56,6 +59,7 @@ public class SecureRandomParametersTest extends AbstractJsseParametersTest {
         }
     }
     
+    @Test
     public void testExplicitInvalidAlgorithm() throws Exception {
         SecureRandomParameters srp = new SecureRandomParameters();
         srp.setAlgorithm("fsafsadfasdfasdf");
@@ -68,6 +72,7 @@ public class SecureRandomParametersTest extends AbstractJsseParametersTest {
         }
     }
     
+    @Test
     public void testExplicitInvalidProvider() throws Exception {
         if (this.canTest()) {
             SecureRandomParameters srp = new SecureRandomParameters();

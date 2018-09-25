@@ -17,7 +17,6 @@
 package org.apache.camel.component.mongodb3;
 
 import com.mongodb.ReadPreference;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.junit.Test;

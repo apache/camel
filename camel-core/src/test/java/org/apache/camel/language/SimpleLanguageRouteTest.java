@@ -19,12 +19,14 @@ package org.apache.camel.language;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Unit test routing with simple language.
  */
 public class SimpleLanguageRouteTest extends ContextTestSupport {
 
+    @Test
     public void testSimpleFilter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:foo");
         mock.expectedBodiesReceived("Hello Foo");

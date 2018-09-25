@@ -84,7 +84,13 @@ public class InMemorySagaCoordinator implements CamelSagaCoordinator {
             Map<String, Object> values = optionValues.get(step);
             for (String option : step.getOptions().keySet()) {
                 Expression expression = step.getOptions().get(option);
-                values.put(option, expression.evaluate(exchange, Object.class));
+                try {
+                    values.put(option, expression.evaluate(exchange, Object.class));
+                } catch (Exception ex) {
+                    return CompletableFuture.supplyAsync(() -> {
+                        throw new RuntimeCamelException("Cannot evaluate saga option '" + option + "'", ex);
+                    });
+                }
             }
         }
 

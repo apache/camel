@@ -34,7 +34,12 @@ public class KMSComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * The AWS MQ default configuration
+     * Whether to enable auto configuration of the aws-kms component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
+     * The AWS KMS default configuration
      */
     private KMSConfigurationNestedConfiguration configuration;
     /**
@@ -46,7 +51,7 @@ public class KMSComponentConfiguration
      */
     private String secretKey;
     /**
-     * The region in which MQ client needs to work
+     * The region in which KMS client needs to work
      */
     private String region;
     /**
@@ -116,8 +121,17 @@ public class KMSComponentConfiguration
          * The operation to perform
          */
         private KMSOperations operation;
+        /**
+         * To define a proxy host when instantiating the KMS client
+         */
         private String proxyHost;
+        /**
+         * To define a proxy port when instantiating the KMS client
+         */
         private Integer proxyPort;
+        /**
+         * The region in which KMS client needs to work
+         */
         private String region;
 
         public AWSKMS getKmsClient() {

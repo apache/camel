@@ -18,12 +18,14 @@ package org.apache.camel.component.seda;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class SedaInOutBigChainedTest extends ContextTestSupport {
 
+    @Test
     public void testInOutBigSedaChained() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("start");
         getMockEndpoint("mock:b").expectedBodiesReceived("start-a");

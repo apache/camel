@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Test;
 
 /**
  * @version 
@@ -40,6 +41,7 @@ public class PredicateBuilderConcurrentTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testPredicateBuilderConcurrent() throws Exception {
         context.start();
 

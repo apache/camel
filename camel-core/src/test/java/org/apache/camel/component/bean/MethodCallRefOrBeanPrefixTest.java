@@ -19,6 +19,7 @@ package org.apache.camel.component.bean;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * @version 
@@ -32,6 +33,7 @@ public class MethodCallRefOrBeanPrefixTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testRefOrBeanPrefix() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello A");
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello B");

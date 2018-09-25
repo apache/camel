@@ -30,12 +30,14 @@ import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Validator;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ManagedValidatorRegistryTest extends ManagementTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ManagedValidatorRegistryTest.class);
 
+    @Test
     public void testManageValidatorRegistry() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

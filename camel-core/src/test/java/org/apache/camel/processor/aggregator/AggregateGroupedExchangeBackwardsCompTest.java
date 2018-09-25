@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Unit test for aggregate grouped exchanges.
@@ -29,6 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class AggregateGroupedExchangeBackwardsCompTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testGrouped() throws Exception {
         // START SNIPPET: e2
         MockEndpoint result = getMockEndpoint("mock:result");

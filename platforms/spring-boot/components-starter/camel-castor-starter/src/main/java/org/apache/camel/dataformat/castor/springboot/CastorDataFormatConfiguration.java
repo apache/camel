@@ -33,6 +33,11 @@ public class CastorDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the castor data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Path to a Castor mapping file to load from the classpath.
      */
     private String mappingFile;
@@ -45,7 +50,7 @@ public class CastorDataFormatConfiguration
      * class name of allowed objects, and you can use comma to separate multiple
      * entries. It is also possible to use wildcards and regular expression
      * which is based on the pattern defined by link
-     * org.apache.camel.util.EndpointHelpermatchPattern(String, String). Denied
+     * org.apache.camel.util.EndpointHelper#matchPattern(String, String). Denied
      * objects takes precedence over allowed objects.
      */
     private String allowedUnmarshallObjects;
@@ -54,7 +59,7 @@ public class CastorDataFormatConfiguration
      * class name of deined objects, and you can use comma to separate multiple
      * entries. It is also possible to use wildcards and regular expression
      * which is based on the pattern defined by link
-     * org.apache.camel.util.EndpointHelpermatchPattern(String, String). Denied
+     * org.apache.camel.util.EndpointHelper#matchPattern(String, String). Denied
      * objects takes precedence over allowed objects.
      */
     private String deniedUnmarshallObjects;

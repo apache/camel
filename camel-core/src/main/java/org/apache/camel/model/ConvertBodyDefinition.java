@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -64,6 +65,11 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
     @Override
     public String toString() {        
         return "ConvertBodyTo[" + getType() + "]";
+    }
+
+    @Override
+    public String getShortName() {
+        return "convertBodyTo";
     }
 
     @Override

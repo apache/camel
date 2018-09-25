@@ -8,7 +8,7 @@ The Twitter Search component consumes search results.
 ### Component Options
 
 // component options: START
-The Twitter Search component supports 9 options which are listed below.
+The Twitter Search component supports 9 options, which are listed below.
 
 
 
@@ -99,3 +99,27 @@ with the following path and query parameters:
 | *consumerSecret* (security) | The consumer secret. Can also be configured on the TwitterComponent level instead. |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 10 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.twitter-search.access-token* | The access token |  | String
+| *camel.component.twitter-search.access-token-secret* | The access token secret |  | String
+| *camel.component.twitter-search.consumer-key* | The consumer key |  | String
+| *camel.component.twitter-search.consumer-secret* | The consumer secret |  | String
+| *camel.component.twitter-search.enabled* | Whether to enable auto configuration of the twitter-search component. This is enabled by default. |  | Boolean
+| *camel.component.twitter-search.http-proxy-host* | The http proxy host which can be used for the camel-twitter. |  | String
+| *camel.component.twitter-search.http-proxy-password* | The http proxy password which can be used for the camel-twitter. |  | String
+| *camel.component.twitter-search.http-proxy-port* | The http proxy port which can be used for the camel-twitter. |  | Integer
+| *camel.component.twitter-search.http-proxy-user* | The http proxy user which can be used for the camel-twitter. |  | String
+| *camel.component.twitter-search.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+

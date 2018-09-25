@@ -17,12 +17,14 @@
 package org.apache.camel.component.timer;
 
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +35,7 @@ public class TimerRouteTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(TimerRouteTest.class);
     private MyBean bean = new MyBean();
 
+    @Test
     public void testTimerInvokesBeanMethod() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);

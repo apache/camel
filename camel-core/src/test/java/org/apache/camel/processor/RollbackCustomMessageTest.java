@@ -20,12 +20,14 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class RollbackCustomMessageTest extends ContextTestSupport {
 
+    @Test
     public void testRollbackCustomMessage() throws Exception {
         try {
             template.sendBody("direct:start", "Hello World");

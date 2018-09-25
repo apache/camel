@@ -20,13 +20,16 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.w3c.dom.Document;
+
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class ManagedRouteDumpStatsAsXmlTest extends ManagementTestSupport {
 
+    @Test
     public void testPerformanceCounterStats() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

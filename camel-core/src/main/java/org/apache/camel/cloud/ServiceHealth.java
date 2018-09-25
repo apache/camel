@@ -16,17 +16,31 @@
  */
 package org.apache.camel.cloud;
 
+import java.net.URI;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 public interface ServiceHealth {
 
     /**
      * Gets a key/value metadata associated with the service.
      */
-    Map<String, String> getMetadata();
+    default Map<String, String> getMetadata() {
+        return Collections.EMPTY_MAP;
+    }
 
     /**
      * States if the service is healthy or not
      */
-    boolean isHealthy();
+    default boolean isHealthy() {
+        return true;
+    }
+
+    /**
+     * The health enpoint exposed by the service.
+     */
+    default Optional<URI> getEndpoint() {
+        return Optional.empty();
+    }
 }

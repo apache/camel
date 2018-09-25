@@ -71,7 +71,7 @@ public class HipchatProducer extends DefaultProducer {
         }
         LOG.info("Sending message to room: " + room + ", " + MAPPER.writeValueAsString(jsonParam));
         StatusLine statusLine = post(encodeHttpURI(urlPath), jsonParam);
-        LOG.debug("Response status for send room message: " + statusLine);
+        LOG.debug("Response status for send room message: {}", statusLine);
         return statusLine;
     }
 
@@ -80,7 +80,7 @@ public class HipchatProducer extends DefaultProducer {
         Map<String, String> jsonParam = getCommonHttpPostParam(exchange);
         LOG.info("Sending message to user: " + user + ", " + MAPPER.writeValueAsString(jsonParam));
         StatusLine statusLine = post(urlPath, jsonParam);
-        LOG.debug("Response status for send user message: " + statusLine);
+        LOG.debug("Response status for send user message: {}", statusLine);
         return statusLine;
     }
 

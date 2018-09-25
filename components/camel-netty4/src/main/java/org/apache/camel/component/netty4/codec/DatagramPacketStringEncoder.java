@@ -28,10 +28,14 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.DefaultAddressedEnvelope;
 import io.netty.handler.codec.MessageToMessageEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Sharable
 public class DatagramPacketStringEncoder extends
     MessageToMessageEncoder<AddressedEnvelope<Object, InetSocketAddress>> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DatagramPacketStringEncoder.class);
 
     private final Charset charset;
 
@@ -63,6 +67,8 @@ public class DatagramPacketStringEncoder extends
             AddressedEnvelope<Object, InetSocketAddress> addressedEnvelop = 
                 new DefaultAddressedEnvelope<>(ByteBufUtil.encodeString(ctx.alloc(), CharBuffer.wrap(payload), charset), msg.recipient(), msg.sender());
             out.add(addressedEnvelop);
+        } else {
+            LOG.debug("Ignoring message content as it is not a java.lang.CharSequence instance.");
         }
     }
 

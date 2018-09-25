@@ -14,7 +14,7 @@ the original plaintext. This data format implements only symmetric
 ### PGPDataFormat Options
 
 // dataformat options: START
-The PGP dataformat supports 15 options which are listed below.
+The PGP dataformat supports 15 options, which are listed below.
 
 
 

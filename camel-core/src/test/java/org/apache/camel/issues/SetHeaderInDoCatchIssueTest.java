@@ -22,12 +22,14 @@ import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class SetHeaderInDoCatchIssueTest extends ContextTestSupport {
 
+    @Test
     public void testSuccess() {
         Exchange exchange = template.request("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -38,6 +40,7 @@ public class SetHeaderInDoCatchIssueTest extends ContextTestSupport {
         assertEquals("CamsResponse", exchange.getOut().getHeader("Status"));
     }
 
+    @Test
     public void testExchangeTimedOutException() {
         Exchange exchange = template.request("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -48,6 +51,7 @@ public class SetHeaderInDoCatchIssueTest extends ContextTestSupport {
         assertEquals("TimeOut", exchange.getOut().getHeader("Status"));
     }
 
+    @Test
     public void testException() {
         Exchange exchange = template.request("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {

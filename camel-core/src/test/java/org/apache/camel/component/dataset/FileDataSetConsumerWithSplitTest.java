@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.component.dataset;
-
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -35,6 +36,7 @@ public class FileDataSetConsumerWithSplitTest extends ContextTestSupport {
     final String dataSetName = "foo";
     final String dataSetUri = "dataset://" + dataSetName;
 
+    @Test
     public void testDefaultListDataSet() throws Exception {
         MockEndpoint result = getMockEndpoint(resultUri);
         result.expectedMinimumMessageCount((int) dataSet.getSize());
@@ -42,6 +44,7 @@ public class FileDataSetConsumerWithSplitTest extends ContextTestSupport {
         result.assertIsSatisfied();
     }
 
+    @Test
     public void testDefaultListDataSetWithSizeGreaterThanListSize() throws Exception {
         MockEndpoint result = getMockEndpoint(resultUri);
         dataSet.setSize(20);
@@ -51,6 +54,7 @@ public class FileDataSetConsumerWithSplitTest extends ContextTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         dataSet = new FileDataSet(testDataFileName, "\n");
         assertEquals("Unexpected DataSet size", testDataFileRecordCount, dataSet.getSize());

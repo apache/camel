@@ -33,6 +33,11 @@ public class AvroDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the avro data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Class name to use for marshal and unmarshalling
      */
     private String instanceClassName;

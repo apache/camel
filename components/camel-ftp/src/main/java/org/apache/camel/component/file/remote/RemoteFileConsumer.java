@@ -52,7 +52,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
 
     protected boolean prePollCheck() throws Exception {
         if (log.isTraceEnabled()) {
-            log.trace("prePollCheck on " + getEndpoint().getConfiguration().remoteServerInformation());
+            log.trace("prePollCheck on {}", getEndpoint().getConfiguration().remoteServerInformation());
         }
         try {
             if (getEndpoint().getMaximumReconnectAttempts() > 0) {
@@ -88,7 +88,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     @Override
     protected void postPollCheck(int polledMessages) {
         if (log.isTraceEnabled()) {
-            log.trace("postPollCheck on " + getEndpoint().getConfiguration().remoteServerInformation());
+            log.trace("postPollCheck on {}", getEndpoint().getConfiguration().remoteServerInformation());
         }
 
         // if we did not poll any messages, but are configured to disconnect then we need to do this now
@@ -113,7 +113,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             exchange.addOnCompletion(new SynchronizationAdapter() {
                 @Override
                 public void onDone(Exchange exchange) {
-                    log.trace("postPollCheck disconnect from: {}", getEndpoint());
+                    log.trace("processExchange disconnect from: {}", getEndpoint());
                     disconnect();
                 }
 
@@ -222,7 +222,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         } catch (Exception ex) {
             // here we just ignore the exception and try to reconnect
             if (log.isDebugEnabled()) {
-                log.debug("Exception checking connection status: " + ex.getMessage());
+                log.debug("Exception checking connection status: {}", ex.getMessage());
             }
         }
 
@@ -232,7 +232,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             }
             loggedIn = getOperations().connect((RemoteFileConfiguration) endpoint.getConfiguration());
             if (loggedIn) {
-                log.debug("Connected and logged in to: " + remoteServer());
+                log.debug("Connected and logged in to: {}", remoteServer());
             }
         }
     }

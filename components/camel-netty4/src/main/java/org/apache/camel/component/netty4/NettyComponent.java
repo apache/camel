@@ -23,7 +23,6 @@ import java.util.concurrent.ThreadFactory;
 
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
@@ -31,6 +30,7 @@ import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
+import org.apache.camel.util.jsse.SSLContextParameters;
 
 public class NettyComponent extends UriEndpointComponent implements SSLContextParametersAware {
 
@@ -138,6 +138,15 @@ public class NettyComponent extends UriEndpointComponent implements SSLContextPa
     @Override
     public void setUseGlobalSslContextParameters(boolean useGlobalSslContextParameters) {
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
+    }
+
+    @Metadata(description = "To configure security using SSLContextParameters", label = "security")
+    public void setSslContextParameters(final SSLContextParameters sslContextParameters) {
+        if (configuration == null) {
+            configuration = new NettyConfiguration();
+        }
+
+        configuration.setSslContextParameters(sslContextParameters);
     }
 
     public EventExecutorGroup getExecutorService() {

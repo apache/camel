@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
@@ -61,6 +62,11 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     @Override
     public String toString() {
         return "Routes: " + routes;
+    }
+
+    @Override
+    public String getShortName() {
+        return "routes";
     }
 
     public String getLabel() {

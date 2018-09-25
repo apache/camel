@@ -34,10 +34,19 @@ public class XmlRouteTest {
 
     @Test
     public void testXml() throws Exception {
+        test("mycamel", 29);
+    }
+
+    @Test
+    public void testXmlWithNamespacePrefix() throws Exception {
+        test("mycamel-withNamespacePrefix", 51);
+    }
+
+    private void test(String filename, int pos) throws Exception {
         List<CamelEndpointDetails> endpoints = new ArrayList<>();
 
-        InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parser/xml/mycamel.xml");
-        String fqn = "src/test/resources/org/apache/camel/camel/parser/xml/mycamel.xml";
+        InputStream is = new FileInputStream("src/test/resources/org/apache/camel/parser/xml/" + filename + ".xml");
+        String fqn = "src/test/resources/org/apache/camel/camel/parser/xml/" + filename + ".xml";
         String baseDir = "src/test/resources";
         XmlRouteParser.parseXmlRouteEndpoints(is, baseDir, fqn, endpoints);
 
@@ -46,6 +55,8 @@ public class XmlRouteTest {
         }
         Assert.assertEquals("stream:in?promptMessage=Enter something:", endpoints.get(0).getEndpointUri());
         Assert.assertEquals("stream:out", endpoints.get(1).getEndpointUri());
+        Assert.assertEquals("39", endpoints.get(1).getLineNumber());
+        Assert.assertEquals(pos, endpoints.get(1).getLinePosition());
     }
 
 }

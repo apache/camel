@@ -32,6 +32,11 @@ public class JXPathLanguageConfiguration
             LanguageConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the jxpath language. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Allows to turn lenient on the JXPathContext. When turned on this allows
      * the JXPath expression to evaluate against expressions and message bodies
      * which may be invalid / missing data. This option is by default false

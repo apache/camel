@@ -18,6 +18,7 @@ package org.apache.camel.spring.issues.packagescan;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -31,6 +32,7 @@ public class SkipNonPublicRouteBuilderTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/packagescan/camelContext.xml");
     }
     
+    @Test
     public void testSkipNonPublicRouteBuilder() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

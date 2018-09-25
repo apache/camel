@@ -18,6 +18,7 @@ package org.apache.camel.component.sjms;
 
 import java.io.File;
 import java.util.Map;
+
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -86,6 +87,11 @@ public class SjmsMessage extends DefaultMessage {
         }
         if (copyMessageId) {
             setMessageId(that.getMessageId());
+        }
+
+        // cover over exchange if none has been assigned
+        if (getExchange() == null) {
+            setExchange(that.getExchange());
         }
 
         // copy body and fault flag

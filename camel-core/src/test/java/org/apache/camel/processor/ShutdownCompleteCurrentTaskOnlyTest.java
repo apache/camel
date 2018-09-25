@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -30,7 +31,8 @@ public class ShutdownCompleteCurrentTaskOnlyTest extends ContextTestSupport {
     private static String url = "file:target/pending?initialDelay=0&delay=10";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("target/pending");
 
@@ -41,6 +43,7 @@ public class ShutdownCompleteCurrentTaskOnlyTest extends ContextTestSupport {
         template.sendBodyAndHeader(url, "E", Exchange.FILE_NAME, "e.txt");
     }
 
+    @Test
     public void testShutdownCompleteCurrentTaskOnly() throws Exception {
         // give it 20 seconds to shutdown
         context.getShutdownStrategy().setTimeout(20);

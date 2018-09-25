@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -27,7 +28,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class LogDebugBodyMaxCharsOffTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "-1");
     }
@@ -39,6 +41,7 @@ public class LogDebugBodyMaxCharsOffTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testLogBodyMaxLengthTest() throws Exception {
         // create a big body
         StringBuilder sb = new StringBuilder();

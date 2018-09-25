@@ -19,12 +19,14 @@ package org.apache.camel.converter.stream;
 import java.io.ByteArrayOutputStream;
 
 import org.apache.camel.ContextTestSupport;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class SourceCacheTest extends ContextTestSupport {
 
+    @Test
     public void testSourceCache() throws Exception {
         SourceCache cache = new SourceCache("<foo>bar</foo>");
 

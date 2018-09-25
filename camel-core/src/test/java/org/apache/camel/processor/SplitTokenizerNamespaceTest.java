@@ -19,9 +19,11 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class SplitTokenizerNamespaceTest extends ContextTestSupport {
 
+    @Test
     public void testSplitTokenizerWithImplicitNamespaces() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         
@@ -38,6 +40,7 @@ public class SplitTokenizerNamespaceTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitTokenizerWithExplicitNamespaces() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         

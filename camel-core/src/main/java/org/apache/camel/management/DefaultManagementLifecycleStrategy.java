@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
+
 import javax.management.JMException;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -258,7 +259,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForCamelContext(newName, name);
             done = !getManagementStrategy().isManaged(mc, on);
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Using name: {} in ObjectName[{}] exists? {}", new Object[]{name, on, done});
+                LOG.trace("Using name: {} in ObjectName[{}] exists? {}", name, on, done);
             }
         }
         return newName;
@@ -767,8 +768,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
 
         // Create a map (ProcessorType -> PerformanceCounter)
         // to be passed to InstrumentationInterceptStrategy.
-        Map<ProcessorDefinition<?>, PerformanceCounter> registeredCounters =
-                new HashMap<>();
+        Map<ProcessorDefinition<?>, PerformanceCounter> registeredCounters = new HashMap<>();
 
         // Each processor in a route will have its own performance counter.
         // These performance counter will be embedded to InstrumentationProcessor

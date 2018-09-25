@@ -19,12 +19,14 @@ package org.apache.camel.component.bean;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  *
  */
 public class BeanParameterValueOverloadedTest extends ContextTestSupport {
 
+    @Test
     public void testBeanParameterValueBoolean() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
@@ -33,6 +35,7 @@ public class BeanParameterValueOverloadedTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanParameterValueBoolean2() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 

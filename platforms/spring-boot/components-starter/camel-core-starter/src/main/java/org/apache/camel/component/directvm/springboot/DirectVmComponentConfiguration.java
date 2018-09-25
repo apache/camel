@@ -17,10 +17,8 @@
 package org.apache.camel.component.directvm.springboot;
 
 import javax.annotation.Generated;
-import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The direct-vm component provides direct, synchronous call to another endpoint
@@ -35,6 +33,11 @@ public class DirectVmComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the direct-vm component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * If sending a message to a direct endpoint which has no active consumer,
      * then we can tell the producer to block and wait for the consumer to
      * become active.
@@ -47,10 +50,9 @@ public class DirectVmComponentConfiguration
     /**
      * Sets a HeaderFilterStrategy that will only be applied on producer
      * endpoints (on both directions: request and response). Default value:
-     * none.
+     * none. The option is a org.apache.camel.spi.HeaderFilterStrategy type.
      */
-    @NestedConfigurationProperty
-    private HeaderFilterStrategy headerFilterStrategy;
+    private String headerFilterStrategy;
     /**
      * Whether to propagate or not properties from the producer side to the
      * consumer side, and vice versa. Default value: true.
@@ -79,12 +81,11 @@ public class DirectVmComponentConfiguration
         this.timeout = timeout;
     }
 
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
+    public String getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
 
-    public void setHeaderFilterStrategy(
-            HeaderFilterStrategy headerFilterStrategy) {
+    public void setHeaderFilterStrategy(String headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 

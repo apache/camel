@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Synchronization;
+import org.junit.Test;
 
 /**
  * Unit test to verify unit of work with multicast.
@@ -33,6 +34,7 @@ public class MulticastUnitOfWorkTest extends ContextTestSupport {
     private static String sync;
     private static String lastOne;
 
+    @Test
     public void testMulticastUOW() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);

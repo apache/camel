@@ -18,12 +18,14 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class ThreadsCoreAndMaxPoolTest extends ContextTestSupport {
 
+    @Test
     public void testThreadsCoreAndMaxPool() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -32,6 +34,7 @@ public class ThreadsCoreAndMaxPoolTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testThreadsCoreAndMaxPoolBuilder() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

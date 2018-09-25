@@ -220,7 +220,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
                 log.trace("No URLs returned by classloader");
             }
         } catch (IOException ioe) {
-            log.warn("Cannot read package: " + packageName, ioe);
+            log.warn("Cannot read package: {}", packageName, ioe);
             return;
         }
 
@@ -300,7 +300,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
                 }
             } catch (IOException e) {
                 // use debug logging to avoid being to noisy in logs
-                log.debug("Cannot read entries in url: " + url, e);
+                log.debug("Cannot read entries in url: {}", url, e);
             }
         }
     }
@@ -472,7 +472,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
             boolean found = false;
             for (ClassLoader classLoader : set) {
                 if (log.isTraceEnabled()) {
-                    log.trace("Testing for class {} matches criteria [{}] using classloader: {}", new Object[]{externalName, test, classLoader});
+                    log.trace("Testing for class {} matches criteria [{}] using classloader: {}", externalName, test, classLoader);
                 }
                 try {
                     Class<?> type = classLoader.loadClass(externalName);

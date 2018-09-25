@@ -26,7 +26,6 @@ import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The camel consul component allows you to work with Consul, a distributed,
@@ -42,6 +41,11 @@ public class ConsulComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the consul component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The Consul agent URL
      */
     private String url;
@@ -51,10 +55,10 @@ public class ConsulComponentConfiguration
     private String datacenter;
     /**
      * SSL configuration using an
-     * org.apache.camel.util.jsse.SSLContextParameters instance.
+     * org.apache.camel.util.jsse.SSLContextParameters instance. The option is a
+     * org.apache.camel.util.jsse.SSLContextParameters type.
      */
-    @NestedConfigurationProperty
-    private SSLContextParameters sslContextParameters;
+    private String sslContextParameters;
     /**
      * Enable usage of global SSL context parameters.
      */
@@ -98,12 +102,11 @@ public class ConsulComponentConfiguration
         this.datacenter = datacenter;
     }
 
-    public SSLContextParameters getSslContextParameters() {
+    public String getSslContextParameters() {
         return sslContextParameters;
     }
 
-    public void setSslContextParameters(
-            SSLContextParameters sslContextParameters) {
+    public void setSslContextParameters(String sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
 
@@ -176,7 +179,6 @@ public class ConsulComponentConfiguration
         /**
          * Reference to a `com.orbitz.consul.Consul` in the registry.
          */
-        @NestedConfigurationProperty
         private Consul consulClient;
         /**
          * The Consul agent URL
@@ -213,7 +215,6 @@ public class ConsulComponentConfiguration
          * SSL configuration using an
          * org.apache.camel.util.jsse.SSLContextParameters instance.
          */
-        @NestedConfigurationProperty
         private SSLContextParameters sslContextParameters;
         /**
          * Sets the ACL token to be used with Consul

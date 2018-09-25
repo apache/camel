@@ -20,12 +20,14 @@ import java.io.ByteArrayOutputStream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.util.IOHelper;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class ReaderCacheTest extends ContextTestSupport {
 
+    @Test
     public void testReaderCache() throws Exception {
         ReaderCache cache = new ReaderCache("<foo>bar</foo>");
         assertEquals("<foo>bar</foo>", cache.getData());

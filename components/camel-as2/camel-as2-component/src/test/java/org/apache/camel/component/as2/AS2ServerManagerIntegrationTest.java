@@ -127,7 +127,7 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
 
         clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN,
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), null, null, null,
-                DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS);
+                DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null);
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
         mockEndpoint.expectedMinimumMessageCount(1);
@@ -185,7 +185,7 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
         clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.SIGNED,
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), null,
                 certList.toArray(new Certificate[0]), signingKP.getPrivate(), DISPOSITION_NOTIFICATION_TO,
-                SIGNED_RECEIPT_MIC_ALGORITHMS);
+                SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null);
 
         MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
         mockEndpoint.expectedMinimumMessageCount(1);
@@ -290,7 +290,7 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
         signingCert = Utils.makeCertificate(
                                         signingKP, signingDN, issueKP, issueDN);
 
-        certList = new ArrayList<X509Certificate>();
+        certList = new ArrayList<>();
 
         certList.add(signingCert);
         certList.add(issueCert);

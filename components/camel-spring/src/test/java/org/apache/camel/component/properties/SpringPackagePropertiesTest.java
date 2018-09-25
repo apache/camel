@@ -17,6 +17,7 @@
 package org.apache.camel.component.properties;
 
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -30,6 +31,7 @@ public class SpringPackagePropertiesTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringPackagePropertiesTest.xml");
     }
 
+    @Test
     public void testSpringPackageProperties() throws Exception {
         getMockEndpoint("{{result}}").expectedMessageCount(1);
 

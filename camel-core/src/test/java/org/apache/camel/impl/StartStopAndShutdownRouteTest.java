@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * This test stops a route, mutates it then restarts it
@@ -27,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class StartStopAndShutdownRouteTest extends ContextTestSupport {
 
+    @Test
     public void testStartStopAndShutdownRoute() throws Exception {
 
         // there should still be 2 services on the route

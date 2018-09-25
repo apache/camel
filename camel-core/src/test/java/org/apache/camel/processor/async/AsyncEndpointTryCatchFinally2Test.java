@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
@@ -30,6 +31,7 @@ public class AsyncEndpointTryCatchFinally2Test extends ContextTestSupport {
     private static String middleThreadName;
     private static String afterThreadName;
 
+    @Test
     public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:catch").expectedBodiesReceived("Hello Camel");

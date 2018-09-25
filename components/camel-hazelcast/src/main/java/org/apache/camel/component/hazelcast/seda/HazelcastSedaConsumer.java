@@ -114,7 +114,7 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                         }
 
                     } catch (Exception e) {
-                        LOG.error("Hzlq Exception caught: " + e, e);
+                        LOG.error("Hzlq Exception caught: {}", e, e);
                         // Rollback
                         if (transactionCtx != null) {
                             log.trace("Rollback transaction: {}", transactionCtx.getTxnId());
@@ -129,7 +129,7 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                 }
             } catch (InterruptedException e) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Hzlq Consumer Interrupted: " + e, e);
+                    LOG.debug("Hzlq Consumer Interrupted: {}", e, e);
                 }
                 continue;
             } catch (Throwable e) {

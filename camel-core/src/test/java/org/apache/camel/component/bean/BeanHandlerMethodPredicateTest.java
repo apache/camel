@@ -18,12 +18,14 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class BeanHandlerMethodPredicateTest extends ContextTestSupport {
 
+    @Test
     public void testHandleMethod() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hi Camel");
 

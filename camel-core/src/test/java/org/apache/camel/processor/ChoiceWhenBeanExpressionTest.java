@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ChoiceWhenBeanExpressionTest extends ContextTestSupport {
     private MockEndpoint gradeA;
@@ -43,18 +44,21 @@ public class ChoiceWhenBeanExpressionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testBeanExpression() throws Exception {
         verifyGradeA("direct:expression");
         verifyOtherGrade("direct:expression");
     }
     
+    @Test
     public void testMethod() throws Exception {
         verifyGradeA("direct:method");
         verifyOtherGrade("direct:method");
     }
     
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         gradeA = getMockEndpoint("mock:gradeA");

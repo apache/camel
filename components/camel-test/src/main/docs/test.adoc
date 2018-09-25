@@ -66,7 +66,7 @@ the URI.
 |anyOrder |false |*Camel 2.17:* Whether the expected messages should arrive in the same
 order or can be in any order.
 
-|split |false |*Camel 2.17:* If enabled the the messages loaded from the test endpoint
+|split |false |*Camel 2.17:* If enabled the messages loaded from the test endpoint
 will be split using \n\r delimiters (new lines) so each line is an
 expected message. +
 For example to use a file endpoint to load a file where each line is an

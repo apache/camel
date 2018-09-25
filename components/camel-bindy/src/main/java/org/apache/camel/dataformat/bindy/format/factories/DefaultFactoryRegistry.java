@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.camel.dataformat.bindy.FormattingOptions;
 
 /**
@@ -101,9 +102,7 @@ public final class DefaultFactoryRegistry implements FactoryRegistry {
     @Override
     public FactoryRegistry unregister(Class<? extends FormatFactoryInterface> clazz) {
         for (Map.Entry<Class<?>, List<FormatFactoryInterface>> entry : classBasedFactories.entrySet()) {
-            entry.getValue().stream().filter(factory -> factory.getClass() == clazz).forEach(factory -> {
-                entry.getValue().remove(factory);
-            });
+            entry.getValue().removeIf(factory -> factory.getClass() == clazz);
         }
         return this;
     }

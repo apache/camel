@@ -21,12 +21,14 @@ import java.lang.reflect.Method;
 import org.apache.camel.Consume;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class CamelPostProcessorHelperConsumePropertyTest extends ContextTestSupport {
 
+    @Test
     public void testConsumePropertyExplicit() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 
@@ -44,6 +46,7 @@ public class CamelPostProcessorHelperConsumePropertyTest extends ContextTestSupp
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testConsumePropertyImplicit() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 
@@ -61,6 +64,7 @@ public class CamelPostProcessorHelperConsumePropertyTest extends ContextTestSupp
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testConsumePropertyOnImplicit() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 
@@ -78,6 +82,7 @@ public class CamelPostProcessorHelperConsumePropertyTest extends ContextTestSupp
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testConsumePropertyEndpointImplicit() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 
@@ -95,6 +100,7 @@ public class CamelPostProcessorHelperConsumePropertyTest extends ContextTestSupp
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testConsumePropertyOnEndpointImplicit() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 

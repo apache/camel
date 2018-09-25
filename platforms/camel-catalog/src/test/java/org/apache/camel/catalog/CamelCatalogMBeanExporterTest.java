@@ -20,14 +20,20 @@ import java.lang.management.ManagementFactory;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.junit.Ignore;
+import org.junit.Test;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+@Deprecated
+@Ignore
 public class CamelCatalogMBeanExporterTest {
 
     private CamelCatalogMBeanExporter exporter = new CamelCatalogMBeanExporter();
 
+    @Test
     public void testMBeanExporter() throws Exception {
         exporter.init();
 

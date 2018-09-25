@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -285,6 +286,11 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         return "Resequencer[" + getExpression() + " -> " + getOutputs() + "]";
     }
     
+    @Override
+    public String getShortName() {
+        return "resequence";
+    }
+
     @Override
     public String getLabel() {
         return "resequencer[" + (getExpression() != null ? getExpression().getLabel() : "") + "]";

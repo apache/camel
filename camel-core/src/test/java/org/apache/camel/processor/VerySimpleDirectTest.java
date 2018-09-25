@@ -18,12 +18,14 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class VerySimpleDirectTest extends ContextTestSupport {
 
+    @Test
     public void testVerySimpleDirect() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

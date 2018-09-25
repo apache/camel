@@ -22,12 +22,14 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class AggregateExpressionTimeoutPerGroupTest extends ContextTestSupport {
 
+    @Test
     public void testAggregateExpressionPerGroupTimeout() throws Exception {
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("G+H+I", "D+E+F", "A+B+C");
 

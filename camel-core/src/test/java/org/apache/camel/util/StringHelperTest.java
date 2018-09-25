@@ -19,25 +19,29 @@ package org.apache.camel.util;
 import java.util.List;
 import java.util.Locale;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Unit test for StringHelper
  */
-public class StringHelperTest extends TestCase {
+public class StringHelperTest extends Assert {
 
+    @Test
     public void testSimpleSanitized() {
         String out = StringHelper.sanitize("hello");
         assertTrue("Should not contain : ", out.indexOf(':') == -1);
         assertTrue("Should not contain . ", out.indexOf('.') == -1);
     }
 
+    @Test
     public void testNotFileFriendlySimpleSanitized() {
         String out = StringHelper.sanitize("c:\\helloworld");
         assertTrue("Should not contain : ", out.indexOf(':') == -1);
         assertTrue("Should not contain . ", out.indexOf('.') == -1);
     }
 
+    @Test
     public void testCountChar() {
         assertEquals(0, StringHelper.countChar("Hello World", 'x'));
         assertEquals(1, StringHelper.countChar("Hello World", 'e'));
@@ -47,6 +51,7 @@ public class StringHelperTest extends TestCase {
         assertEquals(0, StringHelper.countChar(null, ' '));
     }
 
+    @Test
     public void testRemoveQuotes() throws Exception {
         assertEquals("Hello World", StringHelper.removeQuotes("Hello World"));
         assertEquals("", StringHelper.removeQuotes(""));
@@ -61,6 +66,7 @@ public class StringHelperTest extends TestCase {
         assertEquals("foo", StringHelper.removeQuotes("'foo\""));
     }
 
+    @Test
     public void testRemoveLeadingAndEndingQuotes() throws Exception {
         assertEquals(null, StringHelper.removeLeadingAndEndingQuotes(null));
         assertEquals("", StringHelper.removeLeadingAndEndingQuotes(""));
@@ -71,6 +77,7 @@ public class StringHelperTest extends TestCase {
         assertEquals("Hello 'Camel'", StringHelper.removeLeadingAndEndingQuotes("Hello 'Camel'"));
     }
 
+    @Test
     public void testHasUpper() throws Exception {
         assertEquals(false, StringHelper.hasUpperCase(null));
         assertEquals(false, StringHelper.hasUpperCase(""));
@@ -85,6 +92,7 @@ public class StringHelperTest extends TestCase {
         assertEquals(true, StringHelper.hasUpperCase("com.foo.subA"));
     }
 
+    @Test
     public void testIsClassName() throws Exception {
         assertEquals(false, StringHelper.isClassName(null));
         assertEquals(false, StringHelper.isClassName(""));
@@ -99,6 +107,7 @@ public class StringHelperTest extends TestCase {
         assertEquals(false, StringHelper.isClassName("com.foo.subA"));
     }
 
+    @Test
     public void testHasStartToken() throws Exception {
         assertEquals(false, StringHelper.hasStartToken(null, null));
         assertEquals(false, StringHelper.hasStartToken(null, "simple"));
@@ -117,6 +126,7 @@ public class StringHelperTest extends TestCase {
         assertEquals(true, StringHelper.hasStartToken("$foo{body}", "foo"));
     }
 
+    @Test
     public void testIsQuoted() throws Exception {
         assertEquals(false, StringHelper.isQuoted(null));
         assertEquals(false, StringHelper.isQuoted(""));
@@ -135,6 +145,7 @@ public class StringHelperTest extends TestCase {
         assertEquals(true, StringHelper.isQuoted("\"abc\""));
     }
 
+    @Test
     public void testReplaceAll() throws Exception {
         assertEquals("", StringHelper.replaceAll("", "", ""));
         assertEquals(null, StringHelper.replaceAll(null, "", ""));
@@ -150,12 +161,14 @@ public class StringHelperTest extends TestCase {
         assertEquals("fooDOT", StringHelper.replaceAll("foo.", ".", "DOT"));
     }
 
+    @Test
     public void testRemoveInitialCharacters() throws Exception {
         assertEquals(StringHelper.removeStartingCharacters("foo", '/'), "foo");
         assertEquals(StringHelper.removeStartingCharacters("/foo", '/'), "foo");
         assertEquals(StringHelper.removeStartingCharacters("//foo", '/'), "foo");
     }
 
+    @Test
     public void testBefore() {
         assertEquals("Hello ", StringHelper.before("Hello World", "World"));
         assertEquals("Hello ", StringHelper.before("Hello World Again", "World"));
@@ -165,6 +178,7 @@ public class StringHelperTest extends TestCase {
         assertFalse(StringHelper.before("ignore:ignore", ":", "mykey"::equals).orElse(false));
     }
 
+    @Test
     public void testAfter() {
         assertEquals(" World", StringHelper.after("Hello World", "Hello"));
         assertEquals(" World Again", StringHelper.after("Hello World Again", "Hello"));
@@ -174,6 +188,7 @@ public class StringHelperTest extends TestCase {
         assertFalse(StringHelper.after("ignore:ignore", ":", "mykey"::equals).orElse(false));
     }
 
+    @Test
     public void testBetween() {
         assertEquals("foo bar", StringHelper.between("Hello 'foo bar' how are you", "'", "'"));
         assertEquals("foo bar", StringHelper.between("Hello ${foo bar} how are you", "${", "}"));
@@ -183,6 +198,7 @@ public class StringHelperTest extends TestCase {
         assertFalse(StringHelper.between("begin:ignore:end", "begin:", ":end", "mykey"::equals).orElse(false));
     }
 
+    @Test
     public void testBetweenOuterPair() {
         assertEquals("bar(baz)123", StringHelper.betweenOuterPair("foo(bar(baz)123)", '(', ')'));
         assertEquals(null, StringHelper.betweenOuterPair("foo(bar(baz)123))", '(', ')'));
@@ -195,6 +211,7 @@ public class StringHelperTest extends TestCase {
         assertFalse(StringHelper.betweenOuterPair("foo[bar)baz123", '(', ')', "bar"::equals).orElse(false));
     }
 
+    @Test
     public void testIsJavaIdentifier() {
         assertEquals(true, StringHelper.isJavaIdentifier("foo"));
         assertEquals(false, StringHelper.isJavaIdentifier("foo.bar"));
@@ -202,6 +219,7 @@ public class StringHelperTest extends TestCase {
         assertEquals(false, StringHelper.isJavaIdentifier(null));
     }
 
+    @Test
     public void testNormalizeClassName() {
         assertEquals("Should get the right class name", "my.package-info", StringHelper.normalizeClassName("my.package-info"));
         assertEquals("Should get the right class name", "Integer[]", StringHelper.normalizeClassName("Integer[] \r"));
@@ -209,6 +227,7 @@ public class StringHelperTest extends TestCase {
         assertEquals("Should get the right class name", "", StringHelper.normalizeClassName("////"));
     }
 
+    @Test
     public void testChangedLines() {
         String oldText = "Hello\nWorld\nHow are you";
         String newText = "Hello\nWorld\nHow are you";
@@ -240,6 +259,7 @@ public class StringHelperTest extends TestCase {
         assertEquals(3, changed.get(1).intValue());
     }
 
+    @Test
     public void testTrimToNull() {
         assertEquals(StringHelper.trimToNull("abc"), "abc");
         assertEquals(StringHelper.trimToNull(" abc"), "abc");
@@ -250,6 +270,7 @@ public class StringHelperTest extends TestCase {
         assertNull(StringHelper.trimToNull(""));
     }
 
+    @Test
     public void testHumanReadableBytes() {
         assertEquals("0 B",  StringHelper.humanReadableBytes(Locale.ENGLISH, 0));
         assertEquals("32 B",  StringHelper.humanReadableBytes(Locale.ENGLISH, 32));
@@ -262,10 +283,12 @@ public class StringHelperTest extends TestCase {
         assertEquals("1.7 TB",  StringHelper.humanReadableBytes(Locale.ENGLISH, 1855425871872L));
     }
 
+    @Test
     public void testHumanReadableBytesNullLocale() {
         assertEquals("1.3 KB",  StringHelper.humanReadableBytes(null, 1280));
     }
 
+    @Test
     public void testHumanReadableBytesDefaultLocale() {
         assertNotNull(StringHelper.humanReadableBytes(110592));
     }

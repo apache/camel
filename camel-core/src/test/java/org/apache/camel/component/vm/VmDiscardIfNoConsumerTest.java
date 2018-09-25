@@ -18,12 +18,14 @@ package org.apache.camel.component.vm;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class VmDiscardIfNoConsumerTest extends ContextTestSupport {
 
+    @Test
     public void testDiscard() throws Exception {
         VmEndpoint bar = getMandatoryEndpoint("vm:bar", VmEndpoint.class);
         assertEquals(0, bar.getCurrentQueueSize());

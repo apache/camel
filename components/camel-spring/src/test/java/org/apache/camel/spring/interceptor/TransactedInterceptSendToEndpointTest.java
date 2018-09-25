@@ -19,12 +19,14 @@ package org.apache.camel.spring.interceptor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringRouteBuilder;
+import org.junit.Test;
 
 /**
  * Easier transaction configuration as we do not have to setup a transaction error handler
  */
 public class TransactedInterceptSendToEndpointTest extends TransactionalClientDataSourceTest {
 
+    @Test
     public void testTransactionSuccess() throws Exception {
         MockEndpoint intercepted = getMockEndpoint("mock:intercepted");
         intercepted.expectedBodiesReceived("Hello World");
@@ -34,6 +36,7 @@ public class TransactedInterceptSendToEndpointTest extends TransactionalClientDa
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTransactionRollback() throws Exception {
         MockEndpoint intercepted = getMockEndpoint("mock:intercepted");
         intercepted.expectedBodiesReceived("Tiger in Action");

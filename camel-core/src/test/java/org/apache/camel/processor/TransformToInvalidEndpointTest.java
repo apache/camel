@@ -20,12 +20,14 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class TransformToInvalidEndpointTest extends ContextTestSupport {
 
+    @Test
     public void testTransformToInvalidEndpoint() throws Exception {
         try {
             template.requestBody("direct:bar", "Hello World");

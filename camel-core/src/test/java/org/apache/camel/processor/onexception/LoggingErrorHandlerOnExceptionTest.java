@@ -19,12 +19,14 @@ package org.apache.camel.processor.onexception;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class LoggingErrorHandlerOnExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testLoggingErrorHandler() throws Exception {
         getMockEndpoint("mock:handled").expectedMessageCount(0);
 
@@ -38,6 +40,7 @@ public class LoggingErrorHandlerOnExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testLoggingErrorHandlerOnException() throws Exception {
         getMockEndpoint("mock:handled").expectedMessageCount(1);
 

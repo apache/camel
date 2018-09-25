@@ -27,7 +27,7 @@ The stream needs to be created prior to it being used. +
 
 
 // component options: START
-The AWS Kinesis component supports 5 options which are listed below.
+The AWS Kinesis component supports 5 options, which are listed below.
 
 
 
@@ -105,6 +105,37 @@ with the following path and query parameters:
 | *secretKey* (security) | Amazon AWS Secret Key |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 17 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.aws-kinesis.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-kinesis.configuration.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-kinesis.configuration.amazon-kinesis-client* | Amazon Kinesis client to use for all requests for this endpoint |  | AmazonKinesis
+| *camel.component.aws-kinesis.configuration.iterator-type* | Defines where in the Kinesis stream to start getting records |  | ShardIteratorType
+| *camel.component.aws-kinesis.configuration.max-results-per-request* | Maximum number of records that will be fetched in each poll | 1 | Integer
+| *camel.component.aws-kinesis.configuration.proxy-host* | To define a proxy host when instantiating the DDBStreams client |  | String
+| *camel.component.aws-kinesis.configuration.proxy-port* | To define a proxy port when instantiating the DDBStreams client |  | Integer
+| *camel.component.aws-kinesis.configuration.region* | The region in which Kinesis client needs to work |  | String
+| *camel.component.aws-kinesis.configuration.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-kinesis.configuration.sequence-number* | The sequence number to start polling from. Required if iteratorType is set to AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER |  | String
+| *camel.component.aws-kinesis.configuration.shard-closed* | Define what will be the behavior in case of shard closed. Possible value are ignore, silent and fail.In case of ignore a message will be logged and the consumer will restart from the beginning,in case of silent there will be no logging and the consumer will start from the beginning,in case of fail a ReachedClosedStateException will be raised |  | KinesisShardClosed StrategyEnum
+| *camel.component.aws-kinesis.configuration.shard-id* | Defines which shardId in the Kinesis stream to get records from |  | String
+| *camel.component.aws-kinesis.configuration.stream-name* | Name of the stream |  | String
+| *camel.component.aws-kinesis.enabled* | Enable aws-kinesis component | true | Boolean
+| *camel.component.aws-kinesis.region* | Amazon AWS Region |  | String
+| *camel.component.aws-kinesis.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.aws-kinesis.secret-key* | Amazon AWS Secret Key |  | String
+|===
+// spring-boot-auto-configure options: END
+
 
 
 
@@ -176,7 +207,7 @@ however, a
 different http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/AWSCredentialsProvider.html[AWSCredentialsProvider]
 can be specified when calling createClient(...).
 
-#### Message headers used by the Kinesis producer to write to Kinesis.  The producer expects that the message body is a `ByteBuffer`.
+#### Message headers used by the Kinesis producer to write to Kinesis.  The producer expects that the message body is a `byte[]`.
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================

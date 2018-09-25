@@ -20,12 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class LoopCopyErrorTest extends ContextTestSupport {
 
+    @Test
     public void testLoopCopy() throws Exception {
         getMockEndpoint("mock:loop").expectedMessageCount(2);
         getMockEndpoint("mock:result").expectedMessageCount(0);

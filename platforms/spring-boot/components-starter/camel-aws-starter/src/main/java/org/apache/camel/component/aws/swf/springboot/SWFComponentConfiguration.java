@@ -26,7 +26,6 @@ import com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeExecutionOp
 import com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The aws-swf component is used for managing workflows from Amazon Simple
@@ -40,6 +39,11 @@ public class SWFComponentConfiguration
         extends
             ComponentConfigurationPropertiesCommon {
 
+    /**
+     * Whether to enable auto configuration of the aws-swf component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
     /**
      * The AWS SWF default configuration
      */
@@ -156,13 +160,10 @@ public class SWFComponentConfiguration
         /**
          * To use the given AmazonSimpleWorkflowClient as client
          */
-        @NestedConfigurationProperty
         private AmazonSimpleWorkflowClient amazonSWClient;
         /**
          * To configure the StartWorkflowOptions using the key/values from the
          * Map.
-         * 
-         * @param startWorkflowOptionsParameters
          */
         private Map startWorkflowOptionsParameters;
         /**
@@ -192,12 +193,10 @@ public class SWFComponentConfiguration
         /**
          * Activity execution options
          */
-        @NestedConfigurationProperty
         private ActivityTypeExecutionOptions activityTypeExecutionOptions;
         /**
          * Activity registration options
          */
-        @NestedConfigurationProperty
         private ActivityTypeRegistrationOptions activityTypeRegistrationOptions;
         /**
          * An instance of
@@ -208,18 +207,22 @@ public class SWFComponentConfiguration
         /**
          * Workflow registration options
          */
-        @NestedConfigurationProperty
         private WorkflowTypeRegistrationOptions workflowTypeRegistrationOptions;
         /**
          * Activity scheduling options
          */
-        @NestedConfigurationProperty
         private ActivitySchedulingOptions activitySchedulingOptions;
         /**
          * Maximum number of threads in work pool for activity.
          */
         private Integer activityThreadPoolSize = 100;
+        /**
+         * Set the execution start to close timeout.
+         */
         private String executionStartToCloseTimeout = "3600";
+        /**
+         * Set the task start to close timeout.
+         */
         private String taskStartToCloseTimeout = "600";
 
         public String getAccessKey() {

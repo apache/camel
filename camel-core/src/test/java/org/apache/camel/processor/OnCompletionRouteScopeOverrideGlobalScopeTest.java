@@ -22,12 +22,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class OnCompletionRouteScopeOverrideGlobalScopeTest extends ContextTestSupport {
 
+    @Test
     public void testSynchronizeComplete() throws Exception {
         getMockEndpoint("mock:global").expectedMessageCount(0);
         getMockEndpoint("mock:sync").expectedBodiesReceived("Bye World");
@@ -41,6 +43,7 @@ public class OnCompletionRouteScopeOverrideGlobalScopeTest extends ContextTestSu
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSynchronizeFailure() throws Exception {
         getMockEndpoint("mock:global").expectedMessageCount(0);
         getMockEndpoint("mock:sync").expectedMessageCount(1);

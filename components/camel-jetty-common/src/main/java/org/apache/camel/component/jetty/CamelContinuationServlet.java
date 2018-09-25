@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,9 +63,19 @@ public class CamelContinuationServlet extends CamelServlet {
         // is there a consumer registered for the request.
         HttpConsumer consumer = getServletResolveConsumerStrategy().resolve(request, getConsumers());
         if (consumer == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
-        }
+            // okay we cannot process this requires so return either 404 or 405.
+            // to know if its 405 then we need to check if any other HTTP method would have a consumer for the "same" request
+            boolean hasAnyMethod = METHODS.stream().anyMatch(m -> getServletResolveConsumerStrategy().isHttpMethodAllowed(request, m, getConsumers()));
+            if (hasAnyMethod) {
+                log.debug("No consumer to service request {} as method {} is not allowed", request, request.getMethod());
+                response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+                return;
+            } else {
+                log.debug("No consumer to service request {} as resource is not found", request);
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+        }       
 
         // figure out if continuation is enabled and what timeout to use
         boolean useContinuation = false;
@@ -95,14 +106,18 @@ public class CamelContinuationServlet extends CamelServlet {
 
         // if its an OPTIONS request then return which method is allowed
         if ("OPTIONS".equals(request.getMethod()) && !consumer.isOptionsEnabled()) {
-            String s;
-            if (consumer.getEndpoint().getHttpMethodRestrict() != null) {
-                s = "OPTIONS," + consumer.getEndpoint().getHttpMethodRestrict();
-            } else {
-                // allow them all
-                s = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT,PATCH";
+            String allowedMethods = METHODS.stream().filter(m -> getServletResolveConsumerStrategy().isHttpMethodAllowed(request, m, getConsumers())).collect(Collectors.joining(","));
+            if (allowedMethods == null && consumer.getEndpoint().getHttpMethodRestrict() != null) {
+                allowedMethods = consumer.getEndpoint().getHttpMethodRestrict();
             }
-            response.addHeader("Allow", s);
+            if (allowedMethods == null) {
+                // allow them all
+                allowedMethods = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT,PATCH";
+            }
+            if (!allowedMethods.contains("OPTIONS")) {
+                allowedMethods = allowedMethods + ",OPTIONS";
+            }
+            response.addHeader("Allow", allowedMethods);
             response.setStatus(HttpServletResponse.SC_OK);
             return;
         }

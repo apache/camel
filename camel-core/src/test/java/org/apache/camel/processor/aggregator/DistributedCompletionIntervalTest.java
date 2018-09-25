@@ -20,6 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.junit.Test;
 
 /**
  * Unit test to verify that aggregate by interval only also works.
@@ -30,6 +31,7 @@ public class DistributedCompletionIntervalTest extends AbstractDistributedTest {
 
     private MemoryAggregationRepository sharedAggregationRepository = new MemoryAggregationRepository(true);
 
+    @Test
     public void testCamelContext1Wins() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Message 19");
@@ -44,6 +46,7 @@ public class DistributedCompletionIntervalTest extends AbstractDistributedTest {
         mock2.assertIsSatisfied();
     }
 
+    @Test
     public void testCamelContext2Wins() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);

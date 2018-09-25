@@ -18,12 +18,14 @@ package org.apache.camel.processor.async;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class AsyncEndpointSingleTopicLoadBalanceTest extends ContextTestSupport {
 
+    @Test
     public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello Camel");

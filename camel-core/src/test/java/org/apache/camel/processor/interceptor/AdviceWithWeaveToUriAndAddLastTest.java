@@ -19,12 +19,14 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Advice with tests
  */
 public class AdviceWithWeaveToUriAndAddLastTest extends ContextTestSupport {
 
+    @Test
     public void testWeaveByToUriAndAddLast() throws Exception {
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
             @Override

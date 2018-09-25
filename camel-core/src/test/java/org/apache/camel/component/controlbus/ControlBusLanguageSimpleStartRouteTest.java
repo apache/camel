@@ -18,12 +18,14 @@ package org.apache.camel.component.controlbus;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class ControlBusLanguageSimpleStartRouteTest extends ContextTestSupport {
 
+    @Test
     public void testControlBusStartStop() throws Exception {
         assertEquals("Stopped", context.getRouteStatus("foo").name());
 
@@ -42,6 +44,7 @@ public class ControlBusLanguageSimpleStartRouteTest extends ContextTestSupport {
         assertEquals("Stopped", context.getRouteStatus("foo").name());
     }
 
+    @Test
     public void testControlBusStatus() throws Exception {
         assertEquals("Stopped", context.getRouteStatus("foo").name());
 

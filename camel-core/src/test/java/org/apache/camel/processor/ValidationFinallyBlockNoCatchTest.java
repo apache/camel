@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * No catch blocks but handle all should work
@@ -30,6 +31,7 @@ public class ValidationFinallyBlockNoCatchTest extends ContextTestSupport {
     protected MockEndpoint allEndpoint;
     protected MockEndpoint deadEndpoint;
 
+    @Test
     public void testValidMessage() throws Exception {
         validEndpoint.expectedMessageCount(1);
         allEndpoint.expectedMessageCount(1);
@@ -39,6 +41,7 @@ public class ValidationFinallyBlockNoCatchTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInvalidMessage() throws Exception {
         validEndpoint.expectedMessageCount(0);
         
@@ -59,7 +62,8 @@ public class ValidationFinallyBlockNoCatchTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         validEndpoint = resolveMandatoryEndpoint("mock:valid", MockEndpoint.class);

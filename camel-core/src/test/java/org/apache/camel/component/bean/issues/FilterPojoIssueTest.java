@@ -18,6 +18,7 @@ package org.apache.camel.component.bean.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
@@ -31,6 +32,7 @@ public class FilterPojoIssueTest extends ContextTestSupport {
         return null;
     }
 
+    @Test
     public void testFilterPojo() throws Exception {
         getMockEndpoint("mock:filter").expectedBodiesReceived("Bye World");
 
@@ -39,6 +41,7 @@ public class FilterPojoIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFilterPojoNull() throws Exception {
         getMockEndpoint("mock:filter").expectedMessageCount(0);
 

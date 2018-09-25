@@ -15,9 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.nagios;
-
 import com.googlecode.jsendnsca.NonBlockingNagiosPassiveCheckSender;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.BeforeClass;
 import org.mockito.Mockito;

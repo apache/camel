@@ -18,12 +18,14 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class CBRWithLoadBalancerTest extends ContextTestSupport {
 
+    @Test
     public void testFoo() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMessageCount(1);
@@ -34,6 +36,7 @@ public class CBRWithLoadBalancerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFooBar() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMessageCount(1);
@@ -45,6 +48,7 @@ public class CBRWithLoadBalancerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testResult() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:foo").expectedMessageCount(0);

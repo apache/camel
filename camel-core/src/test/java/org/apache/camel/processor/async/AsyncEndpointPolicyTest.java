@@ -28,6 +28,7 @@ import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.junit.Test;
 
 /**
  * @version 
@@ -44,6 +45,7 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:foo").expectedHeaderReceived("foo", "was wrapped");

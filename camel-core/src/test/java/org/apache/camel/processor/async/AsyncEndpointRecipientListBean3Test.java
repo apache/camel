@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RecipientList;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * @version 
@@ -38,6 +39,7 @@ public class AsyncEndpointRecipientListBean3Test extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:after").expectedBodiesReceived("Bye Camel");

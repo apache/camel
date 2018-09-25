@@ -90,7 +90,9 @@ public class JdbcEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Name of DataSource to lookup in the Registry.
+     * Name of DataSource to lookup in the Registry. If the name is dataSource or default, then Camel
+     * will attempt to lookup a default DataSource from the registry, meaning if there is a only
+     * one instance of DataSource found, then this DataSource will be used.
      */
     public void setDataSourceName(String dataSourceName) {
         this.dataSourceName = dataSourceName;

@@ -21,9 +21,11 @@ import javax.xml.transform.TransformerException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class XsltFeatureRouteTest extends ContextTestSupport {
 
+    @Test
     public void testSendMessage() throws Exception {
         String message = "<hello/>";
         sendXmlMessage("direct:start1", message);

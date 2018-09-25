@@ -34,6 +34,7 @@ import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 
@@ -49,6 +50,7 @@ public class AsyncEndpointRoutingSlipBeanNonBlockingTest extends ContextTestSupp
         return jndi;
     }
 
+    @Test
     public void testAsyncEndpointDontBlock() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
         Endpoint startEndpoint = context.getEndpoint("direct:start");

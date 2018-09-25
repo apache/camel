@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Unit test with multi route specific error handlers
@@ -29,6 +30,7 @@ public class MultiErrorHandlerInRouteNotHandledTest extends ContextTestSupport {
     private MyProcessor outer = new MyProcessor();
     private MyProcessor inner = new MyProcessor();
 
+    @Test
     public void testNoErrors() throws Exception {
         outer.setName("Claus");
         inner.setName("James");
@@ -44,6 +46,7 @@ public class MultiErrorHandlerInRouteNotHandledTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOuterError() throws Exception {
         outer.setName("Error");
         inner.setName("James");
@@ -58,6 +61,7 @@ public class MultiErrorHandlerInRouteNotHandledTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInnerError() throws Exception {
         outer.setName("Claus");
         inner.setName("Error");

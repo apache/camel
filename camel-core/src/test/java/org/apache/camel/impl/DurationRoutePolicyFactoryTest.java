@@ -20,11 +20,13 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
 public class DurationRoutePolicyFactoryTest extends ContextTestSupport {
 
+    @Test
     public void testDurationRoutePolicyFactory() throws Exception {
         assertTrue(context.getRouteStatus("foo").isStarted());
         assertFalse(context.getRouteStatus("foo").isStopped());

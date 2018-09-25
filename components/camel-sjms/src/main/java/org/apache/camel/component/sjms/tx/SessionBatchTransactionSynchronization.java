@@ -19,6 +19,7 @@ package org.apache.camel.component.sjms.tx;
 import java.util.TimerTask;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import javax.jms.Session;
 
 import org.apache.camel.Exchange;

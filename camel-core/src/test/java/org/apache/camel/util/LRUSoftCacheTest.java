@@ -23,12 +23,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.TestSupport;
+import org.junit.Test;
 
 /**
  *
  */
 public class LRUSoftCacheTest extends TestSupport {
 
+    @Test
     public void testLRUSoftCacheGetAndPut() throws Exception {
         LRUSoftCache<Integer, Object> cache = new LRUSoftCache<>(1000);
 
@@ -41,6 +43,7 @@ public class LRUSoftCacheTest extends TestSupport {
         assertEquals(2, cache.size());
     }
 
+    @Test
     public void testLRUSoftCacheHitsAndMisses() throws Exception {
         LRUSoftCache<Integer, Object> cache = new LRUSoftCache<>(1000);
 
@@ -63,6 +66,7 @@ public class LRUSoftCacheTest extends TestSupport {
         assertEquals(1, cache.getMisses());
     }
 
+    @Test
     public void testLRUSoftCachePutOverride() throws Exception {
         LRUSoftCache<Integer, Object> cache = new LRUSoftCache<>(1000);
 
@@ -80,6 +84,7 @@ public class LRUSoftCacheTest extends TestSupport {
         assertEquals(2, cache.size());
     }
 
+    @Test
     public void testLRUSoftCachePutAll() throws Exception {
         LRUSoftCache<Integer, Object> cache = new LRUSoftCache<>(1000);
 
@@ -95,6 +100,7 @@ public class LRUSoftCacheTest extends TestSupport {
         assertEquals(2, cache.size());
     }
 
+    @Test
     public void testLRUSoftCachePutAllAnotherLRUSoftCache() throws Exception {
         LRUSoftCache<Integer, Object> cache = new LRUSoftCache<>(1000);
 
@@ -110,6 +116,7 @@ public class LRUSoftCacheTest extends TestSupport {
         assertEquals(2, cache.size());
     }
 
+    @Test
     public void testLRUSoftCacheRemove() throws Exception {
         LRUSoftCache<Integer, Object> cache = new LRUSoftCache<>(1000);
 
@@ -121,6 +128,7 @@ public class LRUSoftCacheTest extends TestSupport {
         assertEquals(null, cache.get(2));
     }
 
+    @Test
     public void testLRUSoftCacheValues() throws Exception {
         LRUSoftCache<Integer, Object> cache = new LRUSoftCache<>(1000);
 
@@ -135,6 +143,7 @@ public class LRUSoftCacheTest extends TestSupport {
         assertEquals("bar", it.next());
     }
 
+    @Test
     public void testLRUSoftCacheEmpty() throws Exception {
         LRUSoftCache<Integer, Object> cache = new LRUSoftCache<>(1000);
 
@@ -153,6 +162,7 @@ public class LRUSoftCacheTest extends TestSupport {
         assertTrue(cache.isEmpty());
     }
 
+    @Test
     public void testLRUSoftCacheContainsKey() throws Exception {
         LRUSoftCache<Integer, Object> cache = new LRUSoftCache<>(1000);
 
@@ -169,6 +179,7 @@ public class LRUSoftCacheTest extends TestSupport {
         assertFalse(cache.containsKey(2));
     }
 
+    @Test
     public void testLRUSoftCacheKeySet() throws Exception {
         LRUSoftCache<Integer, Object> cache = new LRUSoftCache<>(1000);
 

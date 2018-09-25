@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class EndpointRegistryKeepRouteEndpointsTest extends ContextTestSupport {
 
@@ -30,6 +31,7 @@ public class EndpointRegistryKeepRouteEndpointsTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testEndpointRegistryKeepRouteEndpoints() throws Exception {
         assertTrue(context.hasEndpoint("direct://start") != null);
         assertTrue(context.hasEndpoint("log://foo") != null);

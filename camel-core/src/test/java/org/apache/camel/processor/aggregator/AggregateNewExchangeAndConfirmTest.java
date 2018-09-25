@@ -25,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
@@ -37,6 +38,7 @@ public class AggregateNewExchangeAndConfirmTest extends ContextTestSupport {
 
     private MyRepo repo = new MyRepo();
 
+    @Test
     public void testAggregateNewExchangeAndConfirm() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
         mock.expectedBodiesReceived("ABC");

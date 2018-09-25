@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.support.ServiceSupport;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
@@ -30,6 +31,7 @@ import static org.awaitility.Awaitility.await;
  */
 public class ConsumerCacheZeroCapacityTest extends ContextTestSupport {
 
+    @Test
     public void testConsumerCacheZeroCapacity() throws Exception {
         ConsumerCache cache = new ConsumerCache(this, context, 0);
         cache.start();

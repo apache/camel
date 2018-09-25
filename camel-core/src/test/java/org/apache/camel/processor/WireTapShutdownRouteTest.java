@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,7 @@ public class WireTapShutdownRouteTest extends ContextTestSupport {
 
     private static final CountDownLatch LATCH = new CountDownLatch(1);
 
+    @Test
     public void testWireTapShutdown() throws Exception {
         final MyTapBean tapBean = (MyTapBean) context.getRegistry().lookupByName("tap");
 

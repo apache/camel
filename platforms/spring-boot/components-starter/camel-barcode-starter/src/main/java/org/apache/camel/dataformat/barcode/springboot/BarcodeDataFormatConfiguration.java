@@ -33,6 +33,11 @@ public class BarcodeDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the barcode data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Width of the barcode
      */
     private Integer width;

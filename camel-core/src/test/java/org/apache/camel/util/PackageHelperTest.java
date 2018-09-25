@@ -16,13 +16,15 @@
  */
 package org.apache.camel.util;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class PackageHelperTest extends TestCase {
+public class PackageHelperTest extends Assert {
 
+    @Test
     public void testIsValidPackage() {
         boolean valid = PackageHelper.isValidVersion("org.apache.camel", 2.0);
         assertEquals("Should be Camel 2.0 or higher", true, valid);

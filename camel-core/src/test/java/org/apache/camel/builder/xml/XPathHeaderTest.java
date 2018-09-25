@@ -19,12 +19,14 @@ package org.apache.camel.builder.xml;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * XPath with and without header test.
  */
 public class XPathHeaderTest extends ContextTestSupport {
 
+    @Test
     public void testChoiceWithHeaderSelectCamel() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:camel");
         mock.expectedBodiesReceived("<name>King</name>");
@@ -35,6 +37,7 @@ public class XPathHeaderTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testChoiceWithNoHeaderSelectDonkey() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:donkey");
         mock.expectedBodiesReceived("<name>Kong</name>");
@@ -44,6 +47,7 @@ public class XPathHeaderTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testChoiceWithNoHeaderSelectOther() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:other");
         mock.expectedBodiesReceived("<name>Other</name>");

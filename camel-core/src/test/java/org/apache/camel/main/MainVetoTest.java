@@ -16,17 +16,19 @@
  */
 package org.apache.camel.main;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.LifecycleStrategySupport;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class MainVetoTest extends TestCase {
+public class MainVetoTest extends Assert {
 
+    @Test
     public void testMain() throws Exception {
         // lets make a simple route
         Main main = new Main();

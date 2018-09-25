@@ -37,6 +37,7 @@ import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +82,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor, IdA
 
     public RecipientList(CamelContext camelContext, String delimiter) {
         notNull(camelContext, "camelContext");
-        ObjectHelper.notEmpty(delimiter, "delimiter");
+        StringHelper.notEmpty(delimiter, "delimiter");
         this.camelContext = camelContext;
         this.delimiter = delimiter;
     }
@@ -94,7 +95,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor, IdA
     public RecipientList(CamelContext camelContext, Expression expression, String delimiter) {
         notNull(camelContext, "camelContext");
         ObjectHelper.notNull(expression, "expression");
-        ObjectHelper.notEmpty(delimiter, "delimiter");
+        StringHelper.notEmpty(delimiter, "delimiter");
         this.camelContext = camelContext;
         this.expression = expression;
         this.delimiter = delimiter;

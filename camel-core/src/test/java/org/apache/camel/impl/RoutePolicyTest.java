@@ -23,14 +23,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.RoutePolicy;
+import org.junit.Test;
 
 public class RoutePolicyTest extends ContextTestSupport {
     private MyRoutPolicy routePolicy = new MyRoutPolicy();
 
+    @Test
     public void testStartCalledWhenCamelStarts() throws Exception {
         assertEquals(1, routePolicy.getStartCount());
     }
 
+    @Test
     public void testStartCalledWhenRouteStarts() throws Exception {
         assertEquals(1, routePolicy.getStartCount());
         context.stopRoute("foo");
@@ -38,6 +41,7 @@ public class RoutePolicyTest extends ContextTestSupport {
         assertEquals(2, routePolicy.getStartCount());
     }
 
+    @Test
     public void testStopCalledWhenCamelStops() throws Exception {
         assertEquals(0, routePolicy.getStopCount());
         stopCamelContext();
@@ -45,18 +49,21 @@ public class RoutePolicyTest extends ContextTestSupport {
     }
 
 
+    @Test
     public void testStopCalledWhenRouteStops() throws Exception {
         assertEquals(0, routePolicy.getStopCount());
         context.stopRoute("foo");
         assertEquals(1, routePolicy.getStopCount());
     }
 
+    @Test
     public void testSuspendCalledWhenRouteSuspends() throws Exception {
         assertEquals(0, routePolicy.getSuspendCount());
         context.suspendRoute("foo");
         assertEquals(1, routePolicy.getSuspendCount());
     }
 
+    @Test
     public void testResumeCalledWhenRouteResumes() throws Exception {
         assertEquals(0, routePolicy.getResumeCount());
         context.suspendRoute("foo");
@@ -64,6 +71,7 @@ public class RoutePolicyTest extends ContextTestSupport {
         assertEquals(1, routePolicy.getResumeCount());
     }
 
+    @Test
     public void testRemoveCalledWhenRouteIsRemovedById() throws Exception {
         assertEquals(0, routePolicy.getRemoveCount());
         context.stopRoute("foo");
@@ -73,6 +81,7 @@ public class RoutePolicyTest extends ContextTestSupport {
         assertEquals(1, routePolicy.getRemoveCount());
     }
 
+    @Test
     public void testRemoveCalledWhenCamelIsStopped() throws Exception {
         assertTrue(context.getStatus().isStarted());
         assertEquals(0, routePolicy.getRemoveCount());

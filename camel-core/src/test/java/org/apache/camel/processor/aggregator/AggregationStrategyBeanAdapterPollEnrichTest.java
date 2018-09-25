@@ -19,11 +19,13 @@ package org.apache.camel.processor.aggregator;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.toolbox.AggregationStrategies;
+import org.junit.Test;
 
 public class AggregationStrategyBeanAdapterPollEnrichTest extends ContextTestSupport {
 
     private MyBodyAppender appender = new MyBodyAppender();
 
+    @Test
     public void testNoData() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("A");
 
@@ -32,6 +34,7 @@ public class AggregationStrategyBeanAdapterPollEnrichTest extends ContextTestSup
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testData() throws Exception {
         template.sendBody("seda:foo", "B");
 

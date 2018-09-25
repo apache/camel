@@ -15,25 +15,28 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
-
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.camel.Exchange;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version
  */
 public class DefaultProducerTemplateNonBlockingAsyncTest extends DefaultProducerTemplateAsyncTest {
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         template.stop();
         template.setThreadedAsyncMode(false);
         template.start();
     }
 
+    @Test
     public void testRunningInSameThread() throws ExecutionException, InterruptedException {
         Thread originalThread = Thread.currentThread();
         CompletableFuture<Exchange> future = template.asyncSend("direct:echo", e -> {

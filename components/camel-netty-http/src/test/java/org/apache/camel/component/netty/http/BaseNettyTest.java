@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty.http;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Properties;

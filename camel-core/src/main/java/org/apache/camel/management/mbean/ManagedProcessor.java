@@ -18,6 +18,7 @@ package org.apache.camel.management.mbean;
 
 import java.util.List;
 import java.util.Map;
+
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;

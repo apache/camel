@@ -17,6 +17,7 @@
 package org.apache.camel.component.redis;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -44,6 +45,13 @@ public class RedisConsumer extends DefaultConsumer implements MessageListener {
         super.doStart();
         Collection<Topic> topics = toTopics(redisConfiguration.getChannels());
         redisConfiguration.getListenerContainer().addMessageListener(this, topics);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        Collection<Topic> topics = toTopics(redisConfiguration.getChannels());
+        redisConfiguration.getListenerContainer().removeMessageListener(this, topics);
+        super.doStop();
     }
 
     private Collection<Topic> toTopics(String channels) {
@@ -89,7 +97,7 @@ public class RedisConsumer extends DefaultConsumer implements MessageListener {
 
     private void setChannel(Exchange exchange, byte[] message) throws UnsupportedEncodingException {
         if (message != null) {
-            exchange.getIn().setHeader(RedisConstants.CHANNEL, new String(message, "UTF8"));
+            exchange.getIn().setHeader(RedisConstants.CHANNEL, new String(message, StandardCharsets.UTF_8));
         }
     }
 }

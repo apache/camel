@@ -19,12 +19,14 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Advice with match multiple ids test
  */
 public class AdviceWithTasksSelectTest extends ContextTestSupport {
 
+    @Test
     public void testSelectFirst() throws Exception {
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
@@ -46,6 +48,7 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSelectLast() throws Exception {
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
@@ -68,6 +71,7 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
     }
 
 
+    @Test
     public void testSelectIndexZero() throws Exception {
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
@@ -89,6 +93,7 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSelectIndexOne() throws Exception {
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
@@ -110,6 +115,7 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSelectIndexTwo() throws Exception {
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
@@ -131,6 +137,7 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSelectIndexOutOfBounds() throws Exception {
         try {
             context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
@@ -146,6 +153,7 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testSelectRangeZeroOne() throws Exception {
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
@@ -167,6 +175,7 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSelectRangeOneTwo() throws Exception {
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
             @Override

@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version
@@ -35,6 +36,7 @@ public class ThreadsRejectedExecutionWithDeadLetterTest extends ContextTestSuppo
         return false;
     }
 
+    @Test
     public void testThreadsRejectedExecution() throws Exception {
         final CountDownLatch latch = new CountDownLatch(3);
 
@@ -75,6 +77,7 @@ public class ThreadsRejectedExecutionWithDeadLetterTest extends ContextTestSuppo
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testThreadsRejectedExecutionWithRedelivery() throws Exception {
         final CountDownLatch latch = new CountDownLatch(3);
 

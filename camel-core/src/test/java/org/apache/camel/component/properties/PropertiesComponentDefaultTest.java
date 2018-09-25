@@ -22,12 +22,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class PropertiesComponentDefaultTest extends ContextTestSupport {
 
+    @Test
     public void testPropertiesComponentDefault() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -44,6 +46,7 @@ public class PropertiesComponentDefaultTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPropertiesComponentDefaultNoFileFound() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -61,6 +64,7 @@ public class PropertiesComponentDefaultTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testIgnoreMissingPropertyFilesOnClasspath() throws Exception {
         System.setProperty("bar.end", "mock:bar");
         context.addRoutes(new RouteBuilder() {
@@ -75,6 +79,7 @@ public class PropertiesComponentDefaultTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testIgnoreMissingPropertyFilesFromRegistry() throws Exception {
         System.setProperty("bar.end", "mock:bar");
         context.addRoutes(new RouteBuilder() {
@@ -89,6 +94,7 @@ public class PropertiesComponentDefaultTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testIgnoreMissingPropertyFilesFromFilePath() throws Exception {
         System.setProperty("bar.end", "mock:bar");
         context.addRoutes(new RouteBuilder() {
@@ -103,6 +109,7 @@ public class PropertiesComponentDefaultTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testIgnoreMissingPropertySystemPropertyOnClasspath() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -117,6 +124,7 @@ public class PropertiesComponentDefaultTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNotIgnoreMissingPropertySystemPropertyOnClasspath() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

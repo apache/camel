@@ -28,14 +28,16 @@ import com.orbitz.consul.model.agent.Registration;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.component.consul.ConsulTestSupport;
 import org.apache.camel.impl.cloud.DefaultServiceCallProcessor;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.test.testcontainers.spring.ContainerAwareSpringTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
+import org.testcontainers.containers.GenericContainer;
 
-public abstract class SpringConsulServiceCallRouteTest extends CamelSpringTestSupport {
+public abstract class SpringConsulServiceCallRouteTest extends ContainerAwareSpringTestSupport {
     private AgentClient client;
     private List<Registration> registrations;
 
@@ -45,7 +47,13 @@ public abstract class SpringConsulServiceCallRouteTest extends CamelSpringTestSu
 
     @Override
     public void doPreSetup() throws Exception {
-        this.client = Consul.builder().build().agentClient();
+        super.doPreSetup();
+
+        this.client = Consul.builder()
+            .withUrl(consulUrl())
+            .build()
+            .agentClient();
+
         this.registrations = Arrays.asList(
             ImmutableRegistration.builder()
                 .id("service-1-1")
@@ -86,13 +94,15 @@ public abstract class SpringConsulServiceCallRouteTest extends CamelSpringTestSu
         );
 
         this.registrations.forEach(client::register);
-        super.doPreSetup();
     }
 
     @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-        registrations.forEach(r -> client.deregister(r.getId()));
+    public void doPostTearDown() throws Exception {
+        super.doPostTearDown();
+
+        if (client != null) {
+            registrations.forEach(r -> client.deregister(r.getId()));
+        }
     }
 
     // *************************************************************************
@@ -141,5 +151,18 @@ public abstract class SpringConsulServiceCallRouteTest extends CamelSpringTestSu
         }
 
         return processors;
+    }
+
+    @Override
+    protected GenericContainer<?> createContainer() {
+        return ConsulTestSupport.consulContainer();
+    }
+
+    protected String consulUrl() {
+        return String.format(
+            "http://%s:%d",
+            getContainerHost(ConsulTestSupport.CONTAINER_NAME),
+            getContainerPort(ConsulTestSupport.CONTAINER_NAME, Consul.DEFAULT_HTTP_PORT)
+        );
     }
 }

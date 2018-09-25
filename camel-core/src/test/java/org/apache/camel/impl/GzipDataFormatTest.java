@@ -23,6 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
+import org.junit.Test;
 
 /**
  * Unit test of the gzip data format.
@@ -44,6 +45,7 @@ public class GzipDataFormatTest extends ContextTestSupport {
         return (byte[]) template.requestBody("direct:start", TEXT.getBytes("UTF-8"));
     }
 
+    @Test
     public void testMarshalTextToGZip() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -59,6 +61,7 @@ public class GzipDataFormatTest extends ContextTestSupport {
         assertEquals("Uncompressed something different than compressed", TEXT, result);
     }
 
+    @Test
     public void testUnMarshalTextToGzip() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {

@@ -21,6 +21,7 @@ import org.apache.camel.MyBarSingleton;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.ModelHelper;
+import org.junit.Test;
 
 /**
  *
@@ -34,6 +35,7 @@ public class DumpModelAsXmlRouteExpressionTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testDumpModelAsXml() throws Exception {
         String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
@@ -42,6 +44,7 @@ public class DumpModelAsXmlRouteExpressionTest extends ContextTestSupport {
         assertTrue(xml.contains("<simple>Hello ${body}</simple>"));
     }
 
+    @Test
     public void testDumpModelAsXmlXPath() throws Exception {
         String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myOtherRoute"));
         assertNotNull(xml);
@@ -50,6 +53,7 @@ public class DumpModelAsXmlRouteExpressionTest extends ContextTestSupport {
         assertTrue(xml.contains("<xpath>/foo</xpath>"));
     }
 
+    @Test
     public void testDumpModelAsXmlHeader() throws Exception {
         String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myFooRoute"));
         assertNotNull(xml);
@@ -58,6 +62,7 @@ public class DumpModelAsXmlRouteExpressionTest extends ContextTestSupport {
         assertTrue(xml.contains("<header>bar</header>"));
     }
 
+    @Test
     public void testDumpModelAsXmlBean() throws Exception {
         String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myBeanRoute"));
         assertNotNull(xml);

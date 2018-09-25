@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms;
 
 import java.util.Map;
+
 import javax.jms.ConnectionFactory;
 import javax.jms.DeliveryMode;
 

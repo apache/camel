@@ -21,6 +21,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Test;
+
 import static org.apache.camel.builder.Builder.constant;
 
 /**
@@ -28,6 +30,7 @@ import static org.apache.camel.builder.Builder.constant;
  */
 public class PredicateAssertHelperTest extends ContextTestSupport {
 
+    @Test
     public void testPredicateAssertHelper() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Predicate notNull = PredicateBuilder.isNotNull(constant("foo"));
@@ -36,6 +39,7 @@ public class PredicateAssertHelperTest extends ContextTestSupport {
         PredicateAssertHelper.assertMatches(notNull, null, exchange);
     }
 
+    @Test
     public void testPredicateAssertHelperFailed() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Predicate notNull = PredicateBuilder.isNotNull(constant(null));

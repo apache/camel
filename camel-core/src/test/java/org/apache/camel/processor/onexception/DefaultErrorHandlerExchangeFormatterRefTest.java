@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.ExchangeFormatter;
+import org.junit.Test;
 
 public class DefaultErrorHandlerExchangeFormatterRefTest extends ContextTestSupport {
 
@@ -34,6 +35,7 @@ public class DefaultErrorHandlerExchangeFormatterRefTest extends ContextTestSupp
         return jndi;
     }
 
+    @Test
     public void testRetryUntil() throws Exception {
         try {
             template.requestBody("direct:start", "Hello World");

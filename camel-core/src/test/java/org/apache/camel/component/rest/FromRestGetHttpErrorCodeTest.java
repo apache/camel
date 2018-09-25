@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 public class FromRestGetHttpErrorCodeTest extends ContextTestSupport {
 
@@ -31,6 +32,7 @@ public class FromRestGetHttpErrorCodeTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testFromRestModel() throws Exception {
         String out = template.requestBody("seda:get-say-bye", "I was here", String.class);
         assertEquals("Bye World", out);

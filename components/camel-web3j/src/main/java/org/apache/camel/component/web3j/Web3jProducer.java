@@ -30,7 +30,6 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.Request;
 import org.web3j.protocol.core.Response;
-import org.web3j.protocol.core.methods.request.ShhFilter;
 
 import org.web3j.protocol.core.methods.response.DbGetHex;
 import org.web3j.protocol.core.methods.response.DbGetString;
@@ -81,9 +80,18 @@ import org.web3j.protocol.core.methods.response.ShhNewIdentity;
 import org.web3j.protocol.core.methods.response.ShhPost;
 import org.web3j.protocol.core.methods.response.ShhUninstallFilter;
 import org.web3j.protocol.core.methods.response.ShhVersion;
-import org.web3j.protocol.core.methods.response.Transaction;
+import org.web3j.protocol.core.methods.response.VoidResponse;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.core.methods.response.Web3Sha3;
+import org.web3j.quorum.Quorum;
+import org.web3j.quorum.methods.request.PrivateTransaction;
+import org.web3j.quorum.methods.response.BlockMaker;
+import org.web3j.quorum.methods.response.CanonicalHash;
+import org.web3j.quorum.methods.response.MakeBlock;
+import org.web3j.quorum.methods.response.PrivatePayload;
+import org.web3j.quorum.methods.response.QuorumNodeInfo;
+import org.web3j.quorum.methods.response.Vote;
+import org.web3j.quorum.methods.response.Voter;
 
 /**
  * The web3j producer.
@@ -92,14 +100,16 @@ import org.web3j.protocol.core.methods.response.Web3Sha3;
 public class Web3jProducer extends HeaderSelectorProducer {
     private static final Logger LOG = LoggerFactory.getLogger(Web3jProducer.class);
     private Web3j web3j;
+    private Quorum quorum;
     private Web3jConfiguration configuration;
-    private Web3jEndpoint endpoint;
 
     public Web3jProducer(Web3jEndpoint endpoint, final Web3jConfiguration configuration) {
         super(endpoint, Web3jConstants.OPERATION, () -> configuration.getOperationOrDefault(), false);
         web3j = endpoint.getWeb3j();
-        this.endpoint = endpoint;
         this.configuration = configuration;
+        if (web3j instanceof Quorum) {
+            quorum = (Quorum) web3j;
+        }
     }
 
     @Override
@@ -150,7 +160,6 @@ public class Web3jProducer extends HeaderSelectorProducer {
         }
     }
 
-    //new
     @InvokeOnHeader(Web3jConstants.NET_LISTENING)
     void netListening(Message message) throws IOException {
         Request<?, NetListening> netListeningRequest = web3j.netListening();
@@ -158,7 +167,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
         NetListening response = netListeningRequest.send();
         boolean hasError = checkForError(message, response);
         if (!hasError) {
-            message.setBody(response.getResult());
+            message.setBody(response.isListening());
         }
     }
 
@@ -169,7 +178,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
         NetPeerCount response = request.send();
         boolean hasError = checkForError(message, response);
         if (!hasError) {
-            message.setBody(response.getResult());
+            message.setBody(response.getQuantity());
         }
     }
 
@@ -180,18 +189,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
         EthProtocolVersion response = request.send();
         boolean hasError = checkForError(message, response);
         if (!hasError) {
-            message.setBody(response.getResult());
-        }
-    }
-
-    @InvokeOnHeader(Web3jConstants.ETH_COINBASE)
-    void ethCoinbase(Message message) throws IOException {
-        Request<?, EthCoinbase> request = web3j.ethCoinbase();
-        setRequestId(message, request);
-        EthCoinbase response = request.send();
-        boolean hasError = checkForError(message, response);
-        if (!hasError) {
-            message.setBody(response.getResult());
+            message.setBody(response.getProtocolVersion());
         }
     }
 
@@ -203,6 +201,17 @@ public class Web3jProducer extends HeaderSelectorProducer {
         boolean hasError = checkForError(message, response);
         if (!hasError) {
             message.setBody(response.isSyncing());
+        }
+    }
+
+    @InvokeOnHeader(Web3jConstants.ETH_COINBASE)
+    void ethCoinbase(Message message) throws IOException {
+        Request<?, EthCoinbase> request = web3j.ethCoinbase();
+        setRequestId(message, request);
+        EthCoinbase response = request.send();
+        boolean hasError = checkForError(message, response);
+        if (!hasError) {
+            message.setBody(response.getAddress());
         }
     }
 
@@ -247,7 +256,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
         message.setBody(response.getAccounts());
         boolean hasError = checkForError(message, response);
         if (!hasError) {
-
+            message.setBody(response.getAccounts());
         }
     }
 
@@ -264,9 +273,10 @@ public class Web3jProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(Web3jConstants.ETH_GET_BALANCE)
     void ethGetBalance(Message message) throws IOException {
-        String atBlock = message.getHeader(Web3jConstants.AT_BLOCK, configuration::getAtBlock, String.class);
         String address = message.getHeader(Web3jConstants.ADDRESS, configuration::getAddress, String.class);
-        Request<?, EthGetBalance> request = web3j.ethGetBalance(address, DefaultBlockParameter.valueOf(atBlock));
+        DefaultBlockParameter atBlock = toBlockParameter(message.getHeader(Web3jConstants.AT_BLOCK, configuration::getAtBlock, Object.class));
+
+        Request<?, EthGetBalance> request = web3j.ethGetBalance(address, atBlock);
         setRequestId(message, request);
         EthGetBalance response = request.send();
         boolean hasError = checkForError(message, response);
@@ -278,7 +288,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
     @InvokeOnHeader(Web3jConstants.ETH_GET_STORAGE_AT)
     void ethGetStorageAt(Message message) throws IOException {
         String address = message.getHeader(Web3jConstants.ADDRESS, configuration::getAddress, String.class);
-        DefaultBlockParameter atBlock = message.getHeader(Web3jConstants.AT_BLOCK, configuration::getAtBlock, DefaultBlockParameter.class);
+        DefaultBlockParameter atBlock = toBlockParameter(message.getHeader(Web3jConstants.AT_BLOCK, configuration::getAtBlock, Object.class));
         BigInteger position = message.getHeader(Web3jConstants.POSITION, configuration::getPosition, BigInteger.class);
         Request<?, EthGetStorageAt> request = web3j.ethGetStorageAt(address, position, atBlock);
         setRequestId(message, request);
@@ -292,7 +302,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
     @InvokeOnHeader(Web3jConstants.ETH_GET_TRANSACTION_COUNT)
     void ethGetTransactionCount(Message message) throws IOException {
         String address = message.getHeader(Web3jConstants.ADDRESS, configuration::getAddress, String.class);
-        DefaultBlockParameter atBlock = message.getHeader(Web3jConstants.AT_BLOCK, configuration::getAtBlock, DefaultBlockParameter.class);
+        DefaultBlockParameter atBlock = toBlockParameter(message.getHeader(Web3jConstants.AT_BLOCK, configuration::getAtBlock, Object.class));
         Request<?, EthGetTransactionCount> request = web3j.ethGetTransactionCount(address, atBlock);
         setRequestId(message, request);
         EthGetTransactionCount response = request.send();
@@ -316,7 +326,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(Web3jConstants.ETH_GET_BLOCK_TRANSACTION_COUNT_BY_NUMBER)
     void ethGetBlockTransactionCountByNumber(Message message) throws IOException {
-        DefaultBlockParameter atBlock = message.getHeader(Web3jConstants.AT_BLOCK, configuration::getAtBlock, DefaultBlockParameter.class);
+        DefaultBlockParameter atBlock = toBlockParameter(message.getHeader(Web3jConstants.AT_BLOCK, configuration::getAtBlock, Object.class));
         Request<?, EthGetBlockTransactionCountByNumber> request = web3j.ethGetBlockTransactionCountByNumber(atBlock);
         setRequestId(message, request);
         EthGetBlockTransactionCountByNumber response = request.send();
@@ -340,7 +350,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(Web3jConstants.ETH_GET_UNCLE_COUNT_BY_BLOCK_NUMBER)
     void ethGetUncleCountByBlockNumber(Message message) throws IOException {
-        DefaultBlockParameter atBlock = message.getHeader(Web3jConstants.AT_BLOCK, configuration::getAtBlock, DefaultBlockParameter.class);
+        DefaultBlockParameter atBlock = toBlockParameter(message.getHeader(Web3jConstants.AT_BLOCK, configuration::getAtBlock, Object.class));
         Request<?, EthGetUncleCountByBlockNumber> request = web3j.ethGetUncleCountByBlockNumber(atBlock);
         setRequestId(message, request);
         EthGetUncleCountByBlockNumber response = request.send();
@@ -352,7 +362,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(Web3jConstants.ETH_GET_CODE)
     void ethGetCode(Message message) throws IOException {
-        DefaultBlockParameter atBlock = message.getHeader(Web3jConstants.AT_BLOCK, configuration::getAtBlock, DefaultBlockParameter.class);
+        DefaultBlockParameter atBlock = toBlockParameter(message.getHeader(Web3jConstants.AT_BLOCK, configuration::getAtBlock, Object.class));
         String address = message.getHeader(Web3jConstants.ADDRESS, configuration::getAddress, String.class);
         Request<?, EthGetCode> request = web3j.ethGetCode(address, atBlock);
         setRequestId(message, request);
@@ -414,11 +424,15 @@ public class Web3jProducer extends HeaderSelectorProducer {
     void ethCall(Message message) throws IOException {
         String fromAddress = message.getHeader(Web3jConstants.FROM_ADDRESS, configuration::getFromAddress, String.class);
         String toAddress = message.getHeader(Web3jConstants.TO_ADDRESS, configuration::getToAddress, String.class);
+        BigInteger nonce = message.getHeader(Web3jConstants.NONCE, configuration::getNonce, BigInteger.class);
+        BigInteger gasPrice = message.getHeader(Web3jConstants.GAS_PRICE, configuration::getGasPrice, BigInteger.class);
+        BigInteger gasLimit = message.getHeader(Web3jConstants.GAS_LIMIT, configuration::getGasLimit, BigInteger.class);
+        BigInteger value = message.getHeader(Web3jConstants.VALUE, configuration::getValue, BigInteger.class);
         String data = message.getHeader(Web3jConstants.DATA, configuration::getData, String.class);
-        DefaultBlockParameter atBlock = message.getHeader(Web3jConstants.AT_BLOCK, configuration::getAtBlock, DefaultBlockParameter.class);
+        DefaultBlockParameter atBlock = toBlockParameter(message.getHeader(Web3jConstants.AT_BLOCK, configuration::getAtBlock, Object.class));
 
         org.web3j.protocol.core.methods.request.Transaction transaction = new org.web3j.protocol.core.methods.request.Transaction(
-                fromAddress, null, null, null, toAddress, null, data);
+                fromAddress, nonce, gasPrice, gasLimit, toAddress, value, data);
 
         Request<?, EthCall> request = web3j.ethCall(transaction, atBlock);
         setRequestId(message, request);
@@ -462,7 +476,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(Web3jConstants.ETH_GET_BLOCK_BY_NUMBER)
     void ethGetBlockByNumber(Message message) throws IOException {
-        DefaultBlockParameter atBlock = message.getHeader(Web3jConstants.AT_BLOCK, configuration::getAtBlock, DefaultBlockParameter.class);
+        DefaultBlockParameter atBlock = toBlockParameter(message.getHeader(Web3jConstants.AT_BLOCK, configuration::getAtBlock, Object.class));
         Boolean fullTransactionObjects = message.getHeader(Web3jConstants.FULL_TRANSACTION_OBJECTS, configuration::isFullTransactionObjects, Boolean.class);
         Request<?, EthBlock> request = web3j.ethGetBlockByNumber(atBlock, fullTransactionObjects);
         setRequestId(message, request);
@@ -481,33 +495,59 @@ public class Web3jProducer extends HeaderSelectorProducer {
         EthTransaction response = request.send();
         boolean hasError = checkForError(message, response);
         if (!hasError) {
-            message.setBody(response.getTransaction());
+            message.setBody(response.getTransaction().isPresent() ? response.getTransaction().get() : null);
         }
     }
 
     @InvokeOnHeader(Web3jConstants.ETH_GET_TRANSACTION_BY_BLOCK_HASH_AND_INDEX)
     void ethGetTransactionByBlockHashAndIndex(Message message) throws IOException {
         String blockHash = message.getHeader(Web3jConstants.BLOCK_HASH, configuration::getBlockHash, String.class);
-        BigInteger transactionIndex = message.getHeader(Web3jConstants.TRANSACTION_INDEX, configuration::getTransactionIndex, BigInteger.class);
+        BigInteger transactionIndex = message.getHeader(Web3jConstants.INDEX, configuration::getIndex, BigInteger.class);
         Request<?, EthTransaction> request = web3j.ethGetTransactionByBlockHashAndIndex(blockHash, transactionIndex);
         setRequestId(message, request);
         EthTransaction response = request.send();
         boolean hasError = checkForError(message, response);
         if (!hasError) {
-            message.setBody(response.getTransaction());
+            message.setBody(response.getTransaction().isPresent() ? response.getTransaction().get() : null);
         }
     }
 
     @InvokeOnHeader(Web3jConstants.ETH_GET_TRANSACTION_BY_BLOCK_NUMBER_AND_INDEX)
     void ethGetTransactionByBlockNumberAndIndex(Message message) throws IOException {
-        DefaultBlockParameter atBlock = message.getHeader(Web3jConstants.AT_BLOCK, configuration::getAtBlock, DefaultBlockParameter.class);
-        BigInteger transactionIndex = message.getHeader(Web3jConstants.TRANSACTION_INDEX, configuration::getTransactionIndex, BigInteger.class);
+        DefaultBlockParameter atBlock = toBlockParameter(message.getHeader(Web3jConstants.AT_BLOCK, configuration::getAtBlock, Object.class));
+        BigInteger transactionIndex = message.getHeader(Web3jConstants.INDEX, configuration::getIndex, BigInteger.class);
         Request<?, EthTransaction> request = web3j.ethGetTransactionByBlockNumberAndIndex(atBlock, transactionIndex);
         setRequestId(message, request);
         EthTransaction response = request.send();
         boolean hasError = checkForError(message, response);
         if (!hasError) {
-            message.setBody(response.getTransaction());
+            message.setBody(response.getTransaction().isPresent() ? response.getTransaction().get() : null);
+        }
+    }
+
+    @InvokeOnHeader(Web3jConstants.ETH_GET_UNCLE_BY_BLOCK_HASH_AND_INDEX)
+    void ethGetUncleByBlockHashAndIndex(Message message) throws IOException {
+        String blockHash = message.getHeader(Web3jConstants.BLOCK_HASH, configuration::getBlockHash, String.class);
+        BigInteger uncleIndex = message.getHeader(Web3jConstants.INDEX, configuration::getIndex, BigInteger.class);
+        Request<?, EthBlock> request = web3j.ethGetUncleByBlockHashAndIndex(blockHash, uncleIndex);
+        setRequestId(message, request);
+        EthBlock response = request.send();
+        boolean hasError = checkForError(message, response);
+        if (!hasError) {
+            message.setBody(response.getBlock());
+        }
+    }
+
+    @InvokeOnHeader(Web3jConstants.ETH_GET_UNCLE_BY_BLOCK_NUMBER_AND_INDEX)
+    void ethGetUncleByBlockNumberAndIndex(Message message) throws IOException {
+        DefaultBlockParameter atBlock = toBlockParameter(message.getHeader(Web3jConstants.AT_BLOCK, configuration::getAtBlock, Object.class));
+        BigInteger uncleIndex = message.getHeader(Web3jConstants.INDEX, configuration::getIndex, BigInteger.class);
+        Request<?, EthBlock> request = web3j.ethGetUncleByBlockNumberAndIndex(atBlock, uncleIndex);
+        setRequestId(message, request);
+        EthBlock response = request.send();
+        boolean hasError = checkForError(message, response);
+        if (!hasError) {
+            message.setBody(response.getBlock());
         }
     }
 
@@ -520,32 +560,6 @@ public class Web3jProducer extends HeaderSelectorProducer {
         boolean hasError = checkForError(message, response);
         if (!hasError) {
             message.setBody(response.getTransactionReceipt());
-        }
-    }
-
-    @InvokeOnHeader(Web3jConstants.ETH_GET_UNCLE_BY_BLOCK_HASH_AND_INDEX)
-    void ethGetUncleByBlockHashAndIndex(Message message) throws IOException {
-        String blockHash = message.getHeader(Web3jConstants.BLOCK_HASH, configuration::getBlockHash, String.class);
-        BigInteger transactionIndex = message.getHeader(Web3jConstants.TRANSACTION_INDEX, configuration::getTransactionIndex, BigInteger.class);
-        Request<?, EthBlock> request = web3j.ethGetUncleByBlockHashAndIndex(blockHash, transactionIndex);
-        setRequestId(message, request);
-        EthBlock response = request.send();
-        boolean hasError = checkForError(message, response);
-        if (!hasError) {
-            message.setBody(response.getBlock());
-        }
-    }
-
-    @InvokeOnHeader(Web3jConstants.ETH_GET_UNCLE_BY_BLOCK_NUMBER_AND_INDEX)
-    void ethGetUncleByBlockNumberAndIndex(Message message) throws IOException {
-        DefaultBlockParameter atBlock = message.getHeader(Web3jConstants.AT_BLOCK, configuration::getAtBlock, DefaultBlockParameter.class);
-        BigInteger transactionIndex = message.getHeader(Web3jConstants.TRANSACTION_INDEX, configuration::getTransactionIndex, BigInteger.class);
-        Request<?, EthBlock> request = web3j.ethGetUncleByBlockNumberAndIndex(atBlock, transactionIndex);
-        setRequestId(message, request);
-        EthBlock response = request.send();
-        boolean hasError = checkForError(message, response);
-        if (!hasError) {
-            message.setBody(response.getBlock());
         }
     }
 
@@ -598,11 +612,12 @@ public class Web3jProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(Web3jConstants.ETH_NEW_FILTER)
     void ethNewFilter(Message message) throws IOException {
-        DefaultBlockParameter fromBlock = message.getHeader(Web3jConstants.FROM_BLOCK, configuration::getFromBlock, DefaultBlockParameter.class);
-        DefaultBlockParameter toBlock = message.getHeader(Web3jConstants.TO_BLOCK, configuration::getToBlock, DefaultBlockParameter.class);
+        DefaultBlockParameter fromBlock = toBlockParameter(message.getHeader(Web3jConstants.FROM_BLOCK, configuration::getFromBlock, Object.class));
+        DefaultBlockParameter toBlock = toBlockParameter(message.getHeader(Web3jConstants.TO_BLOCK, configuration::getToBlock, Object.class));
         List<String> addresses = message.getHeader(Web3jConstants.ADDRESSES, configuration::getAddresses, List.class);
         List<String> topics = message.getHeader(Web3jConstants.TOPICS, configuration::getTopics, List.class);
-        org.web3j.protocol.core.methods.request.EthFilter ethFilter = endpoint.buildEthFilter(fromBlock, toBlock, addresses, topics);
+
+        org.web3j.protocol.core.methods.request.EthFilter ethFilter = Web3jEndpoint.buildEthFilter(fromBlock, toBlock, addresses, topics);
 
         Request<?, EthFilter> request = web3j.ethNewFilter(ethFilter);
         setRequestId(message, request);
@@ -673,11 +688,11 @@ public class Web3jProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(Web3jConstants.ETH_GET_LOGS)
     void ethGetLogs(Message message) throws IOException {
-        DefaultBlockParameter fromBlock = message.getHeader(Web3jConstants.FROM_BLOCK, configuration::getFromBlock, DefaultBlockParameter.class);
-        DefaultBlockParameter toBlock = message.getHeader(Web3jConstants.TO_BLOCK, configuration::getToBlock, DefaultBlockParameter.class);
+        DefaultBlockParameter fromBlock = toBlockParameter(message.getHeader(Web3jConstants.FROM_BLOCK, configuration::getFromBlock, Object.class));
+        DefaultBlockParameter toBlock = toBlockParameter(message.getHeader(Web3jConstants.TO_BLOCK, configuration::getToBlock, Object.class));
         List<String> addresses = message.getHeader(Web3jConstants.ADDRESSES, configuration::getAddresses, List.class);
         List<String> topics = message.getHeader(Web3jConstants.TOPICS, configuration::getTopics, List.class);
-        org.web3j.protocol.core.methods.request.EthFilter ethFilter = endpoint.buildEthFilter(fromBlock, toBlock, addresses, topics);
+        org.web3j.protocol.core.methods.request.EthFilter ethFilter = Web3jEndpoint.buildEthFilter(fromBlock, toBlock, addresses, topics);
 
         Request<?, EthLog> request = web3j.ethGetLogs(ethFilter);
         setRequestId(message, request);
@@ -695,7 +710,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
         EthGetWork response = request.send();
         boolean hasError = checkForError(message, response);
         if (!hasError) {
-            message.setBody(response.getBoundaryCondition());
+            message.setBody(response.getResult());
         }
     }
 
@@ -726,6 +741,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
         }
     }
 
+    //deprecated operations
     @InvokeOnHeader(Web3jConstants.DB_PUT_STRING)
     void dbPutString(Message message) throws IOException {
         String databaseName = message.getHeader(Web3jConstants.DATABASE_NAME, configuration::getDatabaseName, String.class);
@@ -778,6 +794,17 @@ public class Web3jProducer extends HeaderSelectorProducer {
         }
     }
 
+    @InvokeOnHeader(Web3jConstants.SHH_VERSION)
+    void shhVersion(Message message) throws IOException {
+        Request<?, ShhVersion> request = web3j.shhVersion();
+        setRequestId(message, request);
+        ShhVersion response = request.send();
+        boolean hasError = checkForError(message, response);
+        if (!hasError) {
+            message.setBody(response.getVersion());
+        }
+    }
+
     @InvokeOnHeader(Web3jConstants.SHH_POST)
     void shhPost(Message message) throws IOException {
         String fromAddress = message.getHeader(Web3jConstants.FROM_ADDRESS, configuration::getFromAddress, String.class);
@@ -794,17 +821,6 @@ public class Web3jProducer extends HeaderSelectorProducer {
         boolean hasError = checkForError(message, response);
         if (!hasError) {
             message.setBody(response.messageSent());
-        }
-    }
-
-    @InvokeOnHeader(Web3jConstants.SHH_VERSION)
-    void shhVersion(Message message) throws IOException {
-        Request<?, ShhVersion> request = web3j.shhVersion();
-        setRequestId(message, request);
-        ShhVersion response = request.send();
-        boolean hasError = checkForError(message, response);
-        if (!hasError) {
-            message.setBody(response.getVersion());
         }
     }
 
@@ -858,7 +874,7 @@ public class Web3jProducer extends HeaderSelectorProducer {
     void shhNewFilter(Message message) throws IOException {
         String data = message.getHeader(Web3jConstants.DATA, configuration::getData, String.class);
         List<String> topics = message.getHeader(Web3jConstants.TOPICS, configuration::getTopics, List.class);
-        org.web3j.protocol.core.methods.request.ShhFilter shhFilter = endpoint.buildShhFilter(data, topics);
+        org.web3j.protocol.core.methods.request.ShhFilter shhFilter = Web3jEndpoint.buildShhFilter(data, topics);
 
         Request<?, ShhNewFilter> request = web3j.shhNewFilter(shhFilter);
         setRequestId(message, request);
@@ -905,12 +921,203 @@ public class Web3jProducer extends HeaderSelectorProducer {
         }
     }
 
+    // Quorum API Operations
+    @InvokeOnHeader(Web3jConstants.QUORUM_NODE_INFO)
+    void quorumNodeInfo(Message message) throws IOException {
+        if (quorum == null) {
+            setQuorumEndpointError(message);
+            return;
+        }
+
+        Request<?, QuorumNodeInfo> request = quorum.quorumNodeInfo();
+        setRequestId(message, request);
+        QuorumNodeInfo response = request.send();
+        boolean hasError = checkForError(message, response);
+        if (!hasError) {
+            message.setBody(response.getNodeInfo());
+        }
+    }
+
+    @InvokeOnHeader(Web3jConstants.QUORUM_CANONICAL_HASH)
+    void quorumCanonicalHash(Message message) throws IOException {
+        if (quorum == null) {
+            setQuorumEndpointError(message);
+            return;
+        }
+
+        Request<?, CanonicalHash> request = quorum.quorumCanonicalHash(message.getBody(BigInteger.class));
+        setRequestId(message, request);
+        CanonicalHash response = request.send();
+        boolean hasError = checkForError(message, response);
+        if (!hasError) {
+            message.setBody(response.getCanonicalHash());
+        }
+    }
+
+    @InvokeOnHeader(Web3jConstants.QUORUM_VOTE)
+    void quorumVote(Message message) throws IOException {
+        if (quorum == null) {
+            setQuorumEndpointError(message);
+            return;
+        }
+
+        String blockHash = message.getHeader(Web3jConstants.BLOCK_HASH, configuration::getBlockHash, String.class);
+        Request<?, Vote> request = quorum.quorumVote(blockHash);
+        setRequestId(message, request);
+        Vote response = request.send();
+        boolean hasError = checkForError(message, response);
+        if (!hasError) {
+            message.setBody(response.getTransactionHash());
+        }
+    }
+
+    @InvokeOnHeader(Web3jConstants.QUORUM_MAKE_BLOCK)
+    void quorumMakeBlock(Message message) throws IOException {
+        if (quorum == null) {
+            setQuorumEndpointError(message);
+            return;
+        }
+
+        Request<?, MakeBlock> request = quorum.quorumMakeBlock();
+        setRequestId(message, request);
+        MakeBlock response = request.send();
+        boolean hasError = checkForError(message, response);
+        if (!hasError) {
+            message.setBody(response.getBlockHash());
+        }
+    }
+
+    @InvokeOnHeader(Web3jConstants.QUORUM_PAUSE_BLOCK_MAKER)
+    void quorumPauseBlockMaker(Message message) throws IOException {
+        if (quorum == null) {
+            setQuorumEndpointError(message);
+            return;
+        }
+
+        Request<?, VoidResponse> request = quorum.quorumPauseBlockMaker();
+        setRequestId(message, request);
+        VoidResponse response = request.send();
+        boolean hasError = checkForError(message, response);
+        if (!hasError) {
+            message.setBody(response.isValid());
+        }
+    }
+
+    @InvokeOnHeader(Web3jConstants.QUORUM_RESUME_BLOCK_MAKER)
+    void quorumResumeBlockMaker(Message message) throws IOException {
+        if (quorum == null) {
+            setQuorumEndpointError(message);
+            return;
+        }
+
+        Request<?, VoidResponse> request = quorum.quorumResumeBlockMaker();
+        setRequestId(message, request);
+        VoidResponse response = request.send();
+        boolean hasError = checkForError(message, response);
+        if (!hasError) {
+            message.setBody(response.isValid());
+        }
+    }
+
+    @InvokeOnHeader(Web3jConstants.QUORUM_IS_BLOCK_MAKER)
+    void quorumIsBlockMaker(Message message) throws IOException {
+        if (quorum == null) {
+            setQuorumEndpointError(message);
+            return;
+        }
+
+        String address = message.getHeader(Web3jConstants.ADDRESS, configuration::getAddress, String.class);
+        Request<?, BlockMaker> request = quorum.quorumIsBlockMaker(address);
+        setRequestId(message, request);
+        BlockMaker response = request.send();
+        boolean hasError = checkForError(message, response);
+        if (!hasError) {
+            message.setBody(response.isBlockMaker());
+        }
+    }
+
+    @InvokeOnHeader(Web3jConstants.QUORUM_IS_VOTER)
+    void quorumIsVoter(Message message) throws IOException {
+        if (quorum == null) {
+            setQuorumEndpointError(message);
+            return;
+        }
+
+        String address = message.getHeader(Web3jConstants.ADDRESS, configuration::getAddress, String.class);
+        Request<?, Voter> request = quorum.quorumIsVoter(address);
+        setRequestId(message, request);
+        Voter response = request.send();
+        boolean hasError = checkForError(message, response);
+        if (!hasError) {
+            message.setBody(response.isVoter());
+        }
+    }
+
+    @InvokeOnHeader(Web3jConstants.QUORUM_GET_PRIVATE_PAYLOAD)
+    void quorumGetPrivatePayload(Message message) throws IOException {
+        if (quorum == null) {
+            setQuorumEndpointError(message);
+            return;
+        }
+
+        Request<?, PrivatePayload> request = quorum.quorumGetPrivatePayload(message.getBody(String.class));
+        setRequestId(message, request);
+        PrivatePayload response = request.send();
+        boolean hasError = checkForError(message, response);
+        if (!hasError) {
+            message.setBody(response.getPrivatePayload());
+        }
+    }
+
+    @InvokeOnHeader(Web3jConstants.QUORUM_ETH_SEND_TRANSACTION)
+    void quorumEthSendTransaction(Message message) throws IOException {
+        if (quorum == null) {
+            setQuorumEndpointError(message);
+            return;
+        }
+
+        //the same as a regular transaction, but there is no gasPrice, instead there is optional privateFor
+        String fromAddress = message.getHeader(Web3jConstants.FROM_ADDRESS, configuration::getFromAddress, String.class);
+        String toAddress = message.getHeader(Web3jConstants.TO_ADDRESS, configuration::getToAddress, String.class);
+        BigInteger nonce = message.getHeader(Web3jConstants.NONCE, configuration::getNonce, BigInteger.class);
+        BigInteger gasLimit = message.getHeader(Web3jConstants.GAS_LIMIT, configuration::getGasLimit, BigInteger.class);
+        BigInteger value = message.getHeader(Web3jConstants.VALUE, configuration::getValue, BigInteger.class);
+        String data = message.getHeader(Web3jConstants.DATA, configuration::getData, String.class);
+        List<String> privateFor = message.getHeader(Web3jConstants.PRIVATE_FOR, configuration::getPrivateFor, List.class);
+        PrivateTransaction transaction = new PrivateTransaction(fromAddress, nonce, gasLimit, toAddress, value, data, privateFor);
+
+        Request<?, EthSendTransaction> request = quorum.ethSendTransaction(transaction);
+        setRequestId(message, request);
+        EthSendTransaction response = request.send();
+        boolean hasError = checkForError(message, response);
+        if (!hasError) {
+            message.setBody(response.getTransactionHash());
+        }
+    }
+
     private void setRequestId(Message message, Request request) {
         final Long id = message.getHeader(Web3jConstants.ID, Long.class);
-        LOG.debug("setRequestId " + id);
+        LOG.debug("setRequestId {}", id);
         if (id != null) {
             request.setId(id);
         }
+    }
+
+    private DefaultBlockParameter toBlockParameter(Object o) {
+        DefaultBlockParameter defaultBlockParameter = null;
+        if (o != null) {
+            try {
+                defaultBlockParameter = DefaultBlockParameter.valueOf(o.toString());
+            } catch (Throwable e) {
+                //not one of: "latest", "earliest" or "pending"
+            }
+
+            if (defaultBlockParameter == null) {
+                defaultBlockParameter = DefaultBlockParameter.valueOf(new BigInteger(o.toString()));
+            }
+        }
+
+        return defaultBlockParameter;
     }
 
     private boolean checkForError(Message message, Response response) {
@@ -926,5 +1133,9 @@ public class Web3jProducer extends HeaderSelectorProducer {
         } else {
             return false;
         }
+    }
+
+    private void setQuorumEndpointError(Message message) {
+        message.getExchange().setException(new CamelExchangeException("This is not a Quorum endpoint. Create one by specifying quorumAPI=true", message.getExchange()));
     }
 }

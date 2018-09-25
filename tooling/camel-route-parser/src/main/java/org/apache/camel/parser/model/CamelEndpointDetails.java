@@ -24,6 +24,8 @@ public class CamelEndpointDetails {
     private String fileName;
     private String lineNumber;
     private String lineNumberEnd;
+    private int absolutePosition;
+    private int linePosition;
     private String className;
     private String methodName;
     private String endpointComponentName;
@@ -54,6 +56,28 @@ public class CamelEndpointDetails {
 
     public void setLineNumberEnd(String lineNumberEnd) {
         this.lineNumberEnd = lineNumberEnd;
+    }
+
+    public int getAbsolutePosition() {
+        return absolutePosition;
+    }
+
+    /**
+     * The absolute position where 0 is the beginning of the file. This is only available for Java DSL.
+     */
+    public void setAbsolutePosition(int absolutePosition) {
+        this.absolutePosition = absolutePosition;
+    }
+
+    public int getLinePosition() {
+        return linePosition;
+    }
+
+    /**
+     * The relative position in the line number (start line).
+     */
+    public void setLinePosition(int linePosition) {
+        this.linePosition = linePosition;
     }
 
     public String getClassName() {
@@ -110,51 +134,6 @@ public class CamelEndpointDetails {
 
     public void setProducerOnly(boolean producerOnly) {
         this.producerOnly = producerOnly;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        CamelEndpointDetails that = (CamelEndpointDetails) o;
-
-        if (!fileName.equals(that.fileName)) {
-            return false;
-        }
-        if (lineNumber != null ? !lineNumber.equals(that.lineNumber) : that.lineNumber != null) {
-            return false;
-        }
-        if (lineNumberEnd != null ? !lineNumberEnd.equals(that.lineNumberEnd) : that.lineNumberEnd != null) {
-            return false;
-        }
-        if (!className.equals(that.className)) {
-            return false;
-        }
-        if (methodName != null ? !methodName.equals(that.methodName) : that.methodName != null) {
-            return false;
-        }
-        if (endpointInstance != null ? !endpointInstance.equals(that.endpointInstance) : that.endpointInstance != null) {
-            return false;
-        }
-        return endpointUri.equals(that.endpointUri);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = fileName.hashCode();
-        result = 31 * result + (lineNumber != null ? lineNumber.hashCode() : 0);
-        result = 31 * result + (lineNumberEnd != null ? lineNumberEnd.hashCode() : 0);
-        result = 31 * result + className.hashCode();
-        result = 31 * result + (methodName != null ? methodName.hashCode() : 0);
-        result = 31 * result + (endpointInstance != null ? endpointInstance.hashCode() : 0);
-        result = 31 * result + endpointUri.hashCode();
-        return result;
     }
 
     @Override

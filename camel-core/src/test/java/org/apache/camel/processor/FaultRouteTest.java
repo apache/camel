@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.interceptor.HandleFault;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -32,6 +33,7 @@ public class FaultRouteTest extends ContextTestSupport {
     protected MockEndpoint c;
     protected MockEndpoint err;
 
+    @Test
     public void testWithOut() throws Exception {
         a.whenExchangeReceived(1, new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -46,6 +48,7 @@ public class FaultRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testWithFault() throws Exception {
         a.whenExchangeReceived(1, new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -69,7 +72,8 @@ public class FaultRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         a = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);
         b = resolveMandatoryEndpoint("mock:b", MockEndpoint.class);

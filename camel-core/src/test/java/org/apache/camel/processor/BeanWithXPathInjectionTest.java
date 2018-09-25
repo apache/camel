@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.language.XPath;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +33,7 @@ public class BeanWithXPathInjectionTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
     protected MyBean myBean = new MyBean();
 
+    @Test
     public void testSendMessage() throws Exception {
         String expectedBody = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>"
                               + "<foo>bar</foo></env:Body></env:Envelope>";
@@ -42,6 +44,7 @@ public class BeanWithXPathInjectionTest extends ContextTestSupport {
         assertEquals("bean foo: " + myBean, "bar", myBean.foo);
     }
 
+    @Test
     public void testSendTwoMessages() throws Exception {
         // 1st message
         String expectedBody = "<env:Envelope xmlns:env='http://www.w3.org/2003/05/soap-envelope'><env:Body>"

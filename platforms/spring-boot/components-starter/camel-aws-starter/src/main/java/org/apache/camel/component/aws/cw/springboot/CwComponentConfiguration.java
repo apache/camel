@@ -34,6 +34,11 @@ public class CwComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the aws-cw component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The AWS CW default configuration
      */
     private CwConfigurationNestedConfiguration configuration;
@@ -132,8 +137,17 @@ public class CwComponentConfiguration
          * To use the AmazonCloudWatch as the client
          */
         private AmazonCloudWatch amazonCwClient;
+        /**
+         * To define a proxy host when instantiating the CW client
+         */
         private String proxyHost;
+        /**
+         * To define a proxy port when instantiating the CW client
+         */
         private Integer proxyPort;
+        /**
+         * The region in which CW client needs to work
+         */
         private String region;
 
         public String getAccessKey() {

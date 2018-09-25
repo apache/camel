@@ -19,12 +19,14 @@ package org.apache.camel.component.properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class PropertiesComponentSetHeaderSimpleTest extends ContextTestSupport {
     
+    @Test
     public void testPropertiesAndSimple() throws Exception {
         getMockEndpoint("mock:result").expectedHeaderReceived("foo", "http://mycoolserver/myapp");
 

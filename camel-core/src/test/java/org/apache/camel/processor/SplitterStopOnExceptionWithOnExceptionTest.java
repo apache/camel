@@ -21,12 +21,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class SplitterStopOnExceptionWithOnExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testSplitStopOnExceptionOk() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedBodiesReceived("Hello World", "Bye World");
@@ -37,6 +39,7 @@ public class SplitterStopOnExceptionWithOnExceptionTest extends ContextTestSuppo
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitStopOnExceptionStop1() throws Exception {
         // we do stop so we stop splitting when the exception occurs and thus we wont receive any message
         getMockEndpoint("mock:split").expectedMessageCount(0);
@@ -48,6 +51,7 @@ public class SplitterStopOnExceptionWithOnExceptionTest extends ContextTestSuppo
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitStopOnExceptionStop2() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         // we do stop so we stop splitting when the exception occurs and thus we only receive 1 message
@@ -60,6 +64,7 @@ public class SplitterStopOnExceptionWithOnExceptionTest extends ContextTestSuppo
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitStopOnExceptionStop3() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         // we do stop so we stop splitting when the exception occurs and thus we only receive 2 message

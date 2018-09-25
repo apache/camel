@@ -19,11 +19,13 @@ package org.apache.camel.management;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
@@ -32,6 +34,7 @@ public class ManagedRouteRemoveWireTapExplicitThreadPoolTest extends ManagementT
 
     private ExecutorService myThreadPool;
 
+    @Test
     public void testRemove() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

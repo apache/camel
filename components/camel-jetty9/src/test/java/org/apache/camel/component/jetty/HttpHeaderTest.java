@@ -18,6 +18,7 @@ package org.apache.camel.component.jetty;
 
 import java.util.Map;
 import java.util.Map.Entry;
+
 import javax.servlet.ServletRequest;
 
 import org.apache.camel.Exchange;

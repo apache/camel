@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -26,6 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class TransformViaDSLTest extends ContextTestSupport {
     protected MockEndpoint resultEndpoint;
 
+    @Test
     public void testSendingAMessageUsingMulticastReceivesItsOwnExchange() throws Exception {
         resultEndpoint.expectedBodiesReceived("Hello World!");
 
@@ -35,7 +37,8 @@ public class TransformViaDSLTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         resultEndpoint = getMockEndpoint("mock:result");

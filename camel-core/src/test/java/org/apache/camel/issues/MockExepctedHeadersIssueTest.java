@@ -19,12 +19,14 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class MockExepctedHeadersIssueTest extends ContextTestSupport {
 
+    @Test
     public void testHeaders() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
 
@@ -37,6 +39,7 @@ public class MockExepctedHeadersIssueTest extends ContextTestSupport {
         resultEndpoint.assertIsNotSatisfied();
     }
 
+    @Test
     public void testHeadersAdded() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.message(0).header("header1").isNull();

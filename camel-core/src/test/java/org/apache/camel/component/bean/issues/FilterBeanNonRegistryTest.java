@@ -18,12 +18,14 @@ package org.apache.camel.component.bean.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class FilterBeanNonRegistryTest extends ContextTestSupport {
 
+    @Test
     public void testBeanLanguageExp() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -46,6 +48,7 @@ public class FilterBeanNonRegistryTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMethodCallExp() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

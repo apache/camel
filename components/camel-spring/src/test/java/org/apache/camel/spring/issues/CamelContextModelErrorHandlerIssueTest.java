@@ -18,13 +18,14 @@ package org.apache.camel.spring.issues;
 
 import java.io.File;
 import java.io.StringWriter;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import junit.framework.TestCase;
 import org.apache.camel.spring.CamelContextFactoryBean;
 import org.apache.camel.spring.SpringModelJAXBContextFactory;
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,7 @@ import org.slf4j.LoggerFactory;
 /**
  *
  */
-public class CamelContextModelErrorHandlerIssueTest extends TestCase {
+public class CamelContextModelErrorHandlerIssueTest extends Assert {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelContextModelErrorHandlerIssueTest.class);
 

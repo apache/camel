@@ -48,7 +48,7 @@ public abstract class ExchangeTestSupport extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
         exchange = createExchange();
         assertNotNull("No exchange created!", exchange);

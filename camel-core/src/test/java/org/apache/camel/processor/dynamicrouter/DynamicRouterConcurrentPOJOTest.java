@@ -21,11 +21,13 @@ import org.apache.camel.DynamicRouter;
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class DynamicRouterConcurrentPOJOTest extends ContextTestSupport {
 
     private static final int COUNT = 100;
 
+    @Test
     public void testConcurrentDynamicRouter() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(COUNT);
         getMockEndpoint("mock:b").expectedMessageCount(COUNT);

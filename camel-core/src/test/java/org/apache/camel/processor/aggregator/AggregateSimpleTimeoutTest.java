@@ -19,12 +19,14 @@ package org.apache.camel.processor.aggregator;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class AggregateSimpleTimeoutTest extends ContextTestSupport {
 
+    @Test
     public void testAggregateSimpleTimeout() throws Exception {
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C");
 

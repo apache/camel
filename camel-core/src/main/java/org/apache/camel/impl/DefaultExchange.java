@@ -18,12 +18,12 @@ package org.apache.camel.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -560,11 +560,11 @@ public final class DefaultExchange implements Exchange {
     }
 
     protected Map<String, Object> createProperties() {
-        return new HashMap<>();
+        return new ConcurrentHashMap<>();
     }
 
     protected Map<String, Object> createProperties(Map<String, Object> properties) {
-        return new HashMap<>(properties);
+        return new ConcurrentHashMap<>(properties);
     }
 
     private static boolean isExcludePatternMatch(String key, String... excludePatterns) {

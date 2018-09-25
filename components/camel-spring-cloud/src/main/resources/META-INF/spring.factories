@@ -16,4 +16,7 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.spring.cloud.CamelSpringCloudServiceLoadBalancerAutoConfiguration
+    org.apache.camel.spring.cloud.CamelSpringCloudDiscoveryClientAutoConfiguration,\
+    org.apache.camel.spring.cloud.CamelSpringCloudServiceDiscoveryAutoConfiguration,\
+    org.apache.camel.spring.cloud.CamelSpringCloudServiceLoadBalancerAutoConfiguration,\
+    org.apache.camel.spring.cloud.CamelSpringCloudServiceRegistryAutoConfiguration

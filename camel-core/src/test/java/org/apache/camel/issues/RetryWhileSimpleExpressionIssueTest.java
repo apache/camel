@@ -18,12 +18,14 @@ package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class RetryWhileSimpleExpressionIssueTest extends ContextTestSupport {
 
+    @Test
     public void testRetryWhileSimple() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(1);
         getMockEndpoint("mock:error").message(0).body().isInstanceOf(MyCoolDude.class);

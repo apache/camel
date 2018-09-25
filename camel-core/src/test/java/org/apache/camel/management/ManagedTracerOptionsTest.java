@@ -22,12 +22,14 @@ import javax.management.ObjectName;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class ManagedTracerOptionsTest extends ManagementTestSupport {
 
+    @Test
     public void testManagedTracerOptions() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

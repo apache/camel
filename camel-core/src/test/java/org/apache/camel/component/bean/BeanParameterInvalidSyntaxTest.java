@@ -20,9 +20,11 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 public class BeanParameterInvalidSyntaxTest extends ContextTestSupport {
 
+    @Test
     public void testBeanParameterInvalidSyntax() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 

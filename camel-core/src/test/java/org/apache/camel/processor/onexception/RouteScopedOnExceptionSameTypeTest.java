@@ -21,6 +21,7 @@ import java.io.IOException;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
@@ -32,6 +33,7 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testOnExceptionExactType() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -61,6 +63,7 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOnExceptionDifferentType() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -90,6 +93,7 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOnExceptionSameTypeRouteLast() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -120,6 +124,7 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOnExceptionDifferentTypeRouteLast() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -149,6 +154,7 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOnExceptionExactTypeDLC() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -181,6 +187,7 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTwoOnExceptionExactType() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -219,6 +226,7 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOnExceptionRouteAndGlobalExactType() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -245,6 +253,7 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOnExceptionRouteAndGlobalDifferentType() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -271,6 +280,7 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOnExceptionRouteAndOnlyGlobalExactType() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -298,6 +308,7 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOnExceptionRouteAndOnlyGlobalBestMatchType() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -325,6 +336,7 @@ public class RouteScopedOnExceptionSameTypeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOnExceptionRouteBestMatchAndGlobalSameType() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

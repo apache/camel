@@ -34,6 +34,11 @@ public class BindyCsvDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the bindy-csv data format. This
+     * is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Whether to use csv, fixed or key value pairs mode.
      */
     private BindyType type;

@@ -25,6 +25,7 @@ import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.ServiceSupport;
+import org.junit.Test;
 
 public class LanguageServiceTest extends ContextTestSupport {
 
@@ -37,6 +38,7 @@ public class LanguageServiceTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testLanguageService() throws Exception {
         MyLanguage myl = (MyLanguage) context.resolveLanguage("my");
         assertNotNull(myl);
@@ -57,6 +59,7 @@ public class LanguageServiceTest extends ContextTestSupport {
         assertTrue(context.getLanguageNames().isEmpty());
     }
 
+    @Test
     public void testNonSingletonLanguage() throws Exception {
         Language tol = context.resolveLanguage("tokenize");
         assertNotNull(tol);

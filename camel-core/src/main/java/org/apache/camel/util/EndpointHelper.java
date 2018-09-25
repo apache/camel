@@ -42,7 +42,7 @@ import org.apache.camel.spi.BrowsableEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.util.ObjectHelper.after;
+import static org.apache.camel.util.StringHelper.after;
 
 /**
  * Some helper methods for working with {@link Endpoint} instances
@@ -130,14 +130,14 @@ public final class EndpointHelper {
         // we need to test with and without scheme separators (//)
         if (uri.contains("://")) {
             // try without :// also
-            String scheme = ObjectHelper.before(uri, "://");
+            String scheme = StringHelper.before(uri, "://");
             String path = after(uri, "://");
             if (matchPattern(scheme + ":" + path, pattern)) {
                 return true;
             }
         } else {
             // try with :// also
-            String scheme = ObjectHelper.before(uri, ":");
+            String scheme = StringHelper.before(uri, ":");
             String path = after(uri, ":");
             if (matchPattern(scheme + "://" + path, pattern)) {
                 return true;

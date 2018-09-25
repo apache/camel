@@ -19,9 +19,11 @@ package org.apache.camel.component.mock;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.language.XPathExpression;
+import org.junit.Test;
 
 public class MockXpathTest extends ContextTestSupport {
 
+    @Test
     public void testXpathAssertion() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);

@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.language;
-
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *
@@ -28,11 +29,13 @@ import org.apache.camel.builder.RouteBuilder;
 public class XPathFromFileExceptionTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/xpath");
         super.setUp();
     }
 
+    @Test
     public void testXPathFromFileExceptionOk() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:error").expectedMessageCount(0);
@@ -50,6 +53,7 @@ public class XPathFromFileExceptionTest extends ContextTestSupport {
         assertTrue("File should exists " + file, file.exists());
     }
 
+    @Test
     public void testXPathFromFileExceptionFail() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:error").expectedMessageCount(1);

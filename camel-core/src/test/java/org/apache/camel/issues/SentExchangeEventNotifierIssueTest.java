@@ -26,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
+import org.junit.Test;
 
 public class SentExchangeEventNotifierIssueTest extends ContextTestSupport {
 
@@ -61,6 +62,7 @@ public class SentExchangeEventNotifierIssueTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testExchangeSentNotifier() throws Exception {
         notifier.reset();
 
@@ -71,6 +73,7 @@ public class SentExchangeEventNotifierIssueTest extends ContextTestSupport {
         assertEquals(1, notifier.getCounter());
     }
 
+    @Test
     public void testExchangeSentNotifierExchange() throws Exception {
         notifier.reset();
 
@@ -86,6 +89,7 @@ public class SentExchangeEventNotifierIssueTest extends ContextTestSupport {
         assertEquals(1, notifier.getCounter());
     }
 
+    @Test
     public void testExchangeSentNotifierManualExchange() throws Exception {
         notifier.reset();
 

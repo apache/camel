@@ -18,12 +18,14 @@ package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class InterceptSimpleRouteWhenStopTest extends ContextTestSupport {
 
+    @Test
     public void testInterceptStop() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(0);
         getMockEndpoint("mock:bar").expectedMessageCount(0);
@@ -36,6 +38,7 @@ public class InterceptSimpleRouteWhenStopTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInterceptNoStop() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);

@@ -24,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.vm.AbstractVmTestSupport;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 public class DisruptorVmSplitterTest extends AbstractVmTestSupport {
 
@@ -34,6 +35,7 @@ public class DisruptorVmSplitterTest extends AbstractVmTestSupport {
     }
 
 
+    @Test
     public void testSplitUsingMethodCall() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("Claus", "James", "Willem");

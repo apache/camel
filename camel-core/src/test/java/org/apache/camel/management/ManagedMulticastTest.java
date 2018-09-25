@@ -21,12 +21,14 @@ import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class ManagedMulticastTest extends ManagementTestSupport {
 
+    @Test
     public void testMulticast() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

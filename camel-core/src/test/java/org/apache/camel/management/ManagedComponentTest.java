@@ -18,6 +18,7 @@ package org.apache.camel.management;
 
 import java.util.Collections;
 import java.util.Map;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -29,6 +30,7 @@ import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.impl.DefaultComponent;
+import org.junit.Test;
 
 public class ManagedComponentTest extends ManagementTestSupport {
     private static final String[] VERIFY_SIGNATURE = new String[] {
@@ -44,6 +46,7 @@ public class ManagedComponentTest extends ManagementTestSupport {
         return context;
     }
 
+    @Test
     public void testVerifySupported() throws Exception {
         // JMX tests don't work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {
@@ -63,6 +66,7 @@ public class ManagedComponentTest extends ManagementTestSupport {
         assertFalse(invoke(mbeanServer, on, "isVerifySupported"));
     }
 
+    @Test
     public void testVerify() throws Exception {
         // JMX tests don't work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

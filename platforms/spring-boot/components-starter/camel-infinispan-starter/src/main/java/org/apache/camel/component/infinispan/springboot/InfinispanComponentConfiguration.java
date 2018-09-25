@@ -28,7 +28,6 @@ import org.infinispan.commons.api.BasicCacheContainer;
 import org.infinispan.context.Flag;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * For reading/writing from/to Infinispan distributed key/value store and data
@@ -43,14 +42,19 @@ public class InfinispanComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the infinispan component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The default configuration shared among endpoints.
      */
     private InfinispanConfigurationNestedConfiguration configuration;
     /**
-     * The default cache container.
+     * The default cache container. The option is a
+     * org.infinispan.commons.api.BasicCacheContainer type.
      */
-    @NestedConfigurationProperty
-    private BasicCacheContainer cacheContainer;
+    private String cacheContainer;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -67,11 +71,11 @@ public class InfinispanComponentConfiguration
         this.configuration = configuration;
     }
 
-    public BasicCacheContainer getCacheContainer() {
+    public String getCacheContainer() {
         return cacheContainer;
     }
 
-    public void setCacheContainer(BasicCacheContainer cacheContainer) {
+    public void setCacheContainer(String cacheContainer) {
         this.cacheContainer = cacheContainer;
     }
 
@@ -88,8 +92,6 @@ public class InfinispanComponentConfiguration
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.infinispan.InfinispanConfiguration.class;
         /**
          * The operation to perform.
-         * 
-         * @deprecated replaced by @{link setOperation}
          */
         @Deprecated
         private String command = "PUT";
@@ -97,35 +99,61 @@ public class InfinispanComponentConfiguration
          * The operation to perform.
          */
         private InfinispanOperation operation = InfinispanOperation.PUT;
+        /**
+         * Specifies the host of the cache on Infinispan instance
+         */
         private String hosts;
+        /**
+         * Specifies the cache Container to connect
+         */
         private BasicCacheContainer cacheContainer;
+        /**
+         * If true, the consumer will receive notifications synchronously
+         */
         private Boolean sync = true;
+        /**
+         * If true, the listener will be installed for the entire cluster
+         */
         private Boolean clusteredListener = false;
         /**
          * Specifies the set of event types to register by the consumer.
-         * Multiple event can be separated by comma.
-         * <p/>
-         * The possible event types are: CACHE_ENTRY_ACTIVATED,
-         * CACHE_ENTRY_PASSIVATED, CACHE_ENTRY_VISITED, CACHE_ENTRY_LOADED,
-         * CACHE_ENTRY_EVICTED, CACHE_ENTRY_CREATED, CACHE_ENTRY_REMOVED,
-         * CACHE_ENTRY_MODIFIED, TRANSACTION_COMPLETED, TRANSACTION_REGISTERED,
+         * Multiple event can be separated by comma. The possible event types
+         * are: CACHE_ENTRY_ACTIVATED, CACHE_ENTRY_PASSIVATED,
+         * CACHE_ENTRY_VISITED, CACHE_ENTRY_LOADED, CACHE_ENTRY_EVICTED,
+         * CACHE_ENTRY_CREATED, CACHE_ENTRY_REMOVED, CACHE_ENTRY_MODIFIED,
+         * TRANSACTION_COMPLETED, TRANSACTION_REGISTERED,
          * CACHE_ENTRY_INVALIDATED, DATA_REHASHED, TOPOLOGY_CHANGED,
          * PARTITION_STATUS_CHANGED
          */
         private Set eventTypes;
+        /**
+         * Returns the custom listener in use, if provided
+         */
         private InfinispanCustomListener customListener;
         /**
          * Specifies the query builder.
          */
         private InfinispanQueryBuilder queryBuilder;
+        /**
+         * A comma separated list of Flag to be applied by default on each cache
+         * invocation, not applicable to remote caches.
+         */
         private Flag[] flags;
+        /**
+         * An implementation specific URI for the CacheManager
+         */
         private String configurationUri;
         /**
          * Implementation specific properties for the CacheManager
          */
         private Map configurationProperties;
         /**
-         * The CacheContainer configuration
+         * The CacheContainer configuration. Uses if the cacheContainer is not
+         * defined. Must be the following types:
+         * org.infinispan.client.hotrod.configuration.Configuration - for remote
+         * cache interaction configuration;
+         * org.infinispan.configuration.cache.Configuration - for embedded cache
+         * interaction configuration;
          */
         private Object cacheContainerConfiguration;
         /**

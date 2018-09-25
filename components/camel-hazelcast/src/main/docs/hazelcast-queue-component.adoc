@@ -9,7 +9,7 @@ The http://www.hazelcast.com/[Hazelcast] Queue component is one of Camel Hazelca
 ### Options
 
 // component options: START
-The Hazelcast Queue component supports 3 options which are listed below.
+The Hazelcast Queue component supports 3 options, which are listed below.
 
 
 
@@ -64,6 +64,26 @@ with the following path and query parameters:
 | *transferExchange* (seda) | If set to true the whole Exchange will be transfered. If header or body contains not serializable objects, they will be skipped. | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 6 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.hazelcast-queue.customizer.hazelcast-instance.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
+| *camel.component.hazelcast-queue.customizer.hazelcast-instance.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
+| *camel.component.hazelcast-queue.enabled* | Enable hazelcast-queue component | true | Boolean
+| *camel.component.hazelcast-queue.hazelcast-instance* | The hazelcast instance reference which can be used for hazelcast endpoint. If you don't specify the instance reference, camel use the default hazelcast instance from the camel-hazelcast instance. The option is a com.hazelcast.core.HazelcastInstance type. |  | String
+| *camel.component.hazelcast-queue.hazelcast-mode* | The hazelcast mode reference which kind of instance should be used. If you don't specify the mode, then the node mode will be the default. | node | String
+| *camel.component.hazelcast-queue.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 ### Queue producer – to(“hazelcast-queue:foo”)

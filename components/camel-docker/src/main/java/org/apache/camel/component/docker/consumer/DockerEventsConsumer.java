@@ -84,7 +84,7 @@ public class DockerEventsConsumer extends DefaultConsumer {
     protected class EventsCallback extends EventsResultCallback {
 
         public void onNext(Event event) {
-            LOG.debug("Received Docker Event: " + event);
+            LOG.debug("Received Docker Event: {}", event);
 
             final Exchange exchange = getEndpoint().createExchange();
             Message message = exchange.getIn();

@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -52,6 +53,11 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
     @Override
     public String toString() {
         return "Intercept[" + getOutputs() + "]";
+    }
+
+    @Override
+    public String getShortName() {
+        return "intercept";
     }
 
     @Override

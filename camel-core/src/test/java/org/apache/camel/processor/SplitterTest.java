@@ -33,12 +33,14 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class SplitterTest extends ContextTestSupport {
 
+    @Test
     public void testSendingAMessageUsingMulticastReceivesItsOwnExchange() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("James", "Guillaume", "Hiram", "Rob");
@@ -72,6 +74,7 @@ public class SplitterTest extends ContextTestSupport {
         assertEquals("The sub messages should have unique exchange ids", 4, ids2.size());
     }
 
+    @Test
     public void testSplitterWithAggregationStrategy() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("James", "Guillaume", "Hiram", "Rob", "Roman");
@@ -91,6 +94,7 @@ public class SplitterTest extends ContextTestSupport {
         assertProperty(result, Exchange.SPLIT_INDEX, 4);
     }
 
+    @Test
     public void testEmptyBody() {
         Exchange result = template.request("direct:seqential", new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -101,6 +105,7 @@ public class SplitterTest extends ContextTestSupport {
         assertFalse("Should not have out", result.hasOut());
     }
 
+    @Test
     public void testSendingAMessageUsingMulticastReceivesItsOwnExchangeParallel() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
 
@@ -134,6 +139,7 @@ public class SplitterTest extends ContextTestSupport {
         assertEquals(4, numbersFound.size());
     }
 
+    @Test
     public void testSplitterWithAggregationStrategyParallel() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(5);
@@ -153,6 +159,7 @@ public class SplitterTest extends ContextTestSupport {
         assertEquals((Integer) 5, result.getProperty("aggregated", Integer.class));
     }
 
+    @Test
     public void testSplitterWithAggregationStrategyParallelStreaming() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(5);
@@ -173,6 +180,7 @@ public class SplitterTest extends ContextTestSupport {
         assertEquals((Integer) 5, result.getProperty("aggregated", Integer.class));
     }
     
+    @Test
     public void testSplitterParallelAggregate() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(5);
@@ -193,6 +201,7 @@ public class SplitterTest extends ContextTestSupport {
         // we aggregate parallel and therefore its not thread-safe when setting values
     }
 
+    @Test
     public void testSplitterWithStreamingAndFileBody() throws Exception {
         URL url = this.getClass().getResource("/org/apache/camel/processor/simple.txt");
         assertNotNull("We should find this simple file here.", url);
@@ -200,6 +209,7 @@ public class SplitterTest extends ContextTestSupport {
         sendToSplitterWithStreaming(file);
     }
     
+    @Test
     public void testSplitterWithStreamingAndStringBody() throws Exception {
         sendToSplitterWithStreaming("James,Guillaume,Hiram,Rob,Roman");
     }
@@ -236,6 +246,7 @@ public class SplitterTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testSplitterWithException() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(4);
@@ -258,6 +269,7 @@ public class SplitterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitterWithIterable() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(4);

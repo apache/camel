@@ -18,6 +18,7 @@ package org.apache.camel.language;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +45,7 @@ public class XPathRouteConcurrentBigTest extends ContextTestSupport {
             + "<sentDate>2009-10-12T12:22:02+02:00</sentDate> <receivedDate>2009-10-12T12:23:31.248+02:00</receivedDate>"
             + "<intproperty>1</intproperty><stringproperty>aaaaaaabbbbbbbccccccccdddddddd</stringproperty></message>";
 
+    @Test
     public void testConcurrent() throws Exception {
         doSendMessages(333);
     }

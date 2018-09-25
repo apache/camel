@@ -45,16 +45,22 @@ public class CamelCloudServiceCallConfigurationAutoConfiguration {
     @Bean(name = ServiceCallDefinitionConstants.DEFAULT_SERVICE_CALL_CONFIG_ID)
     @ConditionalOnMissingBean(name = ServiceCallDefinitionConstants.DEFAULT_SERVICE_CALL_CONFIG_ID)
     public ServiceCallConfigurationDefinition serviceCallConfiguration() throws Exception {
-        ServiceCallConfigurationDefinition definition = new ServiceCallConfigurationDefinition();
-        ObjectHelper.ifNotEmpty(configurationProperties.getServiceCall().getComponent(), definition::setComponent);
-        ObjectHelper.ifNotEmpty(configurationProperties.getServiceCall().getUri(), definition::setUri);
-        ObjectHelper.ifNotEmpty(configurationProperties.getServiceCall().getServiceDiscovery(), definition::setServiceDiscoveryRef);
-        ObjectHelper.ifNotEmpty(configurationProperties.getServiceCall().getServiceFilter(), definition::setServiceFilterRef);
-        ObjectHelper.ifNotEmpty(configurationProperties.getServiceCall().getServiceChooser(), definition::setServiceChooserRef);
-        ObjectHelper.ifNotEmpty(configurationProperties.getServiceCall().getLoadBalancer(), definition::setLoadBalancerRef);
+        final ServiceCallConfigurationDefinition definition = new ServiceCallConfigurationDefinition();
+        final CamelCloudConfigurationProperties.ServiceCall serviceCall = configurationProperties.getServiceCall();
 
-        String expression = configurationProperties.getServiceCall().getExpression();
-        String expressionLanguage = configurationProperties.getServiceCall().getExpressionLanguage();
+        ObjectHelper.ifNotEmpty(serviceCall.getComponent(), definition::setComponent);
+        ObjectHelper.ifNotEmpty(serviceCall.getUri(), definition::setUri);
+        ObjectHelper.ifNotEmpty(serviceCall.getServiceDiscovery(), definition::setServiceDiscoveryRef);
+        ObjectHelper.ifNotEmpty(serviceCall.getServiceFilter(), definition::setServiceFilterRef);
+        ObjectHelper.ifNotEmpty(serviceCall.getServiceChooser(), definition::setServiceChooserRef);
+        ObjectHelper.ifNotEmpty(serviceCall.getLoadBalancer(), definition::setLoadBalancerRef);
+
+        if (serviceCall.getLoadBalancer() == null && serviceCall.isDefaultLoadBalancer()) {
+            definition.defaultLoadBalancer();
+        }
+
+        final String expression = serviceCall.getExpression();
+        final String expressionLanguage = serviceCall.getExpressionLanguage();
 
         if (ObjectHelper.isNotEmpty(expression) && ObjectHelper.isNotEmpty(expressionLanguage)) {
             Language language = camelContext.resolveLanguage(expressionLanguage);

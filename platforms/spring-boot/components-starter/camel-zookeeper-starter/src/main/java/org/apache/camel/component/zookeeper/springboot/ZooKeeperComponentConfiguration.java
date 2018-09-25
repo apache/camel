@@ -34,6 +34,11 @@ public class ZooKeeperComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the zookeeper component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use a shared ZooKeeperConfiguration
      */
     private ZooKeeperConfigurationNestedConfiguration configuration;
@@ -86,8 +91,6 @@ public class ZooKeeperComponentConfiguration
         private Boolean repeat = false;
         /**
          * Not in use
-         * 
-         * @deprecated The usage of this option has no effect at all.
          */
         @Deprecated
         private Boolean awaitExistence = true;

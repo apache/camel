@@ -20,12 +20,14 @@ import java.util.Iterator;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class SedaComponentReferenceEndpointTest extends ContextTestSupport {
     
+    @Test
     public void testSedaComponentReference() throws Exception {
         SedaComponent seda = context.getComponent("seda", SedaComponent.class);
 

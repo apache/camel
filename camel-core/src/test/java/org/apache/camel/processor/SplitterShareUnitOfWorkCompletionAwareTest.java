@@ -20,12 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.CompletionAwareAggregationStrategy;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class SplitterShareUnitOfWorkCompletionAwareTest extends ContextTestSupport {
 
+    @Test
     public void testCompletionAware() throws Exception {
         getMockEndpoint("mock:line").expectedBodiesReceived("A", "B", "C");
         getMockEndpoint("mock:result").expectedBodiesReceived("A+B+C");

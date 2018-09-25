@@ -118,7 +118,7 @@ public class CdiCamelExtension implements Extension {
 
     private final Set<Annotation> eventQualifiers = newSetFromMap(new ConcurrentHashMap<>());
 
-    private final Set<ImportResource> resources = newSetFromMap(new ConcurrentHashMap<>());
+    private final Map<AnnotatedType<?>, ImportResource> resources = new ConcurrentHashMap<>();
 
     private final CdiCamelConfigurationEvent configuration = new CdiCamelConfigurationEvent();
 
@@ -148,7 +148,7 @@ public class CdiCamelExtension implements Extension {
             eagerBeans.add(pat.getAnnotatedType());
         }
         if (hasAnnotation(pat.getAnnotatedType(), ImportResource.class)) {
-            resources.add(pat.getAnnotatedType().getAnnotation(ImportResource.class));
+            resources.put(pat.getAnnotatedType(), pat.getAnnotatedType().getAnnotation(ImportResource.class));
         }
     }
 
@@ -245,11 +245,12 @@ public class CdiCamelExtension implements Extension {
         Set<SyntheticBean<?>> extraBeans = new HashSet<>();
 
         // Add beans from Camel XML resources
-        for (ImportResource resource : resources) {
+        for (AnnotatedType<?> annotatedType: resources.keySet()) {
             XmlCdiBeanFactory factory = XmlCdiBeanFactory.with(manager, environment, this);
+            ImportResource resource = resources.get(annotatedType);
             for (String path : resource.value()) {
                 try {
-                    extraBeans.addAll(factory.beansFrom(path));
+                    extraBeans.addAll(factory.beansFrom(path, annotatedType));
                 } catch (NoClassDefFoundError cause) {
                     if (cause.getMessage().contains("AbstractCamelContextFactoryBean")) {
                         logger.error("Importing Camel XML requires to have the 'camel-core-xml' dependency in the classpath!");
@@ -258,7 +259,7 @@ public class CdiCamelExtension implements Extension {
                 } catch (Exception cause) {
                     abd.addDefinitionError(
                         new InjectionException(
-                            "Error while importing resource [" + getResource(path) + "]", cause));
+                            "Error while importing resource [" + getResource(path, annotatedType.getJavaClass().getClassLoader()) + "]", cause));
                 }
             }
         }
@@ -379,9 +380,9 @@ public class CdiCamelExtension implements Extension {
         }
 
         // Add type converters to Camel contexts
-        CdiTypeConverterLoader loader = new CdiTypeConverterLoader();
-        for (Class<?> converter : converters) {
-            for (CamelContext context : contexts) {
+        for (CamelContext context : contexts) {
+            CdiTypeConverterLoader loader = new CdiTypeConverterLoader();
+            for (Class<?> converter : converters) {
                 loader.loadConverterMethods(context.getTypeConverterRegistry(), converter);
             }
         }

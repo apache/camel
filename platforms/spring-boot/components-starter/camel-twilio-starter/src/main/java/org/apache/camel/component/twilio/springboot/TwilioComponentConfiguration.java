@@ -17,11 +17,9 @@
 package org.apache.camel.component.twilio.springboot;
 
 import javax.annotation.Generated;
-import com.twilio.http.TwilioRestClient;
 import org.apache.camel.component.twilio.internal.TwilioApiName;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The Twilio component allows you to interact with the Twilio REST APIs using
@@ -36,14 +34,31 @@ public class TwilioComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the twilio component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the shared configuration
      */
     private TwilioConfigurationNestedConfiguration configuration;
     /**
-     * To use the shared REST client
+     * To use the shared REST client. The option is a
+     * com.twilio.http.TwilioRestClient type.
      */
-    @NestedConfigurationProperty
-    private TwilioRestClient restClient;
+    private String restClient;
+    /**
+     * The account to use.
+     */
+    private String username;
+    /**
+     * Auth token for the account.
+     */
+    private String password;
+    /**
+     * The account SID to use.
+     */
+    private String accountSid;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -60,12 +75,36 @@ public class TwilioComponentConfiguration
         this.configuration = configuration;
     }
 
-    public TwilioRestClient getRestClient() {
+    public String getRestClient() {
         return restClient;
     }
 
-    public void setRestClient(TwilioRestClient restClient) {
+    public void setRestClient(String restClient) {
         this.restClient = restClient;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getAccountSid() {
+        return accountSid;
+    }
+
+    public void setAccountSid(String accountSid) {
+        this.accountSid = accountSid;
     }
 
     public Boolean getResolvePropertyPlaceholders() {
@@ -81,30 +120,12 @@ public class TwilioComponentConfiguration
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.twilio.TwilioConfiguration.class;
         /**
          * What kind of operation to perform
-         * 
-         * @param apiNamethe
-         *            API Name to set
          */
         private TwilioApiName apiName;
         /**
          * What sub operation to use for the selected operation
-         * 
-         * @param methodNamethe
-         *            methodName to set
          */
         private String methodName;
-        /**
-         * The account to use.
-         */
-        private String username;
-        /**
-         * Auth token for the account.
-         */
-        private String password;
-        /**
-         * The account SID to use.
-         */
-        private String accountSid;
 
         public TwilioApiName getApiName() {
             return apiName;
@@ -120,30 +141,6 @@ public class TwilioComponentConfiguration
 
         public void setMethodName(String methodName) {
             this.methodName = methodName;
-        }
-
-        public String getUsername() {
-            return username;
-        }
-
-        public void setUsername(String username) {
-            this.username = username;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
-
-        public String getAccountSid() {
-            return accountSid;
-        }
-
-        public void setAccountSid(String accountSid) {
-            this.accountSid = accountSid;
         }
     }
 }

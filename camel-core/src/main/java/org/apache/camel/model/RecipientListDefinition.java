@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -101,6 +102,11 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     @Override
     public String toString() {
         return "RecipientList[" + getExpression() + "]";
+    }
+
+    @Override
+    public String getShortName() {
+        return "recipientList";
     }
 
     @Override

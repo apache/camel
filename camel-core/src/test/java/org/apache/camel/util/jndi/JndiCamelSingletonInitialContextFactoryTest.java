@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.util.jndi;
-
 import java.util.Hashtable;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
@@ -26,6 +26,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *
@@ -36,7 +38,8 @@ public class JndiCamelSingletonInitialContextFactoryTest extends ContextTestSupp
     private final Hashtable<String, String> env = new Hashtable<>();
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // use the singleton context factory
         env.put(Context.INITIAL_CONTEXT_FACTORY, CamelSingletonInitialContextFactory.class.getName());
         super.setUp();
@@ -49,6 +52,7 @@ public class JndiCamelSingletonInitialContextFactoryTest extends ContextTestSupp
         return jndi;
     }
 
+    @Test
     public void testSingletonJndiContext() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived(FAKE);

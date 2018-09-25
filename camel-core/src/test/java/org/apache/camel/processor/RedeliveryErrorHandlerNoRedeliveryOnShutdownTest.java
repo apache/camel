@@ -20,12 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
+import org.junit.Test;
 
 /**
  *
  */
 public class RedeliveryErrorHandlerNoRedeliveryOnShutdownTest extends ContextTestSupport {
 
+    @Test
     public void testRedeliveryErrorHandlerNoRedeliveryOnShutdown() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
 

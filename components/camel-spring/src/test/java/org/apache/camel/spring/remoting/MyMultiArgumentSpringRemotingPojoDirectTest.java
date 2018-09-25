@@ -17,6 +17,7 @@
 package org.apache.camel.spring.remoting;
 
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -30,6 +31,7 @@ public class MyMultiArgumentSpringRemotingPojoDirectTest extends SpringTestSuppo
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/remoting/my-multi-argument-pojo-direct.xml");
     }
 
+    @Test
     public void testMultiArgumentPojo() throws Exception {
         try {
             // use the pojo directly to call the injected endpoint and have the

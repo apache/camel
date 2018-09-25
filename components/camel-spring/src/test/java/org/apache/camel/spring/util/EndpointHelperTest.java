@@ -19,6 +19,7 @@ package org.apache.camel.spring.util;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.util.EndpointHelper;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -32,6 +33,7 @@ public class EndpointHelperTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/util/EndpointHelperTest.xml");
     }
 
+    @Test
     public void testLookupEndpointRegistryId() throws Exception {
         Endpoint foo = context.getEndpoint("ref:foo");
         Endpoint bar = context.getEndpoint("ref:coolbar");

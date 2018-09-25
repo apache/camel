@@ -21,6 +21,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.util.ServiceHelper;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -33,6 +34,7 @@ public class DualCamelContextEndpointOutsideTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/DualCamelContextEndpointOutsideTest.xml");
     }
 
+    @Test
     public void testDualCamelContextEndpoint() throws Exception {
         CamelContext camelA = applicationContext.getBean("camel-A", CamelContext.class);
         assertNotNull(camelA);

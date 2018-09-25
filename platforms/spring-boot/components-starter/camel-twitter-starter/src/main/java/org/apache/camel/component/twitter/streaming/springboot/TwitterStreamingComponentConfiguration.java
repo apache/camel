@@ -33,6 +33,11 @@ public class TwitterStreamingComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the twitter-streaming component.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The access token
      */
     private String accessToken;

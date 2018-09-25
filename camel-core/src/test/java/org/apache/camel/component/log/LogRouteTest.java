@@ -17,6 +17,7 @@
 package org.apache.camel.component.log;
 
 import org.apache.camel.ContextTestSupport;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,18 +27,22 @@ import org.slf4j.LoggerFactory;
 public class LogRouteTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(LogRouteTest.class);
 
+    @Test
     public void testSendMessageToLog() throws Exception {
         template.sendBody("log:org.apache.camel.TEST", "<level>default</level>");
     }
 
+    @Test
     public void testSendMessageToInfoLog() throws Exception {
         template.sendBody("log:org.apache.camel.TEST?level=INFO", "<level>INFO</level>");
     }
 
+    @Test
     public void testSendMessageToWarnLog() throws Exception {
         template.sendBody("log:org.apache.camel.TEST?level=warn", "<level>WARN</level>");
     }
 
+    @Test
     public void testSendMessageToBadLevel() throws Exception {
         try {
             template.sendBody("log:org.apache.camel.TEST?level=noSuchLevel", "<level>noSuchLevel</level>");

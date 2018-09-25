@@ -19,6 +19,7 @@ package org.apache.camel.converter.stream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.Exchange;

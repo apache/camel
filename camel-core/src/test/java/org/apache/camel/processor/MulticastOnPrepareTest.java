@@ -20,12 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class MulticastOnPrepareTest extends ContextTestSupport {
 
+    @Test
     public void testMulticastOnPrepare() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:a").message(0).body(String.class).isEqualTo("1 Tony the Tiger");

@@ -25,6 +25,7 @@ import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
@@ -38,6 +39,7 @@ public class ManagedEnricherTest extends ManagementTestSupport {
         return context;
     }
 
+    @Test
     public void testManageEnricher() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

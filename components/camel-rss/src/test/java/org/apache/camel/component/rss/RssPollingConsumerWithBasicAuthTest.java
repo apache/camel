@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.rss;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

@@ -23,6 +23,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
 import java.io.Serializable;
+
 import krati.io.SerializationException;
 import krati.io.Serializer;
 import org.apache.camel.util.IOHelper;

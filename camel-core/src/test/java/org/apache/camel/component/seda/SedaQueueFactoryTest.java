@@ -25,6 +25,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
+import org.junit.Test;
 
 /**
  *
@@ -40,6 +41,7 @@ public class SedaQueueFactoryTest extends ContextTestSupport {
     }
 
    
+    @Test
     public void testArrayBlockingQueueFactory() throws Exception {
         SedaEndpoint endpoint = resolveMandatoryEndpoint("seda:arrayQueue?queueFactory=#arrayQueueFactory", SedaEndpoint.class);
 
@@ -48,6 +50,7 @@ public class SedaQueueFactoryTest extends ContextTestSupport {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testArrayBlockingQueueFactoryAndSize() throws Exception {
         SedaEndpoint endpoint = resolveMandatoryEndpoint("seda:arrayQueue50?queueFactory=#arrayQueueFactory&size=50", SedaEndpoint.class);
 
@@ -57,6 +60,7 @@ public class SedaQueueFactoryTest extends ContextTestSupport {
     }
 
     
+    @Test
     public void testDefaultBlockingQueueFactory() throws Exception {
         SedaEndpoint endpoint = resolveMandatoryEndpoint("seda:linkedQueue", SedaEndpoint.class);
         BlockingQueue<Exchange> queue = endpoint.getQueue();

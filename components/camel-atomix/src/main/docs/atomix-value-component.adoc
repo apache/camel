@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.20*
 
-The camel atomix-value component allows you to work with http://atomix.io/atomix/[Atomix's] http://atomix.io/atomix/docs/variables/#distributedvalue[Distributed Value].
+The camel atomix-value component allows you to work with http://atomix.io[Atomix's] https://atomix.io/docs/latest/user-manual/primitives/DistributedValue/[Distributed Value].
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -25,7 +25,7 @@ for this component:
 ----
 
 // component options: START
-The Atomix Value component supports 5 options which are listed below.
+The Atomix Value component supports 5 options, which are listed below.
 
 
 
@@ -84,3 +84,25 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 8 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.atomix-value.atomix* | The shared AtomixClient instance. The option is a io.atomix.AtomixClient type. |  | String
+| *camel.component.atomix-value.configuration-uri* | The path to the AtomixClient configuration |  | String
+| *camel.component.atomix-value.configuration.default-action* | The default action. |  | AtomixValue$Action
+| *camel.component.atomix-value.configuration.result-header* | The header that wil carry the result. |  | String
+| *camel.component.atomix-value.configuration.ttl* | The resource ttl. |  | Long
+| *camel.component.atomix-value.enabled* | Whether to enable auto configuration of the atomix-value component. This is enabled by default. |  | Boolean
+| *camel.component.atomix-value.nodes* | The nodes the AtomixClient should connect to |  | List
+| *camel.component.atomix-value.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+

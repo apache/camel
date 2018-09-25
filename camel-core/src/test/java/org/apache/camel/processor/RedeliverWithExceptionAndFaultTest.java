@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
@@ -28,6 +29,7 @@ public class RedeliverWithExceptionAndFaultTest extends ContextTestSupport {
 
     private static int counter;
 
+    @Test
     public void testOk() throws Exception {
         counter = 0;
 
@@ -39,6 +41,7 @@ public class RedeliverWithExceptionAndFaultTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTransientAndPersistentError() throws Exception {
         counter = 0;
 
@@ -50,6 +53,7 @@ public class RedeliverWithExceptionAndFaultTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTransientAndPersistentErrorWithExchange() throws Exception {
         counter = 0;
 

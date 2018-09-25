@@ -16,14 +16,15 @@
  */
 package org.apache.camel.impl;
 
+import java.util.AbstractMap;
+import java.util.AbstractSet;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.transformer.TransformerKey;
@@ -32,26 +33,32 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.CompoundIterator;
 import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 
 /**
  * Default implementation of {@link org.apache.camel.spi.TransformerRegistry}.
  */
-public class DefaultTransformerRegistry extends LRUCache<TransformerKey, Transformer> implements TransformerRegistry<TransformerKey> {
+public class DefaultTransformerRegistry extends AbstractMap<TransformerKey, Transformer> implements TransformerRegistry<TransformerKey> {
+
     private static final long serialVersionUID = 1L;
-    private ConcurrentMap<TransformerKey, Transformer> staticMap;
-    private ConcurrentMap<TransformerKey, TransformerKey> aliasMap;
+    private Map<TransformerKey, Transformer> dynamicMap;
+    private Map<TransformerKey, Transformer> staticMap;
+    private Map<TransformerKey, TransformerKey> aliasMap;
     private final CamelContext context;
+    private int maxCacheSize;
 
     public DefaultTransformerRegistry(CamelContext context) throws Exception {
         this(context, new ArrayList<>());
     }
 
     public DefaultTransformerRegistry(CamelContext context, List<TransformerDefinition> definitions) throws Exception {
+        this.maxCacheSize = CamelContextHelper.getMaximumTransformerCacheSize(context);
         // do not stop on eviction, as the transformer may still be in use
-        super(CamelContextHelper.getMaximumTransformerCacheSize(context), CamelContextHelper.getMaximumTransformerCacheSize(context), false);
+        this.dynamicMap = LRUCacheFactory.newLRUCache(maxCacheSize, maxCacheSize, false);
         // static map to hold transformers we do not want to be evicted
         this.staticMap = new ConcurrentHashMap<>();
         this.aliasMap = new ConcurrentHashMap<>();
@@ -108,7 +115,9 @@ public class DefaultTransformerRegistry extends LRUCache<TransformerKey, Transfo
 
     @Override
     public void start() throws Exception {
-        resetStatistics();
+        if (dynamicMap instanceof LRUCache) {
+            ((LRUCache) dynamicMap).resetStatistics();
+        }
     }
 
     @Override
@@ -116,9 +125,7 @@ public class DefaultTransformerRegistry extends LRUCache<TransformerKey, Transfo
         // try static map first
         Transformer answer = staticMap.get(o);
         if (answer == null) {
-            answer = super.get(o);
-        } else {
-            hits.increment();
+            answer = dynamicMap.get(o);
         }
         return answer;
     }
@@ -133,10 +140,10 @@ public class DefaultTransformerRegistry extends LRUCache<TransformerKey, Transfo
             return answer;
         }
 
-        answer = super.remove(key);
+        answer = dynamicMap.remove(key);
         if (answer != null) {
             // replace existing
-            super.put(key, transformer);
+            dynamicMap.put(key, transformer);
             return answer;
         }
 
@@ -144,33 +151,25 @@ public class DefaultTransformerRegistry extends LRUCache<TransformerKey, Transfo
         if (context.isSetupRoutes() || context.isStartingRoutes()) {
             answer = staticMap.put(key, transformer);
         } else {
-            answer = super.put(key, transformer);
+            answer = dynamicMap.put(key, transformer);
         }
 
         return answer;
     }
 
     @Override
-    public void putAll(Map<? extends TransformerKey, ? extends Transformer> map) {
-        // need to use put instead of putAll to ensure the entries gets added to either static or dynamic map
-        for (Map.Entry<? extends TransformerKey, ? extends Transformer> entry : map.entrySet()) {
-            put(entry.getKey(), entry.getValue());
-        }
-    }
-
-    @Override
     public boolean containsKey(Object o) {
-        return staticMap.containsKey(o) || super.containsKey(o);
+        return staticMap.containsKey(o) || dynamicMap.containsKey(o);
     }
 
     @Override
     public boolean containsValue(Object o) {
-        return staticMap.containsValue(o) || super.containsValue(o);
+        return staticMap.containsValue(o) || dynamicMap.containsValue(o);
     }
 
     @Override
     public int size() {
-        return staticMap.size() + super.size();
+        return staticMap.size() + dynamicMap.size();
     }
 
     public int staticSize() {
@@ -179,19 +178,19 @@ public class DefaultTransformerRegistry extends LRUCache<TransformerKey, Transfo
 
     @Override
     public int dynamicSize() {
-        return super.size();
+        return dynamicMap.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return staticMap.isEmpty() && super.isEmpty();
+        return staticMap.isEmpty() && dynamicMap.isEmpty();
     }
 
     @Override
     public Transformer remove(Object o) {
         Transformer answer = staticMap.remove(o);
         if (answer == null) {
-            answer = super.remove(o);
+            answer = dynamicMap.remove(o);
         }
         return answer;
     }
@@ -199,36 +198,29 @@ public class DefaultTransformerRegistry extends LRUCache<TransformerKey, Transfo
     @Override
     public void clear() {
         staticMap.clear();
-        super.clear();
-    }
-
-    @Override
-    public Set<TransformerKey> keySet() {
-        Set<TransformerKey> answer = new LinkedHashSet<>();
-        answer.addAll(staticMap.keySet());
-        answer.addAll(super.keySet());
-        return answer;
-    }
-
-    @Override
-    public Collection<Transformer> values() {
-        Collection<Transformer> answer = new ArrayList<>();
-        answer.addAll(staticMap.values());
-        answer.addAll(super.values());
-        return answer;
+        dynamicMap.clear();
     }
 
     @Override
     public Set<Entry<TransformerKey, Transformer>> entrySet() {
-        Set<Entry<TransformerKey, Transformer>> answer = new LinkedHashSet<>();
-        answer.addAll(staticMap.entrySet());
-        answer.addAll(super.entrySet());
-        return answer;
+        return new AbstractSet<Entry<TransformerKey, Transformer>>() {
+            @Override
+            public Iterator<Entry<TransformerKey, Transformer>> iterator() {
+                return new CompoundIterator<>(Arrays.asList(
+                        staticMap.entrySet().iterator(), dynamicMap.entrySet().iterator()
+                ));
+            }
+
+            @Override
+            public int size() {
+                return staticMap.size() + dynamicMap.size();
+            }
+        };
     }
 
     @Override
     public int getMaximumCacheSize() {
-        return super.getMaxCacheSize();
+        return maxCacheSize;
     }
 
     /**
@@ -238,6 +230,13 @@ public class DefaultTransformerRegistry extends LRUCache<TransformerKey, Transfo
     public void purge() {
         // only purge the dynamic part
         super.clear();
+    }
+
+    @Override
+    public void cleanUp() {
+        if (dynamicMap instanceof LRUCache) {
+            ((LRUCache) dynamicMap).cleanUp();
+        }
     }
 
     @Override
@@ -252,24 +251,24 @@ public class DefaultTransformerRegistry extends LRUCache<TransformerKey, Transfo
 
     @Override
     public boolean isDynamic(String scheme) {
-        return super.containsKey(new TransformerKey(scheme));
+        return dynamicMap.containsKey(new TransformerKey(scheme));
     }
 
     @Override
     public boolean isDynamic(DataType from, DataType to) {
-        return super.containsKey(new TransformerKey(from, to));
+        return dynamicMap.containsKey(new TransformerKey(from, to));
     }
 
     @Override
     public void stop() throws Exception {
         ServiceHelper.stopServices(staticMap.values());
-        ServiceHelper.stopServices(values());
+        ServiceHelper.stopServices(dynamicMap.values());
         purge();
     }
 
     @Override
     public String toString() {
-        return "TransformerRegistry for " + context.getName() + ", capacity: " + getMaxCacheSize();
+        return "TransformerRegistry for " + context.getName() + ", capacity: " + maxCacheSize;
     }
 
     private TransformerKey createKey(TransformerDefinition def) {

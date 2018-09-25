@@ -23,12 +23,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Unit test for try .. catch with handled false.
  */
 public class TryProcessorHandledTest extends ContextTestSupport {
 
+    @Test
     public void testOk() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:error").expectedMessageCount(0);
@@ -38,6 +40,7 @@ public class TryProcessorHandledTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testIllegalStateException() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:error").expectedMessageCount(1);
@@ -47,6 +50,7 @@ public class TryProcessorHandledTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testIOException() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:io").expectedMessageCount(1);

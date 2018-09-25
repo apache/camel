@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
-
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -28,6 +27,8 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
@@ -39,6 +40,7 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
     protected static List<EventObject> events = new ArrayList<>();
 
     @Override
+    @Before
     public void setUp() throws Exception {
         events.clear();
         super.setUp();
@@ -75,6 +77,7 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testExchangeSent() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -110,6 +113,7 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
         assertTrue("Should take about 0.5 sec, was: " + time, time > 400);
     }
 
+    @Test
     public void testExchangeSentRecipient() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -147,6 +151,7 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
         assertEquals("direct://foo", e11.getEndpoint().getEndpointUri());
     }
 
+    @Test
     public void testExchangeWireTap() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

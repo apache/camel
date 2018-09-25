@@ -16,7 +16,6 @@
  */
 
 package org.apache.camel.support;
-
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.InputStream;
@@ -26,12 +25,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * 
  */
-public class XMLTokenExpressionIteratorGroupingTest extends TestCase {
+public class XMLTokenExpressionIteratorGroupingTest extends Assert {
 
     // the input containing multiple Cs
     private static final byte[] TEST_BODY = (
@@ -314,7 +315,7 @@ public class XMLTokenExpressionIteratorGroupingTest extends TestCase {
     private Map<String, String> nsmap;
         
     
-    @Override
+    @Before
     public void setUp() {
         nsmap = new HashMap<>();
         nsmap.put("g", "urn:g");
@@ -322,16 +323,19 @@ public class XMLTokenExpressionIteratorGroupingTest extends TestCase {
     }
 
     // wrapped mode
+    @Test
     public void testExtractWrappedSize1() throws Exception {
         invokeAndVerify("//c:C", 
             'w', 1, new ByteArrayInputStream(TEST_BODY), "utf-8", RESULTS_WRAPPED_SIZE1);
     }
 
+    @Test
     public void testExtractWrappedSize2() throws Exception {
         invokeAndVerify("//c:C", 
             'w', 2, new ByteArrayInputStream(TEST_BODY), "utf-8", RESULTS_WRAPPED_SIZE2);
     }
 
+    @Test
     public void testExtractWrappedSize3L() throws Exception {
         invokeAndVerify("//c:C", 
             'w', 3, new ByteArrayInputStream(TEST_BODY), "utf-8", RESULTS_WRAPPED_SIZE3L);
@@ -343,11 +347,13 @@ public class XMLTokenExpressionIteratorGroupingTest extends TestCase {
             'W', 3, new ByteArrayInputStream(TEST_BODY), "utf-8", RESULTS_WRAPPED_SIZE3U);
     }
 
+    @Test
     public void testExtractWrappedSize4() throws Exception {
         invokeAndVerify("//c:C", 
             'w', 4, new ByteArrayInputStream(TEST_BODY), "utf-8", RESULTS_WRAPPED_SIZE4);
     }
 
+    @Test
     public void testExtractWrappedSize5L() throws Exception {
         invokeAndVerify("//c:C", 
             'w', 5, new ByteArrayInputStream(TEST_BODY), "utf-8", RESULTS_WRAPPED_SIZE5L);
@@ -360,31 +366,37 @@ public class XMLTokenExpressionIteratorGroupingTest extends TestCase {
     }
 
     // injected mode
+    @Test
     public void testExtractInjectedSize1() throws Exception {
         invokeAndVerify("//c:C", 
             'i', 1, new ByteArrayInputStream(TEST_BODY), "utf-8", RESULTS_INJECTED_SIZE1);
     }
 
+    @Test
     public void testExtractInjectedSize2() throws Exception {
         invokeAndVerify("//c:C", 
             'i', 2, new ByteArrayInputStream(TEST_BODY), "utf-8", RESULTS_INJECTED_SIZE2);
     }
 
+    @Test
     public void testExtractInjectedSize3() throws Exception {
         invokeAndVerify("//c:C", 
             'i', 3, new ByteArrayInputStream(TEST_BODY), "utf-8", RESULTS_INJECTED_SIZE3);
     }
 
+    @Test
     public void testExtractInjectedSize4() throws Exception {
         invokeAndVerify("//c:C", 
             'i', 4, new ByteArrayInputStream(TEST_BODY), "utf-8", RESULTS_INJECTED_SIZE4);
     }
 
+    @Test
     public void testExtractInjectedSize5() throws Exception {
         invokeAndVerify("//c:C", 
             'i', 5, new ByteArrayInputStream(TEST_BODY), "utf-8", RESULTS_INJECTED_SIZE5);
     }
 
+    @Test
     public void testExtractWrappedLeftOver() throws Exception {
         final byte[] data = ("<?xml version='1.0' encoding='UTF-8'?><g:A xmlns:g='urn:g'><c:B attr='1' xmlns:c='urn:c'>"
             + "<c:C attr='1'>peach</c:C>"

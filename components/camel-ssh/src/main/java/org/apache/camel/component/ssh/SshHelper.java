@@ -18,6 +18,10 @@ package org.apache.camel.component.ssh;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.security.KeyPair;
 import java.util.Arrays;
 import java.util.Map;
@@ -109,10 +113,23 @@ public final class SshHelper {
                 LOG.debug("Failed to authenticate");
                 throw new RuntimeCamelException("Failed to authenticate username " + configuration.getUsername());
             }
+            
+            InputStream in = null;
+            PipedOutputStream reply = new PipedOutputStream();
         
-            channel = session.createChannel(Channel.CHANNEL_EXEC, command);
+            // for now only two channel types are supported
+            // shell option is added for specific purpose for now
+            // may need further maintainance for further use cases
+            if (Channel.CHANNEL_EXEC.equals(endpoint.getChannelType())) {
+                channel = session.createChannel(Channel.CHANNEL_EXEC, command);
+                in = new ByteArrayInputStream(new byte[]{0});
+            } else if (Channel.CHANNEL_SHELL.equals(endpoint.getChannelType())) {
+                // PipedOutputStream and PipedInputStream both are connected to each other to create a communication pipe
+                // this approach is used to send the command and evaluate the response
+                channel = session.createChannel(Channel.CHANNEL_SHELL);
+                in = new PipedInputStream(reply);
+            }
 
-            ByteArrayInputStream in = new ByteArrayInputStream(new byte[]{0});
             channel.setIn(in);
     
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -123,13 +140,23 @@ public final class SshHelper {
             OpenFuture openFuture = channel.open();
             openFuture.await(configuration.getTimeout());
             SshResult result = null;
-            if (openFuture.isOpened()) {
-                Set<ClientChannelEvent> events = channel.waitFor(Arrays.asList(ClientChannelEvent.CLOSED), 0);
-                if (!events.contains(ClientChannelEvent.TIMEOUT)) {
-                    result = new SshResult(command, channel.getExitStatus(),
-                            new ByteArrayInputStream(out.toByteArray()),
-                            new ByteArrayInputStream(err.toByteArray()));
+            if (Channel.CHANNEL_EXEC.equals(endpoint.getChannelType())) {
+                if (openFuture.isOpened()) {
+                    Set<ClientChannelEvent> events = channel.waitFor(Arrays.asList(ClientChannelEvent.CLOSED), 0);
+                    if (!events.contains(ClientChannelEvent.TIMEOUT)) {
+                        result = new SshResult(command, channel.getExitStatus(),
+                                new ByteArrayInputStream(out.toByteArray()),
+                                new ByteArrayInputStream(err.toByteArray()));
+                    }
                 }
+            } else if (Channel.CHANNEL_SHELL.equals(endpoint.getChannelType())) {
+                getPrompt(channel, out, endpoint);
+                reply.write(command.getBytes());
+                reply.write(System.lineSeparator().getBytes());
+                String response = getPrompt(channel, out, endpoint);
+                result = new SshResult(command, channel.getExitStatus(),
+                        new ByteArrayInputStream(response.getBytes()),
+                        new ByteArrayInputStream(err.toByteArray()));
             }
             return result;
         } finally {
@@ -144,4 +171,20 @@ public final class SshHelper {
         
     }
 
+    private static String getPrompt(ClientChannel channel, ByteArrayOutputStream output, SshEndpoint endpoint)
+        throws UnsupportedEncodingException, InterruptedException {
+
+        while (!channel.isClosed()) {
+
+            String response = new String(output.toByteArray(), "UTF-8");
+            if (response.trim().endsWith(endpoint.getShellPrompt())) {
+                output.reset();
+                return SshShellOutputStringHelper.betweenBeforeLast(response, System.lineSeparator(), System.lineSeparator());
+            }
+
+            // avoid cpu burning cycles
+            Thread.sleep(endpoint.getSleepForShellPrompt());
+        }
+        return null;
+    }
 }

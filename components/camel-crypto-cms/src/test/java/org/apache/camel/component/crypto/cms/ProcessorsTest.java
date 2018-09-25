@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.crypto.cms;
-
 import java.security.Security;
 
 import org.apache.camel.CamelContext;

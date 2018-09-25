@@ -19,12 +19,14 @@ package org.apache.camel.component.properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class PropertiesComponentEncodingTest extends ContextTestSupport {
 
+    @Test
     public void testPropertiesComponent() throws Exception {
         final String title = "Hello Thai Elephant \u0E08";
 

@@ -20,6 +20,16 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
+Starting with Camel *2.22* gRCP requires strong own of the Google Guava version. It's necessary to
+add following configuration property to the maven file
+
+[source,xml]
+------------------------------------------------------------
+<properties>
+    <google-guava-version>${grpc-guava-version}</google-guava-version>
+<properties>
+------------------------------------------------------------
+
 ### URI format
 
 [source,java]
@@ -80,13 +90,29 @@ with the following path and query parameters:
 | *jwtSecret* (security) | JSON Web Token secret |  | String
 | *jwtSubject* (security) | JSON Web Token subject |  | String
 | *keyCertChainResource* (security) | The X.509 certificate chain file resource in PEM format link |  | String
-| *keyPassword* (security) | The PKCS8 private key file password |  | String
-| *keyResource* (security) | The PKCS8 private key file resource in PEM format link |  | String
+| *keyPassword* (security) | The PKCS#8 private key file password |  | String
+| *keyResource* (security) | The PKCS#8 private key file resource in PEM format link |  | String
 | *negotiationType* (security) | Identifies the security negotiation type used for HTTP/2 communication | PLAINTEXT | NegotiationType
 | *serviceAccountResource* (security) | Service Account key file in JSON format resource link supported by the Google Cloud SDK |  | String
 | *trustCertCollectionResource* (security) | The trusted certificates collection file resource in PEM format for verifying the remote endpoint's certificate |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.grpc.enabled* | Enable grpc component | true | Boolean
+| *camel.component.grpc.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 ### Transport security and authentication support (available from *Camel 2.20*)
 

@@ -18,9 +18,7 @@ package org.apache.camel.component.jgroups.springboot;
 
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.jgroups.JChannel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The jgroups component provides exchange of messages between Camel and JGroups
@@ -35,10 +33,14 @@ public class JGroupsComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Channel to use
+     * Whether to enable auto configuration of the jgroups component. This is
+     * enabled by default.
      */
-    @NestedConfigurationProperty
-    private JChannel channel;
+    private Boolean enabled;
+    /**
+     * Channel to use. The option is a org.jgroups.JChannel type.
+     */
+    private String channel;
     /**
      * Specifies configuration properties of the JChannel used by the endpoint.
      */
@@ -56,11 +58,11 @@ public class JGroupsComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public JChannel getChannel() {
+    public String getChannel() {
         return channel;
     }
 
-    public void setChannel(JChannel channel) {
+    public void setChannel(String channel) {
         this.channel = channel;
     }
 

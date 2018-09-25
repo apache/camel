@@ -18,12 +18,14 @@ package org.apache.camel.management;
 
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class ManagedDuplicateIdTest extends ManagementTestSupport {
 
+    @Test
     public void testDuplicateId() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

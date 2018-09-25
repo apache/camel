@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.interceptor;
-
 import javax.sql.DataSource;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -39,7 +40,8 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         this.disableJMX();
         super.setUp();
 
@@ -47,6 +49,7 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
         jdbc = new JdbcTemplate(ds);
     }
 
+    @Test
     public void testOkay() throws Exception {
         template.sendBody("direct:okay", "Hello World");
 
@@ -54,6 +57,7 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
         assertEquals("Number of books", 3, count);
     }
 
+    @Test
     public void testFail() throws Exception {
         try {
             template.sendBody("direct:fail", "Hello World");
@@ -69,6 +73,7 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
         assertEquals("Number of books", 1, count);
     }
 
+    @Test
     public void testMixedRollbackOnlyLast() throws Exception {
         template.sendBody("direct:mixed", "Hello World");
 
@@ -83,6 +88,7 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
         assertEquals(new Integer(0), jdbc.queryForObject("select count(*) from books where title = 'Donkey in Action'", Integer.class));
     }
 
+    @Test
     public void testMixedCommit() throws Exception {
         template.sendBody("direct:mixed3", "Hello World");
 

@@ -18,12 +18,14 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class FailoverStickyTest extends ContextTestSupport {
 
+    @Test
     public void testFailoverSticky() throws Exception {
         getMockEndpoint("mock:bad").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:bad2").expectedBodiesReceived("Hello World");

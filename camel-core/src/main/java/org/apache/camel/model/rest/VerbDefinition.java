@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
@@ -52,6 +51,9 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     @XmlElementRef
     private List<RestOperationResponseMsgDefinition> responseMsgs = new ArrayList<>();
 
+    @XmlElementRef
+    private List<SecurityDefinition> security = new ArrayList<>();
+
     @XmlAttribute
     private String uri;
 
@@ -67,6 +69,9 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
 
     @XmlAttribute
     private Boolean skipBindingOnErrorCode;
+
+    @XmlAttribute
+    private Boolean clientRequestValidation;
 
     @XmlAttribute
     private Boolean enableCORS;
@@ -105,6 +110,11 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     private Boolean usedForGeneratingNodeId = Boolean.FALSE;
 
     @Override
+    public String getShortName() {
+        return "verb";
+    }
+
+    @Override
     public String getLabel() {
         if (method != null) {
             return method;
@@ -133,6 +143,17 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
      */
     public void setResponseMsgs(List<RestOperationResponseMsgDefinition> params) {
         this.responseMsgs = responseMsgs;
+    }
+
+    public List<SecurityDefinition> getSecurity() {
+        return security;
+    }
+
+    /**
+     * Sets the swagger security settings for this verb.
+     */
+    public void setSecurity(List<SecurityDefinition> security) {
+        this.security = security;
     }
 
     public String getMethod() {
@@ -206,6 +227,22 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
      */
     public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
+    }
+
+    public Boolean getClientRequestValidation() {
+        return clientRequestValidation;
+    }
+
+    /**
+     * Whether to enable validation of the client request to check whether the Content-Type and Accept headers from
+     * the client is supported by the Rest-DSL configuration of its consumes/produces settings.
+     * <p/>
+     * This can be turned on, to enable this check. In case of validation error, then HTTP Status codes 415 or 406 is returned.
+     * <p/>
+     * The default value is false.
+     */
+    public void setClientRequestValidation(Boolean clientRequestValidation) {
+        this.clientRequestValidation = clientRequestValidation;
     }
 
     public Boolean getEnableCORS() {

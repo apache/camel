@@ -76,6 +76,22 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.git.enabled* | Enable git component | true | Boolean
+| *camel.component.git.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 
@@ -116,6 +132,8 @@ from("direct:start")
         .setHeader(GitConstants.GIT_COMMIT_MESSAGE, constant("first commit"))
         .to("git:///tmp/testRepo?operation=commit")
         .to("git:///tmp/testRepo?operation=push&remotePath=https://foo.com/test/test.git&username=xxx&password=xxx")
+        .to("git:///tmp/testRepo?operation=createTag&tagName=myTag")
+        .to("git:///tmp/testRepo?operation=pushTag&tagName=myTag&remoteName=origin")
 --------------------------------------------------------------------------------------------------------------------
 
 ### Consumer Example

@@ -17,11 +17,8 @@
 package org.apache.camel.component.undertow.springboot;
 
 import javax.annotation.Generated;
-import org.apache.camel.component.undertow.UndertowHttpBinding;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The undertow component provides HTTP and WebSocket based endpoints for
@@ -36,16 +33,21 @@ public class UndertowComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * To use a custom HttpBinding to control the mapping between Camel message
-     * and HttpClient.
+     * Whether to enable auto configuration of the undertow component. This is
+     * enabled by default.
      */
-    @NestedConfigurationProperty
-    private UndertowHttpBinding undertowHttpBinding;
+    private Boolean enabled;
     /**
-     * To configure security using SSLContextParameters
+     * To use a custom HttpBinding to control the mapping between Camel message
+     * and HttpClient. The option is a
+     * org.apache.camel.component.undertow.UndertowHttpBinding type.
      */
-    @NestedConfigurationProperty
-    private SSLContextParameters sslContextParameters;
+    private String undertowHttpBinding;
+    /**
+     * To configure security using SSLContextParameters. The option is a
+     * org.apache.camel.util.jsse.SSLContextParameters type.
+     */
+    private String sslContextParameters;
     /**
      * Enable usage of global SSL context parameters.
      */
@@ -61,20 +63,19 @@ public class UndertowComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public UndertowHttpBinding getUndertowHttpBinding() {
+    public String getUndertowHttpBinding() {
         return undertowHttpBinding;
     }
 
-    public void setUndertowHttpBinding(UndertowHttpBinding undertowHttpBinding) {
+    public void setUndertowHttpBinding(String undertowHttpBinding) {
         this.undertowHttpBinding = undertowHttpBinding;
     }
 
-    public SSLContextParameters getSslContextParameters() {
+    public String getSslContextParameters() {
         return sslContextParameters;
     }
 
-    public void setSslContextParameters(
-            SSLContextParameters sslContextParameters) {
+    public void setSslContextParameters(String sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
 

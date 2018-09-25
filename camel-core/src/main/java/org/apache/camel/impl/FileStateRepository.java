@@ -21,7 +21,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.api.management.ManagedAttribute;
@@ -32,6 +31,7 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.Scanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,7 +144,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
      */
     private void appendToStore(String key, String value) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Appending {}={} to state filestore: {}", new Object[]{key, value, fileStore});
+            LOG.debug("Appending {}={} to state filestore: {}", key, value, fileStore);
         }
         FileOutputStream fos = null;
         try {
@@ -217,12 +217,9 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
         LOG.trace("Loading to 1st level cache from state filestore: {}", fileStore);
 
         cache.clear();
-        Scanner scanner = null;
-        try {
-            scanner = new Scanner(fileStore);
-            scanner.useDelimiter(STORE_DELIMITER);
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
+        try (Scanner scanner = new Scanner(fileStore, null, STORE_DELIMITER)) {
+            while (scanner.hasNext()) {
+                String line = scanner.next();
                 int separatorIndex = line.indexOf(KEY_VALUE_DELIMITER);
                 String key = line.substring(0, separatorIndex);
                 String value = line.substring(separatorIndex + KEY_VALUE_DELIMITER.length());
@@ -230,10 +227,6 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
             }
         } catch (IOException e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
-        } finally {
-            if (scanner != null) {
-                scanner.close();
-            }
         }
 
         LOG.debug("Loaded {} to the 1st level cache from state filestore: {}", cache.size(), fileStore);

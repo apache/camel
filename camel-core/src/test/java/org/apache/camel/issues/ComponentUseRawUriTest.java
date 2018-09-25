@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.issues;
-
 import java.util.Map;
 
 import org.apache.camel.Consumer;
@@ -25,6 +24,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *
@@ -92,11 +93,13 @@ public class ComponentUseRawUriTest extends ContextTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         context.addComponent("my", new MyComponent());
     }
 
+    @Test
     public void testUseRaw() {
         String uri = "my:host:11303/tube1+tube?foo=%2B+tube%3F&bar=++%%w?rd";
         MyEndpoint endpoint = context.getEndpoint(uri, MyEndpoint.class);

@@ -23,12 +23,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class AggregateExpressionSizeOverrideFixedTimeoutTest extends ContextTestSupport {
 
+    @Test
     public void testAggregateExpressionSize() throws Exception {
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C");
         getMockEndpoint("mock:aggregated").expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "timeout");

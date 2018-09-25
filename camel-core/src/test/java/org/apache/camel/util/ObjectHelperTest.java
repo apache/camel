@@ -32,8 +32,6 @@ import java.util.Properties;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import junit.framework.TestCase;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -44,12 +42,15 @@ import org.apache.camel.component.bean.MyOtherFooBean.InterfaceSize;
 import org.apache.camel.component.bean.MyStaticClass;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultMessage;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class ObjectHelperTest extends TestCase {
+public class ObjectHelperTest extends Assert {
 
+    @Test
     public void testLoadResourceAsStream() {
         InputStream res1 = ObjectHelper.loadResourceAsStream("org/apache/camel/util/ObjectHelperResourceTestFile.properties");
         InputStream res2 = ObjectHelper.loadResourceAsStream("/org/apache/camel/util/ObjectHelperResourceTestFile.properties");
@@ -60,6 +61,7 @@ public class ObjectHelperTest extends TestCase {
         IOHelper.close(res1, res2);
     }
 
+    @Test
     public void testLoadResource() {
         URL url1 = ObjectHelper.loadResourceAsURL("org/apache/camel/util/ObjectHelperResourceTestFile.properties");
         URL url2 = ObjectHelper.loadResourceAsURL("/org/apache/camel/util/ObjectHelperResourceTestFile.properties");
@@ -68,6 +70,7 @@ public class ObjectHelperTest extends TestCase {
         assertNotNull("Cannot load resource with leading \"/\"", url2);
     }
 
+    @Test
     public void testGetPropertyName() throws Exception {
         Method method = getClass().getMethod("setCheese", String.class);
         assertNotNull("should have found a method!", method);
@@ -80,6 +83,7 @@ public class ObjectHelperTest extends TestCase {
         // used in the above unit test
     }
 
+    @Test
     public void testContains() throws Exception {
         String[] array = {"foo", "bar"};
         Collection<String> collection = Arrays.asList(array);
@@ -93,6 +97,7 @@ public class ObjectHelperTest extends TestCase {
         assertFalse(ObjectHelper.contains("foo", "xyz"));
     }
 
+    @Test
     public void testContainsStringBuilder() throws Exception {
         StringBuilder sb = new StringBuilder();
         sb.append("Hello World");
@@ -106,6 +111,7 @@ public class ObjectHelperTest extends TestCase {
         assertFalse(ObjectHelper.contains(sb, new StringBuilder("Camel")));
     }
 
+    @Test
     public void testContainsStringBuffer() throws Exception {
         StringBuffer sb = new StringBuffer();
         sb.append("Hello World");
@@ -119,6 +125,7 @@ public class ObjectHelperTest extends TestCase {
         assertFalse(ObjectHelper.contains(sb, new StringBuilder("Camel")));
     }
 
+    @Test
     public void testEqual() {
         assertTrue(ObjectHelper.equal(null, null));
         assertTrue(ObjectHelper.equal("", ""));
@@ -143,6 +150,7 @@ public class ObjectHelperTest extends TestCase {
         assertFalse(ObjectHelper.equal(a, b));
     }
 
+    @Test
     public void testEqualByteArray() {
         assertTrue(ObjectHelper.equalByteArray("Hello".getBytes(), "Hello".getBytes()));
         assertFalse(ObjectHelper.equalByteArray("Hello".getBytes(), "World".getBytes()));
@@ -186,12 +194,14 @@ public class ObjectHelperTest extends TestCase {
         assertTrue(ObjectHelper.equalByteArray(a, b));
     }
 
+    @Test
     public void testCreateIterator() {
         List<String> list = new ArrayList<>();
         Iterator<String> iterator = list.iterator();
         assertSame("Should return the same iterator", iterator, ObjectHelper.createIterator(iterator));
     }
 
+    @Test
     public void testCreateIteratorAllowEmpty() {
         String s = "a,b,,c";
         Iterator<?> it = ObjectHelper.createIterator(s, ",", true);
@@ -201,6 +211,7 @@ public class ObjectHelperTest extends TestCase {
         assertEquals("c", it.next());
     }
 
+    @Test
     public void testCreateIteratorPattern() {
         String s = "a\nb\rc";
         Iterator<?> it = ObjectHelper.createIterator(s, "\n|\r", false, true);
@@ -209,6 +220,7 @@ public class ObjectHelperTest extends TestCase {
         assertEquals("c", it.next());
     }
 
+    @Test
     public void testCreateIteratorWithStringAndCommaSeparator() {
         String s = "a,b,c";
         Iterator<?> it = ObjectHelper.createIterator(s, ",");
@@ -217,6 +229,7 @@ public class ObjectHelperTest extends TestCase {
         assertEquals("c", it.next());
     }
 
+    @Test
     public void testCreateIteratorWithStringAndCommaSeparatorEmptyString() {
         String s = "";
         Iterator<?> it = ObjectHelper.createIterator(s, ",", true);
@@ -231,6 +244,7 @@ public class ObjectHelperTest extends TestCase {
         }
     }
 
+    @Test
     public void testCreateIteratorWithStringAndSemiColonSeparator() {
         String s = "a;b;c";
         Iterator<?> it = ObjectHelper.createIterator(s, ";");
@@ -239,12 +253,14 @@ public class ObjectHelperTest extends TestCase {
         assertEquals("c", it.next());
     }
 
+    @Test
     public void testCreateIteratorWithStringAndCommaInParanthesesSeparator() {
         String s = "bean:foo?method=bar('A','B','C')";
         Iterator<?> it = ObjectHelper.createIterator(s, ",");
         assertEquals("bean:foo?method=bar('A','B','C')", it.next());
     }
 
+    @Test
     public void testCreateIteratorWithStringAndCommaInParanthesesSeparatorTwo() {
         String s = "bean:foo?method=bar('A','B','C'),bean:bar?method=cool('A','Hello,World')";
         Iterator<?> it = ObjectHelper.createIterator(s, ",");
@@ -253,6 +269,7 @@ public class ObjectHelperTest extends TestCase {
     }
 
     // CHECKSTYLE:OFF
+    @Test
     public void testCreateIteratorWithPrimitiveArrayTypes() {
         Iterator<?> it = ObjectHelper.createIterator(new byte[] {13, Byte.MAX_VALUE, 7, Byte.MIN_VALUE}, null);
         assertTrue(it.hasNext());
@@ -500,6 +517,7 @@ public class ObjectHelperTest extends TestCase {
     }
     // CHECKSTYLE:ON
 
+    @Test
     public void testArrayAsIterator() throws Exception {
         String[] data = {"a", "b"};
 
@@ -513,6 +531,7 @@ public class ObjectHelperTest extends TestCase {
         assertFalse("should not have a next", iter.hasNext());
     }
 
+    @Test
     public void testIsEmpty() {
         assertTrue(ObjectHelper.isEmpty(null));
         assertTrue(ObjectHelper.isEmpty(""));
@@ -523,6 +542,7 @@ public class ObjectHelperTest extends TestCase {
         assertFalse(ObjectHelper.isEmpty(new Object()));
     }
 
+    @Test
     public void testIsNotEmpty() {
         assertFalse(ObjectHelper.isNotEmpty(null));
         assertFalse(ObjectHelper.isNotEmpty(""));
@@ -533,6 +553,7 @@ public class ObjectHelperTest extends TestCase {
         assertTrue(ObjectHelper.isNotEmpty(new Object()));
     }
 
+    @Test
     public void testIteratorWithComma() {
         Iterator<?> it = ObjectHelper.createIterator("Claus,Jonathan");
         assertEquals("Claus", it.next());
@@ -540,6 +561,7 @@ public class ObjectHelperTest extends TestCase {
         assertEquals(false, it.hasNext());
     }
 
+    @Test
     public void testIteratorWithOtherDelimiter() {
         Iterator<?> it = ObjectHelper.createIterator("Claus#Jonathan", "#");
         assertEquals("Claus", it.next());
@@ -547,6 +569,7 @@ public class ObjectHelperTest extends TestCase {
         assertEquals(false, it.hasNext());
     }
 
+    @Test
     public void testIteratorEmpty() {
         Iterator<?> it = ObjectHelper.createIterator("");
         assertEquals(false, it.hasNext());
@@ -578,6 +601,7 @@ public class ObjectHelperTest extends TestCase {
         }
     }
 
+    @Test
     public void testIteratorIdempotentNext() {
         Iterator<?> it = ObjectHelper.createIterator("a");
         assertTrue(it.hasNext());
@@ -593,6 +617,7 @@ public class ObjectHelperTest extends TestCase {
         }
     }
 
+    @Test
     public void testIteratorIdempotentNextWithNodeList() {
         NodeList nodeList = new NodeList() {
 
@@ -620,6 +645,7 @@ public class ObjectHelperTest extends TestCase {
         }
     }
 
+    @Test
     public void testGetCamelContextPropertiesWithPrefix() {
         CamelContext context = new DefaultCamelContext();
         Map<String, String> properties = context.getGlobalOptions();
@@ -633,6 +659,7 @@ public class ObjectHelperTest extends TestCase {
         assertEquals("It should contain the test2", "test2", result.get("test2"));
     }
 
+    @Test
     public void testEvaluateAsPredicate() throws Exception {
         assertEquals(false, ObjectHelper.evaluateValuePredicate(null));
         assertEquals(true, ObjectHelper.evaluateValuePredicate(123));
@@ -651,6 +678,7 @@ public class ObjectHelperTest extends TestCase {
         assertEquals(true, ObjectHelper.evaluateValuePredicate(list));
     }
 
+    @Test
     public void testIsPrimitiveArrayType() {
         assertTrue(ObjectHelper.isPrimitiveArrayType(byte[].class));
         assertTrue(ObjectHelper.isPrimitiveArrayType(short[].class));
@@ -675,10 +703,12 @@ public class ObjectHelperTest extends TestCase {
         assertFalse(ObjectHelper.isPrimitiveArrayType(null));
     }
 
+    @Test
     public void testGetDefaultCharSet() {
         assertNotNull(ObjectHelper.getDefaultCharacterSet());
     }
 
+    @Test
     public void testConvertPrimitiveTypeToWrapper() {
         assertEquals("java.lang.Integer", ObjectHelper.convertPrimitiveTypeToWrapperType(int.class).getName());
         assertEquals("java.lang.Long", ObjectHelper.convertPrimitiveTypeToWrapperType(long.class).getName());
@@ -692,6 +722,7 @@ public class ObjectHelperTest extends TestCase {
         assertEquals("java.lang.Object", ObjectHelper.convertPrimitiveTypeToWrapperType(Object.class).getName());
     }
 
+    @Test
     public void testAsString() {
         String[] args = new String[] {"foo", "bar"};
         String out = ObjectHelper.asString(args);
@@ -699,24 +730,29 @@ public class ObjectHelperTest extends TestCase {
         assertEquals("{foo, bar}", out);
     }
 
+    @Test
     public void testName() {
         assertEquals("java.lang.Integer", ObjectHelper.name(Integer.class));
         assertEquals(null, ObjectHelper.name(null));
     }
 
+    @Test
     public void testClassName() {
         assertEquals("java.lang.Integer", ObjectHelper.className(Integer.valueOf("5")));
         assertEquals(null, ObjectHelper.className(null));
     }
 
+    @Test
     public void testGetSystemPropertyDefault() {
         assertEquals("foo", ObjectHelper.getSystemProperty("CamelFooDoesNotExist", "foo"));
     }
 
+    @Test
     public void testGetSystemPropertyBooleanDefault() {
         assertEquals(true, ObjectHelper.getSystemProperty("CamelFooDoesNotExist", Boolean.TRUE));
     }
 
+    @Test
     public void testMatches() {
         List<Object> data = new ArrayList<>();
         data.add("foo");
@@ -732,6 +768,7 @@ public class ObjectHelperTest extends TestCase {
         assertEquals(false, ObjectHelper.matches(data));
     }
 
+    @Test
     public void testToBoolean() {
         assertEquals(Boolean.TRUE, ObjectHelper.toBoolean(Boolean.TRUE));
         assertEquals(Boolean.TRUE, ObjectHelper.toBoolean("true"));
@@ -740,6 +777,7 @@ public class ObjectHelperTest extends TestCase {
         assertEquals(null, ObjectHelper.toBoolean(new Date()));
     }
 
+    @Test
     public void testIteratorWithMessage() {
         Message msg = new DefaultMessage(new DefaultCamelContext());
         msg.setBody("a,b,c");
@@ -757,6 +795,7 @@ public class ObjectHelperTest extends TestCase {
         }
     }
 
+    @Test
     public void testIteratorWithEmptyMessage() {
         Message msg = new DefaultMessage(new DefaultCamelContext());
         msg.setBody("");
@@ -772,6 +811,7 @@ public class ObjectHelperTest extends TestCase {
         }
     }
 
+    @Test
     public void testIteratorWithNullMessage() {
         Message msg = new DefaultMessage(new DefaultCamelContext());
         msg.setBody(null);
@@ -786,6 +826,7 @@ public class ObjectHelperTest extends TestCase {
         }
     }
 
+    @Test
     public void testIterable() {
         final List<String> data = new ArrayList<>();
         data.add("A");
@@ -809,17 +850,20 @@ public class ObjectHelperTest extends TestCase {
         }
     }
 
+    @Test
     public void testLookupConstantFieldValue() {
         assertEquals("CamelFileName", ObjectHelper.lookupConstantFieldValue(Exchange.class, "FILE_NAME"));
         assertEquals(null, ObjectHelper.lookupConstantFieldValue(Exchange.class, "XXX"));
         assertEquals(null, ObjectHelper.lookupConstantFieldValue(null, "FILE_NAME"));
     }
 
+    @Test
     public void testHasDefaultPublicNoArgConstructor() {
         assertTrue(ObjectHelper.hasDefaultPublicNoArgConstructor(ObjectHelperTest.class));
         assertFalse(ObjectHelper.hasDefaultPublicNoArgConstructor(MyStaticClass.class));
     }
     
+    @Test
     public void testIdentityHashCode() {
         MyDummyObject dummy = new MyDummyObject("Camel");
         
@@ -833,6 +877,7 @@ public class ObjectHelperTest extends TestCase {
         assertNotSame(code, code3);
     }
     
+    @Test
     public void testIsNaN() throws Exception {
         assertTrue(ObjectHelper.isNaN(Float.NaN));
         assertTrue(ObjectHelper.isNaN(Double.NaN));
@@ -847,6 +892,7 @@ public class ObjectHelperTest extends TestCase {
         assertFalse(ObjectHelper.isNaN(true));
     }
 
+    @Test
     public void testNotNull() {
         Long expected = 3L;
         Long actual = ObjectHelper.notNull(expected, "expected");
@@ -871,35 +917,41 @@ public class ObjectHelperTest extends TestCase {
         }
     }
 
+    @Test
     public void testSameMethodIsOverride() throws Exception {
         Method m = MyOtherFooBean.class.getMethod("toString", Object.class);
         assertTrue(ObjectHelper.isOverridingMethod(m, m, false));
     }
 
+    @Test
     public void testOverloadIsNotOverride() throws Exception {
         Method m1 = MyOtherFooBean.class.getMethod("toString", Object.class);
         Method m2 = MyOtherFooBean.class.getMethod("toString", String.class);
         assertFalse(ObjectHelper.isOverridingMethod(m2, m1, false));
     }
 
+    @Test
     public void testOverrideEquivalentSignatureFromSiblingClassIsNotOverride() throws Exception {
         Method m1 = Double.class.getMethod("intValue");
         Method m2 = Float.class.getMethod("intValue");
         assertFalse(ObjectHelper.isOverridingMethod(m2, m1, false));
     }
 
+    @Test
     public void testOverrideEquivalentSignatureFromUpperClassIsOverride() throws Exception {
         Method m1 = Double.class.getMethod("intValue");
         Method m2 = Number.class.getMethod("intValue");
         assertTrue(ObjectHelper.isOverridingMethod(m2, m1, false));
     }
 
+    @Test
     public void testInheritedMethodCanOverrideInterfaceMethod() throws Exception {
         Method m1 = AbstractClassSize.class.getMethod("size");
         Method m2 = InterfaceSize.class.getMethod("size");
         assertTrue(ObjectHelper.isOverridingMethod(Clazz.class, m2, m1, false));
     }
 
+    @Test
     public void testNonInheritedMethodCantOverrideInterfaceMethod() throws Exception {
         Method m1 = AbstractClassSize.class.getMethod("size");
         Method m2 = InterfaceSize.class.getMethod("size");

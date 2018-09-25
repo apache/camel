@@ -18,9 +18,7 @@ package org.apache.camel.component.elasticsearch5.springboot;
 
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.elasticsearch.client.transport.TransportClient;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The elasticsearch component is used for interfacing with ElasticSearch server
@@ -35,12 +33,17 @@ public class ElasticsearchComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the elasticsearch5 component.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use an existing configured Elasticsearch client, instead of creating a
      * client per endpoint. This allow to customize the client with specific
-     * settings.
+     * settings. The option is a
+     * org.elasticsearch.client.transport.TransportClient type.
      */
-    @NestedConfigurationProperty
-    private TransportClient client;
+    private String client;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -48,11 +51,11 @@ public class ElasticsearchComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public TransportClient getClient() {
+    public String getClient() {
         return client;
     }
 
-    public void setClient(TransportClient client) {
+    public void setClient(String client) {
         this.client = client;
     }
 

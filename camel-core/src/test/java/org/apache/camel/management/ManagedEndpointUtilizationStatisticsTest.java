@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
+import org.junit.Test;
 
 /**
  * @version 
@@ -36,6 +37,7 @@ public class ManagedEndpointUtilizationStatisticsTest extends ManagementTestSupp
         return camelContext;
     }
 
+    @Test
     public void testManageEndpointUtilizationStatistics() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

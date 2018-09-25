@@ -126,7 +126,7 @@ public final class ResolverHelper {
     public static class LookupExceptionHandler {
 
         public void handleException(Exception e, Logger log, String name) {
-            log.debug("Ignored error looking up bean: " + name, e);
+            log.debug("Ignored error looking up bean: {}", name, e);
         }
 
     }

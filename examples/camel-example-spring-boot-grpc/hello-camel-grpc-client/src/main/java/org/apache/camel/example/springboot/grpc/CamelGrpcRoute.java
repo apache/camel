@@ -23,7 +23,7 @@ import org.apache.camel.examples.CamelHelloRequest;
 import org.springframework.stereotype.Component;
 
 /**
- * A simple Camel Grpc route example using Spring-boot
+ * A simple Camel gRPC route example using Spring-boot
  */
 @Component
 public class CamelGrpcRoute extends RouteBuilder {
@@ -32,7 +32,7 @@ public class CamelGrpcRoute extends RouteBuilder {
     public void configure() throws Exception {
 
         CamelHelloRequest request = CamelHelloRequest.newBuilder().setName("Camel").build();
-        from("timer://foo?period=10000&repeatCount=1").process(new Processor() {
+        from("timer://foo?period=10000&repeatCount=5").process(new Processor() {
 
             @Override
             public void process(Exchange exchange) throws Exception {

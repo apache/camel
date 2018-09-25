@@ -18,12 +18,14 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class CBRWithWireTapTest extends ContextTestSupport {
 
+    @Test
     public void testCBRWithWireTapCamel() throws Exception {
         getMockEndpoint("mock:other").expectedMessageCount(0);
         getMockEndpoint("mock:camel").expectedMessageCount(1);
@@ -34,6 +36,7 @@ public class CBRWithWireTapTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testCBRWithWireTapDonkey() throws Exception {
         getMockEndpoint("mock:other").expectedMessageCount(0);
         getMockEndpoint("mock:camel").expectedMessageCount(0);
@@ -44,6 +47,7 @@ public class CBRWithWireTapTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testCBRWithWireTapOther() throws Exception {
         getMockEndpoint("mock:other").expectedMessageCount(1);
         getMockEndpoint("mock:camel").expectedMessageCount(0);

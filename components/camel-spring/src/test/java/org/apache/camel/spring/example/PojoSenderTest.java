@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.example;
-
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
-
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -32,6 +32,7 @@ public class PojoSenderTest extends SpringTestSupport {
     protected MockEndpoint notMatchedEndpoint;
     protected MySender mySender;
 
+    @Test
     public void testMatchesPredicate() throws Exception {
         matchedEndpoint.expectedMessageCount(1);
         notMatchedEndpoint.expectedMessageCount(0);
@@ -41,6 +42,7 @@ public class PojoSenderTest extends SpringTestSupport {
         assertIsSatisfied(matchedEndpoint, notMatchedEndpoint);
     }
 
+    @Test
     public void testDoesNotMatchPredicate() throws Exception {
         matchedEndpoint.expectedMessageCount(0);
         notMatchedEndpoint.expectedMessageCount(1);
@@ -51,7 +53,8 @@ public class PojoSenderTest extends SpringTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         matchedEndpoint = getMockEndpoint("mock:a");

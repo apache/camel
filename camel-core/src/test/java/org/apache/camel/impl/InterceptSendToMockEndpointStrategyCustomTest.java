@@ -21,6 +21,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
@@ -38,6 +39,7 @@ public class InterceptSendToMockEndpointStrategyCustomTest extends ContextTestSu
         }
     }
 
+    @Test
     public void testAdvisedMockEndpoints() throws Exception {
         context.addRegisterEndpointCallback(new MyStrategy());
         context.addRoutes(new RouteBuilder() {

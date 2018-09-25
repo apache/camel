@@ -471,7 +471,145 @@ public class UserPojo {
 By having the JAXB annotations the POJO supports both json and xml
 bindings.
 
-You can configure properties on these levels. 
+=== Configuring Rest DSL
+[width="100%",cols="20%,10%,30%",options="header",]
+|===
+|Option |Default |Description
+|component | - |The Camel Rest component to use for the REST transport, such as restlet, spark-rest.
+
+                If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is found, then that is being used.
+|apiComponent | - |The Camel component to use as the REST API (such as swagger)
+|producerComponent | - |The Camel component to use as the REST producer.
+|producerApiDoc | - |The location of the api document (swagger api) the REST producer will use
+                     to validate the REST uri and query parameters are valid accordingly to the api document.
+
+                     This requires adding camel-swagger-java to the classpath, and any miss configuration
+                    will let Camel fail on startup and report the error(s).
+
+                    The location of the api document is loaded from classpath by default, but you can use
+                    `file:` or `http:` to refer to resources to load from file or http url.
+|scheme | http|The scheme to use for exposing the REST service. Usually http or https is supported
+|host |- |The hostname to use for exposing the REST service.
+|apiHost |- |Specific hostname for the API documentation (eg swagger)
+
+             This can be used to override the generated host with this configured hostname
+|port |- |The port number to use for exposing the REST service.
+
+*NOTE*: if you use servlet component then the port number configured here does not apply, as the port number in use is the actual port number the servlet component is using, e.g., if using Apache Tomcat its the tomcat HTTP port, if using Apache Karaf it's the HTTP service in Karaf that uses port 8181 by default etc. Though in those situations setting the port number here, allows tooling and JMX to know the port number, so its recommended to set the port number to the number that the servlet engine uses.`
+
+|contextPath |-|Leading context-path the REST services will be using.
+ This can be used when using components such as SERVLET where the deployed web application is deployed using a
+ context-path.  Or for components such as `camel-jetty` or `camel-netty4-http` that includes a HTTP server.
+|apiContextPath | - |A leading API context-path the REST API services will be using.
+
+                    This can be used when using components such as `camel-servlet` where the deployed web application
+                    is deployed using a context-path.
+|apiContextRouteId | - |Route id to use for the route that services the REST API.
+                        The route will by default use an auto assigned route id.
+|apiContextIdPattern | - |Optional CamelContext id pattern to only allow Rest APIs from rest services within
+  CamelContext's which name matches the pattern.
+
+  The pattern `\#name#` refers to the CamelContext name, to match on the current CamelContext only.
+   For any other value, the pattern uses the rules from {@link org.apache.camel.util.
+   EndpointHelper#matchPattern(String, String)}
+|apiContextListing | - |Sets whether listing of all available CamelContext's with REST services in the JVM is enabled.
+    If enabled it allows to discover these contexts, if <tt>false</tt> then only the current CamelContext is in use.
+|apiVendorExtension | - |Whether vendor extension is enabled in the Rest APIs. If enabled then Camel will include additional information
+                          as vendor extension (eg keys starting with x-) such as route ids, class names etc.
+
+                         Not all 3rd party API gateways and tools supports vendor-extensions when importing your API docs.
+|hostNameResolver | -|From *Camel 2.20*
+If no hostname has been explicit configured, then this resolver is used to compute the hostname the REST service will be using.
+
+The resolver supports:
+
+allLocalIp (from Camel 2.17)
+localHostName
+localIp
+For Camel 2.16.x or older: localHostName
+
+From Camel 2.17: allLocalIp
+|restHostNameResolver | -|Camel 2.19 and before (now called "hostNameResolver")
+|bindingMode | off|Whether binding is in use. See further above for more details.
+|skipBindingOnErrorCode |true |Camel 2.14.1: Whether to skip binding on output if there is a custom HTTP error code header.
+
+                               This allows to build custom error messages that do not bind to JSON/XML etc, as success messages otherwise will do.
+
+                               See below for an example.
+|clientRequestValidation |false |From **Camel 2.22 ** Whether to enable validation of the client request to check
+whether the Content-Type and Accept headers from
+                    the client is supported by the Rest-DSL configuration of its consumes/produces settings.
+
+                  This can be turned on, to enable this check. In case of validation error,
+                  then HTTP Status codes 415 or 406 is returned.
+|enableCORS |false |Camel 2.14.1: Whether to enable CORS headers in the HTTP response.
+|jsonDataFormat |- |Name of specific JSON data format to use. By default json-jackson will be used.
+
+                    *Important:* This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
+
+                    *Note:* Currently Jackson is what we recommend and are using for testing.
+|xmlDataFormat | -|Name of specific XML data format to use. By default jaxb will be used.
+
+                   *Important:* This option is only for setting a custom name of the data format, not to refer to an existing data format instance.
+
+                   *Note:* Currently only jaxb is supported.
+|componentProperty | -|Allows to configure as many additional properties.
+  This is used to configure component specific options such as for Restlet / Spark-Rest etc.
+  The options value can use the # notation to refer to a bean to lookup in
+  the link:../../../../docs/user-manual/en/registry.adoc[Registry]
+|endpointProperty | -|Allows to configure as many additional properties.
+  This is used to configure endpoint specific options for  Restlet / Spark-Rest etc.
+  The options value can use the # notation to refer to a bean to lookup in
+  the link:../../../../docs/user-manual/en/registry.adoc[Registry]
+|consumerProperty |- |Allows to configure as many additional properties.
+  This is used to configure consumer specific options for  Restlet / Spark-Rest etc.
+  The options value can use the # notation to refer to a bean to lookup in
+  the link:../../../../docs/user-manual/en/registry.adoc[Registry]
+|dataFormatProperty |- |Allows to configure as many additional properties.
+  This is used to configure the data format specific options.
+
+                        For example set property prettyPrint=true to have JSON outputted in pretty mode.
+
+                        From Camel 2.14.1: the keys can be prefixed with either:
+
+*json.in.
+
+*json.out.
+
+* xml.in.
+
+* xml.out.
+
+                        to denote that the option is only for either JSON or XML data format, and only for either the in or the out going. For example a key with value xml.out.mustBeJAXBElement is only for the XML data format for the outgoing.
+
+                        A key without a prefix is a common key for all situations.
+
+                        From Camel 2.17: the options value can use the # notation to refer to a bean to lookup in the Registry
+|apiProperties | -|Sets additional options on api level.
+|corsHeaders | -|Allows to configure custom CORS headers.
+|===
+
+
+For example to configure to use the spark-rest component on port 9091, then we can do as follows:
+[source,java]
+----
+restConfiguration().component("spark-rest").port(9091).componentProperty("foo", "123");
+----
+
+And with XML DSL
+[source,xml]
+----
+<restConfiguration component="spark-rest" port="9091">
+  <componentProperty key="foo" value="123"/>
+</restConfiguration>
+----
+
+
+
+If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is found, then that is being used.
+
+
+You can configure properties on these levels.
 
 * component - Is used to set any options on the Component class. You can
 also configure these directly on the component.
@@ -645,6 +783,29 @@ the `/customers/id/orders` do not include a query parameter with
 key `verbose` then Camel will now include a header with key `verbose`
 and the value `false` because it was declared as the default value. This
 functionality is only applicable for query parameters.
+
+
+=== Client Request Validation
+
+From *Camel 2.22* onwards its possible to enable validation of the incoming client request.
+The validation checks for the following:
+
+- Content-Type header matches what the Rest DSL consumes. (Returns HTTP Status 415)
+- Accept header matches what the Rest DSL produces. (Returns HTTP Status 406)
+- Missing required data (query parameters, HTTP headers, body). (Returns HTTP Status 400)
+
+If the validation fails then Rest DSL will return back an empty response
+with a HTTP error code.
+
+The validation is by default turned off (to be backwards compatible).
+It can be turned on via `clientRequestValidation` as shown below:
+
+[source,java]
+----
+restConfiguration().component("jetty").host("localhost")
+    .clientRequestValidation(true);
+----
+
 
 === Integrating a Camel component with Rest DSL
 

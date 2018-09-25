@@ -23,6 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.junit.Test;
 
 /**
  * @version 
@@ -40,6 +41,7 @@ public class EnricherRefTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testEnrichRef() throws Exception {
         cool.whenAnyExchangeReceived(new Processor() {
             public void process(Exchange exchange) throws Exception {

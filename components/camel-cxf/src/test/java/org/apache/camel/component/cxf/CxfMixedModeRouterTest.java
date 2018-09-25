@@ -16,7 +16,6 @@
  */
 
 package org.apache.camel.component.cxf;
-
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;

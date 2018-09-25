@@ -36,6 +36,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,13 +77,18 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
     }
     
     @Override
+    public String getShortName() {
+        return "log";
+    }
+
+    @Override
     public String getLabel() {
         return "log";
     }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        ObjectHelper.notEmpty(message, "message", this);
+        StringHelper.notEmpty(message, "message", this);
 
         // use simple language for the message string to give it more power
         Expression exp = routeContext.getCamelContext().resolveLanguage("simple").createExpression(message);

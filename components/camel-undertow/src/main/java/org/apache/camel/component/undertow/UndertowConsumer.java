@@ -17,7 +17,9 @@
 package org.apache.camel.component.undertow;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.ByteBuffer;
+import java.util.Collection;
 
 import io.undertow.Handlers;
 import io.undertow.server.HttpHandler;
@@ -29,7 +31,6 @@ import io.undertow.util.Methods;
 import io.undertow.util.MimeMappings;
 import io.undertow.util.StatusCodes;
 import io.undertow.websockets.core.WebSocketChannel;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -38,6 +39,8 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.component.undertow.UndertowConstants.EventType;
 import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.util.CollectionStringBuffer;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,14 +95,29 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
         HttpString requestMethod = httpExchange.getRequestMethod();
 
         if (Methods.OPTIONS.equals(requestMethod) && !getEndpoint().isOptionsEnabled()) {
-            String allowedMethods;
-            if (getEndpoint().getHttpMethodRestrict() != null) {
-                allowedMethods = getEndpoint().getHttpMethodRestrict();
-                if (!allowedMethods.contains("OPTIONS")) {
-                    allowedMethods = "OPTIONS," + allowedMethods;
+            CollectionStringBuffer csb = new CollectionStringBuffer(",");
+
+            Collection<HttpHandlerRegistrationInfo> handlers = getEndpoint().getComponent().getHandlers();
+            for (HttpHandlerRegistrationInfo reg : handlers) {
+                URI uri = reg.getUri();
+                // what other HTTP methods may exists for the same path
+                if (reg.getMethodRestrict() != null && getEndpoint().getHttpURI().equals(uri)) {
+                    String restrict = reg.getMethodRestrict();
+                    if (restrict.endsWith(",OPTIONS")) {
+                        restrict = restrict.substring(0, restrict.length() - 8);
+                    }
+                    csb.append(restrict);
                 }
-            } else {
+            }
+            String allowedMethods = csb.toString();
+            if (ObjectHelper.isEmpty(allowedMethods)) {
+                allowedMethods = getEndpoint().getHttpMethodRestrict();
+            }
+            if (ObjectHelper.isEmpty(allowedMethods)) {
                 allowedMethods = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT,PATCH";
+            }
+            if (!allowedMethods.contains("OPTIONS")) {
+                allowedMethods = allowedMethods + ",OPTIONS";
             }
             //return list of allowed methods in response headers
             httpExchange.setStatusCode(StatusCodes.OK);
@@ -134,7 +152,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
         TypeConverter tc = getEndpoint().getCamelContext().getTypeConverter();
 
         if (body == null) {
-            LOG.trace("No payload to send as reply for exchange: " + camelExchange);
+            LOG.trace("No payload to send as reply for exchange: {}", camelExchange);
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_TYPE, MimeMappings.DEFAULT_MIME_MAPPINGS.get("txt"));
             httpExchange.getResponseSender().send("No response available");
         } else {

@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
 /**
  * @version 
@@ -35,6 +36,7 @@ public class EnricherRouteNumberOfProcessorTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testOneProcesssor() throws Exception {
         failed = false;
 
@@ -80,6 +82,7 @@ public class EnricherRouteNumberOfProcessorTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testThreeProcesssors() throws Exception {
         failed = false;
 

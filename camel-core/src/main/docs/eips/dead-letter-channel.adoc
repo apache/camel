@@ -67,13 +67,13 @@ forwarded to the dead letter queue.
 [[DeadLetterChannel-AboutmovingExchangetodeadletterqueueandusinghandled]]
 === About moving Exchange to dead letter queue and using handled
 
-*Handled* on link:dead-letter-channel.html[Dead Letter Channel]
+*Handled* on <<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>>
 
 When all attempts of redelivery have failed the
 link:exchange.html[Exchange] is moved to the dead letter queue (the dead
 letter endpoint). The exchange is then complete and from the client
 point of view it was processed. As such the
-link:dead-letter-channel.html[Dead Letter Channel] have handled the
+<<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>> have handled the
 link:exchange.html[Exchange].
 
 For instance configuring the dead letter channel as:
@@ -103,7 +103,7 @@ And in XML:
 </bean>
 ----
 
-The link:dead-letter-channel.html[Dead Letter Channel] above will clear
+The <<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>> above will clear
 the caused exception (`setException(null)`), by moving the caused
 exception to a property on the link:exchange.html[Exchange], with the
 key `Exchange.EXCEPTION_CAUGHT`. Then the link:exchange.html[Exchange]
@@ -131,7 +131,7 @@ The route listen for JMS messages and validates, transforms and handle
 it. During this the link:exchange.html[Exchange] payload is
 transformed/modified. So in case something goes wrong and we want to
 move the message to another JMS destination, then we can configure our
-link:dead-letter-channel.html[Dead Letter Channel] with the
+<<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>> with the
 *useOriginalMessage* option. But when we move the
 link:exchange.html[Exchange] to this destination we do not know in which
 state the message is in. Did the error happen in before the
@@ -143,7 +143,7 @@ this by enabling the *useOriginalMessage* option as shown below:
 ----
 // will use original body
 errorHandler(deadLetterChannel("jms:queue:dead")
-   .useOriginalMessage().maximumRedeliveries(5).redeliverDelay(5000);
+   .useOriginalMessage().maximumRedeliveries(5).redeliveryDelay(5000);
 ----
 
 Then the messages routed to the `jms:queue:dead` is the original input.
@@ -154,7 +154,7 @@ original we received.
 [[DeadLetterChannel-OnRedelivery]]
 === OnRedelivery
 
-When link:dead-letter-channel.html[Dead Letter Channel] is doing
+When <<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>> is doing
 redeliver its possible to configure a link:processor.html[Processor]
 that is executed just *before* every redelivery attempt. This can be
 used for the situations where you need to alter the message before its
@@ -164,7 +164,7 @@ TIP: *onException and onRedeliver*
 We also support for per link:exception-clause.html[*onException*] to set
 a *onRedeliver*. That means you can do special on redelivery for
 different exceptions, as opposed to onRedelivery set on
-link:dead-letter-channel.html[Dead Letter Channel] can be viewed as a
+<<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>> can be viewed as a
 global scope.
 
 
@@ -176,7 +176,7 @@ Redelivery is disabled by default.
 The default redeliver policy will use the following values:
 
 * maximumRedeliveries=0
-* redeliverDelay=1000L (1 second)
+* redeliveryDelay=1000L (1 second)
 * maximumRedeliveryDelay = 60 * 1000L (60 seconds)
 * And the exponential backoff and collision avoidance is turned off.
 * The retriesExhaustedLogLevel are set to LoggingLevel.ERROR
@@ -384,7 +384,7 @@ The onPrepare is also available using the default error handler.
 *Available as of Camel 2.10.4/2.11*
 
 When Camel error handler handles an error such as
-link:dead-letter-channel.html[Dead Letter Channel] or using
+<<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>> or using
 link:exception-clause.html[Exception Clause] with handled=true, then
 Camel will decorate +
  the link:exchange.html[Exchange] with the route id where the error
@@ -416,7 +416,7 @@ redelivery is allowed or not; notice that any in progress redelivery
 will still be executed. This option can only disallow any redelivery to
 be executed *after* the stopping of a route/shutdown of Camel has been
 triggered. If a redelivery is dissallowed then a
-`RejectedExcutionException` is set on the link:exchange.html[Exchange]
+`RejectedExecutionException` is set on the link:exchange.html[Exchange]
 and the processing of the link:exchange.html[Exchange] stops. This means
 any consumer will see the link:exchange.html[Exchange] as failed due the
 `RejectedExecutionException`.
@@ -444,13 +444,13 @@ We support directly in link:dead-letter-channel.html[Dead Letter
 Channel] to set a link:processor.html[Processor] that is executed
 *before* each redelivery attempt.
 
-When link:dead-letter-channel.html[Dead Letter Channel] is doing
+When <<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>> is doing
 redeliver its possible to configure a link:processor.html[Processor]
 that is executed just *before* every redelivery attempt. This can be
 used for the situations where you need to alter the message before its
 redelivered.
 
-Here we configure the link:dead-letter-channel.html[Dead Letter Channel]
+Here we configure the <<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>>
 to use our processor `MyRedeliveryProcessor` to be executed before each
 redelivery.
 

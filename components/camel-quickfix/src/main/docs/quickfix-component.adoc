@@ -76,7 +76,7 @@ inject the session-related fields into the FIX message.
 ### Options
 
 // component options: START
-The QuickFix component supports 6 options which are listed below.
+The QuickFix component supports 6 options, which are listed below.
 
 
 
@@ -125,6 +125,27 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 7 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.quickfix.configurations* | To use the given map of pre configured QuickFix configurations mapped to the key. The option is a java.util.Map<java.lang.String,org.apache.camel.component .quickfixj.QuickfixjConfiguration> type. |  | String
+| *camel.component.quickfix.enabled* | Enable quickfix component | true | Boolean
+| *camel.component.quickfix.lazy-create-engines* | If set to true, the engines will be created and started when needed (when first message is send) | false | Boolean
+| *camel.component.quickfix.log-factory* | To use the given LogFactory. The option is a quickfix.LogFactory type. |  | String
+| *camel.component.quickfix.message-factory* | To use the given MessageFactory. The option is a quickfix.MessageFactory type. |  | String
+| *camel.component.quickfix.message-store-factory* | To use the given MessageStoreFactory. The option is a quickfix.MessageStoreFactory type. |  | String
+| *camel.component.quickfix.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 ### Exchange Format
 

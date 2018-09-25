@@ -19,6 +19,7 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version 
@@ -28,6 +29,7 @@ public class Issue170Test extends ContextTestSupport {
     protected String qTwo = "mock:Q2";
     protected String qThree = "mock:Q3";
 
+    @Test
     public void testSendMessagesGetCorrectCounts() throws Exception {
         MockEndpoint q2 = getMockEndpoint(qTwo);
         MockEndpoint q3 = getMockEndpoint(qThree);

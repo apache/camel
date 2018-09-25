@@ -62,7 +62,7 @@ public class WebsocketProducer extends DefaultProducer {
             || message instanceof Reader || message instanceof InputStream)) {
             // fallback to use String
             if (LOG.isInfoEnabled()) {
-                LOG.info("Using String for unexpected message type {} ", message.getClass());
+                LOG.info("Using String for unexpected message type {}", message.getClass());
             }
             message = in.getBody(String.class);    
         }

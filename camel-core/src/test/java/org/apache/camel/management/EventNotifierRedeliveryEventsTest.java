@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
-
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -32,6 +31,8 @@ import org.apache.camel.management.event.ExchangeRedeliveryEvent;
 import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -41,6 +42,7 @@ public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
     private static List<EventObject> events = new ArrayList<>();
 
     @Override
+    @Before
     public void setUp() throws Exception {
         events.clear();
         super.setUp();
@@ -77,6 +79,7 @@ public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testExchangeRedeliverySync() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -113,6 +116,7 @@ public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
         assertIsInstanceOf(ExchangeSentEvent.class, events.get(11));
     }
 
+    @Test
     public void testExchangeRedeliveryAsync() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

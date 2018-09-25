@@ -139,37 +139,36 @@ public class CwConfiguration implements Cloneable {
     public void setAmazonCwClient(AmazonCloudWatch amazonCwClient) {
         this.amazonCwClient = amazonCwClient;
     }
-    
-    
-    /**
-     * To define a proxy host when instantiating the CW client
-     */
+
     public String getProxyHost() {
         return proxyHost;
     }
 
+    /**
+     * To define a proxy host when instantiating the CW client
+     */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
     }
 
     /**
      * To define a proxy port when instantiating the CW client
      */
-    public Integer getProxyPort() {
-        return proxyPort;
-    }
-
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
+    }
+
+    public String getRegion() {
+        return region;
     }
 
     /**
      * The region in which CW client needs to work
      */
-    public String getRegion() {
-        return region;
-    }
-
     public void setRegion(String region) {
         this.region = region;
     }

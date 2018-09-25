@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ServiceHelper;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
@@ -30,6 +31,7 @@ import static org.awaitility.Awaitility.await;
  */
 public class SedaConsumerSuspendResumeTest extends ContextTestSupport {
 
+    @Test
     public void testSuspendResume() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:bar");
         mock.expectedMessageCount(1);

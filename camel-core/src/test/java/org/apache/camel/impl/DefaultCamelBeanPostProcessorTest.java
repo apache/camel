@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
-
 import org.apache.camel.Consume;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -28,6 +29,7 @@ public class DefaultCamelBeanPostProcessorTest extends ContextTestSupport {
 
     private DefaultCamelBeanPostProcessor postProcessor;
 
+    @Test
     public void testPostProcessor() throws Exception {
         FooService foo = new FooService();
         foo.setFooEndpoint("seda:input");
@@ -42,7 +44,8 @@ public class DefaultCamelBeanPostProcessorTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         postProcessor = new DefaultCamelBeanPostProcessor(context);
     }

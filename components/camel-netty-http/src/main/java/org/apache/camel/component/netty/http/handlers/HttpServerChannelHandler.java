@@ -35,6 +35,7 @@ import org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration;
 import org.apache.camel.component.netty.http.SecurityAuthenticator;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.ChannelHandlerContext;
@@ -45,9 +46,9 @@ import org.jboss.netty.handler.codec.http.DefaultHttpResponse;
 import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.METHOD_NOT_ALLOWED;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.OK;
@@ -154,7 +155,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
             // drop parameters from url
             if (url.contains("?")) {
-                url = ObjectHelper.before(url, "?");
+                url = StringHelper.before(url, "?");
             }
 
             // we need the relative path without the hostname and port
@@ -254,16 +255,16 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
     protected static HttpPrincipal extractBasicAuthSubject(HttpRequest request) {
         String auth = request.headers().get("Authorization");
         if (auth != null) {
-            String constraint = ObjectHelper.before(auth, " ");
+            String constraint = StringHelper.before(auth, " ");
             if (constraint != null) {
                 if ("Basic".equalsIgnoreCase(constraint.trim())) {
-                    String decoded = ObjectHelper.after(auth, " ");
+                    String decoded = StringHelper.after(auth, " ");
                     // the decoded part is base64 encoded, so we need to decode that
                     ChannelBuffer buf = ChannelBuffers.copiedBuffer(decoded.getBytes());
                     ChannelBuffer out = Base64.decode(buf);
                     String userAndPw = out.toString(Charset.defaultCharset());
-                    String username = ObjectHelper.before(userAndPw, ":");
-                    String password = ObjectHelper.after(userAndPw, ":");
+                    String username = StringHelper.before(userAndPw, ":");
+                    String password = StringHelper.after(userAndPw, ":");
                     HttpPrincipal principal = new HttpPrincipal(username, password);
 
                     LOG.debug("Extracted Basic Auth principal from HTTP header: {}", principal);

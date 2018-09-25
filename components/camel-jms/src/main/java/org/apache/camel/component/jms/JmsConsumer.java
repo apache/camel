@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms;
 
 import java.util.concurrent.ExecutorService;
+
 import javax.jms.Connection;
 
 import org.apache.camel.FailedToCreateConsumerException;

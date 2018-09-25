@@ -32,7 +32,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
@@ -79,7 +81,6 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Rule;
 import org.slf4j.Logger;
@@ -98,7 +99,6 @@ public abstract class CamelTestSupport extends TestSupport {
     public static final String ROUTE_COVERAGE_ENABLED = "CamelTestRouteCoverage";
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelTestSupport.class);
-    private static final ThreadLocal<Boolean> INIT = new ThreadLocal<>();
     private static ThreadLocal<ModelCamelContext> threadCamelContext = new ThreadLocal<>();
     private static ThreadLocal<ProducerTemplate> threadTemplate = new ThreadLocal<>();
     private static ThreadLocal<FluentProducerTemplate> threadFluentTemplate = new ThreadLocal<>();
@@ -114,6 +114,7 @@ public abstract class CamelTestSupport extends TestSupport {
     private final DebugBreakpoint breakpoint = new DebugBreakpoint();
     private final StopWatch watch = new StopWatch();
     private final Map<String, String> fromEndpoints = new HashMap<>();
+    private final AtomicInteger tests = new AtomicInteger(0);
     private CamelTestWatcher camelTestWatcher = new CamelTestWatcher();
 
     /**
@@ -253,21 +254,29 @@ public abstract class CamelTestSupport extends TestSupport {
         log.info("********************************************************************************");
 
         if (isCreateCamelContextPerClass()) {
-            // test is per class, so only setup once (the first time)
-            boolean first = INIT.get() == null;
-            if (first) {
-                doSpringBootCheck();
-                doPreSetup();
-                doSetUp();
-                doPostSetup();
-            } else {
-                // and in between tests we must do IoC and reset mocks
-                postProcessTest();
-                resetMocks();
+            while (true) {
+                int v = tests.get();
+                if (tests.compareAndSet(v, v + 1)) {
+                    if (v == 0) {
+                        // test is per class, so only setup once (the first time)
+                        doSpringBootCheck();
+                        setupResources();
+                        doPreSetup();
+                        doSetUp();
+                        doPostSetup();
+                    } else {
+                        // and in between tests we must do IoC and reset mocks
+                        postProcessTest();
+                        resetMocks();
+                    }
+
+                    break;
+                }
             }
         } else {
             // test is per test so always setup
             doSpringBootCheck();
+            setupResources();
             doPreSetup();
             doSetUp();
             doPostSetup();
@@ -389,8 +398,6 @@ public abstract class CamelTestSupport extends TestSupport {
         log.debug("Routing Rules are: " + context.getRoutes());
 
         assertValidContext(context);
-
-        INIT.set(true);
     }
 
     private void replaceFromEndpoints() throws Exception {
@@ -446,13 +453,53 @@ public abstract class CamelTestSupport extends TestSupport {
         log.info("********************************************************************************");
 
         if (isCreateCamelContextPerClass()) {
-            // we tear down in after class
-            return;
-        }
+            while (true) {
+                int v = tests.get();
+                if (v <= 0) {
+                    LOG.warn("Test already teared down");
+                    break;
+                }
 
-        LOG.debug("tearDown test");
-        doStopTemplates(consumer, template, fluentTemplate);
-        doStopCamelContext(context, camelContextService);
+                if (tests.compareAndSet(v, v - 1)) {
+                    if (v == 1) {
+                        LOG.debug("tearDown test");
+                        doStopTemplates(threadConsumer.get(), threadTemplate.get(), threadFluentTemplate.get());
+                        doStopCamelContext(threadCamelContext.get(), threadService.get());
+                        doPostTearDown();
+                        cleanupResources();
+                    }
+
+                    break;
+                }
+            }
+        } else {
+            LOG.debug("tearDown test");
+            doStopTemplates(consumer, template, fluentTemplate);
+            doStopCamelContext(context, camelContextService);
+            doPostTearDown();
+            cleanupResources();
+        }
+    }
+
+    /**
+     * Strategy to perform any post action, after {@link CamelContext} is stopped
+     */
+    protected void doPostTearDown() throws Exception {
+        // noop
+    }
+
+    /**
+     * Strategy to perform resources setup, before {@link CamelContext} is created
+     */
+    protected void setupResources() throws Exception {
+        // noop
+    }
+
+    /**
+     * Strategy to perform resources cleanup, after {@link CamelContext} is stopped
+     */
+    protected void cleanupResources() throws Exception {
+        // noop
     }
 
     /**
@@ -550,14 +597,6 @@ public abstract class CamelTestSupport extends TestSupport {
         }
 
         return processorsForRoute;
-    }
-
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception {
-        INIT.remove();
-        LOG.debug("tearDownAfterClass test");
-        doStopTemplates(threadConsumer.get(), threadTemplate.get(), threadFluentTemplate.get());
-        doStopCamelContext(threadCamelContext.get(), threadService.get());
     }
 
     /**

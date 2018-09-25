@@ -19,12 +19,14 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Advice with using to string matching
  */
 public class AdviceWithTasksToStringPatternTest extends ContextTestSupport {
 
+    @Test
     public void testUnknownId() throws Exception {
         try {
             context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
@@ -39,6 +41,7 @@ public class AdviceWithTasksToStringPatternTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testReplace() throws Exception {
         // START SNIPPET: e1
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
@@ -62,6 +65,7 @@ public class AdviceWithTasksToStringPatternTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRemove() throws Exception {
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
@@ -80,6 +84,7 @@ public class AdviceWithTasksToStringPatternTest extends ContextTestSupport {
         assertTrue("Should have removed mock:bar endpoint", context.hasEndpoint("mock:bar") == null);
     }
 
+    @Test
     public void testBefore() throws Exception {
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
             @Override
@@ -98,6 +103,7 @@ public class AdviceWithTasksToStringPatternTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAfter() throws Exception {
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
             @Override

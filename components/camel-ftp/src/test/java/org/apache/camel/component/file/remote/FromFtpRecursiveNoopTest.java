@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.remote;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -32,6 +32,7 @@ public class FromFtpRecursiveNoopTest extends FtpServerTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
 

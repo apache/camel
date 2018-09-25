@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.TimerListener;
+import org.junit.Test;
 
 /**
  *
@@ -36,6 +37,7 @@ public class TimerListenerManagerTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testTimerListenerManager() throws Exception {
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         TimerListenerManager manager = new TimerListenerManager();

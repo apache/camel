@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -58,6 +59,11 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
 
     public DelayDefinition(Expression delay) {
         super(delay);
+    }
+
+    @Override
+    public String getShortName() {
+        return "delay";
     }
 
     @Override

@@ -52,8 +52,10 @@ import org.apache.camel.impl.DefaultAttachment;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CollectionHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -258,7 +260,7 @@ public class MailBinding {
                 LOG.debug("Unsupported encoding detected: {}", uee.getMessage());
                 try {
                     String contentType = message.getContentType();
-                    String type = ObjectHelper.before(contentType, "charset=");
+                    String type = StringHelper.before(contentType, "charset=");
                     if (type != null) {
                         // try again with fixed content type
                         LOG.debug("Trying to extract mail message again with fixed Content-Type: {}", type);
@@ -314,7 +316,7 @@ public class MailBinding {
                 extractAttachmentsFromMultipart((Multipart) part.getContent(), map);
             } else {
                 String disposition = part.getDisposition();
-                String fileName = part.getFileName();
+                String fileName = FileUtil.stripPath(part.getFileName());
 
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Part #{}: Disposition: {}", i, disposition);
@@ -330,7 +332,11 @@ public class MailBinding {
                     LOG.debug("Mail contains file attachment: {}", fileName);
                     if (!map.containsKey(fileName)) {
                         // Parts marked with a disposition of Part.ATTACHMENT are clearly attachments
-                        DefaultAttachment camelAttachment = new DefaultAttachment(part.getDataHandler());
+                        final DataHandler dataHandler = part.getDataHandler();
+                        final DataSource dataSource = dataHandler.getDataSource();
+
+                        final DataHandler replacement = new DataHandler(new DelegatingDataSource(fileName, dataSource));
+                        DefaultAttachment camelAttachment = new DefaultAttachment(replacement);
                         @SuppressWarnings("unchecked")
                         Enumeration<Header> headers = part.getAllHeaders();
                         while (headers.hasMoreElements()) {

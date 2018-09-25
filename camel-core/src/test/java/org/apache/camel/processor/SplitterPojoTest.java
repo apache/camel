@@ -29,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * @version 
@@ -42,6 +43,7 @@ public class SplitterPojoTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testSplitBodyWithPojoBean() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.reset();
@@ -52,6 +54,7 @@ public class SplitterPojoTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testSplitMessageWithPojoBean() throws Exception {
         String users[] = {"James", "Jonathan", "Hadrian", "Claus", "Willem"};
         MockEndpoint mock = getMockEndpoint("mock:result");

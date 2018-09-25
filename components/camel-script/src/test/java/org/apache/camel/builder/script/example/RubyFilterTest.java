@@ -18,6 +18,7 @@ package org.apache.camel.builder.script.example;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -26,11 +27,13 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class RubyFilterTest extends XPathFilterTest {
 
     @Override
+    @Test
     public void testSendMatchingMessage() throws Exception {
         super.testSendMatchingMessage();
     }
 
     @Override
+    @Test
     public void testSendNotMatchingMessage() throws Exception {
         super.testSendNotMatchingMessage();
     }

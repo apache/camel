@@ -102,7 +102,7 @@ public class VelocityEndpoint extends ResourceEndpoint {
                 InputStream reader = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), getPropertiesFile());
                 try {
                     properties.load(reader);
-                    log.info("Loaded the velocity configuration file " + getPropertiesFile());
+                    log.info("Loaded the velocity configuration file {}", getPropertiesFile());
                 } finally {
                     IOHelper.close(reader, getPropertiesFile(), log);
                 }
@@ -192,7 +192,7 @@ public class VelocityEndpoint extends ResourceEndpoint {
             exchange.getIn().removeHeader(VelocityConstants.VELOCITY_TEMPLATE);
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Velocity content read from resource {} with resourceUri: {} for endpoint {}", new Object[]{getResourceUri(), path, getEndpointUri()});
+                log.debug("Velocity content read from resource {} with resourceUri: {} for endpoint {}", getResourceUri(), path, getEndpointUri());
             }
             reader = getEncoding() != null ? new InputStreamReader(getResourceAsInputStream(), getEncoding()) : new InputStreamReader(getResourceAsInputStream());
         }

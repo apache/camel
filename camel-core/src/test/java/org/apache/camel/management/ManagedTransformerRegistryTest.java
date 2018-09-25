@@ -30,12 +30,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ManagedTransformerRegistryTest extends ManagementTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ManagedTransformerRegistryTest.class);
 
+    @Test
     public void testManageTransformerRegistry() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
         if (isPlatform("aix")) {

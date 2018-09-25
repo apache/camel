@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -23,6 +22,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.idempotent.FileIdempotentRepository;
 import org.apache.camel.spi.IdempotentRepository;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
@@ -33,7 +34,8 @@ public class FileIdempotentClearTest extends ContextTestSupport {
     private IdempotentRepository<String> repo;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // delete file store before testing
         if (store.exists()) {
             store.delete();
@@ -43,6 +45,7 @@ public class FileIdempotentClearTest extends ContextTestSupport {
         super.setUp();
     }
 
+    @Test
     public void testClear() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Foo", "Bar");

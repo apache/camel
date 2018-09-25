@@ -19,12 +19,14 @@ package org.apache.camel.component.properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class PropertiesComponentEIPChoiceSimpleTest extends ContextTestSupport {
 
+    @Test
     public void testChoice() throws Exception {
         getMockEndpoint("mock:camel").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:other").expectedBodiesReceived("Hello World");

@@ -19,14 +19,15 @@ package org.apache.camel.component.undertow;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.net.ssl.SSLContext;
 
 import io.undertow.server.HttpHandler;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Consumer;
@@ -42,6 +43,7 @@ import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.spi.RestProducerFactoryHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.IntrospectionSupport;
@@ -60,7 +62,8 @@ import org.slf4j.LoggerFactory;
 public class UndertowComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, VerifiableComponent, SSLContextParametersAware {
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
 
-    private Map<UndertowHostKey, UndertowHost> undertowRegistry = new ConcurrentHashMap<>();
+    private final Map<UndertowHostKey, UndertowHost> undertowRegistry = new ConcurrentHashMap<>();
+    private final Set<HttpHandlerRegistrationInfo> handlers = new HashSet<>();
 
     @Metadata(label = "advanced")
     private UndertowHttpBinding undertowHttpBinding;
@@ -83,8 +86,6 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        new HashMap<>(parameters);
-
         URI uriHttpUriAddress = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(remaining));
         URI endpointUri = URISupport.createRemainingURI(uriHttpUriAddress, parameters);
 
@@ -298,6 +299,11 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
             url = url + "?" + query;
         }
 
+        // there are cases where we might end up here without component being created beforehand
+        // we need to abide by the component properties specified in the parameters when creating
+        // the component
+        RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.get("component"));
+
         UndertowEndpoint endpoint = camelContext.getEndpoint(url, UndertowEndpoint.class);
         if (parameters != null && !parameters.isEmpty()) {
             setProperties(camelContext, endpoint, parameters);
@@ -328,6 +334,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         final UndertowHost host = undertowRegistry.computeIfAbsent(key, k -> createUndertowHost(k));
 
         host.validateEndpointURI(uri);
+        handlers.add(registrationInfo);
         return host.registerHandler(registrationInfo, handler);
     }
 
@@ -335,6 +342,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         final URI uri = registrationInfo.getUri();
         final UndertowHostKey key = new UndertowHostKey(uri.getHost(), uri.getPort(), sslContext);
         final UndertowHost host = undertowRegistry.get(key);
+        handlers.remove(registrationInfo);
         host.unregisterHandler(registrationInfo);
     }
 
@@ -395,5 +403,9 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
 
     protected String getComponentName() {
         return "undertow";
+    }
+
+    public Set<HttpHandlerRegistrationInfo> getHandlers() {
+        return handlers;
     }
 }

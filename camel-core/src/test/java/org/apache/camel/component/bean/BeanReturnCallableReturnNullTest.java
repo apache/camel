@@ -17,6 +17,7 @@
 package org.apache.camel.component.bean;
 
 import java.util.concurrent.Callable;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
@@ -24,9 +25,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
 public class BeanReturnCallableReturnNullTest extends ContextTestSupport {
 
+    @Test
     public void testBeanReturnCallable() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("StartMyBean");

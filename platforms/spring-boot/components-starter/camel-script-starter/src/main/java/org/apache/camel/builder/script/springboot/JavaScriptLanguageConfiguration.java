@@ -32,6 +32,11 @@ public class JavaScriptLanguageConfiguration
             LanguageConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the javaScript language. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Whether to trim the value to remove leading and trailing whitespaces and
      * line breaks
      */

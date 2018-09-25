@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.kafka;
-
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;

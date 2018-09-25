@@ -21,12 +21,14 @@ import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Test;
 
 /**
  *
  */
 public class XsltSaxonTest extends TestSupport {
 
+    @Test
     public void testSaxon() throws Exception {
         try {
             RouteBuilder builder = createRouteBuilder();

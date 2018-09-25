@@ -53,7 +53,7 @@ public class SparkConsumer extends DefaultConsumer {
         boolean matchOnUriPrefix = getEndpoint().getSparkConfiguration().isMatchOnUriPrefix();
 
         if (accept != null) {
-            log.debug("Spark-rest: {}({}) accepting: {}", new Object[]{verb, path, accept});
+            log.debug("Spark-rest: {}({}) accepting: {}", verb, path, accept);
         } else {
             log.debug("Spark-rest: {}({})", verb, path);
         }

@@ -59,18 +59,14 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (14 parameters):
+==== Query Parameters (13 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *clientId* (producer) | To use google premium with this client id |  | String
-| *clientKey* (producer) | To use google premium with this client key |  | String
 | *headersOnly* (producer) | Whether to only enrich the Exchange with headers, and leave the body as-is. | false | boolean
 | *language* (producer) | The language to use. | en | String
-| *httpClientConfigurer* (advanced) | Register a custom configuration strategy for new HttpClient instances created by producers or consumers such as to configure authentication mechanisms etc |  | HttpClientConfigurer
-| *httpConnectionManager* (advanced) | To use a custom HttpConnectionManager to manage connections |  | HttpConnectionManager
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *proxyAuthDomain* (proxy) | Domain for proxy NTML authentication |  | String
 | *proxyAuthHost* (proxy) | Optional host for proxy NTML authentication |  | String
@@ -79,8 +75,27 @@ with the following path and query parameters:
 | *proxyAuthUsername* (proxy) | Username for proxy authentication |  | String
 | *proxyHost* (proxy) | The proxy host name |  | String
 | *proxyPort* (proxy) | The proxy port number |  | Integer
+| *apiKey* (security) | To use google apiKey |  | String
+| *clientId* (security) | To use google premium with this client id |  | String
+| *clientKey* (security) | To use google premium with this client key |  | String
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.geocoder.enabled* | Enable geocoder component | true | Boolean
+| *camel.component.geocoder.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 
 
@@ -121,6 +136,8 @@ Exchange.
 |`CamelGeoCoderCountryLong` |The country long name.
 
 |`CamelGeoCoderCountryShort` |The country short name.
+
+|`CamelGeoCoderPostalCode` |The postal code.
 |=======================================================================
 
 Notice not all headers may be provided depending on available data and
