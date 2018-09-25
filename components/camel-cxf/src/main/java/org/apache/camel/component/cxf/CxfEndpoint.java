@@ -127,8 +127,8 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     @UriParam(label = "advanced")
     protected Bus bus;
 
-    private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
     protected volatile boolean createBus;
+    private final AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
 
     private BindingConfiguration bindingConfig;
     private DataBinding dataBinding;
