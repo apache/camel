@@ -195,9 +195,6 @@ public class BeanInfoTest extends Assert {
         public void inOnlyMethod() {
         }
 
-        public void robustInOnlyMethod() {
-        }
-
         public Object inOutMethod() {
             return null;
         }

@@ -53,9 +53,6 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     private String beanType;
     @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean cache;
-    @XmlAttribute
-    @Deprecated
-    private Boolean multiParameterArray;
     @XmlTransient
     private Class<?> beanClass;
     @XmlTransient
@@ -163,20 +160,6 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     public void setCache(Boolean cache) {
         this.cache = cache;
     }
-    
-    public Boolean getMultiParameterArray() {
-        return multiParameterArray;
-    }
-
-    /**
-     * Whether the message body is an array type.
-     *
-     * @deprecated is to be replaced with a better solution in Camel 3.0
-     */
-    @Deprecated
-    public void setMultiParameterArray(Boolean multiParameterArray) {
-        this.multiParameterArray = multiParameterArray;
-    }
 
     // Fluent API
     //-------------------------------------------------------------------------
@@ -261,11 +244,6 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
             answer = new BeanProcessor(beanHolder);
         }
         
-        // check for multiParameterArray setting
-        if (multiParameterArray != null) {
-            answer.setMultiParameterArray(multiParameterArray);
-        }
-
         // check for method exists
         if (method != null) {
             answer.setMethod(method);

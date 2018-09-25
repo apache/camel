@@ -43,10 +43,6 @@ public class BeanEndpoint extends DefaultEndpoint {
     @UriParam(label = "advanced", description = "If enabled, Camel will cache the result of the first Registry look-up."
             + " Cache can be enabled if the bean in the Registry is defined as a singleton scope.")
     private Boolean cache;
-    @UriParam(label = "advanced", description = "How to treat the parameters which are passed from the message body."
-            + "true means the message body should be an array of parameters.")
-    @Deprecated @Metadata(deprecationNode = "This option is used internally by Camel, and is not intended for end users to use.")
-    private boolean multiParameterArray;
     @UriParam(prefix = "bean.", label = "advanced", description = "Used for configuring additional properties on the bean", multiValue = true)
     private Map<String, Object> parameters;
 
@@ -102,7 +98,6 @@ public class BeanEndpoint extends DefaultEndpoint {
             if (method != null) {
                 processor.setMethod(method);
             }
-            processor.setMultiParameterArray(isMultiParameterArray());
             processor.setCache(cache);
             if (parameters != null) {
                 setProperties(processor, parameters);
@@ -128,23 +123,6 @@ public class BeanEndpoint extends DefaultEndpoint {
      */
     public void setBeanName(String beanName) {
         this.beanName = beanName;
-    }
-
-    public boolean isMultiParameterArray() {
-        return multiParameterArray;
-    }
-
-    /**
-     * How to treat the parameters which are passed from the message body;
-     * if it is true, the message body should be an array of parameters.
-     * <p/>
-     * Note: This option is used internally by Camel, and is not intended for end users to use.
-     *
-     * @deprecated this option is used internally by Camel, and is not intended for end users to use
-     */
-    @Deprecated
-    public void setMultiParameterArray(boolean mpArray) {
-        multiParameterArray = mpArray;
     }
 
     public boolean isCache() {

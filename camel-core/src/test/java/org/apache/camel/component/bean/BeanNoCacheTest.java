@@ -46,7 +46,7 @@ public class BeanNoCacheTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .bean(MyCoolBean.class, "doSomething", false, false)
+                    .bean(MyCoolBean.class, "doSomething", false)
                     .to("mock:result");
             }
         };

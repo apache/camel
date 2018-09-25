@@ -149,7 +149,6 @@ public class BeanEndpointTest extends ContextTestSupport {
         final BeanEndpoint endpoint = new BeanEndpoint();
         endpoint.setCamelContext(context);
         endpoint.setCache(true);
-        endpoint.setMultiParameterArray(false);
 
         endpoint.setBeanName("foo");
         endpoint.setMethod("hello");

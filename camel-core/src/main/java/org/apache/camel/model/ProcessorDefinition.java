@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -869,20 +868,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * <a href="http://camel.apache.org/exchange-pattern.html">ExchangePattern:</a>
-     * set the exchange's ExchangePattern {@link ExchangePattern} to be InOnly
-     * <p/>
-     * The pattern set on the {@link Exchange} will be changed from this point going foward.
-     *
-     * @return the builder
-     * @deprecated use {@link #setExchangePattern(org.apache.camel.ExchangePattern)} instead
-     */
-    @Deprecated
-    public Type inOnly() {
-        return setExchangePattern(ExchangePattern.InOnly);
-    }
-
-    /**
      * Sends the message to the given endpoint using an
      * <a href="http://camel.apache.org/event-message.html">Event Message</a> or
      * <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange pattern</a>
@@ -950,18 +935,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type inOnly(Iterable<Endpoint> endpoints) {
         return to(ExchangePattern.InOnly, endpoints);
-    }
-
-    /**
-     * <a href="http://camel.apache.org/exchange-pattern.html">ExchangePattern:</a>
-     * set the exchange's ExchangePattern {@link ExchangePattern} to be InOut
-     *
-     * @return the builder
-     * @deprecated use {@link #setExchangePattern(org.apache.camel.ExchangePattern)} instead
-     */
-    @Deprecated
-    public Type inOut() {
-        return setExchangePattern(ExchangePattern.InOut);
     }
 
     /**
@@ -1795,75 +1768,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Creates a routing slip allowing you to route a message consecutively through a series of processing
      * steps where the sequence of steps is not known at design time and can vary for each message.
      * <p/>
-     * The list of URIs will be split based on the default delimiter {@link RoutingSlipDefinition#DEFAULT_DELIMITER}
-     * <p/>
-     * The route slip will be evaluated <i>once</i>, use {@link #dynamicRouter()} if you need even more dynamic routing.
-     *
-     * @param header  is the header that the {@link org.apache.camel.processor.RoutingSlip RoutingSlip}
-     *                class will look in for the list of URIs to route the message to.
-     * @return the builder
-     * @deprecated prefer to use {@link #routingSlip(org.apache.camel.Expression)} instead
-     */
-    @Deprecated
-    public Type routingSlip(String header) {
-        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<>(header);
-        addOutput(answer);
-        return (Type) this;
-    }
-    
-    /**
-     * <a href="http://camel.apache.org/routing-slip.html">Routing Slip EIP:</a>
-     * Creates a routing slip allowing you to route a message consecutively through a series of processing
-     * steps where the sequence of steps is not known at design time and can vary for each message.
-     * <p/>
-     * The route slip will be evaluated <i>once</i>, use {@link #dynamicRouter()} if you need even more dynamic routing.
-     *
-     * @param header  is the header that the {@link org.apache.camel.processor.RoutingSlip RoutingSlip}
-     *                class will look in for the list of URIs to route the message to.
-     * @param uriDelimiter  is the delimiter that will be used to split up
-     *                      the list of URIs in the routing slip.
-     * @param ignoreInvalidEndpoints if this parameter is true, routingSlip will ignore the endpoints which
-     *                               cannot be resolved or a producer cannot be created or started 
-     * @return the builder
-     * @deprecated prefer to use {@link #routingSlip()} instead
-     */
-    @Deprecated
-    public Type routingSlip(String header, String uriDelimiter, boolean ignoreInvalidEndpoints) {
-        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<>(header, uriDelimiter);
-        answer.setIgnoreInvalidEndpoints(ignoreInvalidEndpoints);
-        addOutput(answer);
-        return (Type) this;
-    }
-
-    /**
-     * <a href="http://camel.apache.org/routing-slip.html">Routing Slip EIP:</a>
-     * Creates a routing slip allowing you to route a message consecutively through a series of processing
-     * steps where the sequence of steps is not known at design time and can vary for each message.
-     * <p/>
-     * The list of URIs will be split based on the default delimiter {@link RoutingSlipDefinition#DEFAULT_DELIMITER}
-     * <p/>
-     * The route slip will be evaluated <i>once</i>, use {@link #dynamicRouter()} if you need even more dynamic routing.
-     *
-     * @param header  is the header that the {@link org.apache.camel.processor.RoutingSlip RoutingSlip}
-     *                class will look in for the list of URIs to route the message to.
-     * @param ignoreInvalidEndpoints if this parameter is true, routingSlip will ignore the endpoints which
-     *                               cannot be resolved or a producer cannot be created or started 
-     * @return the builder
-     * @deprecated prefer to use {@link #routingSlip()} instead
-     */
-    @Deprecated
-    public Type routingSlip(String header, boolean ignoreInvalidEndpoints) {
-        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<>(header);
-        answer.setIgnoreInvalidEndpoints(ignoreInvalidEndpoints);
-        addOutput(answer);
-        return (Type) this;
-    }
-    
-    /**
-     * <a href="http://camel.apache.org/routing-slip.html">Routing Slip EIP:</a>
-     * Creates a routing slip allowing you to route a message consecutively through a series of processing
-     * steps where the sequence of steps is not known at design time and can vary for each message.
-     * <p/>
      * The route slip will be evaluated <i>once</i>, use {@link #dynamicRouter()} if you need even more dynamic routing.
      *
      * @param expression  to decide the destinations
@@ -2626,24 +2530,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     /**
      * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
-     * Adds the custom processor reference to this destination which could be a final
-     * destination, or could be a transformation in a pipeline
-     *
-     * @param ref   reference to a {@link Processor} to lookup in the registry
-     * @return the builder
-     * @deprecated use {@link #process(String)}
-     */
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    public Type processRef(String ref) {
-        ProcessDefinition answer = new ProcessDefinition();
-        answer.setRef(ref);
-        addOutput(answer);
-        return (Type) this;
-    }
-
-    /**
-     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds the custom processor using a fluent builder to this destination which could be a final
      * destination, or could be a transformation in a pipeline
      *
@@ -2776,49 +2662,23 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         addOutput(answer);
         return (Type) this;
     }
-    
-    /**
-     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
-     * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
-     *
-     * @param beanType  the bean class, Camel will instantiate an object at runtime
-     * @param method  the method name to invoke on the bean (can be used to avoid ambiguity)
-     * @param multiParameterArray if it is true, camel will treat the message body as an object array which holds
-     *  the multi parameter 
-     * @return the builder
-     * @deprecated the option multiParameterArray is deprecated
-     */
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    public Type bean(Class<?> beanType, String method, boolean multiParameterArray) {
-        BeanDefinition answer = new BeanDefinition();
-        answer.setBeanType(beanType);
-        answer.setMethod(method);
-        answer.setMultiParameterArray(multiParameterArray);
-        addOutput(answer);
-        return (Type) this;
-    }
 
     /**
      * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
-     * @param beanType  the bean class, Camel will instantiate an object at runtime
+     * @param  beanType  the bean class, Camel will instantiate an object at runtime
      * @param method  the method name to invoke on the bean (can be used to avoid ambiguity)
-     * @param multiParameterArray if it is true, camel will treat the message body as an object array which holds
-     *  the multi parameter
      * @param cache  if enabled, Camel will cache the result of the first Registry look-up.
      *               Cache can be enabled if the bean in the Registry is defined as a singleton scope.
+     *  the multi parameter
      * @return the builder
-     * @deprecated the option multiParameterArray is deprecated
      */
     @SuppressWarnings("unchecked")
-    @Deprecated
-    public Type bean(Class<?> beanType, String method, boolean multiParameterArray, boolean cache) {
+    public Type bean(Class<?> beanType, String method, boolean cache) {
         BeanDefinition answer = new BeanDefinition();
         answer.setBeanType(beanType);
         answer.setMethod(method);
-        answer.setMultiParameterArray(multiParameterArray);
         answer.setCache(cache);
         addOutput(answer);
         return (Type) this;
@@ -3333,72 +3193,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * The difference between this and {@link #pollEnrich(String)} is that this uses a producer
      * to obtain the additional data, where as pollEnrich uses a polling consumer.
      *
-     * @param resourceRef            Reference of resource endpoint for obtaining additional data.
-     * @param aggregationStrategyRef Reference of aggregation strategy to aggregate input data and additional data.
-     * @return the builder
-     * @see org.apache.camel.processor.Enricher
-     * @deprecated use enrich with a <tt>ref:id</tt> as the resourceUri parameter.
-     */
-    @Deprecated
-    public Type enrichRef(String resourceRef, String aggregationStrategyRef) {
-        return enrichRef(resourceRef, aggregationStrategyRef, false);
-    }
-
-    /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
-     * enriches an exchange with additional data obtained from a <code>resourceUri</code>.
-     * <p/>
-     * The difference between this and {@link #pollEnrich(String)} is that this uses a producer
-     * to obtain the additional data, where as pollEnrich uses a polling consumer.
-     *
-     * @param resourceRef            Reference of resource endpoint for obtaining additional data.
-     * @param aggregationStrategyRef Reference of aggregation strategy to aggregate input data and additional data.
-     * @param aggregateOnException   whether to call {@link org.apache.camel.processor.aggregate.AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
-     *                               an exception was thrown.
-     * @return the builder
-     * @see org.apache.camel.processor.Enricher
-     * @deprecated use enrich with a <tt>ref:id</tt> as the resourceUri parameter.
-     */
-    @Deprecated
-    public Type enrichRef(String resourceRef, String aggregationStrategyRef, boolean aggregateOnException) {
-        return enrichRef(resourceRef, aggregationStrategyRef, false, false);
-    }
-
-    /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
-     * enriches an exchange with additional data obtained from a <code>resourceUri</code>.
-     * <p/>
-     * The difference between this and {@link #pollEnrich(String)} is that this uses a producer
-     * to obtain the additional data, where as pollEnrich uses a polling consumer.
-     *
-     * @param resourceRef            Reference of resource endpoint for obtaining additional data.
-     * @param aggregationStrategyRef Reference of aggregation strategy to aggregate input data and additional data.
-     * @param aggregateOnException   whether to call {@link org.apache.camel.processor.aggregate.AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
-     *                               an exception was thrown.
-     * @param shareUnitOfWork        whether to share unit of work
-     * @return the builder
-     * @see org.apache.camel.processor.Enricher
-     * @deprecated use enrich with a <tt>ref:id</tt> as the resourceUri parameter.
-     */
-    @Deprecated
-    @SuppressWarnings("unchecked")
-    public Type enrichRef(String resourceRef, String aggregationStrategyRef, boolean aggregateOnException, boolean shareUnitOfWork) {
-        EnrichDefinition answer = new EnrichDefinition();
-        answer.setExpression(new SimpleExpression("ref:" + resourceRef));
-        answer.setAggregationStrategyRef(aggregationStrategyRef);
-        answer.setAggregateOnException(aggregateOnException);
-        answer.setShareUnitOfWork(shareUnitOfWork);
-        addOutput(answer);
-        return (Type) this;
-    }
-
-    /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
-     * enriches an exchange with additional data obtained from a <code>resourceUri</code>.
-     * <p/>
-     * The difference between this and {@link #pollEnrich(String)} is that this uses a producer
-     * to obtain the additional data, where as pollEnrich uses a polling consumer.
-     *
      * @return a expression builder clause to set the expression to use for computing the endpoint to use
      * @see org.apache.camel.processor.PollEnricher
      */
@@ -3609,69 +3403,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public Type pollEnrich(@AsEndpointUri String resourceUri, long timeout) {
         return pollEnrich(resourceUri, timeout, (String) null);
-    }
-
-    /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
-     * enriches an exchange with additional data obtained from a <code>resourceUri</code>
-     * using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
-     * <p/>
-     * The difference between this and {@link #enrich(String)} is that this uses a consumer
-     * to obtain the additional data, where as enrich uses a producer.
-     * <p/>
-     * The timeout controls which operation to use on {@link org.apache.camel.PollingConsumer}.
-     * If timeout is negative, we use <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt>
-     * otherwise we use <tt>receive(timeout)</tt>.
-     *
-     * @param resourceRef            Reference of resource endpoint for obtaining additional data.
-     * @param timeout                timeout in millis to wait at most for data to be available.
-     * @param aggregationStrategyRef Reference of aggregation strategy to aggregate input data and additional data.
-     * @return the builder
-     * @see org.apache.camel.processor.PollEnricher
-     * @deprecated use pollEnrich with a <tt>ref:id</tt> as the resourceUri parameter.
-     */
-    @Deprecated
-    @SuppressWarnings("unchecked")
-    public Type pollEnrichRef(String resourceRef, long timeout, String aggregationStrategyRef) {
-        PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
-        pollEnrich.setExpression(new SimpleExpression("ref:" + resourceRef));
-        pollEnrich.setTimeout(timeout);
-        pollEnrich.setAggregationStrategyRef(aggregationStrategyRef);
-        addOutput(pollEnrich);
-        return (Type) this;
-    }
-
-    /**
-     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
-     * enriches an exchange with additional data obtained from a <code>resourceUri</code>
-     * using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
-     * <p/>
-     * The difference between this and {@link #enrich(String)} is that this uses a consumer
-     * to obtain the additional data, where as enrich uses a producer.
-     * <p/>
-     * The timeout controls which operation to use on {@link org.apache.camel.PollingConsumer}.
-     * If timeout is negative, we use <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt>
-     * otherwise we use <tt>receive(timeout)</tt>.
-     *
-     * @param resourceRef            Reference of resource endpoint for obtaining additional data.
-     * @param timeout                timeout in millis to wait at most for data to be available.
-     * @param aggregationStrategyRef Reference of aggregation strategy to aggregate input data and additional data.
-     * @param aggregateOnException   whether to call {@link org.apache.camel.processor.aggregate.AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
-     *                               an exception was thrown.
-     * @return the builder
-     * @see org.apache.camel.processor.PollEnricher
-     * @deprecated use pollEnrich with a <tt>ref:id</tt> as the resourceUri parameter.
-     */
-    @Deprecated
-    @SuppressWarnings("unchecked")
-    public Type pollEnrichRef(String resourceRef, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
-        PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
-        pollEnrich.setExpression(new SimpleExpression("ref:" + resourceRef));
-        pollEnrich.setTimeout(timeout);
-        pollEnrich.setAggregationStrategyRef(aggregationStrategyRef);
-        pollEnrich.setAggregateOnException(aggregateOnException);
-        addOutput(pollEnrich);
-        return (Type) this;
     }
 
     /**
