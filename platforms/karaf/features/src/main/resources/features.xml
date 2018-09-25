@@ -1830,6 +1830,7 @@
     <feature version='${project.version}'>camel-reactive-streams</feature>
     <bundle dependency='true'>mvn:org.reactivestreams/reactive-streams/${reactive-streams-version}</bundle>
     <bundle dependency='true'>mvn:io.projectreactor/reactor-core/${reactor-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:io.micrometer/micrometer-core/${micrometer-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-reactor/${project.version}</bundle>
   </feature>
   <feature name='camel-restlet' version='${project.version}' resolver='(obr)' start-level='50'>
