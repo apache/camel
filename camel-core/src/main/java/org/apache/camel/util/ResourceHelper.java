@@ -200,28 +200,6 @@ public final class ResourceHelper {
     }
 
     /**
-     * Resolves the mandatory resource.
-     * <p/>
-     * If possible recommended to use {@link #resolveMandatoryResourceAsUrl(org.apache.camel.spi.ClassResolver, String)}
-     *
-     * @param classResolver the class resolver to load the resource from the classpath
-     * @param uri URI of the resource
-     * @return the resource as an {@link InputStream}.  Remember to close this stream after usage.
-     * @throws java.io.IOException is thrown if the resource file could not be found or loaded as {@link InputStream}
-     * @deprecated use {@link #resolveMandatoryResourceAsInputStream(CamelContext, String)}
-     */
-    @Deprecated
-    public static InputStream resolveMandatoryResourceAsInputStream(ClassResolver classResolver, String uri) throws IOException {
-        InputStream is = resolveResourceAsInputStream(classResolver, uri);
-        if (is == null) {
-            String resolvedName = resolveUriPath(uri);
-            throw new FileNotFoundException("Cannot find resource: " + resolvedName + " in classpath for URI: " + uri);
-        } else {
-            return is;
-        }
-    }
-
-    /**
      * Resolves the resource.
      * <p/>
      * If possible recommended to use {@link #resolveMandatoryResourceAsUrl(org.apache.camel.spi.ClassResolver, String)}

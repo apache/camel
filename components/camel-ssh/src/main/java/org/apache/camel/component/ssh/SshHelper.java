@@ -82,7 +82,7 @@ public final class SshHelper {
             final String certResource = configuration.getCertResource();
             if (certResource != null) {
                 LOG.debug("Attempting to authenticate using ResourceKey '{}'...", certResource);
-                keyPairProvider = new ResourceHelperKeyPairProvider(new String[]{certResource}, endpoint.getCamelContext().getClassResolver());
+                keyPairProvider = new ResourceHelperKeyPairProvider(new String[]{certResource}, endpoint.getCamelContext());
             } else {
                 keyPairProvider = configuration.getKeyPairProvider();
             }

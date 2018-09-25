@@ -56,8 +56,6 @@ public class ValidatorEndpoint extends DefaultEndpoint {
     private SchemaFactory schemaFactory;
     @UriParam(label = "advanced", description = "To use a custom org.apache.camel.processor.validation.ValidatorErrorHandler. The default error handler captures the errors and throws an exception.")
     private ValidatorErrorHandler errorHandler = new DefaultValidationErrorHandler();
-    @UriParam(label = "advanced", description = "Whether DOMSource/DOMResult or SaxSource/SaxResult should be used by the validator.")
-    private boolean useDom;
     @UriParam(defaultValue = "true", label = "advanced",
             description = "Whether the Schema instance should be shared or not. This option is introduced to work around a JDK 1.6.x bug. Xerces should not have this issue.")
     private boolean useSharedSchema = true;
@@ -140,7 +138,6 @@ public class ValidatorEndpoint extends DefaultEndpoint {
 
     protected void configureValidator(ValidatingProcessor validator) throws Exception {
         validator.setErrorHandler(getErrorHandler());
-        validator.setUseDom(isUseDom());
         validator.setUseSharedSchema(isUseSharedSchema());
         validator.setFailOnNullBody(isFailOnNullBody());
         validator.setFailOnNullHeader(isFailOnNullHeader());
@@ -192,17 +189,6 @@ public class ValidatorEndpoint extends DefaultEndpoint {
      */
     public void setErrorHandler(ValidatorErrorHandler errorHandler) {
         this.errorHandler = errorHandler;
-    }
-
-    public boolean isUseDom() {
-        return useDom;
-    }
-
-    /**
-     * Whether DOMSource/DOMResult or SaxSource/SaxResult should be used by the validator.
-     */
-    public void setUseDom(boolean useDom) {
-        this.useDom = useDom;
     }
 
     public boolean isUseSharedSchema() {

@@ -65,7 +65,6 @@ public class ValidatingProcessor implements AsyncProcessor {
     private final SchemaReader schemaReader;
     private ValidatorErrorHandler errorHandler = new DefaultValidationErrorHandler();
     private final XmlConverter converter = new XmlConverter();
-    private boolean useDom;
     private boolean useSharedSchema = true;
     private boolean failOnNullBody = true;
     private boolean failOnNullHeader = true;
@@ -265,21 +264,6 @@ public class ValidatingProcessor implements AsyncProcessor {
         this.errorHandler = errorHandler;
     }
 
-    @Deprecated
-    public boolean isUseDom() {
-        return useDom;
-    }
-
-    /**
-     * Sets whether DOMSource and DOMResult should be used.
-     *
-     * @param useDom true to use DOM otherwise
-     */
-    @Deprecated
-    public void setUseDom(boolean useDom) {
-        this.useDom = useDom;
-    }
-
     public boolean isUseSharedSchema() {
         return useSharedSchema;
     }
@@ -380,11 +364,6 @@ public class ValidatingProcessor implements AsyncProcessor {
      * </ul>
      */
     protected Source getSource(Exchange exchange, Object content) {
-        if (isUseDom()) {
-            // force DOM
-            return exchange.getContext().getTypeConverter().tryConvertTo(DOMSource.class, exchange, content);
-        }
-
         // body or header may already be a source
         if (content instanceof Source) {
             return (Source) content;

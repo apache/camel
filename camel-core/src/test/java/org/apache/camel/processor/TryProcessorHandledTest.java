@@ -77,11 +77,10 @@ public class TryProcessorHandledTest extends ContextTestSupport {
                     .doTry()
                         .process(new ProcessorFail())
                         .to("mock:result")
-                    // catch IOExcption that we do not want to handle, eg the caller should get the error back
+                    // catch IOException that we do not want to handle, eg the caller should get the error back
                     .doCatch(IOException.class)
-                        // mark this as NOT handled, eg the caller will also get the exception
-                        .handled(false)
                         .to("mock:io")
+                        .rethrow()
                     .doCatch(Exception.class)
                         // and catch all other exceptions
                         // they are handled by default (ie handled = true)

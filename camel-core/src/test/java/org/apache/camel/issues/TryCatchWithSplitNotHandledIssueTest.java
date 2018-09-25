@@ -63,8 +63,9 @@ public class TryCatchWithSplitNotHandledIssueTest extends ContextTestSupport {
                     .doTry()
                         .to("bean:error")
                         .to("mock:result")
-                    .doCatch(Exception.class).handled(false)
+                    .doCatch(Exception.class)
                         .to("mock:error")
+                        .rethrow()
                     .end();
             }
 

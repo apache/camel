@@ -70,6 +70,7 @@ RemovePropertyDefinition
 RemovePropertiesDefinition
 ResequenceDefinition
 RestContextRefDefinition
+RethrowDefinition
 RollbackDefinition
 RouteBuilderDefinition
 RouteDefinition

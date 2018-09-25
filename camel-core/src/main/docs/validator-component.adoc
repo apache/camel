@@ -85,7 +85,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (11 parameters):
+==== Query Parameters (10 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -100,7 +100,6 @@ with the following path and query parameters:
 | *schemaFactory* (advanced) | To use a custom javax.xml.validation.SchemaFactory |  | SchemaFactory
 | *schemaLanguage* (advanced) | Configures the W3C XML Schema Namespace URI. | http://www.w3.org/2001/XMLSchema | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| *useDom* (advanced) | Whether DOMSource/DOMResult or SaxSource/SaxResult should be used by the validator. | false | boolean
 | *useSharedSchema* (advanced) | Whether the Schema instance should be shared or not. This option is introduced to work around a JDK 1.6.x bug. Xerces should not have this issue. | true | boolean
 |===
 // endpoint options: END
