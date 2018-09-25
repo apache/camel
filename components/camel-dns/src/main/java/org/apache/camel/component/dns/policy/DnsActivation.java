@@ -59,10 +59,12 @@ public class DnsActivation {
     }
 
     public void setResolvesTo(List<String> resolvesTo) {
+        this.resolvesTo = new ArrayList<>();
         this.resolvesTo.addAll(resolvesTo);
     }
 
     public void setResolvesTo(String resolvesTo) {
+        this.resolvesTo = new ArrayList<>();
         this.resolvesTo.add(resolvesTo);
     }
 
