@@ -184,10 +184,14 @@ public class DnsActivationPolicy extends RoutePolicySupport {
         }
     }
 
+    protected boolean isActive() throws Exception {
+        return dnsActivation.isActive();
+    }
+
     class DnsActivationTask extends TimerTask {
         public void run() {
             try {
-                if (dnsActivation.isActive()) {
+                if (isActive()) {
                     startRoutes();
                 } else {
                     stopRoutes();
