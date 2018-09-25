@@ -40,7 +40,7 @@ public class DnsActivation {
     private static final transient Logger LOG = LoggerFactory.getLogger(DnsActivation.class);
 
     private String hostname;
-    private final List<String> resolvesTo = new ArrayList<>();
+    private List<String> resolvesTo = new ArrayList<>();
 
     public DnsActivation() {
     }
