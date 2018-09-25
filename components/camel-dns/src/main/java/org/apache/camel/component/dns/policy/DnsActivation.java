@@ -54,12 +54,20 @@ public class DnsActivation {
         this.hostname = hostname;
     }
 
+    public String getHostname() {
+        return hostname;
+    }
+
     public void setResolvesTo(List<String> resolvesTo) {
         this.resolvesTo.addAll(resolvesTo);
     }
 
     public void setResolvesTo(String resolvesTo) {
         this.resolvesTo.add(resolvesTo);
+    }
+
+    public List<String> getResolvesTo() {
+        return resolvesTo;
     }
 
     public boolean isActive() throws Exception {
