@@ -22,8 +22,9 @@ import java.io.InputStreamReader;
 import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
-import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.CamelContext;
 import org.apache.camel.util.ResourceHelper;
 import org.apache.sshd.common.keyprovider.AbstractKeyPairProvider;
 import org.apache.sshd.common.util.io.IoUtils;
@@ -32,7 +33,6 @@ import org.bouncycastle.openssl.PEMDecryptorProvider;
 import org.bouncycastle.openssl.PEMEncryptedKeyPair;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
-import org.bouncycastle.openssl.PasswordFinder;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.bouncycastle.openssl.jcajce.JcePEMDecryptorProviderBuilder;
 import org.slf4j.Logger;
@@ -49,33 +49,33 @@ import org.slf4j.LoggerFactory;
 public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    private ClassResolver classResolver;
+    private CamelContext camelContext;
     private String[] resources;
-    private PasswordFinder passwordFinder;
+    private Supplier<char[]> passwordFinder;
 
     public ResourceHelperKeyPairProvider() {
     }
 
     public ResourceHelperKeyPairProvider(String[] resources,
-                                         ClassResolver classResolver) {
-        this.classResolver = classResolver;
+                                         CamelContext camelContext) {
+        this.camelContext = camelContext;
         this.resources = resources;
     }
 
     public ResourceHelperKeyPairProvider(String[] resources,
-                                         PasswordFinder passwordFinder,
-                                         ClassResolver classResolver) {
-        this.classResolver = classResolver;
+                                         Supplier<char[]> passwordFinder,
+                                         CamelContext camelContext) {
+        this.camelContext = camelContext;
         this.resources = resources;
         this.passwordFinder = passwordFinder;
     }
 
-    public ClassResolver getClassResolver() {
-        return classResolver;
+    public CamelContext getCamelContext() {
+        return camelContext;
     }
 
-    public void setClassResolver(ClassResolver classResolver) {
-        this.classResolver = classResolver;
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     public String[] getResources() {
@@ -86,11 +86,11 @@ public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
         this.resources = resources;
     }
 
-    public PasswordFinder getPasswordFinder() {
+    public Supplier<char[]> getPasswordFinder() {
         return passwordFinder;
     }
 
-    public void setPasswordFinder(PasswordFinder passwordFinder) {
+    public void setPasswordFinder(Supplier<char[]> passwordFinder) {
         this.passwordFinder = passwordFinder;
     }
 
@@ -108,7 +108,7 @@ public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
             InputStreamReader isr = null;
             InputStream is = null;
             try {
-                is = ResourceHelper.resolveMandatoryResourceAsInputStream(classResolver, resource);
+                is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, resource);
                 isr = new InputStreamReader(is);
                 r = new PEMParser(isr);
 
@@ -118,7 +118,7 @@ public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
                 pemConverter.setProvider("BC");
                 if (passwordFinder != null && o instanceof PEMEncryptedKeyPair) {
                     JcePEMDecryptorProviderBuilder decryptorBuilder = new JcePEMDecryptorProviderBuilder();
-                    PEMDecryptorProvider pemDecryptor = decryptorBuilder.build(passwordFinder.getPassword());
+                    PEMDecryptorProvider pemDecryptor = decryptorBuilder.build(passwordFinder.get());
                     o = pemConverter.getKeyPair(((PEMEncryptedKeyPair) o).decryptKeyPair(pemDecryptor));
                 }
                 

@@ -38,8 +38,6 @@ public class MsvEndpoint extends ValidatorEndpoint {
     protected void configureValidator(ValidatingProcessor validator) throws Exception {
         super.configureValidator(validator);
         validator.setSchemaLanguage(XMLConstants.RELAXNG_NS_URI);
-        // must use Dom for Msv to work
-        validator.setUseDom(true);
     }
 
     @Override

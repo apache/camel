@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -168,51 +169,13 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     }
 
     /**
-     * Sets whether the exchange should be marked as handled or not.
+     * Rethrow the exception that has been caught by Camel.
      *
-     * @param handled  handled or not
      * @return the builder
-     * @deprecated will be removed in Camel 3.0. Instead of using handled(false) you can re-throw the exception
-     * from a {@link Processor} or use the {@link ProcessorDefinition#throwException(Exception)}
      */
-    @Deprecated
-    public TryDefinition handled(boolean handled) {
-        Expression expression = ExpressionBuilder.constantExpression(Boolean.toString(handled));
-        return handled(expression);
-    }
-
-    /**
-     * Sets whether the exchange should be marked as handled or not.
-     *
-     * @param handled  predicate that determines true or false
-     * @return the builder
-     * @deprecated will be removed in Camel 3.0. Instead of using handled(false) you can re-throw the exception
-     * from a {@link Processor} or use the {@link ProcessorDefinition#throwException(Exception)}
-     */
-    @Deprecated
-    public TryDefinition handled(@AsPredicate Predicate handled) {
-        // we must use a delegate so we can use the fluent builder based on TryDefinition
-        // to configure all with try .. catch .. finally
-        // set the handled on all the catch definitions
-        Iterator<CatchDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(getOutputs(), CatchDefinition.class);
-        while (it.hasNext()) {
-            CatchDefinition doCatch = it.next();
-            doCatch.setHandledPolicy(handled);
-        }
+    public TryDefinition rethrow() {
+        addOutput(new RethrowDefinition());
         return this;
-    }
-
-    /**
-     * Sets whether the exchange should be marked as handled or not.
-     *
-     * @param handled  expression that determines true or false
-     * @return the builder
-     * @deprecated will be removed in Camel 3.0. Instead of using handled(false) you can re-throw the exception
-     * from a {@link Processor} or use the {@link ProcessorDefinition#throwException(Exception)}
-     */
-    @Deprecated
-    public TryDefinition handled(@AsPredicate Expression handled) {
-        return handled(ExpressionToPredicateAdapter.toPredicate(handled));
     }
 
     // Properties
