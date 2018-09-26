@@ -121,6 +121,10 @@ public class DnsActivationPolicy extends RoutePolicySupport {
         dnsActivation.setHostname(hostname);
     }
 
+    public String getHostname() {
+        return dnsActivation.getHostname();
+    }
+
     public void setResolvesTo(List<String> resolvesTo) {
         dnsActivation.setResolvesTo(resolvesTo);
     }
@@ -129,8 +133,20 @@ public class DnsActivationPolicy extends RoutePolicySupport {
         dnsActivation.setResolvesTo(resolvesTo);
     }
 
+    public List<String> getResolvesTo() {
+        return dnsActivation.getResolvesTo();
+    }
+
+    public void setTtl(long ttl) throws Exception {
+        this.ttl = ttl;
+    }
+
     public void setTtl(String ttl) throws Exception {
         this.ttl = Long.parseLong(ttl);
+    }
+
+    public long getTtl() throws Exception {
+        return ttl;
     }
 
     public void setStopRoutesOnException(String stopRoutesOnException) throws Exception {
@@ -184,10 +200,14 @@ public class DnsActivationPolicy extends RoutePolicySupport {
         }
     }
 
+    protected boolean isActive() throws Exception {
+        return dnsActivation.isActive();
+    }
+
     class DnsActivationTask extends TimerTask {
         public void run() {
             try {
-                if (dnsActivation.isActive()) {
+                if (isActive()) {
                     startRoutes();
                 } else {
                     stopRoutes();
