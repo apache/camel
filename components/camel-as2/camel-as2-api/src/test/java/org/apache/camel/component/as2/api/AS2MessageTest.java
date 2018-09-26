@@ -366,105 +366,105 @@ public class AS2MessageTest {
 
     @Test
     public void aes128CbcEnvelopedMessageTest() throws Exception {
-        envelopeddMessageTest(AS2EncryptionAlgorithm.AES128_CBC);
+        envelopedMessageTest(AS2EncryptionAlgorithm.AES128_CBC);
     }
     
     @Test
     public void aes192CbcEnvelopedMessageTest() throws Exception {
-        envelopeddMessageTest(AS2EncryptionAlgorithm.AES192_CBC);
+        envelopedMessageTest(AS2EncryptionAlgorithm.AES192_CBC);
     }
     
     @Test
     public void aes256CbcEnvelopedMessageTest() throws Exception {
-        envelopeddMessageTest(AS2EncryptionAlgorithm.AES256_CBC);
+        envelopedMessageTest(AS2EncryptionAlgorithm.AES256_CBC);
     }
     
     @Test
     public void aes128CcmEnvelopedMessageTest() throws Exception {
-        envelopeddMessageTest(AS2EncryptionAlgorithm.AES128_CCM);
+        envelopedMessageTest(AS2EncryptionAlgorithm.AES128_CCM);
     }
     
     @Test
     public void aes192CcmEnvelopedMessageTest() throws Exception {
-        envelopeddMessageTest(AS2EncryptionAlgorithm.AES192_CCM);
+        envelopedMessageTest(AS2EncryptionAlgorithm.AES192_CCM);
     }
     
     @Test
     public void aes256CcmEnvelopedMessageTest() throws Exception {
-        envelopeddMessageTest(AS2EncryptionAlgorithm.AES256_CCM);
+        envelopedMessageTest(AS2EncryptionAlgorithm.AES256_CCM);
     }
     
     @Test
     public void aes128GcmEnvelopedMessageTest() throws Exception {
-        envelopeddMessageTest(AS2EncryptionAlgorithm.AES128_GCM);
+        envelopedMessageTest(AS2EncryptionAlgorithm.AES128_GCM);
     }
     
     @Test
     public void aes192GcmEnvelopedMessageTest() throws Exception {
-        envelopeddMessageTest(AS2EncryptionAlgorithm.AES192_GCM);
+        envelopedMessageTest(AS2EncryptionAlgorithm.AES192_GCM);
     }
     
     @Test
     public void aes256GcmEnvelopedMessageTest() throws Exception {
-        envelopeddMessageTest(AS2EncryptionAlgorithm.AES256_GCM);
+        envelopedMessageTest(AS2EncryptionAlgorithm.AES256_GCM);
     }
     
     @Test
     public void camellia128CbcEnvelopedMessageTest() throws Exception {
-        envelopeddMessageTest(AS2EncryptionAlgorithm.CAMELLIA128_CBC);
+        envelopedMessageTest(AS2EncryptionAlgorithm.CAMELLIA128_CBC);
     }
     
     @Test
     public void camellia192CbcEnvelopedMessageTest() throws Exception {
-        envelopeddMessageTest(AS2EncryptionAlgorithm.CAMELLIA192_CBC);
+        envelopedMessageTest(AS2EncryptionAlgorithm.CAMELLIA192_CBC);
     }
     
     @Test
     public void camellia256CbcEnvelopedMessageTest() throws Exception {
-        envelopeddMessageTest(AS2EncryptionAlgorithm.CAMELLIA256_CBC);
+        envelopedMessageTest(AS2EncryptionAlgorithm.CAMELLIA256_CBC);
     }
     
     @Test
     public void cast5CbcEnvelopedMessageTest() throws Exception {
-        envelopeddMessageTest(AS2EncryptionAlgorithm.CAST5_CBC);
+        envelopedMessageTest(AS2EncryptionAlgorithm.CAST5_CBC);
     }
     
     @Test
     public void desCbcEnvelopedMessageTest() throws Exception {
-        envelopeddMessageTest(AS2EncryptionAlgorithm.DES_CBC);
+        envelopedMessageTest(AS2EncryptionAlgorithm.DES_CBC);
     }
     
     @Test
     public void desEde3CbcEnvelopedMessageTest() throws Exception {
-        envelopeddMessageTest(AS2EncryptionAlgorithm.DES_EDE3_CBC);
+        envelopedMessageTest(AS2EncryptionAlgorithm.DES_EDE3_CBC);
     }
     
     @Test
     public void cost28147GcfbEnvelopedMessageTest() throws Exception {
-        envelopeddMessageTest(AS2EncryptionAlgorithm.GOST28147_GCFB);
+        envelopedMessageTest(AS2EncryptionAlgorithm.GOST28147_GCFB);
     }
     
     @Test
     public void ideaCbcEnvelopedMessageTest() throws Exception {
-        envelopeddMessageTest(AS2EncryptionAlgorithm.IDEA_CBC);
+        envelopedMessageTest(AS2EncryptionAlgorithm.IDEA_CBC);
     }
     
     @Test
     public void rc2CbcEnvelopedMessageTest() throws Exception {
-        envelopeddMessageTest(AS2EncryptionAlgorithm.RC2_CBC);
+        envelopedMessageTest(AS2EncryptionAlgorithm.RC2_CBC);
     }
     
     @Test
     public void rc4EnvelopedMessageTest() throws Exception {
-        envelopeddMessageTest(AS2EncryptionAlgorithm.RC4);
+        envelopedMessageTest(AS2EncryptionAlgorithm.RC4);
     }
     
     @Test
     public void seedCbcEnvelopedMessageTest() throws Exception {
-        envelopeddMessageTest(AS2EncryptionAlgorithm.SEED_CBC);
+        envelopedMessageTest(AS2EncryptionAlgorithm.SEED_CBC);
     }
 
-    public void envelopeddMessageTest(AS2EncryptionAlgorithm encryptionAlgorithm) throws Exception {
+    public void envelopedMessageTest(AS2EncryptionAlgorithm encryptionAlgorithm) throws Exception {
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN,
                 TARGET_HOST, TARGET_PORT);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
@@ -516,6 +516,80 @@ public class AS2MessageTest {
         assertFalse("Enveloped mime type set as main body of request", ediEntity.isMainBody());
         assertEquals("Unexpected content for enveloped mime part", EDI_MESSAGE.replaceAll("[\n\r]", ""),
                 ediEntity.getEdiMessage().replaceAll("[\n\r]", ""));
+
+    }
+
+    @Test
+    public void aes128CbcEnvelopedAndSignedMessageTest() throws Exception {
+        envelopedAndSignedMessageTest(AS2EncryptionAlgorithm.AES128_CBC);
+    }
+    
+    public void envelopedAndSignedMessageTest(AS2EncryptionAlgorithm encryptionAlgorithm) throws Exception {
+        AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN,
+                TARGET_HOST, TARGET_PORT);
+        AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
+        
+        LOG.info("Key Algoritm: " + signingKP.getPrivate().getAlgorithm());
+
+        HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
+                AS2MessageStructure.ENCRYPTED_SIGNED, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII),
+                null, certList.toArray(new Certificate[0]), signingKP.getPrivate(), DISPOSITION_NOTIFICATION_TO,
+                SIGNED_RECEIPT_MIC_ALGORITHMS, encryptionAlgorithm, certList.toArray(new Certificate[0]),
+                signingKP.getPrivate());
+
+        HttpRequest request = httpContext.getRequest();
+        assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
+        assertEquals("Unexpected request URI value", REQUEST_URI, request.getRequestLine().getUri());
+        assertEquals("Unexpected HTTP version value", HttpVersion.HTTP_1_1,
+                request.getRequestLine().getProtocolVersion());
+
+        assertEquals("Unexpected subject value", SUBJECT, request.getFirstHeader(AS2Header.SUBJECT).getValue());
+        assertEquals("Unexpected from value", FROM, request.getFirstHeader(AS2Header.FROM).getValue());
+        assertEquals("Unexpected AS2 version value", AS2_VERSION,
+                request.getFirstHeader(AS2Header.AS2_VERSION).getValue());
+        assertEquals("Unexpected AS2 from value", AS2_NAME, request.getFirstHeader(AS2Header.AS2_FROM).getValue());
+        assertEquals("Unexpected AS2 to value", AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue());
+        assertTrue("Unexpected message id value",
+                request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"));
+        assertEquals("Unexpected target host value", TARGET_HOST + ":" + TARGET_PORT,
+                request.getFirstHeader(AS2Header.TARGET_HOST).getValue());
+        assertEquals("Unexpected user agent value", USER_AGENT,
+                request.getFirstHeader(AS2Header.USER_AGENT).getValue());
+        assertNotNull("Date value missing", request.getFirstHeader(AS2Header.DATE));
+        assertNotNull("Content length value missing", request.getFirstHeader(AS2Header.CONTENT_LENGTH));
+        assertTrue("Unexpected content type for message",
+                request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MimeType.APPLICATION_PKCS7_MIME));
+
+        assertTrue("Request does not contain entity", request instanceof BasicHttpEntityEnclosingRequest);
+        HttpEntity entity = ((BasicHttpEntityEnclosingRequest) request).getEntity();
+        assertNotNull("Request does not contain entity", entity);
+        assertTrue("Unexpected request entity type", entity instanceof ApplicationPkcs7MimeEntity);
+        ApplicationPkcs7MimeEntity envelopedEntity = (ApplicationPkcs7MimeEntity) entity;
+        assertTrue("Entity not set as main body of request", envelopedEntity.isMainBody());
+
+        // Validated enveloped part.
+        MimeEntity encryptedEntity = envelopedEntity.getEncryptedEntity(signingKP.getPrivate());
+        assertTrue("Enveloped mime part incorrect type ", encryptedEntity instanceof MultipartSignedEntity);
+        MultipartSignedEntity multipartSignedEntity = (MultipartSignedEntity) encryptedEntity;
+        assertTrue("Unexpected content type for enveloped mime part",
+                multipartSignedEntity.getContentType().getValue().startsWith(AS2MediaType.MULTIPART_SIGNED));
+        assertFalse("Enveloped mime type set as main body of request", multipartSignedEntity.isMainBody());
+        assertTrue("Request contains invalid number of mime parts", multipartSignedEntity.getPartCount() == 2);
+
+        // Validated first mime part.
+        assertTrue("First mime part incorrect type ", multipartSignedEntity.getPart(0) instanceof ApplicationEDIFACTEntity);
+        ApplicationEDIFACTEntity ediEntity = (ApplicationEDIFACTEntity) multipartSignedEntity.getPart(0);
+        assertTrue("Unexpected content type for first mime part",
+                ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT));
+        assertFalse("First mime type set as main body of request", ediEntity.isMainBody());
+
+        // Validate second mime part.
+        assertTrue("Second mime part incorrect type ",
+                multipartSignedEntity.getPart(1) instanceof ApplicationPkcs7SignatureEntity);
+        ApplicationPkcs7SignatureEntity signatureEntity = (ApplicationPkcs7SignatureEntity) multipartSignedEntity.getPart(1);
+        assertTrue("Unexpected content type for second mime part",
+                signatureEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_PKCS7_SIGNATURE));
+        assertFalse("First mime type set as main body of request", signatureEntity.isMainBody());
 
     }
 
