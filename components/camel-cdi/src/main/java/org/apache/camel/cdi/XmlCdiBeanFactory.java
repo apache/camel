@@ -62,6 +62,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.cdi.AnyLiteral.ANY;
 import static org.apache.camel.cdi.ApplicationScopedLiteral.APPLICATION_SCOPED;
+import static org.apache.camel.cdi.CdiSpiHelper.createCamelContextWithTCCL;
 import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
 import static org.apache.camel.cdi.ResourceHelper.getResource;
 import static org.apache.camel.cdi.Startup.Literal.STARTUP;
@@ -109,7 +110,7 @@ final class XmlCdiBeanFactory {
                 ApplicationContextFactoryBean app = (ApplicationContextFactoryBean) node;
                 Set<SyntheticBean<?>> beans = new HashSet<>();
                 for (CamelContextFactoryBean factory : app.getContexts()) {
-                    SyntheticBean<?> bean = camelContextBean(factory, url);
+                    SyntheticBean<?> bean = camelContextBean(factory, url, annotatedType);
                     beans.add(bean);
                     beans.addAll(camelContextBeans(factory, bean, url));
                 }
@@ -137,7 +138,7 @@ final class XmlCdiBeanFactory {
             } else if (node instanceof CamelContextFactoryBean) {
                 CamelContextFactoryBean factory = (CamelContextFactoryBean) node;
                 Set<SyntheticBean<?>> beans = new HashSet<>();
-                SyntheticBean<?> bean = camelContextBean(factory, url);
+                SyntheticBean<?> bean = camelContextBean(factory, url, annotatedType);
                 beans.add(bean);
                 beans.addAll(camelContextBeans(factory, bean, url));
                 return beans;
@@ -152,7 +153,7 @@ final class XmlCdiBeanFactory {
         return emptySet();
     }
 
-    private SyntheticBean<?> camelContextBean(CamelContextFactoryBean factory, URL url) {
+    private SyntheticBean<?> camelContextBean(CamelContextFactoryBean factory, URL url, AnnotatedType annotatedType) {
         Set<Annotation> annotations = new HashSet<>();
         annotations.add(ANY);
         if (hasId(factory)) {
@@ -167,11 +168,13 @@ final class XmlCdiBeanFactory {
         annotations.add(APPLICATION_SCOPED);
         SyntheticAnnotated annotated = new SyntheticAnnotated(DefaultCamelContext.class,
             manager.createAnnotatedType(DefaultCamelContext.class).getTypeClosure(),
+            annotatedType.getJavaClass(),
             annotations);
+
         return new SyntheticBean<>(manager, annotated, DefaultCamelContext.class,
             environment.camelContextInjectionTarget(
                 new SyntheticInjectionTarget<>(() -> {
-                    DefaultCamelContext context = new DefaultCamelContext();
+                    DefaultCamelContext context = createCamelContextWithTCCL(DefaultCamelContext::new, annotated);
                     factory.setContext(context);
                     factory.setBeanManager(manager);
                     return context;
