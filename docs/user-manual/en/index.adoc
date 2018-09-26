@@ -1,0 +1,107 @@
+//
+// Licensed under the Apache License, Version 2.0 (the "License"[];
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+= Apache Camel - User Manual
+Apache Software Foundation
+:doctype: article
+:toc: left
+:toclevels: 3
+:toc-position: left
+:toc-title: Table of Contents
+:numbered:
+:homepage: https://unomi.apache.org
+
+image::camel-logo.png[pdfwidth=35%,align=center]
+
+include::getting-started.adoc[]
+
+include::book-getting-started.adoc[]
+
+include::architecture.adoc[]
+
+include::async.adoc[]
+
+include::asynchronous-routing-engine.adoc[]
+
+include::backlogdebugger.adoc[]
+
+include::bam.adoc[]
+
+include::batch-consumer.adoc[]
+
+include::browsable-endpoint.adoc[]
+
+include::camel-core.adoc[]
+
+include::camelcontext.adoc[]
+
+include::cep.adoc[]
+
+include::component.adoc[]
+
+include::debugger.adoc[]
+
+include::delay-interceptor.adoc[]
+
+include::dependency-injection.adoc[]
+
+include::dozer-type-conversion.adoc[]
+
+include::dsl.adoc[]
+
+include::java-dsl.adoc[]
+
+include::spring.adoc[]
+
+include::using-osgi-blueprint-with-camel.adoc[]
+
+include::groovy-dsl.adoc[]
+
+include::scala-dsl.adoc[]
+
+include::scala-dsl-getting-started.adoc[]
+
+include::scala-dsl-eip.adoc[]
+
+include::scala-dsl-supported-languages.adoc[]
+
+include::bean-integration.adoc[]
+
+include::endpoint.adoc[]
+
+include::error-handler.adoc[]
+
+include::exchange.adoc[]
+
+include::exchange-pattern.adoc[]
+
+include::expression.adoc[]
+
+include::injector.adoc[]
+
+include::intercept.adoc[]
+
+include::inversion-of-control-with-smart-defaults.adoc[]
+
+include::lifecycle.adoc[]
+
+include::oncompletion.adoc[]
+
+include::predicate.adoc[]
+
+include::registry.adoc[]
+
+include::route-builder.adoc[]
+
+include::routes.adoc[]
