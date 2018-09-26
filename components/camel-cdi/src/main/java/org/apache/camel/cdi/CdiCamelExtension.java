@@ -24,9 +24,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Collections.newSetFromMap;
@@ -271,15 +274,22 @@ public class CdiCamelExtension implements Extension {
             .forEach(contextQualifiers::addAll);
 
         // From the @ContextName qualifiers on RoutesBuilder and RouteContainer beans
-        cdiBeans.stream()
+        List<Bean<?>> routeBeans = cdiBeans.stream()
             .filter(hasType(RoutesBuilder.class).or(hasType(RouteContainer.class)))
-            .map(Bean::getQualifiers)
-            .flatMap(Set::stream)
-            .filter(isAnnotationType(ContextName.class))
-            .filter(name -> !contextQualifiers.contains(name))
-            .peek(contextQualifiers::add)
-            .map(name -> camelContextBean(manager, ANY, name, APPLICATION_SCOPED))
-            .forEach(extraBeans::add);
+            .filter(bean -> bean.getQualifiers()
+                .stream()
+                .filter(isAnnotationType(ContextName.class).and(name -> !contextQualifiers.contains(name)))
+                .peek(contextQualifiers::add)
+                .count() > 0
+            )
+            .collect(Collectors.toList());
+
+        for (Bean<?> bean : routeBeans) {
+            Optional<Annotation> annotation = bean.getQualifiers()
+                .stream()
+                .filter(isAnnotationType(ContextName.class)).findFirst();
+            extraBeans.add(camelContextBean(manager, bean.getBeanClass(), ANY, annotation.get(), APPLICATION_SCOPED));
+        }
 
         Set<Bean<?>> allBeans = concat(cdiBeans.stream(), extraBeans.stream())
             .collect(toSet());
@@ -289,7 +299,7 @@ public class CdiCamelExtension implements Extension {
 
         if (contexts.size() == 0 && shouldDeployDefaultCamelContext(allBeans)) {
             // Add @Default Camel context bean if any
-            extraBeans.add(camelContextBean(manager, ANY, DEFAULT, APPLICATION_SCOPED));
+            extraBeans.add(camelContextBean(manager, null, ANY, DEFAULT, APPLICATION_SCOPED));
         } else if (contexts.size() == 1) {
             // Add the @Default qualifier if there is only one Camel context bean
             Bean<?> context = contexts.iterator().next();
@@ -360,9 +370,9 @@ public class CdiCamelExtension implements Extension {
             .anyMatch(isAnnotationType(Uri.class).or(isAnnotationType(Mock.class)).or(isEqual(DEFAULT)));
     }
 
-    private SyntheticBean<?> camelContextBean(BeanManager manager, Annotation... qualifiers) {
+    private SyntheticBean<?> camelContextBean(BeanManager manager, Class<?> beanClass, Annotation... qualifiers) {
         SyntheticAnnotated annotated = new SyntheticAnnotated(DefaultCamelContext.class,
-            manager.createAnnotatedType(DefaultCamelContext.class).getTypeClosure(), qualifiers);
+            manager.createAnnotatedType(DefaultCamelContext.class).getTypeClosure(), beanClass, qualifiers);
         return new SyntheticBean<>(manager, annotated, DefaultCamelContext.class,
             environment.camelContextInjectionTarget(
                 new SyntheticInjectionTarget<>(DefaultCamelContext::new), annotated, manager, this), bean ->

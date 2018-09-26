@@ -39,13 +39,24 @@ final class SyntheticAnnotated implements Annotated {
 
     private final Set<Annotation> annotations;
 
+    private final Class<?> javaClass;
+
     SyntheticAnnotated(Class<?> type, Set<Type> types, Annotation... annotations) {
-        this(type, types, asList(annotations));
+        this(type, types, null, asList(annotations));
     }
 
     SyntheticAnnotated(Class<?> type, Set<Type> types, Collection<Annotation> annotations) {
+        this(type, types, null, annotations);
+    }
+
+    SyntheticAnnotated(Class<?> type, Set<Type> types, Class<?> javaClass, Annotation... annotations) {
+        this(type, types, javaClass, asList(annotations));
+    }
+
+    SyntheticAnnotated(Class<?> type, Set<Type> types, Class<?> javaClass, Collection<Annotation> annotations) {
         this.type = type;
         this.types = types;
+        this.javaClass  = javaClass;
         this.annotations = new HashSet<>(annotations);
     }
 
@@ -82,5 +93,9 @@ final class SyntheticAnnotated implements Annotated {
 
     public boolean isAnnotationPresent(Class<? extends Annotation> type) {
         return annotations.stream().anyMatch(isAnnotationType(type));
+    }
+
+    public Class<?> getJavaClass() {
+        return javaClass;
     }
 }
