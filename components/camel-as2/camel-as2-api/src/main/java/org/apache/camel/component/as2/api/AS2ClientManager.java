@@ -29,8 +29,10 @@ import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.SigningUtils;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicHttpEntityEnclosingRequest;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HttpCoreContext;
 import org.apache.http.util.Args;
 import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
@@ -252,31 +254,38 @@ public class AS2ClientManager {
             throw new HttpException("Failed to create EDI message entity", e);
         }
         switch (as2MessageStructure) {
-        case PLAIN:
+        case PLAIN: {
             applicationEDIEntity.setMainBody(true);
             EntityUtils.setMessageEntity(request, applicationEDIEntity);
             break;
-        case SIGNED:
+        }
+        case SIGNED: {
             AS2SignedDataGenerator gen = createSigningGenerator(httpContext);
             // Create Multipart Signed Entity
-            try {
-                MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(applicationEDIEntity, gen,
-                        AS2Charset.US_ASCII, AS2TransferEncoding.BASE64, true, null);
-                multipartSignedEntity.setMainBody(true);
-                EntityUtils.setMessageEntity(request, multipartSignedEntity);
-            } catch (Exception e) {
-                throw new HttpException("Failed to sign message", e);
-            }
+            MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(applicationEDIEntity, gen,
+                    AS2Charset.US_ASCII, AS2TransferEncoding.BASE64, true, null);
+            multipartSignedEntity.setMainBody(true);
+            EntityUtils.setMessageEntity(request, multipartSignedEntity);
             break;
-        case ENCRYPTED:
+        }
+        case ENCRYPTED: {
             CMSEnvelopedDataGenerator envelopedDataGenerator = createEncryptingGenerator(httpContext);
             OutputEncryptor encryptor = createEncryptor(httpContext);
             ApplicationPkcs7MimeEntity pkcs7MimeEntity = new ApplicationPkcs7MimeEntity(applicationEDIEntity, envelopedDataGenerator, encryptor, AS2TransferEncoding.BASE64, true);
             EntityUtils.setMessageEntity(request, pkcs7MimeEntity);
             break;
-        case ENCRYPTED_SIGNED:
-            // TODO : Add code here to add application/pkcs7-mime entity when encryption facility available.
+        }
+        case ENCRYPTED_SIGNED: {
+            AS2SignedDataGenerator signingGenrator = createSigningGenerator(httpContext);
+            MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(applicationEDIEntity,
+                    signingGenrator, AS2Charset.US_ASCII, AS2TransferEncoding.BASE64, false, null);
+             
+            CMSEnvelopedDataGenerator envelopedDataGenerator = createEncryptingGenerator(httpContext);
+            OutputEncryptor encryptor = createEncryptor(httpContext);
+            ApplicationPkcs7MimeEntity pkcs7MimeEntity = new ApplicationPkcs7MimeEntity(multipartSignedEntity, envelopedDataGenerator, encryptor, AS2TransferEncoding.BASE64, true);
+            EntityUtils.setMessageEntity(request, pkcs7MimeEntity);
             break;
+        }
         default:
             throw new HttpException("Unknown AS2 Message Structure");
         }
@@ -292,7 +301,7 @@ public class AS2ClientManager {
         httpContext.setAttribute(HTTP_RESPONSE, response);
         return httpContext;
     }
-
+    
     public AS2SignedDataGenerator createSigningGenerator(HttpCoreContext httpContext) throws HttpException {
 
         Certificate[] certificateChain = httpContext.getAttribute(SIGNING_CERTIFICATE_CHAIN, Certificate[].class);

@@ -171,7 +171,7 @@ public final class EntityParser {
             throw new HttpException("Failed to read start boundary for body part", e);
         }
 
-        if (!foundEndBoundary) {
+        if (!foundEndBoundary && boundary != null) {
             throw new HttpException("Failed to find start boundary for body part");
         }
 
