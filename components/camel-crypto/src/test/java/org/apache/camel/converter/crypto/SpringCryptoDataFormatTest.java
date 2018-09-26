@@ -23,6 +23,7 @@ import javax.crypto.KeyGenerator;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringCamelContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringCryptoDataFormatTest extends CryptoDataFormatTest {
 
@@ -42,7 +43,8 @@ public class SpringCryptoDataFormatTest extends CryptoDataFormatTest {
         desEdekey = generator.generateKey();
         generator = KeyGenerator.getInstance("AES");
         aeskey = generator.generateKey();
-        return SpringCamelContext.springCamelContext("/org/apache/camel/component/crypto/SpringCryptoDataFormatTest.xml");
+        return SpringCamelContext.springCamelContext(
+                new ClassPathXmlApplicationContext("/org/apache/camel/component/crypto/SpringCryptoDataFormatTest.xml"), true);
     }
 
     public static Key getDesKey() {

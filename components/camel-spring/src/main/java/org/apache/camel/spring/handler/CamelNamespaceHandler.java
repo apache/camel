@@ -37,8 +37,6 @@ import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition;
 import org.apache.camel.impl.DefaultCamelContextNameStrategy;
-import org.apache.camel.model.FromDefinition;
-import org.apache.camel.model.SendDefinition;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spring.CamelBeanPostProcessor;
@@ -352,7 +350,6 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
             String contextId = element.getAttribute("id");
             boolean implicitId = false;
-            boolean registerEndpointIdsFromRoute = false;
 
             // lets avoid folks having to explicitly give an ID to a camel context
             if (ObjectHelper.isEmpty(contextId)) {
@@ -409,8 +406,6 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("hystrixConfigurations", factoryBean.getHystrixConfigurations());
                 // add any depends-on
                 addDependsOn(factoryBean, builder);
-
-                registerEndpointIdsFromRoute = "true".equalsIgnoreCase(factoryBean.getRegisterEndpointIdsFromRoute());
             }
 
             NodeList list = element.getChildNodes();
@@ -441,12 +436,6 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                         }
                     }
                 }
-            }
-
-            if (registerEndpointIdsFromRoute) {
-                // register as endpoint defined indirectly in the routes by from/to types having id explicit set
-                LOG.debug("Registering endpoint with ids defined in Camel routes");
-                registerEndpointsWithIdsDefinedInFromOrToTypes(element, parserContext, contextId, binder);
             }
 
             // register templates if not already defined
@@ -536,28 +525,6 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         // see more at CAMEL-1663
         definition.getPropertyValues().addPropertyValue("camelId", contextId);
         builder.addPropertyReference("beanPostProcessor", beanPostProcessorId);
-    }
-
-    /**
-     * Used for auto registering endpoints from the <tt>from</tt> or <tt>to</tt> DSL if they have an id attribute set
-     */
-    @Deprecated
-    protected void registerEndpointsWithIdsDefinedInFromOrToTypes(Element element, ParserContext parserContext, String contextId, Binder<Node> binder) {
-        NodeList list = element.getChildNodes();
-        int size = list.getLength();
-        for (int i = 0; i < size; i++) {
-            Node child = list.item(i);
-            if (child instanceof Element) {
-                Element childElement = (Element) child;
-                Object object = binder.getJAXBNode(child);
-                // we only want from/to types to be registered as endpoints
-                if (object instanceof FromDefinition || object instanceof SendDefinition) {
-                    registerEndpoint(childElement, parserContext, contextId);
-                }
-                // recursive
-                registerEndpointsWithIdsDefinedInFromOrToTypes(childElement, parserContext, contextId, binder);
-            }
-        }
     }
 
     /**

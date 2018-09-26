@@ -20,12 +20,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spring.SpringCamelContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringComponentTest extends ComponentTest {
 
     protected CamelContext createCamelContext() throws Exception {
 
-        return SpringCamelContext.springCamelContext("SpringCryptoCmsTests.xml");
+        return SpringCamelContext.springCamelContext(
+                new ClassPathXmlApplicationContext("SpringCryptoCmsTests.xml"), true);
     }
 
     @Override

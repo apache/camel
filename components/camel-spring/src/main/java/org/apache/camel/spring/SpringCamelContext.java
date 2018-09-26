@@ -41,7 +41,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.Lifecycle;
 import org.springframework.context.Phased;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.Ordered;
 
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
@@ -85,15 +84,6 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
      * using the Spring API.
      */
     @Deprecated
-    public static SpringCamelContext springCamelContext(ApplicationContext applicationContext) throws Exception {
-        return springCamelContext(applicationContext, true);
-    }
-
-    /**
-     * @deprecated its better to create and boot Spring the standard Spring way and to get hold of CamelContext
-     * using the Spring API.
-     */
-    @Deprecated
     public static SpringCamelContext springCamelContext(ApplicationContext applicationContext, boolean maybeStart) throws Exception {
         if (applicationContext != null) {
             // lets try and look up a configured camel context in the context
@@ -108,15 +98,6 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
             answer.start();
         }
         return answer;
-    }
-
-    /**
-     * @deprecated its better to create and boot Spring the standard Spring way and to get hold of CamelContext
-     * using the Spring API.
-     */
-    @Deprecated
-    public static SpringCamelContext springCamelContext(String configLocations) throws Exception {
-        return springCamelContext(new ClassPathXmlApplicationContext(configLocations));
     }
 
     @Override
@@ -219,16 +200,6 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
                 addComponent("spring-event", eventComponent);
             }
         }
-    }
-
-    @Deprecated
-    public EventEndpoint getEventEndpoint() {
-        return null;
-    }
-
-    @Deprecated
-    public void setEventEndpoint(EventEndpoint eventEndpoint) {
-        // noop
     }
 
     /**

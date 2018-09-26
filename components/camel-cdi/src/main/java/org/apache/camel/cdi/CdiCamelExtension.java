@@ -22,7 +22,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.EventObject;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -368,7 +367,7 @@ public class CdiCamelExtension implements Extension {
             .filter(ip -> getRawType(ip.getType()).getName().startsWith("org.apache.camel"))
             .map(InjectionPoint::getQualifiers)
             .flatMap(Set::stream)
-            .anyMatch(isAnnotationType(Uri.class).or(isAnnotationType(Mock.class)).or(isEqual(DEFAULT)));
+            .anyMatch(isAnnotationType(Uri.class).or(isEqual(DEFAULT)));
     }
 
     private SyntheticBean<?> camelContextBean(BeanManager manager, Class<?> beanClass, Annotation... qualifiers) {

@@ -42,7 +42,7 @@ public class SpringMarshalDomainObjectJSONTest extends MarshalDomainObjectJSONTe
             }
         });
 
-        return SpringCamelContext.springCamelContext(applicationContext);        
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
 }

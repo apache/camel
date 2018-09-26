@@ -29,7 +29,7 @@ public class SpringRemotingTwoCamelContextTest extends Assert {
     @Test
     public void testProxyWithTwoCamelContext() throws Exception {
         AbstractXmlApplicationContext applicationContext = createApplicationContext();
-        CamelContext camelContext = SpringCamelContext.springCamelContext(applicationContext);
+        CamelContext camelContext = SpringCamelContext.springCamelContext(applicationContext, true);
         
         ISay proxy = applicationContext.getBean("sayProxy1", ISay.class);
         String rc = proxy.say();

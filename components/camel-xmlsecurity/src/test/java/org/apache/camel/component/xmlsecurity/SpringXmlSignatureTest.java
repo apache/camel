@@ -33,6 +33,7 @@ import org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spring.SpringCamelContext;
 import org.junit.Test;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
 public class SpringXmlSignatureTest extends XmlSignatureTest {
@@ -41,7 +42,8 @@ public class SpringXmlSignatureTest extends XmlSignatureTest {
 
     protected CamelContext createCamelContext() throws Exception {
         rsaPair = getKeyPair("RSA", 1024);
-        return SpringCamelContext.springCamelContext("/org/apache/camel/component/xmlsecurity/SpringXmlSignatureTests.xml");
+        return SpringCamelContext.springCamelContext(
+                new ClassPathXmlApplicationContext("/org/apache/camel/component/xmlsecurity/SpringXmlSignatureTests.xml"), true);
     }
 
     public static KeyAccessor getDsaKeyAccessor() {

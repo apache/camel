@@ -34,7 +34,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import org.json.simple.Jsoner;
 
 import static org.apache.camel.component.slack.utils.SlackUtils.readResponse;
 
@@ -123,8 +123,7 @@ public class SlackComponentVerifierExtension extends DefaultComponentVerifierExt
                 if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
                     builder.error(ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, "Invalid token").parameterKey("token").build());
                 }
-                JSONParser parser = new JSONParser();
-                JSONObject obj = (JSONObject)parser.parse(jsonString);
+                JSONObject obj = (JSONObject) Jsoner.deserialize(jsonString);
                 if (obj.get("ok") != null && obj.get("ok").equals(false)) {
                     builder.error(ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, "Invalid token").parameterKey("token").build());
                 }

@@ -426,7 +426,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 172 options, which are listed below.
+The component supports 171 options, which are listed below.
 
 
 
@@ -529,7 +529,6 @@ The component supports 172 options, which are listed below.
 | *camel.component.jms.configuration.test-connection-on-startup* | Specifies whether to test the connection on startup. This ensures that when Camel starts that all the JMS consumers have a valid connection to the JMS broker. If a connection cannot be granted then Camel throws an exception on startup. This ensures that Camel is not started with failed connections. The JMS producers is tested as well. | false | Boolean
 | *camel.component.jms.configuration.time-to-live* | When sending messages, specifies the time-to-live of the message (in milliseconds). | -1 | Long
 | *camel.component.jms.configuration.transacted* | Specifies whether to use transacted mode | false | Boolean
-| *camel.component.jms.configuration.transacted-in-out* |  |  | Boolean
 | *camel.component.jms.configuration.transaction-manager* | The Spring transaction manager to use. |  | PlatformTransaction Manager
 | *camel.component.jms.configuration.transaction-name* | The name of the transaction to use. |  | String
 | *camel.component.jms.configuration.transaction-timeout* | The timeout value of the transaction (in seconds), if using transacted mode. | -1 | Integer
@@ -1417,13 +1416,6 @@ messaging:
 
 The `transacted` property applies *only* to the InOnly message
 Exchange Pattern (MEP).
-
-The `transactedInOut` property applies to the
-InOut(Request Reply) message
-Exchange Pattern (MEP).
-
-If you want to use transactions for link:request-reply.html[Request
-Reply](InOut MEP), you *must* set `transactedInOut=true`.
 
 *Available as of Camel 2.10*
 

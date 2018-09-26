@@ -40,7 +40,7 @@ public class BeanShellFilterTest extends XPathFilterTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(new ClassPathXmlApplicationContext("org/apache/camel/builder/script/example/beanShellFilter.xml"));
+        return SpringCamelContext.springCamelContext(new ClassPathXmlApplicationContext("org/apache/camel/builder/script/example/beanShellFilter.xml"), true);
     }
 
 }

@@ -35,9 +35,12 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.simple.DeserializationException;
 import org.json.simple.JSONObject;
+import org.json.simple.JsonArray;
+import org.json.simple.JsonObject;
+import org.json.simple.Jsoner;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +54,7 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
     private String timestamp;
     private String channelId;
 
-    public SlackConsumer(SlackEndpoint endpoint, Processor processor) throws IOException, ParseException {
+    public SlackConsumer(SlackEndpoint endpoint, Processor processor) throws IOException, DeserializationException {
         super(endpoint, processor);
         this.slackEndpoint = endpoint;
         this.channelId = getChannelId(slackEndpoint.getChannel());
@@ -128,7 +131,7 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
         return total;
     }
 
-    private String getChannelId(String channel) throws IOException, ParseException {
+    private String getChannelId(String channel) throws IOException, DeserializationException {
         HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
         HttpPost httpPost = new HttpPost("https://slack.com/api/channels.list");
 
@@ -139,24 +142,18 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
         HttpResponse response = client.execute(httpPost);
 
         String jsonString = readResponse(response);
-        JSONParser parser = new JSONParser();
-
-        JSONObject c = (JSONObject)parser.parse(jsonString);
-        List list = (List)c.get("channels");
-        Iterator it = list.iterator();
-        int i = 0;
-        while (it.hasNext()) {
-            Object object = (Object)it.next();
-            JSONObject singleChannel = (JSONObject)object;
+        JsonObject c = (JsonObject) Jsoner.deserialize(jsonString);
+        JsonArray list = (JsonArray) c.getCollection("channels");
+        for (JsonObject singleChannel : (List<JsonObject>)(List) list) {
             if (singleChannel.get("name") != null) {
                 if (singleChannel.get("name").equals(channel)) {
                     if (singleChannel.get("id") != null) {
-                        return (String)singleChannel.get("id");
+                        return (String) singleChannel.get("id");
                     }
                 }
             }
-
         }
+
         return jsonString;
     }
 

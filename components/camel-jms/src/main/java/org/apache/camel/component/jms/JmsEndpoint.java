@@ -792,12 +792,6 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     }
 
     @ManagedAttribute
-    @Deprecated
-    public boolean isTransactedInOut() {
-        return getConfiguration().isTransactedInOut();
-    }
-
-    @ManagedAttribute
     public boolean isUseMessageIDAsCorrelationID() {
         return getConfiguration().isUseMessageIDAsCorrelationID();
     }
@@ -1039,12 +1033,6 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     @ManagedAttribute
     public void setTransacted(boolean consumerTransacted) {
         getConfiguration().setTransacted(consumerTransacted);
-    }
-
-    @ManagedAttribute
-    @Deprecated
-    public void setTransactedInOut(boolean transactedInOut) {
-        getConfiguration().setTransactedInOut(transactedInOut);
     }
 
     @ManagedAttribute

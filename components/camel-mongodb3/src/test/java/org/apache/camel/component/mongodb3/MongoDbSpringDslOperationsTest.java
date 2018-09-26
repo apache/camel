@@ -27,7 +27,7 @@ public class MongoDbSpringDslOperationsTest extends MongoDbOperationsTest {
     protected CamelContext createCamelContext() throws Exception {
         applicationContext = new AnnotationConfigApplicationContext(MongoBasicOperationsConfiguration.class);
         @SuppressWarnings("deprecation")
-        CamelContext ctx = SpringCamelContext.springCamelContext(applicationContext);
+        CamelContext ctx = SpringCamelContext.springCamelContext(applicationContext, true);
         return ctx;
     }
 
