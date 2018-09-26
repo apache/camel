@@ -23,11 +23,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.junit.Assert;
 
 @ContextConfiguration
 public class BindyDoNotRemoveQuotesCsvUnmarshallTest extends AbstractJUnit4SpringContextTests {
@@ -43,7 +43,8 @@ public class BindyDoNotRemoveQuotesCsvUnmarshallTest extends AbstractJUnit4Sprin
 
     private String expected;
 
-    //Without removesQuotes=false annotation on product this will fail to unmarshall properly
+    // Without removesQuotes=false annotation on product this will fail to
+    // unmarshall properly
     @Test
     @DirtiesContext
     public void testUnMarshallMessage() throws Exception {
@@ -68,7 +69,7 @@ public class BindyDoNotRemoveQuotesCsvUnmarshallTest extends AbstractJUnit4Sprin
         }
     }
 
-    @CsvRecord(separator = ",",removeQuotes = false)
+    @CsvRecord(separator = ",", removeQuotes = false)
     public static class Product {
 
         @DataField(pos = 1)
@@ -106,11 +107,7 @@ public class BindyDoNotRemoveQuotesCsvUnmarshallTest extends AbstractJUnit4Sprin
 
         @Override
         public String toString() {
-            return "Product{" +
-                    "name='" + name + '\'' +
-                    ", description1='" + description1 + '\'' +
-                    ", description2='" + description2 + '\'' +
-                    '}';
+            return "Product{" + "name='" + name + '\'' + ", description1='" + description1 + '\'' + ", description2='" + description2 + '\'' + '}';
         }
     }
 

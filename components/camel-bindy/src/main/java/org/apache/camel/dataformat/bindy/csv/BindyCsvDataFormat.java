@@ -82,12 +82,13 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
 
         List<Map<String, Object>> models = new ArrayList<>();
 
-        // the body is not a prepared list of map that bindy expects so help a bit here and create one for us
+        // the body is not a prepared list of map that bindy expects so help a
+        // bit here and create one for us
         Iterator<Object> it = ObjectHelper.createIterator(body);
         while (it.hasNext()) {
             Object model = it.next();
             if (model instanceof Map) {
-                models.add((Map<String, Object>) model);
+                models.add((Map<String, Object>)model);
             } else {
                 String name = model.getClass().getName();
                 Map<String, Object> row = new HashMap<>(1);
@@ -96,7 +97,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                 models.add(row);
             }
         }
-        
+
         Iterator<Map<String, Object>> modelsMap = models.iterator();
         while (modelsMap.hasNext()) {
             String result = factory.unbind(getCamelContext(), modelsMap.next());
@@ -112,22 +113,22 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     }
 
     /**
-     * check emptyStream and if CVSRecord is allow to process emptyStreams
-     * avoid IllegalArgumentException and return empty list when unmarshalling
+     * check emptyStream and if CVSRecord is allow to process emptyStreams avoid
+     * IllegalArgumentException and return empty list when unmarshalling
      */
     private boolean checkEmptyStream(BindyCsvFactory factory, InputStream inputStream) throws IOException {
         boolean allowEmptyStream = factory.isAllowEmptyStream();
         boolean isStreamEmpty = false;
         boolean canReturnEmptyListOfModels = false;
-        
+
         if (inputStream == null || inputStream.available() == 0) {
             isStreamEmpty = true;
         }
-        
+
         if (isStreamEmpty && allowEmptyStream) {
             canReturnEmptyListOfModels = true;
         }
-        
+
         return canReturnEmptyListOfModels;
     }
 
@@ -146,20 +147,20 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             if (checkEmptyStream(factory, inputStream)) {
                 return models;
             }
-    
+
             in = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
-    
+
             // Scanner is used to read big file
             scanner = new Scanner(in);
-    
+
             // Retrieve the separator defined to split the record
             String separator = factory.getSeparator();
             String quote = factory.getQuote();
             Boolean removeQuotes = factory.getRemoveQuotes();
             ObjectHelper.notNull(separator, "The separator has not been defined in the annotation @CsvRecord or not instantiated during initModel.");
-    
+
             int count = 0;
-            
+
             // If the first line of the CSV file contains columns name, then we
             // skip this line
             if (factory.getSkipFirstLine()) {
@@ -168,29 +169,29 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                     scanner.nextLine();
                 }
             }
-    
+
             while (scanner.hasNextLine()) {
-    
+
                 // Read the line
                 String line = scanner.nextLine().trim();
-    
+
                 if (ObjectHelper.isEmpty(line)) {
                     // skip if line is empty
                     continue;
                 }
-    
+
                 // Increment counter
                 count++;
-    
+
                 // Create POJO where CSV data will be stored
                 model = factory.factory();
-    
+
                 // Split the CSV record according to the separator defined in
                 // annotated class @CSVRecord
                 Pattern pattern = Pattern.compile(separator);
                 Matcher matcher = pattern.matcher(line);
                 List<String> separators = new ArrayList<>();
-                
+
                 // Retrieve separators for each match
                 while (matcher.find()) {
                     separators.add(matcher.group());
@@ -199,34 +200,34 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                 if (separators.size() > 0) {
                     separators.add(separators.get(separators.size() - 1));
                 }
-                
+
                 String[] tokens = pattern.split(line, factory.getAutospanLine() ? factory.getMaxpos() : -1);
                 List<String> result = Arrays.asList(tokens);
                 // must unquote tokens before use
-                if(removeQuotes) {
+                if (removeQuotes) {
                     result = unquoteTokens(result, separators, quote);
                 }
-    
+
                 if (result.size() == 0 || result.isEmpty()) {
                     throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
                 } else {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Size of the record splitted : {}", result.size());
                     }
-    
+
                     // Bind data from CSV record with model classes
                     factory.bind(getCamelContext(), result, model, count);
-    
+
                     // Link objects together
                     factory.link(model);
-    
+
                     // Add objects graph to the list
                     models.add(model);
-    
+
                     LOG.debug("Graph of objects created: {}", model);
                 }
             }
-    
+
             // BigIntegerFormatFactory if models list is empty or not
             // If this is the case (correspond to an empty stream, ...)
             if (models.size() == 0) {
@@ -247,51 +248,53 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     }
 
     /**
-     * Unquote the tokens, by removing leading and trailing quote chars,
-     * as will handling fixing broken tokens which may have been split
-     * by a separator inside a quote.
+     * Unquote the tokens, by removing leading and trailing quote chars, as will
+     * handling fixing broken tokens which may have been split by a separator
+     * inside a quote.
      */
     private List<String> unquoteTokens(List<String> result, List<String> separators, String quote) {
         // a current quoted token which we assemble from the broken pieces
         // we need to do this as we use the split method on the String class
         // to split the line using regular expression, and it does not handle
-        // if the separator char is also inside a quoted token, therefore we need
+        // if the separator char is also inside a quoted token, therefore we
+        // need
         // to fix this afterwards
         StringBuilder current = new StringBuilder();
         boolean inProgress = false;
         List<String> answer = new ArrayList<>();
         int idxSeparator = 0;
 
-        //parsing assumes matching close and end quotes
+        // parsing assumes matching close and end quotes
         for (String s : result) {
             boolean canStart = false;
             boolean canClose = false;
             boolean cutStart = false;
             boolean cutEnd = false;
             if (s.startsWith(quote)) {
-                //token is just a quote
+                // token is just a quote
                 if (s.length() == 1) {
                     s = "";
-                    //if token is a quote then it can only close processing if it has begun
+                    // if token is a quote then it can only close processing if
+                    // it has begun
                     if (inProgress) {
                         canClose = true;
                     } else {
                         canStart = true;
                     }
                 } else {
-                    //quote+"not empty"
+                    // quote+"not empty"
                     cutStart = true;
                     canStart = true;
                 }
             }
 
-            //"not empty"+quote
+            // "not empty"+quote
             if (s.endsWith(quote)) {
                 cutEnd = true;
                 canClose = true;
             }
 
-            //optimize to only substring once
+            // optimize to only substring once
             if (cutEnd || cutStart) {
                 s = s.substring(cutStart ? 1 : 0, cutEnd ? s.length() - 1 : s.length());
             }
@@ -311,7 +314,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                     current.append(s);
                     inProgress = true;
                 } else {
-                    //case where no quotes
+                    // case where no quotes
                     answer.add(s);
                 }
             }
