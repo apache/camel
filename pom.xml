@@ -153,6 +153,7 @@
     <module>connectors</module>
     <module>tests</module>
     <module>examples</module>
+    <module>docs</module>
   </modules>
 
   <scm>
