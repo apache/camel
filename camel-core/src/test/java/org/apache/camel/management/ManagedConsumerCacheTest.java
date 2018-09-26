@@ -45,13 +45,13 @@ public class ManagedConsumerCacheTest extends ManagementTestSupport {
         // always register services in JMX so we can enlist our consumer template/cache
         context.getManagementStrategy().getManagementAgent().setRegisterAlways(true);
 
-        ConsumerCache cache = new ConsumerCache(this, context);
+        ConsumerCache cache = new ConsumerCache(this, context, 0);
         context.addService(cache);
 
         template.sendBody("direct:start", "Hello World");
 
         Endpoint endpoint = context.getEndpoint("seda:queue");
-        PollingConsumer consumer = cache.getConsumer(endpoint);
+        PollingConsumer consumer = cache.acquirePollingConsumer(endpoint);
         Exchange out = consumer.receive(3000);
         assertNotNull("Should got an exchange", out);
         assertEquals("Hello World", out.getIn().getBody());

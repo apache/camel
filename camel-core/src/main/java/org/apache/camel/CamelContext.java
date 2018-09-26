@@ -29,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
-import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -75,7 +74,6 @@ import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
-import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Transformer;
@@ -1355,34 +1353,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     void setPackageScanClassResolver(PackageScanClassResolver resolver);
 
-    /**
-     * Sets a pluggable service pool to use for {@link Producer} pooling.
-     *
-     * @param servicePool the pool
-     */
-    void setProducerServicePool(ServicePool<Endpoint, Producer> servicePool);
-
-    /**
-     * Gets the service pool for {@link Producer} pooling.
-     *
-     * @return the service pool
-     */
-    ServicePool<Endpoint, Producer> getProducerServicePool();
-    
-    /**
-     * Sets a pluggable service pool to use for {@link PollingConsumer} pooling.
-     *
-     * @param servicePool the pool
-     */
-    void setPollingConsumerServicePool(ServicePool<Endpoint, PollingConsumer> servicePool);
-
-    /**
-     * Gets the service pool for {@link Producer} pooling.
-     *
-     * @return the service pool
-     */
-    ServicePool<Endpoint, PollingConsumer> getPollingConsumerServicePool();
-    
     /**
      * Uses a custom node id factory when generating auto assigned ids to the nodes in the route definitions
      *

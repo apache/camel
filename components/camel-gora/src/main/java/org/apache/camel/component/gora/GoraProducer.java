@@ -18,9 +18,7 @@ package org.apache.camel.component.gora;
 
 import java.util.Map;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ServicePoolAware;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.gora.persistency.Persistent;
 import org.apache.gora.store.DataStore;
@@ -34,7 +32,7 @@ import static org.apache.camel.component.gora.utils.GoraUtils.getValueFromExchan
 /**
  * Camel-Gora {@link DefaultProducer}.
  */
-public class GoraProducer extends DefaultProducer implements ServicePoolAware {
+public class GoraProducer extends DefaultProducer {
 
     /**
      * logger
@@ -58,7 +56,7 @@ public class GoraProducer extends DefaultProducer implements ServicePoolAware {
      * @param configuration Reference to Camel-Gora endpoint configuration
      * @param dataStore     Reference to the datastore
      */
-    public GoraProducer(final Endpoint endpoint,
+    public GoraProducer(final GoraEndpoint endpoint,
                         final GoraConfiguration configuration,
                         final DataStore<Object, Persistent> dataStore) {
 

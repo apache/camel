@@ -26,7 +26,7 @@ package org.apache.camel;
  * This allows for subclasses to have a singleton status different from a parent and
  * for objects to have this value dynamically changed.
  * <p/>
- * Camel component is very often singleton based, only a few components is not.
+ * Camel component are very often singleton based, only a few components are not.
  *
  * @version 
  */

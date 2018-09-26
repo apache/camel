@@ -29,7 +29,6 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.impl.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.impl.ConsumerCache;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.impl.EmptyConsumerCache;
 import org.apache.camel.impl.EventDrivenPollingConsumer;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
@@ -373,16 +372,8 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAw
     protected void doStart() throws Exception {
         if (consumerCache == null) {
             // create consumer cache if we use dynamic expressions for computing the endpoints to poll
-            if (cacheSize < 0) {
-                consumerCache = new EmptyConsumerCache(this, camelContext);
-                LOG.debug("PollEnrich {} is not using ConsumerCache", this);
-            } else if (cacheSize == 0) {
-                consumerCache = new ConsumerCache(this, camelContext);
-                LOG.debug("PollEnrich {} using ConsumerCache with default cache size", this);
-            } else {
-                consumerCache = new ConsumerCache(this, camelContext, cacheSize);
-                LOG.debug("PollEnrich {} using ConsumerCache with cacheSize={}", this, cacheSize);
-            }
+            consumerCache = new ConsumerCache(this, camelContext, cacheSize);
+            LOG.debug("PollEnrich {} using ConsumerCache with cacheSize={}", this, cacheSize);
         }
         if (aggregationStrategy instanceof CamelContextAware) {
             ((CamelContextAware) aggregationStrategy).setCamelContext(camelContext);

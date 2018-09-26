@@ -64,7 +64,7 @@ public class DefaultProducerTemplateWithCustomCacheMaxSizeTest extends ContextTe
             context.createProducerTemplate();
             fail("Should have thrown an exception");
         } catch (Exception e) {
-            assertEquals("Property CamelMaximumCachePoolSize must be a positive number, was: ABC", e.getMessage());
+            assertEquals("Property CamelMaximumCachePoolSize must be a positive number, was: ABC", e.getCause().getMessage());
         }
     }
 
@@ -75,7 +75,7 @@ public class DefaultProducerTemplateWithCustomCacheMaxSizeTest extends ContextTe
             context.createProducerTemplate();
             fail("Should have thrown an exception");
         } catch (Exception e) {
-            assertEquals("Property CamelMaximumCachePoolSize must be a positive number, was: 0", e.getMessage());
+            assertEquals("Property CamelMaximumCachePoolSize must be a positive number, was: 0", e.getCause().getMessage());
         }
     }
 }

@@ -25,11 +25,10 @@ import javax.sip.message.Request;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
-import org.apache.camel.ServicePoolAware;
 import org.apache.camel.component.sip.listener.SipPublishListener;
 import org.apache.camel.impl.DefaultProducer;
 
-public class SipPublisher extends DefaultProducer implements ServicePoolAware {
+public class SipPublisher extends DefaultProducer {
     private SipConfiguration configuration;
     private long sequenceNumber = 1;
     private SipPublishListener sipPublishListener;

@@ -24,6 +24,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,7 +83,9 @@ public final class FileUtil {
         return windowsOs;
     }
 
-    public static File createTempFile(String prefix, String suffix, File parent) throws IOException {
+    public static File createTempFile(String prefix, String suffix, File parentDir) throws IOException {
+        Objects.requireNonNull(parentDir);
+
         if (suffix == null) {
             suffix = ".tmp";
         }
@@ -93,9 +96,9 @@ public final class FileUtil {
         }
 
         // create parent folder
-        parent.mkdirs();
+        parentDir.mkdirs();
 
-        return File.createTempFile(prefix, suffix, parent);
+        return File.createTempFile(prefix, suffix, parentDir);
     }
 
     /**

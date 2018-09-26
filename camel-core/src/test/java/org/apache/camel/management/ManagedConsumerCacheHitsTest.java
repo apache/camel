@@ -43,12 +43,12 @@ public class ManagedConsumerCacheHitsTest extends ManagementTestSupport {
         // always register services in JMX so we can enlist our consumer template/cache
         context.getManagementStrategy().getManagementAgent().setRegisterAlways(true);
 
-        ConsumerCache cache = new ConsumerCache(this, context);
+        ConsumerCache cache = new ConsumerCache(this, context, 0);
         context.addService(cache);
 
         template.sendBody("seda:a", "Hello World");
 
-        Exchange out = cache.getConsumer(context.getEndpoint("seda:a")).receive(3000);
+        Exchange out = cache.acquirePollingConsumer(context.getEndpoint("seda:a")).receive(3000);
         assertNotNull("Should got an exchange", out);
         assertEquals("Hello World", out.getIn().getBody());
 
@@ -84,9 +84,9 @@ public class ManagedConsumerCacheHitsTest extends ManagementTestSupport {
 
         template.sendBody("seda:b", "Hello World");
         template.sendBody("seda:c", "Hello World");
-        out = cache.getConsumer(context.getEndpoint("seda:b")).receive(3000);
+        out = cache.acquirePollingConsumer(context.getEndpoint("seda:b")).receive(3000);
         assertNotNull(out);
-        out = cache.getConsumer(context.getEndpoint("seda:c")).receive(3000);
+        out = cache.acquirePollingConsumer(context.getEndpoint("seda:c")).receive(3000);
         assertNotNull(out);
 
         // we have only consumed from 3 different endpoints so all is misses
@@ -101,9 +101,9 @@ public class ManagedConsumerCacheHitsTest extends ManagementTestSupport {
 
         template.sendBody("seda:a", "Bye World");
         template.sendBody("seda:b", "Bye World");
-        out = cache.getConsumer(context.getEndpoint("seda:a")).receive(3000);
+        out = cache.acquirePollingConsumer(context.getEndpoint("seda:a")).receive(3000);
         assertNotNull(out);
-        out = cache.getConsumer(context.getEndpoint("seda:b")).receive(3000);
+        out = cache.acquirePollingConsumer(context.getEndpoint("seda:b")).receive(3000);
         assertNotNull(out);
 
         // we should have hits now

@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import java.util.Map;
 
+import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -26,7 +27,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.ServicePoolAware;
 import org.apache.camel.ShutdownableService;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
@@ -89,12 +89,13 @@ public class InterceptSendToEndpoint implements Endpoint, ShutdownableService {
     }
 
     public Producer createProducer() throws Exception {
+        return createAsyncProducer();
+    }
+
+    @Override
+    public AsyncProducer createAsyncProducer() throws Exception {
         Producer producer = delegate.createProducer();
-        if (producer instanceof ServicePoolAware) {
-            return new InterceptSendToEndpointServicePoolProcessor(this, delegate, producer, skip);
-        } else {
-            return new InterceptSendToEndpointProcessor(this, delegate, producer, skip);
-        }
+        return new InterceptSendToEndpointProcessor(this, delegate, producer, skip);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {

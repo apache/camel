@@ -18,7 +18,8 @@ package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
-import org.apache.camel.AsyncProducerCallback;
+import org.apache.camel.AsyncProducer;
+import org.apache.camel.impl.ProducerCache.AsyncProducerCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
@@ -27,9 +28,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
-import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.impl.EmptyProducerCache;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
@@ -157,40 +156,38 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
         // send the exchange to the destination using the producer cache
         final Processor preProcessor = preAwareProcessor;
         final Processor postProcessor = postAwareProcessor;
-        return producerCache.doInAsyncProducer(endpoint, exchange, pattern, callback, new AsyncProducerCallback() {
-            public boolean doInAsyncProducer(Producer producer, AsyncProcessor asyncProducer, final Exchange exchange,
-                                             ExchangePattern pattern, final AsyncCallback callback) {
-                final Exchange target = configureExchange(exchange, pattern, destinationExchangePattern, endpoint);
+        // destination exchange pattern overrides pattern
+        final ExchangePattern pattern = destinationExchangePattern != null ? destinationExchangePattern : this.pattern;
+        return producerCache.doInAsyncProducer(endpoint, exchange, callback, (p, e, c) -> {
+            final Exchange target = configureExchange(e, pattern, endpoint);
+            try {
+                if (preProcessor != null) {
+                    preProcessor.process(target);
+                }
+            } catch (Throwable t) {
+                e.setException(t);
+                // restore previous MEP
+                target.setPattern(existingPattern);
+                // we failed
+                c.done(true);
+            }
 
-                try {
-                    if (preProcessor != null) {
-                        preProcessor.process(target);
-                    }
-                } catch (Throwable e) {
-                    exchange.setException(e);
+            LOG.debug(">>>> {} {}", endpoint, e);
+            return p.process(target, new AsyncCallback() {
+                public void done(boolean doneSync) {
                     // restore previous MEP
                     target.setPattern(existingPattern);
-                    // we failed
-                    callback.done(true);
-                }
-
-                LOG.debug(">>>> {} {}", endpoint, exchange);
-                return asyncProducer.process(target, new AsyncCallback() {
-                    public void done(boolean doneSync) {
-                        // restore previous MEP
-                        target.setPattern(existingPattern);
-                        try {
-                            if (postProcessor != null) {
-                                postProcessor.process(target);
-                            }
-                        } catch (Throwable e) {
-                            target.setException(e);
+                    try {
+                        if (postProcessor != null) {
+                            postProcessor.process(target);
                         }
-                        // signal we are done
-                        callback.done(doneSync);
+                    } catch (Throwable e) {
+                        target.setException(e);
                     }
-                });
-            }
+                    // signal we are done
+                    c.done(doneSync);
+                }
+            });
         });
     }
 
@@ -242,11 +239,8 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
         }
     }
 
-    protected Exchange configureExchange(Exchange exchange, ExchangePattern pattern, ExchangePattern destinationExchangePattern, Endpoint endpoint) {
-        // destination exchange pattern overrides pattern
-        if (destinationExchangePattern != null) {
-            exchange.setPattern(destinationExchangePattern);
-        } else if (pattern != null) {
+    protected Exchange configureExchange(Exchange exchange, ExchangePattern pattern, Endpoint endpoint) {
+        if (pattern != null) {
             exchange.setPattern(pattern);
         }
         // set property which endpoint we send to
@@ -256,16 +250,8 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
 
     protected void doStart() throws Exception {
         if (producerCache == null) {
-            if (cacheSize < 0) {
-                producerCache = new EmptyProducerCache(this, camelContext);
-                LOG.debug("DynamicSendTo {} is not using ProducerCache", this);
-            } else if (cacheSize == 0) {
-                producerCache = new ProducerCache(this, camelContext);
-                LOG.debug("DynamicSendTo {} using ProducerCache with default cache size", this);
-            } else {
-                producerCache = new ProducerCache(this, camelContext, cacheSize);
-                LOG.debug("DynamicSendTo {} using ProducerCache with cacheSize={}", this, cacheSize);
-            }
+            producerCache = new ProducerCache(this, camelContext, cacheSize);
+            LOG.debug("DynamicSendTo {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
         }
 
         if (isAllowOptimisedComponents() && uri != null) {

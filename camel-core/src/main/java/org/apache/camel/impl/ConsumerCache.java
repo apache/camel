@@ -16,22 +16,14 @@
  */
 package org.apache.camel.impl;
 
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateConsumerException;
-import org.apache.camel.IsSingleton;
 import org.apache.camel.PollingConsumer;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.ServicePoolAware;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
-import org.apache.camel.spi.ServicePool;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.LRUCache;
-import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,35 +37,18 @@ public class ConsumerCache extends ServiceSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ConsumerCache.class);
 
     private final CamelContext camelContext;
-    private final ServicePool<Endpoint, PollingConsumer> pool;
-    private final Map<String, PollingConsumer> consumers;
+    private final ServicePool<PollingConsumer> consumers;
     private final Object source;
 
     private EndpointUtilizationStatistics statistics;
     private boolean extendedStatistics;
     private int maxCacheSize;
 
-    public ConsumerCache(Object source, CamelContext camelContext) {
-        this(source, camelContext, CamelContextHelper.getMaximumCachePoolSize(camelContext));
-    }
-
     public ConsumerCache(Object source, CamelContext camelContext, int cacheSize) {
-        this(source, camelContext, createLRUCache(cacheSize));
-    }
-    
-    public ConsumerCache(Object source, CamelContext camelContext, Map<String, PollingConsumer> cache) {
-        this(source, camelContext, cache, camelContext.getPollingConsumerServicePool());
-    }
-
-    public ConsumerCache(Object source, CamelContext camelContext, Map<String, PollingConsumer> cache, ServicePool<Endpoint, PollingConsumer> pool) {
-        this.camelContext = camelContext;
-        this.consumers = cache;
         this.source = source;
-        this.pool = pool;
-        if (consumers instanceof LRUCache) {
-            maxCacheSize = ((LRUCache) consumers).getMaxCacheSize();
-        }
-
+        this.camelContext = camelContext;
+        this.maxCacheSize = cacheSize == 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : cacheSize;
+        this.consumers = new ServicePool<>(Endpoint::createPollingConsumer, PollingConsumer::getEndpoint, maxCacheSize);
         // only if JMX is enabled
         if (camelContext.getManagementStrategy().getManagementAgent() != null) {
             this.extendedStatistics = camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
@@ -94,22 +69,15 @@ public class ConsumerCache extends ServiceSupport {
     }
 
     /**
-     * Creates the {@link LRUCache} to be used.
-     * <p/>
-     * This implementation returns a {@link LRUCache} instance.
-
-     * @param cacheSize the cache size
-     * @return the cache
+     * Releases an acquired producer back after usage.
+     *
+     * @param endpoint the endpoint
+     * @param pollingConsumer the pollingConsumer to release
      */
-    @SuppressWarnings("unchecked")
-    protected static Map<String, PollingConsumer> createLRUCache(int cacheSize) {
-        // Use a regular cache as we want to ensure that the lifecycle of the consumers
-        // being cache is properly handled, such as they are stopped when being evicted
-        // or when this cache is stopped. This is needed as some consumers requires to
-        // be stopped so they can shutdown internal resources that otherwise may cause leaks
-        return LRUCacheFactory.newLRUCache(cacheSize);
+    public void releasePollingConsumer(Endpoint endpoint, PollingConsumer pollingConsumer) {
+        consumers.release(endpoint, pollingConsumer);
     }
-    
+
     /**
      * Acquires a pooled PollingConsumer which you <b>must</b> release back again after usage using the
      * {@link #releasePollingConsumer(org.apache.camel.Endpoint, org.apache.camel.PollingConsumer)} method.
@@ -118,89 +86,15 @@ public class ConsumerCache extends ServiceSupport {
      * @return the PollingConsumer
      */
     public PollingConsumer acquirePollingConsumer(Endpoint endpoint) {
-        return doGetPollingConsumer(endpoint, true);
-    }
-
-    /**
-     * Releases an acquired producer back after usage.
-     *
-     * @param endpoint the endpoint
-     * @param pollingConsumer the pollingConsumer to release
-     */
-    public void releasePollingConsumer(Endpoint endpoint, PollingConsumer pollingConsumer) {
-        if (pollingConsumer instanceof ServicePoolAware) {
-            // release back to the pool
-            pool.release(endpoint, pollingConsumer);
-        } else {
-            boolean singleton = false;
-            if (pollingConsumer instanceof IsSingleton) {
-                singleton = ((IsSingleton) pollingConsumer).isSingleton();
+        try {
+            PollingConsumer consumer = consumers.acquire(endpoint);
+            if (statistics != null) {
+                statistics.onHit(endpoint.getEndpointUri());
             }
-            String key = endpoint.getEndpointUri();
-            boolean cached = consumers.containsKey(key);
-            if (!singleton || !cached) {
-                try {
-                    // stop and shutdown non-singleton/non-cached consumers as we should not leak resources
-                    if (!singleton) {
-                        LOG.debug("Released PollingConsumer: {} is stopped as consumer is not singleton", endpoint);
-                    } else {
-                        LOG.debug("Released PollingConsumer: {} is stopped as consumer cache is full", endpoint);
-                    }
-                    ServiceHelper.stopAndShutdownService(pollingConsumer);
-                } catch (Throwable ex) {
-                    if (ex instanceof RuntimeCamelException) {
-                        throw (RuntimeCamelException)ex;
-                    } else {
-                        throw new RuntimeCamelException(ex);
-                    }
-                }
-            }
+            return consumer;
+        } catch (Throwable e) {
+            throw new FailedToCreateConsumerException(endpoint, e);
         }
-    }
-
-    public PollingConsumer getConsumer(Endpoint endpoint) {
-        return doGetPollingConsumer(endpoint, true);
-    }
-    
-    protected synchronized PollingConsumer doGetPollingConsumer(Endpoint endpoint, boolean pooled) {
-        String key = endpoint.getEndpointUri();
-        PollingConsumer answer = consumers.get(key);
-        if (pooled && answer == null) {
-            pool.acquire(endpoint);
-        }  
-        
-        if (answer == null) {
-            try {
-                answer = endpoint.createPollingConsumer();
-                answer.start();
-            } catch (Throwable e) {
-                throw new FailedToCreateConsumerException(endpoint, e);
-            }
-            if (pooled && answer instanceof ServicePoolAware) {
-                LOG.debug("Adding to consumer service pool with key: {} for consumer: {}", endpoint, answer);
-                answer = pool.addAndAcquire(endpoint, answer);
-            } else {
-                boolean singleton = false;
-                if (answer instanceof IsSingleton) {
-                    singleton = ((IsSingleton) answer).isSingleton();
-                }
-                if (singleton) {
-                    LOG.debug("Adding to consumer cache with key: {} for consumer: {}", endpoint, answer);
-                    consumers.put(key, answer);
-                } else {
-                    LOG.debug("Consumer for endpoint: {} is not singleton and thus not added to consumer cache", key);
-                }
-            }
-        }
-
-        if (answer != null) {
-            // record statistics
-            if (extendedStatistics) {
-                statistics.onHit(key);
-            }
-        }
-
-        return answer;
     }
  
     public Exchange receive(Endpoint endpoint) {
@@ -233,7 +127,7 @@ public class ConsumerCache extends ServiceSupport {
         LOG.debug("<<<< {}", endpoint);
         PollingConsumer consumer = null;
         try {
-            consumer = doGetPollingConsumer(endpoint, true);
+            consumer = acquirePollingConsumer(endpoint);
             return consumer.receiveNoWait();
         } finally {
             if (consumer != null) {
@@ -274,12 +168,7 @@ public class ConsumerCache extends ServiceSupport {
      * @return the capacity
      */
     public int getCapacity() {
-        int capacity = -1;
-        if (consumers instanceof LRUCache) {
-            LRUCache<String, PollingConsumer> cache = (LRUCache<String, PollingConsumer>)consumers;
-            capacity = cache.getMaxCacheSize();
-        }
-        return capacity;
+        return consumers.getMaxCacheSize();
     }
 
     /**
@@ -290,12 +179,7 @@ public class ConsumerCache extends ServiceSupport {
      * @return the hits
      */
     public long getHits() {
-        long hits = -1;
-        if (consumers instanceof LRUCache) {
-            LRUCache<String, PollingConsumer> cache = (LRUCache<String, PollingConsumer>)consumers;
-            hits = cache.getHits();
-        }
-        return hits;
+        return consumers.getHits();
     }
 
     /**
@@ -306,12 +190,7 @@ public class ConsumerCache extends ServiceSupport {
      * @return the misses
      */
     public long getMisses() {
-        long misses = -1;
-        if (consumers instanceof LRUCache) {
-            LRUCache<String, PollingConsumer> cache = (LRUCache<String, PollingConsumer>)consumers;
-            misses = cache.getMisses();
-        }
-        return misses;
+        return consumers.getMisses();
     }
 
     /**
@@ -322,22 +201,14 @@ public class ConsumerCache extends ServiceSupport {
      * @return the evicted
      */
     public long getEvicted() {
-        long evicted = -1;
-        if (consumers instanceof LRUCache) {
-            LRUCache<String, PollingConsumer> cache = (LRUCache<String, PollingConsumer>)consumers;
-            evicted = cache.getEvicted();
-        }
-        return evicted;
+        return consumers.getEvicted();
     }
 
     /**
      * Resets the cache statistics
      */
     public void resetCacheStatistics() {
-        if (consumers instanceof LRUCache) {
-            LRUCache<String, PollingConsumer> cache = (LRUCache<String, PollingConsumer>)consumers;
-            cache.resetStatistics();
-        }
+        consumers.resetStatistics();
         if (statistics != null) {
             statistics.clear();
         }
@@ -347,7 +218,12 @@ public class ConsumerCache extends ServiceSupport {
      * Purges this cache
      */
     public synchronized void purge() {
-        consumers.clear();
+        try {
+            consumers.stop();
+            consumers.start();
+        } catch (Exception e) {
+            LOG.debug("Error restarting consumer pool", e);
+        }
         if (statistics != null) {
             statistics.clear();
         }
@@ -357,10 +233,7 @@ public class ConsumerCache extends ServiceSupport {
      * Cleanup the cache (purging stale entries)
      */
     public void cleanUp() {
-        if (consumers instanceof LRUCache) {
-            LRUCache<String, PollingConsumer> cache = (LRUCache<String, PollingConsumer>)consumers;
-            cache.cleanUp();
-        }
+        consumers.cleanUp();
     }
 
     public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
@@ -377,22 +250,12 @@ public class ConsumerCache extends ServiceSupport {
             int max = maxCacheSize == 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : maxCacheSize;
             statistics = new DefaultEndpointUtilizationStatistics(max);
         }
-
-        ServiceHelper.startServices(consumers.values());
+        ServiceHelper.startServices(consumers);
     }
 
     protected void doStop() throws Exception {
         // when stopping we intend to shutdown
-        ServiceHelper.stopAndShutdownServices(statistics, pool);
-        try {
-            ServiceHelper.stopAndShutdownServices(consumers.values());
-        } finally {
-            // ensure consumers are removed, and also from JMX
-            for (PollingConsumer consumer : consumers.values()) {
-                getCamelContext().removeService(consumer);
-            }
-        }
-        consumers.clear();
+        ServiceHelper.stopAndShutdownServices(statistics, consumers);
         if (statistics != null) {
             statistics.clear();
         }

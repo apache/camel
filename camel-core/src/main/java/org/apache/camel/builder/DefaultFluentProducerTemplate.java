@@ -333,7 +333,7 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
         ObjectHelper.notNull(context, "CamelContext");
 
         if (template == null) {
-            template = maximumCacheSize > 0 ? context.createProducerTemplate(maximumCacheSize) : context.createProducerTemplate();
+            template = context.createProducerTemplate(maximumCacheSize);
             defaultEndpoint.ifPresent(template::setDefaultEndpoint);
             template.setEventNotifierEnabled(eventNotifierEnabled);
             templateCustomizer.ifPresent(tc -> tc.accept(template));

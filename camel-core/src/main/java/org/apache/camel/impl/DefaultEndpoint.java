@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
@@ -32,6 +33,7 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.HasId;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -181,6 +183,11 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     public CamelContext getCamelContext() {
         return camelContext;
+    }
+
+    @Override
+    public AsyncProducer createAsyncProducer() throws Exception {
+        return AsyncProcessorConverterHelper.convert(createProducer());
     }
 
     /**

@@ -21,17 +21,18 @@ import java.util.HashMap;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
-import org.apache.camel.AsyncProducerCallback;
+import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
-import org.apache.camel.ServicePoolAware;
 import org.apache.camel.Traceable;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.impl.ProducerCache;
+import org.apache.camel.impl.ServicePool;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
@@ -56,7 +57,7 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
     protected final CamelContext camelContext;
     protected final ExchangePattern pattern;
     protected ProducerCache producerCache;
-    protected AsyncProcessor producer;
+    protected AsyncProducer producer;
     protected Endpoint destination;
     protected ExchangePattern destinationExchangePattern;
     protected String id;
@@ -162,22 +163,16 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
             return true;
         }
 
+        configureExchange(exchange, pattern);
+        LOG.debug(">>>> {} {}", destination, exchange);
+
         // send the exchange to the destination using the producer cache for the non optimized producers
-        return producerCache.doInAsyncProducer(destination, exchange, pattern, callback, new AsyncProducerCallback() {
-            public boolean doInAsyncProducer(Producer producer, AsyncProcessor asyncProducer, final Exchange exchange,
-                                             ExchangePattern pattern, final AsyncCallback callback) {
-                final Exchange target = configureExchange(exchange, pattern);
-                LOG.debug(">>>> {} {}", destination, exchange);
-                return asyncProducer.process(target, new AsyncCallback() {
-                    public void done(boolean doneSync) {
-                        // restore previous MEP
-                        target.setPattern(existingPattern);
-                        // signal we are done
-                        callback.done(doneSync);
-                    }
-                });
-            }
-        });
+        return producerCache.doInAsyncProducer(destination, exchange, callback, (producer, ex, cb) -> producer.process(ex, doneSync -> {
+            // restore previous MEP
+            exchange.setPattern(existingPattern);
+            // signal we are done
+            cb.done(doneSync);
+        }));
     }
     
     public Endpoint getDestination() {
@@ -214,7 +209,7 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
             // and use a regular HashMap as we do not want a soft reference store that may get re-claimed when low on memory
             // as we want to ensure the producer is kept around, to ensure its lifecycle is fully managed,
             // eg stopping the producer when we stop etc.
-            producerCache = new ProducerCache(this, camelContext, new HashMap<String, Producer>(1));
+            producerCache = new ProducerCache(this, camelContext, 1);
             // do not add as service as we do not want to manage the producer cache
         }
         ServiceHelper.startService(producerCache);
@@ -238,14 +233,14 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
         // Only for pooled and non-singleton producers we have to use the ProducerCache as it supports these
         // kind of producer better (though these kind of producer should be rare)
 
-        Producer producer = producerCache.acquireProducer(destination);
-        if (producer instanceof ServicePoolAware || !producer.isSingleton()) {
+        AsyncProducer producer = producerCache.acquireProducer(destination);
+        if (!producer.isSingleton()) {
             // no we cannot optimize it - so release the producer back to the producer cache
             // and use the producer cache for sending
             producerCache.releaseProducer(destination, producer);
         } else {
             // yes we can optimize and use the producer directly for sending
-            this.producer = AsyncProcessorConverterHelper.convert(producer);
+            this.producer = producer;
         }
     }
 

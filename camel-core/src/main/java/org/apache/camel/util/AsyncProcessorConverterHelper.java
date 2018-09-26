@@ -21,10 +21,13 @@ import java.util.List;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.AsyncProducer;
 import org.apache.camel.DelegateProcessor;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.Service;
 
 /**
@@ -44,7 +47,7 @@ public final class AsyncProcessorConverterHelper {
      * Creates a {@link AsyncProcessor} that delegates to the given processor.
      * It is important that this implements {@link DelegateProcessor}
      */
-    private static final class ProcessorToAsyncProcessorBridge implements DelegateProcessor, AsyncProcessor, Navigate<Processor>, Service {
+    private static class ProcessorToAsyncProcessorBridge implements DelegateProcessor, AsyncProcessor, Navigate<Processor>, Service {
         protected final Processor processor;
 
         private ProcessorToAsyncProcessorBridge(Processor processor) {
@@ -141,9 +144,36 @@ public final class AsyncProcessorConverterHelper {
         }
     }
 
+    private static class ProducerToAsyncProducerBridge extends ProcessorToAsyncProcessorBridge implements AsyncProducer {
+        ProducerToAsyncProducerBridge(Producer producer) {
+            super(producer);
+        }
+
+        protected Producer producer() {
+            return (Producer) processor;
+        }
+
+        @Override
+        public Endpoint getEndpoint() {
+            return producer().getEndpoint();
+        }
+
+        @Override
+        public boolean isSingleton() {
+            return producer().isSingleton();
+        }
+    }
+
+    public static AsyncProducer convert(Producer value) {
+        if (value instanceof AsyncProducer) {
+            return (AsyncProducer) value;
+        }
+        return new ProducerToAsyncProducerBridge(value);
+    }
+
     public static AsyncProcessor convert(Processor value) {
         if (value instanceof AsyncProcessor) {
-            return (AsyncProcessor)value;
+            return (AsyncProcessor) value;
         }
         return new ProcessorToAsyncProcessorBridge(value);
     }

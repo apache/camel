@@ -260,11 +260,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
 
     protected void doStart() throws Exception {
         if (consumerCache == null) {
-            if (maximumCacheSize > 0) {
-                consumerCache = new ConsumerCache(this, camelContext, maximumCacheSize);
-            } else {
-                consumerCache = new ConsumerCache(this, camelContext);
-            }
+            consumerCache = new ConsumerCache(this, camelContext, maximumCacheSize);
         }
         ServiceHelper.startService(consumerCache);
     }

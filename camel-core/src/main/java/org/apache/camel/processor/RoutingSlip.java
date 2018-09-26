@@ -20,20 +20,18 @@ import java.util.Iterator;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
-import org.apache.camel.AsyncProducerCallback;
+import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Message;
-import org.apache.camel.Producer;
 import org.apache.camel.Traceable;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.EmptyProducerCache;
 import org.apache.camel.impl.ProducerCache;
+import org.apache.camel.impl.ProducerCache.AsyncProducerCallback;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteContext;
@@ -344,17 +342,13 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
         // - routing slip was routed asynchronously
         // - and we are completely done with the routing slip
         // so we need to signal done on the original callback so it can continue
-        AsyncCallback callback = new AsyncCallback() {
-            @Override
-            public void done(boolean doneSync) {
-                if (!doneSync) {
-                    originalCallback.done(false);
-                }
+        AsyncCallback callback = doneSync -> {
+            if (!doneSync) {
+                originalCallback.done(false);
             }
         };
-        boolean sync = producerCache.doInAsyncProducer(endpoint, exchange, null, callback, new AsyncProducerCallback() {
-            public boolean doInAsyncProducer(Producer producer, AsyncProcessor asyncProducer, final Exchange exchange,
-                                             ExchangePattern exchangePattern, final AsyncCallback callback) {
+        return producerCache.doInAsyncProducer(endpoint, exchange, callback, new AsyncProducerCallback() {
+            public boolean doInAsyncProducer(AsyncProducer asyncProducer, Exchange exchange, final AsyncCallback callback) {
 
                 // rework error handling to support fine grained error handling
                 RouteContext routeContext = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getRouteContext() : null;
@@ -365,7 +359,7 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
                 exchange.setProperty(Exchange.SLIP_ENDPOINT, endpoint.getEndpointUri());
                 exchange.setProperty(Exchange.SLIP_PRODUCER, asyncProducer);
 
-                boolean answer = target.process(exchange, new AsyncCallback() {
+                return target.process(exchange, new AsyncCallback() {
                     public void done(boolean doneSync) {
                         // cleanup producer after usage
                         exchange.removeProperty(Exchange.SLIP_PRODUCER);
@@ -438,26 +432,14 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
                         originalCallback.done(false);
                     }
                 });
-
-                return answer;
             }
         });
-
-        return sync;
     }
 
     protected void doStart() throws Exception {
         if (producerCache == null) {
-            if (cacheSize < 0) {
-                producerCache = new EmptyProducerCache(this, camelContext);
-                log.debug("RoutingSlip {} is not using ProducerCache", this);
-            } else if (cacheSize == 0) {
-                producerCache = new ProducerCache(this, camelContext);
-                log.debug("RoutingSlip {} using ProducerCache with default cache size", this);
-            } else {
-                producerCache = new ProducerCache(this, camelContext, cacheSize);
-                log.debug("RoutingSlip {} using ProducerCache with cacheSize={}", this, cacheSize);
-            }
+            producerCache = new ProducerCache(this, camelContext, cacheSize);
+            log.debug("RoutingSlip {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
         }
 
         ServiceHelper.startServices(producerCache, errorHandler);

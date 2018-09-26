@@ -84,6 +84,14 @@ public interface Endpoint extends IsSingleton, Service {
     Producer createProducer() throws Exception;
 
     /**
+     * Creates a new producer which is used send messages into the endpoint
+     *
+     * @return a newly created producer
+     * @throws Exception can be thrown
+     */
+    AsyncProducer createAsyncProducer() throws Exception;
+
+    /**
      * Creates a new <a
      * href="http://camel.apache.org/event-driven-consumer.html">Event
      * Driven Consumer</a> which consumes messages from the endpoint using the

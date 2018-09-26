@@ -26,7 +26,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.EmptyProducerCache;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
@@ -187,16 +186,8 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor, IdA
 
     protected void doStart() throws Exception {
         if (producerCache == null) {
-            if (cacheSize < 0) {
-                producerCache = new EmptyProducerCache(this, camelContext);
-                LOG.debug("RecipientList {} is not using ProducerCache", this);
-            } else if (cacheSize == 0) {
-                producerCache = new ProducerCache(this, camelContext);
-                LOG.debug("RecipientList {} using ProducerCache with default cache size", this);
-            } else {
-                producerCache = new ProducerCache(this, camelContext, cacheSize);
-                LOG.debug("RecipientList {} using ProducerCache with cacheSize={}", this, cacheSize);
-            }
+            producerCache = new ProducerCache(this, camelContext, cacheSize);
+            LOG.debug("RecipientList {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
         }
         ServiceHelper.startServices(aggregationStrategy, producerCache);
     }
