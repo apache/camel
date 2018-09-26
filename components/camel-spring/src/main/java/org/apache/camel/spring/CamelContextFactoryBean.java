@@ -122,9 +122,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String autoStartup;
     @XmlAttribute @Metadata(defaultValue = "true")
     private String shutdownEager;
-    @XmlAttribute @Metadata(defaultValue = "false")
-    @Deprecated
-    private String registerEndpointIdsFromRoute;
     @XmlAttribute
     private String useMDCLogging;
     @XmlAttribute
@@ -759,19 +756,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      */
     public void setShutdownEager(String shutdownEager) {
         this.shutdownEager = shutdownEager;
-    }
-
-    public String getRegisterEndpointIdsFromRoute() {
-        return registerEndpointIdsFromRoute;
-    }
-
-    /**
-     * Sets whether to register endpoints that has id attribute assigned in the Spring registry.
-     * <p/>
-     * This mode is by default false, but can be turned on for backwards compatibility.
-     */
-    public void setRegisterEndpointIdsFromRoute(String registerEndpointIdsFromRoute) {
-        this.registerEndpointIdsFromRoute = registerEndpointIdsFromRoute;
     }
 
     public String getUseMDCLogging() {

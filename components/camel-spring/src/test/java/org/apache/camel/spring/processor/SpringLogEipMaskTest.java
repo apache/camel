@@ -30,7 +30,7 @@ public class SpringLogEipMaskTest {
     @Test
     public void testLogEipMask() throws Exception {
         final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/logEipMaskTest.xml");
-        SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext);
+        SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext, true);
         MockEndpoint mock = context.getEndpoint("mock:foo", MockEndpoint.class);
         mock.expectedMessageCount(1);
         context.start();
@@ -43,7 +43,7 @@ public class SpringLogEipMaskTest {
     @Test
     public void testCustomFormatter() throws Exception {
         final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/logEipCustomFormatterTest.xml");
-        SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext);
+        SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext, true);
         context.start();
         MockMaskingFormatter customFormatter = applicationContext.getBean(Constants.CUSTOM_LOG_MASK_REF, MockMaskingFormatter.class);
         context.createProducerTemplate().sendBody("direct:foo", "mock password=\"my passw0rd!\"");

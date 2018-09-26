@@ -78,7 +78,7 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         applicationContext = new AnnotationConfigApplicationContext(EmbedMongoConfiguration.class);
         @SuppressWarnings("deprecation")
-        CamelContext ctx = SpringCamelContext.springCamelContext(applicationContext);
+        CamelContext ctx = SpringCamelContext.springCamelContext(applicationContext, true);
         PropertiesComponent pc = new PropertiesComponent("classpath:mongodb.test.properties");
         ctx.addComponent("properties", pc);
         return ctx;

@@ -36,7 +36,7 @@ public class BarcodeDataFormatSpringTest extends BarcodeDataFormatCamelTest {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/dataformat/barcode/barcodeDataformatSpring.xml");
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
 }

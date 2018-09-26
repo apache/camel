@@ -252,8 +252,6 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(label = "transaction",
             description = "Specifies whether to use transacted mode")
     private boolean transacted;
-    @Deprecated
-    private boolean transactedInOut;
     @UriParam(defaultValue = "true", label = "transaction,advanced",
             description = "If true, Camel will create a JmsTransactionManager, if there is no transactionManager injected when option transacted=true.")
     private boolean lazyCreateTransactionManager = true;
@@ -655,18 +653,13 @@ public class JmsConfiguration implements Cloneable {
                 jmsTemplate.setTimeToLive(ttl);
             }
 
-            jmsTemplate.setSessionTransacted(isTransactedInOut());
-            if (isTransactedInOut()) {
-                jmsTemplate.setSessionAcknowledgeMode(Session.SESSION_TRANSACTED);
+            if (acknowledgementMode >= 0) {
+                jmsTemplate.setSessionAcknowledgeMode(acknowledgementMode);
+            } else if (acknowledgementModeName != null) {
+                jmsTemplate.setSessionAcknowledgeModeName(acknowledgementModeName);
             } else {
-                if (acknowledgementMode >= 0) {
-                    jmsTemplate.setSessionAcknowledgeMode(acknowledgementMode);
-                } else if (acknowledgementModeName != null) {
-                    jmsTemplate.setSessionAcknowledgeModeName(acknowledgementModeName);
-                } else {
-                    // default to AUTO
-                    jmsTemplate.setSessionAcknowledgeMode(Session.AUTO_ACKNOWLEDGE);
-                }
+                // default to AUTO
+                jmsTemplate.setSessionAcknowledgeMode(Session.AUTO_ACKNOWLEDGE);
             }
         }
         return answer;
@@ -1357,21 +1350,6 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setTransacted(boolean consumerTransacted) {
         this.transacted = consumerTransacted;
-    }
-
-    /**
-     * Should InOut operations (request reply) default to using transacted mode?
-     * <p>
-     * By default this is false as you need to commit the outgoing request before you can consume the input
-     */
-    @Deprecated
-    public boolean isTransactedInOut() {
-        return transactedInOut;
-    }
-
-    @Deprecated
-    public void setTransactedInOut(boolean transactedInOut) {
-        this.transactedInOut = transactedInOut;
     }
 
     public boolean isLazyCreateTransactionManager() {

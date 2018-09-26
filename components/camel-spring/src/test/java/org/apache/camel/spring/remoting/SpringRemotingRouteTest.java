@@ -32,7 +32,7 @@ public class SpringRemotingRouteTest extends Assert {
     @Test
     public void testBeanRoutes() throws Exception {
         AbstractXmlApplicationContext applicationContext = createApplicationContext();
-        CamelContext camelContext = SpringCamelContext.springCamelContext(applicationContext);
+        CamelContext camelContext = SpringCamelContext.springCamelContext(applicationContext, true);
 
         // START SNIPPET: invoke
         ISay proxy = applicationContext.getBean("sayProxy", ISay.class);

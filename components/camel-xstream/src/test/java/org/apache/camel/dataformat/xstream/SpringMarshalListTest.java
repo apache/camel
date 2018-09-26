@@ -39,7 +39,7 @@ public class SpringMarshalListTest extends MarshalListTest {
             }
         });
 
-        return SpringCamelContext.springCamelContext(applicationContext);        
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
 }

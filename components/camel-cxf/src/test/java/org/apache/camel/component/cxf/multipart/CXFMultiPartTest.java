@@ -105,7 +105,7 @@ public class CXFMultiPartTest extends CamelTestSupport {
    
 
     protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
     protected ClassPathXmlApplicationContext createApplicationContext() {

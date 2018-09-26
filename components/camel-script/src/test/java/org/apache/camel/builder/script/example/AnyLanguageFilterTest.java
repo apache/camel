@@ -40,7 +40,7 @@ public class AnyLanguageFilterTest extends XPathFilterTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(new ClassPathXmlApplicationContext("org/apache/camel/builder/script/example/anyLanguageFilter.xml"));
+        return SpringCamelContext.springCamelContext(new ClassPathXmlApplicationContext("org/apache/camel/builder/script/example/anyLanguageFilter.xml"), true);
     }
 
 }

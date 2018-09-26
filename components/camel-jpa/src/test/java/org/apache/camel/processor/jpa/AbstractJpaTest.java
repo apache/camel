@@ -62,7 +62,7 @@ public abstract class AbstractJpaTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         applicationContext = new ClassPathXmlApplicationContext(routeXml());
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
     protected void cleanupRepository() {

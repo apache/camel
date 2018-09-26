@@ -49,7 +49,7 @@ public class CxfPayLoadSoapHeaderSpringTest extends CxfPayLoadSoapHeaderTest {
       
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
     protected ClassPathXmlApplicationContext createApplicationContext() {

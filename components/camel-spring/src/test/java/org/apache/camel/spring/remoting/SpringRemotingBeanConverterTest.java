@@ -33,7 +33,7 @@ public class SpringRemotingBeanConverterTest extends Assert {
     public void testBeanRoutes() throws Exception {
         AbstractXmlApplicationContext applicationContext = createApplicationContext();
 
-        CamelContext camelContext = SpringCamelContext.springCamelContext(applicationContext);
+        CamelContext camelContext = SpringCamelContext.springCamelContext(applicationContext, true);
         
         Invoker invoker = applicationContext.getBean("invokerProxy", Invoker.class);
         String response = invoker.invoke(new Bean.SubClass());

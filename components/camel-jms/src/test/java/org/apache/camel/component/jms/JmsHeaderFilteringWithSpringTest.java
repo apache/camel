@@ -33,7 +33,7 @@ public class JmsHeaderFilteringWithSpringTest extends JmsHeaderFilteringTest {
     @Override
     protected CamelContext createCamelContext() throws Exception {   
         applicationContext = createApplicationContext();
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }    
     
     private ClassPathXmlApplicationContext createApplicationContext() {

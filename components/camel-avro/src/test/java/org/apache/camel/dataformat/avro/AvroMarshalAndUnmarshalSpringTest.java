@@ -27,7 +27,7 @@ public class AvroMarshalAndUnmarshalSpringTest extends AvroMarshalAndUnmarshallT
 
     protected CamelContext createCamelContext() throws Exception {
         applicationContext =  new ClassPathXmlApplicationContext("org/apache/camel/dataformat/avro/springDataFormat.xml");
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
     public boolean isUseRouteBuilder() {

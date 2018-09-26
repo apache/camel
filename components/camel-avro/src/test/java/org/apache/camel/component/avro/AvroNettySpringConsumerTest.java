@@ -51,7 +51,7 @@ public class AvroNettySpringConsumerTest extends AvroNettyConsumerTest {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/avro/avro-netty-consumer.xml");
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
     @Override

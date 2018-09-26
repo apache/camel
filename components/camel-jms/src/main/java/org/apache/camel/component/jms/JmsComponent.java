@@ -131,7 +131,6 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
         JmsConfiguration template = new JmsConfiguration(connectionFactory);
         template.setTransactionManager(transactionManager);
         template.setTransacted(true);
-        template.setTransactedInOut(true);
         return jmsComponent(template);
     }
 

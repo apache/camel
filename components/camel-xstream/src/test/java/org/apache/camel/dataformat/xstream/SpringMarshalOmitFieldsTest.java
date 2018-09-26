@@ -43,7 +43,7 @@ public class SpringMarshalOmitFieldsTest extends XStreamDataFormatOmitFieldsTest
             }
         });
 
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
    
 }

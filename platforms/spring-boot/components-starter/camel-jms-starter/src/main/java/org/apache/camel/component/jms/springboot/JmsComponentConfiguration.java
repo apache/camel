@@ -31,7 +31,6 @@ import org.apache.camel.component.jms.MessageListenerContainerFactory;
 import org.apache.camel.component.jms.ReplyToType;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.support.converter.MessageConverter;
@@ -1573,8 +1572,6 @@ public class JmsComponentConfiguration
          * Specifies whether to use transacted mode
          */
         private Boolean transacted = false;
-        @Deprecated
-        private Boolean transactedInOut;
         /**
          * If true, Camel will create a JmsTransactionManager, if there is no
          * transactionManager injected when option transacted=true.
@@ -2343,17 +2340,6 @@ public class JmsComponentConfiguration
 
         public void setTransacted(Boolean transacted) {
             this.transacted = transacted;
-        }
-
-        @Deprecated
-        @DeprecatedConfigurationProperty
-        public Boolean getTransactedInOut() {
-            return transactedInOut;
-        }
-
-        @Deprecated
-        public void setTransactedInOut(Boolean transactedInOut) {
-            this.transactedInOut = transactedInOut;
         }
 
         public Boolean getLazyCreateTransactionManager() {

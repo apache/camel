@@ -58,7 +58,7 @@ public class CxfPayloadProducerNamespaceOnEnvelopeTest extends CamelTestSupport 
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
     @Before

@@ -48,7 +48,7 @@ public class CxfEndpointUtilsWithSpringTest extends CxfEndpointUtilsTest {
 
     @Override
     protected CamelContext getCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
     protected ClassPathXmlApplicationContext createApplicationContext() {

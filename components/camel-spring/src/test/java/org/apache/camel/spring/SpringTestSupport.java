@@ -24,7 +24,6 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
 import org.apache.camel.impl.scan.InvertingPackageScanFilter;
@@ -143,7 +142,7 @@ public abstract class SpringTestSupport extends ContextTestSupport {
     @SuppressWarnings("deprecation")
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = SpringCamelContext.springCamelContext(applicationContext);
+        CamelContext context = SpringCamelContext.springCamelContext(applicationContext, true);
         return context;
     }
 

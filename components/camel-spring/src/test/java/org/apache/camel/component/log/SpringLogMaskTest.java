@@ -34,7 +34,7 @@ public class SpringLogMaskTest {
     @Test
     public void testLogMask() throws Exception {
         final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/log/SpringLogMaskTest-context.xml");
-        SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext);
+        SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext, true);
         context.start();
         MockEndpoint mock = context.getEndpoint("mock:mask", MockEndpoint.class);
         ProducerTemplate template = context.createProducerTemplate();
@@ -47,7 +47,7 @@ public class SpringLogMaskTest {
     @Test
     public void testLogMaskDisabled() throws Exception {
         final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/log/SpringLogMaskTest-context.xml");
-        SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext);
+        SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext, true);
         context.start();
         MockEndpoint mock = context.getEndpoint("mock:no-mask", MockEndpoint.class);
         ProducerTemplate template = context.createProducerTemplate();
@@ -60,7 +60,7 @@ public class SpringLogMaskTest {
     @Test
     public void testCustomLogMask() throws Exception {
         final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/log/SpringCustomLogMaskTest-context.xml");
-        SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext);
+        SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext, true);
         MockMaskingFormatter customFormatter = applicationContext.getBean(Constants.CUSTOM_LOG_MASK_REF, MockMaskingFormatter.class);
         context.start();
         ProducerTemplate template = context.createProducerTemplate();

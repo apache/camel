@@ -45,6 +45,6 @@ public final class SpringTestHelper {
             }
         });
 
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 }
