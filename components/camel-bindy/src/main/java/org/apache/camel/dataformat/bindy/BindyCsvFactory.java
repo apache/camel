@@ -75,6 +75,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     private boolean allowEmptyStream;
     private boolean quotingEscaped;
     private boolean endWithLineBreak;
+    private boolean removeQuotes;
 
     public BindyCsvFactory(Class<?> type) throws Exception {
         super(type);
@@ -665,6 +666,9 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     // Get endWithLineBreak parameter
                     endWithLineBreak = record.endWithLineBreak();
                     LOG.debug("End with line break: {}", endWithLineBreak);
+
+                    removeQuotes = record.removeQuotes();
+                    LOG.debug("Remove quotes: {}", removeQuotes);
                 }
 
                 if (section != null) {
@@ -751,6 +755,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
     public String getQuote() {
         return quote;
+    }
+
+    public Boolean getRemoveQuotes() {
+        return removeQuotes;
     }
 
     public int getMaxpos() {
