@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.AsyncProducer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -27,7 +28,7 @@ import org.apache.camel.util.AsyncProcessorHelper;
  *
  * @version 
  */
-public abstract class DefaultAsyncProducer extends DefaultProducer implements AsyncProcessor {
+public abstract class DefaultAsyncProducer extends DefaultProducer implements AsyncProducer {
 
     public DefaultAsyncProducer(Endpoint endpoint) {
         super(endpoint);

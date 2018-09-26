@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -33,6 +34,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
@@ -72,7 +74,7 @@ public class RecipientListProcessor extends MulticastProcessor {
     static final class RecipientProcessorExchangePair implements ProcessorExchangePair {
         private final int index;
         private final Endpoint endpoint;
-        private final Producer producer;
+        private final AsyncProducer producer;
         private Processor prepared;
         private final Exchange exchange;
         private final ProducerCache producerCache;
@@ -84,7 +86,7 @@ public class RecipientListProcessor extends MulticastProcessor {
             this.index = index;
             this.producerCache = producerCache;
             this.endpoint = endpoint;
-            this.producer = producer;
+            this.producer = AsyncProcessorConverterHelper.convert(producer);
             this.prepared = prepared;
             this.exchange = exchange;
             this.pattern = pattern;
@@ -265,7 +267,7 @@ public class RecipientListProcessor extends MulticastProcessor {
     protected void doStart() throws Exception {
         super.doStart();
         if (producerCache == null) {
-            producerCache = new ProducerCache(this, getCamelContext());
+            producerCache = new ProducerCache(this, getCamelContext(), 0);
         }
         ServiceHelper.startService(producerCache);
     }

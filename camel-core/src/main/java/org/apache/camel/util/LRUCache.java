@@ -19,8 +19,10 @@ package org.apache.camel.util;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.LongAdder;
+import java.util.function.Consumer;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -51,9 +53,9 @@ public class LRUCache<K, V> implements Map<K, V>, RemovalListener<K, V>, Seriali
     protected final LongAdder evicted = new LongAdder();
 
     private int maxCacheSize = 10000;
-    private boolean stopOnEviction;
     private final Cache<K, V> cache;
     private final Map<K, V> map;
+    private final Consumer<V> evict;
 
     /**
      * Constructs an empty <tt>LRUCache</tt> instance with the
@@ -106,6 +108,23 @@ public class LRUCache<K, V> implements Map<K, V>, RemovalListener<K, V>, Seriali
      */
     public LRUCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction,
                     boolean soft, boolean weak, boolean syncListener) {
+        this(initialCapacity, maximumCacheSize, stopOnEviction ? LRUCache::doStop : LRUCache::doNothing, soft, weak, syncListener);
+    }
+
+    /**
+     * Constructs an empty <tt>LRUCache</tt> instance with the
+     * specified initial capacity, maximumCacheSize,load factor and ordering mode.
+     *
+     * @param initialCapacity  the initial capacity.
+     * @param maximumCacheSize the max capacity.
+     * @param evict            callback for evicted elements
+     * @param soft             whether to use soft values a soft cache  (default is false)
+     * @param weak             whether to use weak keys/values as a weak cache  (default is false)
+     * @param syncListener     whether to use synchronous call for the eviction listener (default is false)
+     * @throws IllegalArgumentException if the initial capacity is negative
+     */
+    public LRUCache(int initialCapacity, int maximumCacheSize, Consumer<V> evict,
+                    boolean soft, boolean weak, boolean syncListener) {
         Caffeine<K, V> caffeine = Caffeine.newBuilder()
                 .initialCapacity(initialCapacity)
                 .maximumSize(maximumCacheSize)
@@ -124,7 +143,7 @@ public class LRUCache<K, V> implements Map<K, V>, RemovalListener<K, V>, Seriali
         this.cache = caffeine.build();
         this.map = cache.asMap();
         this.maxCacheSize = maximumCacheSize;
-        this.stopOnEviction = stopOnEviction;
+        this.evict = Objects.requireNonNull(evict);
     }
 
     @Override
@@ -198,14 +217,7 @@ public class LRUCache<K, V> implements Map<K, V>, RemovalListener<K, V>, Seriali
         if (cause.wasEvicted()) {
             evicted.increment();
             LOG.trace("onRemoval {} -> {}", key, value);
-            if (stopOnEviction) {
-                try {
-                    // stop service as its evicted from cache
-                    ServiceHelper.stopService(value);
-                } catch (Exception e) {
-                    LOG.warn("Error stopping service: " + value + ". This exception will be ignored.", e);
-                }
-            }
+            evict.accept(value);
         }
     }
 
@@ -253,5 +265,17 @@ public class LRUCache<K, V> implements Map<K, V>, RemovalListener<K, V>, Seriali
     @Override
     public String toString() {
         return "LRUCache@" + ObjectHelper.getIdentityHashCode(this);
+    }
+
+    static <V> void doNothing(V value) {
+    }
+
+    static <V> void doStop(V value) {
+        try {
+            // stop service as its evicted from cache
+            ServiceHelper.stopService(value);
+        } catch (Exception e) {
+            LOG.warn("Error stopping service: " + value + ". This exception will be ignored.", e);
+        }
     }
 }

@@ -33,7 +33,7 @@ public class ConsumerCacheZeroCapacityTest extends ContextTestSupport {
 
     @Test
     public void testConsumerCacheZeroCapacity() throws Exception {
-        ConsumerCache cache = new ConsumerCache(this, context, 0);
+        ConsumerCache cache = new ConsumerCache(this, context, -1);
         cache.start();
 
         assertEquals("Size should be 0", 0, cache.size());

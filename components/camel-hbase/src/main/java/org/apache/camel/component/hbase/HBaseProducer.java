@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ServicePoolAware;
 import org.apache.camel.component.hbase.filters.ModelAwareFilter;
 import org.apache.camel.component.hbase.mapping.CellMappingStrategy;
 import org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory;
@@ -46,7 +45,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 /**
  * The HBase producer.
  */
-public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
+public class HBaseProducer extends DefaultProducer {
 
     private HBaseEndpoint endpoint;
     private HBaseRow rowModel;

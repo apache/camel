@@ -28,8 +28,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
-import org.apache.camel.ServicePoolAware;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ExchangeHelper;
@@ -64,7 +62,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version
  */
-public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
+public class Mina2Producer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(Mina2Producer.class);
     private final ResponseHandler handler;
@@ -112,7 +110,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
     public boolean isSingleton() {
         // the producer should not be singleton otherwise cannot use concurrent producers and safely
         // use request/reply with correct correlation
-        return false;
+        return !sync;
     }
 
     @Override
@@ -125,7 +123,6 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         }
     }
 
-    @SuppressWarnings("deprecation")
     protected void doProcess(Exchange exchange) throws Exception {
         if (session == null && !lazySessionCreation) {
             throw new IllegalStateException("Not started yet!");

@@ -16,23 +16,23 @@
  */
 package org.apache.camel.impl;
 
+import org.apache.camel.AsyncProducer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Producer;
 import org.junit.Test;
 
 public class EmptyProducerCacheTest extends ContextTestSupport {
 
     @Test
     public void testEmptyCache() throws Exception {
-        ProducerCache cache = new EmptyProducerCache(this, context);
+        ProducerCache cache = new ProducerCache(this, context, -1);
         cache.start();
 
         assertEquals("Size should be 0", 0, cache.size());
 
         // we never cache any producers
         Endpoint e = context.getEndpoint("direct:queue:1");
-        Producer p = cache.acquireProducer(e);
+        AsyncProducer p = cache.acquireProducer(e);
 
         assertEquals("Size should be 0", 0, cache.size());
 
@@ -45,7 +45,7 @@ public class EmptyProducerCacheTest extends ContextTestSupport {
 
     @Test
     public void testCacheProducerAcquireAndRelease() throws Exception {
-        ProducerCache cache = new EmptyProducerCache(this, context);
+        ProducerCache cache = new ProducerCache(this, context, -1);
         cache.start();
 
         assertEquals("Size should be 0", 0, cache.size());
@@ -53,11 +53,11 @@ public class EmptyProducerCacheTest extends ContextTestSupport {
         // we never cache any producers
         for (int i = 0; i < 1003; i++) {
             Endpoint e = context.getEndpoint("direct:queue:" + i);
-            Producer p = cache.acquireProducer(e);
+            AsyncProducer p = cache.acquireProducer(e);
             cache.releaseProducer(e, p);
         }
 
-        assertEquals("Size should be 1000", 0, cache.size());
+        assertEquals("Size should be 0", 0, cache.size());
         cache.stop();
     }
 

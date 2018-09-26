@@ -17,7 +17,6 @@
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ServicePoolAware;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.util.URISupport;
@@ -25,7 +24,7 @@ import org.apache.camel.util.URISupport;
 /**
  * Generic remote file producer for all the FTP variations.
  */
-public class RemoteFileProducer<T> extends GenericFileProducer<T> implements ServicePoolAware {
+public class RemoteFileProducer<T> extends GenericFileProducer<T> {
 
     private boolean loggedIn;
     

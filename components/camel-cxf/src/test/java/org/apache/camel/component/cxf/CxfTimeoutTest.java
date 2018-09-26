@@ -95,7 +95,8 @@ public class CxfTimeoutTest extends CamelSpringTestSupport {
         Exchange reply = sendJaxWsMessage(endpointUri);
         Exception e = reply.getException();
         assertNotNull("We should get the exception cause here", e);
-        assertTrue("We should get the socket time out exception here", e instanceof SocketTimeoutException);
+        assertNotNull("We should get the exception cause here", e.getCause());
+        assertTrue("We should get the socket time out exception here", e.getCause() instanceof SocketTimeoutException);
     }
 
     protected Exchange sendJaxWsMessage(String endpointUri) throws InterruptedException {

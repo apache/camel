@@ -14,25 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
-
-import org.apache.camel.Endpoint;
-import org.apache.camel.PollingConsumer;
+package org.apache.camel;
 
 /**
- * A service pool for {@link PollingConsumer}.
- * <p/>
- * For instance camel-jms leverages this to allow a pool of pollingConsumers so we
- * can support concurrent pollingConsumer in a thread safe manner.
+ * Asynchronous producer
  */
-@Deprecated
-public class DefaultPollingConsumerServicePool extends DefaultServicePool<Endpoint, PollingConsumer> {
-    
-    public DefaultPollingConsumerServicePool() {
-    }
-
-    public DefaultPollingConsumerServicePool(int capacity) {
-        super(capacity);
-    }
+public interface AsyncProducer extends Producer, AsyncProcessor {
 
 }

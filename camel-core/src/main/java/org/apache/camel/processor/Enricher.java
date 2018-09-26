@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
@@ -25,9 +26,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
-import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.EmptyProducerCache;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
@@ -155,7 +154,7 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, IdAware,
      */
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         // which producer to use
-        final Producer producer;
+        final AsyncProducer producer;
         final Endpoint endpoint;
 
         // use dynamic endpoint so calculate the endpoint to use
@@ -346,16 +345,8 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, IdAware,
         }
 
         if (producerCache == null) {
-            if (cacheSize < 0) {
-                producerCache = new EmptyProducerCache(this, camelContext);
-                LOG.debug("Enricher {} is not using ProducerCache", this);
-            } else if (cacheSize == 0) {
-                producerCache = new ProducerCache(this, camelContext);
-                LOG.debug("Enricher {} using ProducerCache with default cache size", this);
-            } else {
-                producerCache = new ProducerCache(this, camelContext, cacheSize);
-                LOG.debug("Enricher {} using ProducerCache with cacheSize={}", this, cacheSize);
-            }
+            producerCache = new ProducerCache(this, camelContext, cacheSize);
+            LOG.debug("Enricher {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
         }
 
         ServiceHelper.startServices(producerCache, aggregationStrategy);

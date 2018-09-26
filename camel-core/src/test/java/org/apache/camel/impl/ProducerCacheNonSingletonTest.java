@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import java.util.Map;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -37,11 +38,11 @@ public class ProducerCacheNonSingletonTest extends ContextTestSupport {
     public void testNonSingleton() throws Exception {
         context.addComponent("dummy", new MyDummyComponent());
 
-        ProducerCache cache = new ProducerCache(this, context);
+        ProducerCache cache = new ProducerCache(this, context, -1);
         cache.start();
 
         Endpoint endpoint = context.getEndpoint("dummy:foo");
-        DefaultProducer producer = (DefaultProducer) cache.acquireProducer(endpoint);
+        DefaultAsyncProducer producer = (DefaultAsyncProducer) cache.acquireProducer(endpoint);
         assertNotNull(producer);
         assertTrue("Should be started", producer.getStatus().isStarted());
 
@@ -85,15 +86,15 @@ public class ProducerCacheNonSingletonTest extends ContextTestSupport {
         }
     }
 
-    private class MyDummyProducer extends DefaultProducer {
+    private class MyDummyProducer extends DefaultAsyncProducer {
 
         public MyDummyProducer(Endpoint endpoint) {
             super(endpoint);
         }
 
         @Override
-        public void process(Exchange exchange) throws Exception {
-            // noop
+        public boolean process(Exchange exchange, AsyncCallback callback) {
+            return false;
         }
     }
 }

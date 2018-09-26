@@ -161,7 +161,6 @@ import org.apache.camel.spi.RouteError;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
-import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Transformer;
@@ -275,8 +274,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private PackageScanClassResolver packageScanClassResolver;
     // we use a capacity of 100 per endpoint, so for the same endpoint we have at most 100 producers in the pool
     // so if we have 6 endpoints in the pool, we can have 6 x 100 producers in total
-    private ServicePool<Endpoint, Producer> producerServicePool = createProducerServicePool();
-    private ServicePool<Endpoint, PollingConsumer> pollingConsumerServicePool = createPollingConsumerServicePool();
+    private ServicePool<Producer> producerServicePool = createProducerServicePool();
+    private ServicePool<PollingConsumer> pollingConsumerServicePool = createPollingConsumerServicePool();
     private NodeIdFactory nodeIdFactory = createNodeIdFactory();
     private ProcessorFactory processorFactory = createProcessorFactory();
     private MessageHistoryFactory messageHistoryFactory = createMessageHistoryFactory();
@@ -2909,8 +2908,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public ProducerTemplate createProducerTemplate() {
-        int size = CamelContextHelper.getMaximumCachePoolSize(this);
-        return createProducerTemplate(size);
+        return createProducerTemplate(0);
     }
 
     public ProducerTemplate createProducerTemplate(int maximumCacheSize) {
@@ -2926,8 +2924,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public FluentProducerTemplate createFluentProducerTemplate() {
-        int size = CamelContextHelper.getMaximumCachePoolSize(this);
-        return createFluentProducerTemplate(size);
+        return createFluentProducerTemplate(0);
     }
 
     public FluentProducerTemplate createFluentProducerTemplate(int maximumCacheSize) {
@@ -2943,8 +2940,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public ConsumerTemplate createConsumerTemplate() {
-        int size = CamelContextHelper.getMaximumCachePoolSize(this);
-        return createConsumerTemplate(size);
+        return createConsumerTemplate(0);
     }
 
     public ConsumerTemplate createConsumerTemplate(int maximumCacheSize) {
@@ -2977,19 +2973,19 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return errorHandlerExecutorService;
     }
 
-    public void setProducerServicePool(ServicePool<Endpoint, Producer> producerServicePool) {
+    public void setProducerServicePool(ServicePool<Producer> producerServicePool) {
         this.producerServicePool = producerServicePool;
     }
 
-    public ServicePool<Endpoint, Producer> getProducerServicePool() {
+    public ServicePool<Producer> getProducerServicePool() {
         return producerServicePool;
     }
 
-    public ServicePool<Endpoint, PollingConsumer> getPollingConsumerServicePool() {
+    public ServicePool<PollingConsumer> getPollingConsumerServicePool() {
         return pollingConsumerServicePool;
     }
 
-    public void setPollingConsumerServicePool(ServicePool<Endpoint, PollingConsumer> pollingConsumerServicePool) {
+    public void setPollingConsumerServicePool(ServicePool<PollingConsumer> pollingConsumerServicePool) {
         this.pollingConsumerServicePool = pollingConsumerServicePool;
     }
 
@@ -4764,12 +4760,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return new DefaultExecutorServiceManager(this);
     }
 
-    protected ServicePool<Endpoint, Producer> createProducerServicePool() {
-        return new SharedProducerServicePool(100);
+    protected ServicePool<Producer> createProducerServicePool() {
+        return new ServicePool<>(Endpoint::createProducer, Producer::getEndpoint, 100);
     }
 
-    protected ServicePool<Endpoint, PollingConsumer> createPollingConsumerServicePool() {
-        return new SharedPollingConsumerServicePool(100);
+    protected ServicePool<PollingConsumer> createPollingConsumerServicePool() {
+        return new ServicePool<>(Endpoint::createPollingConsumer, PollingConsumer::getEndpoint, 100);
     }
 
     protected UnitOfWorkFactory createUnitOfWorkFactory() {

@@ -291,7 +291,7 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
 
     @Override
     public PollingConsumer createPollingConsumer() throws Exception {
-        JmsPollingConsumer answer = new JmsPollingConsumer(this);
+        JmsPollingConsumer answer = new JmsPollingConsumer(this, createInOnlyTemplate());
         configurePollingConsumer(answer);
         return answer;
     }

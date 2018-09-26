@@ -18,7 +18,9 @@ package org.apache.camel.util;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 import org.apache.camel.util.concurrent.ThreadHelper;
 import org.slf4j.Logger;
@@ -91,6 +93,21 @@ public final class LRUCacheFactory {
 
     /**
      * Constructs an empty <tt>LRUCache</tt> instance with the
+     * specified maximumCacheSize, and will stop on eviction.
+     *
+     * @param maximumCacheSize the max capacity.
+     * @throws IllegalArgumentException if the initial capacity is negative
+     */
+    public static <K, V> Map<K, V> newLRUCache(int maximumCacheSize, Consumer<V> onEvict) {
+        LOG.trace("Creating LRUCache with maximumCacheSize: {}", maximumCacheSize);
+        if (USE_SIMPLE_CACHE) {
+            return new SimpleLRUCache<>(16, maximumCacheSize, onEvict);
+        }
+        return new LRUCache<>(16, maximumCacheSize, onEvict, false, false, false);
+    }
+
+    /**
+     * Constructs an empty <tt>LRUCache</tt> instance with the
      * specified initial capacity, maximumCacheSize, and will stop on eviction.
      *
      * @param initialCapacity  the initial capacity.
@@ -157,7 +174,7 @@ public final class LRUCacheFactory {
         static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
         private final int maximumCacheSize;
-        private final boolean stopOnEviction;
+        private final Consumer<V> evict;
 
         public SimpleLRUCache(int maximumCacheSize) {
             this(16, maximumCacheSize, maximumCacheSize > 0);
@@ -168,26 +185,35 @@ public final class LRUCacheFactory {
         }
 
         public SimpleLRUCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
+            this(initialCapacity, maximumCacheSize, stopOnEviction ? SimpleLRUCache::doStop : SimpleLRUCache::doNothing);
+        }
+
+        public SimpleLRUCache(int initialCapacity, int maximumCacheSize, Consumer<V> evicted) {
             super(initialCapacity, DEFAULT_LOAD_FACTOR, true);
             this.maximumCacheSize = maximumCacheSize;
-            this.stopOnEviction = stopOnEviction;
+            this.evict = Objects.requireNonNull(evicted);
         }
 
         @Override
         protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
             if (size() >= maximumCacheSize) {
-                if (stopOnEviction) {
-                    Object value = eldest.getValue();
-                    try {
-                        // stop service as its evicted from cache
-                        ServiceHelper.stopService(value);
-                    } catch (Exception e) {
-                        LOG.warn("Error stopping service: " + value + ". This exception will be ignored.", e);
-                    }
-                }
+                V value = eldest.getValue();
+                evict.accept(value);
                 return true;
             }
             return false;
+        }
+
+        static <V> void doNothing(V value) {
+        }
+
+        static <V> void doStop(V value) {
+            try {
+                // stop service as its evicted from cache
+                ServiceHelper.stopService(value);
+            } catch (Exception e) {
+                LOG.warn("Error stopping service: " + value + ". This exception will be ignored.", e);
+            }
         }
     }
 

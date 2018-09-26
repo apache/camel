@@ -19,6 +19,8 @@ package org.apache.camel.impl;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.AsyncProducer;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -36,9 +38,11 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
     private final AtomicInteger stopCounter = new AtomicInteger();
     private final AtomicInteger shutdownCounter = new AtomicInteger();
 
+    private MyComponent component;
+
     @Test
     public void testCacheProducerAcquireAndRelease() throws Exception {
-        ProducerCache cache = new ProducerCache(this, context);
+        ProducerCache cache = new ProducerCache(this, context, 0);
         cache.start();
 
         assertEquals("Size should be 0", 0, cache.size());
@@ -46,7 +50,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         // test that we cache at most 1000 producers to avoid it eating to much memory
         for (int i = 0; i < 1003; i++) {
             Endpoint e = context.getEndpoint("direct:queue:" + i);
-            Producer p = cache.acquireProducer(e);
+            AsyncProducer p = cache.acquireProducer(e);
             cache.releaseProducer(e, p);
         }
 
@@ -65,8 +69,9 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         assertEquals("Size should be 0", 0, cache.size());
 
         for (int i = 0; i < 8; i++) {
-            Endpoint e = new MyEndpoint(true, i);
-            Producer p = cache.acquireProducer(e);
+            Endpoint e = newEndpoint(true, i);
+            e.setCamelContext(context);
+            AsyncProducer p = cache.acquireProducer(e);
             cache.releaseProducer(e, p);
         }
 
@@ -88,36 +93,6 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
     }
 
     @Test
-    public void testReleaseProducerInvokesStopAndShutdownByNonSingletonProducers() throws Exception {
-        ProducerCache cache = new ProducerCache(this, context, 1);
-        cache.start();
-
-        assertEquals("Size should be 0", 0, cache.size());
-
-        for (int i = 0; i < 3; i++) {
-            Endpoint e = new MyEndpoint(false, i);
-            Producer p = cache.acquireProducer(e);
-            cache.releaseProducer(e, p);
-        }
-
-        assertEquals("Size should be 0", 0, cache.size());
-
-        // should have stopped all 3
-        assertEquals(3, stopCounter.get());
-
-        // should have shutdown all 3
-        assertEquals(3, shutdownCounter.get());
-
-        cache.stop();
-
-        // no more stop after stopping the cache
-        assertEquals(3, stopCounter.get());
-
-        // no more shutdown after stopping the cache
-        assertEquals(3, shutdownCounter.get());
-    }
-
-    @Test
     public void testExtendedStatistics() throws Exception {
         ProducerCache cache = new ProducerCache(this, context, 5);
         cache.setExtendedStatistics(true);
@@ -129,25 +104,25 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         // use 2 = 3 times
         // use 3..4 = 1 times
         // use 5 = 0 times
-        Endpoint e = new MyEndpoint(true, 1);
-        Producer p = cache.acquireProducer(e);
+        Endpoint e = newEndpoint(true, 1);
+        AsyncProducer p = cache.acquireProducer(e);
         cache.releaseProducer(e, p);
-        e = new MyEndpoint(true, 1);
+        e = newEndpoint(true, 1);
         p = cache.acquireProducer(e);
         cache.releaseProducer(e, p);
-        e = new MyEndpoint(true, 2);
+        e = newEndpoint(true, 2);
         p = cache.acquireProducer(e);
         cache.releaseProducer(e, p);
-        e = new MyEndpoint(true, 2);
+        e = newEndpoint(true, 2);
         p = cache.acquireProducer(e);
         cache.releaseProducer(e, p);
-        e = new MyEndpoint(true, 2);
+        e = newEndpoint(true, 2);
         p = cache.acquireProducer(e);
         cache.releaseProducer(e, p);
-        e = new MyEndpoint(true, 3);
+        e = newEndpoint(true, 3);
         p = cache.acquireProducer(e);
         cache.releaseProducer(e, p);
-        e = new MyEndpoint(true, 4);
+        e = newEndpoint(true, 4);
         p = cache.acquireProducer(e);
         cache.releaseProducer(e, p);
 
@@ -166,12 +141,33 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         cache.stop();
     }
 
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        component = new MyComponent(context);
+    }
+
+    protected MyEndpoint newEndpoint(boolean isSingleton, int number) {
+        return new MyEndpoint(component, isSingleton, number);
+    }
+
+    private final class MyComponent extends DefaultComponent {
+        public MyComponent(CamelContext context) {
+            super(context);
+        }
+
+        @Override
+        protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+            throw new UnsupportedOperationException();
+        }
+    }
     private final class MyEndpoint extends DefaultEndpoint {
 
         private final boolean isSingleton;
         private final int number;
 
-        private MyEndpoint(boolean isSingleton, int number) {
+        private MyEndpoint(MyComponent component, boolean isSingleton, int number) {
+            super("my://" + number, component);
             this.isSingleton = isSingleton;
             this.number = number;
         }
@@ -191,10 +187,6 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
             return isSingleton;
         }
 
-        @Override
-        public String getEndpointUri() {
-            return "my://" + number;
-        }
     }
 
     private final class MyProducer extends DefaultProducer {
