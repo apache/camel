@@ -95,6 +95,10 @@ public class GenerateMojo extends AbstractGenerateMojo {
             throw new MojoExecutionException(
                 "Unable to generate REST DSL Swagger sources from specification: " + specificationUri, e);
         }
+
+        if (dto) {
+            generateDto();
+        }
     }
 
 }

@@ -23,10 +23,24 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 import org.apache.camel.generator.swagger.DestinationGenerator;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+
+import static org.twdata.maven.mojoexecutor.MojoExecutor.artifactId;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.element;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.executeMojo;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.executionEnvironment;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.goal;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.groupId;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.name;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.plugin;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.version;
 
 abstract class AbstractGenerateMojo extends AbstractMojo {
 
@@ -44,6 +58,21 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project.basedir}/src/spec/swagger.json", required = true)
     String specificationUri;
+
+    @Parameter(defaultValue = "true")
+    boolean dto;
+
+    @Parameter(defaultValue = "2.3.1")
+    String swaggerCodegenMavenPluginVersion;
+
+    @Parameter(defaultValue = "${project}", readonly = true)
+    private MavenProject mavenProject;
+
+    @Parameter(defaultValue = "${session}", readonly = true)
+    private MavenSession mavenSession;
+
+    @Component
+    private BuildPluginManager pluginManager;
 
     DestinationGenerator createDestinationGenerator() throws MojoExecutionException {
         final Class<DestinationGenerator> destinationGeneratorClass;
@@ -84,6 +113,33 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
                 e);
         }
         return destinationGeneratorObject;
+    }
+
+    void generateDto() throws MojoExecutionException {
+        getLog().info("Generating DTO classes using io.swagger:swagger-codegen-maven-plugin:" + swaggerCodegenMavenPluginVersion);
+
+        executeMojo(
+            plugin(
+                groupId("io.swagger"),
+                artifactId("swagger-codegen-maven-plugin"),
+                version(swaggerCodegenMavenPluginVersion)
+            ),
+            goal("generate"),
+            configuration(
+                element(name("inputSpec"), specificationUri),
+                element(name("language"), "java"),
+                element(name("generateApis"), "false"),
+                element(name("generateModelTests"), "false"),
+                element(name("generateModelDocumentation"), "false"),
+                element(name("generateSupportingFiles"), "false")
+            ),
+            executionEnvironment(
+                mavenProject,
+                mavenSession,
+                pluginManager
+            )
+        );
+
     }
 
 }
