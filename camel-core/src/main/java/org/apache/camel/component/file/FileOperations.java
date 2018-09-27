@@ -395,7 +395,7 @@ public class FileOperations implements GenericFileOperations<File> {
                     throw new GenericFileOperationFailedException("Cannot delete file: " + to);
                 }
             } else {
-                throw new GenericFileOperationFailedException("Cannot moved existing file from: " + fileName + " to: " + to + " as there already exists a file: " + to);
+                throw new GenericFileOperationFailedException("Cannot move existing file from: " + fileName + " to: " + to + " as there already exists a file: " + to);
             }
         }
 
