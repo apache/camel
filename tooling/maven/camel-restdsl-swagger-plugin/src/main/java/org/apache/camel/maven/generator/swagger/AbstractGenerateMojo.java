@@ -65,8 +65,20 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
     @Parameter(defaultValue = "2.3.1")
     String swaggerCodegenMavenPluginVersion;
 
+    @Parameter(defaultValue = "${project.build.directory}/generated-sources/swagger")
+    String modelOutput;
+
     @Parameter
     String modelPackage;
+
+    @Parameter
+    String modelNamePrefix;
+
+    @Parameter
+    String modelNameSuffix;
+
+    @Parameter(defaultValue = "true")
+    String modelWithXml;
 
     @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject mavenProject;
@@ -131,8 +143,20 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
         elements.add(new MojoExecutor.Element("generateModelTests", "false"));
         elements.add(new MojoExecutor.Element("generateModelDocumentation", "false"));
         elements.add(new MojoExecutor.Element("generateSupportingFiles", "false"));
+        if (modelOutput != null) {
+            elements.add(new MojoExecutor.Element("output", modelOutput));
+        }
         if (modelPackage != null) {
             elements.add(new MojoExecutor.Element("modelPackage", modelPackage));
+        }
+        if (modelNamePrefix != null) {
+            elements.add(new MojoExecutor.Element("modelNamePrefix", modelNamePrefix));
+        }
+        if (modelNameSuffix != null) {
+            elements.add(new MojoExecutor.Element("modelNameSuffix", modelNameSuffix));
+        }
+        if (modelWithXml != null) {
+            elements.add(new MojoExecutor.Element("withXml", modelPackage));
         }
 
         executeMojo(
