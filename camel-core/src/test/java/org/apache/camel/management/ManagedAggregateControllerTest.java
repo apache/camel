@@ -160,7 +160,7 @@ public class ManagedAggregateControllerTest extends ManagementTestSupport {
         assertEquals(1, pending.intValue());
 
         // we can also use the client mbean
-        ManagedAggregateProcessorMBean client = context.getManagedProcessor("myAggregator", ManagedAggregateProcessorMBean.class);
+        ManagedAggregateProcessorMBean client = context.adapt(ManagedCamelContext.class).getManagedProcessor("myAggregator", ManagedAggregateProcessorMBean.class);
         assertNotNull(client);
 
         assertEquals(1, client.getCompletedByForce());

@@ -17,27 +17,14 @@
 package org.apache.camel;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
-import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
-import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.health.HealthCheckRegistry;
-import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.model.rest.RestDefinition;
-import org.apache.camel.model.rest.RestsDefinition;
-import org.apache.camel.model.transformer.TransformerDefinition;
-import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelContextNameStrategy;
@@ -535,35 +522,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void setupRoutes(boolean done);
 
     /**
-     * Returns a list of the current route definitions
-     *
-     * @return list of the current route definitions
-     */
-    List<RouteDefinition> getRouteDefinitions();
-
-    /**
-     * Gets the route definition with the given id
-     *
-     * @param id id of the route
-     * @return the route definition or <tt>null</tt> if not found
-     */
-    RouteDefinition getRouteDefinition(String id);
-
-    /**
-     * Returns a list of the current REST definitions
-     *
-     * @return list of the current REST definitions
-     */
-    List<RestDefinition> getRestDefinitions();
-
-    /**
-     * Adds a collection of rest definitions to the context
-     *
-     * @param restDefinitions the rest(s) definition to add
-     */
-    void addRestDefinitions(Collection<RestDefinition> restDefinitions) throws Exception;
-
-    /**
      * Sets a custom {@link org.apache.camel.spi.RestConfiguration}
      *
      * @param restConfiguration the REST configuration
@@ -643,49 +601,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     <T extends Processor> T getProcessor(String id, Class<T> type);
 
     /**
-     * Gets the managed processor client api from any of the routes which with the given id
-     *
-     * @param id id of the processor
-     * @param type the managed processor type from the {@link org.apache.camel.api.management.mbean} package.
-     * @return the processor or <tt>null</tt> if not found
-     * @throws IllegalArgumentException if the type is not compliant
-     */
-    <T extends ManagedProcessorMBean> T getManagedProcessor(String id, Class<T> type);
-
-    /**
-     * Gets the managed route client api with the given route id
-     *
-     * @param routeId id of the route
-     * @param type the managed route type from the {@link org.apache.camel.api.management.mbean} package.
-     * @return the route or <tt>null</tt> if not found
-     * @throws IllegalArgumentException if the type is not compliant
-     */
-    <T extends ManagedRouteMBean> T getManagedRoute(String routeId, Class<T> type);
-
-    /**
-     * Gets the managed Camel CamelContext client api
-     */
-    ManagedCamelContextMBean getManagedCamelContext();
-
-    /**
-     * Gets the processor definition from any of the routes which with the given id
-     *
-     * @param id id of the processor definition
-     * @return the processor definition or <tt>null</tt> if not found
-     */
-    ProcessorDefinition getProcessorDefinition(String id);
-
-    /**
-     * Gets the processor definition from any of the routes which with the given id
-     *
-     * @param id id of the processor definition
-     * @param type the processor definition type
-     * @return the processor definition or <tt>null</tt> if not found
-     * @throws java.lang.ClassCastException is thrown if the type is not correct type
-     */
-    <T extends ProcessorDefinition> T getProcessorDefinition(String id, Class<T> type);
-
-    /**
      * Adds a collection of routes to this CamelContext using the given builder
      * to build them.
      * <p/>
@@ -701,142 +616,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @throws Exception if the routes could not be created for whatever reason
      */
     void addRoutes(RoutesBuilder builder) throws Exception;
-
-    /**
-     * Loads a collection of route definitions from the given {@link java.io.InputStream}.
-     *
-     * @param is input stream with the route(s) definition to add
-     * @throws Exception if the route definitions could not be loaded for whatever reason
-     * @return the route definitions
-     */
-    RoutesDefinition loadRoutesDefinition(InputStream is) throws Exception;
-
-    /**
-     * Loads a collection of rest definitions from the given {@link java.io.InputStream}.
-     *
-     * @param is input stream with the rest(s) definition to add
-     * @throws Exception if the rest definitions could not be loaded for whatever reason
-     * @return the rest definitions
-     */
-    RestsDefinition loadRestsDefinition(InputStream is) throws Exception;
-    
-    /**
-     * Adds a collection of route definitions to the context
-     *
-     * @param routeDefinitions the route(s) definition to add
-     * @throws Exception if the route definitions could not be created for whatever reason
-     */
-    void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception;
-
-    /**
-     * Add a route definition to the context
-     *
-     * @param routeDefinition the route definition to add
-     * @throws Exception if the route definition could not be created for whatever reason
-     */
-    void addRouteDefinition(RouteDefinition routeDefinition) throws Exception;
-
-    /**
-     * Removes a collection of route definitions from the CamelContext - stopping any previously running
-     * routes if any of them are actively running
-     *
-     * @param routeDefinitions route(s) definitions to remove
-     * @throws Exception if the route definitions could not be removed for whatever reason
-     */
-    void removeRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception;
-
-    /**
-     * Removes a route definition from the CamelContext - stopping any previously running
-     * routes if any of them are actively running
-     *
-     * @param routeDefinition route definition to remove
-     * @throws Exception if the route definition could not be removed for whatever reason
-     */
-    void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception;
-
-    /**
-     * Starts the given route if it has been previously stopped
-     *
-     * @param route the route to start
-     * @throws Exception is thrown if the route could not be started for whatever reason
-     * @deprecated favor using {@link CamelContext#startRoute(String)}
-     */
-    @Deprecated
-    void startRoute(RouteDefinition route) throws Exception;
-
-    /**
-     * Starts the given route if it has been previously stopped
-     *
-     * @param routeId the route id
-     * @throws Exception is thrown if the route could not be started for whatever reason
-     */
-    void startRoute(String routeId) throws Exception;
-
-    /**
-     * Stops the given route.
-     *
-     * @param route the route to stop
-     * @throws Exception is thrown if the route could not be stopped for whatever reason
-     * @deprecated favor using {@link CamelContext#stopRoute(String)}
-     */
-    @Deprecated
-    void stopRoute(RouteDefinition route) throws Exception;
-
-    /**
-     * Stops the given route using {@link org.apache.camel.spi.ShutdownStrategy}.
-     *
-     * @param routeId the route id
-     * @throws Exception is thrown if the route could not be stopped for whatever reason
-     * @see #suspendRoute(String)
-     */
-    void stopRoute(String routeId) throws Exception;
-
-    /**
-     * Stops the given route using {@link org.apache.camel.spi.ShutdownStrategy} with a specified timeout.
-     *
-     * @param routeId the route id
-     * @param timeout  timeout
-     * @param timeUnit the unit to use
-     * @throws Exception is thrown if the route could not be stopped for whatever reason
-     * @see #suspendRoute(String, long, java.util.concurrent.TimeUnit)
-     */
-    void stopRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception;
-
-    /**
-     * Stops the given route using {@link org.apache.camel.spi.ShutdownStrategy} with a specified timeout 
-     * and optional abortAfterTimeout mode.
-     *
-     * @param routeId the route id
-     * @param timeout  timeout
-     * @param timeUnit the unit to use
-     * @param abortAfterTimeout should abort shutdown after timeout
-     * @return <tt>true</tt> if the route is stopped before the timeout
-     * @throws Exception is thrown if the route could not be stopped for whatever reason
-     * @see #suspendRoute(String, long, java.util.concurrent.TimeUnit)
-     */
-    boolean stopRoute(String routeId, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout) throws Exception;
-    
-    /**
-     * Shutdown and <b>removes</b> the given route using {@link org.apache.camel.spi.ShutdownStrategy}.
-     *
-     * @param routeId the route id
-     * @throws Exception is thrown if the route could not be shutdown for whatever reason
-     * @deprecated use {@link #stopRoute(String)} and {@link #removeRoute(String)}
-     */
-    @Deprecated
-    void shutdownRoute(String routeId) throws Exception;
-
-    /**
-     * Shutdown and <b>removes</b> the given route using {@link org.apache.camel.spi.ShutdownStrategy} with a specified timeout.
-     *
-     * @param routeId  the route id
-     * @param timeout  timeout
-     * @param timeUnit the unit to use
-     * @throws Exception is thrown if the route could not be shutdown for whatever reason
-     * @deprecated use {@link #stopRoute(String, long, java.util.concurrent.TimeUnit)} and {@link #removeRoute(String)}
-     */
-    @Deprecated
-    void shutdownRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception;
 
     /**
      * Removes the given route (the route <b>must</b> be stopped before it can be removed).
@@ -860,56 +639,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @throws Exception is thrown if the route could not be shutdown for whatever reason
      */
     boolean removeRoute(String routeId) throws Exception;
-
-    /**
-     * Resumes the given route if it has been previously suspended
-     * <p/>
-     * If the route does <b>not</b> support suspension the route will be started instead
-     *
-     * @param routeId the route id
-     * @throws Exception is thrown if the route could not be resumed for whatever reason
-     */
-    void resumeRoute(String routeId) throws Exception;
-
-    /**
-     * Suspends the given route using {@link org.apache.camel.spi.ShutdownStrategy}.
-     * <p/>
-     * Suspending a route is more gently than stopping, as the route consumers will be suspended (if they support)
-     * otherwise the consumers will be stopped.
-     * <p/>
-     * By suspending the route services will be kept running (if possible) and therefore its faster to resume the route.
-     * <p/>
-     * If the route does <b>not</b> support suspension the route will be stopped instead
-     *
-     * @param routeId the route id
-     * @throws Exception is thrown if the route could not be suspended for whatever reason
-     */
-    void suspendRoute(String routeId) throws Exception;
-
-    /**
-     * Suspends the given route using {@link org.apache.camel.spi.ShutdownStrategy} with a specified timeout.
-     * <p/>
-     * Suspending a route is more gently than stopping, as the route consumers will be suspended (if they support)
-     * otherwise the consumers will be stopped.
-     * <p/>
-     * By suspending the route services will be kept running (if possible) and therefore its faster to resume the route.
-     * <p/>
-     * If the route does <b>not</b> support suspension the route will be stopped instead
-     *
-     * @param routeId  the route id
-     * @param timeout  timeout
-     * @param timeUnit the unit to use
-     * @throws Exception is thrown if the route could not be suspended for whatever reason
-     */
-    void suspendRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception;
-
-    /**
-     * Returns the current status of the given route
-     *
-     * @param routeId the route id
-     * @return the status for the route
-     */
-    ServiceStatus getRouteStatus(String routeId);
 
     /**
      * Indicates whether current thread is setting up route(s) as part of starting Camel from spring/blueprint.
@@ -1180,14 +909,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     DataFormat createDataFormat(String name);
 
     /**
-     * Resolve a data format definition given its name
-     *
-     * @param name the data format definition name or a reference to it in the {@link Registry}
-     * @return the resolved data format definition, or <tt>null</tt> if not found
-     */
-    DataFormatDefinition resolveDataFormatDefinition(String name);
-
-    /**
      * Gets the current data format resolver
      *
      * @return the resolver
@@ -1200,20 +921,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param dataFormatResolver the resolver
      */
     void setDataFormatResolver(DataFormatResolver dataFormatResolver);
-
-    /**
-     * Sets the transformers that can be referenced in the routes.
-     *
-     * @param transformers the transformers
-     */
-    void setTransformers(List<TransformerDefinition> transformers);
-
-    /**
-     * Gets the transformers that can be referenced in the routes.
-     *
-     * @return the transformers available
-     */
-    List<TransformerDefinition> getTransformers();
 
     /**
      * Resolve a transformer given a scheme
@@ -1237,20 +944,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the TransformerRegistry
      */
     TransformerRegistry<? extends ValueHolder<String>> getTransformerRegistry();
-
-    /**
-     * Sets the validators that can be referenced in the routes.
-     *
-     * @param validators the validators
-     */
-    void setValidators(List<ValidatorDefinition> validators);
-
-    /**
-     * Gets the validators that can be referenced in the routes.
-     *
-     * @return the validators available
-     */
-    List<ValidatorDefinition> getValidators();
 
     /**
      * Resolve a validator given from/to data type.

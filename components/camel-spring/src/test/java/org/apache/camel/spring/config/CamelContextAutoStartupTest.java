@@ -42,14 +42,14 @@ public class CamelContextAutoStartupTest extends Assert {
         assertEquals(Boolean.FALSE, camel.isAutoStartup());
         assertEquals(1, camel.getRoutes().size());
 
-        assertEquals(false, camel.getRouteStatus("foo").isStarted());
+        assertEquals(false, camel.getRouteController().getRouteStatus("foo").isStarted());
 
         // now starting route manually
         camel.startRoute("foo");
 
         assertEquals(Boolean.FALSE, camel.isAutoStartup());
         assertEquals(1, camel.getRoutes().size());
-        assertEquals(true, camel.getRouteStatus("foo").isStarted());
+        assertEquals(true, camel.getRouteController().getRouteStatus("foo").isStarted());
 
         // and now we can send a message to the route and see that it works
         MockEndpoint mock = camel.getEndpoint("mock:result", MockEndpoint.class);

@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Experimental;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
@@ -541,7 +542,7 @@ public class SupervisingRouteController extends DefaultRouteController {
         }
 
         public RouteDefinition getDefinition() {
-            return this.route.getRouteContext().getRoute();
+            return (RouteDefinition) this.route.getRouteContext().getRoute();
         }
 
         public ServiceStatus getStatus() {
@@ -597,7 +598,7 @@ public class SupervisingRouteController extends DefaultRouteController {
         private final RoutePolicy policy = new ManagedRoutePolicy();
 
         @Override
-        public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition route) {
+        public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode route) {
             return policy;
         }
     }
@@ -618,7 +619,7 @@ public class SupervisingRouteController extends DefaultRouteController {
 
         @Override
         public void onInit(Route route) {
-            final String autoStartup = route.getRouteContext().getRoute().getAutoStartup();
+            final String autoStartup = ((RouteDefinition) route.getRouteContext().getRoute()).getAutoStartup();
             if (ObjectHelper.equalIgnoreCase("false", autoStartup)) {
                 LOGGER.info("Route {} won't be supervised (reason: has explicit auto-startup flag set to false)", route.getId());
                 return;

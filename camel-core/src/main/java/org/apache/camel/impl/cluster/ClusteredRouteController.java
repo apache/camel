@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Experimental;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.impl.DefaultRouteController;
@@ -292,7 +293,8 @@ public class ClusteredRouteController extends DefaultRouteController {
 
     private final class PolicyFactory implements RoutePolicyFactory {
         @Override
-        public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition route) {
+        public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode node) {
+            RouteDefinition route = (RouteDefinition) node;
             // All the filter have to be match to include the route in the
             // clustering set-up
             if (filters.stream().allMatch(filter -> filter.test(camelContext, routeId, route))) {

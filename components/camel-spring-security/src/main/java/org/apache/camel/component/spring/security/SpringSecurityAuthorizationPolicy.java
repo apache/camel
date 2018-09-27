@@ -23,9 +23,9 @@ import javax.security.auth.Subject;
 import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.model.IdentifiedType;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.spi.RouteContext;
@@ -55,7 +55,7 @@ public class SpringSecurityAuthorizationPolicy extends IdentifiedType implements
     private boolean alwaysReauthenticate;
     private boolean useThreadSecurityContext = true;
 
-    public void beforeWrap(RouteContext routeContext, ProcessorDefinition<?> definition) {
+    public void beforeWrap(RouteContext routeContext, NamedNode definition) {
     }
 
     public Processor wrap(RouteContext routeContext, Processor processor) {

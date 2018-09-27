@@ -17,19 +17,32 @@
 package org.apache.camel.spi;
 
 import java.io.Closeable;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.CamelContextTrackerRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link CamelContext} creation tracker.
  */
 public class CamelContextTracker implements Closeable {
 
-    public interface Filter {
+    private static final Logger LOG = LoggerFactory.getLogger(CamelContextTracker.class);
+
+    private static final List<CamelContextTracker> TRACKERS = new CopyOnWriteArrayList<>();
+
+    @FunctionalInterface
+    public interface Filter extends Predicate<CamelContext> {
 
         boolean accept(CamelContext camelContext);
 
+        @Override
+        default boolean test(CamelContext camelContext) {
+            return accept(camelContext);
+        }
     }
 
     private final Filter filter;
@@ -61,10 +74,22 @@ public class CamelContextTracker implements Closeable {
     }
 
     public final void open() {
-        CamelContextTrackerRegistry.INSTANCE.addTracker(this);
+        TRACKERS.add(this);
     }
 
     public final void close() {
-        CamelContextTrackerRegistry.INSTANCE.removeTracker(this);
+        TRACKERS.remove(this);
+    }
+
+    public static synchronized void notifyContextCreated(CamelContext camelContext) {
+        for (CamelContextTracker tracker : TRACKERS) {
+            try {
+                if (tracker.accept(camelContext)) {
+                    tracker.contextCreated(camelContext);
+                }
+            } catch (Exception e) {
+                LOG.warn("Error calling CamelContext tracker. This exception is ignored.", e);
+            }
+        }
     }
 }

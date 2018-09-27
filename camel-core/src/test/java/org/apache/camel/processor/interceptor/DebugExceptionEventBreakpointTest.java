@@ -22,13 +22,13 @@ import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.BreakpointSupport;
 import org.apache.camel.impl.ConditionSupport;
 import org.apache.camel.impl.DefaultDebugger;
 import org.apache.camel.management.event.AbstractExchangeEvent;
 import org.apache.camel.management.event.ExchangeFailedEvent;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Condition;
 import org.junit.Before;
@@ -50,7 +50,7 @@ public class DebugExceptionEventBreakpointTest extends ContextTestSupport {
         super.setUp();
 
         breakpoint = new BreakpointSupport() {
-            public void onEvent(Exchange exchange, EventObject event, ProcessorDefinition<?> definition) {
+            public void onEvent(Exchange exchange, EventObject event, NamedNode definition) {
                 AbstractExchangeEvent aee = (AbstractExchangeEvent) event;
                 Exception e = aee.getExchange().getException();
                 logs.add("Breakpoint at " + definition + " caused by: " + e.getClass().getSimpleName() + "[" + e.getMessage() + "]");

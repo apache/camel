@@ -19,19 +19,16 @@ package org.apache.camel.spi;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Message;
-import org.apache.camel.model.InputTypeDefinition;
-import org.apache.camel.model.OutputTypeDefinition;
-import org.apache.camel.processor.ContractAdvice;
 import org.apache.camel.support.ServiceSupport;
 
 /**
  * <a href="http://camel.apache.org/transformer.html">Transformer</a>
  * performs message transformation according to the declared data type.
- * {@link ContractAdvice} looks for a required Transformer and apply if
+ * {@link org.apache.camel.processor.ContractAdvice} looks for a required Transformer and apply if
  * input/output type declared on a route is different from current message type.
  *  
- * @see {@link ContractAdvice}
- * {@link DataType} {@link InputTypeDefinition} {@link OutputTypeDefinition}
+ * @see {@link org.apache.camel.processor.ContractAdvice}
+ * {@link DataType} {@link org.apache.camel.model.InputTypeDefinition} {@link org.apache.camel.model.OutputTypeDefinition}
  */
 public abstract class Transformer extends ServiceSupport implements CamelContextAware {
 

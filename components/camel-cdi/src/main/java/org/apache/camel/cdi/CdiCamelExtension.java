@@ -453,7 +453,7 @@ public class CdiCamelExtension implements Extension {
                 if (route instanceof RoutesBuilder) {
                     context.addRoutes((RoutesBuilder) route);
                 } else if (route instanceof RouteContainer) {
-                    context.addRouteDefinitions(((RouteContainer) route).getRoutes());
+                    context.adapt(ModelCamelContext.class).addRouteDefinitions(((RouteContainer) route).getRoutes());
                 } else {
                     throw new IllegalArgumentException(
                         "Invalid routes type [" + routeBean.getBeanClass().getName() + "], "

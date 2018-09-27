@@ -40,6 +40,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
@@ -51,7 +52,6 @@ import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.management.event.ExchangeFailedEvent;
 import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.support.EventNotifierSupport;
@@ -152,7 +152,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     }
 
     @Override
-    public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition route) {
+    public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode route) {
         // ensure this zipkin tracer gets initialized when Camel starts
         init(camelContext);
         return new ZipkinRoutePolicy();

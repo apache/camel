@@ -19,6 +19,7 @@ package org.apache.camel.management;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.api.management.PerformanceCounter;
 import org.apache.camel.management.mbean.ManagedPerformanceCounter;
@@ -58,7 +59,7 @@ public class InstrumentationInterceptStrategy implements InterceptStrategy {
         return counter;
     }
 
-    public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition,
+    public Processor wrapProcessorInInterceptors(CamelContext context, NamedNode definition,
                                                  Processor target, Processor nextTarget) throws Exception {
         // no longer in use as we have optimised to avoid wrapping unless needed
         return target;

@@ -37,11 +37,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.StaticService;
 import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
@@ -113,7 +113,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
     }
 
     @Override
-    public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition route) {
+    public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode route) {
         init(camelContext);
         return new XRayRoutePolicy(routeId);
     }

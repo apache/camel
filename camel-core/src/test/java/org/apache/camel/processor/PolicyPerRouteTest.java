@@ -18,10 +18,10 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.junit.Test;
@@ -89,7 +89,7 @@ public class PolicyPerRouteTest extends ContextTestSupport {
         }
 
         public void beforeWrap(RouteContext routeContext,
-                ProcessorDefinition<?> definition) {
+                               NamedNode definition) {
             // no need to modify the route
         }
 

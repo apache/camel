@@ -19,8 +19,8 @@ package org.apache.camel.spi;
 import java.util.EventObject;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
-import org.apache.camel.model.ProcessorDefinition;
 
 /**
  * {@link org.apache.camel.spi.Breakpoint} are used by the {@link org.apache.camel.spi.Debugger} API.
@@ -64,32 +64,30 @@ public interface Breakpoint {
 
     /**
      * Callback invoked when the breakpoint was hit and the {@link Exchange} is about to be processed (before).
-     *
-     * @param exchange   the {@link Exchange}
+     *  @param exchange   the {@link Exchange}
      * @param processor  the {@link Processor} about to be processed
-     * @param definition the {@link org.apache.camel.model.ProcessorDefinition} definition of the processor
+     * @param definition the {@link NamedNode} definition of the processor
      */
-    void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition);
+    void beforeProcess(Exchange exchange, Processor processor, NamedNode definition);
 
     /**
      * Callback invoked when the breakpoint was hit and the {@link Exchange} has been processed (after).
-     *
-     * @param exchange   the {@link Exchange}
+     *  @param exchange   the {@link Exchange}
      * @param processor  the {@link Processor} which was processed
-     * @param definition the {@link org.apache.camel.model.ProcessorDefinition} definition of the processor
+     * @param definition the {@link NamedNode} definition of the processor
      * @param timeTaken  time in millis it took to process the {@link Exchange} - time spend in breakpoint callbacks may affect this time
      */
-    void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition, long timeTaken);
+    void afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken);
 
     /**
      * Callback invoked when the breakpoint was hit and any of the {@link Exchange} {@link EventObject event}s occurred.
      *
      * @param exchange   the {@link Exchange}
      * @param event      the event (instance of {@link org.apache.camel.management.event.AbstractExchangeEvent}
-     * @param definition the {@link org.apache.camel.model.ProcessorDefinition} definition of the last processor executed,
+     * @param definition the {@link NamedNode} definition of the last processor executed,
      *                   may be <tt>null</tt> if not possible to resolve from tracing
      * @see org.apache.camel.management.event.AbstractExchangeEvent
      */
-    void onEvent(Exchange exchange, EventObject event, ProcessorDefinition<?> definition);
+    void onEvent(Exchange exchange, EventObject event, NamedNode definition);
 
 }

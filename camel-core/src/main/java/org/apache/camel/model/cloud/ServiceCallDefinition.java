@@ -55,6 +55,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.Suppliers;
+import org.apache.camel.util.function.ThrowingHelper;
 
 import static org.apache.camel.util.CamelContextHelper.findByType;
 import static org.apache.camel.util.CamelContextHelper.lookup;
@@ -814,8 +815,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         // Service name is mandatory
         ObjectHelper.notNull(name, "Service name");
 
-        endpointScheme = ObjectHelper.applyIfNotEmpty(endpointScheme, camelContext::resolvePropertyPlaceholders, () -> ServiceCallDefinitionConstants.DEFAULT_COMPONENT);
-        endpointUri = ObjectHelper.applyIfNotEmpty(endpointUri, camelContext::resolvePropertyPlaceholders, () -> null);
+        endpointScheme = ThrowingHelper.applyIfNotEmpty(endpointScheme, camelContext::resolvePropertyPlaceholders, () -> ServiceCallDefinitionConstants.DEFAULT_COMPONENT);
+        endpointUri = ThrowingHelper.applyIfNotEmpty(endpointUri, camelContext::resolvePropertyPlaceholders, () -> null);
 
         return new DefaultServiceCallProcessor(
             camelContext,

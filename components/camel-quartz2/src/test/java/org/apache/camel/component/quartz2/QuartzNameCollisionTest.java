@@ -167,7 +167,7 @@ public class QuartzNameCollisionTest {
         Trigger trigger = scheduler.getTrigger(triggerKey);
         Assert.assertNotNull(trigger);
 
-        camel1.stopRoute("route-1");
+        camel1.getRouteController().stopRoute("route-1");
 
         Trigger.TriggerState triggerState = component.getScheduler().getTriggerState(triggerKey);
         Assert.assertNotNull(trigger);

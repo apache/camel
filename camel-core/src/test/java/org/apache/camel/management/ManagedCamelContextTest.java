@@ -51,7 +51,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
             return;
         }
 
-        ManagedCamelContextMBean client = context.getManagedCamelContext();
+        ManagedCamelContextMBean client = context.adapt(ManagedCamelContext.class).getManagedCamelContext();
         assertNotNull(client);
 
         assertEquals("camel-1", client.getCamelId());

@@ -33,6 +33,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.infinispan.InfinispanConfiguration;
 import org.apache.camel.component.infinispan.InfinispanManager;
 import org.apache.camel.component.infinispan.InfinispanUtil;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -112,7 +113,8 @@ public class InfinispanRoutePolicy extends RoutePolicySupport implements CamelCo
         super.onInit(route);
 
         LOGGER.info("Route managed by {}. Setting route {} AutoStartup flag to false.", getClass(), route.getId());
-        route.getRouteContext().getRoute().setAutoStartup("false");
+        RouteDefinition definition = (RouteDefinition) route.getRouteContext().getRoute();
+        definition.setAutoStartup("false");
 
         stoppeddRoutes.add(route);
 

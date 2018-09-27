@@ -24,6 +24,7 @@ import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -118,9 +119,10 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
         // the transacted error handler could have been configured on the route so we should use that one
         if (!isErrorHandlerBuilderConfigured(ref)) {
             // see if there has been configured a route builder on the route
-            answer = routeContext.getRoute().getErrorHandlerBuilder();
-            if (answer == null && routeContext.getRoute().getErrorHandlerRef() != null) {
-                answer = routeContext.lookup(routeContext.getRoute().getErrorHandlerRef(), ErrorHandlerBuilder.class);
+            RouteDefinition route = (RouteDefinition) routeContext.getRoute();
+            answer = route.getErrorHandlerBuilder();
+            if (answer == null && route.getErrorHandlerRef() != null) {
+                answer = routeContext.lookup(route.getErrorHandlerRef(), ErrorHandlerBuilder.class);
             }
             if (answer == null) {
                 // fallback to the default error handler if none configured on the route

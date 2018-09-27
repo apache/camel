@@ -28,13 +28,13 @@ import org.apache.camel.spi.RouteController;
 
 @Experimental
 public class DefaultRouteController extends org.apache.camel.support.ServiceSupport implements RouteController  {
-    private CamelContext camelContext;
+    private DefaultCamelContext camelContext;
 
     public DefaultRouteController() {
         this(null);
     }
 
-    public DefaultRouteController(CamelContext camelContext) {
+    public DefaultRouteController(DefaultCamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
@@ -44,7 +44,7 @@ public class DefaultRouteController extends org.apache.camel.support.ServiceSupp
 
     @Override
     public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
+        this.camelContext = (DefaultCamelContext) camelContext;
     }
 
     @Override
@@ -72,17 +72,17 @@ public class DefaultRouteController extends org.apache.camel.support.ServiceSupp
 
     @Override
     public void startAllRoutes() throws Exception {
-        ((DefaultCamelContext) camelContext).startAllRoutes();
+        camelContext.startAllRoutes();
     }
 
     @Override
     public boolean isStartingRoutes() {
-        return ((DefaultCamelContext) camelContext).isStartingRoutes();
+        return camelContext.isStartingRoutes();
     }
 
     @Override
     public ServiceStatus getRouteStatus(String routeId) {
-        return ((DefaultCamelContext) camelContext).getRouteStatus(routeId);
+        return camelContext.getRouteStatus(routeId);
     }
 
     @Override

@@ -38,6 +38,7 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.management.ManagedCamelContext;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
@@ -277,7 +278,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
                         row.put("routeId", route.getId());
                         row.put("state", getRouteState(route));
                         row.put("uptime", route.getUptime());
-                        ManagedRouteMBean mr = context.getManagedRoute(route.getId(), ManagedRouteMBean.class);
+                        ManagedRouteMBean mr = context.adapt(ManagedCamelContext.class).getManagedRoute(route.getId(), ManagedRouteMBean.class);
                         if (mr != null) {
                             row.put("exchangesTotal", "" + mr.getExchangesTotal());
                             row.put("exchangesInflight", "" + mr.getExchangesInflight());

@@ -38,11 +38,11 @@ public class RouteAutoStartupPropertiesTest extends Assert {
 
         SpringCamelContext camel = ac.getBeansOfType(SpringCamelContext.class).values().iterator().next();
 
-        assertEquals(false, camel.getRouteStatus("foo").isStarted());
+        assertEquals(false, camel.getRouteController().getRouteStatus("foo").isStarted());
 
         // now starting route manually
         camel.startRoute("foo");
-        assertEquals(true, camel.getRouteStatus("foo").isStarted());
+        assertEquals(true, camel.getRouteController().getRouteStatus("foo").isStarted());
 
         // and now we can send a message to the route and see that it works
         MockEndpoint mock = camel.getEndpoint("mock:result", MockEndpoint.class);
@@ -62,7 +62,7 @@ public class RouteAutoStartupPropertiesTest extends Assert {
 
         SpringCamelContext camel = ac.getBeansOfType(SpringCamelContext.class).values().iterator().next();
 
-        assertEquals(true, camel.getRouteStatus("bar").isStarted());
+        assertEquals(true, camel.getRouteController().getRouteStatus("bar").isStarted());
 
         // and now we can send a message to the route and see that it works
         MockEndpoint mock = camel.getEndpoint("mock:result", MockEndpoint.class);

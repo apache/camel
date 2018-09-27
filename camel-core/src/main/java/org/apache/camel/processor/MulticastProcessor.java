@@ -48,6 +48,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.CompletionAwareAggregationStrategy;
 import org.apache.camel.processor.aggregate.DelegateAggregationStrategy;
@@ -1067,7 +1068,8 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             }
 
             LOG.trace("Creating error handler for: {}", processor);
-            ErrorHandlerFactory builder = routeContext.getRoute().getErrorHandlerBuilder();
+            RouteDefinition route = (RouteDefinition) routeContext.getRoute();
+            ErrorHandlerFactory builder = route.getErrorHandlerBuilder();
             // create error handler (create error handler directly to keep it light weight,
             // instead of using ProcessorDefinition.wrapInErrorHandler)
             try {

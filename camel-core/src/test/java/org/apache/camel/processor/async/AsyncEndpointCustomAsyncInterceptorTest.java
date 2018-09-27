@@ -22,9 +22,9 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.junit.Test;
@@ -87,7 +87,7 @@ public class AsyncEndpointCustomAsyncInterceptorTest extends ContextTestSupport 
     private static class MyInterceptor implements InterceptStrategy {
         private AtomicInteger counter = new AtomicInteger();
 
-        public Processor wrapProcessorInInterceptors(final CamelContext context, final ProcessorDefinition<?> definition,
+        public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition,
                                                      final Processor target, final Processor nextTarget) throws Exception {
 
             // use DelegateAsyncProcessor to ensure the interceptor works well with the asynchronous routing

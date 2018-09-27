@@ -215,7 +215,8 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
             errorHandlers.put(id, errorHandler);
         }
         // lookup the error handler builder
-        ErrorHandlerBuilder builder = (ErrorHandlerBuilder)routeContext.getRoute().getErrorHandlerBuilder();
+        RouteDefinition route = (RouteDefinition) routeContext.getRoute();
+        ErrorHandlerBuilder builder = (ErrorHandlerBuilder) route.getErrorHandlerBuilder();
         // and add this as error handlers
         builder.addErrorHandlers(routeContext, this);
     }

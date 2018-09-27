@@ -83,11 +83,7 @@ public class SortDefinition<T> extends NoOutputExpressionNode {
 
         // if no comparator then default on to string representation
         if (comparator == null) {
-            comparator = new Comparator<T>() {
-                public int compare(T o1, T o2) {
-                    return ObjectHelper.compare(o1, o2);
-                }
-            };
+            comparator = (Comparator<T>) ObjectHelper::compare;
         }
 
         // if no expression provided then default to body expression

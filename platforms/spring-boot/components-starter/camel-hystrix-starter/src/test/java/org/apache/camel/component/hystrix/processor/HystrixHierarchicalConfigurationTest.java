@@ -19,6 +19,7 @@ package org.apache.camel.component.hystrix.processor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.HystrixDefinition;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.junit.Assert;
 import org.junit.Test;
@@ -50,7 +51,7 @@ public class HystrixHierarchicalConfigurationTest {
 
     @Test
     public void testConfiguration() throws Exception {
-        RouteDefinition routeDefinition = camelContext.getRouteDefinition("hystrix-route");
+        RouteDefinition routeDefinition = camelContext.adapt(ModelCamelContext.class).getRouteDefinition("hystrix-route");
         HystrixDefinition hystrixDefinition = findHystrixDefinition(routeDefinition);
 
         Assert.assertNotNull(hystrixDefinition);

@@ -138,7 +138,8 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
             routeContext.setAllowUseOriginalMessage(true);
         }
 
-        String routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+        RouteDefinition route = (RouteDefinition) routeContext.getRoute();
+        String routeId = route.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
 
         Processor childProcessor = this.createChildProcessor(routeContext, true);
 

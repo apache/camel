@@ -18,9 +18,9 @@ package org.apache.camel.processor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.ToDefinition;
@@ -86,11 +86,11 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
     // START SNIPPET: e3
     public static class MyFactory implements ProcessorFactory {
 
-        public Processor createChildProcessor(RouteContext routeContext, ProcessorDefinition<?> definition, boolean mandatory) throws Exception {
+        public Processor createChildProcessor(RouteContext routeContext, NamedNode definition, boolean mandatory) throws Exception {
             return null;
         }
 
-        public Processor createProcessor(RouteContext routeContext, ProcessorDefinition<?> definition) throws Exception {
+        public Processor createProcessor(RouteContext routeContext, NamedNode definition) throws Exception {
             if (definition instanceof SplitDefinition) {
                 // add additional output to the splitter
                 SplitDefinition split = (SplitDefinition) definition;

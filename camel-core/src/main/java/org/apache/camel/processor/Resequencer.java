@@ -258,29 +258,14 @@ public class Resequencer extends ServiceSupport implements AsyncProcessor, Navig
         Comparator<? super Exchange> answer = comparator;
 
         if (reverse) {
-            answer = new Comparator<Exchange>() {
-                public int compare(Exchange o1, Exchange o2) {
-                    int answer = comparator.compare(o1, o2);
-                    // reverse it
-                    return answer * -1;
-                }
-            };
+            answer = comparator.reversed();
         }
 
         // if we allow duplicates then we need to cater for that in the comparator
-        final Comparator<? super Exchange> forAllowDuplicates = answer;
         if (allowDuplicates) {
-            answer = new Comparator<Exchange>() {
-                public int compare(Exchange o1, Exchange o2) {
-                    int answer = forAllowDuplicates.compare(o1, o2);
-                    if (answer == 0) {
-                        // they are equal but we should allow duplicates so say that o2 is higher
-                        // so it will come next
-                        return 1;
-                    }
-                    return answer;
-                }
-            };
+            // they are equal but we should allow duplicates so say that o2 is higher
+            // so it will come next
+            answer = answer.thenComparing((o1, o2) -> 1);
         }
 
         return new TreeSet<>(answer);

@@ -35,7 +35,7 @@ public class RouteDetailsInfo extends RouteInfo {
         super(route);
 
         if (camelContext.getManagementStrategy().getManagementAgent() != null) {
-            this.routeDetails = new RouteDetails(camelContext.getManagedRoute(route.getId(), ManagedRouteMBean.class));
+            this.routeDetails = new RouteDetails(camelContext.adapt(ManagedCamelContext.class).getManagedRoute(route.getId(), ManagedRouteMBean.class));
         }
     }
 

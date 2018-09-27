@@ -21,12 +21,12 @@ import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.BreakpointSupport;
 import org.apache.camel.impl.ConditionSupport;
 import org.apache.camel.impl.DefaultDebugger;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Condition;
 import org.junit.Before;
@@ -49,7 +49,7 @@ public class DebugExceptionBreakpointTest extends ContextTestSupport {
 
         breakpoint = new BreakpointSupport() {
             @Override
-            public void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition, long timeTaken) {
+            public void afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken) {
                 Exception e = exchange.getException();
                 logs.add("Breakpoint at " + definition.getShortName() + " caused by: " + e.getClass().getSimpleName() + "[" + e.getMessage() + "]");
             }
@@ -57,7 +57,7 @@ public class DebugExceptionBreakpointTest extends ContextTestSupport {
 
         exceptionCondition = new ConditionSupport() {
             @Override
-            public boolean matchProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
+            public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition) {
                 return exchange.getException() != null;
             }
         };

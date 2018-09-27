@@ -17,14 +17,14 @@
 package org.apache.camel.itest.issues;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 
 public class DummyInterceptor implements InterceptStrategy {
     
     // Just simply return the target processor 
-    public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition, Processor target, Processor nextTarget) throws Exception {
+    public Processor wrapProcessorInInterceptors(CamelContext context, NamedNode definition, Processor target, Processor nextTarget) throws Exception {
         return target;
     }
 }

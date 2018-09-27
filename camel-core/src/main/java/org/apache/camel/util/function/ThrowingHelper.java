@@ -16,10 +16,13 @@
  */
 package org.apache.camel.util.function;
 
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import org.apache.camel.util.ObjectHelper;
 
 public final class ThrowingHelper {
     private ThrowingHelper() {
@@ -64,5 +67,34 @@ public final class ThrowingHelper {
                 throw new RuntimeException(t);
             }
         };
+    }
+
+    /**
+     * Tests whether the value is <b>not</b> <tt>null</tt>, an empty string, an empty collection or a map  and transform it using the given function.
+     *
+     * @param value  the value, if its a String it will be tested for text length as well
+     * @param function  the function to be executed against value if not empty
+     */
+    public static <I, R, T extends Throwable> Optional<R> applyIfNotEmpty(I value, ThrowingFunction<I, R, T> function) throws T {
+        if (ObjectHelper.isNotEmpty(value)) {
+            return Optional.ofNullable(function.apply(value));
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * Tests whether the value is <b>not</b> <tt>null</tt>, an empty string, an empty collection or a map and transform it using the given function.
+     *
+     * @param value  the value, if its a String it will be tested for text length as well
+     * @param consumer  the function to be executed against value if not empty
+     * @param orElse  the supplier to use to retrieve a result if the given value is empty
+     */
+    public static <I, R, T extends Throwable> R applyIfNotEmpty(I value, ThrowingFunction<I, R, T> consumer, Supplier<R> orElse) throws T {
+        if (ObjectHelper.isNotEmpty(value)) {
+            return consumer.apply(value);
+        }
+
+        return orElse.get();
     }
 }

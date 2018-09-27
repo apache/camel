@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.NamedNode;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -53,7 +54,7 @@ import org.apache.camel.util.ObjectHelper;
  * @version 
  */
 public class DefaultRouteContext implements RouteContext {
-    private final Map<ProcessorDefinition<?>, AtomicInteger> nodeIndex = new HashMap<>();
+    private final Map<NamedNode, AtomicInteger> nodeIndex = new HashMap<>();
     private final RouteDefinition route;
     private FromDefinition from;
     private final Collection<Route> routes;
@@ -458,7 +459,7 @@ public class DefaultRouteContext implements RouteContext {
         }
     }
     
-    public int getAndIncrement(ProcessorDefinition<?> node) {
+    public int getAndIncrement(NamedNode node) {
         AtomicInteger count = nodeIndex.get(node);
         if (count == null) {
             count = new AtomicInteger();

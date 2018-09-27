@@ -107,8 +107,8 @@ public interface SpanDecorator {
      * This method returns the map to be used for headers extraction
      * when the component is receiving a communication.
      *
-     * @param a map containing the objects
-     * @param whether the headers are encoded
+     * @param map a map containing the objects
+     * @param encoding whether the headers are encoded
      * @return The extraction map
      */
     TextMap getExtractAdapter(Map<String, Object> map, boolean encoding);
@@ -117,8 +117,8 @@ public interface SpanDecorator {
      * This method returns the map to be used for headers injection
      *  when the component is receiving a communication.
      *
-     * @param a map containing the objects
-     * @param whether the headers are encoded
+     * @param map a map containing the objects
+     * @param encoding whether the headers are encoded
      * @return The injection map
      */
     TextMap getInjectAdapter(Map<String, Object> map, boolean encoding);

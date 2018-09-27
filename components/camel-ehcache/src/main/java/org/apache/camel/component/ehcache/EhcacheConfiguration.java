@@ -26,6 +26,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.function.ThrowingHelper;
 import org.ehcache.CacheManager;
 import org.ehcache.config.CacheConfiguration;
 import org.ehcache.config.Configuration;
@@ -235,7 +236,7 @@ public class EhcacheConfiguration implements Cloneable {
     }
 
     public boolean hasConfiguration(String name) {
-        return ObjectHelper.applyIfNotEmpty(configurations, c -> c.containsKey(name), () -> false);
+        return ThrowingHelper.applyIfNotEmpty(configurations, c -> c.containsKey(name), () -> false);
     }
 
     /**
