@@ -28,7 +28,6 @@ import org.apache.camel.generator.swagger.RestDslXmlGenerator;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -48,7 +47,7 @@ public class GenerateXmlMojo extends AbstractGenerateMojo {
     private boolean blueprint;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void execute() throws MojoExecutionException {
         if (skip) {
             return;
         }
@@ -93,10 +92,6 @@ public class GenerateXmlMojo extends AbstractGenerateMojo {
         } catch (final Exception e) {
             throw new MojoExecutionException(
                 "Unable to generate REST DSL Swagger sources from specification: " + specificationUri, e);
-        }
-
-        if (dto) {
-            generateDto();
         }
     }
 

@@ -59,9 +59,6 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project.basedir}/src/spec/swagger.json", required = true)
     String specificationUri;
 
-    @Parameter(defaultValue = "true")
-    boolean dto;
-
     @Parameter(defaultValue = "2.3.1")
     String swaggerCodegenMavenPluginVersion;
 
