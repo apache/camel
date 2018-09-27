@@ -45,8 +45,8 @@ public class CamelLoadRoutesFromXMLTest extends SpringTestSupport {
         assertEquals(2, camel.getRoutes().size());
 
         // they should be started
-        assertTrue(camel.getRouteStatus("foo").isStarted());
-        assertTrue(camel.getRouteStatus("bar").isStarted());
+        assertTrue(camel.getRouteController().getRouteStatus("foo").isStarted());
+        assertTrue(camel.getRouteController().getRouteStatus("bar").isStarted());
 
         // and they should work
         MockEndpoint foo = camel.getEndpoint("mock:foo", MockEndpoint.class);
@@ -65,14 +65,14 @@ public class CamelLoadRoutesFromXMLTest extends SpringTestSupport {
         camel.removeRouteDefinitions(routes.getRoutes());
 
         // they should be removed
-        assertNull(camel.getRouteStatus("foo"));
-        assertNull(camel.getRouteStatus("bar"));
+        assertNull(camel.getRouteController().getRouteStatus("foo"));
+        assertNull(camel.getRouteController().getRouteStatus("bar"));
 
         // you can also do this manually via their route ids
-        //camel.stopRoute("foo");
-        //camel.removeRoute("foo");
-        //camel.stopRoute("bar");
-        //camel.removeRoute("bar");
+        //camel.getRouteController().stopRoute("foo");
+        //camel.getRouteController().removeRoute("foo");
+        //camel.getRouteController().stopRoute("bar");
+        //camel.getRouteController().removeRoute("bar");
 
         // load updated xml
         is = this.getClass().getResourceAsStream("myUpdatedRoutes.xml");
@@ -82,8 +82,8 @@ public class CamelLoadRoutesFromXMLTest extends SpringTestSupport {
         assertEquals(2, camel.getRoutes().size());
 
         // they should be started
-        assertTrue(camel.getRouteStatus("foo").isStarted());
-        assertTrue(camel.getRouteStatus("bar").isStarted());
+        assertTrue(camel.getRouteController().getRouteStatus("foo").isStarted());
+        assertTrue(camel.getRouteController().getRouteStatus("bar").isStarted());
 
         // and they should work again (need to get new mock endpoint as the old is gone)
         foo = camel.getEndpoint("mock:foo", MockEndpoint.class);

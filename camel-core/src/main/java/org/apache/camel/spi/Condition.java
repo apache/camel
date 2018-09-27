@@ -19,8 +19,8 @@ package org.apache.camel.spi;
 import java.util.EventObject;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
-import org.apache.camel.model.ProcessorDefinition;
 
 /**
  * A condition to define when a given {@link Exchange} matches when is being routed.
@@ -40,7 +40,7 @@ public interface Condition {
      * @param definition the present location in the route where the {@link Exchange} is located at
      * @return <tt>true</tt> to match, <tt>false</tt> otherwise
      */
-    boolean matchProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition);
+    boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition);
 
     /**
      * Does the condition match

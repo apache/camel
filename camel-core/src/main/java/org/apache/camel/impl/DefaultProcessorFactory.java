@@ -16,9 +16,9 @@
  */
 package org.apache.camel.impl;
 
+import org.apache.camel.NamedNode;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.RouteContext;
@@ -39,7 +39,7 @@ public class DefaultProcessorFactory implements ProcessorFactory {
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/model/";
 
     @Override
-    public Processor createChildProcessor(RouteContext routeContext, ProcessorDefinition<?> definition, boolean mandatory) throws Exception {
+    public Processor createChildProcessor(RouteContext routeContext, NamedNode definition, boolean mandatory) throws Exception {
         String name = definition.getClass().getSimpleName();
         FactoryFinder finder = routeContext.getCamelContext().getFactoryFinder(RESOURCE_PATH);
         try {
@@ -58,7 +58,7 @@ public class DefaultProcessorFactory implements ProcessorFactory {
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext, ProcessorDefinition<?> definition) throws Exception {
+    public Processor createProcessor(RouteContext routeContext, NamedNode definition) throws Exception {
         String name = definition.getClass().getSimpleName();
         FactoryFinder finder = routeContext.getCamelContext().getFactoryFinder(RESOURCE_PATH);
         try {

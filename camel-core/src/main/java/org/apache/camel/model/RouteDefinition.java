@@ -228,7 +228,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     }
 
     public RouteDefinition adviceWith(CamelContext camelContext, RouteBuilder builder) throws Exception {
-        return adviceWith((ModelCamelContext)camelContext, builder);
+        return adviceWith(camelContext.adapt(ModelCamelContext.class), builder);
     }
 
     /**
@@ -255,7 +255,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @throws Exception can be thrown from the route builder
      * @see AdviceWithRouteBuilder
      */
-    @SuppressWarnings("deprecation")
     public RouteDefinition adviceWith(ModelCamelContext camelContext, RouteBuilder builder) throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
         ObjectHelper.notNull(builder, "RouteBuilder");
@@ -303,7 +302,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         RouteDefinition merged = routes.route(this);
 
         // add the new merged route
-        camelContext.getRouteDefinitions().add(0, merged);
+        camelContext.addRouteDefinition(merged);
 
         // log the merged route at info level to make it easier to end users to spot any mistakes they may have made
         log.info("AdviceWith route after: {}", merged);
@@ -311,13 +310,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         String afterAsXml = ModelHelper.dumpModelAsXml(camelContext, merged);
         log.info("Adviced route before/after as XML:\n{}\n{}", beforeAsXml, afterAsXml);
 
-        // If the camel context is started then we start the route
-        if (camelContext instanceof StatefulService) {
-            StatefulService service = (StatefulService) camelContext;
-            if (service.isStarted()) {
-                camelContext.startRoute(merged);
-            }
-        }
         return merged;
     }
 
@@ -1336,7 +1328,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
 
         // validate route has output processors
         if (!ProcessorDefinitionHelper.hasOutputs(outputs, true)) {
-            RouteDefinition route = routeContext.getRoute();
+            RouteDefinition route = (RouteDefinition) routeContext.getRoute();
             String at = fromType.toString();
             Exception cause = new IllegalArgumentException("Route " + route.getId() + " has no output processors."
                     + " You need to add outputs to the route such as to(\"log:foo\").");
@@ -1348,7 +1340,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
             try {
                 output.addRoutes(routeContext, routes);
             } catch (Exception e) {
-                RouteDefinition route = routeContext.getRoute();
+                RouteDefinition route = (RouteDefinition) routeContext.getRoute();
                 throw new FailedToCreateRouteException(route.getId(), route.toString(), output.toString(), e);
             }
         }

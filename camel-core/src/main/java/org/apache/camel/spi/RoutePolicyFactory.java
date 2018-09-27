@@ -17,7 +17,7 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.NamedNode;
 
 /**
  * A factory to create {@link org.apache.camel.spi.RoutePolicy} and assign to routes automatic.
@@ -32,5 +32,5 @@ public interface RoutePolicyFactory {
      * @param route        the route definition
      * @return the created {@link org.apache.camel.spi.RoutePolicy}, or <tt>null</tt> to not use a policy for this route
      */
-    RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition route);
+    RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode route);
 }

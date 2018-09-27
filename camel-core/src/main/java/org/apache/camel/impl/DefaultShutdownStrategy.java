@@ -154,8 +154,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     }
 
     public boolean shutdown(CamelContext context, RouteStartupOrder route, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout) throws Exception {
-        List<RouteStartupOrder> routes = new ArrayList<>(1);
-        routes.add(route);
+        List<RouteStartupOrder> routes = Collections.singletonList(route);
         return doShutdown(context, routes, timeout, timeUnit, false, abortAfterTimeout, false);
     }
 
@@ -179,15 +178,12 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         StopWatch watch = new StopWatch();
 
         // at first sort according to route startup order
-        List<RouteStartupOrder> routesOrdered = new ArrayList<>(routes);
-        routesOrdered.sort(new Comparator<RouteStartupOrder>() {
-            public int compare(RouteStartupOrder o1, RouteStartupOrder o2) {
-                return o1.getStartupOrder() - o2.getStartupOrder();
-            }
-        });
+        Comparator<RouteStartupOrder> comparator = Comparator.comparingInt(RouteStartupOrder::getStartupOrder);
         if (shutdownRoutesInReverseOrder) {
-            Collections.reverse(routesOrdered);
+            comparator = comparator.reversed();
         }
+        List<RouteStartupOrder> routesOrdered = new ArrayList<>(routes);
+        routesOrdered.sort(comparator);
 
         if (suspendOnly) {
             LOG.info("Starting to graceful suspend {} routes (timeout {} {})", routesOrdered.size(), timeout, timeUnit.toString().toLowerCase(Locale.ENGLISH));
@@ -540,8 +536,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("{}{} with options [{},{}]",
-                            new Object[]{suspendOnly ? "Suspending route: " : "Shutting down route: ",
-                                order.getRoute().getId(), shutdownRoute, shutdownRunningTask});
+                            suspendOnly ? "Suspending route: " : "Shutting down route: ",
+                            order.getRoute().getId(), shutdownRoute, shutdownRunningTask);
                 }
 
                 for (Consumer consumer : order.getInputs()) {

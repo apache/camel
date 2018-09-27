@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.junit.Test;
 
@@ -56,12 +57,12 @@ public class StartAndStopRoutesTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // stop the route
-        context.stopRoute(route);
+        context.getRouteController().stopRoute(route.getId());
 
         // lets mutate the route...
         FromDefinition fromType = assertOneElement(route.getInputs());
         fromType.setUri("direct:test.C");
-        context.startRoute(route);
+        context.adapt(ModelCamelContext.class).addRouteDefinition(route);
 
         // now lets check it works
         // send from C over B to results

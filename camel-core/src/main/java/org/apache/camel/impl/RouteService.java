@@ -378,7 +378,8 @@ public class RouteService extends ChildServiceSupport {
             if (service instanceof ErrorHandler) {
                 // special for error handlers
                 for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-                    strategy.onErrorHandlerRemove(route.getRouteContext(), (Processor) service, route.getRouteContext().getRoute().getErrorHandlerBuilder());
+                    RouteDefinition definition = (RouteDefinition) route.getRouteContext().getRoute();
+                    strategy.onErrorHandlerRemove(route.getRouteContext(), (Processor) service, definition.getErrorHandlerBuilder());
                 }
             } else {
                 for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
@@ -442,7 +443,8 @@ public class RouteService extends ChildServiceSupport {
      * Gather all other kind of route scoped services from the given route, except error handler
      */
     private void doGetRouteScopedServices(List<Service> services, Route route) {
-        for (ProcessorDefinition<?> output : route.getRouteContext().getRoute().getOutputs()) {
+        RouteDefinition definition = (RouteDefinition) route.getRouteContext().getRoute();
+        for (ProcessorDefinition<?> output : definition.getOutputs()) {
             if (output instanceof OnExceptionDefinition) {
                 OnExceptionDefinition onExceptionDefinition = (OnExceptionDefinition) output;
                 if (onExceptionDefinition.isRouteScoped()) {

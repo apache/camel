@@ -24,11 +24,11 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.management.event.AbstractExchangeEvent;
 import org.apache.camel.model.PipelineDefinition;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.StopWatch;
@@ -137,7 +137,7 @@ public class PipelineStepWithEventTest extends ContextTestSupport {
     private class MyInterceptStrategy implements InterceptStrategy {
 
         @Override
-        public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition, Processor target, Processor nextTarget) throws Exception {
+        public Processor wrapProcessorInInterceptors(CamelContext context, NamedNode definition, Processor target, Processor nextTarget) throws Exception {
             // grab the listener
             StepEventListener listener = context.hasService(StepEventListener.class);
 

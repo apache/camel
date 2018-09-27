@@ -38,6 +38,7 @@ import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.cluster.CamelClusterView;
 import org.apache.camel.management.event.CamelContextStartedEvent;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
@@ -153,12 +154,15 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     // life-cycle
     // ****************************************************
 
+    private RouteDefinition definition(Route route) {
+        return (RouteDefinition) route.getRouteContext().getRoute();
+    }
     @Override
     public void onInit(Route route) {
         super.onInit(route);
 
         LOGGER.info("Route managed by {}. Setting route {} AutoStartup flag to false.", getClass(), route.getId());
-        route.getRouteContext().getRoute().setAutoStartup("false");
+        definition(route).setAutoStartup("false");
 
         this.refCount.retain();
         this.stoppedRoutes.add(route);
@@ -229,7 +233,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
 
         try {
             for (Route route : stoppedRoutes) {
-                ServiceStatus status = route.getRouteContext().getRoute().getStatus(getCamelContext());
+                ServiceStatus status = definition(route).getStatus(getCamelContext());
                 if (status.isStartable()) {
                     LOGGER.debug("Starting route '{}'", route.getId());
                     camelContext.getRouteController().startRoute(route.getId());
@@ -261,7 +265,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
 
         try {
             for (Route route : startedRoutes) {
-                ServiceStatus status = route.getRouteContext().getRoute().getStatus(getCamelContext());
+                ServiceStatus status = definition(route).getStatus(getCamelContext());
                 if (status.isStoppable()) {
                     LOGGER.debug("Stopping route '{}'", route.getId());
                     stopRoute(route);

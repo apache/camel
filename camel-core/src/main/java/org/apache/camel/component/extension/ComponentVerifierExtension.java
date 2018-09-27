@@ -22,12 +22,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.Component;
-import org.apache.camel.component.extension.verifier.ComponentVerifierExtensionHelper.ErrorAttribute;
-import org.apache.camel.component.extension.verifier.ComponentVerifierExtensionHelper.ErrorCode;
-import org.apache.camel.component.extension.verifier.ComponentVerifierExtensionHelper.ExceptionErrorAttribute;
-import org.apache.camel.component.extension.verifier.ComponentVerifierExtensionHelper.GroupErrorAttribute;
-import org.apache.camel.component.extension.verifier.ComponentVerifierExtensionHelper.HttpErrorAttribute;
-import org.apache.camel.component.extension.verifier.ComponentVerifierExtensionHelper.StandardErrorCode;
+import org.apache.camel.component.extension.ComponentVerifierExtensionHelper.ErrorAttribute;
+import org.apache.camel.component.extension.ComponentVerifierExtensionHelper.ErrorCode;
+import org.apache.camel.component.extension.ComponentVerifierExtensionHelper.ExceptionErrorAttribute;
+import org.apache.camel.component.extension.ComponentVerifierExtensionHelper.GroupErrorAttribute;
+import org.apache.camel.component.extension.ComponentVerifierExtensionHelper.HttpErrorAttribute;
+import org.apache.camel.component.extension.ComponentVerifierExtensionHelper.StandardErrorCode;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
 import org.apache.camel.util.ObjectHelper;
 

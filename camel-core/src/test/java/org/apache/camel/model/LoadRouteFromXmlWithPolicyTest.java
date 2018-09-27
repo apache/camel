@@ -20,6 +20,7 @@ import java.io.InputStream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Policy;
@@ -83,7 +84,7 @@ public class LoadRouteFromXmlWithPolicyTest extends ContextTestSupport {
         }
 
         public void beforeWrap(RouteContext routeContext,
-                               ProcessorDefinition<?> definition) {
+                               NamedNode definition) {
             // no need to modify the route
         }
 

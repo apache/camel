@@ -18,10 +18,12 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.spi.Policy;
@@ -80,8 +82,8 @@ public class DefinitionPolicyPerProcessorTest extends ContextTestSupport {
             return invoked;
         }
 
-        public void beforeWrap(RouteContext routeContext, ProcessorDefinition<?> definition) {
-            SetBodyDefinition bodyDef = (SetBodyDefinition) definition.getOutputs().get(0);
+        public void beforeWrap(RouteContext routeContext, NamedNode definition) {
+            SetBodyDefinition bodyDef = (SetBodyDefinition) ((ProcessorDefinition<?>) definition).getOutputs().get(0);
             bodyDef.setExpression(new ConstantExpression("body was altered"));
         }
 

@@ -21,12 +21,12 @@ import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.BreakpointSupport;
 import org.apache.camel.impl.ConditionSupport;
 import org.apache.camel.impl.DefaultDebugger;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Condition;
 import org.junit.Before;
@@ -48,14 +48,14 @@ public class DebugSingleStepConditionTest extends ContextTestSupport {
         super.setUp();
 
         breakpoint = new BreakpointSupport() {
-            public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
+            public void beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
                 String body = exchange.getIn().getBody(String.class);
                 logs.add("Single stepping at " + definition.getLabel() + " with body: " + body);
             }
         };
 
         beerCondition = new ConditionSupport() {
-            public boolean matchProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
+            public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition) {
                 return "beer".equals(exchange.getFromRouteId());
             }
         };

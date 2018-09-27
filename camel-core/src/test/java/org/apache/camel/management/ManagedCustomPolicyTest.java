@@ -23,9 +23,9 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.junit.Test;
@@ -85,7 +85,7 @@ public class ManagedCustomPolicyTest extends ManagementTestSupport {
     private final class MyPolicy implements Policy {
 
         @Override
-        public void beforeWrap(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        public void beforeWrap(RouteContext routeContext, NamedNode definition) {
             // noop
         }
 

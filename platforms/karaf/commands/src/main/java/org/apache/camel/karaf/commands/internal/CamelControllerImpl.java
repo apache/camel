@@ -86,10 +86,10 @@ public class CamelControllerImpl extends AbstractLocalCamelController {
             row.put("name", camelContext.getName());
             row.put("state", camelContext.getStatus().name());
             row.put("uptime", camelContext.getUptime());
-            if (camelContext.getManagedCamelContext() != null) {
-                row.put("exchangesTotal", "" + camelContext.getManagedCamelContext().getExchangesTotal());
-                row.put("exchangesInflight", "" + camelContext.getManagedCamelContext().getExchangesInflight());
-                row.put("exchangesFailed", "" + camelContext.getManagedCamelContext().getExchangesFailed());
+            if (camelContext.adapt(ManagedCamelContext.class).getManagedCamelContext() != null) {
+                row.put("exchangesTotal", "" + camelContext.adapt(ManagedCamelContext.class).getManagedCamelContext().getExchangesTotal());
+                row.put("exchangesInflight", "" + camelContext.adapt(ManagedCamelContext.class).getManagedCamelContext().getExchangesInflight());
+                row.put("exchangesFailed", "" + camelContext.adapt(ManagedCamelContext.class).getManagedCamelContext().getExchangesFailed());
             } else {
                 row.put("exchangesTotal", "0");
                 row.put("exchangesInflight", "0");

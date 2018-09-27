@@ -756,7 +756,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         // Each processor in a route will have its own performance counter.
         // These performance counter will be embedded to InstrumentationProcessor
         // and wrap the appropriate processor by InstrumentationInterceptStrategy.
-        RouteDefinition route = routeContext.getRoute();
+        RouteDefinition route = (RouteDefinition) routeContext.getRoute();
 
         // register performance counters for all processors and its children
         for (ProcessorDefinition<?> processor : route.getOutputs()) {

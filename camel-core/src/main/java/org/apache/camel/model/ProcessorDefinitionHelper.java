@@ -30,6 +30,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
@@ -145,12 +146,12 @@ public final class ProcessorDefinitionHelper {
      * @param node the node
      * @return the route, or <tt>null</tt> if not possible to find
      */
-    public static RouteDefinition getRoute(ProcessorDefinition<?> node) {
+    public static RouteDefinition getRoute(NamedNode node) {
         if (node == null) {
             return null;
         }
 
-        ProcessorDefinition<?> def = node;
+        ProcessorDefinition<?> def = (ProcessorDefinition) node;
         // drill to the top
         while (def != null && def.getParent() != null) {
             def = def.getParent();
@@ -170,7 +171,7 @@ public final class ProcessorDefinitionHelper {
      * @param node the node
      * @return the route id, or <tt>null</tt> if not possible to find
      */
-    public static String getRouteId(ProcessorDefinition<?> node) {
+    public static String getRouteId(NamedNode node) {
         RouteDefinition route = getRoute(node);
         return route != null ? route.getId() : null;
     }

@@ -370,7 +370,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @throws Exception can be thrown if failed to create error handler builder
      */
     protected Processor wrapInErrorHandler(RouteContext routeContext, Processor output) throws Exception {
-        ErrorHandlerFactory builder = routeContext.getRoute().getErrorHandlerBuilder();
+        RouteDefinition route = (RouteDefinition) routeContext.getRoute();
+        ErrorHandlerFactory builder = route.getErrorHandlerBuilder();
         // create error handler
         Processor errorHandler = builder.createErrorHandler(routeContext, output);
 

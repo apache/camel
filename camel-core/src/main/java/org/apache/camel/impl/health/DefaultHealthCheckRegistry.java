@@ -43,10 +43,8 @@ public class DefaultHealthCheckRegistry implements HealthCheckRegistry {
 
     public DefaultHealthCheckRegistry(CamelContext camelContext) {
         this.checks = new CopyOnWriteArraySet<>();
-
         this.repositories = new CopyOnWriteArraySet<>();
         this.repositories.add(new RegistryRepository());
-        this.repositories.addAll(repositories);
 
         setCamelContext(camelContext);
     }

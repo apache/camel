@@ -20,19 +20,16 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Message;
 import org.apache.camel.ValidationException;
-import org.apache.camel.model.InputTypeDefinition;
-import org.apache.camel.model.OutputTypeDefinition;
-import org.apache.camel.processor.ContractAdvice;
 import org.apache.camel.support.ServiceSupport;
 
 /**
  * <a href="http://camel.apache.org/validator.html">Validator</a>
  * performs message content validation according to the declared data type.
- * {@link ContractAdvice} applies Validator if input/output type is declared on
+ * {@link org.apache.camel.processor.ContractAdvice} applies Validator if input/output type is declared on
  * a route with validation enabled.
  *  
- * @see {@link ContractAdvice}
- * {@link InputTypeDefinition} {@link OutputTypeDefinition}
+ * @see {@link org.apache.camel.processor.ContractAdvice}
+ * {@link org.apache.camel.model.InputTypeDefinition} {@link org.apache.camel.model.OutputTypeDefinition}
  */
 public abstract class Validator extends ServiceSupport implements CamelContextAware {
 

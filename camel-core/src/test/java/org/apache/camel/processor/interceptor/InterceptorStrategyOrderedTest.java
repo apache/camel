@@ -19,10 +19,10 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.junit.Test;
 
@@ -57,7 +57,7 @@ public class InterceptorStrategyOrderedTest extends ContextTestSupport {
 
     public static class FooInterceptStrategy implements InterceptStrategy, Ordered {
 
-        public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition, final Processor target, Processor nextTarget) throws Exception {
+        public Processor wrapProcessorInInterceptors(CamelContext context, NamedNode definition, final Processor target, Processor nextTarget) throws Exception {
             Processor answer = new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     String order = exchange.getIn().getHeader("order", "", String.class);
@@ -77,7 +77,7 @@ public class InterceptorStrategyOrderedTest extends ContextTestSupport {
 
     public static class BarInterceptStrategy implements InterceptStrategy, Ordered {
 
-        public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition, final Processor target, Processor nextTarget) throws Exception {
+        public Processor wrapProcessorInInterceptors(CamelContext context, NamedNode definition, final Processor target, Processor nextTarget) throws Exception {
             Processor answer = new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     String order = exchange.getIn().getHeader("order", "", String.class);

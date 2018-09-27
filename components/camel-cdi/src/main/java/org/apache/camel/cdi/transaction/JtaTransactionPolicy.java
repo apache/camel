@@ -19,11 +19,13 @@ package org.apache.camel.cdi.transaction;
 import javax.annotation.Resource;
 import javax.transaction.TransactionManager;
 
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.util.ObjectHelper;
@@ -49,12 +51,12 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
     protected TransactionManager transactionManager;
 
     @Override
-    public void beforeWrap(RouteContext routeContext, ProcessorDefinition<?> definition) {
+    public void beforeWrap(RouteContext routeContext, NamedNode definition) {
         // do not inherit since we create our own
         // (otherwise the default error handler would be used two times
         // because we inherit it on our own but only in case of a
         // non-transactional error handler)
-        definition.setInheritErrorHandler(false);
+        ((ProcessorDefinition<?>) definition).setInheritErrorHandler(false);
     }
 
     public abstract void run(Runnable runnable) throws Throwable;
@@ -74,7 +76,8 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
         // we only need one transacted error handler
 
         // find the existing error handler builder
-        ErrorHandlerBuilder builder = (ErrorHandlerBuilder) routeContext.getRoute().getErrorHandlerBuilder();
+        RouteDefinition route = (RouteDefinition) routeContext.getRoute();
+        ErrorHandlerBuilder builder = (ErrorHandlerBuilder) route.getErrorHandlerBuilder();
 
         // check if its a ref if so then do a lookup
         if (builder instanceof ErrorHandlerBuilderRef) {
@@ -118,7 +121,7 @@ public abstract class JtaTransactionPolicy implements TransactedPolicy {
         txBuilder.configure(routeContext, answer);
 
         // set the route to use our transacted error handler builder
-        routeContext.getRoute().setErrorHandlerBuilder(txBuilder);
+        route.setErrorHandlerBuilder(txBuilder);
 
         // return with wrapped transacted error handler
         return answer;

@@ -21,9 +21,9 @@ import java.util.List;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
-import org.apache.camel.model.ProcessorDefinition;
 
 /**
  * A debugger which allows tooling to attach breakpoints which is is being invoked
@@ -119,7 +119,7 @@ public interface Debugger extends Service, CamelContextAware {
      * @param definition the definition of the processor
      * @return <tt>true</tt> if any breakpoint was hit, <tt>false</tt> if not breakpoint was hit
      */
-    boolean beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition);
+    boolean beforeProcess(Exchange exchange, Processor processor, NamedNode definition);
 
     /**
      * Callback invoked when an {@link Exchange} has been processed which allows implementators
@@ -131,7 +131,7 @@ public interface Debugger extends Service, CamelContextAware {
      * @param timeTaken  time in millis it took to process the {@link Exchange} - time spend in breakpoint callbacks may affect this time
      * @return <tt>true</tt> if any breakpoint was hit, <tt>false</tt> if not breakpoint was hit
      */
-    boolean afterProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition, long timeTaken);
+    boolean afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken);
 
     /**
      * Callback invoked when an {@link Exchange} is being processed which allows implementators

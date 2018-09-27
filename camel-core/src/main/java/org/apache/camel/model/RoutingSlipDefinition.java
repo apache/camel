@@ -101,7 +101,8 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
         }
 
         // and wrap this in an error handler
-        ErrorHandlerFactory builder = routeContext.getRoute().getErrorHandlerBuilder();
+        RouteDefinition route = (RouteDefinition) routeContext.getRoute();
+        ErrorHandlerFactory builder = route.getErrorHandlerBuilder();
         // create error handler (create error handler directly to keep it light weight,
         // instead of using ProcessorDefinition.wrapInErrorHandler)
         AsyncProcessor errorHandler = (AsyncProcessor) builder.createErrorHandler(routeContext, routingSlip.newRoutingSlipProcessorForErrorHandler());

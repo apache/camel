@@ -14,9 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.extension.verifier;
+package org.apache.camel.component.extension;
 
-import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.Attribute;
 import org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.Code;
 import org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.ExceptionAttribute;
@@ -28,16 +27,16 @@ import org.apache.camel.component.extension.ComponentVerifierExtension.Verificat
  * Package visible helper class holding implementation classes for
  * constant like error code and attributes in {@link  ComponentVerifierExtension.VerificationError}
  */
-public final class ComponentVerifierExtensionHelper {
+final class ComponentVerifierExtensionHelper {
 
     /**
      * Custom class for error codes
      */
-    public static class ErrorCode implements Code {
+    static class ErrorCode implements Code {
 
         private final String name;
 
-        public ErrorCode(String name) {
+        ErrorCode(String name) {
             if (name == null) {
                 throw new IllegalArgumentException("Name of an error code must not be null");
             }
@@ -74,11 +73,11 @@ public final class ComponentVerifierExtensionHelper {
         }
     }
 
-    public static class ErrorAttribute implements Attribute {
+    static class ErrorAttribute implements Attribute {
 
         private final String name;
 
-        public ErrorAttribute(String name) {
+        ErrorAttribute(String name) {
             if (name == null) {
                 throw new IllegalArgumentException("Name of an error attribute must not be null");
             }
@@ -119,26 +118,26 @@ public final class ComponentVerifierExtensionHelper {
     // ===========================================================================================================
     // Helper classes for implementing the constants in ComponentVerifier:
 
-    public static class StandardErrorCode extends ErrorCode implements StandardCode {
-        public StandardErrorCode(String name) {
+    static class StandardErrorCode extends ErrorCode implements StandardCode {
+        StandardErrorCode(String name) {
             super(name);
         }
     }
 
-    public static class ExceptionErrorAttribute extends ErrorAttribute implements ExceptionAttribute {
-        public ExceptionErrorAttribute(String name) {
+    static class ExceptionErrorAttribute extends ErrorAttribute implements ExceptionAttribute {
+        ExceptionErrorAttribute(String name) {
             super(name);
         }
     }
 
-    public static class HttpErrorAttribute extends ErrorAttribute implements HttpAttribute {
-        public HttpErrorAttribute(String name) {
+    static class HttpErrorAttribute extends ErrorAttribute implements HttpAttribute {
+        HttpErrorAttribute(String name) {
             super(name);
         }
     }
 
-    public static class GroupErrorAttribute extends ErrorAttribute implements GroupAttribute {
-        public GroupErrorAttribute(String name) {
+    static class GroupErrorAttribute extends ErrorAttribute implements GroupAttribute {
+        GroupErrorAttribute(String name) {
             super(name);
         }
     }

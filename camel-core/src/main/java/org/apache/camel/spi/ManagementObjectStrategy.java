@@ -23,12 +23,12 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.cluster.CamelClusterService;
-import org.apache.camel.model.ProcessorDefinition;
 
 /**
  * Strategy for creating the managed object for the various beans Camel register for management.
@@ -57,7 +57,7 @@ public interface ManagementObjectStrategy {
     Object getManagedObjectForProducer(CamelContext context, Producer producer);
 
     Object getManagedObjectForProcessor(CamelContext context, Processor processor,
-                                        ProcessorDefinition<?> definition, Route route);
+                                        NamedNode definition, Route route);
 
     Object getManagedObjectForService(CamelContext context, Service service);
 

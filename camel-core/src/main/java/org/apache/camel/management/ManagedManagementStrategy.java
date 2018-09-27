@@ -20,6 +20,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.NamedNode;
 import org.apache.camel.management.mbean.ManagedBacklogDebugger;
 import org.apache.camel.management.mbean.ManagedBacklogTracer;
 import org.apache.camel.management.mbean.ManagedCamelContext;
@@ -173,7 +174,7 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
     }
 
     @Override
-    public boolean manageProcessor(ProcessorDefinition<?> definition) {
+    public boolean manageProcessor(NamedNode definition) {
         return true;
     }
 

@@ -24,6 +24,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.junit.Test;
 
@@ -53,7 +54,8 @@ public class RemoveRouteDefinitionTest extends ManagementTestSupport {
         RouteDefinition definition = context.getRouteDefinition("route1");
         List<RouteDefinition> routeDefinitions = new ArrayList<>();
         routeDefinitions.add(definition);
-        context.shutdownRoute("route1");
+        context.getRouteController().stopRoute("route1");
+        context.adapt(ModelCamelContext.class).removeRoute("route1");
 
         // route is shutdown (= also removed), so its not longer in JMX
         set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
@@ -81,7 +83,7 @@ public class RemoveRouteDefinitionTest extends ManagementTestSupport {
         List<RouteDefinition> routeDefinitions = new ArrayList<>();
         routeDefinitions.add(definition);
         // must stop before we can remove
-        context.stopRoute("route1");
+        context.getRouteController().stopRoute("route1");
         context.removeRoute("route1");
 
         // route is removed, so its not longer in JMX
@@ -109,7 +111,7 @@ public class RemoveRouteDefinitionTest extends ManagementTestSupport {
         RouteDefinition definition = context.getRouteDefinition("route1");
         List<RouteDefinition> routeDefinitions = new ArrayList<>();
         routeDefinitions.add(definition);
-        context.stopRoute("route1");
+        context.getRouteController().stopRoute("route1");
 
         // route is only stopped so its still in JMX
         set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);

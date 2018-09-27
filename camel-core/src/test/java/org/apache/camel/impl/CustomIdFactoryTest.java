@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.spi.InterceptStrategy;
@@ -114,12 +115,12 @@ public class CustomIdFactoryTest extends ContextTestSupport {
 
     private static class MyDebuggerCheckingId implements InterceptStrategy {
 
-        public Processor wrapProcessorInInterceptors(final CamelContext context, 
-                final ProcessorDefinition<?> definition, Processor target, Processor nextTarget) throws Exception {
+        public Processor wrapProcessorInInterceptors(final CamelContext context,
+                                                     final NamedNode definition, Processor target, Processor nextTarget) throws Exception {
 
             // MUST DO THIS
             // force id creation as sub nodes have lazy assigned ids
-            definition.idOrCreate(context.getNodeIdFactory());
+            ((OptionalIdentifiedDefinition<?>) definition).idOrCreate(context.getNodeIdFactory());
 
             return new DelegateProcessor(target) {
                 @Override

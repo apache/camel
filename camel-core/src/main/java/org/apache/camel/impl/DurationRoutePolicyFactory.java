@@ -17,7 +17,7 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.NamedNode;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.util.EndpointHelper;
@@ -35,7 +35,7 @@ public class DurationRoutePolicyFactory implements RoutePolicyFactory {
     private DurationRoutePolicy.Action action = DurationRoutePolicy.Action.STOP_ROUTE;
 
     @Override
-    public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition route) {
+    public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode route) {
         DurationRoutePolicy policy = null;
 
         if (fromRouteId == null || EndpointHelper.matchPattern(routeId, fromRouteId)) {

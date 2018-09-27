@@ -18,21 +18,18 @@ package org.apache.camel.spi;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.processor.CamelLogProcessor;
-import org.apache.camel.processor.LogProcessor;
 import org.apache.camel.util.CamelLogger;
-import org.slf4j.Marker;
 
 /**
- * An event listener SPI for logging. Listeners are registered into {@link LogProcessor} and
- * {@link CamelLogProcessor} so that the logging events are delivered for both of Log Component and Log EIP.
+ * An event listener SPI for logging. Listeners are registered into {@link org.apache.camel.processor.LogProcessor} and
+ * {@link org.apache.camel.processor.CamelLogProcessor} so that the logging events are delivered for both of Log Component and Log EIP.
  * 
  */
 public interface LogListener {
 
     /**
      * Invoked right before Log component or Log EIP logs.
-     * Note that {@link CamelLogger} holds the {@link LoggingLevel} and {@link Marker}.
+     * Note that {@link CamelLogger} holds the {@link LoggingLevel} and {@link org.slf4j.Marker}.
      * The listener can check {@link CamelLogger#getLevel()} to see in which log level
      * this is going to be logged.
      * 

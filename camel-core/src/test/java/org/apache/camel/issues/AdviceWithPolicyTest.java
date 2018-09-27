@@ -17,10 +17,10 @@
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
@@ -67,7 +67,7 @@ public class AdviceWithPolicyTest extends ContextTestSupport {
     private static final class MyPolicy implements Policy {
 
         @Override
-        public void beforeWrap(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        public void beforeWrap(RouteContext routeContext, NamedNode definition) {
             // noop
         }
 

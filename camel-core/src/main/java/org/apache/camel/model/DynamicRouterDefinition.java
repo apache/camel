@@ -91,7 +91,8 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
         }
 
         // and wrap this in an error handler
-        ErrorHandlerFactory builder = routeContext.getRoute().getErrorHandlerBuilder();
+        RouteDefinition route = (RouteDefinition) routeContext.getRoute();
+        ErrorHandlerFactory builder = route.getErrorHandlerBuilder();
         // create error handler (create error handler directly to keep it light weight,
         // instead of using ProcessorDefinition.wrapInErrorHandler)
         AsyncProcessor errorHandler = (AsyncProcessor) builder.createErrorHandler(routeContext, dynamicRouter.newRoutingSlipProcessorForErrorHandler());

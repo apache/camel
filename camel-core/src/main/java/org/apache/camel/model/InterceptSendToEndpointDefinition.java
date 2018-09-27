@@ -120,7 +120,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
         // remove the original intercepted route from the outputs as we do not intercept as the regular interceptor
         // instead we use the proxy endpoints producer do the triggering. That is we trigger when someone sends
         // an exchange to the endpoint, see InterceptSendToEndpoint for details.
-        RouteDefinition route = routeContext.getRoute();
+        RouteDefinition route = (RouteDefinition) routeContext.getRoute();
         List<ProcessorDefinition<?>> outputs = route.getOutputs();
         outputs.remove(this);
 

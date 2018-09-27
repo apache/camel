@@ -19,8 +19,8 @@ package org.apache.camel.health;
 import java.time.Duration;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.converter.TimePatternConverter;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.TimeUtils;
 
 public class HealthCheckConfiguration implements Cloneable {
     public static final Boolean DEFAULT_VALUE_ENABLED = Boolean.FALSE;
@@ -80,7 +80,7 @@ public class HealthCheckConfiguration implements Cloneable {
      */
     public void setInterval(String interval) {
         if (ObjectHelper.isNotEmpty(interval)) {
-            this.interval = Duration.ofMillis(TimePatternConverter.toMilliSeconds(interval));
+            this.interval = Duration.ofMillis(TimeUtils.toMilliSeconds(interval));
         } else {
             this.interval = null;
         }
@@ -173,7 +173,7 @@ public class HealthCheckConfiguration implements Cloneable {
 
         public Builder interval(String interval) {
             return ObjectHelper.isNotEmpty(interval)
-                ? interval(TimePatternConverter.toMilliSeconds(interval))
+                ? interval(TimeUtils.toMilliSeconds(interval))
                 : this;
         }
 

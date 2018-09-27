@@ -22,6 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.NamedNode;
 import org.apache.camel.management.event.DefaultEventFactory;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.EventFactory;
@@ -120,7 +121,7 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
         this.managementAgent = managementAgent;
     }
 
-    public boolean manageProcessor(ProcessorDefinition<?> definition) {
+    public boolean manageProcessor(NamedNode definition) {
         return false;
     }
 

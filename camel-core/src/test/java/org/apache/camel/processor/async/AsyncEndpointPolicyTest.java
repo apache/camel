@@ -20,10 +20,10 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
@@ -113,7 +113,7 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
         }
 
         public void beforeWrap(RouteContext routeContext,
-                ProcessorDefinition<?> definition) {
+                               NamedNode definition) {
             // no need to modify the route
         }
 

@@ -33,6 +33,7 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.management.ManagedCamelContext;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
@@ -160,7 +161,7 @@ public class CamelRoutesEndpoint {
 
     private void resetRoute(String id) {
         try {
-            ManagedRouteMBean managedRouteMBean = camelContext.getManagedRoute(id, ManagedRouteMBean.class);
+            ManagedRouteMBean managedRouteMBean = camelContext.adapt(ManagedCamelContext.class).getManagedRoute(id, ManagedRouteMBean.class);
             if (managedRouteMBean != null) {
                 managedRouteMBean.reset(true);
             }
@@ -284,7 +285,7 @@ public class CamelRoutesEndpoint {
             super(route);
 
             if (camelContext.getManagementStrategy().getManagementAgent() != null) {
-                this.routeDetails = new RouteDetails(camelContext.getManagedRoute(route.getId(), ManagedRouteMBean.class));
+                this.routeDetails = new RouteDetails(camelContext.adapt(ManagedCamelContext.class).getManagedRoute(route.getId(), ManagedRouteMBean.class));
             }
         }
 
