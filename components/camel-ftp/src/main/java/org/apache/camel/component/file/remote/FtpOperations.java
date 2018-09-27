@@ -760,7 +760,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                     throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), "Cannot delete file: " + to, e);
                 }
             } else {
-                throw new GenericFileOperationFailedException("Cannot moved existing file from: " + name + " to: " + to + " as there already exists a file: " + to);
+                throw new GenericFileOperationFailedException("Cannot move existing file from: " + name + " to: " + to + " as there already exists a file: " + to);
             }
         }
 
