@@ -183,6 +183,7 @@ You can use the following for `operationName`:
 * getQueryResultIds - Gets a list of Result Ids for a Batch Query
 * getQueryResult - Gets results for a Result Id
 * getRecentReports - Gets up to 200 of the reports you most recently viewed by sending a GET request to the Report List resource.
+* getReportDescription - Retrieves the report, report type, and related metadata for a report, either in a tabular or summary or matrix format.
 * executeSyncReport - Runs a report synchronously with or without changing filters and returns the latest summary data.
 * executeAsyncReport - Runs an instance of a report asynchronously with or without filters and returns the summary data with or without details.
 * getReportInstances - Returns a list of instances for a report that you requested to be run asynchronously. Each item in the list is treated as a separate instance of the report.
