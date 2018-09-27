@@ -46,6 +46,26 @@ Works as `generate` goal but also generates DTO model classes by automatic execu
 the swagger-codegen-maven-plugin to generate java source code of the DTO model classes
 from the swagger specification.
 
+This plugin has been scoped and limited to only support a good effort set of defaults for
+using the swagger-codegen-maven-plugin to generate the model DTOs. If you need more power
+and flexibility then use the https://github.com/swagger-api/swagger-codegen/tree/master/modules/swagger-codegen-maven-plugin[Swagger Codegen Maven Plugin]
+directly to generate the DTO and not this plugin.
+
+The DTO classes may require additional dependencies such as:
+[source,xml]
+----
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.8.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.threeten</groupId>
+      <artifactId>threetenbp</artifactId>
+      <version>1.3.7</version>
+    </dependency>
+----
+
 === Options
 
 The plugin supports the following *additional* options
@@ -53,7 +73,11 @@ The plugin supports the following *additional* options
 |========================================
 | Parameter | Default Value | Description
 | `swaggerCodegenMavenPluginVersion` | 2.3.1 | The version of the `io.swagger:swagger-codegen-maven-plugin` maven plugin to be used.
+| `modelOutput` | | Target output path (default is ${project.build.directory}/generated-sources/swagger)
 | `modelPackage` | `io.swagger.client.model` | The package to use for generated model objects/classes
+| `modelNamePrefix` | | Sets the pre- or suffix for model classes and enums
+| `modelNameSuffix` | | Sets the pre- or suffix for model classes and enums
+| `modelWithXml` | true | Enable XML annotations inside the generated models (only works with ibraries that provide support for JSON and XML)
 |========================================
 
 
@@ -86,6 +110,26 @@ Works as `generate-xml` goal but also generates DTO model classes by automatic e
 the swagger-codegen-maven-plugin to generate java source code of the DTO model classes
 from the swagger specification.
 
+This plugin has been scoped and limited to only support a good effort set of defaults for
+using the swagger-codegen-maven-plugin to generate the model DTOs. If you need more power
+and flexibility then use the https://github.com/swagger-api/swagger-codegen/tree/master/modules/swagger-codegen-maven-plugin[Swagger Codegen Maven Plugin]
+directly to generate the DTO and not this plugin.
+
+The DTO classes may require additional dependencies such as:
+[source,xml]
+----
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.8.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.threeten</groupId>
+      <artifactId>threetenbp</artifactId>
+      <version>1.3.7</version>
+    </dependency>
+----
+
 === Options
 
 The plugin supports the following *additional* options
@@ -93,6 +137,10 @@ The plugin supports the following *additional* options
 |========================================
 | Parameter | Default Value | Description
 | `swaggerCodegenMavenPluginVersion` | 2.3.1 | The version of the `io.swagger:swagger-codegen-maven-plugin` maven plugin to be used.
+| `modelOutput` | | Target output path (default is ${project.build.directory}/generated-sources/swagger)
 | `modelPackage` | `io.swagger.client.model` | The package to use for generated model objects/classes
+| `modelNamePrefix` | | Sets the pre- or suffix for model classes and enums
+| `modelNameSuffix` | | Sets the pre- or suffix for model classes and enums
+| `modelWithXml` | true | Enable XML annotations inside the generated models (only works with ibraries that provide support for JSON and XML)
 |========================================
 

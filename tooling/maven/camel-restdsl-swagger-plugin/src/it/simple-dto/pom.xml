@@ -70,6 +70,7 @@
             </goals>
             <configuration>
               <modelPackage>com.foo</modelPackage>
+              <modelWithXml>false</modelWithXml>
             </configuration>
           </execution>
         </executions>
