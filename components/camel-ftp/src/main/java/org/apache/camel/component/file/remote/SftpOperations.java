@@ -1003,7 +1003,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                 LOG.trace("Deleting existing file: {}", to);
                 deleteFile(to);
             } else {
-                throw new GenericFileOperationFailedException("Cannot moved existing file from: " + name + " to: " + to + " as there already exists a file: " + to);
+                throw new GenericFileOperationFailedException("Cannot move existing file from: " + name + " to: " + to + " as there already exists a file: " + to);
             }
         }
 
