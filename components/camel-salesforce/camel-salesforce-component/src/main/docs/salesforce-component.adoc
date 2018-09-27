@@ -140,6 +140,9 @@ results) using result link returned from the 'query' API
 * composite - submit up to 25 possibly related REST requests and receive individual responses
 * composite-tree - create up to 200 records with parent-child relationships (up to 5 levels) in one go
 * composite-batch - submit a composition of requests in batch
+* queryAll - Runs a SOQL query. It returns the results that are deleted because of a merge or delete. Also returns the  information about archived Task and Event records.
+* getBlobField - Retrieves the specified blob field from an individual record.
+* apexCall - Executes a user defined APEX REST API call.
 
 For example, the following producer endpoint uses the upsertSObject API,
 with the sObjectIdName parameter specifying 'Name' as the external id
@@ -179,6 +182,11 @@ You can use the following for `operationName`:
 * createBatchQuery - Creates a Batch from an SOQL query
 * getQueryResultIds - Gets a list of Result Ids for a Batch Query
 * getQueryResult - Gets results for a Result Id
+* getRecentReports - Gets up to 200 of the reports you most recently viewed by sending a GET request to the Report List resource.
+* executeSyncReport - Runs a report synchronously with or without changing filters and returns the latest summary data.
+* executeAsyncReport - Runs an instance of a report asynchronously with or without filters and returns the summary data with or without details.
+* getReportInstances - Returns a list of instances for a report that you requested to be run asynchronously. Each item in the list is treated as a separate instance of the report.
+* getReportResults: Contains the results of running a report.
 
 For example, the following producer endpoint uses the createBatch API to
 create a Job Batch. The in message must contain a body that can be converted into an
