@@ -90,14 +90,11 @@ public class GenerateMojo extends AbstractGenerateMojo {
         final Path outputPath = new File(outputDirectory).toPath();
 
         try {
+            getLog().info("Generating Camel DSL source in directory: " + outputPath);
             generator.generate(outputPath);
         } catch (final IOException e) {
             throw new MojoExecutionException(
                 "Unable to generate REST DSL Swagger sources from specification: " + specificationUri, e);
-        }
-
-        if (dto) {
-            generateDto();
         }
     }
 
