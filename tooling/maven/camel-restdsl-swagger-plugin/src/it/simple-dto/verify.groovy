@@ -19,6 +19,6 @@ def File restdsl = new File(basedir, "target/generated-sources/restdsl-swagger/i
 
 assert restdsl.exists()
 
-def File restdto = new File(basedir, "target/generated-sources/swagger/src/main/java/io/swagger/client/model/Order.java")
+def File restdto = new File(basedir, "target/generated-sources/swagger/src/main/java/com/foo/Order.java")
 
 assert restdto.exists()

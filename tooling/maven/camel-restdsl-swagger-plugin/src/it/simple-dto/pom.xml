@@ -68,6 +68,9 @@
             <goals>
               <goal>generate-with-dto</goal>
             </goals>
+            <configuration>
+              <modelPackage>com.foo</modelPackage>
+            </configuration>
           </execution>
         </executions>
       </plugin>
