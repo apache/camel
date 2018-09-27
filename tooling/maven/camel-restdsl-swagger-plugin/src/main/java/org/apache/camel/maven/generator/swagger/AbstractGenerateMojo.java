@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.camel.generator.swagger.DestinationGenerator;
 import org.apache.maven.execution.MavenSession;
@@ -30,6 +32,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.twdata.maven.mojoexecutor.MojoExecutor;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.artifactId;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
@@ -61,6 +64,9 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "2.3.1")
     String swaggerCodegenMavenPluginVersion;
+
+    @Parameter
+    String modelPackage;
 
     @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject mavenProject;
@@ -112,8 +118,22 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
         return destinationGeneratorObject;
     }
 
-    void generateDto() throws MojoExecutionException {
+    void generateDto(String language) throws MojoExecutionException {
         getLog().info("Generating DTO classes using io.swagger:swagger-codegen-maven-plugin:" + swaggerCodegenMavenPluginVersion);
+
+        // swagger-codegen-maven-plugin documentation and its supported options
+        // https://github.com/swagger-api/swagger-codegen/tree/master/modules/swagger-codegen-maven-plugin
+
+        List<MojoExecutor.Element> elements = new ArrayList<>();
+        elements.add(new MojoExecutor.Element("inputSpec", specificationUri));
+        elements.add(new MojoExecutor.Element("language", language));
+        elements.add(new MojoExecutor.Element("generateApis", "false"));
+        elements.add(new MojoExecutor.Element("generateModelTests", "false"));
+        elements.add(new MojoExecutor.Element("generateModelDocumentation", "false"));
+        elements.add(new MojoExecutor.Element("generateSupportingFiles", "false"));
+        if (modelPackage != null) {
+            elements.add(new MojoExecutor.Element("modelPackage", modelPackage));
+        }
 
         executeMojo(
             plugin(
@@ -123,12 +143,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
             ),
             goal("generate"),
             configuration(
-                element(name("inputSpec"), specificationUri),
-                element(name("language"), "java"),
-                element(name("generateApis"), "false"),
-                element(name("generateModelTests"), "false"),
-                element(name("generateModelDocumentation"), "false"),
-                element(name("generateSupportingFiles"), "false")
+                elements.toArray(new MojoExecutor.Element[elements.size()])
             ),
             executionEnvironment(
                 mavenProject,

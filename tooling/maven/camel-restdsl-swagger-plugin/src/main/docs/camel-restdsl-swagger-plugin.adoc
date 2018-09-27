@@ -53,6 +53,7 @@ The plugin supports the following *additional* options
 |========================================
 | Parameter | Default Value | Description
 | `swaggerCodegenMavenPluginVersion` | 2.3.1 | The version of the `io.swagger:swagger-codegen-maven-plugin` maven plugin to be used.
+| `modelPackage` | `io.swagger.client.model` | The package to use for generated model objects/classes
 |========================================
 
 
@@ -92,5 +93,6 @@ The plugin supports the following *additional* options
 |========================================
 | Parameter | Default Value | Description
 | `swaggerCodegenMavenPluginVersion` | 2.3.1 | The version of the `io.swagger:swagger-codegen-maven-plugin` maven plugin to be used.
+| `modelPackage` | `io.swagger.client.model` | The package to use for generated model objects/classes
 |========================================
 

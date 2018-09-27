@@ -33,7 +33,7 @@ public class GenerateXmlWithDtoMojo extends GenerateXmlMojo {
         }
         super.execute();
 
-        generateDto();
+        generateDto("java");
     }
 
 }

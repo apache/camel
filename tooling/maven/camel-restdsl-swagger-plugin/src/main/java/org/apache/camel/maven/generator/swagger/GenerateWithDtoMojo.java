@@ -32,7 +32,7 @@ public class GenerateWithDtoMojo extends GenerateMojo {
         }
         super.execute();
 
-        generateDto();
+        generateDto("java");
     }
 
 }
