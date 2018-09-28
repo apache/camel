@@ -8,9 +8,9 @@
     <header class='header'>
       <div class='site-header'>
         {{ if eq .Kind "home" }}
-        <h1 class='title'>{{ .Site.Title }}</h1>
+        <h1 class='title'><img src="images/logo-medium-d.png" class="logo">{{ .Site.Title }}</h1>
         {{ else }}
-        <p class='title'>{{ .Site.Title }}</p>
+        <h1 class='title'><img src="images/logo-medium-d.png" class="logo">{{ .Site.Title }}</h1>
         {{ end }}
         <p>{{ .Site.Params.description }}</p>
       </div>

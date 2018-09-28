@@ -1,6 +1,6 @@
 baseURL = "https://camel.apache.org/"
 languageCode = "en-us"
-title = "Apache Camel: Integration that you want"
+title = "Integration that you want"
 
 [params]
     comments = "false"
