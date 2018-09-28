@@ -157,14 +157,14 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
     protected void doStart() throws Exception {
         // the output has now been created, so assign the output as the processor
         setProcessor(getOutput());
-        ServiceHelper.startServices(errorHandler, output);
+        ServiceHelper.startService(errorHandler, output);
     }
 
     @Override
     protected void doStop() throws Exception {
         if (!isContextScoped()) {
             // only stop services if not context scoped (as context scoped is reused by others)
-            ServiceHelper.stopServices(output, errorHandler);
+            ServiceHelper.stopService(output, errorHandler);
         }
     }
 

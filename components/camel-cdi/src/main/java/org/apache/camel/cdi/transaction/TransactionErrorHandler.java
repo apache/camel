@@ -327,7 +327,7 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(output);
+        ServiceHelper.startService(output);
         preparingShutdown = false;
     }
 

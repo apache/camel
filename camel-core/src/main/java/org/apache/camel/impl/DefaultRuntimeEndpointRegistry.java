@@ -201,13 +201,13 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
         } else {
             log.info("Runtime endpoint registry is in normal mode gathering information of all incoming and outgoing endpoints (cache limit: {})", limit);
         }
-        ServiceHelper.startServices(inputUtilization, outputUtilization);
+        ServiceHelper.startService(inputUtilization, outputUtilization);
     }
 
     @Override
     protected void doStop() throws Exception {
         clear();
-        ServiceHelper.stopServices(inputUtilization, outputUtilization);
+        ServiceHelper.stopService(inputUtilization, outputUtilization);
     }
 
     @Override

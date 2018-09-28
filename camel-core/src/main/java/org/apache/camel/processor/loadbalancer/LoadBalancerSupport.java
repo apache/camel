@@ -78,11 +78,11 @@ public abstract class LoadBalancerSupport extends ServiceSupport implements Load
     }
 
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(processors);
+        ServiceHelper.startService(processors);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(processors);
+        ServiceHelper.stopService(processors);
     }
 
     @Override

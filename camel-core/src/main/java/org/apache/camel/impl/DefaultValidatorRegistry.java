@@ -210,8 +210,8 @@ public class DefaultValidatorRegistry extends AbstractMap<ValidatorKey, Validato
 
     @Override
     public void stop() throws Exception {
-        ServiceHelper.stopServices(staticMap.values());
-        ServiceHelper.stopServices(dynamicMap.values());
+        ServiceHelper.stopService(staticMap.values());
+        ServiceHelper.stopService(dynamicMap.values());
         purge();
     }
 

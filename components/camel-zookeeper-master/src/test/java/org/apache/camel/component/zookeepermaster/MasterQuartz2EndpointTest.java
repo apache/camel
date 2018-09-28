@@ -58,7 +58,7 @@ public class MasterQuartz2EndpointTest extends AbstractJUnit4SpringContextTests 
     public void afterRun() throws Exception {
         lastServerBean = zkServerBean;
         lastClientBean = zkClientBean;
-        ServiceHelper.stopServices(camelContext);
+        ServiceHelper.stopService(camelContext);
     }
 
     @AfterClass

@@ -40,7 +40,7 @@ public abstract class AbstractVmTestSupport extends ContextTestSupport {
         context2 = new DefaultCamelContext();
         template2 = context2.createProducerTemplate();
         
-        ServiceHelper.startServices(template2, context2);
+        ServiceHelper.startService(template2, context2);
 
         // add routes after CamelContext has been started
         RouteBuilder routeBuilder = createRouteBuilderForSecondContext();
@@ -52,7 +52,7 @@ public abstract class AbstractVmTestSupport extends ContextTestSupport {
     @Override
     @After
     public void tearDown() throws Exception {
-        ServiceHelper.stopServices(context2, template2);
+        ServiceHelper.stopService(context2, template2);
         VmComponent.ENDPOINTS.clear();
         VmComponent.QUEUES.clear();
         super.tearDown();

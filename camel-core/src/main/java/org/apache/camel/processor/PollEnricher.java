@@ -378,11 +378,11 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAw
         if (aggregationStrategy instanceof CamelContextAware) {
             ((CamelContextAware) aggregationStrategy).setCamelContext(camelContext);
         }
-        ServiceHelper.startServices(consumerCache, aggregationStrategy);
+        ServiceHelper.startService(consumerCache, aggregationStrategy);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(aggregationStrategy, consumerCache);
+        ServiceHelper.stopService(aggregationStrategy, consumerCache);
     }
 
     protected void doShutdown() throws Exception {

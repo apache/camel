@@ -231,13 +231,13 @@ public class RestProducer extends DefaultAsyncProducer {
         // create binding processor (returns null if binding is not in use)
         binding = createBindingProcessor();
 
-        ServiceHelper.startServices(binding, producer);
+        ServiceHelper.startService(binding, producer);
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        ServiceHelper.stopServices(producer, binding);
+        ServiceHelper.stopService(producer, binding);
     }
 
     protected AsyncProcessor createBindingProcessor() throws Exception {

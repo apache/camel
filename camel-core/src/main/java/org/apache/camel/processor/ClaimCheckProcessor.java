@@ -182,12 +182,12 @@ public class ClaimCheckProcessor extends ServiceSupport implements AsyncProcesso
             ((CamelContextAware) aggregationStrategy).setCamelContext(camelContext);
         }
 
-        ServiceHelper.startServices(aggregationStrategy);
+        ServiceHelper.startService(aggregationStrategy);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(aggregationStrategy);
+        ServiceHelper.stopService(aggregationStrategy);
     }
 
     @Override

@@ -51,57 +51,28 @@ public final class ServiceHelper {
      * Starts the given {@code value} if it's a {@link Service} or a collection of it.
      * <p/>
      * Calling this method has no effect if {@code value} is {@code null}.
-     * 
-     * @see #startService(Service)
-     * @see #startServices(Collection)
      */
     public static void startService(Object value) throws Exception {
         if (value instanceof Service) {
-            startService((Service)value);
-        } else if (value instanceof Collection) {
-            startServices((Collection<?>)value);
+            ((Service) value).start();
+        } else if (value instanceof Iterable) {
+            for (Object o : (Iterable) value) {
+                startService(o);
+            }
         }
     }
     
-    /**
-     * Starts the given {@code service}.
-     * <p/>
-     * Calling this method has no effect if {@code service} is {@code null}.
-     * 
-     * @see Service#start()
-     */
-    public static void startService(Service service) throws Exception {
-        if (service != null) {
-            service.start();
-        }
-    }
-
-    /**
-     * Starts each element of the given {@code services} if {@code services} itself is
-     * not {@code null}, otherwise this method would return immediately.
-     * 
-     * @see #startServices(Collection)
-     */
-    public static void startServices(Object... services) throws Exception {
-        if (services == null) {
-            return;
-        }
-        List<Object> list = Arrays.asList(services);
-        startServices(list);
-    }
-
     /**
      * Starts each element of the given {@code services} if {@code services} itself is
      * not {@code null}, otherwise this method would return immediately.
      * 
      * @see #startService(Object)
      */
-    public static void startServices(Collection<?> services) throws Exception {
-        if (services == null) {
-            return;
-        }
-        for (Object value : services) {
-            startService(value);
+    public static void startService(Object... services) throws Exception {
+        if (services != null) {
+            for (Object o : services) {
+                startService(o);
+            }
         }
     }
 
@@ -112,14 +83,14 @@ public final class ServiceHelper {
      * If there's any exception being thrown while stopping the elements one after the
      * other this method would rethrow the <b>first</b> such exception being thrown.
      * 
-     * @see #stopServices(Collection)
+     * @see #stopService(Collection)
      */
-    public static void stopServices(Object... services) throws Exception {
-        if (services == null) {
-            return;
+    public static void stopService(Object... services) throws Exception {
+        if (services != null) {
+            for (Object o : services) {
+                stopService(o);
+            }
         }
-        List<Object> list = Arrays.asList(services);
-        stopServices(list);
     }
 
     /**
@@ -128,20 +99,15 @@ public final class ServiceHelper {
      * Calling this method has no effect if {@code value} is {@code null}.
      * 
      * @see Service#stop()
-     * @see #stopServices(Collection)
+     * @see #stopService(Collection)
      */
     public static void stopService(Object value) throws Exception {
-        if (isStopped(value)) {
-            // only stop service if not already stopped
-            LOG.trace("Service already stopped: {}", value);
-            return;
-        }
         if (value instanceof Service) {
-            Service service = (Service)value;
-            LOG.trace("Stopping service {}", value);
-            service.stop();
-        } else if (value instanceof Collection) {
-            stopServices((Collection<?>)value);
+            ((Service) value).stop();
+        } else if (value instanceof Iterable) {
+            for (Object o : (Iterable) value) {
+                stopService(o);
+            }
         }
     }
 
@@ -154,7 +120,7 @@ public final class ServiceHelper {
      * 
      * @see #stopService(Object)
      */
-    public static void stopServices(Collection<?> services) throws Exception {
+    public static void stopService(Collection<?> services) throws Exception {
         if (services == null) {
             return;
         }

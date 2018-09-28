@@ -47,12 +47,12 @@ public class ConnectorProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(processor);
+        ServiceHelper.startService(processor);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(processor);
+        ServiceHelper.stopService(processor);
     }
 
     @Override

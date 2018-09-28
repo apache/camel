@@ -245,7 +245,7 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(producerCache, producer);
+        ServiceHelper.stopService(producerCache, producer);
     }
 
     protected void doShutdown() throws Exception {

@@ -90,7 +90,7 @@ public class XmppComponent extends DefaultComponent {
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(endpointCache.values());
+        ServiceHelper.stopService(endpointCache.values());
         endpointCache.clear();
 
         super.doStop();

@@ -38,7 +38,7 @@ public abstract class ChildServiceSupport extends ServiceSupport {
                 Exception ex = null;
                 try {
                     if (childServices != null && startChildren) {
-                        ServiceHelper.startServices(childServices);
+                        ServiceHelper.startService(childServices);
                     }
                     childrenStarted = true;
                     doStart();
@@ -80,7 +80,7 @@ public abstract class ChildServiceSupport extends ServiceSupport {
                     started.set(false);
                     suspended.set(false);
                     if (childServices != null) {
-                        ServiceHelper.stopServices(childServices);
+                        ServiceHelper.stopService(childServices);
                     }
                 }
             } finally {

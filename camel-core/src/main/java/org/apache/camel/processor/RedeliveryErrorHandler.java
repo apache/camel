@@ -1481,7 +1481,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(output, outputAsync, deadLetter);
+        ServiceHelper.startService(output, outputAsync, deadLetter);
 
         // determine if redeliver is enabled or not
         redeliveryEnabled = determineIfRedeliveryIsEnabled();

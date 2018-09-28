@@ -1516,13 +1516,13 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         if (idempotentRepository != null) {
             getCamelContext().addService(idempotentRepository, true);
         }
-        ServiceHelper.startServices(inProgressRepository);
+        ServiceHelper.startService(inProgressRepository);
         super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        ServiceHelper.stopServices(inProgressRepository);
+        ServiceHelper.stopService(inProgressRepository);
     }
 }

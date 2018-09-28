@@ -73,11 +73,11 @@ public class DelegateProcessor extends ServiceSupport implements org.apache.came
     }
 
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(processor);
+        ServiceHelper.startService(processor);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(processor);
+        ServiceHelper.stopService(processor);
     }
 
     public boolean hasNext() {

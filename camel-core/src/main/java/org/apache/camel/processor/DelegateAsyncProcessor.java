@@ -77,11 +77,11 @@ public class DelegateAsyncProcessor extends ServiceSupport implements DelegatePr
     }
 
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(processor);
+        ServiceHelper.startService(processor);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(processor);
+        ServiceHelper.stopService(processor);
     }
 
     protected void doShutdown() throws Exception {

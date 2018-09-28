@@ -43,7 +43,7 @@ public abstract class AbstractDistributedTest extends ContextTestSupport {
         context2 = new DefaultCamelContext();
         context2.setUseMDCLogging(true);
         template2 = context2.createProducerTemplate();
-        ServiceHelper.startServices(template2, context2);
+        ServiceHelper.startService(template2, context2);
 
         // add routes after CamelContext has been started
         context2.adapt(ModelCamelContext.class).addRoutes(createRouteBuilder2());

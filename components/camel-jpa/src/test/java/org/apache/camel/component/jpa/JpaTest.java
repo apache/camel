@@ -30,6 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.examples.SendEmail;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.util.ServiceHelper;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -39,9 +40,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import static org.apache.camel.util.ServiceHelper.startServices;
-import static org.apache.camel.util.ServiceHelper.stopServices;
 
 /**
  * @version 
@@ -110,7 +108,7 @@ public class JpaTest extends Assert {
     @Before
     public void setUp() throws Exception {
         template = camelContext.createProducerTemplate();
-        startServices(template, camelContext);
+        ServiceHelper.startService(template, camelContext);
 
         Endpoint value = camelContext.getEndpoint(getEndpointUri());
         assertNotNull("Could not find endpoint!", value);
@@ -127,6 +125,6 @@ public class JpaTest extends Assert {
 
     @After
     public void tearDown() throws Exception {
-        stopServices(consumer, template, camelContext);
+        ServiceHelper.stopService(consumer, template, camelContext);
     }
 }

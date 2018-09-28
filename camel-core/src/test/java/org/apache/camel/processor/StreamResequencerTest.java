@@ -79,7 +79,7 @@ public class StreamResequencerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        ServiceHelper.stopServices(producerTemplate, producerTemplate2);
+        ServiceHelper.stopService(producerTemplate, producerTemplate2);
     }
 
     @Override

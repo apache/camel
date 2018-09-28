@@ -353,7 +353,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
     public void stop() throws Exception {
         breakpoints.clear();
         singleSteps.clear();
-        ServiceHelper.stopServices(debugEventNotifier);
+        ServiceHelper.stopService(debugEventNotifier);
     }
 
     @Override

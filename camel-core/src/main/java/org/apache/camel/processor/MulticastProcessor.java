@@ -1081,7 +1081,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 boolean child = exchange.getProperty(Exchange.PARENT_UNIT_OF_WORK, UnitOfWork.class) != null;
 
                 // must start the error handler
-                ServiceHelper.startServices(answer);
+                ServiceHelper.startService(answer);
 
                 // here we don't cache the child unit of work
                 if (!child) {
@@ -1153,7 +1153,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             ((CamelContextAware) aggregationStrategy).setCamelContext(camelContext);
         }
 
-        ServiceHelper.startServices(aggregationStrategy, processors);
+        ServiceHelper.startService(aggregationStrategy, processors);
     }
 
     /**
@@ -1170,7 +1170,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(processors, errorHandlers, aggregationStrategy);
+        ServiceHelper.stopService(processors, errorHandlers, aggregationStrategy);
     }
 
     @Override

@@ -189,11 +189,11 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor, IdA
             producerCache = new ProducerCache(this, camelContext, cacheSize);
             LOG.debug("RecipientList {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
         }
-        ServiceHelper.startServices(aggregationStrategy, producerCache);
+        ServiceHelper.startService(aggregationStrategy, producerCache);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(producerCache, aggregationStrategy);
+        ServiceHelper.stopService(producerCache, aggregationStrategy);
     }
 
     protected void doShutdown() throws Exception {

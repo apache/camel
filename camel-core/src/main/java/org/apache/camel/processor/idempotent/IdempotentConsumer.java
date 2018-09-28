@@ -208,11 +208,11 @@ public class IdempotentConsumer extends ServiceSupport implements CamelContextAw
         if (!camelContext.hasService(idempotentRepository)) {
             camelContext.addService(idempotentRepository);
         }
-        ServiceHelper.startServices(processor, idempotentRepository);
+        ServiceHelper.startService(processor, idempotentRepository);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(processor, idempotentRepository);
+        ServiceHelper.stopService(processor, idempotentRepository);
     }
 
     @Override

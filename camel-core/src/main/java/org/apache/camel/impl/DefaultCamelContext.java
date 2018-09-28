@@ -3071,7 +3071,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             log.info("Apache Camel {} (CamelContext: {}) is starting", getVersion(), getName());
 
             // Start the route controller
-            ServiceHelper.startServices(this.routeController);
+            ServiceHelper.startService(this.routeController);
 
             doNotStartRoutesOnFirstStart = !firstStartDone && !isAutoStartup();
 
@@ -3266,7 +3266,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         ServiceHelper.startService(managementStrategy);
 
         // start lifecycle strategies
-        ServiceHelper.startServices(lifecycleStrategies);
+        ServiceHelper.startService(lifecycleStrategies);
         Iterator<LifecycleStrategy> it = lifecycleStrategies.iterator();
         while (it.hasNext()) {
             LifecycleStrategy strategy = it.next();

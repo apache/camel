@@ -349,11 +349,11 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, IdAware,
             LOG.debug("Enricher {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
         }
 
-        ServiceHelper.startServices(producerCache, aggregationStrategy);
+        ServiceHelper.startService(producerCache, aggregationStrategy);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(aggregationStrategy, producerCache);
+        ServiceHelper.stopService(aggregationStrategy, producerCache);
     }
 
     private static class CopyAggregationStrategy implements AggregationStrategy {

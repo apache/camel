@@ -489,7 +489,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     protected void doStop() throws Exception {
         super.doStop();
 
-        ServiceHelper.stopServices(bootstrapFactories.values());
+        ServiceHelper.stopService(bootstrapFactories.values());
         bootstrapFactories.clear();
 
         ServiceHelper.stopService(multiplexChannelHandlers.values());

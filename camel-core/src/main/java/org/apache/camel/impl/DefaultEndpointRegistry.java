@@ -199,8 +199,8 @@ public class DefaultEndpointRegistry extends AbstractMap<EndpointKey, Endpoint> 
 
     @Override
     public void stop() throws Exception {
-        ServiceHelper.stopServices(staticMap.values());
-        ServiceHelper.stopServices(values());
+        ServiceHelper.stopService(staticMap.values());
+        ServiceHelper.stopService(values());
         purge();
     }
 

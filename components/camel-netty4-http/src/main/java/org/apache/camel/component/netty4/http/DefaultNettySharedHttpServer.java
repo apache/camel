@@ -116,17 +116,17 @@ public class DefaultNettySharedHttpServer extends ServiceSupport implements Nett
         bootstrapFactory = new HttpServerBootstrapFactory(channelFactory, false);
         bootstrapFactory.init(tf, configuration, pipelineFactory);
 
-        ServiceHelper.startServices(channelFactory);
+        ServiceHelper.startService(channelFactory);
 
         if (startServer) {
             LOG.info("Starting NettySharedHttpServer on {}:{}", configuration.getHost(), configuration.getPort());
-            ServiceHelper.startServices(bootstrapFactory);
+            ServiceHelper.startService(bootstrapFactory);
         }
     }
 
     @Override
     protected void doStop() throws Exception {
         LOG.info("Stopping NettySharedHttpServer on {}:{}", configuration.getHost(), configuration.getPort());
-        ServiceHelper.stopServices(bootstrapFactory, channelFactory);
+        ServiceHelper.stopService(bootstrapFactory, channelFactory);
     }
 }

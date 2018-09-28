@@ -164,7 +164,7 @@ public class JpaWithNamedQueryTest extends Assert {
     @Before
     public void setUp() throws Exception {
         template = camelContext.createProducerTemplate();
-        ServiceHelper.startServices(template, camelContext);
+        ServiceHelper.startService(template, camelContext);
 
         Endpoint value = camelContext.getEndpoint(getEndpointUri());
         assertNotNull("Could not find endpoint!", value);
@@ -181,6 +181,6 @@ public class JpaWithNamedQueryTest extends Assert {
 
     @After
     public void tearDown() throws Exception {
-        ServiceHelper.stopServices(consumer, template, camelContext);
+        ServiceHelper.stopService(consumer, template, camelContext);
     }
 }
