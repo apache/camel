@@ -23,7 +23,7 @@
     "extract-text-webpack-plugin": "^v4.0.0-alpha.0",
     "gulp": "^3.9.1",
     "gulp-chmod": "^2.0.0",
-    "gulp-rename": "^1.2.2",
+    "gulp-rename": "^1.4.0",
     "gulp-replace": "^0.6.1",
     "hugo-bin": "^0.23.0",
     "node-sass": "^4.7.2",
