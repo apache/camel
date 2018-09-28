@@ -98,6 +98,6 @@ public class DelegateSyncProcessor extends ServiceSupport implements org.apache.
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(processor);
+        ServiceHelper.stopService(processor);
     }
 }

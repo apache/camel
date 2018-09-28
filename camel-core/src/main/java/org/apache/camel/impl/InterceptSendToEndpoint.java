@@ -123,11 +123,11 @@ public class InterceptSendToEndpoint implements Endpoint, ShutdownableService {
     }
 
     public void start() throws Exception {
-        ServiceHelper.startServices(detour, delegate);
+        ServiceHelper.startService(detour, delegate);
     }
 
     public void stop() throws Exception {
-        ServiceHelper.stopServices(delegate, detour);
+        ServiceHelper.stopService(delegate, detour);
     }
 
     @Override

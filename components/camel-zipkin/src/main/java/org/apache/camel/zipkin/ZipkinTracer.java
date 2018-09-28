@@ -412,7 +412,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
             createTracingForService(pattern, serviceName);
         }
 
-        ServiceHelper.startServices(spanReporter, eventNotifier);
+        ServiceHelper.startService(spanReporter, eventNotifier);
     }
 
     @Override

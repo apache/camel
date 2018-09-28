@@ -44,9 +44,9 @@ public class DirectVmConsumerExpressionTest extends ContextTestSupport {
         context3 = new DefaultCamelContext();
         context4 = new DefaultCamelContext();
 
-        ServiceHelper.startServices(context2);
-        ServiceHelper.startServices(context3);
-        ServiceHelper.startServices(context4);
+        ServiceHelper.startService(context2);
+        ServiceHelper.startService(context3);
+        ServiceHelper.startService(context4);
 
         // add routes after CamelContext has been started
         RouteBuilder routeBuilder = createRouteBuilderCamelContext2();
@@ -68,7 +68,7 @@ public class DirectVmConsumerExpressionTest extends ContextTestSupport {
     @Override
     @After
     public void tearDown() throws Exception {
-        ServiceHelper.stopServices(context2, context3, context4);
+        ServiceHelper.stopService(context2, context3, context4);
         super.tearDown();
     }
 

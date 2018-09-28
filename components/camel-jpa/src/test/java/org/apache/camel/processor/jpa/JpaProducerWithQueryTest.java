@@ -152,11 +152,11 @@ public class JpaProducerWithQueryTest extends Assert {
         });
 
         template = camelContext.createProducerTemplate();
-        ServiceHelper.startServices(template, camelContext);
+        ServiceHelper.startService(template, camelContext);
     }
 
     @After
     public void tearDown() throws Exception {
-        ServiceHelper.stopServices(template, camelContext);
+        ServiceHelper.stopService(template, camelContext);
     }
 }

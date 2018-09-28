@@ -92,11 +92,11 @@ public final class AsyncProcessorConverterHelper {
         }
 
         public void start() throws Exception {
-            ServiceHelper.startServices(processor);
+            ServiceHelper.startService(processor);
         }
 
         public void stop() throws Exception {
-            ServiceHelper.stopServices(processor);
+            ServiceHelper.stopService(processor);
         }
 
         public boolean hasNext() {

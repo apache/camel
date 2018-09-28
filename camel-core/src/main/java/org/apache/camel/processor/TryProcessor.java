@@ -160,11 +160,11 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
     }
 
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(tryProcessor, catchClauses, finallyProcessor);
+        ServiceHelper.startService(tryProcessor, catchClauses, finallyProcessor);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(tryProcessor, catchClauses, finallyProcessor);
+        ServiceHelper.stopService(tryProcessor, catchClauses, finallyProcessor);
     }
 
     public List<Processor> next() {

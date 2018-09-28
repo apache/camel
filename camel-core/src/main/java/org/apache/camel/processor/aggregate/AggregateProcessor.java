@@ -1381,7 +1381,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
             LOG.info("Optimistic locking is enabled");
         }
 
-        ServiceHelper.startServices(aggregationStrategy, processor, aggregationRepository);
+        ServiceHelper.startService(aggregationStrategy, processor, aggregationRepository);
 
         // should we use recover checker
         if (aggregationRepository instanceof RecoverableAggregationRepository) {
@@ -1470,7 +1470,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
             shutdownTimeoutCheckerExecutorService = false;
         }
 
-        ServiceHelper.stopServices(timeoutMap, processor, deadLetterProducerTemplate);
+        ServiceHelper.stopService(timeoutMap, processor, deadLetterProducerTemplate);
 
         if (closedCorrelationKeys != null) {
             // it may be a service so stop it as well

@@ -95,12 +95,12 @@ public final class SubscribeMethodProcessor extends ServiceSupport implements As
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(methods.keySet());
+        ServiceHelper.startService(methods.keySet());
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(methods.keySet());
+        ServiceHelper.stopService(methods.keySet());
     }
 
     @Override

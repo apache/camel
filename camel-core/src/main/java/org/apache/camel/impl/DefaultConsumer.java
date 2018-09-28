@@ -137,12 +137,12 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
 
     protected void doStop() throws Exception {
         log.debug("Stopping consumer: {}", this);
-        ServiceHelper.stopServices(processor);
+        ServiceHelper.stopService(processor);
     }
 
     protected void doStart() throws Exception {
         log.debug("Starting consumer: {}", this);
-        ServiceHelper.startServices(processor);
+        ServiceHelper.startService(processor);
     }
 
     /**

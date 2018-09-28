@@ -194,7 +194,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(processor);
+        ServiceHelper.startService(processor);
         delivery = new Delivery();
         engine.start();
         delivery.start();
@@ -205,7 +205,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
         // let's stop everything in the reverse order
         // no need to stop the worker thread -- it will stop automatically when this service is stopped
         engine.stop();
-        ServiceHelper.stopServices(processor);
+        ServiceHelper.stopService(processor);
     }
 
     /**

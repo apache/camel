@@ -99,13 +99,13 @@ public class InterceptorToAsyncProcessorBridge extends ServiceSupport implements
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(target, interceptor);
+        ServiceHelper.startService(target, interceptor);
     }
 
     @Override
     protected void doStop() throws Exception {
         callback.remove();
         interceptorDone.remove();
-        ServiceHelper.stopServices(interceptor, target);
+        ServiceHelper.stopService(interceptor, target);
     }
 }

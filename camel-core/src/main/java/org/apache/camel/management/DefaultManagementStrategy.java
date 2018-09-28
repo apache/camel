@@ -203,7 +203,7 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(managementAgent, eventNotifiers);
+        ServiceHelper.stopService(managementAgent, eventNotifiers);
     }
 
 }

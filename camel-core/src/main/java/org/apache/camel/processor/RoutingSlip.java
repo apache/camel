@@ -442,11 +442,11 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
             log.debug("RoutingSlip {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
         }
 
-        ServiceHelper.startServices(producerCache, errorHandler);
+        ServiceHelper.startService(producerCache, errorHandler);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(producerCache, errorHandler);
+        ServiceHelper.stopService(producerCache, errorHandler);
     }
 
     protected void doShutdown() throws Exception {

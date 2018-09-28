@@ -373,7 +373,7 @@ public class ProducerCache extends ServiceSupport {
             statistics = new DefaultEndpointUtilizationStatistics(max);
         }
 
-        ServiceHelper.startServices(producers, statistics);
+        ServiceHelper.startService(producers, statistics);
     }
 
     protected void doStop() throws Exception {

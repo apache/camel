@@ -199,11 +199,11 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
     }
 
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(filters, otherwise);
+        ServiceHelper.startService(filters, otherwise);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(otherwise, filters);
+        ServiceHelper.stopService(otherwise, filters);
     }
 
 }

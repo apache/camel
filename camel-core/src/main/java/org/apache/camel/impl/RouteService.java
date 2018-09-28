@@ -262,7 +262,7 @@ public class RouteService extends ChildServiceSupport {
                 if (isShutdownCamelContext) {
                     ServiceHelper.stopAndShutdownServices(route);
                 } else {
-                    ServiceHelper.stopServices(route);
+                    ServiceHelper.stopService(route);
                 }
 
                 // invoke callbacks on route policy

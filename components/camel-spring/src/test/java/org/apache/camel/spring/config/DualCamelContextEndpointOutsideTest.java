@@ -55,7 +55,7 @@ public class DualCamelContextEndpointOutsideTest extends SpringTestSupport {
         producer2.sendBody("direct:start2", "Hello B");
 
         // make sure we properly stop the services we created
-        ServiceHelper.stopServices(producer1, producer2);
+        ServiceHelper.stopService(producer1, producer2);
 
         mockA.assertIsSatisfied();
         mockB.assertIsSatisfied();

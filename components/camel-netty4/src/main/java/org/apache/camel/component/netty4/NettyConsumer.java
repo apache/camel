@@ -70,7 +70,7 @@ public class NettyConsumer extends DefaultConsumer {
             nettyServerBootstrapFactory.init(context, configuration, pipelineFactory);
         }
 
-        ServiceHelper.startServices(nettyServerBootstrapFactory);
+        ServiceHelper.startService(nettyServerBootstrapFactory);
 
         LOG.info("Netty consumer bound to: {}", configuration.getAddress());
     }

@@ -279,11 +279,11 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
             }
         }
 
-        ServiceHelper.startServices(producerCache);
+        ServiceHelper.startService(producerCache);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(producerCache);
+        ServiceHelper.stopService(producerCache);
     }
 
     public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {

@@ -250,7 +250,7 @@ public class ConsumerCache extends ServiceSupport {
             int max = maxCacheSize == 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : maxCacheSize;
             statistics = new DefaultEndpointUtilizationStatistics(max);
         }
-        ServiceHelper.startServices(consumers);
+        ServiceHelper.startService(consumers);
     }
 
     protected void doStop() throws Exception {

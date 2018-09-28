@@ -110,12 +110,12 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
         if (xmlUnmarshal instanceof CamelContextAware) {
             ((CamelContextAware) xmlUnmarshal).setCamelContext(camelContext);
         }
-        ServiceHelper.startServices(jsonMarshal, jsonUnmarshal, xmlMarshal, xmlUnmarshal);
+        ServiceHelper.startService(jsonMarshal, jsonUnmarshal, xmlMarshal, xmlUnmarshal);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(jsonMarshal, jsonUnmarshal, xmlMarshal, xmlUnmarshal);
+        ServiceHelper.stopService(jsonMarshal, jsonUnmarshal, xmlMarshal, xmlUnmarshal);
     }
 
     @Override

@@ -130,13 +130,13 @@ public class DataFormatEndpoint extends DefaultEndpoint {
             processor = unmarshal;
         }
 
-        ServiceHelper.startServices(dataFormat, processor);
+        ServiceHelper.startService(dataFormat, processor);
         super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(processor, dataFormat);
+        ServiceHelper.stopService(processor, dataFormat);
         super.doStop();
     }
 }
