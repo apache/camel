@@ -20,11 +20,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.opentracing.propagation.TextMap;
 import io.opentracing.Span;
 import io.opentracing.tag.Tags;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.opentracing.SpanDecorator;
+import org.apache.camel.opentracing.propagation.CamelHeadersExtractAdapter;
+import org.apache.camel.opentracing.propagation.CamelHeadersInjectAdapter;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
@@ -126,4 +130,13 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
         }
     }
 
+    @Override
+    public TextMap getExtractAdapter(final Map<String, Object> map) {
+    	return new CamelHeadersExtractAdapter(map);
+    }
+
+    @Override
+    public TextMap getInjectAdapter(final Map<String, Object> map) {
+    	return new CamelHeadersInjectAdapter(map);    	
+    }
 }
