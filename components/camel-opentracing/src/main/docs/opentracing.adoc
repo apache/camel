@@ -26,6 +26,8 @@ The configuration properties for the OpenTracing tracer are:
 |excludePatterns |  | Sets exclude pattern(s) that will disable tracing for Camel
 messages that matches the pattern. The content is a Set<String> where the key is a pattern. The pattern
 uses the rules from Intercept.
+|encoding |false| Sets whether the header keys need to be encoded (connector specific) or not. The value is a boolean.
+Dashes need for instances to be encoded for JMS property keys.
 
 |=======================================================================
 
@@ -102,10 +104,9 @@ The OpenTracing Java Agent is associated with the following dependency:
 
 The `Tracer` used will be implicitly loaded from the camel context `Registry` or using the `ServiceLoader`.
 
-How this agent is used will be specific to how you execute your application. _Service2_ in the https://github.com/apache/camel/tree/master/examples/camel-example-opentracing[camel-example-opentracing] downloads the agent into a local folder and then uses the `exec-maven-plugin` to launch the service with the `-javaagent` command line option. 
+How this agent is used will be specific to how you execute your application. _Service2_ in the https://github.com/apache/camel/tree/master/examples/camel-example-opentracing[camel-example-opentracing] downloads the agent into a local folder and then uses the `exec-maven-plugin` to launch the service with the `-javaagent` command line option.
 
 ### Example
 
 You can find an example demonstrating the three ways to configure OpenTracing here:
 https://github.com/apache/camel/tree/master/examples/camel-example-opentracing[camel-example-opentracing]
-

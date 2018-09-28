@@ -80,12 +80,12 @@ public abstract class AbstractMessagingSpanDecorator extends AbstractSpanDecorat
     }
 
     @Override
-    public TextMap getExtractAdapter(final Map<String, Object> map) {
-    	return new CamelMessagingHeadersExtractAdapter(map);
+    public TextMap getExtractAdapter(final Map<String, Object> map, final boolean jmsEncoding) {
+    	return new CamelMessagingHeadersExtractAdapter(map, jmsEncoding);
     }
 
     @Override
-    public TextMap getInjectAdapter(final Map<String, Object> map) {
-    	return new CamelMessagingHeadersInjectAdapter(map);    	
+    public TextMap getInjectAdapter(final Map<String, Object> map, final boolean jmsEncoding) {
+    	return new CamelMessagingHeadersInjectAdapter(map, jmsEncoding);    	
     }
 }
