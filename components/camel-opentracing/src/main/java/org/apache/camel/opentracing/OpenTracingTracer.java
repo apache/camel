@@ -74,6 +74,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
     private Tracer tracer;
     private CamelContext camelContext;
     private Set<String> excludePatterns = new HashSet<>();
+    private boolean encoding;
 
     static {
         ServiceLoader.load(SpanDecorator.class).forEach(d -> {
@@ -131,7 +132,15 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
         this.excludePatterns = excludePatterns;
     }
 
-    /**
+    public boolean isEncoding() {
+		return encoding;
+	}
+
+	public void setEncoding(boolean encoding) {
+		this.encoding = encoding;
+	}
+
+	/**
      * Adds an exclude pattern that will disable tracing for Camel messages that matches the pattern.
      *
      * @param pattern  the pattern such as route id, endpoint url
@@ -233,7 +242,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                     Span span = spanBuilder.start();
                     sd.pre(span, ese.getExchange(), ese.getEndpoint());
                     tracer.inject(span.context(), Format.Builtin.TEXT_MAP,
-                        sd.getInjectAdapter(ese.getExchange().getIn().getHeaders()));
+                        sd.getInjectAdapter(ese.getExchange().getIn().getHeaders(), encoding));
                     ActiveSpanManager.activate(ese.getExchange(), span);
 
                     if (LOG.isTraceEnabled()) {
@@ -289,7 +298,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                 SpanDecorator sd = getSpanDecorator(route.getEndpoint());
                 Span span = tracer.buildSpan(sd.getOperationName(exchange, route.getEndpoint()))
                     .asChildOf(tracer.extract(Format.Builtin.TEXT_MAP,
-                        sd.getExtractAdapter(exchange.getIn().getHeaders())))
+                        sd.getExtractAdapter(exchange.getIn().getHeaders(), encoding)))
                     .withTag(Tags.SPAN_KIND.getKey(), sd.getReceiverSpanKind())
                     .start();
                 sd.pre(span, exchange, route.getEndpoint());

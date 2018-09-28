@@ -25,9 +25,11 @@ import java.util.Map;
 public final class CamelMessagingHeadersExtractAdapter implements TextMap {
  
     private final Map<String, String> map = new HashMap<>();
+    private final boolean jmsEncoding;
 
-    public CamelMessagingHeadersExtractAdapter(final Map<String, Object> map) {
+    public CamelMessagingHeadersExtractAdapter(final Map<String, Object> map, boolean jmsEncoding) {
     	// Extract string valued map entries
+        this.jmsEncoding = jmsEncoding;
         map.entrySet().stream().filter(e -> e.getValue() instanceof String).forEach(e ->
             this.map.put(decodeDash(e.getKey()), (String) e.getValue()));
     }
@@ -51,6 +53,9 @@ public final class CamelMessagingHeadersExtractAdapter implements TextMap {
      * @return the result
      */
     private String decodeDash(String key) {
-      return key.replace(CamelMessagingHeadersInjectAdapter.JMS_DASH, "-");
+    	if (jmsEncoding)
+    		return key.replace(CamelMessagingHeadersInjectAdapter.JMS_DASH, "-");
+    	else
+    		return key;
   }
 }
