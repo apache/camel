@@ -17,9 +17,15 @@
 package org.apache.camel.opentracing.decorators;
 
 import io.opentracing.Span;
+import io.opentracing.propagation.TextMap;
 import io.opentracing.tag.Tags;
+
+import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.opentracing.propagation.CamelMessagingHeadersExtractAdapter;
+import org.apache.camel.opentracing.propagation.CamelMessagingHeadersInjectAdapter;
 
 public abstract class AbstractMessagingSpanDecorator extends AbstractSpanDecorator {
 
@@ -73,4 +79,13 @@ public abstract class AbstractMessagingSpanDecorator extends AbstractSpanDecorat
         return null;
     }
 
+    @Override
+    public TextMap getExtractAdapter(final Map<String, Object> map) {
+    	return new CamelMessagingHeadersExtractAdapter(map);
+    }
+
+    @Override
+    public TextMap getInjectAdapter(final Map<String, Object> map) {
+    	return new CamelMessagingHeadersInjectAdapter(map);    	
+    }
 }

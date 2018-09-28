@@ -41,8 +41,6 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.opentracing.propagation.CamelHeadersExtractAdapter;
-import org.apache.camel.opentracing.propagation.CamelHeadersInjectAdapter;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
@@ -235,7 +233,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                     Span span = spanBuilder.start();
                     sd.pre(span, ese.getExchange(), ese.getEndpoint());
                     tracer.inject(span.context(), Format.Builtin.TEXT_MAP,
-                        new CamelHeadersInjectAdapter(ese.getExchange().getIn().getHeaders()));
+                        sd.getInjectAdapter(ese.getExchange().getIn().getHeaders()));
                     ActiveSpanManager.activate(ese.getExchange(), span);
 
                     if (LOG.isTraceEnabled()) {
@@ -291,7 +289,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                 SpanDecorator sd = getSpanDecorator(route.getEndpoint());
                 Span span = tracer.buildSpan(sd.getOperationName(exchange, route.getEndpoint()))
                     .asChildOf(tracer.extract(Format.Builtin.TEXT_MAP,
-                        new CamelHeadersExtractAdapter(exchange.getIn().getHeaders())))
+                        sd.getExtractAdapter(exchange.getIn().getHeaders())))
                     .withTag(Tags.SPAN_KIND.getKey(), sd.getReceiverSpanKind())
                     .start();
                 sd.pre(span, exchange, route.getEndpoint());
