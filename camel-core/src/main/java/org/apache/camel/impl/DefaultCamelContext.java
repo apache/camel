@@ -205,6 +205,7 @@ import static org.apache.camel.impl.MDCUnitOfWork.MDC_CAMEL_CONTEXT_ID;
 @SuppressWarnings("deprecation")
 public class DefaultCamelContext extends ServiceSupport implements ModelCamelContext, ManagedCamelContext, Suspendable {
     private final Logger log = LoggerFactory.getLogger(getClass());
+    private String version;
     private final AtomicBoolean vetoStated = new AtomicBoolean();
     private JAXBContext jaxbContext;
     private CamelContextNameStrategy nameStrategy = createCamelContextNameStrategy();
@@ -2926,6 +2927,56 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             return 0;
         }
         return new Date().getTime() - startDate.getTime();
+    }
+
+    public String getVersion() {
+        if (version == null) {
+            synchronized (this) {
+                if (version == null) {
+                    version = doGetVersion();
+                }
+            }
+        }
+        return version;
+    }
+
+    private String doGetVersion() {
+        String version = null;
+
+        InputStream is = null;
+        // try to load from maven properties first
+        try {
+            Properties p = new Properties();
+            is = getClass().getResourceAsStream("/META-INF/maven/org.apache.camel/camel-core/pom.properties");
+            if (is != null) {
+                p.load(is);
+                version = p.getProperty("version", "");
+            }
+        } catch (Exception e) {
+            // ignore
+        } finally {
+            if (is != null) {
+                IOHelper.close(is);
+            }
+        }
+
+        // fallback to using Java API
+        if (version == null) {
+            Package aPackage = getClass().getPackage();
+            if (aPackage != null) {
+                version = aPackage.getImplementationVersion();
+                if (version == null) {
+                    version = aPackage.getSpecificationVersion();
+                }
+            }
+        }
+
+        if (version == null) {
+            // we could not compute the version so use a blank
+            version = "";
+        }
+
+        return version;
     }
 
     @Override

@@ -336,44 +336,4 @@ public abstract class ServiceSupport implements StatefulService {
         // noop
     }
 
-    @Override
-    public synchronized String getVersion() {
-        if (version != null) {
-            return version;
-        }
-        InputStream is = null;
-        // try to load from maven properties first
-        try {
-            Properties p = new Properties();
-            is = getClass().getResourceAsStream("/META-INF/maven/org.apache.camel/camel-core/pom.properties");
-            if (is != null) {
-                p.load(is);
-                version = p.getProperty("version", "");
-            }
-        } catch (Exception e) {
-            // ignore
-        } finally {
-            if (is != null) {
-                IOHelper.close(is);
-            }
-        }
-
-        // fallback to using Java API
-        if (version == null) {
-            Package aPackage = getClass().getPackage();
-            if (aPackage != null) {
-                version = aPackage.getImplementationVersion();
-                if (version == null) {
-                    version = aPackage.getSpecificationVersion();
-                }
-            }
-        }
-
-        if (version == null) {
-            // we could not compute the version so use a blank
-            version = "";
-        }
-
-        return version;
-    }
 }
