@@ -131,12 +131,14 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
     }
 
     @Override
-    public TextMap getExtractAdapter(final Map<String, Object> map) {
+    public TextMap getExtractAdapter(final Map<String, Object> map, boolean encoding) {
+    	// no encoding supported per default
     	return new CamelHeadersExtractAdapter(map);
     }
 
     @Override
-    public TextMap getInjectAdapter(final Map<String, Object> map) {
+    public TextMap getInjectAdapter(final Map<String, Object> map, boolean encoding) {
+    	// no encoding supported per default
     	return new CamelHeadersInjectAdapter(map);    	
     }
 }

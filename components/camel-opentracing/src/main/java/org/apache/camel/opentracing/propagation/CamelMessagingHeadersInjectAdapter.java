@@ -29,9 +29,11 @@ public final class CamelMessagingHeadersInjectAdapter implements TextMap {
 	static final String JMS_DASH = "_$dash$_";
 
 	private final Map<String, Object> map;
+	private final boolean jmsEncoding;
 
-    public CamelMessagingHeadersInjectAdapter(final Map<String, Object> map) {
+    public CamelMessagingHeadersInjectAdapter(final Map<String, Object> map, boolean jmsEncoding) {
         this.map = map;
+        this.jmsEncoding = jmsEncoding;
     }
 
     @Override
@@ -51,7 +53,7 @@ public final class CamelMessagingHeadersInjectAdapter implements TextMap {
      * Encode all dashes because JMS specification doesn't allow them in property name
      */
     private String encodeDash(String key) {
-      if (key == null || key.isEmpty()) {
+      if (key == null || key.isEmpty() || !jmsEncoding) {
         return key;
       }
 

@@ -27,14 +27,14 @@ public class CamelMessagingHeadersInjectAdapterTest {
 	
 	@Test
 	public void cannotGetIterator() {
-		CamelMessagingHeadersInjectAdapter adapter = new CamelMessagingHeadersInjectAdapter(map);
+		CamelMessagingHeadersInjectAdapter adapter = new CamelMessagingHeadersInjectAdapter(map,true);
 		thrown.expect(UnsupportedOperationException.class);
 		adapter.iterator();
 	}
 
 	@Test
 	public void putProperties() {
-		CamelMessagingHeadersInjectAdapter adapter = new CamelMessagingHeadersInjectAdapter(map);
+		CamelMessagingHeadersInjectAdapter adapter = new CamelMessagingHeadersInjectAdapter(map,true);
 		adapter.put("key1", "value1");
 	    adapter.put("key2", "value2");
 	    adapter.put("key1", "value3");
@@ -44,8 +44,15 @@ public class CamelMessagingHeadersInjectAdapterTest {
 
 	@Test
 	public void propertyWithDash() {
-		CamelMessagingHeadersInjectAdapter adapter = new CamelMessagingHeadersInjectAdapter(map);
+		CamelMessagingHeadersInjectAdapter adapter = new CamelMessagingHeadersInjectAdapter(map,true);
 		adapter.put("-key-1-", "value1");
 		assertEquals("value1", map.get(JMS_DASH + "key" + JMS_DASH + "1" + JMS_DASH));
+	}
+
+	@Test
+	public void propertyWithoutDashEncoding() {
+		CamelMessagingHeadersInjectAdapter adapter = new CamelMessagingHeadersInjectAdapter(map,false);
+		adapter.put("-key-1-", "value1");
+		assertEquals(null, map.get(JMS_DASH + "key" + JMS_DASH + "1" + JMS_DASH));
 	}
 }

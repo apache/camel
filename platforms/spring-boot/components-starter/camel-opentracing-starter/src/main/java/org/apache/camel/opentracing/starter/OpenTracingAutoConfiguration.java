@@ -47,6 +47,9 @@ public class OpenTracingAutoConfiguration {
         if (config.getExcludePatterns() != null) {
             ottracer.setExcludePatterns(config.getExcludePatterns());
         }
+        if (config.getEncoding() != null) {
+            ottracer.setEncoding(config.getEncoding().booleanValue());
+        }
         ottracer.init(camelContext);
 
         return ottracer;
