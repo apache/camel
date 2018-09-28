@@ -35,8 +35,6 @@ import org.slf4j.LoggerFactory;
  */
 public class CxfComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CxfComponent.class);
-
     @Metadata(label = "advanced")
     private Boolean allowStreaming;
     @Metadata(label = "security", defaultValue = "false")

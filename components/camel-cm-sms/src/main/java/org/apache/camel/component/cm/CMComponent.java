@@ -27,15 +27,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.DefaultComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link CMEndpoint}s.
  */
 public class CMComponent extends DefaultComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(CMComponent.class);
 
     private Validator validator;
 
@@ -54,7 +50,7 @@ public class CMComponent extends DefaultComponent {
         setProperties(config, parameters);
 
         // Validate configuration
-        LOG.debug("Validating uri based configuration");
+        log.debug("Validating uri based configuration");
         final Set<ConstraintViolation<CMConfiguration>> constraintViolations = getValidator().validate(config);
         if (constraintViolations.size() > 0) {
             final StringBuffer msg = new StringBuffer();

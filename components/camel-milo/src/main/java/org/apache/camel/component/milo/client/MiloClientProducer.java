@@ -25,12 +25,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MiloClientProducer extends DefaultAsyncProducer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MiloClientProducer.class);
 
     private final MiloClientConnection connection;
 
@@ -54,7 +50,7 @@ public class MiloClientProducer extends DefaultAsyncProducer {
         final Message msg = exchange.getIn();
         final Object value = msg.getBody();
 
-        LOG.debug("Processing message: {}", value);
+        log.debug("Processing message: {}", value);
 
         final CompletableFuture<?> future;
 

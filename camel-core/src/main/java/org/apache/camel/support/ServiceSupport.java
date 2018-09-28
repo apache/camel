@@ -41,7 +41,6 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public abstract class ServiceSupport implements StatefulService {
-    private static final Logger LOG = LoggerFactory.getLogger(ServiceSupport.class);
 
     protected final AtomicBoolean started = new AtomicBoolean(false);
     protected final AtomicBoolean starting = new AtomicBoolean(false);
@@ -52,7 +51,7 @@ public abstract class ServiceSupport implements StatefulService {
     protected final AtomicBoolean shuttingdown = new AtomicBoolean(false);
     protected final AtomicBoolean shutdown = new AtomicBoolean(false);
 
-    private String version;
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
      * <b>Important: </b> You should override the lifecycle methods that start with <tt>do</tt>, eg {@link #doStart()},
@@ -63,11 +62,11 @@ public abstract class ServiceSupport implements StatefulService {
     public void start() throws Exception {
         if (isStarting() || isStarted()) {
             // only start service if not already started
-            LOG.trace("Service already started");
+            log.trace("Service already started");
             return;
         }
         if (starting.compareAndSet(false, true)) {
-            LOG.trace("Starting service");
+            log.trace("Starting service");
             try {
                 doStart();
                 started.set(true);
@@ -107,11 +106,11 @@ public abstract class ServiceSupport implements StatefulService {
      */
     public void stop() throws Exception {
         if (isStopped()) {
-            LOG.trace("Service already stopped");
+            log.trace("Service already stopped");
             return;
         }
         if (isStopping()) {
-            LOG.trace("Service already stopping");
+            log.trace("Service already stopping");
             return;
         }
         stopping.set(true);
@@ -192,7 +191,7 @@ public abstract class ServiceSupport implements StatefulService {
     @Override
     public void shutdown() throws Exception {
         if (shutdown.get()) {
-            LOG.trace("Service already shut down");
+            log.trace("Service already shut down");
             return;
         }
         // ensure we are stopped first

@@ -32,8 +32,6 @@ import org.slf4j.LoggerFactory;
     syntax = "openshift-build-configs:masterUrl", producerOnly = true, label = "container,cloud,paas")
 public class OpenshiftBuildConfigsEndpoint extends AbstractKubernetesEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OpenshiftBuildConfigsEndpoint.class);
-
     public OpenshiftBuildConfigsEndpoint(String uri, OpenshiftBuildConfigsComponent component, KubernetesConfiguration config) {
         super(uri, component, config);
     }

@@ -25,8 +25,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The azure-blob component is used for storing and retrieving blobs from Azure Storage Blob Service.
@@ -39,8 +37,6 @@ import org.slf4j.LoggerFactory;
              label = "cloud,database,nosql")
 public class BlobServiceEndpoint extends DefaultEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BlobServiceEndpoint.class);
-    
     @UriPath(description = "Container or Blob compact Uri")
     @Metadata(required = "true")
     private String containerOrBlobUri; // to support component docs
@@ -53,7 +49,7 @@ public class BlobServiceEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        LOG.trace("Creating a consumer");
+        log.trace("Creating a consumer");
         if (getConfiguration().getBlobName() == null) {
             throw new IllegalArgumentException("Blob name must be specified.");
         }
@@ -63,7 +59,7 @@ public class BlobServiceEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        LOG.trace("Creating a producer");
+        log.trace("Creating a producer");
         if (getConfiguration().getBlobName() == null
             && getConfiguration().getOperation() != null 
             && BlobServiceOperations.listBlobs != configuration.getOperation()) {

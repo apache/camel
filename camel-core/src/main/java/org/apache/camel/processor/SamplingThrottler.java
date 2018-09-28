@@ -42,7 +42,6 @@ import org.slf4j.LoggerFactory;
  */
 public class SamplingThrottler extends DelegateAsyncProcessor implements Traceable, IdAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SamplingThrottler.class);
     private String id;
     private long messageFrequency;
     private long currentMessageCount;
@@ -129,13 +128,13 @@ public class SamplingThrottler extends DelegateAsyncProcessor implements Traceab
                 long now = System.currentTimeMillis();
                 if (now >= timeOfLastExchange + periodInMillis) {
                     doSend = true;
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace(sampled.sample());
+                    if (log.isTraceEnabled()) {
+                        log.trace(sampled.sample());
                     }
                     timeOfLastExchange = now;
                 } else {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace(sampled.drop());
+                    if (log.isTraceEnabled()) {
+                        log.trace(sampled.drop());
                     }
                 }
             }

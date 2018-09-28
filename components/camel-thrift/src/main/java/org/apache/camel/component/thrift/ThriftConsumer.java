@@ -40,14 +40,11 @@ import org.apache.thrift.transport.TSSLTransportFactory;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TTransportException;
 import org.apache.thrift.transport.TZlibTransport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents Thrift server consumer implementation
  */
 public class ThriftConsumer extends DefaultConsumer {
-    private static final Logger LOG = LoggerFactory.getLogger(ThriftConsumer.class);
 
     private TNonblockingServerSocket asyncServerTransport;
     private TServerSocket syncServerTransport;
@@ -69,17 +66,17 @@ public class ThriftConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         if (server == null) {
-            LOG.debug("Starting the Thrift server");
+            log.debug("Starting the Thrift server");
             initializeServer();
             server.serve();
-            LOG.info("Thrift server started and listening on port: {}", asyncServerTransport == null ? syncServerTransport.getServerSocket().getLocalPort() : asyncServerTransport.getPort());
+            log.info("Thrift server started and listening on port: {}", asyncServerTransport == null ? syncServerTransport.getServerSocket().getLocalPort() : asyncServerTransport.getPort());
         }
     }
 
     @Override
     protected void doStop() throws Exception {
         if (server != null) {
-            LOG.debug("Terminating Thrift server");
+            log.debug("Terminating Thrift server");
             server.stop();
             if (ObjectHelper.isNotEmpty(asyncServerTransport)) {
                 asyncServerTransport.close();
@@ -154,10 +151,10 @@ public class ThriftConsumer extends DefaultConsumer {
             server = new ThriftThreadPoolServer(args);
         } else if (configuration.getCompressionType() == ThriftCompressionType.ZLIB && endpoint.isSynchronous()) {
             if (ObjectHelper.isNotEmpty(configuration.getHost()) && ObjectHelper.isNotEmpty(configuration.getPort())) {
-                LOG.debug("Building sync Thrift server on {}:{}", configuration.getHost(), configuration.getPort());
+                log.debug("Building sync Thrift server on {}:{}", configuration.getHost(), configuration.getPort());
                 syncServerTransport = new TServerSocket(new InetSocketAddress(configuration.getHost(), configuration.getPort()), configuration.getClientTimeout());
             } else if (ObjectHelper.isEmpty(configuration.getHost()) && ObjectHelper.isNotEmpty(configuration.getPort())) {
-                LOG.debug("Building sync Thrift server on <any address>:{}", configuration.getPort());
+                log.debug("Building sync Thrift server on <any address>:{}", configuration.getPort());
                 syncServerTransport = new TServerSocket(configuration.getPort(), configuration.getClientTimeout());
             } else {
                 throw new IllegalArgumentException("No server start properties (host, port) specified");
@@ -175,10 +172,10 @@ public class ThriftConsumer extends DefaultConsumer {
         } else {
 
             if (ObjectHelper.isNotEmpty(configuration.getHost()) && ObjectHelper.isNotEmpty(configuration.getPort())) {
-                LOG.debug("Building Thrift server on {}:{}", configuration.getHost(), configuration.getPort());
+                log.debug("Building Thrift server on {}:{}", configuration.getHost(), configuration.getPort());
                 asyncServerTransport = new TNonblockingServerSocket(new InetSocketAddress(configuration.getHost(), configuration.getPort()), configuration.getClientTimeout());
             } else if (ObjectHelper.isEmpty(configuration.getHost()) && ObjectHelper.isNotEmpty(configuration.getPort())) {
-                LOG.debug("Building Thrift server on <any address>:{}", configuration.getPort());
+                log.debug("Building Thrift server on <any address>:{}", configuration.getPort());
                 asyncServerTransport = new TNonblockingServerSocket(configuration.getPort(), configuration.getClientTimeout());
             } else {
                 throw new IllegalArgumentException("No server start properties (host, port) specified");
@@ -208,7 +205,7 @@ public class ThriftConsumer extends DefaultConsumer {
             });
             return false;
         } else {
-            LOG.warn("Consumer not ready to process exchanges. The exchange {} will be discarded", exchange);
+            log.warn("Consumer not ready to process exchanges. The exchange {} will be discarded", exchange);
             callback.done(true);
             return true;
         }

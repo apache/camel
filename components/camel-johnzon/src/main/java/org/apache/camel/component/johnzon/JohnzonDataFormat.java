@@ -39,8 +39,6 @@ import org.slf4j.LoggerFactory;
  */
 public class JohnzonDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JohnzonDataFormat.class);
-
     private CamelContext camelContext;
     private Mapper objectMapper;
     private Class<?> unmarshalType;

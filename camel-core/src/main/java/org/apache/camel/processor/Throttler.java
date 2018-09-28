@@ -70,7 +70,6 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
 
     private enum State { SYNC, ASYNC, ASYNC_REJECTED }
 
-    private final Logger log = LoggerFactory.getLogger(Throttler.class);
     private final CamelContext camelContext;
     private final ScheduledExecutorService asyncExecutor;
     private final boolean shutdownAsyncExecutor;

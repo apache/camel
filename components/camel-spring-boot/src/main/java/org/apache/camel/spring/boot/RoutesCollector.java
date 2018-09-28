@@ -232,11 +232,11 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                         @Override
                         public void notify(EventObject eventObject) throws Exception {
                             for (CamelContextConfiguration camelContextConfiguration : camelContextConfigurations) {
-                                LOG.debug("CamelContextConfiguration found. Invoking afterApplicationStart: {}", camelContextConfiguration);
+                                log.debug("CamelContextConfiguration found. Invoking afterApplicationStart: {}", camelContextConfiguration);
                                 try {
                                     camelContextConfiguration.afterApplicationStart(camelContext);
                                 } catch (Exception e) {
-                                    LOG.warn("Error during calling afterApplicationStart due " + e.getMessage() + ". This exception is ignored", e);
+                                    log.warn("Error during calling afterApplicationStart due " + e.getMessage() + ". This exception is ignored", e);
                                 }
                             }
                         }

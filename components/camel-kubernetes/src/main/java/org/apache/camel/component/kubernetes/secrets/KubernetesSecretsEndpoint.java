@@ -31,8 +31,6 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-secrets", title = "Kubernetes Secrets", syntax = "kubernetes-secrets:masterUrl", producerOnly = true, label = "container,cloud,paas")
 public class KubernetesSecretsEndpoint extends AbstractKubernetesEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KubernetesSecretsEndpoint.class);
-
     public KubernetesSecretsEndpoint(String uri, KubernetesSecretsComponent component, KubernetesConfiguration config) {
         super(uri, component, config);
     }

@@ -40,7 +40,6 @@ import static java.util.Collections.singletonList;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.milo.KeyStoreLoader;
-import org.apache.camel.component.milo.client.MiloClientConsumer;
 import org.apache.camel.component.milo.server.internal.CamelNamespace;
 import org.apache.camel.impl.DefaultComponent;
 import org.eclipse.milo.opcua.sdk.server.OpcUaServer;
@@ -60,8 +59,6 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.UserTokenType;
 import org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo;
 import org.eclipse.milo.opcua.stack.core.types.structured.UserTokenPolicy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS;
 
@@ -71,7 +68,6 @@ import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USE
 public class MiloServerComponent extends DefaultComponent {
     public static final String DEFAULT_NAMESPACE_URI = "urn:org:apache:camel";
 
-    private static final Logger LOG = LoggerFactory.getLogger(MiloClientConsumer.class);
     private static final String URL_CHARSET = "UTF-8";
     private static final OpcUaServerConfig DEFAULT_SERVER_CONFIG;
 
@@ -188,14 +184,14 @@ public class MiloServerComponent extends DefaultComponent {
 
         if (this.certificateValidator != null) {
             final CertificateValidator validator = this.certificateValidator.get();
-            LOG.debug("Using validator: {}", validator);
+            log.debug("Using validator: {}", validator);
             if (validator instanceof Closeable) {
                 runOnStop(() -> {
                     try {
-                        LOG.debug("Closing: {}", validator);
+                        log.debug("Closing: {}", validator);
                         ((Closeable)validator).close();
                     } catch (final IOException e) {
-                        LOG.warn("Failed to close", e);
+                        log.warn("Failed to close", e);
                     }
                 });
             }
@@ -232,7 +228,7 @@ public class MiloServerComponent extends DefaultComponent {
             try {
                 runnable.run();
             } catch (final Exception e) {
-                LOG.warn("Failed to run on stop", e);
+                log.warn("Failed to run on stop", e);
             }
         });
         this.runOnStop.clear();
@@ -370,7 +366,7 @@ public class MiloServerComponent extends DefaultComponent {
                     try {
                         this.userMap.put(URLDecoder.decode(toks[0], URL_CHARSET), URLDecoder.decode(toks[1], URL_CHARSET));
                     } catch (final UnsupportedEncodingException e) {
-                        LOG.warn("Failed to decode user map entry", e);
+                        log.warn("Failed to decode user map entry", e);
                     }
                 }
             }

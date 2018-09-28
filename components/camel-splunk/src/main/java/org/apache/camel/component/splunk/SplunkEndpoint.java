@@ -28,15 +28,12 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The splunk component allows to publish or search for events in Splunk.
  */
 @UriEndpoint(firstVersion = "2.13.0", scheme = "splunk", title = "Splunk", syntax = "splunk:name", consumerClass = SplunkConsumer.class, label = "log,monitoring")
 public class SplunkEndpoint extends ScheduledPollEndpoint {
-    private static final Logger LOG = LoggerFactory.getLogger(SplunkEndpoint.class);
 
     private static final Pattern SPLUNK_SCHEMA_PATTERN = Pattern.compile("splunk:(//)*");
     private static final Pattern SPLUNK_OPTIONS_PATTER = Pattern.compile("\\?.*");
@@ -107,7 +104,7 @@ public class SplunkEndpoint extends ScheduledPollEndpoint {
     public synchronized boolean reset(Exception e) {
         boolean answer = false;
         if ((e instanceof RuntimeException && ((RuntimeException)e).getCause() instanceof ConnectException) || ((e instanceof SocketException) || (e instanceof SSLException))) {
-            LOG.warn("Got exception from Splunk. Service will be reset.");
+            log.warn("Got exception from Splunk. Service will be reset.");
             this.service = null;
             answer = true;
         }

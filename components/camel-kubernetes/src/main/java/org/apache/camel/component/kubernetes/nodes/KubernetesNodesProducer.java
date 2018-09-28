@@ -31,12 +31,8 @@ import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class KubernetesNodesProducer extends DefaultProducer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(KubernetesNodesProducer.class);
 
     public KubernetesNodesProducer(AbstractKubernetesEndpoint endpoint) {
         super(endpoint);
@@ -100,7 +96,7 @@ public class KubernetesNodesProducer extends DefaultProducer {
         Node node = null;
         String pvName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODE_NAME, String.class);
         if (ObjectHelper.isEmpty(pvName)) {
-            LOG.error("Get a specific Node require specify a Node name");
+            log.error("Get a specific Node require specify a Node name");
             throw new IllegalArgumentException("Get a specific Node require specify a Node name");
         }
         node = getEndpoint().getKubernetesClient().nodes().withName(pvName).get();

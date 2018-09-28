@@ -36,8 +36,6 @@ import org.slf4j.LoggerFactory;
  */
 public class XsltComponent extends DefaultComponent {
 
-    private static final Logger LOG = LoggerFactory.getLogger(XsltComponent.class);
-
     @Metadata(label = "advanced")
     private XmlConverter xmlConverter;
     @Metadata(label = "advanced")
@@ -202,7 +200,7 @@ public class XsltComponent extends DefaultComponent {
             // if its a http uri, then append additional parameters as they are part of the uri
             resourceUri = ResourceHelper.appendParameters(resourceUri, parameters);
         }
-        LOG.debug("{} using schema resource: {}", this, resourceUri);
+        log.debug("{} using schema resource: {}", this, resourceUri);
         endpoint.setResourceUri(resourceUri);
 
         if (!parameters.isEmpty()) {

@@ -46,7 +46,7 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
     public static final String SIGNATURE_KEY_RING = "CamelPGPDataFormatSignatureKeyRing";
     public static final String SIGNATURE_KEY_PASSWORD = "CamelPGPDataFormatSignatureKeyPassword";
 
-    //private static final Logger LOG = LoggerFactory.getLogger(PGPDataFormatChanged.class);
+    //private static final Logger log = LoggerFactory.getLogger(PGPDataFormatChanged.class);
 
     private String password; // only for decryption
     private String keyFileName;

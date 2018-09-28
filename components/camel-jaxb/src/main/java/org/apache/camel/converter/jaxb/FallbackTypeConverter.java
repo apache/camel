@@ -54,8 +54,6 @@ import org.apache.camel.converter.jaxp.StaxConverter;
 import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version
@@ -65,7 +63,6 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
     public static final String PRETTY_PRINT = "CamelJaxbPrettyPrint";
     public static final String OBJECT_FACTORY = "CamelJaxbObjectFactory";
 
-    private static final Logger LOG = LoggerFactory.getLogger(FallbackTypeConverter.class);
     private final Map<AnnotatedElement, JAXBContext> contexts = new HashMap<>();
     private final StaxConverter staxConverter = new StaxConverter();
     private TypeConverter parentTypeConverter;
@@ -200,7 +197,7 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
 
     @Override
     protected void doStart() throws Exception {
-        LOG.info("Jaxb FallbackTypeConverter[prettyPrint={}, objectFactory={}]", prettyPrint, objectFactory);
+        log.info("Jaxb FallbackTypeConverter[prettyPrint={}, objectFactory={}]", prettyPrint, objectFactory);
     }
 
     @Override
@@ -232,7 +229,7 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
      * Lets try parse via JAXB
      */
     protected <T> T unmarshall(Class<T> type, Exchange exchange, Object value) throws Exception {
-        LOG.trace("Unmarshal to {} with value {}", type, value);
+        log.trace("Unmarshal to {} with value {}", type, value);
 
         if (value == null) {
             throw new IllegalArgumentException("Cannot convert from null value to JAXBSource");
@@ -250,7 +247,7 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
                         return castJaxbType(unmarshalled, type);
                     } catch (Exception ex) {
                         // There is some issue on the StaxStreamReader to CXFPayload message body with different namespaces
-                        LOG.debug("Cannot use StaxStreamReader to unmarshal the message, due to {}", ex);
+                        log.debug("Cannot use StaxStreamReader to unmarshal the message, due to {}", ex);
                     }
                 }
             }
@@ -284,7 +281,7 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
 
     protected <T> T marshall(Class<T> type, Exchange exchange, Object value, Method objectFactoryMethod)
         throws JAXBException, XMLStreamException, FactoryConfigurationError, TypeConversionException {
-        LOG.trace("Marshal from value {} to type {}", value, type);
+        log.trace("Marshal from value {} to type {}", value, type);
 
         T answer = null;
         if (parentTypeConverter != null) {
@@ -310,7 +307,7 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
                         toMarshall = objectFactoryMethod.invoke(instance, value);
                     }
                 } catch (Exception e) {
-                    LOG.debug("Unable to create JAXBElement object for type " + value.getClass() + " due to " + e.getMessage(), e);
+                    log.debug("Unable to create JAXBElement object for type " + value.getClass() + " due to " + e.getMessage(), e);
                 }
             }
             if (needFiltering(exchange)) {
@@ -354,7 +351,7 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
             return unmarshaller.unmarshal(xmlReader);
         } finally {
             if (value instanceof Closeable) {
-                IOHelper.close((Closeable)value, "Unmarshalling", LOG);
+                IOHelper.close((Closeable)value, "Unmarshalling", log);
             }
         }
     }

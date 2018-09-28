@@ -38,8 +38,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.convertToGetMethod;
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.convertToSearchMethod;
@@ -55,8 +53,6 @@ import static org.apache.camel.component.facebook.data.FacebookPropertiesHelper.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "facebook", title = "Facebook", syntax = "facebook:methodName", consumerClass = FacebookConsumer.class, label = "social")
 public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstants {
-
-    private static final Logger LOG = LoggerFactory.getLogger(FacebookEndpoint.class);
 
     private FacebookNameStyle nameStyle;
 
@@ -165,10 +161,10 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
         }
 
         // log missing/extra properties for debugging
-        if (LOG.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             final Set<String> missing = getMissingProperties(method, nameStyle, arguments);
             if (!missing.isEmpty()) {
-                LOG.debug("Method {} could use one or more properties from {}", method, missing);
+                log.debug("Method {} could use one or more properties from {}", method, missing);
             }
         }
     }

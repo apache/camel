@@ -32,8 +32,6 @@ import org.slf4j.LoggerFactory;
     syntax = "kubernetes-service-accounts:masterUrl", producerOnly = true, label = "container,cloud,paas")
 public class KubernetesServiceAccountsEndpoint extends AbstractKubernetesEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KubernetesServiceAccountsEndpoint.class);
-
     public KubernetesServiceAccountsEndpoint(String uri, KubernetesServiceAccountsComponent component, KubernetesConfiguration config) {
         super(uri, component, config);
     }

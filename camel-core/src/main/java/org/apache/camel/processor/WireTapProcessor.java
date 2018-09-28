@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, Traceable, ShutdownAware, IdAware, CamelContextAware {
-    private static final Logger LOG = LoggerFactory.getLogger(WireTapProcessor.class);
+
     private String id;
     private CamelContext camelContext;
     private final SendDynamicProcessor dynamicProcessor;
@@ -156,10 +156,10 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
             public Exchange call() throws Exception {
                 taskCount.increment();
                 try {
-                    LOG.debug(">>>> (wiretap) {} {}", uri, wireTapExchange);
+                    log.debug(">>>> (wiretap) {} {}", uri, wireTapExchange);
                     processor.process(wireTapExchange);
                 } catch (Throwable e) {
-                    LOG.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + uri + ". This exception will be ignored.", e);
+                    log.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + uri + ". This exception will be ignored.", e);
                 } finally {
                     taskCount.decrement();
                 }

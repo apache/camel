@@ -41,15 +41,11 @@ import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.filter.PageFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The HBase consumer.
  */
 public class HBaseConsumer extends ScheduledBatchPollingConsumer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(HBaseConsumer.class);
 
     private final HBaseEndpoint endpoint;
     private HBaseRow rowModel;
@@ -154,7 +150,7 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
 
         // limit if needed
         if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
-            LOG.debug("Limiting to maximum messages to poll {} as there were {} messages in this poll.", maxMessagesPerPoll, total);
+            log.debug("Limiting to maximum messages to poll {} as there were {} messages in this poll.", maxMessagesPerPoll, total);
             total = maxMessagesPerPoll;
         }
 
@@ -169,7 +165,7 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
-            LOG.trace("Processing exchange [{}]...", exchange);
+            log.trace("Processing exchange [{}]...", exchange);
             getProcessor().process(exchange);
             if (exchange.getException() != null) {
                 // if we failed then throw exception

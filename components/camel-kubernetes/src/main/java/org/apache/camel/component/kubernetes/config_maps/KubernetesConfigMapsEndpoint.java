@@ -32,8 +32,6 @@ import org.slf4j.LoggerFactory;
     syntax = "kubernetes-config-maps:masterUrl", producerOnly = true, label = "container,cloud,paas")
 public class KubernetesConfigMapsEndpoint extends AbstractKubernetesEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KubernetesConfigMapsEndpoint.class);
-
     public KubernetesConfigMapsEndpoint(String uri, KubernetesConfigMapsComponent component, KubernetesConfiguration config) {
         super(uri, component, config);
     }

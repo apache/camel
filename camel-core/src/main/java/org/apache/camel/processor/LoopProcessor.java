@@ -36,7 +36,6 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  * The processor which sends messages in a loop.
  */
 public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, IdAware {
-    private static final Logger LOG = LoggerFactory.getLogger(LoopProcessor.class);
 
     private String id;
     private final Expression expression;
@@ -96,23 +95,23 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
             boolean sync = process(target, callback, index, count, doWhile, original);
 
             if (!sync) {
-                LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", target.getExchangeId());
+                log.trace("Processing exchangeId: {} is continued being processed asynchronously", target.getExchangeId());
                 // the remainder of the loop will be completed async
                 // so we break out now, then the callback will be invoked which then continue routing from where we left here
                 return false;
             }
 
-            LOG.trace("Processing exchangeId: {} is continued being processed synchronously", target.getExchangeId());
+            log.trace("Processing exchangeId: {} is continued being processed synchronously", target.getExchangeId());
 
             // check for error if so we should break out
-            if (!continueProcessing(target, "so breaking out of loop", LOG)) {
+            if (!continueProcessing(target, "so breaking out of loop", log)) {
                 break;
             }
         }
 
         // we are done so prepare the result
         ExchangeHelper.copyResults(exchange, target);
-        LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+        log.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
         callback.done(true);
         return true;
     }
@@ -122,7 +121,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
                               final Exchange original) {
 
         // set current index as property
-        LOG.debug("LoopProcessor: iteration #{}", index.get());
+        log.debug("LoopProcessor: iteration #{}", index.get());
         exchange.setProperty(Exchange.LOOP_INDEX, index.get());
 
         boolean sync = processor.process(exchange, new AsyncCallback() {
@@ -154,7 +153,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
                 while ((predicate != null && doWhile.get()) || (index.get() < count.get())) {
 
                     // check for error if so we should break out
-                    if (!continueProcessing(target, "so breaking out of loop", LOG)) {
+                    if (!continueProcessing(target, "so breaking out of loop", log)) {
                         break;
                     }
 
@@ -164,7 +163,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
                     // process again
                     boolean sync = process(target, callback, index, count, doWhile, original);
                     if (!sync) {
-                        LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", target.getExchangeId());
+                        log.trace("Processing exchangeId: {} is continued being processed asynchronously", target.getExchangeId());
                         // the remainder of the routing slip will be completed async
                         // so we break out now, then the callback will be invoked which then continue routing from where we left here
                         return;
@@ -173,7 +172,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
 
                 // we are done so prepare the result
                 ExchangeHelper.copyResults(original, target);
-                LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                log.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
                 callback.done(false);
             }
         });

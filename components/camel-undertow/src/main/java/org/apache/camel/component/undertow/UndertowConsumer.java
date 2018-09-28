@@ -41,15 +41,12 @@ import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The Undertow consumer which is also an Undertow HttpHandler implementation to handle incoming request.
  */
 public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UndertowConsumer.class);
     private CamelWebSocketHandler webSocketHandler;
 
     public UndertowConsumer(UndertowEndpoint endpoint, Processor processor) {
@@ -152,7 +149,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
         TypeConverter tc = getEndpoint().getCamelContext().getTypeConverter();
 
         if (body == null) {
-            LOG.trace("No payload to send as reply for exchange: {}", camelExchange);
+            log.trace("No payload to send as reply for exchange: {}", camelExchange);
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_TYPE, MimeMappings.DEFAULT_MIME_MAPPINGS.get("txt"));
             httpExchange.getResponseSender().send("No response available");
         } else {

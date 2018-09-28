@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
  */
 public class BeanComponent extends DefaultComponent {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BeanComponent.class);
     // use an internal soft cache for BeanInfo as they are costly to introspect
     // for example the bean language using OGNL expression runs much faster reusing the BeanInfo from this cache
     @SuppressWarnings("unchecked")
@@ -69,9 +68,9 @@ public class BeanComponent extends DefaultComponent {
 
     @Override
     protected void doShutdown() throws Exception {
-        if (LOG.isDebugEnabled() && beanInfoCache instanceof LRUCache) {
+        if (log.isDebugEnabled() && beanInfoCache instanceof LRUCache) {
             LRUCache cache = (LRUCache) this.beanInfoCache;
-            LOG.debug("Clearing BeanInfo cache[size={}, hits={}, misses={}, evicted={}]", cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted());
+            log.debug("Clearing BeanInfo cache[size={}, hits={}, misses={}, evicted={}]", cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted());
         }
         beanInfoCache.clear();
     }

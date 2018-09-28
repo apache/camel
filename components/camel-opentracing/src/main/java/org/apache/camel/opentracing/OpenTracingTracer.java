@@ -52,8 +52,6 @@ import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StringHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * To use OpenTracing with Camel then setup this {@link OpenTracingTracer} in
@@ -68,8 +66,6 @@ import org.slf4j.LoggerFactory;
  */
 @ManagedResource(description = "OpenTracingTracer")
 public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFactory, StaticService, CamelContextAware {
-
-    private static final Logger LOG = LoggerFactory.getLogger(OpenTracingTracer.class);
 
     private static Map<String, SpanDecorator> decorators = new HashMap<>();
 
@@ -190,7 +186,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
             tracer = NoopTracerFactory.create();
         }
 
-        ServiceHelper.startServices(eventNotifier);
+        ServiceHelper.startService(eventNotifier);
     }
 
     @Override
@@ -252,8 +248,8 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                     tracer.inject(span.context(), Format.Builtin.TEXT_MAP, sd.getInjectAdapter(ese.getExchange().getIn().getHeaders(), encoding));
                     ActiveSpanManager.activate(ese.getExchange(), span);
 
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("OpenTracing: start client span={}", span);
+                    if (log.isTraceEnabled()) {
+                        log.trace("OpenTracing: start client span={}", span);
                     }
                 } else if (event instanceof ExchangeSentEvent) {
                     ExchangeSentEvent ese = (ExchangeSentEvent)event;
@@ -263,19 +259,19 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                     }
                     Span span = ActiveSpanManager.getSpan(ese.getExchange());
                     if (span != null) {
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("OpenTracing: start client span={}", span);
+                        if (log.isTraceEnabled()) {
+                            log.trace("OpenTracing: start client span={}", span);
                         }
                         sd.post(span, ese.getExchange(), ese.getEndpoint());
                         span.finish();
                         ActiveSpanManager.deactivate(ese.getExchange());
                     } else {
-                        LOG.warn("OpenTracing: could not find managed span for exchange={}", ese.getExchange());
+                        log.warn("OpenTracing: could not find managed span for exchange={}", ese.getExchange());
                     }
                 }
             } catch (Throwable t) {
                 // This exception is ignored
-                LOG.warn("OpenTracing: Failed to capture tracing data", t);
+                log.warn("OpenTracing: Failed to capture tracing data", t);
             }
         }
 
@@ -307,12 +303,12 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                     .withTag(Tags.SPAN_KIND.getKey(), sd.getReceiverSpanKind()).start();
                 sd.pre(span, exchange, route.getEndpoint());
                 ActiveSpanManager.activate(exchange, span);
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("OpenTracing: start server span={}", span);
+                if (log.isTraceEnabled()) {
+                    log.trace("OpenTracing: start server span={}", span);
                 }
             } catch (Throwable t) {
                 // This exception is ignored
-                LOG.warn("OpenTracing: Failed to capture tracing data", t);
+                log.warn("OpenTracing: Failed to capture tracing data", t);
             }
         }
 
@@ -324,19 +320,19 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                 }
                 Span span = ActiveSpanManager.getSpan(exchange);
                 if (span != null) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("OpenTracing: finish server span={}", span);
+                    if (log.isTraceEnabled()) {
+                        log.trace("OpenTracing: finish server span={}", span);
                     }
                     SpanDecorator sd = getSpanDecorator(route.getEndpoint());
                     sd.post(span, exchange, route.getEndpoint());
                     span.finish();
                     ActiveSpanManager.deactivate(exchange);
                 } else {
-                    LOG.warn("OpenTracing: could not find managed span for exchange={}", exchange);
+                    log.warn("OpenTracing: could not find managed span for exchange={}", exchange);
                 }
             } catch (Throwable t) {
                 // This exception is ignored
-                LOG.warn("OpenTracing: Failed to capture tracing data", t);
+                log.warn("OpenTracing: Failed to capture tracing data", t);
             }
         }
     }
@@ -354,7 +350,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                 }
             } catch (Throwable t) {
                 // This exception is ignored
-                LOG.warn("OpenTracing: Failed to capture tracing data", t);
+                log.warn("OpenTracing: Failed to capture tracing data", t);
             }
             return message;
         }

@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class EventDrivenPollingConsumer extends PollingConsumerSupport implements Processor, IsSingleton {
-    private static final Logger LOG = LoggerFactory.getLogger(EventDrivenPollingConsumer.class);
+
     private final BlockingQueue<Exchange> queue;
     private ExceptionHandler interruptedExceptionHandler;
     private Consumer consumer;
@@ -127,7 +127,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
                 }
             }
         }
-        LOG.trace("Consumer is not running, so returning null");
+        log.trace("Consumer is not running, so returning null");
         return null;
     }
 
@@ -194,7 +194,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
             try {
                 timeout = strategy.beforePoll(timeout);
             } catch (Exception e) {
-                LOG.debug("Error occurred before polling " + consumer + ". This exception will be ignored.", e);
+                log.debug("Error occurred before polling " + consumer + ". This exception will be ignored.", e);
             }
         }
         return timeout;
@@ -206,7 +206,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
             try {
                 strategy.afterPoll();
             } catch (Exception e) {
-                LOG.debug("Error occurred after polling " + consumer + ". This exception will be ignored.", e);
+                log.debug("Error occurred after polling " + consumer + ". This exception will be ignored.", e);
             }
         }
     }

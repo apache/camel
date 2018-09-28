@@ -46,8 +46,6 @@ import org.slf4j.LoggerFactory;
  */
 public class ProducerCache extends ServiceSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ProducerCache.class);
-
     private final CamelContext camelContext;
     private final ServicePool<AsyncProducer> producers;
     private final Object source;
@@ -152,7 +150,7 @@ public class ProducerCache extends ServiceSupport {
         AsyncProducer producer = acquireProducer(endpoint);
         try {
             // now lets dispatch
-            LOG.debug(">>>> {} {}", endpoint, exchange);
+            log.debug(">>>> {} {}", endpoint, exchange);
 
             // set property which endpoint we send to
             exchange.setProperty(Exchange.TO_ENDPOINT, endpoint.getEndpointUri());
@@ -287,7 +285,7 @@ public class ProducerCache extends ServiceSupport {
 
             if (producer == null) {
                 if (isStopped()) {
-                    LOG.warn("Ignoring exchange sent after processor is stopped: {}", exchange);
+                    log.warn("Ignoring exchange sent after processor is stopped: {}", exchange);
                     callback.done(true);
                     return true;
                 } else {
@@ -342,7 +340,7 @@ public class ProducerCache extends ServiceSupport {
     protected boolean asyncDispatchExchange(Endpoint endpoint, AsyncProducer producer,
                                             Processor resultProcessor, Exchange exchange, AsyncCallback callback) {
         // now lets dispatch
-        LOG.debug(">>>> {} {}", endpoint, exchange);
+        log.debug(">>>> {} {}", endpoint, exchange);
 
         // set property which endpoint we send to
         exchange.setProperty(Exchange.TO_ENDPOINT, endpoint.getEndpointUri());
@@ -392,7 +390,7 @@ public class ProducerCache extends ServiceSupport {
     public int size() {
         int size = producers.size();
 
-        LOG.trace("size = {}", size);
+        log.trace("size = {}", size);
         return size;
     }
 
@@ -456,7 +454,7 @@ public class ProducerCache extends ServiceSupport {
             producers.stop();
             producers.start();
         } catch (Exception e) {
-            LOG.debug("Error restarting producers", e);
+            log.debug("Error restarting producers", e);
         }
         if (statistics != null) {
             statistics.clear();

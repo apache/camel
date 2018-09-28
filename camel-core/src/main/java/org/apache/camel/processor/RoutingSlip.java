@@ -57,7 +57,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * pipeline to ensure it works the same and the async routing engine is flawless.
  */
 public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+
     protected String id;
     protected ProducerCache producerCache;
     protected int cacheSize;

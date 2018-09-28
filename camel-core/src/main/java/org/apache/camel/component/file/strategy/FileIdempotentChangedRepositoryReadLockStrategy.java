@@ -42,8 +42,6 @@ import org.slf4j.LoggerFactory;
  */
 public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupport implements GenericFileExclusiveReadLockStrategy<File>, CamelContextAware {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(FileIdempotentChangedRepositoryReadLockStrategy.class);
-
     private final FileChangedExclusiveReadLockStrategy changed;
     private GenericFileEndpoint<File> endpoint;
     private LoggingLevel readLockLoggingLevel = LoggingLevel.DEBUG;
@@ -67,7 +65,7 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
     @Override
     public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) throws Exception {
         this.endpoint = endpoint;
-        LOG.info("Using FileIdempotentRepositoryReadLockStrategy: {} on endpoint: {}", idempotentRepository, endpoint);
+        log.info("Using FileIdempotentRepositoryReadLockStrategy: {} on endpoint: {}", idempotentRepository, endpoint);
 
         changed.prepareOnStartup(operations, endpoint);
     }
@@ -85,7 +83,7 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
         boolean answer = idempotentRepository.add(key);
         if (!answer) {
             // another node is processing the file so skip
-            CamelLogger.log(LOG, readLockLoggingLevel, "Cannot acquire read lock. Will skip the file: " + file);
+            CamelLogger.log(log, readLockLoggingLevel, "Cannot acquire read lock. Will skip the file: " + file);
         }
 
         if (answer) {
@@ -118,15 +116,15 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
             try {
                 changed.releaseExclusiveReadLockOnRollback(operations, file, exchange);
             } catch (Exception e) {
-                LOG.warn("Error during releasing exclusive readlock on rollback. This exception is ignored.", e);
+                log.warn("Error during releasing exclusive readlock on rollback. This exception is ignored.", e);
             }
         };
 
         if (readLockIdempotentReleaseDelay > 0 && readLockIdempotentReleaseExecutorService != null) {
-            LOG.debug("Scheduling readlock release task to run asynchronous delayed after {} millis", readLockIdempotentReleaseDelay);
+            log.debug("Scheduling readlock release task to run asynchronous delayed after {} millis", readLockIdempotentReleaseDelay);
             readLockIdempotentReleaseExecutorService.schedule(r, readLockIdempotentReleaseDelay, TimeUnit.MILLISECONDS);
         } else if (readLockIdempotentReleaseDelay > 0) {
-            LOG.debug("Delaying readlock release task {} millis", readLockIdempotentReleaseDelay);
+            log.debug("Delaying readlock release task {} millis", readLockIdempotentReleaseDelay);
             Thread.sleep(readLockIdempotentReleaseDelay);
             r.run();
         } else {
@@ -148,15 +146,15 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
             try {
                 changed.releaseExclusiveReadLockOnCommit(operations, file, exchange);
             } catch (Exception e) {
-                LOG.warn("Error during releasing exclusive readlock on rollback. This exception is ignored.", e);
+                log.warn("Error during releasing exclusive readlock on rollback. This exception is ignored.", e);
             }
         };
 
         if (readLockIdempotentReleaseDelay > 0 && readLockIdempotentReleaseExecutorService != null) {
-            LOG.debug("Scheduling readlock release task to run asynchronous delayed after {} millis", readLockIdempotentReleaseDelay);
+            log.debug("Scheduling readlock release task to run asynchronous delayed after {} millis", readLockIdempotentReleaseDelay);
             readLockIdempotentReleaseExecutorService.schedule(r, readLockIdempotentReleaseDelay, TimeUnit.MILLISECONDS);
         } else if (readLockIdempotentReleaseDelay > 0) {
-            LOG.debug("Delaying readlock release task {} millis", readLockIdempotentReleaseDelay);
+            log.debug("Delaying readlock release task {} millis", readLockIdempotentReleaseDelay);
             Thread.sleep(readLockIdempotentReleaseDelay);
             r.run();
         } else {

@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 
 public abstract class AtmosScheduledPollConsumer extends ScheduledPollConsumer {
-    protected static final transient Logger LOG = LoggerFactory.getLogger(AtmosScheduledPollConsumer.class);
+
     protected AtmosEndpoint endpoint;
     protected AtmosConfiguration configuration;
 

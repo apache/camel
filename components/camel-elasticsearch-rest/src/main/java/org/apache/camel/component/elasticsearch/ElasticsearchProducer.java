@@ -44,16 +44,12 @@ import org.elasticsearch.client.sniff.Sniffer;
 import org.elasticsearch.client.sniff.SnifferBuilder;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
  * Represents an Elasticsearch producer.
  */
 public class ElasticsearchProducer extends DefaultProducer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchProducer.class);
 
     protected final ElasticsearchConfiguration configuration;
     private RestClient client;
@@ -240,12 +236,12 @@ public class ElasticsearchProducer extends DefaultProducer {
 
     private void startClient() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, UnknownHostException {
         if (client == null) {
-            LOG.info("Connecting to the ElasticSearch cluster: {}", configuration.getClusterName());
+            log.info("Connecting to the ElasticSearch cluster: {}", configuration.getClusterName());
             if (configuration.getHostAddressesList() != null
                 && !configuration.getHostAddressesList().isEmpty()) {
                 client = createClient();
             } else {
-                LOG.warn("Incorrect ip address and port parameters settings for ElasticSearch cluster");
+                log.warn("Incorrect ip address and port parameters settings for ElasticSearch cluster");
             }
         }
     }
@@ -277,7 +273,7 @@ public class ElasticsearchProducer extends DefaultProducer {
     @Override
     protected void doStop() throws Exception {
         if (client != null) {
-            LOG.info("Disconnecting from ElasticSearch cluster: {}", configuration.getClusterName());
+            log.info("Disconnecting from ElasticSearch cluster: {}", configuration.getClusterName());
             client.close();
             if (sniffer != null) {
                 sniffer.close();

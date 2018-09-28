@@ -35,15 +35,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Producer that can write to streams
  */
 public class StreamProducer extends DefaultProducer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(StreamProducer.class);
     private static final String TYPES = "out,err,file,header,url";
     private static final String INVALID_URI = "Invalid uri, valid form: 'stream:{" + TYPES + "}'";
     private static final List<String> TYPES_LIST = Arrays.asList(TYPES.split(","));
@@ -85,7 +82,7 @@ public class StreamProducer extends DefaultProducer {
     private OutputStream resolveStreamFromUrl() throws IOException {
         String u = endpoint.getUrl();
         StringHelper.notEmpty(u, "url");
-        LOG.debug("About to write to url: {}", u);
+        log.debug("About to write to url: {}", u);
 
         URL url = new URL(u);
         URLConnection c = url.openConnection();
@@ -105,7 +102,7 @@ public class StreamProducer extends DefaultProducer {
     private OutputStream resolveStreamFromFile() throws IOException {
         String fileName = endpoint.getFileName();
         StringHelper.notEmpty(fileName, "fileName");
-        LOG.debug("About to write to file: {}", fileName);
+        log.debug("About to write to file: {}", fileName);
         File f = new File(fileName);
         // will create a new file if missing or append to existing
         f.getParentFile().mkdirs();
@@ -121,7 +118,7 @@ public class StreamProducer extends DefaultProducer {
         if (ms == 0) {
             return;
         }
-        LOG.trace("Delaying {} millis", ms);
+        log.trace("Delaying {} millis", ms);
         Thread.sleep(ms);
     }
 
@@ -137,7 +134,7 @@ public class StreamProducer extends DefaultProducer {
         if (!(body instanceof String)) {
             byte[] bytes = exchange.getIn().getBody(byte[].class);
             if (bytes != null) {
-                LOG.debug("Writing as byte[]: {} to {}", bytes, outputStream);
+                log.debug("Writing as byte[]: {} to {}", bytes, outputStream);
                 outputStream.write(bytes);
                 return;
             }
@@ -148,8 +145,8 @@ public class StreamProducer extends DefaultProducer {
         Charset charset = endpoint.getCharset();
         Writer writer = new OutputStreamWriter(outputStream, charset);
         BufferedWriter bw = IOHelper.buffered(writer);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Writing as text: {} to {} using encoding: {}", body, outputStream, charset);
+        if (log.isDebugEnabled()) {
+            log.debug("Writing as text: {} to {} using encoding: {}", body, outputStream, charset);
         }
         bw.write(s);
         bw.write(System.lineSeparator());
@@ -171,7 +168,7 @@ public class StreamProducer extends DefaultProducer {
             outputStream = resolveStreamFromUrl();
         }
         count.set(outputStream == null ? 0 : endpoint.getAutoCloseCount());
-        LOG.debug("Opened stream '{}'", endpoint.getEndpointKey());
+        log.debug("Opened stream '{}'", endpoint.getEndpointKey());
     }
 
     private void openStream(final Exchange exchange) throws Exception {
@@ -180,7 +177,7 @@ public class StreamProducer extends DefaultProducer {
         }
         if ("header".equals(uri)) {
             outputStream = resolveStreamFromHeader(exchange.getIn().getHeader("stream"), exchange);
-            LOG.debug("Opened stream '{}'", endpoint.getEndpointKey());
+            log.debug("Opened stream '{}'", endpoint.getEndpointKey());
         } else {
             openStream();
         }
@@ -207,7 +204,7 @@ public class StreamProducer extends DefaultProducer {
         if (!systemStream && expiredStream) {
             outputStream.close();
             outputStream = null;
-            LOG.debug("Closed stream '{}'", endpoint.getEndpointKey());
+            log.debug("Closed stream '{}'", endpoint.getEndpointKey());
         }
     }
 

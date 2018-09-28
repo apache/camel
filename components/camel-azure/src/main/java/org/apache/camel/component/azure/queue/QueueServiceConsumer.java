@@ -21,15 +21,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A Consumer of the queue content from the Azure Queue Service
  */
 public class QueueServiceConsumer extends ScheduledPollConsumer {
-    private static final Logger LOG = LoggerFactory.getLogger(QueueServiceConsumer.class);
-    
+
     public QueueServiceConsumer(QueueServiceEndpoint endpoint, Processor processor) throws NoFactoryAvailableException {
         super(endpoint, processor);
     }
@@ -38,7 +35,7 @@ public class QueueServiceConsumer extends ScheduledPollConsumer {
     protected int poll() throws Exception {
         Exchange exchange = super.getEndpoint().createExchange();
         try {
-            LOG.trace("Retrieving a message");
+            log.trace("Retrieving a message");
             retrieveMessage(exchange);
             super.getAsyncProcessor().process(exchange);
             return 1;

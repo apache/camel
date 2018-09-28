@@ -77,8 +77,6 @@ import static org.apache.camel.util.StringHelper.notEmpty;
     syntax = "rest-swagger:specificationUri#operationId", label = "rest,swagger,http", producerOnly = true)
 public final class RestSwaggerEndpoint extends DefaultEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RestSwaggerEndpoint.class);
-
     /**
      * Remaining parameters specified in the Endpoint URI.
      */

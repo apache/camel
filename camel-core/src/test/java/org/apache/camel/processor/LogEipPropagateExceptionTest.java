@@ -73,7 +73,7 @@ public class LogEipPropagateExceptionTest extends ContextTestSupport {
 
                 from("direct:handleFailure")
                     .errorHandler(noErrorHandler())
-                    .log("FAULTY LOG")
+                    .log("FAULTY log")
                     .to("mock:handleFailure");
 
                 from("direct:startSuccess")

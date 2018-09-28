@@ -29,15 +29,11 @@ import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.impl.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Consumer to read data from a database.
  */
 public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MyBatisConsumer.class);
 
     static final class DataHolder {
         Exchange exchange;
@@ -73,7 +69,7 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
 
         // poll data from the database
         MyBatisEndpoint endpoint = getEndpoint();
-        LOG.trace("Polling: {}", endpoint);
+        log.trace("Polling: {}", endpoint);
         List<?> data = endpoint.getProcessingStrategy().poll(this, getEndpoint());
 
         // create a list of exchange objects with the data
@@ -107,7 +103,7 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
 
         // limit if needed
         if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
-            LOG.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there were " + total + " messages in this poll.");
+            log.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there were " + total + " messages in this poll.");
             total = maxMessagesPerPoll;
         }
 
@@ -126,7 +122,7 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
             pendingExchanges = total - index - 1;
 
             // process the current exchange
-            LOG.debug("Processing exchange: {} with properties: {}", exchange, exchange.getProperties());
+            log.debug("Processing exchange: {} with properties: {}", exchange, exchange.getProperties());
             getProcessor().process(exchange);
 
             try {

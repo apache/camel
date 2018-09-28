@@ -33,8 +33,6 @@ import org.slf4j.LoggerFactory;
     syntax = "kubernetes-namespaces:masterUrl", consumerClass = KubernetesNamespacesConsumer.class, label = "container,cloud,paas")
 public class KubernetesNamespacesEndpoint extends AbstractKubernetesEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KubernetesNamespacesEndpoint.class);
-
     public KubernetesNamespacesEndpoint(String uri, KubernetesNamespacesComponent component, KubernetesConfiguration config) {
         super(uri, component, config);
     }

@@ -30,8 +30,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractKubernetesEndpoint extends DefaultEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractKubernetesEndpoint.class);
-
     @UriParam
     private KubernetesConfiguration configuration;
 

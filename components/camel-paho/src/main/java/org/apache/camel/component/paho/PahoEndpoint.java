@@ -35,16 +35,12 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Component for communicating with MQTT M2M message brokers using Eclipse Paho MQTT Client.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "paho", title = "Paho", consumerClass = PahoConsumer.class, label = "messaging,iot", syntax = "paho:topic")
 public class PahoEndpoint extends DefaultEndpoint {
-
-    private static final Logger LOG = LoggerFactory.getLogger(PahoEndpoint.class);
 
     // Configuration members
     @UriPath
@@ -140,10 +136,10 @@ public class PahoEndpoint extends DefaultEndpoint {
         if (resolveMqttConnectOptions) {
             Set<MqttConnectOptions> connectOptions = getCamelContext().getRegistry().findByType(MqttConnectOptions.class);
             if (connectOptions.size() == 1) {
-                LOG.info("Single MqttConnectOptions instance found in the registry. It will be used by the endpoint.");
+                log.info("Single MqttConnectOptions instance found in the registry. It will be used by the endpoint.");
                 return connectOptions.iterator().next();
             } else if (connectOptions.size() > 1) {
-                LOG.warn("Found {} instances of the MqttConnectOptions in the registry. None of these will be used by the endpoint. "
+                log.warn("Found {} instances of the MqttConnectOptions in the registry. None of these will be used by the endpoint. "
                          + "Please use 'connectOptions' endpoint option to select one.", connectOptions.size());
             }
         }

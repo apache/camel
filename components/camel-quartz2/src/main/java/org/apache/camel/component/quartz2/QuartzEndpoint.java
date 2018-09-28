@@ -47,8 +47,6 @@ import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
@@ -58,7 +56,7 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "quartz2", title = "Quartz2", syntax = "quartz2:groupName/triggerName", consumerOnly = true, consumerClass = QuartzComponent.class, label = "scheduling")
 public class QuartzEndpoint extends DefaultEndpoint {
-    private static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
+
     private TriggerKey triggerKey;
     private LoadBalancer consumerLoadBalancer;
     // An internal variables to track whether a job has been in scheduler or not, and has it paused or not.
@@ -355,7 +353,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         if (deleteJob) {
             boolean isClustered = scheduler.getMetaData().isJobStoreClustered();
             if (!scheduler.isShutdown() && !isClustered) {
-                LOG.info("Deleting job {}", triggerKey);
+                log.info("Deleting job {}", triggerKey);
                 scheduler.unscheduleJob(triggerKey);
 
                 jobAdded.set(false);
@@ -408,8 +406,8 @@ public class QuartzEndpoint extends DefaultEndpoint {
             }
         }
 
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Job {} (triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
+        if (log.isInfoEnabled()) {
+            log.info("Job {} (triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
                     new Object[] {trigger.getKey(), trigger.getClass().getSimpleName(),
                             jobDetail.getJobClass().getSimpleName(), trigger.getNextFireTime()});
         }
@@ -457,7 +455,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
             startTime = new Date(System.currentTimeMillis() + triggerStartDelay);
         }
         if (cron != null) {
-            LOG.debug("Creating CronTrigger: {}", cron);
+            log.debug("Creating CronTrigger: {}", cron);
             String timeZone = (String)triggerParameters.get("timeZone");
             if (timeZone != null) {
                 if (ObjectHelper.isNotEmpty(customCalendar)) {
@@ -502,7 +500,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
             jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_TYPE, "cron");
             jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION, cron);
         } else {
-            LOG.debug("Creating SimpleTrigger.");
+            log.debug("Creating SimpleTrigger.");
             int repeat = SimpleTrigger.REPEAT_INDEFINITELY;
             String repeatString = (String) triggerParameters.get("repeatCount");
             if (repeatString != null) {
@@ -547,11 +545,11 @@ public class QuartzEndpoint extends DefaultEndpoint {
         }
 
         if (triggerParameters != null && triggerParameters.size() > 0) {
-            LOG.debug("Setting user extra triggerParameters {}", triggerParameters);
+            log.debug("Setting user extra triggerParameters {}", triggerParameters);
             setProperties(result, triggerParameters);
         }
 
-        LOG.debug("Created trigger={}", result);
+        log.debug("Created trigger={}", result);
         return result;
     }
 
@@ -560,7 +558,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         String name = triggerKey.getName();
         String group = triggerKey.getGroup();
         Class<? extends Job> jobClass = stateful ? StatefulCamelJob.class : CamelJob.class;
-        LOG.debug("Creating new {}.", jobClass.getSimpleName());
+        log.debug("Creating new {}.", jobClass.getSimpleName());
 
         JobBuilder builder = JobBuilder.newJob(jobClass)
                 .withIdentity(name, group);
@@ -576,11 +574,11 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
         // Let user parameters to further set JobDetail properties.
         if (jobParameters != null && jobParameters.size() > 0) {
-            LOG.debug("Setting user extra jobParameters {}", jobParameters);
+            log.debug("Setting user extra jobParameters {}", jobParameters);
             setProperties(result, jobParameters);
         }
 
-        LOG.debug("Created jobDetail={}", result);
+        log.debug("Created jobDetail={}", result);
         return result;
     }
 
@@ -599,7 +597,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         
         jobPaused.set(true);
         if (!scheduler.isShutdown()) {
-            LOG.info("Pausing trigger {}", triggerKey);
+            log.info("Pausing trigger {}", triggerKey);
             scheduler.pauseTrigger(triggerKey);
         }
     }
@@ -612,7 +610,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
         Scheduler scheduler = getComponent().getScheduler();
         if (scheduler != null) {
-            LOG.info("Resuming trigger {}", triggerKey);
+            log.info("Resuming trigger {}", triggerKey);
             scheduler.resumeTrigger(triggerKey);
         }
     }

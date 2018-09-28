@@ -96,8 +96,8 @@ public class JmsBinding {
             // is a custom message converter configured on endpoint then use it instead of doing the extraction
             // based on message type
 /*            if (endpoint != null && endpoint.getMessageConverter() != null) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Extracting body using a custom MessageConverter: {} from JMS message: {}", endpoint.getMessageConverter(), message);
+                if (log.isTraceEnabled()) {
+                    log.trace("Extracting body using a custom MessageConverter: {} from JMS message: {}", endpoint.getMessageConverter(), message);
                 }
                 return endpoint.getMessageConverter().fromMessage(message);
             }
@@ -433,7 +433,7 @@ public class JmsBinding {
 
 /*        // special for transferExchange
         if (endpoint != null && endpoint.isTransferExchange()) {
-            LOG.trace("Option transferExchange=true so we use JmsMessageType: Object");
+            log.trace("Option transferExchange=true so we use JmsMessageType: Object");
             Serializable holder = DefaultExchangeHolder.marshal(exchange);
             Message answer = session.createObjectMessage(holder);
             // ensure default delivery mode is used by default
@@ -443,8 +443,8 @@ public class JmsBinding {
 
         // use a custom message converter
         if (endpoint != null && endpoint.getMessageConverter() != null) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Creating JmsMessage using a custom MessageConverter: {} with body: {}", endpoint.getMessageConverter(), body);
+            if (log.isTraceEnabled()) {
+                log.trace("Creating JmsMessage using a custom MessageConverter: {} with body: {}", endpoint.getMessageConverter(), body);
             }
             return endpoint.getMessageConverter().toMessage(body, session);
         }

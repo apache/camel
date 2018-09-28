@@ -38,8 +38,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.xml.xpath.XPathExpression;
 import org.springframework.xml.xpath.XPathExpressionFactory;
@@ -48,7 +46,6 @@ import org.springframework.xml.xpath.XPathExpressionFactory;
  * Apache Camel component for working with Spring Web Services (a.k.a Spring-WS).
  */
 public class SpringWebserviceComponent extends DefaultComponent implements SSLContextParametersAware {
-    private static final Logger LOG = LoggerFactory.getLogger(SpringWebserviceComponent.class);
 
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
@@ -85,7 +82,7 @@ public class SpringWebserviceComponent extends DefaultComponent implements SSLCo
     private void addConsumerConfiguration(String remaining, Map<String, Object> parameters, SpringWebserviceConfiguration configuration) {
         EndpointMappingType type = EndpointMappingType.getTypeFromUriPrefix(remaining);
         if (type != null) {
-            LOG.debug("Building Spring Web Services consumer of type {}", type);
+            log.debug("Building Spring Web Services consumer of type {}", type);
             String lookupKey = getLookupKey(remaining, type);
             if (EndpointMappingType.BEANNAME.equals(type)) {
                 addEndpointDispatcherToConfiguration(configuration, lookupKey);
@@ -104,7 +101,7 @@ public class SpringWebserviceComponent extends DefaultComponent implements SSLCo
 
     private void configureProducerConfiguration(String remaining, SpringWebserviceConfiguration configuration) throws URISyntaxException {
         if (configuration.getEndpointMapping() == null && configuration.getEndpointDispatcher() == null) {
-            LOG.debug("Building Spring Web Services producer");
+            log.debug("Building Spring Web Services producer");
             URI webServiceEndpointUri = new URI(UnsafeUriCharactersEncoder.encode(remaining));
 
             // Obtain a WebServiceTemplate from the registry when specified by

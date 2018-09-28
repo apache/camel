@@ -31,8 +31,6 @@ import org.apache.camel.spi.UriPath;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.View;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The jgroups component provides exchange of messages between Camel and JGroups clusters.
@@ -44,8 +42,6 @@ public class JGroupsEndpoint extends DefaultEndpoint {
     public static final String HEADER_JGROUPS_SRC = "JGROUPS_SRC";
     public static final String HEADER_JGROUPS_DEST = "JGROUPS_DEST";
     public static final String HEADER_JGROUPS_CHANNEL_ADDRESS = "JGROUPS_CHANNEL_ADDRESS";
-
-    private static final Logger LOG = LoggerFactory.getLogger(JGroupsEndpoint.class);
 
     private AtomicInteger connectCount = new AtomicInteger(0);
 
@@ -112,7 +108,7 @@ public class JGroupsEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStop() throws Exception {
-        LOG.trace("Closing JGroups Channel {}", getEndpointUri());
+        log.trace("Closing JGroups Channel {}", getEndpointUri());
         resolvedChannel.close();
         super.doStop();
     }
@@ -133,7 +129,7 @@ public class JGroupsEndpoint extends DefaultEndpoint {
      */
     public void connect() throws Exception {
         connectCount.incrementAndGet();
-        LOG.trace("Connecting JGroups Channel {}", getEndpointUri());
+        log.trace("Connecting JGroups Channel {}", getEndpointUri());
         resolvedChannel.connect(clusterName);
     }
 
@@ -142,7 +138,7 @@ public class JGroupsEndpoint extends DefaultEndpoint {
      */
     public void disconnect() {
         if (connectCount.decrementAndGet() == 0) {
-            LOG.trace("Disconnecting JGroups Channel {}", getEndpointUri());
+            log.trace("Disconnecting JGroups Channel {}", getEndpointUri());
             resolvedChannel.disconnect();
         }
     }

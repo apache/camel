@@ -57,7 +57,6 @@ import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
  */
 public class Enricher extends ServiceSupport implements AsyncProcessor, IdAware, CamelContextAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Enricher.class);
     private CamelContext camelContext;
     private String id;
     private ProducerCache producerCache;
@@ -166,8 +165,8 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, IdAware,
             producer = producerCache.acquireProducer(endpoint);
         } catch (Throwable e) {
             if (isIgnoreInvalidEndpoint()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
+                if (log.isDebugEnabled()) {
+                    log.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
                 }
             } else {
                 exchange.setException(e);
@@ -238,13 +237,13 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, IdAware,
         });
 
         if (!sync) {
-            LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
+            log.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
             // the remainder of the routing slip will be completed async
             // so we break out now, then the callback will be invoked which then continue routing from where we left here
             return false;
         }
 
-        LOG.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
+        log.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
 
         if (watch != null) {
             // emit event that the exchange was sent to the endpoint
@@ -346,7 +345,7 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, IdAware,
 
         if (producerCache == null) {
             producerCache = new ProducerCache(this, camelContext, cacheSize);
-            LOG.debug("Enricher {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
+            log.debug("Enricher {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
         }
 
         ServiceHelper.startService(producerCache, aggregationStrategy);

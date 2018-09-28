@@ -41,7 +41,6 @@ import static org.apache.camel.utils.cassandra.CassandraUtils.isEmpty;
  */
 public class CassandraProducer extends DefaultProducer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CassandraProducer.class);
     private PreparedStatement preparedStatement;
 
     public CassandraProducer(CassandraEndpoint endpoint) {

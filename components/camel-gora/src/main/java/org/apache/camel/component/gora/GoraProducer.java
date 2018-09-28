@@ -35,11 +35,6 @@ import static org.apache.camel.component.gora.utils.GoraUtils.getValueFromExchan
 public class GoraProducer extends DefaultProducer {
 
     /**
-     * logger
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(GoraProducer.class);
-
-    /**
      * Camel-Gora endpoint configuration
      */
     private final GoraConfiguration configuration;

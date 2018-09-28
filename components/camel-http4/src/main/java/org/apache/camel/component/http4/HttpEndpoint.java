@@ -47,8 +47,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.pool.ConnPoolControl;
 import org.apache.http.pool.PoolStats;
 import org.apache.http.protocol.HttpContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * For calling out to external HTTP servers using Apache HTTP Client 4.x.
@@ -57,8 +55,6 @@ import org.slf4j.LoggerFactory;
     producerOnly = true, label = "http", lenientProperties = true)
 @ManagedResource(description = "Managed HttpEndpoint")
 public class HttpEndpoint extends HttpCommonEndpoint {
-
-    private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
 
     @UriParam(label = "advanced", description = "To use a custom HttpContext instance")
     private HttpContext httpContext;
@@ -194,7 +190,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
                 if (scheme == null) {
                     scheme = HttpHelper.isSecureConnection(getEndpointUri()) ? "https" : "http";
                 }
-                LOG.debug("CamelContext properties http.proxyHost, http.proxyPort, and http.proxyScheme detected. Using http proxy host: {} port: {} scheme: {}", host, port, scheme);
+                log.debug("CamelContext properties http.proxyHost, http.proxyPort, and http.proxyScheme detected. Using http proxy host: {} port: {} scheme: {}", host, port, scheme);
                 HttpHost proxy = new HttpHost(host, port, scheme);
                 clientBuilder.setProxy(proxy);
             }
@@ -217,7 +213,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
             clientBuilder.setDefaultCookieStore(new NoopCookieStore());
         }
 
-        LOG.debug("Setup the HttpClientBuilder {}", clientBuilder);
+        log.debug("Setup the HttpClientBuilder {}", clientBuilder);
         return clientBuilder.build();
     }
 

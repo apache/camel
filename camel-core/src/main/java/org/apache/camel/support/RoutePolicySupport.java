@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class RoutePolicySupport extends ServiceSupport implements RoutePolicy {
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
     private ExceptionHandler exceptionHandler;
 
     public void onInit(Route route) {

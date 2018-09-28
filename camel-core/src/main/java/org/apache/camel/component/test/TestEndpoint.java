@@ -46,7 +46,6 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "test", title = "Test", syntax = "test:name", producerOnly = true, label = "core,testing", lenientProperties = true)
 public class TestEndpoint extends MockEndpoint {
-    private static final Logger LOG = LoggerFactory.getLogger(TestEndpoint.class);
 
     private Endpoint expectedMessageEndpoint;
 
@@ -71,7 +70,7 @@ public class TestEndpoint extends MockEndpoint {
 
     @Override
     protected void doStart() throws Exception {
-        LOG.debug("Consuming expected messages from: {}", expectedMessageEndpoint);
+        log.debug("Consuming expected messages from: {}", expectedMessageEndpoint);
 
         final List<Object> expectedBodies = new ArrayList<>();
         EndpointHelper.pollEndpoint(expectedMessageEndpoint, new Processor() {
@@ -86,7 +85,7 @@ public class TestEndpoint extends MockEndpoint {
                     Iterator it = ObjectHelper.createIterator(body, delimiter, false, true);
                     while (it.hasNext()) {
                         Object line = it.next();
-                        LOG.trace("Received message body {}", line);
+                        log.trace("Received message body {}", line);
                         expectedBodies.add(line);
                     }
                 } else {
@@ -95,7 +94,7 @@ public class TestEndpoint extends MockEndpoint {
             }
         }, timeout);
 
-        LOG.info("Received: {} expected message(s) from: {}", expectedBodies.size(), expectedMessageEndpoint);
+        log.info("Received: {} expected message(s) from: {}", expectedBodies.size(), expectedMessageEndpoint);
         if (anyOrder) {
             expectedBodiesReceivedInAnyOrder(expectedBodies);
         } else {

@@ -69,8 +69,6 @@ import org.slf4j.LoggerFactory;
  */
 public class StreamResequencer extends ServiceSupport implements SequenceSender<Exchange>, AsyncProcessor, Navigate<Processor>, Traceable, IdAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(StreamResequencer.class);
-
     private String id;
     private final CamelContext camelContext;
     private final ExceptionHandler exceptionHandler;
@@ -238,7 +236,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
             delivery.request();
         } catch (Exception e) {
             if (isIgnoreInvalidExchanges()) {
-                LOG.debug("Invalid Exchange. This Exchange will be ignored: {}", exchange);
+                log.debug("Invalid Exchange. This Exchange will be ignored: {}", exchange);
             } else {
                 exchange.setException(new CamelExchangeException("Error processing Exchange in StreamResequencer", exchange, e));
             }

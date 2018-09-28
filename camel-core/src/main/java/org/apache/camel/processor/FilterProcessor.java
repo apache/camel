@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class FilterProcessor extends DelegateAsyncProcessor implements Traceable, IdAware {
-    private static final Logger LOG = LoggerFactory.getLogger(FilterProcessor.class);
+
     private String id;
     private final Predicate predicate;
     private transient long filtered;
@@ -64,7 +64,7 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
     public boolean matches(Exchange exchange) {
         boolean matches = predicate.matches(exchange);
 
-        LOG.debug("Filter matches: {} for exchange: {}", matches, exchange);
+        log.debug("Filter matches: {} for exchange: {}", matches, exchange);
 
         // set property whether the filter matches or not
         exchange.setProperty(Exchange.FILTER_MATCHED, matches);

@@ -25,15 +25,12 @@ import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version
  */
 public class JdbcComponent extends DefaultComponent {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JdbcComponent.class);
     private DataSource dataSource;
 
     @Override
@@ -60,7 +57,7 @@ public class JdbcComponent extends DefaultComponent {
                 if (target == null) {
                     throw new IllegalArgumentException("No default DataSource found in the registry");
                 }
-                LOG.debug("Using default DataSource discovered from registry: {}", target);
+                log.debug("Using default DataSource discovered from registry: {}", target);
             }
             dataSource = target;
             dataSourceRef = remaining;

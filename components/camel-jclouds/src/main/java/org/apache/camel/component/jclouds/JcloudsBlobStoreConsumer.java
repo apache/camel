@@ -32,12 +32,9 @@ import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class JcloudsBlobStoreConsumer extends ScheduledBatchPollingConsumer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JcloudsBlobStoreConsumer.class);
     private final JcloudsBlobStoreEndpoint endpoint;
     private final String container;
     private final BlobStore blobStore;
@@ -105,7 +102,7 @@ public class JcloudsBlobStoreConsumer extends ScheduledBatchPollingConsumer {
             // update pending number of exchanges
             pendingExchanges = total - index - 1;
 
-            LOG.trace("Processing exchange [{}]...", exchange);
+            log.trace("Processing exchange [{}]...", exchange);
             getProcessor().process(exchange);
             if (exchange.getException() != null) {
                 // if we failed then throw exception

@@ -25,8 +25,6 @@ import org.slf4j.LoggerFactory;
 
 public class InfluxDbComponent extends DefaultComponent {
 
-    private static final Logger LOG = LoggerFactory.getLogger(InfluxDbComponent.class);
-
     public InfluxDbComponent() {
     }
 

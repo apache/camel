@@ -43,8 +43,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The aws-sns component is used for sending messages to an Amazon Simple Notification Topic.
@@ -52,8 +50,6 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "2.8.0", scheme = "aws-sns", title = "AWS Simple Notification System", syntax = "aws-sns:topicNameOrArn",
     producerOnly = true, label = "cloud,mobile,messaging")
 public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SnsEndpoint.class);
 
     private AmazonSNS snsClient;
 
@@ -120,7 +116,7 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                     }
                 } while (nextToken != null);
             } catch (final AmazonServiceException ase) {
-                LOG.trace("The list topics operation return the following error code {}", ase.getErrorCode());
+                log.trace("The list topics operation return the following error code {}", ase.getErrorCode());
                 throw ase;
             }
         }
@@ -129,20 +125,20 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             // creates a new topic, or returns the URL of an existing one
             CreateTopicRequest request = new CreateTopicRequest(configuration.getTopicName());
 
-            LOG.trace("Creating topic [{}] with request [{}]...", configuration.getTopicName(), request);
+            log.trace("Creating topic [{}] with request [{}]...", configuration.getTopicName(), request);
 
             CreateTopicResult result = snsClient.createTopic(request);
             configuration.setTopicArn(result.getTopicArn());
 
-            LOG.trace("Topic created with Amazon resource name: {}", configuration.getTopicArn());
+            log.trace("Topic created with Amazon resource name: {}", configuration.getTopicArn());
         }
         
         if (ObjectHelper.isNotEmpty(configuration.getPolicy())) {
-            LOG.trace("Updating topic [{}] with policy [{}]", configuration.getTopicArn(), configuration.getPolicy());
+            log.trace("Updating topic [{}] with policy [{}]", configuration.getTopicArn(), configuration.getPolicy());
             
             snsClient.setTopicAttributes(new SetTopicAttributesRequest(configuration.getTopicArn(), "Policy", configuration.getPolicy()));
             
-            LOG.trace("Topic policy updated");
+            log.trace("Topic policy updated");
         }
         
     }

@@ -44,7 +44,7 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  * @version 
  */
 public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, IdAware {
-    private static final Logger LOG = LoggerFactory.getLogger(ChoiceProcessor.class);
+
     private String id;
     private final List<FilterProcessor> filters;
     private final Processor otherwise;
@@ -103,7 +103,7 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
             }
 
             // check for error if so we should break out
-            if (!continueProcessing(exchange, "so breaking out of choice", LOG)) {
+            if (!continueProcessing(exchange, "so breaking out of choice", log)) {
                 break;
             }
 

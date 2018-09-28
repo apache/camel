@@ -25,12 +25,8 @@ import org.apache.camel.impl.ScheduledPollConsumer;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class AbstractGitConsumer extends ScheduledPollConsumer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractGitConsumer.class);
 
     private final GitEndpoint endpoint;
 
@@ -65,7 +61,7 @@ public abstract class AbstractGitConsumer extends ScheduledPollConsumer {
                     .findGitDir() // scan up the file system tree
                     .build();
         } catch (IOException e) {
-            LOG.error("There was an error, cannot open {} repository", endpoint.getLocalPath());
+            log.error("There was an error, cannot open {} repository", endpoint.getLocalPath());
             throw e;
         }
         return repo;

@@ -22,12 +22,9 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MyBatisBeanProducer extends DefaultProducer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MyBatisBeanProducer.class);
     private final MyBatisBeanEndpoint endpoint;
 
     public MyBatisBeanProducer(MyBatisBeanEndpoint endpoint) {
@@ -44,7 +41,7 @@ public class MyBatisBeanProducer extends DefaultProducer {
         } else {
             session = endpoint.getSqlSessionFactory().openSession(executorType);
         }
-        LOG.debug("Opened MyBatis SqlSession: {}", session);
+        log.debug("Opened MyBatis SqlSession: {}", session);
 
         try {
             doProcess(exchange, session);
@@ -56,13 +53,13 @@ public class MyBatisBeanProducer extends DefaultProducer {
             throw e;
         } finally {
             // and finally close the session as we're done
-            LOG.debug("Closing MyBatis SqlSession: {}", session);
+            log.debug("Closing MyBatis SqlSession: {}", session);
             session.close();
         }
     }
 
     protected void doProcess(Exchange exchange, SqlSession session) throws Exception {
-        LOG.trace("Invoking MyBatisBean on {}:{}", endpoint.getBeanName(), endpoint.getMethodName());
+        log.trace("Invoking MyBatisBean on {}:{}", endpoint.getBeanName(), endpoint.getMethodName());
 
         // if we use input or output header we need to copy exchange to avoid mutating the
         Exchange copy = ExchangeHelper.createCopy(exchange, true);
@@ -79,11 +76,11 @@ public class MyBatisBeanProducer extends DefaultProducer {
         if (result != input) {
             if (endpoint.getOutputHeader() != null) {
                 // set the result as header for insert
-                LOG.trace("Setting result as header [{}]: {}", endpoint.getOutputHeader(), result);
+                log.trace("Setting result as header [{}]: {}", endpoint.getOutputHeader(), result);
                 exchange.getMessage().setHeader(endpoint.getOutputHeader(), result);
             } else {
                 // set the result as body for insert
-                LOG.trace("Setting result as body: {}", result);
+                log.trace("Setting result as body: {}", result);
                 exchange.getMessage().setBody(result);
                 exchange.getMessage().setHeader(MyBatisConstants.MYBATIS_RESULT, result);
             }
@@ -99,14 +96,14 @@ public class MyBatisBeanProducer extends DefaultProducer {
             clazz = getEndpoint().getCamelContext().getClassResolver().resolveMandatoryClass(endpoint.getBeanName());
         }
 
-        LOG.debug("Resolved MyBatis Bean: {} as class: {}", endpoint.getBeanName(), clazz);
+        log.debug("Resolved MyBatis Bean: {} as class: {}", endpoint.getBeanName(), clazz);
 
         // find the mapper
         Object mapper = session.getMapper(clazz);
         if (mapper == null) {
             throw new IllegalArgumentException("No Mapper with typeAlias or class name: " + endpoint.getBeanName() + " in MyBatis configuration.");
         }
-        LOG.debug("Resolved MyBatis Bean mapper: {}", mapper);
+        log.debug("Resolved MyBatis Bean mapper: {}", mapper);
 
         BeanProcessor answer = new BeanProcessor(mapper, getEndpoint().getCamelContext());
         answer.setMethod(endpoint.getMethodName());

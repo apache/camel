@@ -54,8 +54,6 @@ public class RestEndpoint extends DefaultEndpoint {
     public static final String DEFAULT_API_COMPONENT_NAME = "swagger";
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/rest/";
 
-    private static final Logger LOG = LoggerFactory.getLogger(RestEndpoint.class);
-
     @UriPath(label = "common", enums = "get,post,put,delete,patch,head,trace,connect,options") @Metadata(required = "true")
     private String method;
     @UriPath(label = "common") @Metadata(required = "true")
@@ -282,7 +280,7 @@ public class RestEndpoint extends DefaultEndpoint {
         RestProducerFactory factory = null;
 
         if (apiDoc != null) {
-            LOG.debug("Discovering camel-swagger-java on classpath for using api-doc: {}", apiDoc);
+            log.debug("Discovering camel-swagger-java on classpath for using api-doc: {}", apiDoc);
             // lookup on classpath using factory finder to automatic find it (just add camel-swagger-java to classpath etc)
             try {
                 FactoryFinder finder = getCamelContext().getFactoryFinder(RESOURCE_PATH);
@@ -358,13 +356,13 @@ public class RestEndpoint extends DefaultEndpoint {
                 }
             }
             if (found != null) {
-                LOG.debug("Auto discovered {} as RestProducerFactory", foundName);
+                log.debug("Auto discovered {} as RestProducerFactory", foundName);
                 factory = found;
             }
         }
 
         if (factory != null) {
-            LOG.debug("Using RestProducerFactory: {}", factory);
+            log.debug("Using RestProducerFactory: {}", factory);
             
             RestConfiguration config = getCamelContext().getRestConfiguration(cname, true);
 
@@ -450,7 +448,7 @@ public class RestEndpoint extends DefaultEndpoint {
                 }
             }
             if (found != null) {
-                LOG.debug("Auto discovered {} as RestConsumerFactory", foundName);
+                log.debug("Auto discovered {} as RestConsumerFactory", foundName);
                 factory = found;
             }
         }

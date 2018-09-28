@@ -52,7 +52,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 public class RecipientList extends ServiceSupport implements AsyncProcessor, IdAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RecipientList.class);
     private static final String IGNORE_DELIMITER_MARKER = "false";
     private final CamelContext camelContext;
     private String id;
@@ -187,7 +186,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor, IdA
     protected void doStart() throws Exception {
         if (producerCache == null) {
             producerCache = new ProducerCache(this, camelContext, cacheSize);
-            LOG.debug("RecipientList {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
+            log.debug("RecipientList {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
         }
         ServiceHelper.startService(aggregationStrategy, producerCache);
     }

@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * Default component to use for base for components implementations.
  */
 public abstract class DefaultComponent extends ServiceSupport implements Component {
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultComponent.class);
+
     private static final Pattern RAW_PATTERN = Pattern.compile("RAW(.*&&.*)");
 
     private final List<Supplier<ComponentExtension>> extensions = new ArrayList<>();
@@ -113,12 +113,12 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         uri = useRawUri() ? uri : encodedUri;
 
         validateURI(uri, path, parameters);
-        if (LOG.isTraceEnabled()) {
+        if (log.isTraceEnabled()) {
             // at trace level its okay to have parameters logged, that may contain passwords
-            LOG.trace("Creating endpoint uri=[{}], path=[{}], parameters=[{}]", URISupport.sanitizeUri(uri), URISupport.sanitizePath(path), parameters);
-        } else if (LOG.isDebugEnabled()) {
+            log.trace("Creating endpoint uri=[{}], path=[{}], parameters=[{}]", URISupport.sanitizeUri(uri), URISupport.sanitizePath(path), parameters);
+        } else if (log.isDebugEnabled()) {
             // but at debug level only output sanitized uris
-            LOG.debug("Creating endpoint uri=[{}], path=[{}]", URISupport.sanitizeUri(uri), URISupport.sanitizePath(path));
+            log.debug("Creating endpoint uri=[{}], path=[{}]", URISupport.sanitizeUri(uri), URISupport.sanitizePath(path));
         }
         Endpoint endpoint = createEndpoint(uri, path, parameters);
         if (endpoint == null) {
@@ -245,10 +245,10 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             // only resolve property placeholders if its in use
             Component existing = CamelContextHelper.lookupPropertiesComponent(camelContext, false);
             if (existing != null) {
-                LOG.debug("Resolving property placeholders on component: {}", this);
+                log.debug("Resolving property placeholders on component: {}", this);
                 CamelContextHelper.resolvePropertyPlaceholders(camelContext, this);
             } else {
-                LOG.debug("Cannot resolve property placeholders on component: {} as PropertiesComponent is not in use", this);
+                log.debug("Cannot resolve property placeholders on component: {} as PropertiesComponent is not in use", this);
             }
         }
     }

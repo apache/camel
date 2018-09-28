@@ -39,7 +39,6 @@ import org.slf4j.LoggerFactory;
  */
 public class LogProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LogProcessor.class);
     private String id;
     private final Expression expression;
     private final CamelLogger logger;
@@ -89,9 +88,9 @@ public class LogProcessor extends ServiceSupport implements AsyncProcessor, Trac
                 String output = listener.onLog(exchange, logger, message);
                 message = output != null ? output : message;
             } catch (Throwable t) {
-                LOG.warn("Ignoring an exception thrown by {}: {}", listener.getClass().getName(), t.getMessage());
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("", t);
+                log.warn("Ignoring an exception thrown by {}: {}", listener.getClass().getName(), t.getMessage());
+                if (log.isDebugEnabled()) {
+                    log.debug("", t);
                 }
             }
         }

@@ -31,8 +31,6 @@ import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnitOfWorkHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A default consumer useful for implementation inheritance.
@@ -40,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAware {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+
     private transient String consumerToString;
     private final Endpoint endpoint;
     private final Processor processor;

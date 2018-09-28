@@ -107,8 +107,6 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.support.TimerListenerManager;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Default JMX managed lifecycle strategy that registered objects using the configured
@@ -120,7 +118,6 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings("deprecation")
 public class DefaultManagementLifecycleStrategy extends ServiceSupport implements LifecycleStrategy, CamelContextAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultManagementLifecycleStrategy.class);
     // the wrapped processors is for performance counters, which are in use for the created routes
     // when a route is removed, we should remove the associated processors from this map
     private final Map<Processor, KeyValueHolder<ProcessorDefinition<?>, InstrumentationProcessor>> wrappedProcessors = new HashMap<>();
@@ -179,7 +176,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
                         throw new VetoCamelContextStartException("CamelContext (" + context.getName() + ") with ObjectName[" + on + "] is already registered."
                             + " Make sure to use unique names on CamelContext when using multiple CamelContexts in the same MBeanServer.", context);
                     } else {
-                        LOG.warn("This CamelContext(" + context.getName() + ") will be registered using the name: " + managementName
+                        log.warn("This CamelContext(" + context.getName() + ") will be registered using the name: " + managementName
                             + " due to clash with an existing name already registered in MBeanServer.");
                     }
                 }
@@ -224,7 +221,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             }
             manageObject(me);
         } catch (Exception e) {
-            LOG.warn("Could not register CamelHealth MBean. This exception will be ignored.", e);
+            log.warn("Could not register CamelHealth MBean. This exception will be ignored.", e);
         }
 
         try {
@@ -235,7 +232,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             }
             manageObject(me);
         } catch (Exception e) {
-            LOG.warn("Could not register RouteController MBean. This exception will be ignored.", e);
+            log.warn("Could not register RouteController MBean. This exception will be ignored.", e);
         }
     }
 
@@ -253,8 +250,8 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             newName = strategy.getNextName();
             ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForCamelContext(newName, name);
             done = !getManagementStrategy().isManaged(mc, on);
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Using name: {} in ObjectName[{}] exists? {}", name, on, done);
+            if (log.isTraceEnabled()) {
+                log.trace("Using name: {} in ObjectName[{}] exists? {}", name, on, done);
             }
         }
         return newName;
@@ -274,7 +271,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             return;
         }
 
-        LOG.debug("Registering {} pre registered services", preServices.size());
+        log.debug("Registering {} pre registered services", preServices.size());
         for (PreRegisterService pre : preServices) {
             if (pre.getComponent() != null) {
                 onComponentAdd(pre.getName(), pre.getComponent());
@@ -302,7 +299,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
                 unmanageObject(mc);
             }
         } catch (Exception e) {
-            LOG.warn("Could not unregister RouteController MBean", e);
+            log.warn("Could not unregister RouteController MBean", e);
         }
 
         try {
@@ -312,7 +309,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
                 unmanageObject(mc);
             }
         } catch (Exception e) {
-            LOG.warn("Could not unregister CamelHealth MBean", e);
+            log.warn("Could not unregister CamelHealth MBean", e);
         }
 
         try {
@@ -322,7 +319,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
                 unmanageObject(mc);
             }
         } catch (Exception e) {
-            LOG.warn("Could not unregister CamelContext MBean", e);
+            log.warn("Could not unregister CamelContext MBean", e);
         }
 
         camelContextMBean = null;
@@ -341,7 +338,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             Object mc = getManagementObjectStrategy().getManagedObjectForComponent(camelContext, component, name);
             manageObject(mc);
         } catch (Exception e) {
-            LOG.warn("Could not register Component MBean", e);
+            log.warn("Could not register Component MBean", e);
         }
     }
 
@@ -354,7 +351,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             Object mc = getManagementObjectStrategy().getManagedObjectForComponent(camelContext, component, name);
             unmanageObject(mc);
         } catch (Exception e) {
-            LOG.warn("Could not unregister Component MBean", e);
+            log.warn("Could not unregister Component MBean", e);
         }
     }
 
@@ -387,7 +384,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             }
             manageObject(me);
         } catch (Exception e) {
-            LOG.warn("Could not register Endpoint MBean for endpoint: " + endpoint + ". This exception will be ignored.", e);
+            log.warn("Could not register Endpoint MBean for endpoint: " + endpoint + ". This exception will be ignored.", e);
         }
     }
 
@@ -401,7 +398,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             Object me = getManagementObjectStrategy().getManagedObjectForEndpoint(camelContext, endpoint);
             unmanageObject(me);
         } catch (Exception e) {
-            LOG.warn("Could not unregister Endpoint MBean for endpoint: " + endpoint + ". This exception will be ignored.", e);
+            log.warn("Could not unregister Endpoint MBean for endpoint: " + endpoint + ". This exception will be ignored.", e);
         }
     }
 
@@ -430,14 +427,14 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
 
         // skip already managed services, for example if a route has been restarted
         if (getManagementStrategy().isManaged(managedObject, null)) {
-            LOG.trace("The service is already managed: {}", service);
+            log.trace("The service is already managed: {}", service);
             return;
         }
 
         try {
             manageObject(managedObject);
         } catch (Exception e) {
-            LOG.warn("Could not register service: " + service + " as Service MBean.", e);
+            log.warn("Could not register service: " + service + " as Service MBean.", e);
         }
     }
 
@@ -452,7 +449,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             try {
                 unmanageObject(managedObject);
             } catch (Exception e) {
-                LOG.warn("Could not unregister service: " + service + " as Service MBean.", e);
+                log.warn("Could not unregister service: " + service + " as Service MBean.", e);
             }
         }
     }
@@ -594,7 +591,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
 
             // skip already managed routes, for example if the route has been restarted
             if (getManagementStrategy().isManaged(mr, null)) {
-                LOG.trace("The route is already managed: {}", route);
+                log.trace("The route is already managed: {}", route);
                 continue;
             }
 
@@ -623,9 +620,9 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             try {
                 manageObject(mr);
             } catch (JMException e) {
-                LOG.warn("Could not register Route MBean", e);
+                log.warn("Could not register Route MBean", e);
             } catch (Exception e) {
-                LOG.warn("Could not create Route MBean", e);
+                log.warn("Could not create Route MBean", e);
             }
         }
     }
@@ -640,15 +637,15 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             Object mr = getManagementObjectStrategy().getManagedObjectForRoute(camelContext, route);
 
             // skip unmanaged routes
-            if (!getManagementStrategy().isManaged(mr, null)) {
-                LOG.trace("The route is not managed: {}", route);
+            if (!getManagementStrategy().isManaged(mr)) {
+                log.trace("The route is not managed: {}", route);
                 continue;
             }
 
             try {
                 unmanageObject(mr);
             } catch (Exception e) {
-                LOG.warn("Could not unregister Route MBean", e);
+                log.warn("Could not unregister Route MBean", e);
             }
 
             // remove from known routes ids, as the route has been removed
@@ -670,14 +667,14 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
 
         // skip already managed services, for example if a route has been restarted
         if (getManagementStrategy().isManaged(me, null)) {
-            LOG.trace("The error handler builder is already managed: {}", errorHandlerBuilder);
+            log.trace("The error handler builder is already managed: {}", errorHandlerBuilder);
             return;
         }
 
         try {
             manageObject(me);
         } catch (Exception e) {
-            LOG.warn("Could not register error handler builder: " + errorHandlerBuilder + " as ErrorHandler MBean.", e);
+            log.warn("Could not register error handler builder: " + errorHandlerBuilder + " as ErrorHandler MBean.", e);
         }
     }
 
@@ -691,7 +688,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             try {
                 unmanageObject(me);
             } catch (Exception e) {
-                LOG.warn("Could not unregister error handler: " + me + " as ErrorHandler MBean.", e);
+                log.warn("Could not unregister error handler: " + me + " as ErrorHandler MBean.", e);
             }
         }
     }
@@ -708,7 +705,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
 
         // skip already managed services, for example if a route has been restarted
         if (getManagementStrategy().isManaged(mtp, null)) {
-            LOG.trace("The thread pool is already managed: {}", threadPool);
+            log.trace("The thread pool is already managed: {}", threadPool);
             return;
         }
 
@@ -718,7 +715,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             // we need to keep track here, as we cannot re-construct the thread pool ObjectName when removing the thread pool
             managedThreadPools.put(threadPool, mtp);
         } catch (Exception e) {
-            LOG.warn("Could not register thread pool: " + threadPool + " as ThreadPool MBean.", e);
+            log.warn("Could not register thread pool: " + threadPool + " as ThreadPool MBean.", e);
         }
     }
 
@@ -732,14 +729,14 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         if (mtp != null) {
             // skip unmanaged routes
             if (!getManagementStrategy().isManaged(mtp, null)) {
-                LOG.trace("The thread pool is not managed: {}", threadPool);
+                log.trace("The thread pool is not managed: {}", threadPool);
                 return;
             }
 
             try {
                 unmanageObject(mtp);
             } catch (Exception e) {
-                LOG.warn("Could not unregister ThreadPool MBean", e);
+                log.warn("Could not unregister ThreadPool MBean", e);
             }
         }
     }
@@ -908,7 +905,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             return false;
         }
 
-        LOG.trace("Checking whether to register {} from route: {}", service, route);
+        log.trace("Checking whether to register {} from route: {}", service, route);
 
         ManagementAgent agent = getManagementStrategy().getManagementAgent();
         if (agent == null) {
@@ -963,7 +960,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
                     && camelContext.getManagementStrategy().getManagementAgent().getLoadStatisticsEnabled();
             boolean disabled = !load || camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel() == ManagementStatisticsLevel.Off;
 
-            LOG.debug("Load performance statistics {}", disabled ? "disabled" : "enabled");
+            log.debug("Load performance statistics {}", disabled ? "disabled" : "enabled");
             if (!disabled) {
                 // must use 1 sec interval as the load statistics is based on 1 sec calculations
                 loadTimer.setInterval(1000);

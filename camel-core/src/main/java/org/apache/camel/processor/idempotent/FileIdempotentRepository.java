@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  */
 @ManagedResource(description = "File based idempotent repository")
 public class FileIdempotentRepository extends ServiceSupport implements IdempotentRepository<String> {
-    private static final Logger LOG = LoggerFactory.getLogger(FileIdempotentRepository.class);
+
     private static final String STORE_DELIMITER = "\n";
 
     private final AtomicBoolean init = new AtomicBoolean();
@@ -142,7 +142,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
 
                 // check if we hit maximum capacity (if enabled) and report a warning about this
                 if (maxFileStoreSize > 0 && fileStore.length() > maxFileStoreSize) {
-                    LOG.warn("Maximum capacity of file store: {} hit at {} bytes. Dropping {} oldest entries from the file store", fileStore, maxFileStoreSize, dropOldestFileStore);
+                    log.warn("Maximum capacity of file store: {} hit at {} bytes. Dropping {} oldest entries from the file store", fileStore, maxFileStoreSize, dropOldestFileStore);
                     trunkStore();
                 }
 
@@ -308,17 +308,17 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * @param key  the key
      */
     protected void appendToStore(final String key) {
-        LOG.debug("Appending: {} to idempotent filestore: {}", key, fileStore);
+        log.debug("Appending: {} to idempotent filestore: {}", key, fileStore);
         FileOutputStream fos = null;
         try {
             // create store parent directory if missing
             File storeParentDirectory = fileStore.getParentFile();
             if (storeParentDirectory != null && !storeParentDirectory.exists()) {
-                LOG.info("Parent directory of file store {} doesn't exist. Creating.", fileStore);
+                log.info("Parent directory of file store {} doesn't exist. Creating.", fileStore);
                 if (fileStore.getParentFile().mkdirs()) {
-                    LOG.info("Parent directory of filestore: {} successfully created.", fileStore);
+                    log.info("Parent directory of filestore: {} successfully created.", fileStore);
                 } else {
-                    LOG.warn("Parent directory of filestore: {} cannot be created.", fileStore);
+                    log.warn("Parent directory of filestore: {} cannot be created.", fileStore);
                 }
             }
             // create store if missing
@@ -332,12 +332,12 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
         } catch (IOException e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         } finally {
-            IOHelper.close(fos, "Appending to file idempotent repository", LOG);
+            IOHelper.close(fos, "Appending to file idempotent repository", log);
         }
     }
 
     protected synchronized void removeFromStore(String key) {
-        LOG.debug("Removing: {} from idempotent filestore: {}", key, fileStore);
+        log.debug("Removing: {} from idempotent filestore: {}", key, fileStore);
 
         // we need to re-load the entire file and remove the key and then re-write the file
         List<String> lines = new ArrayList<>();
@@ -364,7 +364,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
 
         if (found) {
             // rewrite file
-            LOG.debug("Rewriting idempotent filestore: {} due to key: {} removed", fileStore, key);
+            log.debug("Rewriting idempotent filestore: {} due to key: {} removed", fileStore, key);
             FileOutputStream fos = null;
             try {
                 fos = new FileOutputStream(fileStore);
@@ -375,7 +375,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
             } catch (IOException e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             } finally {
-                IOHelper.close(fos, "Rewriting file idempotent repository", LOG);
+                IOHelper.close(fos, "Rewriting file idempotent repository", log);
             }
         }
     }
@@ -400,7 +400,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
             return;
         }
 
-        LOG.debug("Trunking: {} oldest entries from idempotent filestore: {}", dropOldestFileStore, fileStore);
+        log.debug("Trunking: {} oldest entries from idempotent filestore: {}", dropOldestFileStore, fileStore);
 
         // we need to re-load the entire file and remove the key and then re-write the file
         List<String> lines = new ArrayList<>();
@@ -426,7 +426,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
 
         if (!lines.isEmpty()) {
             // rewrite file
-            LOG.debug("Rewriting idempotent filestore: {} with {} entries:", fileStore, lines.size());
+            log.debug("Rewriting idempotent filestore: {} with {} entries:", fileStore, lines.size());
             FileOutputStream fos = null;
             try {
                 fos = new FileOutputStream(fileStore);
@@ -437,11 +437,11 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
             } catch (IOException e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             } finally {
-                IOHelper.close(fos, "Rewriting file idempotent repository", LOG);
+                IOHelper.close(fos, "Rewriting file idempotent repository", log);
             }
         } else {
             // its a small file so recreate the file
-            LOG.debug("Clearing idempotent filestore: {}", fileStore);
+            log.debug("Clearing idempotent filestore: {}", fileStore);
             clearStore();
         }
     }
@@ -462,7 +462,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     protected void loadStore() throws IOException {
         // auto create starting directory if needed
         if (!fileStore.exists()) {
-            LOG.debug("Creating filestore: {}", fileStore);
+            log.debug("Creating filestore: {}", fileStore);
             File parent = fileStore.getParentFile();
             if (parent != null) {
                 parent.mkdirs();
@@ -473,7 +473,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
             }
         }
 
-        LOG.trace("Loading to 1st level cache from idempotent filestore: {}", fileStore);
+        log.trace("Loading to 1st level cache from idempotent filestore: {}", fileStore);
 
         cache.clear();
         try (Scanner scanner = new Scanner(fileStore, null, STORE_DELIMITER)) {
@@ -485,7 +485,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
 
-        LOG.debug("Loaded {} to the 1st level cache from idempotent filestore: {}", cache.size(), fileStore);
+        log.debug("Loaded {} to the 1st level cache from idempotent filestore: {}", cache.size(), fileStore);
     }
 
     @Override

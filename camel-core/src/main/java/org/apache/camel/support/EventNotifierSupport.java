@@ -17,8 +17,6 @@
 package org.apache.camel.support;
 
 import org.apache.camel.spi.EventNotifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Base class to extend for custom {@link EventNotifier} implementations.
@@ -26,7 +24,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public abstract class EventNotifierSupport extends ServiceSupport implements EventNotifier {
-    protected Logger log = LoggerFactory.getLogger(getClass());
+
     private boolean ignoreCamelContextEvents;
     private boolean ignoreRouteEvents;
     private boolean ignoreServiceEvents;

@@ -63,8 +63,6 @@ import org.slf4j.LoggerFactory;
 
 public class DefaultCompositeApiClient extends AbstractClientBase implements CompositeApiClient {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultCompositeApiClient.class);
-
     // Composite (non-tree, non-batch) does not support XML format
     private static final XStream NO_XSTREAM = null;
 
@@ -226,7 +224,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
             // must be XML
             return Optional.of(fromXml(xstream, responseStream));
         } catch (XStreamException | IOException e) {
-            LOG.warn("Unable to read response from the Composite API", e);
+            log.warn("Unable to read response from the Composite API", e);
             return Optional.empty();
         } finally {
             IOHelper.close(responseStream);

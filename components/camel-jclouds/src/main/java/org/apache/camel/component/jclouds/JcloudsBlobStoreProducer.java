@@ -23,12 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.io.Payload;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class JcloudsBlobStoreProducer extends JcloudsProducer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(JcloudsBlobStoreProducer.class);
 
     private final JcloudsBlobStoreEndpoint endpoint;
     private BlobStore blobStore;
@@ -54,8 +50,8 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
         String operation = getOperation(exchange);
         List blobNames = getBlobNameList(exchange);
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Processing {} operation on '{}'", operation, container + "/" + blobName);
+        if (log.isTraceEnabled()) {
+            log.trace("Processing {} operation on '{}'", operation, container + "/" + blobName);
         }
         if (JcloudsConstants.GET.equals(operation)) {
             exchange.getOut().setBody(JcloudsBlobStoreHelper.readBlob(blobStore, container, blobName));

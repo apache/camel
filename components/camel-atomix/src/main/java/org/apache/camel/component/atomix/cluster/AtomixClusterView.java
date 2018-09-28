@@ -31,11 +31,8 @@ import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.component.atomix.AtomixConfiguration;
 import org.apache.camel.impl.cluster.AbstractCamelClusterView;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 final class AtomixClusterView extends AbstractCamelClusterView {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AtomixClusterView.class);
 
     private final Atomix atomix;
     private final AtomixLocalMember localMember;
@@ -84,7 +81,7 @@ final class AtomixClusterView extends AbstractCamelClusterView {
     @Override
     protected void doStart() throws Exception {
         if (!localMember.hasJoined()) {
-            LOGGER.debug("Get group {}", getNamespace());
+            log.debug("Get group {}", getNamespace());
 
             group = this.atomix.getGroup(
                 getNamespace(),
@@ -92,28 +89,28 @@ final class AtomixClusterView extends AbstractCamelClusterView {
                 new DistributedGroup.Options(configuration.getResourceOptions(getNamespace()))
             ).get();
 
-            LOGGER.debug("Listen election events");
+            log.debug("Listen election events");
             group.election().onElection(term -> {
                 if (isRunAllowed()) {
                     fireLeadershipChangedEvent(Optional.of(toClusterMember(term.leader())));
                 }
             });
 
-            LOGGER.debug("Listen join events");
+            log.debug("Listen join events");
             group.onJoin(member -> {
                 if (isRunAllowed()) {
                     fireMemberAddedEvent(toClusterMember(member));
                 }
             });
 
-            LOGGER.debug("Listen leave events");
+            log.debug("Listen leave events");
             group.onLeave(member -> {
                 if (isRunAllowed()) {
                     fireMemberRemovedEvent(toClusterMember(member));
                 }
             });
 
-            LOGGER.debug("Join group {}", getNamespace());
+            log.debug("Join group {}", getNamespace());
             localMember.join();
         }
     }
@@ -178,11 +175,11 @@ final class AtomixClusterView extends AbstractCamelClusterView {
             if (member == null && group != null) {
                 String id = getClusterService().getId();
                 if (ObjectHelper.isEmpty(id) || configuration.isEphemeral()) {
-                    LOGGER.debug("Joining group: {}", group);
+                    log.debug("Joining group: {}", group);
                     member = group.join().join();
-                    LOGGER.debug("Group {} joined with id {}", group, member.id());
+                    log.debug("Group {} joined with id {}", group, member.id());
                 } else {
-                    LOGGER.debug("Joining group: {}, with id: {}", group, id);
+                    log.debug("Joining group: {}, with id: {}", group, id);
                     member = group.join(id).join();
                 }
             }
@@ -194,7 +191,7 @@ final class AtomixClusterView extends AbstractCamelClusterView {
             if (member != null) {
                 String id = member.id();
 
-                LOGGER.debug("Member {} : leave group {}", id, group);
+                log.debug("Member {} : leave group {}", id, group);
 
                 member.leave().join();
                 group.remove(id).join();

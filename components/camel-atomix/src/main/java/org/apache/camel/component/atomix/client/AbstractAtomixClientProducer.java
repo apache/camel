@@ -40,7 +40,7 @@ import static org.apache.camel.component.atomix.client.AtomixClientConstants.RES
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_NAME;
 
 public abstract class AbstractAtomixClientProducer<E extends AbstractAtomixClientEndpoint, R extends Resource> extends DefaultProducer implements AsyncProcessor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAtomixClientProducer.class);
+
     private final Map<String, AtomixAsyncMessageProcessor> processors;
     private ConcurrentMap<String, R> resources;
 
@@ -142,7 +142,7 @@ public abstract class AbstractAtomixClientProducer<E extends AbstractAtomixClien
                 throw new IllegalArgumentException("Second argument should be of type AsyncCallback");
             }
 
-            LOGGER.debug("bind key={}, class={}, method={}",
+            log.debug("bind key={}, class={}, method={}",
                 annotation.value(), this.getClass(), method.getName());
 
             this.processors.put(annotation.value(), (m, c) -> (boolean)method.invoke(this, m, c));

@@ -39,9 +39,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.namedparam.EmptySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
@@ -51,8 +48,6 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 @UriEndpoint(firstVersion = "2.16.0", scheme = "elsql", title = "ElSQL", syntax = "elsql:elsqlName:resourceUri", consumerClass = ElsqlConsumer.class,
         label = "database,sql")
 public class ElsqlEndpoint extends DefaultSqlEndpoint {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ElsqlEndpoint.class);
 
     private ElSql elSql;
     private final NamedParameterJdbcTemplate namedJdbcTemplate;
@@ -86,7 +81,7 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
         final Exchange dummy = createExchange();
         final SqlParameterSource param = new ElsqlSqlMapSource(dummy, null);
         final String sql = elSql.getSql(elsqlName, new SpringSqlParams(param));
-        LOG.debug("ElsqlConsumer @{} using sql: {}", elsqlName, sql);
+        log.debug("ElsqlConsumer @{} using sql: {}", elsqlName, sql);
 
         final ElsqlConsumer consumer = new ElsqlConsumer(this, processor, namedJdbcTemplate, sql, param, preStategy, proStrategy);
         consumer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());

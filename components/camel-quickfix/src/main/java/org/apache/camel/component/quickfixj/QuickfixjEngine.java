@@ -31,8 +31,6 @@ import javax.management.ObjectName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.quickfixj.jmx.JmxExporter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import quickfix.Acceptor;
 import quickfix.Application;
 import quickfix.ConfigError;
@@ -84,8 +82,6 @@ public class QuickfixjEngine extends ServiceSupport {
     public static final long DEFAULT_HEARTBTINT = 30;
     public static final String SETTING_THREAD_MODEL = "ThreadModel";
     public static final String SETTING_USE_JMX = "UseJmx";
-
-    private static final Logger LOG = LoggerFactory.getLogger(QuickfixjEngine.class);
 
     private Acceptor acceptor;
     private Initiator initiator;
@@ -213,7 +209,7 @@ public class QuickfixjEngine extends ServiceSupport {
         }
 
         if (settings.isSetting(SETTING_USE_JMX) && settings.getBool(SETTING_USE_JMX)) {
-            LOG.info("Enabling JMX for QuickFIX/J");
+            log.info("Enabling JMX for QuickFIX/J");
             jmxExporter = new JmxExporter();
         } else {
             jmxExporter = null;
@@ -341,7 +337,7 @@ public class QuickfixjEngine extends ServiceSupport {
         } else {
             messageStoreFactory = new MemoryStoreFactory();
         }
-        LOG.info("Inferring message store factory: {}", messageStoreFactory.getClass().getName());
+        log.info("Inferring message store factory: {}", messageStoreFactory.getClass().getName());
         return messageStoreFactory;
     }
 
@@ -379,7 +375,7 @@ public class QuickfixjEngine extends ServiceSupport {
             // Default
             sessionLogFactory = new ScreenLogFactory(settings);
         }
-        LOG.info("Inferring log factory: {}", sessionLogFactory.getClass().getName());
+        log.info("Inferring log factory: {}", sessionLogFactory.getClass().getName());
         return sessionLogFactory;
     }
 
@@ -516,7 +512,7 @@ public class QuickfixjEngine extends ServiceSupport {
         }
 
         private void dispatch(QuickfixjEventCategory quickfixjEventCategory, SessionID sessionID, Message message) throws Exception {
-            LOG.debug("FIX event dispatched: {} {}", quickfixjEventCategory, message != null ? message : "");
+            log.debug("FIX event dispatched: {} {}", quickfixjEventCategory, message != null ? message : "");
             for (QuickfixjEventListener listener : eventListeners) {
                 // Exceptions propagate back to the FIX engine so sequence numbers can be adjusted
                 listener.onEvent(quickfixjEventCategory, sessionID, message);

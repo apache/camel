@@ -62,8 +62,6 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultChannel extends CamelInternalProcessor implements ModelChannel {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultChannel.class);
-
     private final List<InterceptStrategy> interceptors = new ArrayList<>();
     private Processor errorHandler;
     // the next processor (non wrapped)
@@ -200,7 +198,7 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
         // the definition to wrap should be the fine grained,
         // so if a child is set then use it, if not then its the original output used
         ProcessorDefinition<?> targetOutputDef = childDefinition != null ? childDefinition : outputDefinition;
-        LOG.debug("Initialize channel for target: '{}'", targetOutputDef);
+        log.debug("Initialize channel for target: '{}'", targetOutputDef);
 
         // fix parent/child relationship. This will be the case of the routes has been
         // defined using XML DSL or end user may have manually assembled a route from the model.
@@ -263,7 +261,7 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
             // use the fine grained definition (eg the child if available). Its always possible to get back to the parent
             Processor wrapped = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, target, next);
             if (!(wrapped instanceof AsyncProcessor)) {
-                LOG.warn("Interceptor: " + strategy + " at: " + outputDefinition + " does not return an AsyncProcessor instance."
+                log.warn("Interceptor: " + strategy + " at: " + outputDefinition + " does not return an AsyncProcessor instance."
                         + " This causes the asynchronous routing engine to not work as optimal as possible."
                         + " See more details at the InterceptStrategy javadoc."
                         + " Camel will use a bridge to adapt the interceptor to the asynchronous routing engine,"

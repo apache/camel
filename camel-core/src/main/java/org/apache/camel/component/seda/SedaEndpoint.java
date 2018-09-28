@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
 @ManagedResource(description = "Managed SedaEndpoint")
 @UriEndpoint(firstVersion = "1.1.0", scheme = "seda", title = "SEDA", syntax = "seda:name", consumerClass = SedaConsumer.class, label = "core,endpoint")
 public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, BrowsableEndpoint, MultipleConsumersSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(SedaEndpoint.class);
+
     private final Set<SedaProducer> producers = new CopyOnWriteArraySet<>();
     private final Set<SedaConsumer> consumers = new CopyOnWriteArraySet<>();
     private volatile MulticastProcessor consumerMulticastProcessor;
@@ -171,7 +171,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
                 QueueReference ref = getComponent().getOrCreateQueue(this, size, isMultipleConsumers(), queueFactory);
                 queue = ref.getQueue();
                 String key = getComponent().getQueueKey(getEndpointUri());
-                LOG.info("Endpoint {} is using shared queue: {} with size: {}", this, key, ref.getSize() !=  null ? ref.getSize() : Integer.MAX_VALUE);
+                log.info("Endpoint {} is using shared queue: {} with size: {}", this, key, ref.getSize() !=  null ? ref.getSize() : Integer.MAX_VALUE);
                 // and set the size we are using
                 if (ref.getSize() != null) {
                     setSize(ref.getSize());
@@ -179,7 +179,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
             } else {
                 // fallback and create queue (as this endpoint has no component)
                 queue = createQueue();
-                LOG.info("Endpoint {} is using queue: {} with size: {}", this, getEndpointUri(), getSize());
+                log.info("Endpoint {} is using queue: {} with size: {}", this, getEndpointUri(), getSize());
             }
         }
         return queue;
@@ -440,7 +440,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
      */
     @ManagedOperation(description = "Purges the seda queue")
     public void purgeQueue() {
-        LOG.debug("Purging queue with {} exchanges", queue.size());
+        log.debug("Purging queue with {} exchanges", queue.size());
         queue.clear();
     }
 
@@ -504,14 +504,14 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         if (getConsumers().isEmpty()) {
             super.stop();
         } else {
-            LOG.debug("There is still active consumers.");
+            log.debug("There is still active consumers.");
         }
     }
 
     @Override
     public void shutdown() throws Exception {
         if (shutdown.get()) {
-            LOG.trace("Service already shut down");
+            log.trace("Service already shut down");
             return;
         }
 
@@ -523,7 +523,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         if (getConsumers().isEmpty()) {
             super.shutdown();
         } else {
-            LOG.debug("There is still active consumers.");
+            log.debug("There is still active consumers.");
         }
     }
 

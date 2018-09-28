@@ -27,15 +27,12 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link SolrEndpoint}.
  */
 public class SolrComponent extends DefaultComponent {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SolrComponent.class);
     private final Map<SolrEndpoint, SolrServerReference> servers = new HashMap<>();
 
     protected static final class SolrServerReference {
@@ -110,7 +107,7 @@ public class SolrComponent extends DefaultComponent {
     
     private void shutdownServer(SolrClient server) throws IOException {
         if (server != null) {
-            LOG.info("Shutting down solr server: {}", server);
+            log.info("Shutting down solr server: {}", server);
             server.close();
         }
     }
@@ -119,18 +116,18 @@ public class SolrComponent extends DefaultComponent {
         try {
             shutdownServer(ref.getSolrServer());
         } catch (Exception e) {
-            LOG.warn("Error shutting down solr server. This exception is ignored.", e);
+            log.warn("Error shutting down solr server. This exception is ignored.", e);
         }
         try {
             shutdownServer(ref.getUpdateSolrServer());
         } catch (Exception e) {
-            LOG.warn("Error shutting down streaming solr server. This exception is ignored.", e);
+            log.warn("Error shutting down streaming solr server. This exception is ignored.", e);
         }
         
         try {
             shutdownServer(ref.getCloudSolrServer());
         } catch (Exception e) {
-            LOG.warn("Error shutting down streaming solr server. This exception is ignored.", e);
+            log.warn("Error shutting down streaming solr server. This exception is ignored.", e);
         }
 
         if (remove) {

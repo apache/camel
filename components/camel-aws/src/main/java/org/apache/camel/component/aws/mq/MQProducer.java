@@ -39,8 +39,6 @@ import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageForResponse;
 
@@ -49,8 +47,6 @@ import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageFo
  * <a href="http://aws.amazon.com/mq/">AWS MQ</a>
  */
 public class MQProducer extends DefaultProducer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MQProducer.class);
 
     private transient String mqProducerToString;
 
@@ -118,7 +114,7 @@ public class MQProducer extends DefaultProducer {
         try {
             result = mqClient.listBrokers(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("List Brokers command returned the error code {}", ase.getErrorCode());
+            log.trace("List Brokers command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -145,7 +141,7 @@ public class MQProducer extends DefaultProducer {
         try {
             result = mqClient.createBroker(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("Create Broker command returned the error code {}", ase.getErrorCode());
+            log.trace("Create Broker command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -165,7 +161,7 @@ public class MQProducer extends DefaultProducer {
         try {
             result = mqClient.deleteBroker(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("Delete Broker command returned the error code {}", ase.getErrorCode());
+            log.trace("Delete Broker command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -185,7 +181,7 @@ public class MQProducer extends DefaultProducer {
         try {
             result = mqClient.rebootBroker(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("Reboot Broker command returned the error code {}", ase.getErrorCode());
+            log.trace("Reboot Broker command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -212,7 +208,7 @@ public class MQProducer extends DefaultProducer {
         try {
             result = mqClient.updateBroker(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("Update Broker command returned the error code {}", ase.getErrorCode());
+            log.trace("Update Broker command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -232,7 +228,7 @@ public class MQProducer extends DefaultProducer {
         try {
             result = mqClient.describeBroker(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("Reboot Broker command returned the error code {}", ase.getErrorCode());
+            log.trace("Reboot Broker command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);

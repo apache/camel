@@ -59,8 +59,6 @@ import org.slf4j.LoggerFactory;
 public class XsltEndpoint extends ProcessorEndpoint {
     public static final String SAXON_TRANSFORMER_FACTORY_CLASS_NAME = "net.sf.saxon.TransformerFactoryImpl";
 
-    private static final Logger LOG = LoggerFactory.getLogger(XsltEndpoint.class);
-
     private volatile boolean cacheCleared;
     private volatile XsltBuilder xslt;
     private Map<String, Object> parameters;
@@ -118,7 +116,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
 
     public XsltEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {
         String newUri = uri.replace(resourceUri, newResourceUri);
-        LOG.trace("Getting endpoint with URI: {}", newUri);
+        log.trace("Getting endpoint with URI: {}", newUri);
         return getCamelContext().getEndpoint(newUri, XsltEndpoint.class);
     }
 
@@ -403,7 +401,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
      * @throws IOException is thrown if error loading resource
      */
     protected void loadResource(String resourceUri) throws TransformerException, IOException {
-        LOG.trace("{} loading schema resource: {}", this, resourceUri);
+        log.trace("{} loading schema resource: {}", this, resourceUri);
         Source source = xslt.getUriResolver().resolve(resourceUri, null);
         if (source == null) {
             throw new IOException("Cannot load schema resource " + resourceUri);
@@ -422,7 +420,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
         final ClassResolver resolver = ctx.getClassResolver();
         final Injector injector = ctx.getInjector();
 
-        LOG.debug("{} using schema resource: {}", this, resourceUri);
+        log.debug("{} using schema resource: {}", this, resourceUri);
 
         this.xslt = injector.newInstance(XsltBuilder.class);
         if (converter != null) {
@@ -439,7 +437,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
         if (factory == null && transformerFactoryClass != null) {
             // provide the class loader of this component to work in OSGi environments
             Class<TransformerFactory> factoryClass = resolver.resolveMandatoryClass(transformerFactoryClass, TransformerFactory.class, XsltComponent.class.getClassLoader());
-            LOG.debug("Using TransformerFactoryClass {}", factoryClass);
+            log.debug("Using TransformerFactoryClass {}", factoryClass);
             factory = injector.newInstance(factoryClass);
 
             if (useSaxon) {
@@ -450,7 +448,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
         }
 
         if (factory != null) {
-            LOG.debug("Using TransformerFactory {}", factory);
+            log.debug("Using TransformerFactory {}", factory);
             xslt.getConverter().setTransformerFactory(factory);
         }
         if (resultHandlerFactory != null) {

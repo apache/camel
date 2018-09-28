@@ -25,12 +25,8 @@ import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PahoConsumer extends DefaultConsumer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(PahoConsumer.class);
 
     public PahoConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -49,19 +45,19 @@ public class PahoConsumer extends DefaultConsumer {
                     try {
                         getEndpoint().getClient().subscribe(topic, getEndpoint().getQos());
                     } catch (MqttException e) {
-                        LOG.error("MQTT resubscribe failed {}", e.getMessage(), e);
+                        log.error("MQTT resubscribe failed {}", e.getMessage(), e);
                     }
                 }
             }
 
             @Override
             public void connectionLost(Throwable cause) {
-                LOG.debug("MQTT broker connection lost due {}", cause.getMessage(), cause);
+                log.debug("MQTT broker connection lost due {}", cause.getMessage(), cause);
             }
 
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
-                LOG.debug("Message arrived on topic: {} -> {}", topic, message);
+                log.debug("Message arrived on topic: {} -> {}", topic, message);
                 Exchange exchange = getEndpoint().createExchange(message, topic);
 
                 getAsyncProcessor().process(exchange, new AsyncCallback() {
@@ -74,7 +70,7 @@ public class PahoConsumer extends DefaultConsumer {
 
             @Override
             public void deliveryComplete(IMqttDeliveryToken token) {
-                LOG.debug("Delivery complete. Token: {}", token);
+                log.debug("Delivery complete. Token: {}", token);
             }
         });
     }

@@ -24,8 +24,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -35,7 +33,6 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @version 
  */
 public class JpaComponent extends DefaultComponent {
-    private static final Logger LOG = LoggerFactory.getLogger(JpaComponent.class);
 
     private ExecutorService pollingConsumerExecutorService;
 
@@ -100,7 +97,7 @@ public class JpaComponent extends DefaultComponent {
 
     synchronized ExecutorService getOrCreatePollingConsumerExecutorService() {
         if (pollingConsumerExecutorService == null) {
-            LOG.debug("Creating thread pool for JpaPollingConsumer to support polling using timeout");
+            log.debug("Creating thread pool for JpaPollingConsumer to support polling using timeout");
             pollingConsumerExecutorService = getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "JpaPollingConsumer");
         }
         return pollingConsumerExecutorService;
@@ -137,14 +134,14 @@ public class JpaComponent extends DefaultComponent {
             if (map != null) {
                 if (map.size() == 1) {
                     entityManagerFactory = map.values().iterator().next();
-                    LOG.info("Using EntityManagerFactory found in registry with id ["
+                    log.info("Using EntityManagerFactory found in registry with id ["
                             + map.keySet().iterator().next() + "] " + entityManagerFactory);
                 } else {
-                    LOG.debug("Could not find a single EntityManagerFactory in registry as there was {} instances.", map.size());
+                    log.debug("Could not find a single EntityManagerFactory in registry as there was {} instances.", map.size());
                 }
             }
         } else {
-            LOG.info("Using EntityManagerFactory configured: {}", entityManagerFactory);
+            log.info("Using EntityManagerFactory configured: {}", entityManagerFactory);
         }
 
         // lookup transaction manager and use it if only one provided
@@ -153,14 +150,14 @@ public class JpaComponent extends DefaultComponent {
             if (map != null) {
                 if (map.size() == 1) {
                     transactionManager = map.values().iterator().next();
-                    LOG.info("Using TransactionManager found in registry with id ["
+                    log.info("Using TransactionManager found in registry with id ["
                             + map.keySet().iterator().next() + "] " + transactionManager);
                 } else {
-                    LOG.debug("Could not find a single TransactionManager in registry as there was {} instances.", map.size());
+                    log.debug("Could not find a single TransactionManager in registry as there was {} instances.", map.size());
                 }
             }
         } else {
-            LOG.info("Using TransactionManager configured on this component: {}", transactionManager);
+            log.info("Using TransactionManager configured on this component: {}", transactionManager);
         }
 
         // transaction manager could also be hidden in a template
@@ -169,20 +166,20 @@ public class JpaComponent extends DefaultComponent {
             if (map != null) {
                 if (map.size() == 1) {
                     transactionManager = map.values().iterator().next().getTransactionManager();
-                    LOG.info("Using TransactionManager found in registry with id ["
+                    log.info("Using TransactionManager found in registry with id ["
                             + map.keySet().iterator().next() + "] " + transactionManager);
                 } else {
-                    LOG.debug("Could not find a single TransactionTemplate in registry as there was {} instances.", map.size());
+                    log.debug("Could not find a single TransactionTemplate in registry as there was {} instances.", map.size());
                 }
             }
         }
 
         // warn about missing configuration
         if (entityManagerFactory == null) {
-            LOG.warn("No EntityManagerFactory has been configured on this JpaComponent. Each JpaEndpoint will auto create their own EntityManagerFactory.");
+            log.warn("No EntityManagerFactory has been configured on this JpaComponent. Each JpaEndpoint will auto create their own EntityManagerFactory.");
         }
         if (transactionManager == null) {
-            LOG.warn("No TransactionManager has been configured on this JpaComponent. Each JpaEndpoint will auto create their own JpaTransactionManager.");
+            log.warn("No TransactionManager has been configured on this JpaComponent. Each JpaEndpoint will auto create their own JpaTransactionManager.");
         }
     }
 

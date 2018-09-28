@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class CatchProcessor extends DelegateAsyncProcessor implements Traceable, IdAware {
-    private static final Logger LOG = LoggerFactory.getLogger(CatchProcessor.class);
 
     private String id;
     private final List<Class<? extends Throwable>> exceptions;
@@ -76,8 +75,8 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
             callback.done(true);
             return true;
         }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("This CatchProcessor catches the exception: {} caused by: {}", caught.getClass().getName(), e.getMessage());
+        if (log.isTraceEnabled()) {
+            log.trace("This CatchProcessor catches the exception: {} caused by: {}", caught.getClass().getName(), e.getMessage());
         }
 
         // store the last to endpoint as the failure endpoint
@@ -94,8 +93,8 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
         // is the exception handled by the catch clause
         final boolean handled = handles(exchange);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("The exception is handled: {} for the exception: {} caused by: {}",
+        if (log.isDebugEnabled()) {
+            log.debug("The exception is handled: {} for the exception: {} caused by: {}",
                     new Object[]{handled, e.getClass().getName(), e.getMessage()});
         }
 

@@ -28,8 +28,6 @@ import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCConstants;
 import org.schwering.irc.lib.IRCModeParser;
 import org.schwering.irc.lib.IRCUser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The irc component implements an <a href="https://en.wikipedia.org/wiki/Internet_Relay_Chat">IRC</a> (Internet Relay Chat) transport.
@@ -43,7 +41,6 @@ import org.slf4j.LoggerFactory;
     consumerClass = IrcConsumer.class, 
     label = "chat")
 public class IrcEndpoint extends DefaultEndpoint {
-    private static final Logger LOG = LoggerFactory.getLogger(IrcEndpoint.class);
 
     @UriParam
     private IrcConfiguration configuration;
@@ -178,9 +175,9 @@ public class IrcEndpoint extends DefaultEndpoint {
 
         // hackish but working approach to prevent an endless loop. Abort after 4 nick attempts.
         if (nick.endsWith("----")) {
-            LOG.error("Unable to set nick: {} disconnecting", nick);
+            log.error("Unable to set nick: {} disconnecting", nick);
         } else {
-            LOG.warn("Unable to set nick: " + nick + " Retrying with " + nick + "-");
+            log.warn("Unable to set nick: " + nick + " Retrying with " + nick + "-");
             connection.doNick(nick);
             // if the nick failure was doing startup channels weren't joined. So join
             // the channels now. It's a no-op if the channels are already joined.
@@ -209,13 +206,13 @@ public class IrcEndpoint extends DefaultEndpoint {
         String key = channel.getKey();
 
         if (ObjectHelper.isNotEmpty(key)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Joining: {} using {} with secret key", channel, connection.getClass().getName());
+            if (log.isDebugEnabled()) {
+                log.debug("Joining: {} using {} with secret key", channel, connection.getClass().getName());
             }
             connection.doJoin(chn, key);
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Joining: {} using {}", channel, connection.getClass().getName());
+            if (log.isDebugEnabled()) {
+                log.debug("Joining: {} using {}", channel, connection.getClass().getName());
             }
             connection.doJoin(chn);
         }

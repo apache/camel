@@ -23,7 +23,6 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.NodeIdFactory;
@@ -125,7 +124,7 @@ public class CustomIdFactoryTest extends ContextTestSupport {
             return new DelegateProcessor(target) {
                 @Override
                 protected void processNext(Exchange exchange) throws Exception {
-                    LOG.debug("Debugging at: {} with id: {} with exchange: {}", definition, definition.getId(), exchange);
+                    log.debug("Debugging at: {} with id: {} with exchange: {}", definition, definition.getId(), exchange);
 
                     // record the path taken at runtime
                     ids += definition.getId();

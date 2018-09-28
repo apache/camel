@@ -24,12 +24,8 @@ import io.nats.client.Connection.Status;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class NatsProducer extends DefaultProducer {
-    
-    private static final Logger LOG = LoggerFactory.getLogger(NatsProducer.class);
     
     private Connection connection;
     
@@ -47,7 +43,7 @@ public class NatsProducer extends DefaultProducer {
         NatsConfiguration config = getEndpoint().getNatsConfiguration();
         String body = exchange.getIn().getMandatoryBody(String.class);
 
-        LOG.debug("Publishing to topic: {}", config.getTopic());
+        log.debug("Publishing to topic: {}", config.getTopic());
         
         if (ObjectHelper.isNotEmpty(config.getReplySubject())) {
             String replySubject = config.getReplySubject();
@@ -60,21 +56,21 @@ public class NatsProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        LOG.debug("Starting Nats Producer");
+        log.debug("Starting Nats Producer");
         
-        LOG.debug("Getting Nats Connection");
+        log.debug("Getting Nats Connection");
         connection = getEndpoint().getNatsConfiguration().getConnection() != null 
             ? getEndpoint().getNatsConfiguration().getConnection() : getEndpoint().getConnection();
     }
 
     @Override
     protected void doStop() throws Exception {
-        LOG.debug("Stopping Nats Producer");
+        log.debug("Stopping Nats Producer");
         if (ObjectHelper.isEmpty(getEndpoint().getNatsConfiguration().getConnection())) {
-            LOG.debug("Closing Nats Connection");
+            log.debug("Closing Nats Connection");
             if (connection != null && !connection.getStatus().equals(Status.CLOSED)) {
                 if (getEndpoint().getNatsConfiguration().isFlushConnection()) {
-                    LOG.debug("Flushing Nats Connection");
+                    log.debug("Flushing Nats Connection");
                     connection.flush(Duration.ofMillis(getEndpoint().getNatsConfiguration().getFlushTimeout()));
                 }
                 connection.close();

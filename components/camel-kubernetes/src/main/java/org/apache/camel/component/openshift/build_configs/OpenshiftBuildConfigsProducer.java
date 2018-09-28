@@ -36,12 +36,8 @@ import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class OpenshiftBuildConfigsProducer extends DefaultProducer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(OpenshiftBuildConfigsProducer.class);
 
     public OpenshiftBuildConfigsProducer(AbstractKubernetesEndpoint endpoint) {
         super(endpoint);
@@ -119,11 +115,11 @@ public class OpenshiftBuildConfigsProducer extends DefaultProducer {
                 String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(buildConfigName)) {
-            LOG.error("Get a specific Build Config require specify a Build Config name");
+            log.error("Get a specific Build Config require specify a Build Config name");
             throw new IllegalArgumentException("Get a specific Build Config require specify a Build Config name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
-            LOG.error("Get a specific Build Config require specify a namespace name");
+            log.error("Get a specific Build Config require specify a namespace name");
             throw new IllegalArgumentException("Get a specific Build Config require specify a namespace name");
         }
         buildConfig = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs()

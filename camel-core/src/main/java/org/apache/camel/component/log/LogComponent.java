@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class LogComponent extends DefaultComponent {
-    private static final Logger LOG = LoggerFactory.getLogger(LogComponent.class);
 
     @Metadata(label = "advanced")
     private ExchangeFormatter exchangeFormatter;
@@ -53,9 +52,9 @@ public class LogComponent extends DefaultComponent {
             Map<String, Logger> availableLoggers = getCamelContext().getRegistry().findByTypeWithName(Logger.class);
             if (availableLoggers.size() == 1) {
                 providedLogger = availableLoggers.values().iterator().next();
-                LOG.info("Using custom Logger: {}", providedLogger);
+                log.info("Using custom Logger: {}", providedLogger);
             } else if (availableLoggers.size() > 1) {
-                LOG.info("More than one {} instance found in the registry. Falling back to creating logger from URI {}.", Logger.class.getName(), uri);
+                log.info("More than one {} instance found in the registry. Falling back to creating logger from URI {}.", Logger.class.getName(), uri);
             }
         }
         

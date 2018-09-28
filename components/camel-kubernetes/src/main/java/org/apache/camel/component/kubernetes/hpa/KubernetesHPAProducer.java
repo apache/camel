@@ -33,12 +33,8 @@ import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class KubernetesHPAProducer extends DefaultProducer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(KubernetesHPAProducer.class);
 
     public KubernetesHPAProducer(AbstractKubernetesEndpoint endpoint) {
         super(endpoint);
@@ -96,7 +92,7 @@ public class KubernetesHPAProducer extends DefaultProducer {
     protected void doListHPAByLabel(Exchange exchange, String operation) {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, Map.class);
         if (ObjectHelper.isEmpty(labels)) {
-            LOG.error("Get HPA by labels require specify a labels set");
+            log.error("Get HPA by labels require specify a labels set");
             throw new IllegalArgumentException("Get HPA by labels require specify a labels set");
         }
 
@@ -116,11 +112,11 @@ public class KubernetesHPAProducer extends DefaultProducer {
         String podName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(podName)) {
-            LOG.error("Get a specific hpa require specify an hpa name");
+            log.error("Get a specific hpa require specify an hpa name");
             throw new IllegalArgumentException("Get a specific hpa require specify an hpa name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
-            LOG.error("Get a specific hpa require specify a namespace name");
+            log.error("Get a specific hpa require specify a namespace name");
             throw new IllegalArgumentException("Get a specific hpa require specify a namespace name");
         }
         hpa = getEndpoint().getKubernetesClient().autoscaling().horizontalPodAutoscalers().inNamespace(namespaceName).withName(podName).get();
@@ -135,15 +131,15 @@ public class KubernetesHPAProducer extends DefaultProducer {
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         HorizontalPodAutoscalerSpec hpaSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_SPEC, HorizontalPodAutoscalerSpec.class);
         if (ObjectHelper.isEmpty(hpaName)) {
-            LOG.error("Create a specific hpa require specify a hpa name");
+            log.error("Create a specific hpa require specify a hpa name");
             throw new IllegalArgumentException("Create a specific hpa require specify a hpa name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
-            LOG.error("Create a specific hpa require specify a namespace name");
+            log.error("Create a specific hpa require specify a namespace name");
             throw new IllegalArgumentException("Create a specific hpa require specify a namespace name");
         }
         if (ObjectHelper.isEmpty(hpaSpec)) {
-            LOG.error("Create a specific hpa require specify a hpa spec bean");
+            log.error("Create a specific hpa require specify a hpa spec bean");
             throw new IllegalArgumentException("Create a specific hpa require specify a hpa spec bean");
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, Map.class);
@@ -158,11 +154,11 @@ public class KubernetesHPAProducer extends DefaultProducer {
         String hpaName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_HPA_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(hpaName)) {
-            LOG.error("Delete a specific hpa require specify a hpa name");
+            log.error("Delete a specific hpa require specify a hpa name");
             throw new IllegalArgumentException("Delete a specific hpa require specify a hpa name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
-            LOG.error("Delete a specific hpa require specify a namespace name");
+            log.error("Delete a specific hpa require specify a namespace name");
             throw new IllegalArgumentException("Delete a specific hpa require specify a namespace name");
         }
         boolean hpaDeleted = getEndpoint().getKubernetesClient().autoscaling().horizontalPodAutoscalers().inNamespace(namespaceName).withName(hpaName).delete();

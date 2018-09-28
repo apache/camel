@@ -48,7 +48,6 @@ import org.slf4j.LoggerFactory;
 
 @ManagedResource(description = "Clustered Route policy using")
 public final class ClusteredRoutePolicy extends RoutePolicySupport implements CamelContextAware {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClusteredRoutePolicy.class);
 
     private final AtomicBoolean leader;
     private final Set<Route> startedRoutes;
@@ -161,7 +160,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     public void onInit(Route route) {
         super.onInit(route);
 
-        LOGGER.info("Route managed by {}. Setting route {} AutoStartup flag to false.", getClass(), route.getId());
+        log.info("Route managed by {}. Setting route {} AutoStartup flag to false.", getClass(), route.getId());
         definition(route).setAutoStartup("false");
 
         this.refCount.retain();
@@ -178,7 +177,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
             );
         }
 
-        LOGGER.debug("ClusteredRoutePolicy {} is using ClusterService instance {} (id={}, type={})",
+        log.debug("ClusteredRoutePolicy {} is using ClusterService instance {} (id={}, type={})",
             this,
             clusterService,
             clusterService.getId(),
@@ -208,10 +207,10 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
 
     private synchronized void setLeader(boolean isLeader) {
         if (isLeader && leader.compareAndSet(false, isLeader)) {
-            LOGGER.debug("Leadership taken");
+            log.debug("Leadership taken");
             startManagedRoutes();
         } else if (!isLeader && leader.getAndSet(isLeader)) {
-            LOGGER.debug("Leadership lost");
+            log.debug("Leadership lost");
             stopManagedRoutes();
         }
     }
@@ -235,7 +234,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
             for (Route route : stoppedRoutes) {
                 ServiceStatus status = definition(route).getStatus(getCamelContext());
                 if (status.isStartable()) {
-                    LOGGER.debug("Starting route '{}'", route.getId());
+                    log.debug("Starting route '{}'", route.getId());
                     camelContext.getRouteController().startRoute(route.getId());
 
                     startedRoutes.add(route);
@@ -267,7 +266,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
             for (Route route : startedRoutes) {
                 ServiceStatus status = definition(route).getStatus(getCamelContext());
                 if (status.isStoppable()) {
-                    LOGGER.debug("Stopping route '{}'", route.getId());
+                    log.debug("Stopping route '{}'", route.getId());
                     stopRoute(route);
 
                     stoppedRoutes.add(route);
@@ -281,7 +280,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     }
 
     private void onCamelContextStarted() {
-        LOGGER.debug("Apply cluster policy (stopped-routes='{}', started-routes='{}')",
+        log.debug("Apply cluster policy (stopped-routes='{}', started-routes='{}')",
             stoppedRoutes.stream().map(Route::getId).collect(Collectors.joining(",")),
             startedRoutes.stream().map(Route::getId).collect(Collectors.joining(","))
         );
@@ -336,7 +335,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
 
                 // Eventually delay the startup of the routes a later time
                 if (initialDelay.toMillis() > 0) {
-                    LOGGER.debug("Policy will be effective in {}", initialDelay);
+                    log.debug("Policy will be effective in {}", initialDelay);
                     executorService.schedule(ClusteredRoutePolicy.this::onCamelContextStarted, initialDelay.toMillis(), TimeUnit.MILLISECONDS);
                 } else {
                     ClusteredRoutePolicy.this.onCamelContextStarted();

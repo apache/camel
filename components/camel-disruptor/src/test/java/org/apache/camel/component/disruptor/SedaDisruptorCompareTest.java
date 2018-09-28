@@ -145,9 +145,9 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
         // It defines all parameters to the same values as the default, so the result should be the same as
         // 'seda:speedtest'. This shows that disruptor has a slight disadvantage as its name is longer than 'seda' :)
         // The reason why this test takes so long is because Camel has a SLF4J call in ProducerCache:
-        // LOG.debug(">>>> {} {}", endpoint, exchange);
+        // log.debug(">>>> {} {}", endpoint, exchange);
         // and the DefaultEndpoint.toString() method will use a Matcher to sanitize the URI.  There should be a guard
-        // before the debug() call to only evaluate the args when required: if(LOG.isDebugEnabled())...
+        // before the debug() call to only evaluate the args when required: if(log.isDebugEnabled())...
         if (SIZE_PARAMETER_VALUE == 0) {
             parameters
                 .add(new Object[] {"SEDA LONG {P=1, C=1, CCT=1, SIZE=0}",

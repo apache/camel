@@ -30,8 +30,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.ignite.IgniteAtomicSequence;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The Ignite ID Generator endpoint is one of camel-ignite endpoints which allows you to interact with
@@ -40,8 +38,6 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-idgen", title = "Ignite ID Generator", syntax = "ignite-idgen:name", label = "nosql,cache,compute", producerOnly = true)
 public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
-
-    private static final Logger LOG = LoggerFactory.getLogger(IgniteIdGenEndpoint.class);
 
     @UriPath
     @Metadata(required = "true")
@@ -77,7 +73,7 @@ public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
 
         if (atomicSeq == null) {
             atomicSeq = ignite().atomicSequence(name, initialValue, true);
-            LOG.info("Created AtomicSequence of ID Generator with name {}.", name);
+            log.info("Created AtomicSequence of ID Generator with name {}.", name);
         }
 
         if (batchSize != null) {

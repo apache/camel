@@ -43,7 +43,6 @@ import org.slf4j.LoggerFactory;
  */
 public class ClaimCheckProcessor extends ServiceSupport implements AsyncProcessor, IdAware, CamelContextAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ClaimCheckProcessor.class);
     private CamelContext camelContext;
     private String id;
     private String operation;
@@ -122,13 +121,13 @@ public class ClaimCheckProcessor extends ServiceSupport implements AsyncProcesso
                 Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
                 boolean addedNew = repo.add(key, copy);
                 if (addedNew) {
-                    LOG.debug("Add: {} -> {}", key, copy);
+                    log.debug("Add: {} -> {}", key, copy);
                 } else {
-                    LOG.debug("Override: {} -> {}", key, copy);
+                    log.debug("Override: {} -> {}", key, copy);
                 }
             } else if ("Get".equals(operation)) {
                 Exchange copy = repo.get(key);
-                LOG.debug("Get: {} -> {}", key, exchange);
+                log.debug("Get: {} -> {}", key, exchange);
                 if (copy != null) {
                     Exchange result = aggregationStrategy.aggregate(exchange, copy);
                     if (result != null) {
@@ -137,7 +136,7 @@ public class ClaimCheckProcessor extends ServiceSupport implements AsyncProcesso
                 }
             } else if ("GetAndRemove".equals(operation)) {
                 Exchange copy = repo.getAndRemove(key);
-                LOG.debug("GetAndRemove: {} -> {}", key, exchange);
+                log.debug("GetAndRemove: {} -> {}", key, exchange);
                 if (copy != null) {
                     // prepare the exchanges for aggregation
                     ExchangeHelper.prepareAggregation(exchange, copy);
@@ -149,11 +148,11 @@ public class ClaimCheckProcessor extends ServiceSupport implements AsyncProcesso
             } else if ("Push".equals(operation)) {
                 // copy exchange, and do not share the unit of work
                 Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
-                LOG.debug("Push: {} -> {}", key, copy);
+                log.debug("Push: {} -> {}", key, copy);
                 repo.push(copy);
             } else if ("Pop".equals(operation)) {
                 Exchange copy = repo.pop();
-                LOG.debug("Pop: {} -> {}", key, exchange);
+                log.debug("Pop: {} -> {}", key, exchange);
                 if (copy != null) {
                     // prepare the exchanges for aggregation
                     ExchangeHelper.prepareAggregation(exchange, copy);

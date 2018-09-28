@@ -44,8 +44,6 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.mongodb3.MongoDbOperation.command;
 import static org.apache.camel.component.mongodb3.MongoDbOperation.findAll;
@@ -61,8 +59,6 @@ import static org.apache.camel.component.mongodb3.MongoDbOutputType.MongoIterabl
 @UriEndpoint(firstVersion = "2.19.0", scheme = "mongodb3", title = "MongoDB", syntax = "mongodb3:connectionBean",
     consumerClass = MongoDbTailableCursorConsumer.class, label = "database,nosql")
 public class MongoDbEndpoint extends DefaultEndpoint {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MongoDbEndpoint.class);
 
     private MongoClient mongoConnection;
 
@@ -208,7 +204,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      * @throws CamelMongoDbException
      */
     public void initializeConnection() throws CamelMongoDbException {
-        LOG.info("Initialising MongoDb endpoint: {}", this);
+        log.info("Initialising MongoDb endpoint: {}", this);
         if (database == null || (collection == null && !(getDbStats.equals(operation) || command.equals(operation)))) {
             throw new CamelMongoDbException("Missing required endpoint configuration: database and/or collection");
         }
@@ -222,7 +218,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
             }
             mongoCollection = mongoDatabase.getCollection(collection, Document.class);
 
-            LOG.debug("MongoDb component initialised and endpoint bound to MongoDB collection with the following parameters. Address list: {}, Db: {}, Collection: {}",
+            log.debug("MongoDb component initialised and endpoint bound to MongoDB collection with the following parameters. Address list: {}, Db: {}, Collection: {}",
                       new Object[] {mongoConnection.getAllAddress().toString(), mongoDatabase.getName(), collection});
 
             try {
@@ -247,7 +243,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     public void ensureIndex(MongoCollection<Document> aCollection, List<Bson> dynamicIndex) {
         if (dynamicIndex != null && !dynamicIndex.isEmpty()) {
             for (Bson index : dynamicIndex) {
-                LOG.debug("create Document Index {}", index);
+                log.debug("create Document Index {}", index);
                 aCollection.createIndex(index);
             }
         }
@@ -298,7 +294,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         mongoConnection = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, MongoClient.class);
-        LOG.debug("Resolved the connection with the name {} as {}", connectionBean, mongoConnection);
+        log.debug("Resolved the connection with the name {} as {}", connectionBean, mongoConnection);
         super.doStart();
     }
     
@@ -306,7 +302,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     protected void doStop() throws Exception {
         super.doStop();
         if (mongoConnection != null) {
-            LOG.debug("Closing connection");
+            log.debug("Closing connection");
             mongoConnection.close();
         }
     }

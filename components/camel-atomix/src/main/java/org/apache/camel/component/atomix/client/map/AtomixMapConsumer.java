@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class AtomixMapConsumer extends AbstractAtomixClientConsumer<AtomixMapEndpoint> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AtomixMapConsumer.class);
 
     private final List<Listener<DistributedMap.EntryEvent<Object, Object>>> listeners;
     private final String resourceName;
@@ -58,12 +57,12 @@ final class AtomixMapConsumer extends AbstractAtomixClientConsumer<AtomixMapEndp
 
         Object key = getAtomixEndpoint().getConfiguration().getKey();
         if (key == null) {
-            LOGGER.debug("Subscribe to events for map: {}", resourceName);
+            log.debug("Subscribe to events for map: {}", resourceName);
             this.listeners.add(this.map.onAdd(this::onEvent).join());
             this.listeners.add(this.map.onRemove(this::onEvent).join());
             this.listeners.add(this.map.onUpdate(this::onEvent).join());
         } else {
-            LOGGER.debug("Subscribe to events for map: {}, key: {}", resourceName, key);
+            log.debug("Subscribe to events for map: {}, key: {}", resourceName, key);
             this.listeners.add(this.map.onAdd(key, this::onEvent).join());
             this.listeners.add(this.map.onRemove(key, this::onEvent).join());
             this.listeners.add(this.map.onUpdate(key, this::onEvent).join());

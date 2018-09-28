@@ -27,8 +27,6 @@ import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.StringHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages Micrometer endpoints.
@@ -36,8 +34,6 @@ import org.slf4j.LoggerFactory;
 public class MicrometerComponent extends DefaultComponent {
 
     public static final Meter.Type DEFAULT_METER_TYPE = Meter.Type.COUNTER;
-
-    private static final Logger LOG = LoggerFactory.getLogger(MicrometerComponent.class);
 
     @Metadata(label = "advanced")
     private MeterRegistry metricsRegistry;
@@ -55,7 +51,7 @@ public class MicrometerComponent extends DefaultComponent {
         Meter.Type metricsType = getMetricsType(remaining);
         Iterable<Tag> tags = getMetricsTag(parameters);
 
-        LOG.debug("Metrics type: {}; name: {}; tags: {}", metricsType, metricsName, tags);
+        log.debug("Metrics type: {}; name: {}; tags: {}", metricsType, metricsName, tags);
         Endpoint endpoint = new MicrometerEndpoint(uri, this, metricsRegistry, metricsType, metricsName, tags);
         setProperties(endpoint, parameters);
         return endpoint;

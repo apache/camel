@@ -37,7 +37,6 @@ import static org.apache.camel.component.atomix.client.AtomixClientConstants.MEM
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_NAME;
 
 final class AtomixMessagingConsumer extends AbstractAtomixClientConsumer<AtomixMessagingEndpoint> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AtomixMessagingConsumer.class);
 
     private final List<Listener<Message<Object>>> listeners;
     private final String resultHeader;
@@ -74,7 +73,7 @@ final class AtomixMessagingConsumer extends AbstractAtomixClientConsumer<AtomixM
         this.localMember = group.join(memberName).join();
         this.consumer = localMember.messaging().consumer(channelName);
 
-        LOGGER.debug("Subscribe to group: {}, member: {}, channel: {}", groupName, memberName, channelName);
+        log.debug("Subscribe to group: {}, member: {}, channel: {}", groupName, memberName, channelName);
         this.listeners.add(consumer.onMessage(this::onMessage));
     }
 

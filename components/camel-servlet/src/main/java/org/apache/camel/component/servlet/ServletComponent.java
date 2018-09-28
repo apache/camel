@@ -38,12 +38,8 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ServletComponent extends HttpCommonComponent implements RestConsumerFactory, RestApiConsumerFactory {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ServletComponent.class);
 
     @Metadata(label = "consumer", defaultValue = "CamelServlet", description = "Default name of servlet to use. The default name is CamelServlet.")
     private String servletName = "CamelServlet";
@@ -146,7 +142,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         if (endpoint.isAttachmentMultipartBinding()) {
             if (disableStreamCache == null) {
                 // disableStreamCache not explicit configured so we can automatic change it
-                LOG.info("Disabling stream caching as attachmentMultipartBinding is enabled");
+                log.info("Disabling stream caching as attachmentMultipartBinding is enabled");
                 endpoint.setDisableStreamCache(true);
             } else if (!disableStreamCache) {
                 throw new IllegalArgumentException("The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together."

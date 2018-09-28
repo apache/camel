@@ -25,7 +25,6 @@ import io.fabric8.kubernetes.client.KubernetesClientException;
 import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.dsl.MixedOperation;
-import io.fabric8.kubernetes.client.dsl.Resource;
 import io.fabric8.kubernetes.client.dsl.ServiceResource;
 
 import org.apache.camel.Exchange;
@@ -35,12 +34,8 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.consumer.common.ServiceEvent;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class KubernetesServicesConsumer extends DefaultConsumer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(KubernetesServicesConsumer.class);
 
     private final Processor processor;
     private ExecutorService executor;
@@ -69,7 +64,7 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        LOG.debug("Stopping Kubernetes Services Consumer");
+        log.debug("Stopping Kubernetes Services Consumer");
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
                 if (servicesWatcher != null) {
@@ -124,7 +119,7 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
                 @Override
                 public void onClose(KubernetesClientException cause) {
                     if (cause != null) {
-                        LOG.error(cause.getMessage(), cause);
+                        log.error(cause.getMessage(), cause);
                     }
                 }
 

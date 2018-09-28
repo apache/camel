@@ -34,8 +34,6 @@ public class MongoDbComponent extends DefaultComponent {
 
     public static final Set<MongoDbOperation> WRITE_OPERATIONS = new HashSet<>(Arrays.asList(MongoDbOperation.insert, MongoDbOperation.save, MongoDbOperation.update,
                                                                                              MongoDbOperation.remove));
-    private static final Logger LOG = LoggerFactory.getLogger(MongoDbComponent.class);
-
     public MongoDbComponent() {
         this(null);
     }

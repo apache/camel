@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class DirectProducer extends DefaultAsyncProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(DirectProducer.class);
+
     private final DirectEndpoint endpoint;
 
     public DirectProducer(DirectEndpoint endpoint) {
@@ -54,7 +54,7 @@ public class DirectProducer extends DefaultAsyncProducer {
             if (endpoint.isFailIfNoConsumers()) {
                 throw new DirectConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
             } else {
-                LOG.debug("message ignored, no consumers available on endpoint: {}", endpoint);
+                log.debug("message ignored, no consumers available on endpoint: {}", endpoint);
             }
         } else {
             consumer.getProcessor().process(exchange);
@@ -68,7 +68,7 @@ public class DirectProducer extends DefaultAsyncProducer {
                 if (endpoint.isFailIfNoConsumers()) {
                     exchange.setException(new DirectConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange));
                 } else {
-                    LOG.debug("message ignored, no consumers available on endpoint: {}", endpoint);
+                    log.debug("message ignored, no consumers available on endpoint: {}", endpoint);
                 }
                 callback.done(true);
                 return true;
