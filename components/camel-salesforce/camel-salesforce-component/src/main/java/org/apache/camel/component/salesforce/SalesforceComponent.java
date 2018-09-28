@@ -53,8 +53,6 @@ import org.eclipse.jetty.client.api.Authentication;
 import org.eclipse.jetty.client.util.BasicAuthentication;
 import org.eclipse.jetty.client.util.DigestAuthentication;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.salesforce.SalesforceLoginConfig.DEFAULT_LOGIN_URL;
 
@@ -80,8 +78,6 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     static final int IDLE_TIMEOUT = 5000;
     static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
     static final String APEX_CALL_PREFIX = OperationName.APEX_CALL.value() + "/";
-
-    private static final Logger LOG = LoggerFactory.getLogger(SalesforceComponent.class);
 
     @Metadata(description = "All authentication configuration in one nested bean, all properties set there can be set"
         + " directly on the component as well", label = "common,security")
@@ -238,7 +234,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         String topicName = null;
         String apexUrl = null;
         try {
-            LOG.debug("Creating endpoint for: {}", remaining);
+            log.debug("Creating endpoint for: {}", remaining);
             if (remaining.startsWith(APEX_CALL_PREFIX)) {
                 // extract APEX URL
                 apexUrl = remaining.substring(APEX_CALL_PREFIX.length());
@@ -317,9 +313,9 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
             loginConfig.setType(authenticationType);
             loginConfig.setUserName(userName);
 
-            LOG.debug("Created login configuration: {}", loginConfig);
+            log.debug("Created login configuration: {}", loginConfig);
         } else {
-            LOG.debug("Using shared login configuration: {}", loginConfig);
+            log.debug("Using shared login configuration: {}", loginConfig);
         }
 
         // create a Jetty HttpClient if not already set
@@ -359,10 +355,10 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         if (packages != null && packages.length > 0) {
             // parse the packages to create SObject name to class map
             classMap = parsePackages();
-            LOG.info("Found {} generated classes in packages: {}", classMap.size(), Arrays.asList(packages));
+            log.info("Found {} generated classes in packages: {}", classMap.size(), Arrays.asList(packages));
         } else {
             // use an empty map to avoid NPEs later
-            LOG.warn("Missing property packages, getSObject* operations will NOT work without property rawPayload=true");
+            log.warn("Missing property packages, getSObject* operations will NOT work without property rawPayload=true");
             classMap = new HashMap<>(0);
         }
 

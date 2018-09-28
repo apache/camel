@@ -67,12 +67,10 @@ import org.slf4j.LoggerFactory;
  */
 public class BacklogDebugger extends ServiceSupport implements InterceptStrategy {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BacklogDebugger.class);
-
     private long fallbackTimeout = 300;
     private final CamelContext camelContext;
     private LoggingLevel loggingLevel = LoggingLevel.INFO;
-    private final CamelLogger logger = new CamelLogger(LOG, loggingLevel);
+    private final CamelLogger logger = new CamelLogger(log, loggingLevel);
     private final AtomicBoolean enabled = new AtomicBoolean();
     private final AtomicLong debugCounter = new AtomicLong(0);
     private final Debugger debugger;

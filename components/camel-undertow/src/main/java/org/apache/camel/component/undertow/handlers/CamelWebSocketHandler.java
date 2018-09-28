@@ -60,7 +60,7 @@ import org.xnio.Pooled;
 
 /**
  * An {@link HttpHandler} that delegates to {@link WebSocketProtocolHandshakeHandler} and provides some wiring to
- * connect {@link UndertowComsumer} with {@link UndertowProducer}.
+ * connect {@link UndertowConsumer} with {@link UndertowProducer}.
  */
 public class CamelWebSocketHandler implements HttpHandler {
     private static final Logger LOG = LoggerFactory.getLogger(CamelWebSocketHandler.class);

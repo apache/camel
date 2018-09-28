@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
  * Base class for implementations of {@link GenericFileProcessStrategy}.
  */
 public abstract class GenericFileProcessStrategySupport<T> extends ServiceSupport implements GenericFileProcessStrategy<T>, CamelContextAware {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
     protected CamelContext camelContext;
 

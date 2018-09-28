@@ -32,8 +32,6 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.UnsafeUriCharactersEncoder.encodeHttpURI;
 
@@ -41,7 +39,7 @@ import static org.apache.camel.util.UnsafeUriCharactersEncoder.encodeHttpURI;
  * The Hipchat producer to send message to a user and/or a room.
  */
 public class HipchatProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(HipchatProducer.class);
+
     private static final ObjectMapper MAPPER = new ObjectMapper();
     
     private transient String hipchatProducerToString;
@@ -69,18 +67,18 @@ public class HipchatProducer extends DefaultProducer {
         if (backGroundColor != null) {
             jsonParam.put(HipchatApiConstants.API_MESSAGE_COLOR, backGroundColor);
         }
-        LOG.info("Sending message to room: " + room + ", " + MAPPER.writeValueAsString(jsonParam));
+        log.info("Sending message to room: " + room + ", " + MAPPER.writeValueAsString(jsonParam));
         StatusLine statusLine = post(encodeHttpURI(urlPath), jsonParam);
-        LOG.debug("Response status for send room message: {}", statusLine);
+        log.debug("Response status for send room message: {}", statusLine);
         return statusLine;
     }
 
     private StatusLine sendUserMessage(String user, Exchange exchange) throws IOException, InvalidPayloadException {
         String urlPath = String.format(getConfig().withAuthToken(HipchatApiConstants.URI_PATH_USER_MESSAGE), user);
         Map<String, String> jsonParam = getCommonHttpPostParam(exchange);
-        LOG.info("Sending message to user: " + user + ", " + MAPPER.writeValueAsString(jsonParam));
+        log.info("Sending message to user: " + user + ", " + MAPPER.writeValueAsString(jsonParam));
         StatusLine statusLine = post(urlPath, jsonParam);
-        LOG.debug("Response status for send user message: {}", statusLine);
+        log.debug("Response status for send user message: {}", statusLine);
         return statusLine;
     }
 

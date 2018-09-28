@@ -32,16 +32,12 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ResourceHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Transforms the message using a XQuery template using Saxon.
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "xquery", title = "XQuery", syntax = "xquery:resourceUri", label = "transformation")
 public class XQueryEndpoint extends ProcessorEndpoint {
-
-    private static final Logger LOG = LoggerFactory.getLogger(XQueryEndpoint.class);
 
     private volatile XQueryBuilder xquery;
 
@@ -223,7 +219,7 @@ public class XQueryEndpoint extends ProcessorEndpoint {
     protected void doStart() throws Exception {
         super.doStart();
 
-        LOG.debug("{} using schema resource: {}", this, resourceUri);
+        log.debug("{} using schema resource: {}", this, resourceUri);
         URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), resourceUri);
 
         this.xquery = XQueryBuilder.xquery(url);

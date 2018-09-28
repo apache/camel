@@ -46,15 +46,11 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Netty HTTP based component.
  */
 public class NettyHttpComponent extends NettyComponent implements HeaderFilterStrategyAware, RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware {
-
-    private static final Logger LOG = LoggerFactory.getLogger(NettyHttpComponent.class);
 
     // factories which is created by this component and therefore manage their lifecycles
     private final Map<Integer, HttpServerConsumerChannelFactory> multiplexChannelHandlers = new HashMap<>();
@@ -108,7 +104,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         NettySharedHttpServer shared = resolveAndRemoveReferenceParameter(parameters, "nettySharedHttpServer", NettySharedHttpServer.class);
         if (shared != null) {
             // use port number from the shared http server
-            LOG.debug("Using NettySharedHttpServer: {} with port: {}", shared, shared.getPort());
+            log.debug("Using NettySharedHttpServer: {} with port: {}", shared, shared.getPort());
             sharedPort = shared.getPort();
         }
 
@@ -128,7 +124,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
                 remaining = "https://" + remaining.substring(6);
             }
         }
-        LOG.debug("Netty http url: {}", remaining);
+        log.debug("Netty http url: {}", remaining);
 
         // set port on configuration which is either shared or using default values
         if (sharedPort != -1) {

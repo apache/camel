@@ -27,8 +27,6 @@ import org.slf4j.LoggerFactory;
 
 public class DozerComponent extends DefaultComponent {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DozerComponent.class);
-
     public DozerComponent() {
     }
 

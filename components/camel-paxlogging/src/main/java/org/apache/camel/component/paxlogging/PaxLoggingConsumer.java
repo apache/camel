@@ -26,8 +26,6 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.ops4j.pax.logging.spi.PaxAppender;
 import org.ops4j.pax.logging.spi.PaxLoggingEvent;
 import org.osgi.framework.ServiceRegistration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Paxlogging consumer.
@@ -41,7 +39,6 @@ import org.slf4j.LoggerFactory;
  */
 public class PaxLoggingConsumer extends DefaultConsumer implements PaxAppender {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PaxLoggingConsumer.class);
     private final PaxLoggingEndpoint endpoint;
     private ExecutorService executor;
     private ServiceRegistration registration;
@@ -62,8 +59,8 @@ public class PaxLoggingConsumer extends DefaultConsumer implements PaxAppender {
         // TODO: populate exchange headers
         exchange.getIn().setBody(paxLoggingEvent);
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("PaxLogging {} is firing", endpoint.getAppender());
+        if (log.isTraceEnabled()) {
+            log.trace("PaxLogging {} is firing", endpoint.getAppender());
         }
         try {
             getProcessor().process(exchange);

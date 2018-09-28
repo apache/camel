@@ -48,7 +48,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 public class OnCompletionProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OnCompletionProcessor.class);
     private final CamelContext camelContext;
     private String id;
     private final Processor processor;
@@ -206,7 +205,7 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
         }
 
         if (useOriginalBody) {
-            LOG.trace("Using the original IN message instead of current");
+            log.trace("Using the original IN message instead of current");
 
             Message original = ExchangeHelper.getOriginalInMessage(exchange);
             answer.setIn(original);
@@ -242,14 +241,14 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
             if (executorService != null) {
                 executorService.submit(new Callable<Exchange>() {
                     public Exchange call() throws Exception {
-                        LOG.debug("Processing onComplete: {}", copy);
+                        log.debug("Processing onComplete: {}", copy);
                         doProcess(processor, copy);
                         return copy;
                     }
                 });
             } else {
                 // run without thread-pool
-                LOG.debug("Processing onComplete: {}", copy);
+                log.debug("Processing onComplete: {}", copy);
                 doProcess(processor, copy);
             }
         }
@@ -282,7 +281,7 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
             if (executorService != null) {
                 executorService.submit(new Callable<Exchange>() {
                     public Exchange call() throws Exception {
-                        LOG.debug("Processing onFailure: {}", copy);
+                        log.debug("Processing onFailure: {}", copy);
                         doProcess(processor, copy);
                         // restore exception after processing
                         copy.setException(original);
@@ -291,7 +290,7 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
                 });
             } else {
                 // run without thread-pool
-                LOG.debug("Processing onFailure: {}", copy);
+                log.debug("Processing onFailure: {}", copy);
                 doProcess(processor, copy);
                 // restore exception after processing
                 copy.setException(original);
@@ -344,14 +343,14 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
             if (executorService != null) {
                 executorService.submit(new Callable<Exchange>() {
                     public Exchange call() throws Exception {
-                        LOG.debug("Processing onAfterRoute: {}", copy);
+                        log.debug("Processing onAfterRoute: {}", copy);
                         doProcess(processor, copy);
                         return copy;
                     }
                 });
             } else {
                 // run without thread-pool
-                LOG.debug("Processing onAfterRoute: {}", copy);
+                log.debug("Processing onAfterRoute: {}", copy);
                 doProcess(processor, copy);
             }
         }

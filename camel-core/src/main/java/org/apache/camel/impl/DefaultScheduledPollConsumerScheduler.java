@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,9 +34,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Default {@link org.apache.camel.impl.ScheduledBatchPollingConsumer}.
  */
-public class DefaultScheduledPollConsumerScheduler extends org.apache.camel.support.ServiceSupport implements ScheduledPollConsumerScheduler {
+public class DefaultScheduledPollConsumerScheduler extends ServiceSupport implements ScheduledPollConsumerScheduler {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultScheduledPollConsumerScheduler.class);
     private CamelContext camelContext;
     private Consumer consumer;
     private ScheduledExecutorService scheduledExecutorService;
@@ -137,16 +137,16 @@ public class DefaultScheduledPollConsumerScheduler extends org.apache.camel.supp
         // only schedule task if we have not already done that
         if (futures.size() == 0) {
             if (isUseFixedDelay()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Scheduling poll (fixed delay) with initialDelay: {}, delay: {} ({}) for: {}",
+                if (log.isDebugEnabled()) {
+                    log.debug("Scheduling poll (fixed delay) with initialDelay: {}, delay: {} ({}) for: {}",
                             new Object[]{getInitialDelay(), getDelay(), getTimeUnit().name().toLowerCase(Locale.ENGLISH), consumer.getEndpoint()});
                 }
                 for (int i = 0; i < concurrentTasks; i++) {
                     futures.add(scheduledExecutorService.scheduleWithFixedDelay(task, getInitialDelay(), getDelay(), getTimeUnit()));
                 }
             } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Scheduling poll (fixed rate) with initialDelay: {}, delay: {} ({}) for: {}",
+                if (log.isDebugEnabled()) {
+                    log.debug("Scheduling poll (fixed rate) with initialDelay: {}, delay: {} ({}) for: {}",
                             new Object[]{getInitialDelay(), getDelay(), getTimeUnit().name().toLowerCase(Locale.ENGLISH), consumer.getEndpoint()});
                 }
                 for (int i = 0; i < concurrentTasks; i++) {
@@ -180,7 +180,7 @@ public class DefaultScheduledPollConsumerScheduler extends org.apache.camel.supp
     @Override
     protected void doStop() throws Exception {
         if (isSchedulerStarted()) {
-            LOG.debug("This consumer is stopping, so cancelling scheduled task: {}", futures);
+            log.debug("This consumer is stopping, so cancelling scheduled task: {}", futures);
             for (ScheduledFuture<?> future : futures) {
                 future.cancel(true);
             }

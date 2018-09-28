@@ -33,9 +33,6 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T>
     extends ScheduledPollConsumer implements PropertyNamesInterceptor, PropertiesInterceptor, ResultInterceptor {
 
-    // logger
-    protected final Logger log = LoggerFactory.getLogger(getClass());
-
     // API Endpoint
     protected final AbstractApiEndpoint<E, T> endpoint;
 

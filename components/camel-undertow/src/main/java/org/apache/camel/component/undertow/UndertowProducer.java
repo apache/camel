@@ -44,8 +44,6 @@ import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
 import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.util.URISupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xnio.OptionMap;
 import org.xnio.Xnio;
 import org.xnio.XnioWorker;
@@ -61,7 +59,6 @@ import org.xnio.ssl.XnioSsl;
  * may be changed too.
  */
 public class UndertowProducer extends DefaultAsyncProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(UndertowProducer.class);
 
     private UndertowClient client;
     private final UndertowEndpoint endpoint;
@@ -150,8 +147,8 @@ public class UndertowProducer extends DefaultAsyncProducer {
                 requestHeaders.putAll(HttpString.tryFromString(entry.getKey()), entry.getValue());
             }
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Executing http {} method: {}", method, pathAndQuery);
+            if (log.isDebugEnabled()) {
+                log.debug("Executing http {} method: {}", method, pathAndQuery);
             }
 
             final UndertowClientCallback clientCallback = new UndertowClientCallback(camelExchange, callback, getEndpoint(),
@@ -234,7 +231,7 @@ public class UndertowProducer extends DefaultAsyncProducer {
             this.webSocketHandler = (CamelWebSocketHandler) endpoint.getComponent().registerEndpoint(endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(), new CamelWebSocketHandler());
         }
 
-        LOG.debug("Created worker: {} with options: {}", worker, options);
+        log.debug("Created worker: {} with options: {}", worker, options);
     }
 
     @Override
@@ -246,7 +243,7 @@ public class UndertowProducer extends DefaultAsyncProducer {
         }
 
         if (worker != null && !worker.isShutdown()) {
-            LOG.debug("Shutting down worker: {}", worker);
+            log.debug("Shutting down worker: {}", worker);
             worker.shutdown();
         }
     }

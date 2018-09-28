@@ -21,8 +21,6 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.snmp4j.CommunityTarget;
 import org.snmp4j.PDU;
 import org.snmp4j.ScopedPDU;
@@ -57,8 +55,6 @@ import org.snmp4j.util.TreeEvent;
 import org.snmp4j.util.TreeUtils;
 
 public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseListener {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SnmpOIDPoller.class);
 
     private Address targetAddress;
     private TransportMapping<? extends Address> transport;
@@ -143,12 +139,12 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
         }
 
         // listen to the transport
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Starting OID poller on {} using {} protocol", endpoint.getAddress(), endpoint.getProtocol());
+        if (log.isDebugEnabled()) {
+            log.debug("Starting OID poller on {} using {} protocol", endpoint.getAddress(), endpoint.getProtocol());
         }
         this.transport.listen();
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Started OID poller on {} using {} protocol", endpoint.getAddress(), endpoint.getProtocol());
+        if (log.isInfoEnabled()) {
+            log.info("Started OID poller on {} using {} protocol", endpoint.getAddress(), endpoint.getProtocol());
         }
     }
 
@@ -156,9 +152,9 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
     protected void doStop() throws Exception {
         // stop listening to the transport
         if (this.transport != null && this.transport.isListening()) {
-            LOG.info("Stopping OID poller on {}", targetAddress);
+            log.info("Stopping OID poller on {}", targetAddress);
             this.transport.close();
-            LOG.info("Stopped OID poller on {}", targetAddress);
+            log.info("Stopped OID poller on {}", targetAddress);
         }
 
         super.doStop();
@@ -184,11 +180,11 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
                 for (Object eventObj : events) {
                     TreeEvent event = (TreeEvent) eventObj;
                     if (event == null) {
-                        LOG.warn("Event is null");
+                        log.warn("Event is null");
                         continue;
                     }
                     if (event.isError()) {
-                        LOG.error("Error in event: {}", event.getErrorMessage());
+                        log.error("Error in event: {}", event.getErrorMessage());
                         continue;
                     }
                     VariableBinding[] varBindings = event.getVariableBindings();
@@ -220,7 +216,7 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
         // check for valid response
         if (event.getRequest() == null || event.getResponse() == null) {
             // ignore null requests/responses
-            LOG.debug("Received invalid SNMP event. Request: " + event.getRequest() + " / Response: " + event.getResponse());
+            log.debug("Received invalid SNMP event. Request: " + event.getRequest() + " / Response: " + event.getResponse());
             return;
         }
         
@@ -234,8 +230,8 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
      * @param pdu the pdu
      */
     public void processPDU(PDU pdu) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Received response event for {} : {}", this.endpoint.getAddress(), pdu);
+        if (log.isDebugEnabled()) {
+            log.debug("Received response event for {} : {}", this.endpoint.getAddress(), pdu);
         }
         Exchange exchange = endpoint.createExchange(pdu);
         try {

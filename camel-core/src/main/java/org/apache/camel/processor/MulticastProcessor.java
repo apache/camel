@@ -85,8 +85,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 public class MulticastProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, IdAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MulticastProcessor.class);
-
     /**
      * Class that represent each step in the multicast route to do
      */
@@ -292,7 +290,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                     aggregationOnTheFlyDone, allTasksSubmitted, executionException);
             final AtomicBoolean aggregationTaskSubmitted = new AtomicBoolean();
 
-            LOG.trace("Starting to submit parallel tasks");
+            log.trace("Starting to submit parallel tasks");
             
             try {
                 while (it.hasNext()) {
@@ -326,7 +324,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     
                             // Decide whether to continue with the multicast or not; similar logic to the Pipeline
                             Integer number = getExchangeIndex(subExchange);
-                            boolean continueProcessing = PipelineHelper.continueProcessing(subExchange, "Parallel processing failed for number " + number, LOG);
+                            boolean continueProcessing = PipelineHelper.continueProcessing(subExchange, "Parallel processing failed for number " + number, log);
                             if (stopOnException && !continueProcessing) {
                                 // signal to stop running
                                 running.set(false);
@@ -338,7 +336,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                                 }
                             }
     
-                            LOG.trace("Parallel processing complete for exchange: {}", subExchange);
+                            log.trace("Parallel processing complete for exchange: {}", subExchange);
                             return subExchange;
                         }
                     });
@@ -354,32 +352,32 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                     executionException.set(ObjectHelper.wrapRuntimeCamelException(e));
                 }
                 // and because of the exception we must signal we are done so the latch can open and let the other thread continue processing
-                LOG.debug("Signaling we are done aggregating on the fly for exchangeId: {}", original.getExchangeId());
-                LOG.trace("Aggregate on the fly task done for exchangeId: {}", original.getExchangeId());
+                log.debug("Signaling we are done aggregating on the fly for exchangeId: {}", original.getExchangeId());
+                log.trace("Aggregate on the fly task done for exchangeId: {}", original.getExchangeId());
                 aggregationOnTheFlyDone.countDown();
             }
 
             // signal all tasks has been submitted
-            LOG.trace("Signaling that all {} tasks has been submitted.", total.get());
+            log.trace("Signaling that all {} tasks has been submitted.", total.get());
             allTasksSubmitted.set(true);
 
             // its to hard to do parallel async routing so we let the caller thread be synchronously
             // and have it pickup the replies and do the aggregation (eg we use a latch to wait)
             // wait for aggregation to be done
-            LOG.debug("Waiting for on-the-fly aggregation to complete aggregating {} responses for exchangeId: {}", total.get(), original.getExchangeId());
+            log.debug("Waiting for on-the-fly aggregation to complete aggregating {} responses for exchangeId: {}", total.get(), original.getExchangeId());
             aggregationOnTheFlyDone.await();
 
             // did we fail for whatever reason, if so throw that caused exception
             if (executionException.get() != null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Parallel processing failed due {}", executionException.get().getMessage());
+                if (log.isDebugEnabled()) {
+                    log.debug("Parallel processing failed due {}", executionException.get().getMessage());
                 }
                 throw executionException.get();
             }
         }
 
         // no everything is okay so we are done
-        LOG.debug("Done parallel processing {} exchanges", total);
+        log.debug("Done parallel processing {} exchanges", total);
     }
 
     /**
@@ -419,7 +417,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         }
 
         public void run() {
-            LOG.trace("Aggregate on the fly task started for exchangeId: {}", original.getExchangeId());
+            log.trace("Aggregate on the fly task started for exchangeId: {}", original.getExchangeId());
 
             try {
                 aggregateOnTheFly();
@@ -431,8 +429,8 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 }
             } finally {
                 // must signal we are done so the latch can open and let the other thread continue processing
-                LOG.debug("Signaling we are done aggregating on the fly for exchangeId: {}", original.getExchangeId());
-                LOG.trace("Aggregate on the fly task done for exchangeId: {}", original.getExchangeId());
+                log.debug("Signaling we are done aggregating on the fly for exchangeId: {}", original.getExchangeId());
+                log.trace("Aggregate on the fly task done for exchangeId: {}", original.getExchangeId());
                 aggregationOnTheFlyDone.countDown();
             }
         }
@@ -447,7 +445,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             while (!done) {
                 // check if we have already aggregate everything
                 if (allTasksSubmitted.get() && aggregated.intValue() >= total.get()) {
-                    LOG.debug("Done aggregating {} exchanges on the fly.", aggregated);
+                    log.debug("Done aggregating {} exchanges on the fly.", aggregated);
                     break;
                 }
 
@@ -456,16 +454,16 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                     // we are timed out but try to grab if some tasks has been completed
                     // poll will return null if no tasks is present
                     future = completion.poll();
-                    LOG.trace("Polled completion task #{} after timeout to grab already completed tasks: {}", aggregated, future);
+                    log.trace("Polled completion task #{} after timeout to grab already completed tasks: {}", aggregated, future);
                 } else if (timeout > 0) {
                     long left = timeout - watch.taken();
                     if (left < 0) {
                         left = 0;
                     }
-                    LOG.trace("Polling completion task #{} using timeout {} millis.", aggregated, left);
+                    log.trace("Polling completion task #{} using timeout {} millis.", aggregated, left);
                     future = completion.poll(left, TimeUnit.MILLISECONDS);
                 } else {
-                    LOG.trace("Polling completion task #{}", aggregated);
+                    log.trace("Polling completion task #{}", aggregated);
                     // we must not block so poll every second
                     future = completion.poll(1, TimeUnit.SECONDS);
                     if (future == null) {
@@ -488,7 +486,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
                     // Decide whether to continue with the multicast or not; similar logic to the Pipeline
                     Integer number = getExchangeIndex(subExchange);
-                    boolean continueProcessing = PipelineHelper.continueProcessing(subExchange, "Parallel processing failed for number " + number, LOG);
+                    boolean continueProcessing = PipelineHelper.continueProcessing(subExchange, "Parallel processing failed for number " + number, log);
                     if (stopOnException && !continueProcessing) {
                         // we want to stop on exception and an exception or failure occurred
                         // this is similar to what the pipeline does, so we should do the same to not surprise end users
@@ -511,10 +509,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
             if (timedOut.get() || stoppedOnException) {
                 if (timedOut.get()) {
-                    LOG.debug("Cancelling tasks due timeout after {} millis.", timeout);
+                    log.debug("Cancelling tasks due timeout after {} millis.", timeout);
                 }
                 if (stoppedOnException) {
-                    LOG.debug("Cancelling tasks due stopOnException.");
+                    log.debug("Cancelling tasks due stopOnException.");
                 }
                 // cancel tasks as we timed out (its safe to cancel done tasks)
                 running.set(false);
@@ -552,7 +550,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                     // wrap in exception to explain where it failed
                     CamelExchangeException cex = new CamelExchangeException("Parallel processing failed for number " + aggregated.get(), subExchange, e);
                     subExchange.setException(cex);
-                    LOG.debug(cex.getMessage(), cex);
+                    log.debug(cex.getMessage(), cex);
                 }
             } finally {
                 aggregated.incrementAndGet();
@@ -598,9 +596,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 ((TimeoutAwareAggregationStrategy) strategy).timeout(oldExchange, aggregated.intValue(), total.intValue(), timeout);
             } else {
                 // log a WARN we timed out since it will not be aggregated and the Exchange will be lost
-                LOG.warn("Parallel processing timed out after {} millis for number {}. This task will be cancelled and will not be aggregated.", timeout, aggregated.intValue());
+                log.warn("Parallel processing timed out after {} millis for number {}. This task will be cancelled and will not be aggregated.", timeout, aggregated.intValue());
             }
-            LOG.debug("Timeout occurred after {} millis for number {} task.", timeout, aggregated.intValue());
+            log.debug("Timeout occurred after {} millis for number {} task.", timeout, aggregated.intValue());
             timedOut.set(true);
 
             // mark that index as timed out, which allows us to try to retrieve
@@ -629,21 +627,21 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
             boolean sync = doProcessSequential(original, result, pairs, it, pair, callback, total);
             if (!sync) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", pair.getExchange().getExchangeId());
+                if (log.isTraceEnabled()) {
+                    log.trace("Processing exchangeId: {} is continued being processed asynchronously", pair.getExchange().getExchangeId());
                 }
                 // the remainder of the multicast will be completed async
                 // so we break out now, then the callback will be invoked which then continue routing from where we left here
                 return false;
             }
 
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Processing exchangeId: {} is continued being processed synchronously", pair.getExchange().getExchangeId());
+            if (log.isTraceEnabled()) {
+                log.trace("Processing exchangeId: {} is continued being processed synchronously", pair.getExchange().getExchangeId());
             }
 
             // Decide whether to continue with the multicast or not; similar logic to the Pipeline
             // remember to test for stop on exception and aggregate before copying back results
-            boolean continueProcessing = PipelineHelper.continueProcessing(subExchange, "Sequential processing failed for number " + total.get(), LOG);
+            boolean continueProcessing = PipelineHelper.continueProcessing(subExchange, "Sequential processing failed for number " + total.get(), log);
             if (stopOnException && !continueProcessing) {
                 if (subExchange.getException() != null) {
                     // wrap in exception to explain where it failed
@@ -657,7 +655,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 return true;
             }
 
-            LOG.trace("Sequential processing complete for number {} exchange: {}", total, subExchange);
+            log.trace("Sequential processing complete for number {} exchange: {}", total, subExchange);
 
             if (parallelAggregate) {
                 doAggregateInternal(getAggregationStrategy(subExchange), result, subExchange);
@@ -668,7 +666,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             total.incrementAndGet();
         }
 
-        LOG.debug("Done sequential processing {} exchanges", total);
+        log.debug("Done sequential processing {} exchanges", total);
 
         return true;
     }
@@ -720,7 +718,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
                     // Decide whether to continue with the multicast or not; similar logic to the Pipeline
                     // remember to test for stop on exception and aggregate before copying back results
-                    boolean continueProcessing = PipelineHelper.continueProcessing(subExchange, "Sequential processing failed for number " + total.get(), LOG);
+                    boolean continueProcessing = PipelineHelper.continueProcessing(subExchange, "Sequential processing failed for number " + total.get(), log);
                     if (stopOnException && !continueProcessing) {
                         if (subExchange.getException() != null) {
                             // wrap in exception to explain where it failed
@@ -761,13 +759,13 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                         boolean sync = doProcessSequential(original, result, pairs, it, pair, callback, total);
 
                         if (!sync) {
-                            LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", original.getExchangeId());
+                            log.trace("Processing exchangeId: {} is continued being processed asynchronously", original.getExchangeId());
                             return;
                         }
 
                         // Decide whether to continue with the multicast or not; similar logic to the Pipeline
                         // remember to test for stop on exception and aggregate before copying back results
-                        continueProcessing = PipelineHelper.continueProcessing(subExchange, "Sequential processing failed for number " + total.get(), LOG);
+                        continueProcessing = PipelineHelper.continueProcessing(subExchange, "Sequential processing failed for number " + total.get(), log);
                         if (stopOnException && !continueProcessing) {
                             if (subExchange.getException() != null) {
                                 // wrap in exception to explain where it failed
@@ -863,7 +861,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
         // we are done so close the pairs iterator
         if (pairs instanceof Closeable) {
-            IOHelper.close((Closeable) pairs, "pairs", LOG);
+            IOHelper.close((Closeable) pairs, "pairs", log);
         }
 
         AggregationStrategy strategy = getAggregationStrategy(subExchange);
@@ -1063,11 +1061,11 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             // lookup cached first to reuse and preserve memory
             answer = errorHandlers.get(key);
             if (answer != null) {
-                LOG.trace("Using existing error handler for: {}", processor);
+                log.trace("Using existing error handler for: {}", processor);
                 return answer;
             }
 
-            LOG.trace("Creating error handler for: {}", processor);
+            log.trace("Creating error handler for: {}", processor);
             RouteDefinition route = (RouteDefinition) routeContext.getRoute();
             ErrorHandlerFactory builder = route.getErrorHandlerBuilder();
             // create error handler (create error handler directly to keep it light weight,

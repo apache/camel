@@ -75,7 +75,6 @@ public class PropertiesComponent extends DefaultComponent {
      */
     public static final String OVERRIDE_PROPERTIES = PropertiesComponent.class.getName() + ".OverrideProperties";
 
-    private static final Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
     @SuppressWarnings("unchecked")
     private final Map<CacheKey, Properties> cacheMap = LRUCacheFactory.newLRUSoftCache(1000);
     private final Map<String, PropertiesFunction> functions = new HashMap<>();
@@ -146,12 +145,12 @@ public class PropertiesComponent extends DefaultComponent {
         // override default locations
         String locations = getAndRemoveParameter(parameters, "locations", String.class);
         if (locations != null) {
-            LOG.trace("Overriding default locations with location: {}", locations);
+            log.trace("Overriding default locations with location: {}", locations);
             paths = Arrays.stream(locations.split(",")).map(PropertiesLocation::new).collect(Collectors.toList());
         }
 
         String endpointUri = parseUri(remaining, paths);
-        LOG.debug("Endpoint uri parsed as: {}", endpointUri);
+        log.debug("Endpoint uri parsed as: {}", endpointUri);
 
         Endpoint delegate = getCamelContext().getEndpoint(endpointUri);
         PropertiesEndpoint answer = new PropertiesEndpoint(uri, delegate, this);
@@ -215,7 +214,7 @@ public class PropertiesComponent extends DefaultComponent {
             uri = uri + suffixToken;
         }
 
-        LOG.trace("Parsing uri {} with properties: {}", uri, prop);
+        log.trace("Parsing uri {} with properties: {}", uri, prop);
         
         if (propertiesParser instanceof AugmentedPropertyNameAwarePropertiesParser) {
             return ((AugmentedPropertyNameAwarePropertiesParser) propertiesParser).parseUri(
@@ -529,11 +528,11 @@ public class PropertiesComponent extends DefaultComponent {
         List<PropertiesLocation> answer = new ArrayList<>();
 
         for (PropertiesLocation location : locations) {
-            LOG.trace("Parsing location: {}", location);
+            log.trace("Parsing location: {}", location);
 
             try {
                 String path = FilePathResolver.resolvePath(location.getPath());
-                LOG.debug("Parsed location: {}", path);
+                log.debug("Parsed location: {}", path);
                 if (ObjectHelper.isNotEmpty(path)) {
                     answer.add(new PropertiesLocation(
                         location.getResolver(),
@@ -545,7 +544,7 @@ public class PropertiesComponent extends DefaultComponent {
                 if (!ignoreMissingLocation && !location.isOptional()) {
                     throw e;
                 } else {
-                    LOG.debug("Ignored missing location: {}", location);
+                    log.debug("Ignored missing location: {}", location);
                 }
             }
         }

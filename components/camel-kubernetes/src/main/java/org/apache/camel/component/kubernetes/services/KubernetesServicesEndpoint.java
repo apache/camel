@@ -33,8 +33,6 @@ import org.slf4j.LoggerFactory;
     syntax = "kubernetes-services:masterUrl", consumerClass = KubernetesServicesConsumer.class, label = "container,cloud,paas")
 public class KubernetesServicesEndpoint extends AbstractKubernetesEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KubernetesServicesEndpoint.class);
-
     public KubernetesServicesEndpoint(String uri, KubernetesServicesComponent component, KubernetesConfiguration config) {
         super(uri, component, config);
     }

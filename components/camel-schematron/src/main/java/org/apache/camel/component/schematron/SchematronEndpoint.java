@@ -38,8 +38,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ResourceHelper;
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.schematron.constant.Constants.LINE_NUMBERING;
 import static org.apache.camel.component.schematron.constant.Constants.SAXON_TRANSFORMER_FACTORY_CLASS_NAME;
@@ -49,8 +47,6 @@ import static org.apache.camel.component.schematron.constant.Constants.SAXON_TRA
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "schematron", title = "Schematron", syntax = "schematron:path", producerOnly = true, label = "validation")
 public class SchematronEndpoint extends DefaultEndpoint {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SchematronEndpoint.class);
 
     private TransformerFactory transformerFactory;
 
@@ -139,24 +135,24 @@ public class SchematronEndpoint extends DefaultEndpoint {
         if (rules == null) {
             try {
                 // Attempt to read the schematron rules from the class path first.
-                LOG.debug("Reading schematron rules from class path {}", path);
+                log.debug("Reading schematron rules from class path {}", path);
                 InputStream schRules = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), path);
                 rules = TemplatesFactory.newInstance().getTemplates(schRules, transformerFactory);
             } catch (Exception classPathException) {
                 // Attempts from the file system.
-                LOG.debug("Error loading schematron rules from class path, attempting file system {}", path);
+                log.debug("Error loading schematron rules from class path, attempting file system {}", path);
                 try {
                     InputStream schRules = FileUtils.openInputStream(new File(path));
                     rules = TemplatesFactory.newInstance().getTemplates(schRules, transformerFactory);
                 } catch (FileNotFoundException e) {
-                    LOG.debug("Schematron rules not found in the file system {}", path);
+                    log.debug("Schematron rules not found in the file system {}", path);
                     throw classPathException; // Can be more meaningful, for example, xslt compilation error.
                 }
             }
 
             // rules not found in class path nor in file system.
             if (rules == null) {
-                LOG.error("Failed to load schematron rules {}", path);
+                log.error("Failed to load schematron rules {}", path);
                 throw new SchematronConfigException("Failed to load schematron rules: " + path);
             }
         }
@@ -167,7 +163,7 @@ public class SchematronEndpoint extends DefaultEndpoint {
         Class<TransformerFactory> factoryClass = getCamelContext().getClassResolver().resolveMandatoryClass(SAXON_TRANSFORMER_FACTORY_CLASS_NAME,
                 TransformerFactory.class, SchematronComponent.class.getClassLoader());
 
-        LOG.debug("Using TransformerFactoryClass {}", factoryClass);
+        log.debug("Using TransformerFactoryClass {}", factoryClass);
         transformerFactory = getCamelContext().getInjector().newInstance(factoryClass);
         transformerFactory.setURIResolver(new ClassPathURIResolver(Constants.SCHEMATRON_TEMPLATES_ROOT_DIR, this.uriResolver));
         transformerFactory.setAttribute(LINE_NUMBERING, true);

@@ -20,7 +20,6 @@ package org.apache.camel.component.mllp;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.nio.charset.Charset;
 import java.util.Date;
 
 import org.apache.camel.Consumer;
@@ -36,7 +35,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Provides functionality required by Healthcare providers to communicate with other systems using the MLLP protocol.
@@ -65,8 +63,6 @@ public class MllpEndpoint extends DefaultEndpoint {
 
     @Deprecated // Use MllpComponent.getDefaultCharset()
     public static final Charset DEFAULT_CHARSET = MllpComponent.getDefaultCharset();
-
-    private static final Logger LOG = LoggerFactory.getLogger(MllpEndpoint.class);
 
     @UriPath
     @Metadata(required = "true")
@@ -124,12 +120,12 @@ public class MllpEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        LOG.trace("({}).createProducer()", this.getEndpointKey());
+        log.trace("({}).createProducer()", this.getEndpointKey());
         return new MllpTcpClientProducer(this);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        LOG.trace("({}).createConsumer(Processor)", this.getEndpointKey());
+        log.trace("({}).createConsumer(Processor)", this.getEndpointKey());
         Consumer consumer = new MllpTcpServerConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;

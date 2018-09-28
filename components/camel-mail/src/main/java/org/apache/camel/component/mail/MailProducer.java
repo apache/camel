@@ -23,14 +23,12 @@ import javax.mail.internet.MimeMessage;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A Producer to send messages using JavaMail.
  */
 public class MailProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(MailProducer.class);
+
     private final JavaMailSender sender;
 
     public MailProducer(MailEndpoint endpoint, JavaMailSender sender) {
@@ -57,8 +55,8 @@ public class MailProducer extends DefaultProducer {
                 mimeMessage = new MimeMessage(sender.getSession());
                 getEndpoint().getBinding().populateMailMessage(getEndpoint(), mimeMessage, exchange);
             }
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Sending MimeMessage: {}", MailUtils.dumpMessage(mimeMessage));
+            if (log.isDebugEnabled()) {
+                log.debug("Sending MimeMessage: {}", MailUtils.dumpMessage(mimeMessage));
             }
             sender.send(mimeMessage);
             // set the message ID for further processing

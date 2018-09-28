@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class AtomixQueueConsumer extends AbstractAtomixClientConsumer<AtomixQueueEndpoint> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AtomixQueueConsumer.class);
 
     private final List<Listener<DistributedQueue.ValueEvent<Object>>> listeners;
     private final String resourceName;
@@ -56,7 +55,7 @@ final class AtomixQueueConsumer extends AbstractAtomixClientConsumer<AtomixQueue
             .join();
 
 
-        LOGGER.debug("Subscribe to events for queue: {}", resourceName);
+        log.debug("Subscribe to events for queue: {}", resourceName);
         this.listeners.add(this.queue.onAdd(this::onEvent).join());
         this.listeners.add(this.queue.onRemove(this::onEvent).join());
     }

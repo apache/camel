@@ -33,8 +33,6 @@ import org.slf4j.LoggerFactory;
     syntax = "kubernetes-hpa:masterUrl", consumerClass = KubernetesHPAConsumer.class, label = "container,cloud,paas")
 public class KubernetesHPAEndpoint extends AbstractKubernetesEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KubernetesHPAEndpoint.class);
-
     public KubernetesHPAEndpoint(String uri, KubernetesHPAComponent component, KubernetesConfiguration config) {
         super(uri, component, config);
     }

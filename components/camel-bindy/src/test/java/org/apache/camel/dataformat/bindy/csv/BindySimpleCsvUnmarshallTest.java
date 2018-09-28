@@ -73,7 +73,7 @@ public class BindySimpleCsvUnmarshallTest extends AbstractJUnit4SpringContextTes
         /*
          * List<Exchange> exchanges = resultEndpoint.getExchanges();
          * for(Exchange exchange : exchanges) { Object body =
-         * exchange.getOut().getBody(); LOG.debug("Body received : " +
+         * exchange.getOut().getBody(); log.debug("Body received : " +
          * body.toString()); }
          */
 

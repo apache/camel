@@ -40,14 +40,11 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents asynchronous and synchronous gRPC producer implementations.
  */
 public class GrpcProducer extends DefaultProducer implements AsyncProcessor {
-    private static final Logger LOG = LoggerFactory.getLogger(GrpcProducer.class);
 
     protected final GrpcConfiguration configuration;
     protected final GrpcEndpoint endpoint;
@@ -110,10 +107,10 @@ public class GrpcProducer extends DefaultProducer implements AsyncProcessor {
             }
             
             if (endpoint.isSynchronous()) {
-                LOG.debug("Getting synchronous method stub from channel");
+                log.debug("Getting synchronous method stub from channel");
                 grpcStub = GrpcUtils.constructGrpcBlockingStub(endpoint.getServicePackage(), endpoint.getServiceName(), channel, callCreds, endpoint.getCamelContext());
             } else {
-                LOG.debug("Getting asynchronous method stub from channel");
+                log.debug("Getting asynchronous method stub from channel");
                 grpcStub = GrpcUtils.constructGrpcAsyncStub(endpoint.getServicePackage(), endpoint.getServiceName(), channel, callCreds, endpoint.getCamelContext());
             }
             forwarder = GrpcExchangeForwarderFactory.createExchangeForwarder(configuration, grpcStub);
@@ -130,7 +127,7 @@ public class GrpcProducer extends DefaultProducer implements AsyncProcessor {
             forwarder.shutdown();
             forwarder = null;
 
-            LOG.debug("Terminating channel to the remote gRPC server");
+            log.debug("Terminating channel to the remote gRPC server");
             channel.shutdown().shutdownNow();
             channel = null;
             grpcStub = null;
@@ -143,7 +140,7 @@ public class GrpcProducer extends DefaultProducer implements AsyncProcessor {
         NettyChannelBuilder channelBuilder = null;
         
         if (!ObjectHelper.isEmpty(configuration.getHost()) && !ObjectHelper.isEmpty(configuration.getPort())) {
-            LOG.info("Creating channel to the remote gRPC server {}:{}", configuration.getHost(), configuration.getPort());
+            log.info("Creating channel to the remote gRPC server {}:{}", configuration.getHost(), configuration.getPort());
             channelBuilder = NettyChannelBuilder.forAddress(configuration.getHost(), configuration.getPort());
         } else {
             throw new IllegalArgumentException("No connection properties (host or port) specified");

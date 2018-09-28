@@ -30,8 +30,6 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A logger for logging message throughput.
@@ -39,7 +37,6 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class ThroughputLogger extends ServiceSupport implements AsyncProcessor, IdAware {
-    private static final Logger LOG = LoggerFactory.getLogger(ThroughputLogger.class);
 
     private String id;
     private final AtomicInteger receivedCounter = new AtomicInteger();
@@ -54,22 +51,22 @@ public class ThroughputLogger extends ServiceSupport implements AsyncProcessor, 
     private String action = "Received";
     private CamelContext camelContext;
     private ScheduledExecutorService logSchedulerService;
-    private CamelLogger log;
+    private CamelLogger logger;
     private String lastLogMessage;
     private double rate;
     private double average;
 
-    public ThroughputLogger(CamelLogger log) {
-        this.log = log;
+    public ThroughputLogger(CamelLogger logger) {
+        this.logger = logger;
     }
 
-    public ThroughputLogger(CamelLogger log, Integer groupSize) {
-        this(log);
+    public ThroughputLogger(CamelLogger logger, Integer groupSize) {
+        this(logger);
         setGroupSize(groupSize);
     }
 
-    public ThroughputLogger(CamelLogger log, CamelContext camelContext, Long groupInterval, Long groupDelay, Boolean groupActiveOnly) {
-        this(log);
+    public ThroughputLogger(CamelLogger logger, CamelContext camelContext, Long groupInterval, Long groupDelay, Boolean groupActiveOnly) {
+        this(logger);
         this.camelContext = camelContext;
         setGroupInterval(groupInterval);
         setGroupActiveOnly(groupActiveOnly);
@@ -100,7 +97,7 @@ public class ThroughputLogger extends ServiceSupport implements AsyncProcessor, 
         if (groupSize != null) {
             if (receivedCount % groupSize == 0) {
                 lastLogMessage = createLogMessage(exchange, receivedCount);
-                log.log(lastLogMessage);
+                logger.log(lastLogMessage);
             }
         }
 
@@ -196,7 +193,7 @@ public class ThroughputLogger extends ServiceSupport implements AsyncProcessor, 
 
             logSchedulerService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "ThroughputLogger");
             Runnable scheduledLogTask = new ScheduledLogTask();
-            LOG.info("Scheduling throughput log to run every {} millis.", groupInterval);
+            log.info("Scheduling throughput logger to run every {} millis.", groupInterval);
             // must use fixed rate to have it trigger at every X interval
             logSchedulerService.scheduleAtFixedRate(scheduledLogTask, groupDelay, groupInterval, TimeUnit.MILLISECONDS);
         }
@@ -235,7 +232,7 @@ public class ThroughputLogger extends ServiceSupport implements AsyncProcessor, 
         public void run() {
             // only run if CamelContext has been fully started
             if (!camelContext.getStatus().isStarted()) {
-                LOG.trace("ThroughputLogger cannot start because CamelContext({}) has not been started yet", camelContext.getName());
+                log.trace("ThroughputLogger cannot start because CamelContext({}) has not been started yet", camelContext.getName());
                 return;
             }
 
@@ -245,14 +242,14 @@ public class ThroughputLogger extends ServiceSupport implements AsyncProcessor, 
 
     protected void createGroupIntervalLogMessage() {
         
-        // this indicates that no messages have been received yet...don't log yet
+        // this indicates that no messages have been received yet...don't logger yet
         if (startTime == 0) {
             return;
         }
         
         int receivedCount = receivedCounter.get();
 
-        // if configured, hide log messages when no new messages have been received
+        // if configured, hide logger messages when no new messages have been received
         if (groupActiveOnly && receivedCount == groupReceivedCount) {
             return;
         }
@@ -273,7 +270,7 @@ public class ThroughputLogger extends ServiceSupport implements AsyncProcessor, 
         lastLogMessage = getAction() + ": " + currentCount + " new messages, with total " + receivedCount + " so far. Last group took: " + duration
                 + " millis which is: " + numberFormat.format(rate)
                 + " messages per second. average: " + numberFormat.format(average);
-        log.log(lastLogMessage);
+        logger.log(lastLogMessage);
     }
 
     protected double messagesPerSecond(long messageCount, long startTime, long endTime) {

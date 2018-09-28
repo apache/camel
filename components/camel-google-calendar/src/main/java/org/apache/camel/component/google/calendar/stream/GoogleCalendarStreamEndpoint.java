@@ -48,8 +48,6 @@ import org.slf4j.LoggerFactory;
              label = "api,cloud")
 public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint {
     
-    private static final Logger LOG = LoggerFactory.getLogger(GoogleCalendarStreamEndpoint.class);
-
     @UriParam
     private GoogleCalendarStreamConfiguration configuration;
 

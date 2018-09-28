@@ -52,8 +52,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The aws-sqs component is used for sending and receiving messages to Amazon's SQS service.
@@ -61,8 +59,6 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "2.6.0", scheme = "aws-sqs", title = "AWS Simple Queue Service", syntax = "aws-sqs:queueNameOrArn",
     consumerClass = SqsConsumer.class, label = "cloud,messaging")
 public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SqsEndpoint.class);
 
     private AmazonSQS client;
     private String queueUrl;
@@ -143,7 +139,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
                 for (String url : listQueuesResult.getQueueUrls()) {
                     if (url.endsWith("/" + configuration.getQueueName())) {
                         queueUrl = url;
-                        LOG.trace("Queue available at '{}'.", queueUrl);
+                        log.trace("Queue available at '{}'.", queueUrl);
                         break;
                     }
                 }
@@ -153,13 +149,13 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         if (queueUrl == null) {
             createQueue(client);
         } else {
-            LOG.debug("Using Amazon SQS queue url: {}", queueUrl);
+            log.debug("Using Amazon SQS queue url: {}", queueUrl);
             updateQueueAttributes(client);
         }
     }
 
     protected void createQueue(AmazonSQS client) {
-        LOG.trace("Queue '{}' doesn't exist. Will create it...", configuration.getQueueName());
+        log.trace("Queue '{}' doesn't exist. Will create it...", configuration.getQueueName());
 
         // creates a new queue, or returns the URL of an existing one
         CreateQueueRequest request = new CreateQueueRequest(configuration.getQueueName());
@@ -186,12 +182,12 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         if (getConfiguration().getRedrivePolicy() != null) {
             request.getAttributes().put(QueueAttributeName.RedrivePolicy.name(), getConfiguration().getRedrivePolicy());
         }
-        LOG.trace("Creating queue [{}] with request [{}]...", configuration.getQueueName(), request);
+        log.trace("Creating queue [{}] with request [{}]...", configuration.getQueueName(), request);
 
         CreateQueueResult queueResult = client.createQueue(request);
         queueUrl = queueResult.getQueueUrl();
 
-        LOG.trace("Queue created and available at: {}", queueUrl);
+        log.trace("Queue created and available at: {}", queueUrl);
     }
 
     private void updateQueueAttributes(AmazonSQS client) {
@@ -216,9 +212,9 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
             request.getAttributes().put(QueueAttributeName.RedrivePolicy.name(), getConfiguration().getRedrivePolicy());
         }
         if (!request.getAttributes().isEmpty()) {
-            LOG.trace("Updating queue '{}' with the provided queue attributes...", configuration.getQueueName());
+            log.trace("Updating queue '{}' with the provided queue attributes...", configuration.getQueueName());
             client.setQueueAttributes(request);
-            LOG.trace("Queue '{}' updated and available at {}'", configuration.getQueueName(), queueUrl);
+            log.trace("Queue '{}' updated and available at {}'", configuration.getQueueName(), queueUrl);
         }
     }
 

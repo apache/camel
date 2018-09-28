@@ -53,8 +53,6 @@ import static org.apache.camel.util.StringHelper.removeStartingCharacters;
  */
 public class JmsComponent extends HeaderFilterStrategyComponent implements ApplicationContextAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JmsComponent.class);
-
     private static final String KEY_FORMAT_STRATEGY_PARAM = "jmsKeyFormatStrategy";
 
     private ExecutorService asyncStartStopExecutorService;
@@ -1326,7 +1324,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
         if (cfUsername != null && cfPassword != null) {
             cf = endpoint.getConfiguration().getConnectionFactory();
             ObjectHelper.notNull(cf, "ConnectionFactory");
-            LOG.debug("Wrapping existing ConnectionFactory with UserCredentialsConnectionFactoryAdapter using username: {} and password: ******", cfUsername);
+            log.debug("Wrapping existing ConnectionFactory with UserCredentialsConnectionFactoryAdapter using username: {} and password: ******", cfUsername);
             UserCredentialsConnectionFactoryAdapter ucfa = new UserCredentialsConnectionFactoryAdapter();
             ucfa.setTargetConnectionFactory(cf);
             ucfa.setPassword(cfPassword);

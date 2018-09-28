@@ -24,8 +24,6 @@ import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;
 import org.restlet.Uniform;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A Restlet consumer acts as a server to listen client requests.
@@ -33,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class RestletConsumer extends DefaultConsumer {
-    private static final Logger LOG = LoggerFactory.getLogger(RestletConsumer.class);
+
     private Restlet restlet;
 
     public RestletConsumer(Endpoint endpoint, Processor processor)
@@ -53,7 +51,7 @@ public class RestletConsumer extends DefaultConsumer {
                 // must call super according to restlet documentation
                 super.handle(request, response);
 
-                LOG.debug("Consumer restlet handle request method: {}", request.getMethod());
+                log.debug("Consumer restlet handle request method: {}", request.getMethod());
 
                 Exchange exchange = null;
                 try {

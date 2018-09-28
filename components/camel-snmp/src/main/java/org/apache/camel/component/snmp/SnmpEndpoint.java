@@ -27,8 +27,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.snmp4j.CommandResponderEvent;
 import org.snmp4j.PDU;
 import org.snmp4j.mp.SnmpConstants;
@@ -44,8 +42,6 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     public static final int DEFAULT_SNMP_VERSION = SnmpConstants.version1;
     public static final int DEFAULT_SNMP_RETRIES = 2;
     public static final int DEFAULT_SNMP_TIMEOUT = 1500;
-
-    private static final Logger LOG = LoggerFactory.getLogger(SnmpEndpoint.class);
 
     private transient String address;
 
@@ -284,7 +280,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
 
         // set the address
         String address = String.format("%s:%s/%d", getProtocol(), host, port);
-        LOG.debug("Using snmp address {}", address);
+        log.debug("Using snmp address {}", address);
         setAddress(address);
     }
 

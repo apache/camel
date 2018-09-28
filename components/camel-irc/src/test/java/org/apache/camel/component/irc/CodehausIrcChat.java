@@ -115,12 +115,12 @@ public final class CodehausIrcChat {
         }
         // while (!conn.isConnected()) {
         // Thread.sleep(1000);
-        // LOG.info("Sleeping");
+        // log.info("Sleeping");
         // }
         LOG.info("Connected");
         // conn.send("/JOIN #camel-test");
 
-        // LOG.info("Joining Channel: " + config.getTarget());
+        // log.info("Joining Channel: " + config.getTarget());
 
         for (IrcChannel channel : config.getChannels()) {
             conn.doJoin(channel.getName());

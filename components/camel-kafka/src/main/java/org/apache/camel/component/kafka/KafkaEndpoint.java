@@ -38,15 +38,12 @@ import org.apache.kafka.clients.producer.Partitioner;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.
  */
 @UriEndpoint(firstVersion = "2.13.0", scheme = "kafka", title = "Kafka", syntax = "kafka:topic", consumerClass = KafkaConsumer.class, label = "messaging")
 public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaEndpoint.class);
 
     @UriParam
     private KafkaConfiguration configuration = new KafkaConfiguration();
@@ -150,7 +147,7 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
             }
         } catch (Throwable t) {
             //can ignore and Kafka itself might be able to handle it, if not, it will throw an exception
-            LOG.debug("Problem loading classes for Serializers", t);
+            log.debug("Problem loading classes for Serializers", t);
         }
     }
 

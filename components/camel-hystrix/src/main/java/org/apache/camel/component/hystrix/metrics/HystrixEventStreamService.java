@@ -27,8 +27,6 @@ import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.hystrix.metrics.servlet.HystrixEventStreamServlet;
 import org.apache.camel.support.ServiceSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * To gather hystrix metrics and offer the metrics over JMX and Java APIs.
@@ -40,7 +38,6 @@ import org.slf4j.LoggerFactory;
 public class HystrixEventStreamService extends ServiceSupport implements StaticService, HystrixMetricsPoller.MetricsAsJsonPollerListener {
 
     public static final int METRICS_QUEUE_SIZE = 1000;
-    private static final Logger LOG = LoggerFactory.getLogger(HystrixEventStreamService.class);
 
     private int delay = 500;
     private int queueSize = METRICS_QUEUE_SIZE;
@@ -112,7 +109,7 @@ public class HystrixEventStreamService extends ServiceSupport implements StaticS
 
     @Override
     protected void doStart() throws Exception {
-        LOG.info("Starting HystrixMetricsPoller with delay: {} and queue size: {}", delay, queueSize);
+        log.info("Starting HystrixMetricsPoller with delay: {} and queue size: {}", delay, queueSize);
         queue = new LinkedBlockingQueue<>(queueSize);
         poller = new HystrixMetricsPoller(this, delay);
         poller.start();
@@ -121,19 +118,19 @@ public class HystrixEventStreamService extends ServiceSupport implements StaticS
     @Override
     protected void doStop() throws Exception {
         if (poller != null) {
-            LOG.info("Shutting down HystrixMetricsPoller");
+            log.info("Shutting down HystrixMetricsPoller");
             poller.shutdown();
         }
     }
 
     @Override
     public void handleJsonMetric(String json) {
-        LOG.debug("handleJsonMetric: {}", json);
+        log.debug("handleJsonMetric: {}", json);
 
         // ensure there is space on the queue by polling until at least single slot is free
         int drain = queue.size() - queueSize + 1;
         if (drain > 0) {
-            LOG.debug("Draining queue to make room: {}", drain);
+            log.debug("Draining queue to make room: {}", drain);
             for (int i = 0; i < drain; i++) {
                 queue.poll();
             }

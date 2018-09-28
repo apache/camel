@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractMetricsProducer extends DefaultProducer {
 
     public static final String HEADER_PATTERN = MetricsConstants.HEADER_PREFIX + "*";
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractMetricsProducer.class);
 
     public AbstractMetricsProducer(MetricsEndpoint endpoint) {
         super(endpoint);

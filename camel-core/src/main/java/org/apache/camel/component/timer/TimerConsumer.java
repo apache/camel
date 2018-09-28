@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class TimerConsumer extends DefaultConsumer implements StartupListener, Suspendable {
-    private static final Logger LOG = LoggerFactory.getLogger(TimerConsumer.class);
+
     private final TimerEndpoint endpoint;
     private volatile TimerTask task;
     private volatile boolean configured;
@@ -67,7 +67,7 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
                 public void run() {
                     if (!isTaskRunAllowed()) {
                         // do not run timer task as it was not allowed
-                        LOG.debug("Run not allowed for timer: {}", endpoint);
+                        log.debug("Run not allowed for timer: {}", endpoint);
                         return;
                     }
 
@@ -80,13 +80,13 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
                         } else {
                             // no need to fire anymore as we exceeded repeat
                             // count
-                            LOG.debug("Cancelling {} timer as repeat count limit reached after {} counts.", endpoint.getTimerName(), endpoint.getRepeatCount());
+                            log.debug("Cancelling {} timer as repeat count limit reached after {} counts.", endpoint.getTimerName(), endpoint.getRepeatCount());
                             cancel();
                         }
                     } catch (Throwable e) {
                         // catch all to avoid the JVM closing the thread and not
                         // firing again
-                        LOG.warn("Error processing exchange. This exception will be ignored, to let the timer be able to trigger again.", e);
+                        log.warn("Error processing exchange. This exception will be ignored, to let the timer be able to trigger again.", e);
                     }
                 }
             };
@@ -189,8 +189,8 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
         // also set now on in header with same key as quartz to be consistent
         exchange.getIn().setHeader("firedTime", now);
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Timer {} is firing #{} count", endpoint.getTimerName(), counter);
+        if (log.isTraceEnabled()) {
+            log.trace("Timer {} is firing #{} count", endpoint.getTimerName(), counter);
         }
 
         if (!endpoint.isSynchronous()) {

@@ -70,7 +70,7 @@ public class LogCustomLoggerTest extends ContextTestSupport {
         ConsumingAppender.newAppender(
             LogComponent.class.getCanonicalName(),
             "LogComponent",
-            Level.TRACE,
+            Level.INFO,
             event -> sw2.append(event.getLoggerName()));
     }
 

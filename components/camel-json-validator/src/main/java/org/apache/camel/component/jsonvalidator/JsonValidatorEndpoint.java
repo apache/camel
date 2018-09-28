@@ -32,8 +32,6 @@ import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.IOHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Validates the payload of a message using NetworkNT JSON Schema library.
@@ -42,8 +40,6 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(scheme = "json-validator", firstVersion = "2.20.0", title = "JSON Schema Validator", syntax = "json-validator:resourceUri",
     producerOnly = true, label = "validation")
 public class JsonValidatorEndpoint extends ResourceEndpoint {
-
-    private static final Logger LOG = LoggerFactory.getLogger(JsonValidatorEndpoint.class);
 
     private volatile JsonSchema schema;
 
@@ -99,10 +95,10 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
                 Set<ValidationMessage> errors = localSchema.validate(node);
 
                 if (errors.size() > 0) {
-                    LOG.debug("Validated JSon has {} errors", errors.size());
+                    this.log.debug("Validated JSon has {} errors", errors.size());
                     this.errorHandler.handleErrors(exchange, schema, errors);
                 } else {
-                    LOG.debug("Validated JSon success");
+                    this.log.debug("Validated JSon success");
                 }
             }
         } catch (Exception e) {

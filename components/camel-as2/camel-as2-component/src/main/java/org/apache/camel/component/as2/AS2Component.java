@@ -32,8 +32,6 @@ import org.slf4j.LoggerFactory;
  */
 public class AS2Component extends AbstractApiComponent<AS2ApiName, AS2Configuration, AS2ApiCollection> {
     
-    private static final Logger LOG = LoggerFactory.getLogger(AS2Component.class);
-
     public AS2Component() {
         super(AS2Endpoint.class, AS2ApiName.class, AS2ApiCollection.getCollection());
     }
@@ -67,7 +65,7 @@ public class AS2Component extends AbstractApiComponent<AS2ApiName, AS2Configurat
     protected void doStart() throws Exception {
         super.doStart();
         if (Security.getProvider("BC") == null) {
-            LOG.debug("Adding BouncyCastleProvider as security provider");
+            log.debug("Adding BouncyCastleProvider as security provider");
             Security.addProvider(new BouncyCastleProvider());
         }
     }

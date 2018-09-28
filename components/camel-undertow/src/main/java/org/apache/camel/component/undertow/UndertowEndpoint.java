@@ -45,8 +45,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xnio.Option;
 import org.xnio.OptionMap;
 import org.xnio.Options;
@@ -58,7 +56,6 @@ import org.xnio.Options;
         consumerClass = UndertowConsumer.class, label = "http,websocket", lenientProperties = true)
 public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, DiscoverableService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
     private UndertowComponent component;
     private SSLContext sslContext;
     private OptionMap optionMap;
@@ -414,7 +411,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
                     key = Options.class.getName() + "." + key;
                     Option option = Option.fromString(key, cl);
                     value = option.parseValue(value.toString(), cl);
-                    LOG.trace("Parsed option {}={}", option.getName(), value);
+                    log.trace("Parsed option {}={}", option.getName(), value);
                     builder.set(option, value);
                 }
             }

@@ -24,13 +24,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.vertx.VertxHelper.getVertxBody;
 
 public class VertxConsumer extends DefaultConsumer {
-    private static final Logger LOG = LoggerFactory.getLogger(VertxConsumer.class);
+
     private final VertxEndpoint endpoint;
     private transient MessageConsumer messageConsumer;
 
@@ -46,7 +44,7 @@ public class VertxConsumer extends DefaultConsumer {
     }
 
     protected void onEventBusEvent(final Message event) {
-        LOG.debug("onEvent {}", event);
+        log.debug("onEvent {}", event);
 
         final boolean reply = event.replyAddress() != null;
         final Exchange exchange = endpoint.createExchange(reply ? ExchangePattern.InOut : ExchangePattern.InOnly);
@@ -59,7 +57,7 @@ public class VertxConsumer extends DefaultConsumer {
                     if (reply) {
                         Object body = getVertxBody(exchange);
                         if (body != null) {
-                            LOG.debug("Sending reply to: {} with body: {}", event.replyAddress(), body);
+                            log.debug("Sending reply to: {} with body: {}", event.replyAddress(), body);
                             event.reply(body);
                         }
                     }
@@ -71,8 +69,8 @@ public class VertxConsumer extends DefaultConsumer {
     }
 
     protected void doStart() throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Registering EventBus handler on address {}", endpoint.getAddress());
+        if (log.isDebugEnabled()) {
+            log.debug("Registering EventBus handler on address {}", endpoint.getAddress());
         }
 
         if (endpoint.getEventBus() != null) {
@@ -82,8 +80,8 @@ public class VertxConsumer extends DefaultConsumer {
     }
 
     protected void doStop() throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Unregistering EventBus handler on address {}", endpoint.getAddress());
+        if (log.isDebugEnabled()) {
+            log.debug("Unregistering EventBus handler on address {}", endpoint.getAddress());
         }
 
         try {
@@ -92,7 +90,7 @@ public class VertxConsumer extends DefaultConsumer {
                 messageConsumer = null;
             }
         } catch (IllegalStateException e) {
-            LOG.warn("EventBus already stopped on address {}", endpoint.getAddress());
+            log.warn("EventBus already stopped on address {}", endpoint.getAddress());
             // ignore if already stopped as vertx throws this exception if its already stopped etc.
             // unfortunately it does not provide an nicer api to know its state
         }

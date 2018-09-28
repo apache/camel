@@ -39,8 +39,6 @@ import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
  */
 public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements ErrorHandler {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FatalFallbackErrorHandler.class);
-
     private boolean deadLetterChannel;
 
     public FatalFallbackErrorHandler(Processor processor) {
@@ -65,7 +63,7 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
             exchange.setProperty(Exchange.FATAL_FALLBACK_ERROR_HANDLER, fatals);
         }
         if (fatals.contains(id)) {
-            LOG.warn("Circular error-handler detected at route: {} - breaking out processing Exchange: {}", id, exchange);
+            log.warn("Circular error-handler detected at route: {} - breaking out processing Exchange: {}", id, exchange);
             // mark this exchange as already been error handler handled (just by having this property)
             // the false value mean the caught exception will be kept on the exchange, causing the
             // exception to be propagated back to the caller, and to break out routing
@@ -163,15 +161,15 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
         // when using dead letter channel we only want to log at WARN level
         if (deadLetterChannel) {
             if (t != null) {
-                LOG.warn(message, t);
+                log.warn(message, t);
             } else {
-                LOG.warn(message);
+                log.warn(message);
             }
         } else {
             if (t != null) {
-                LOG.error(message, t);
+                log.error(message, t);
             } else {
-                LOG.error(message);
+                log.error(message);
             }
         }
     }

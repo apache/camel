@@ -27,16 +27,12 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.eclipse.jetty.client.HttpClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The salesforce component is used for integrating Camel with the massive Salesforce API.
  */
 @UriEndpoint(firstVersion = "2.12.0", scheme = "salesforce", title = "Salesforce", syntax = "salesforce:operationName:topicName", label = "api,cloud,crm", consumerClass = SalesforceConsumer.class)
 public class SalesforceEndpoint extends DefaultEndpoint {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SalesforceEndpoint.class);
 
     @UriPath(label = "producer", description = "The operation to use", enums = "getVersions,getResources,"
         + "getGlobalObjects,getBasicInfo,getDescription,getSObject,createSObject,updateSObject,deleteSObject,"
@@ -130,9 +126,9 @@ public class SalesforceEndpoint extends DefaultEndpoint {
             final HttpClient httpClient = getConfiguration().getHttpClient();
             if (httpClient != null && getComponent().getConfig().getHttpClient() != httpClient) {
                 final String endpointUri = getEndpointUri();
-                LOG.debug("Starting http client for {} ...", endpointUri);
+                log.debug("Starting http client for {} ...", endpointUri);
                 httpClient.start();
-                LOG.debug("Started http client for {}", endpointUri);
+                log.debug("Started http client for {}", endpointUri);
             }
         }
     }
@@ -146,9 +142,9 @@ public class SalesforceEndpoint extends DefaultEndpoint {
             final HttpClient httpClient = getConfiguration().getHttpClient();
             if (httpClient != null && getComponent().getConfig().getHttpClient() != httpClient) {
                 final String endpointUri = getEndpointUri();
-                LOG.debug("Stopping http client for {} ...", endpointUri);
+                log.debug("Stopping http client for {} ...", endpointUri);
                 httpClient.stop();
-                LOG.debug("Stopped http client for {}", endpointUri);
+                log.debug("Stopped http client for {}", endpointUri);
             }
         }
     }

@@ -43,8 +43,6 @@ import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a>
@@ -52,8 +50,6 @@ import org.slf4j.LoggerFactory;
  * to marshal to and from JSON.
  */
 public class JacksonDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
-
-    private static final Logger LOG = LoggerFactory.getLogger(JacksonDataFormat.class);
 
     private CamelContext camelContext;
     private ObjectMapper objectMapper;
@@ -481,21 +477,21 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
                 Set<ObjectMapper> set = camelContext.getRegistry().findByType(ObjectMapper.class);
                 if (set.size() == 1) {
                     objectMapper = set.iterator().next();
-                    LOG.info("Found single ObjectMapper in Registry to use: {}", objectMapper);
+                    log.info("Found single ObjectMapper in Registry to use: {}", objectMapper);
                 } else if (set.size() > 1) {
-                    LOG.debug("Found {} ObjectMapper in Registry cannot use as default as there are more than one instance.", set.size());
+                    log.debug("Found {} ObjectMapper in Registry cannot use as default as there are more than one instance.", set.size());
                 }
             }
             if (objectMapper == null) {
                 objectMapper = new ObjectMapper();
-                LOG.debug("Creating new ObjectMapper to use: {}", objectMapper);
+                log.debug("Creating new ObjectMapper to use: {}", objectMapper);
             }
         }
 
         if (enableJaxbAnnotationModule) {
             // Enables JAXB processing
             JaxbAnnotationModule module = new JaxbAnnotationModule();
-            LOG.debug("Registering JaxbAnnotationModule: {}", module);
+            log.debug("Registering JaxbAnnotationModule: {}", module);
             objectMapper.registerModule(module);
         }
 
@@ -561,7 +557,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
 
         if (modules != null) {
             for (Module module : modules) {
-                LOG.debug("Registering module: {}", module);
+                log.debug("Registering module: {}", module);
                 objectMapper.registerModules(module);
             }
         }
@@ -571,7 +567,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
                 String name = o.toString();
                 Class<Module> clazz = camelContext.getClassResolver().resolveMandatoryClass(name, Module.class);
                 Module module = camelContext.getInjector().newInstance(clazz);
-                LOG.debug("Registering module: {} -> {}", name, module);
+                log.debug("Registering module: {} -> {}", name, module);
                 objectMapper.registerModule(module);
             }
         }
@@ -583,12 +579,12 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
                     name = name.substring(1);
                 }
                 Module module = CamelContextHelper.mandatoryLookup(camelContext, name, Module.class);
-                LOG.debug("Registering module: {} -> {}", name, module);
+                log.debug("Registering module: {} -> {}", name, module);
                 objectMapper.registerModule(module);
             }
         }
         if (ObjectHelper.isNotEmpty(timezone)) {
-            LOG.debug("Setting timezone to Object Mapper: {}", timezone);
+            log.debug("Setting timezone to Object Mapper: {}", timezone);
             objectMapper.setTimeZone(timezone);
         }
     }

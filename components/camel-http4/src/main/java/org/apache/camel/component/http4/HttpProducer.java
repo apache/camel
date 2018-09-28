@@ -71,14 +71,12 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version
  */
 public class HttpProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(HttpProducer.class);
+
     private HttpClient httpClient;
     private HttpContext httpContext;
     private boolean throwException;
@@ -187,12 +185,12 @@ public class HttpProducer extends DefaultProducer {
         // lets store the result in the output message.
         HttpResponse httpResponse = null;
         try {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Executing http {} method: {}", httpRequest.getMethod(), httpRequest.getURI());
+            if (log.isDebugEnabled()) {
+                log.debug("Executing http {} method: {}", httpRequest.getMethod(), httpRequest.getURI());
             }
             httpResponse = executeMethod(httpRequest);
             int responseCode = httpResponse.getStatusLine().getStatusCode();
-            LOG.debug("Http responseCode: {}", responseCode);
+            log.debug("Http responseCode: {}", responseCode);
 
             if (!throwException) {
                 // if we do not use failed exception then populate response for all response codes
@@ -405,7 +403,7 @@ public class HttpProducer extends DefaultProducer {
         }
     }
 
-    private static InputStream doExtractResponseBodyAsStream(InputStream is, Exchange exchange) throws IOException {
+    private InputStream doExtractResponseBodyAsStream(InputStream is, Exchange exchange) throws IOException {
         // As httpclient is using a AutoCloseInputStream, it will be closed when the connection is closed
         // we need to cache the stream for it.
         CachedOutputStream cos = null;
@@ -424,7 +422,7 @@ public class HttpProducer extends DefaultProducer {
             }
             throw ex;
         } finally {
-            IOHelper.close(is, "Extracting response body", LOG);
+            IOHelper.close(is, "Extracting response body", log);
         }
     }
 
@@ -461,12 +459,12 @@ public class HttpProducer extends DefaultProducer {
             method = new HttpDeleteWithBodyMethod(url, requestEntity);
         }
 
-        LOG.trace("Using URL: {} with method: {}", url, method);
+        log.trace("Using URL: {} with method: {}", url, method);
 
         if (methodToUse.isEntityEnclosing()) {
             ((HttpEntityEnclosingRequestBase) method).setEntity(requestEntity);
             if (requestEntity != null && requestEntity.getContentType() == null) {
-                LOG.debug("No Content-Type provided for URL: {} with exchange: {}", url, exchange);
+                log.debug("No Content-Type provided for URL: {} with exchange: {}", url, exchange);
             }
         }
 

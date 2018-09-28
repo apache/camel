@@ -41,14 +41,10 @@ import org.json.simple.JsonArray;
 import org.json.simple.JsonObject;
 import org.json.simple.Jsoner;
 import org.json.simple.parser.JSONParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.slack.utils.SlackUtils.readResponse;
 
 public class SlackConsumer extends ScheduledBatchPollingConsumer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SlackConsumer.class);
 
     private SlackEndpoint slackEndpoint;
     private String timestamp;
@@ -123,7 +119,7 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
             getAsyncProcessor().process(exchange, new AsyncCallback() {
                 @Override
                 public void done(boolean doneSync) {
-                    LOG.trace("Processing exchange done");
+                    log.trace("Processing exchange done");
                 }
             });
         }

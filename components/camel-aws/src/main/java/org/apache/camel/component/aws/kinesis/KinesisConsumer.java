@@ -38,11 +38,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class KinesisConsumer extends ScheduledBatchPollingConsumer {
-    private static final Logger LOG = LoggerFactory.getLogger(KinesisConsumer.class);
 
     private String currentShardIterator;
     private boolean isShardClosed;
@@ -68,12 +65,12 @@ public class KinesisConsumer extends ScheduledBatchPollingConsumer {
         if (isShardClosed) {
             switch (getEndpoint().getConfiguration().getShardClosed()) {
             case ignore:
-                LOG.warn("The shard {} is in closed state");
+                log.warn("The shard {} is in closed state");
                 break;
             case silent:
                 break;
             case fail:
-                LOG.info("Shard Iterator reaches CLOSE status:", getEndpoint().getConfiguration().getStreamName(), getEndpoint().getConfiguration().getShardId());
+                log.info("Shard Iterator reaches CLOSE status:", getEndpoint().getConfiguration().getStreamName(), getEndpoint().getConfiguration().getShardId());
                 throw new ReachedClosedStatusException(getEndpoint().getConfiguration().getStreamName(), getEndpoint().getConfiguration().getShardId());
             default:
                 throw new IllegalArgumentException("Unsupported shard closed strategy");
@@ -89,11 +86,11 @@ public class KinesisConsumer extends ScheduledBatchPollingConsumer {
         while (!exchanges.isEmpty()) {
             final Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
 
-            LOG.trace("Processing exchange [{}] started.", exchange);
+            log.trace("Processing exchange [{}] started.", exchange);
             getAsyncProcessor().process(exchange, new AsyncCallback() {
                 @Override
                 public void done(boolean doneSync) {
-                    LOG.trace("Processing exchange [{}] done.", exchange);
+                    log.trace("Processing exchange [{}] done.", exchange);
                 }
             });
             processedExchanges++;
@@ -143,7 +140,7 @@ public class KinesisConsumer extends ScheduledBatchPollingConsumer {
                     isShardClosed = true;
                 }
             }
-            LOG.debug("ShardId is: {}", shardId);
+            log.debug("ShardId is: {}", shardId);
 
             GetShardIteratorRequest req = new GetShardIteratorRequest().withStreamName(getEndpoint().getConfiguration().getStreamName()).withShardId(shardId)
                 .withShardIteratorType(getEndpoint().getConfiguration().getIteratorType());
@@ -155,7 +152,7 @@ public class KinesisConsumer extends ScheduledBatchPollingConsumer {
             GetShardIteratorResult result = getClient().getShardIterator(req);
             currentShardIterator = result.getShardIterator();
         }
-        LOG.debug("Shard Iterator is: {}", currentShardIterator);
+        log.debug("Shard Iterator is: {}", currentShardIterator);
         return currentShardIterator;
     }
 

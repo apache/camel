@@ -33,12 +33,8 @@ import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class KubernetesDeploymentsProducer extends DefaultProducer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(KubernetesDeploymentsProducer.class);
 
     public KubernetesDeploymentsProducer(AbstractKubernetesEndpoint endpoint) {
         super(endpoint);
@@ -115,7 +111,7 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         Deployment deployment = null;
         String deploymentName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, String.class);
         if (ObjectHelper.isEmpty(deploymentName)) {
-            LOG.error("Get a specific Deployment require specify a Deployment name");
+            log.error("Get a specific Deployment require specify a Deployment name");
             throw new IllegalArgumentException("Get a specific Deployment require specify a Deployment name");
         }
         deployment = getEndpoint().getKubernetesClient().apps().deployments().withName(deploymentName).get();
@@ -128,11 +124,11 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         String deploymentName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(deploymentName)) {
-            LOG.error("Delete a specific deployment require specify a deployment name");
+            log.error("Delete a specific deployment require specify a deployment name");
             throw new IllegalArgumentException("Delete a specific deployment require specify a deployment name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
-            LOG.error("Delete a specific deployment require specify a namespace name");
+            log.error("Delete a specific deployment require specify a namespace name");
             throw new IllegalArgumentException("Delete a specific deployment require specify a namespace name");
         }
 
@@ -148,15 +144,15 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         DeploymentSpec deSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_SPEC, DeploymentSpec.class);
         if (ObjectHelper.isEmpty(deploymentName)) {
-            LOG.error("Create a specific Deployment require specify a Deployment name");
+            log.error("Create a specific Deployment require specify a Deployment name");
             throw new IllegalArgumentException("Create a specific Deployment require specify a pod name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
-            LOG.error("Create a specific Deployment require specify a namespace name");
+            log.error("Create a specific Deployment require specify a namespace name");
             throw new IllegalArgumentException("Create a specific Deployment require specify a namespace name");
         }
         if (ObjectHelper.isEmpty(deSpec)) {
-            LOG.error("Create a specific Deployment require specify a Deployment spec bean");
+            log.error("Create a specific Deployment require specify a Deployment spec bean");
             throw new IllegalArgumentException("Create a specific Deployment require specify a Deployment spec bean");
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENTS_LABELS, Map.class);
@@ -172,15 +168,15 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         Integer replicasNumber = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_REPLICAS, Integer.class);
         if (ObjectHelper.isEmpty(deploymentName)) {
-            LOG.error("Scale a specific deployment require specify a deployment name");
+            log.error("Scale a specific deployment require specify a deployment name");
             throw new IllegalArgumentException("Scale a specific deployment require specify a deployment name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
-            LOG.error("Scale a specific deployment require specify a namespace name");
+            log.error("Scale a specific deployment require specify a namespace name");
             throw new IllegalArgumentException("Scale a specific deployment require specify a namespace name");
         }
         if (ObjectHelper.isEmpty(replicasNumber)) {
-            LOG.error("Scale a specific deployment require specify a replicas number");
+            log.error("Scale a specific deployment require specify a replicas number");
             throw new IllegalArgumentException("Scale a specific deployment require specify a replicas number");
         }
         Deployment deploymentScaled = getEndpoint().getKubernetesClient().apps().deployments().inNamespace(namespaceName).withName(deploymentName).scale(replicasNumber, false);

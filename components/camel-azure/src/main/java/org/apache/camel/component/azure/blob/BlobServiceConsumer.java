@@ -21,8 +21,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A Consumer of the blob content from the Azure Blob Service
@@ -30,8 +28,7 @@ import org.slf4j.LoggerFactory;
 // Extending DefaultConsumer is simpler if the blob must exist before this consumer is started,
 // polling makes it easier to get the consumer working if no blob exists yet.
 public class BlobServiceConsumer extends ScheduledPollConsumer {
-    private static final Logger LOG = LoggerFactory.getLogger(BlobServiceConsumer.class);
-    
+
     public BlobServiceConsumer(BlobServiceEndpoint endpoint, Processor processor) throws NoFactoryAvailableException {
         super(endpoint, processor);
     }
@@ -40,7 +37,7 @@ public class BlobServiceConsumer extends ScheduledPollConsumer {
     protected int poll() throws Exception {
         Exchange exchange = super.getEndpoint().createExchange();
         try {
-            LOG.trace("Getting the blob content");
+            log.trace("Getting the blob content");
             getBlob(exchange);
             super.getAsyncProcessor().process(exchange);
             return 1;

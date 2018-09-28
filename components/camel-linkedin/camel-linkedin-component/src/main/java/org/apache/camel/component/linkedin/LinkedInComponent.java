@@ -30,15 +30,11 @@ import org.apache.camel.component.linkedin.internal.LinkedInApiName;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.component.AbstractApiComponent;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link LinkedInEndpoint}.
  */
 public class LinkedInComponent extends AbstractApiComponent<LinkedInApiName, LinkedInConfiguration, LinkedInApiCollection> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(LinkedInComponent.class);
 
     private LinkedInOAuthRequestFilter requestFilter;
 
@@ -132,7 +128,7 @@ public class LinkedInComponent extends AbstractApiComponent<LinkedInApiName, Lin
         try {
             requestFilter.close();
         } catch (Exception e) {
-            LOG.warn("Error closing OAuth2 request filter: {}", e.getMessage(), e);
+            log.warn("Error closing OAuth2 request filter: {}", e.getMessage(), e);
         }
     }
 }

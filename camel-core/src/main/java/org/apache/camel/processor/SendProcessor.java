@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import java.net.URISyntaxException;
-import java.util.HashMap;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -27,15 +26,11 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Producer;
 import org.apache.camel.Traceable;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.impl.ProducerCache;
-import org.apache.camel.impl.ServicePool;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.EventHelper;
@@ -52,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * @see SendDynamicProcessor
  */
 public class SendProcessor extends ServiceSupport implements AsyncProcessor, Traceable, EndpointAware, IdAware {
-    protected static final Logger LOG = LoggerFactory.getLogger(SendProcessor.class);
+
     protected transient String traceLabelToString;
     protected final CamelContext camelContext;
     protected final ExchangePattern pattern;
@@ -138,7 +133,7 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
             final StopWatch watch = sw;
 
             try {
-                LOG.debug(">>>> {} {}", destination, exchange);
+                log.debug(">>>> {} {}", destination, exchange);
                 return producer.process(exchange, new AsyncCallback() {
                     @Override
                     public void done(boolean doneSync) {
@@ -164,7 +159,7 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
         }
 
         configureExchange(exchange, pattern);
-        LOG.debug(">>>> {} {}", destination, exchange);
+        log.debug(">>>> {} {}", destination, exchange);
 
         // send the exchange to the destination using the producer cache for the non optimized producers
         return producerCache.doInAsyncProducer(destination, exchange, callback, (producer, ex, cb) -> producer.process(ex, doneSync -> {
@@ -218,8 +213,8 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
         // lookup this before we can use the destination
         Endpoint lookup = camelContext.hasEndpoint(destination.getEndpointKey());
         if (lookup instanceof InterceptSendToEndpoint) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Intercepted sending to {} -> {}",
+            if (log.isDebugEnabled()) {
+                log.debug("Intercepted sending to {} -> {}",
                         URISupport.sanitizeUri(destination.getEndpointUri()), URISupport.sanitizeUri(lookup.getEndpointUri()));
             }
             destination = lookup;

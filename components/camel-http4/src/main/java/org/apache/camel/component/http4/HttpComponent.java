@@ -62,8 +62,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.ssl.SSLContexts;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Defines the <a href="http://camel.apache.org/http4.html">HTTP4
@@ -73,8 +71,6 @@ import org.slf4j.LoggerFactory;
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
 public class HttpComponent extends HttpCommonComponent implements RestProducerFactory, SSLContextParametersAware {
-
-    private static final Logger LOG = LoggerFactory.getLogger(HttpComponent.class);
 
     @Metadata(label = "advanced", description = "To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used.")
     protected HttpClientConfigurer httpClientConfigurer;
@@ -275,7 +271,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         // create the endpoint and set the http uri to be null
         String endpointUriString = endpointUri.toString();
 
-        LOG.debug("Creating endpoint uri {}", endpointUriString);
+        log.debug("Creating endpoint uri {}", endpointUriString);
         final HttpClientConnectionManager localConnectionManager = createConnectionManager(parameters, sslContextParameters);
         HttpEndpoint endpoint = new HttpEndpoint(endpointUriString, this, clientBuilder, localConnectionManager, configurer);
 
@@ -407,7 +403,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         if (localConnectionsPerRoute > 0) {
             answer.setDefaultMaxPerRoute(localConnectionsPerRoute);
         }
-        LOG.info("Created ClientConnectionManager {}", answer);
+        log.info("Created ClientConnectionManager {}", answer);
 
         return answer;
     }
@@ -664,7 +660,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     public void doStop() throws Exception {
         // shutdown connection manager
         if (clientConnectionManager != null) {
-            LOG.info("Shutting down ClientConnectionManager: {}", clientConnectionManager);
+            log.info("Shutting down ClientConnectionManager: {}", clientConnectionManager);
             clientConnectionManager.shutdown();
             clientConnectionManager = null;
         }

@@ -61,8 +61,6 @@ import static org.apache.camel.impl.MDCUnitOfWork.MDC_ROUTE_ID;
  */
 public class RouteService extends ChildServiceSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RouteService.class);
-
     private final DefaultCamelContext camelContext;
     private final RouteDefinition routeDefinition;
     private final List<RouteContext> routeContexts;
@@ -165,7 +163,7 @@ public class RouteService extends ChildServiceSupport {
                     // warm up the route first
                     route.warmUp();
 
-                    LOG.debug("Starting services on route: {}", route.getId());
+                    log.debug("Starting services on route: {}", route.getId());
                     List<Service> services = route.getServices();
 
                     // callback that we are staring these services
@@ -250,7 +248,7 @@ public class RouteService extends ChildServiceSupport {
         
         for (Route route : routes) {
             try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
-                LOG.debug("Stopping services on route: {}", route.getId());
+                log.debug("Stopping services on route: {}", route.getId());
 
                 // gather list of services to stop as we need to start child services as well
                 Set<Service> services = gatherChildServices(route, true);
@@ -286,7 +284,7 @@ public class RouteService extends ChildServiceSupport {
     protected void doShutdown() throws Exception {
         for (Route route : routes) {
             try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
-                LOG.debug("Shutting down services on route: {}", route.getId());
+                log.debug("Shutting down services on route: {}", route.getId());
 
                 // gather list of services to stop as we need to start child services as well
                 Set<Service> services = gatherChildServices(route, true);
@@ -363,7 +361,7 @@ public class RouteService extends ChildServiceSupport {
 
     protected void startChildService(Route route, List<Service> services) throws Exception {
         for (Service service : services) {
-            LOG.debug("Starting child service on route: {} -> {}", route.getId(), service);
+            log.debug("Starting child service on route: {} -> {}", route.getId(), service);
             for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
                 strategy.onServiceAdd(camelContext, service, route);
             }
@@ -374,7 +372,7 @@ public class RouteService extends ChildServiceSupport {
 
     protected void stopChildService(Route route, Set<Service> services, boolean shutdown) throws Exception {
         for (Service service : services) {
-            LOG.debug("{} child service on route: {} -> {}", shutdown ? "Shutting down" : "Stopping", route.getId(), service);
+            log.debug("{} child service on route: {} -> {}", shutdown ? "Shutting down" : "Stopping", route.getId(), service);
             if (service instanceof ErrorHandler) {
                 // special for error handlers
                 for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {

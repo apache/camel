@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
  */
 public class FinallyProcessor extends DelegateAsyncProcessor implements Traceable, IdAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FinallyProcessor.class);
     private String id;
 
     public FinallyProcessor(Processor processor) {
@@ -84,7 +83,7 @@ public class FinallyProcessor extends DelegateAsyncProcessor implements Traceabl
         this.id = id;
     }
 
-    private static final class FinallyAsyncCallback implements AsyncCallback {
+    private final class FinallyAsyncCallback implements AsyncCallback {
 
         private final Exchange exchange;
         private final AsyncCallback callback;
@@ -120,7 +119,7 @@ public class FinallyProcessor extends DelegateAsyncProcessor implements Traceabl
                 if (!doneSync) {
                     // signal callback to continue routing async
                     ExchangeHelper.prepareOutToIn(exchange);
-                    LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                    log.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
                 }
             } finally {
                 // callback must always be called

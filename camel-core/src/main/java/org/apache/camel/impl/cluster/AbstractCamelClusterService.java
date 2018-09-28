@@ -35,7 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractCamelClusterService<T extends CamelClusterView> extends ServiceSupport implements CamelClusterService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCamelClusterService.class);
 
     private final Map<String, ViewHolder<T>> views;
     private final Map<String, Object> attributes;
@@ -193,10 +192,10 @@ public abstract class AbstractCamelClusterService<T extends CamelClusterView> ex
                 ViewHolder<T> holder = views.get(namespace);
 
                 if (holder != null) {
-                    LOGGER.info("Force start of view {}", namespace);
+                    log.info("Force start of view {}", namespace);
                     holder.startView();
                 } else {
-                    LOGGER.warn("Error forcing start of view {}: it does not exist", namespace);
+                    log.warn("Error forcing start of view {}: it does not exist", namespace);
                 }
             }
         );
@@ -210,10 +209,10 @@ public abstract class AbstractCamelClusterService<T extends CamelClusterView> ex
                 ViewHolder<T> holder = views.get(namespace);
 
                 if (holder != null) {
-                    LOGGER.info("Force stop of view {}", namespace);
+                    log.info("Force stop of view {}", namespace);
                     holder.stopView();
                 } else {
-                    LOGGER.warn("Error forcing stop of view {}: it does not exist", namespace);
+                    log.warn("Error forcing stop of view {}: it does not exist", namespace);
                 }
             }
         );
@@ -275,7 +274,7 @@ public abstract class AbstractCamelClusterService<T extends CamelClusterView> ex
         }
 
         V retain() {
-            LOGGER.debug("Retain view {}, old-refs={}", view.getNamespace(), count.get());
+            log.debug("Retain view {}, old-refs={}", view.getNamespace(), count.get());
 
             count.retain();
 
@@ -283,22 +282,22 @@ public abstract class AbstractCamelClusterService<T extends CamelClusterView> ex
         }
 
         void release() {
-            LOGGER.debug("Release view {}, old-refs={}", view.getNamespace(), count.get());
+            log.debug("Release view {}, old-refs={}", view.getNamespace(), count.get());
 
             count.release();
         }
 
         void startView() throws Exception {
             if (AbstractCamelClusterService.this.isRunAllowed()) {
-                LOGGER.debug("Start view {}", view.getNamespace());
+                log.debug("Start view {}", view.getNamespace());
                 view.start();
             } else {
-                LOGGER.debug("Can't start view {} as cluster service is not running, view will be started on service start-up", view.getNamespace());
+                log.debug("Can't start view {} as cluster service is not running, view will be started on service start-up", view.getNamespace());
             }
         }
 
         void stopView() throws Exception {
-            LOGGER.debug("Stop view {}", view.getNamespace());
+            log.debug("Stop view {}", view.getNamespace());
             view.stop();
         }
     }

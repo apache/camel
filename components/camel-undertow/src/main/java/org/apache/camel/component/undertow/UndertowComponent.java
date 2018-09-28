@@ -58,7 +58,6 @@ import org.slf4j.LoggerFactory;
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
 public class UndertowComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware {
-    private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
 
     private final Map<UndertowHostKey, UndertowHost> undertowRegistry = new ConcurrentHashMap<>();
     private final Set<HttpHandlerRegistrationInfo> handlers = new HashSet<>();

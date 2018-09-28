@@ -41,7 +41,6 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  * @version 
  */
 public class Pipeline extends MulticastProcessor {
-    private static final Logger LOG = LoggerFactory.getLogger(Pipeline.class);
 
     private String id;
 
@@ -102,16 +101,16 @@ public class Pipeline extends MulticastProcessor {
 
             // continue as long its being processed synchronously
             if (!sync) {
-                LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
+                log.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
                 // the remainder of the pipeline will be completed async
                 // so we break out now, then the callback will be invoked which then continue routing from where we left here
                 return false;
             }
 
-            LOG.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
+            log.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
 
             // check for error if so we should break out
-            if (!continueProcessing(nextExchange, "so breaking out of pipeline", LOG)) {
+            if (!continueProcessing(nextExchange, "so breaking out of pipeline", log)) {
                 break;
             }
         }
@@ -119,7 +118,7 @@ public class Pipeline extends MulticastProcessor {
         // logging nextExchange as it contains the exchange that might have altered the payload and since
         // we are logging the completion if will be confusing if we log the original instead
         // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
-        LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), nextExchange);
+        log.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), nextExchange);
 
         // copy results back to the original exchange
         ExchangeHelper.copyResults(exchange, nextExchange);
@@ -131,7 +130,7 @@ public class Pipeline extends MulticastProcessor {
     private boolean process(final Exchange original, final Exchange exchange, final AsyncCallback callback,
                             final Iterator<Processor> processors, final AsyncProcessor asyncProcessor) {
         // this does the actual processing so log at trace level
-        LOG.trace("Processing exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+        log.trace("Processing exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
 
         // implement asynchronous routing logic in callback so we can have the callback being
         // triggered and then continue routing where we left
@@ -149,20 +148,20 @@ public class Pipeline extends MulticastProcessor {
                     AsyncProcessor processor = AsyncProcessorConverterHelper.convert(processors.next());
 
                     // check for error if so we should break out
-                    if (!continueProcessing(nextExchange, "so breaking out of pipeline", LOG)) {
+                    if (!continueProcessing(nextExchange, "so breaking out of pipeline", log)) {
                         break;
                     }
 
                     nextExchange = createNextExchange(nextExchange);
                     boolean isDoneSync = process(original, nextExchange, callback, processors, processor);
                     if (!isDoneSync) {
-                        LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
+                        log.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
                         return;
                     }
                 }
 
                 ExchangeHelper.copyResults(original, nextExchange);
-                LOG.trace("Processing complete for exchangeId: {} >>> {}", original.getExchangeId(), original);
+                log.trace("Processing complete for exchangeId: {} >>> {}", original.getExchangeId(), original);
                 callback.done(false);
             }
         });
@@ -189,7 +188,7 @@ public class Pipeline extends MulticastProcessor {
         if (stop != null) {
             boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
             if (doStop) {
-                LOG.debug("ExchangeId: {} is marked to stop routing: {}", exchange.getExchangeId(), exchange);
+                log.debug("ExchangeId: {} is marked to stop routing: {}", exchange.getExchangeId(), exchange);
                 answer = false;
             }
         } else {
@@ -197,7 +196,7 @@ public class Pipeline extends MulticastProcessor {
             answer = it.hasNext();
         }
 
-        LOG.trace("ExchangeId: {} should continue routing: {}", exchange.getExchangeId(), answer);
+        log.trace("ExchangeId: {} should continue routing: {}", exchange.getExchangeId(), answer);
         return answer;
     }
 

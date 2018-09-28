@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
  * Represents the component that manages {@link DockerEndpoint}.
  */
 public class DockerComponent extends DefaultComponent {
-    private static final Logger LOG = LoggerFactory.getLogger(DockerComponent.class);
 
     @Metadata(label = "advanced")
     private DockerConfiguration configuration = new DockerConfiguration();

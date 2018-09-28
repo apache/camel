@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public abstract class DefaultProducer extends ServiceSupport implements Producer {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+
     private transient String producerToString;
     private final Endpoint endpoint;
 

@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class ConsumerCache extends ServiceSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(ConsumerCache.class);
 
     private final CamelContext camelContext;
     private final ServicePool<PollingConsumer> consumers;
@@ -98,7 +97,7 @@ public class ConsumerCache extends ServiceSupport {
     }
  
     public Exchange receive(Endpoint endpoint) {
-        LOG.debug("<<<< {}", endpoint);
+        log.debug("<<<< {}", endpoint);
         PollingConsumer consumer = null;
         try {
             consumer = acquirePollingConsumer(endpoint);
@@ -111,7 +110,7 @@ public class ConsumerCache extends ServiceSupport {
     }
 
     public Exchange receive(Endpoint endpoint, long timeout) {
-        LOG.debug("<<<< {}", endpoint);
+        log.debug("<<<< {}", endpoint);
         PollingConsumer consumer = null;
         try {
             consumer = acquirePollingConsumer(endpoint);
@@ -124,7 +123,7 @@ public class ConsumerCache extends ServiceSupport {
     }
 
     public Exchange receiveNoWait(Endpoint endpoint) {
-        LOG.debug("<<<< {}", endpoint);
+        log.debug("<<<< {}", endpoint);
         PollingConsumer consumer = null;
         try {
             consumer = acquirePollingConsumer(endpoint);
@@ -156,7 +155,7 @@ public class ConsumerCache extends ServiceSupport {
      */
     public int size() {
         int size = consumers.size();
-        LOG.trace("size = {}", size);
+        log.trace("size = {}", size);
         return size;
     }
 
@@ -222,7 +221,7 @@ public class ConsumerCache extends ServiceSupport {
             consumers.stop();
             consumers.start();
         } catch (Exception e) {
-            LOG.debug("Error restarting consumer pool", e);
+            log.debug("Error restarting consumer pool", e);
         }
         if (statistics != null) {
             statistics.clear();

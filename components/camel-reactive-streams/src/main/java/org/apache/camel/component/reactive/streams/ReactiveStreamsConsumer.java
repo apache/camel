@@ -24,14 +24,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The Camel reactive-streams consumer.
  */
 public class ReactiveStreamsConsumer extends DefaultConsumer {
-    private static final Logger LOG = LoggerFactory.getLogger(ReactiveStreamsConsumer.class);
 
     private final ReactiveStreamsEndpoint endpoint;
     private final CamelReactiveStreamsService service;
@@ -106,7 +103,7 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
             return false;
 
         } else {
-            LOG.warn("Consumer not ready to process exchanges. The exchange {} will be discarded", exchange);
+            log.warn("Consumer not ready to process exchanges. The exchange {} will be discarded", exchange);
             callback.done(true);
             return true;
         }

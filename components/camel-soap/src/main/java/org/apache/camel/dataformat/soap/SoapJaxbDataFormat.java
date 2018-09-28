@@ -39,8 +39,6 @@ import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
 import org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy;
 import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Data format supporting SOAP 1.1 and 1.2.
@@ -48,8 +46,6 @@ import org.slf4j.LoggerFactory;
 public class SoapJaxbDataFormat extends JaxbDataFormat {
 
     public static final String SOAP_UNMARSHALLED_HEADER_LIST = "org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST";
-
-    private static final Logger LOG = LoggerFactory.getLogger(SoapJaxbDataFormat.class);
 
     private SoapDataFormatAdapter adapter;
     private ElementNameStrategy elementNameStrategy;
@@ -98,10 +94,10 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
     @Override
     protected void doStart() throws Exception {
         if ("1.2".equals(version)) {
-            LOG.debug("Using SOAP 1.2 adapter");
+            log.debug("Using SOAP 1.2 adapter");
             adapter = new Soap12DataFormatAdapter(this);
         } else {
-            LOG.debug("Using SOAP 1.1 adapter");
+            log.debug("Using SOAP 1.1 adapter");
             adapter = new Soap11DataFormatAdapter(this);
         }
         super.doStart();
@@ -213,7 +209,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         for (Object bodyObj : bodyParts) {
             QName name = elementNameStrategy.findQNameForSoapActionOrType(soapAction, bodyObj.getClass());
             if (name == null) {
-                LOG.warn("Could not find QName for class {}", bodyObj.getClass().getName());
+                log.warn("Could not find QName for class {}", bodyObj.getClass().getName());
                 continue;
             } else {
                 bodyElements.add(getElement(bodyObj, name));
@@ -223,7 +219,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         for (Object headerObj : headerParts) {
             QName name = elementNameStrategy.findQNameForSoapActionOrType(soapAction, headerObj.getClass());
             if (name == null) {
-                LOG.warn("Could not find QName for class {}", headerObj.getClass().getName());
+                log.warn("Could not find QName for class {}", headerObj.getClass().getName());
                 continue;
             } else {
                 JAXBElement<?> headerElem = getElement(headerObj, name);

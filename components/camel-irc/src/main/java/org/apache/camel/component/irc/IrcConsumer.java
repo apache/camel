@@ -24,11 +24,8 @@ import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventAdapter;
 import org.schwering.irc.lib.IRCModeParser;
 import org.schwering.irc.lib.IRCUser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class IrcConsumer extends DefaultConsumer {
-    private static final Logger LOG = LoggerFactory.getLogger(IrcConsumer.class);
 
     private final IrcConfiguration configuration;
     private final IrcEndpoint endpoint;
@@ -46,7 +43,7 @@ public class IrcConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         if (connection != null) {
             for (IrcChannel channel : endpoint.getConfiguration().getChannels()) {
-                LOG.debug("Parting: {}", channel);
+                log.debug("Parting: {}", channel);
                 connection.doPart(channel.getName());
             }
             connection.removeIRCEventListener(listener);
@@ -64,12 +61,12 @@ public class IrcConsumer extends DefaultConsumer {
             try {
                 // TODO : sleep before joinChannels() may be another useful config param (even when not identifying)
                 // sleep for a few seconds as the server sometimes takes a moment to fully connect, print banners, etc after connection established
-                LOG.debug("Sleeping for 5 seconds before identifying to NickServ.");
+                log.debug("Sleeping for 5 seconds before identifying to NickServ.");
                 Thread.sleep(5000);
             } catch (InterruptedException ex) {
                 // ignore
             }
-            LOG.debug("Identifying and enforcing nick with NickServ.");
+            log.debug("Identifying and enforcing nick with NickServ.");
             // Identify nick and enforce, https://meta.wikimedia.org/wiki/IRC/Instructions#Register_your_nickname.2C_identify.2C_and_enforce
             connection.doPrivmsg("nickserv", "identify " + configuration.getNickPassword());
             connection.doPrivmsg("nickserv", "set enforce on");

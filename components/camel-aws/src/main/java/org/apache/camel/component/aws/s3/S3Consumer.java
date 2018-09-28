@@ -40,8 +40,6 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A Consumer of messages from the Amazon Web Service Simple Storage Service
@@ -49,7 +47,6 @@ import org.slf4j.LoggerFactory;
  */
 public class S3Consumer extends ScheduledBatchPollingConsumer {
     
-    private static final Logger LOG = LoggerFactory.getLogger(S3Consumer.class);
     private String marker;
     private transient String s3ConsumerToString;
 
@@ -68,12 +65,12 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
         Queue<Exchange> exchanges;
         
         if (fileName != null) {
-            LOG.trace("Getting object in bucket [{}] with file name [{}]...", bucketName, fileName);
+            log.trace("Getting object in bucket [{}] with file name [{}]...", bucketName, fileName);
 
             S3Object s3Object = getAmazonS3Client().getObject(new GetObjectRequest(bucketName, fileName));
             exchanges = createExchanges(s3Object);
         } else {
-            LOG.trace("Queueing objects in bucket [{}]...", bucketName);
+            log.trace("Queueing objects in bucket [{}]...", bucketName);
 
             ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
             listObjectsRequest.setBucketName(bucketName);
@@ -83,20 +80,20 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
             }
             // if there was a marker from previous poll then use that to continue from where we left last time
             if (marker != null) {
-                LOG.trace("Resuming from marker: {}", marker);
+                log.trace("Resuming from marker: {}", marker);
                 listObjectsRequest.setMarker(marker);
             }
 
             ObjectListing listObjects = getAmazonS3Client().listObjects(listObjectsRequest);
             if (listObjects.isTruncated()) {
                 marker = listObjects.getNextMarker();
-                LOG.trace("Returned list is truncated, so setting next marker: {}", marker);
+                log.trace("Returned list is truncated, so setting next marker: {}", marker);
             } else {
                 // no more data so clear marker
                 marker = null;
             }
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Found {} objects in bucket [{}]...", listObjects.getObjectSummaries().size(), bucketName);
+            if (log.isTraceEnabled()) {
+                log.trace("Found {} objects in bucket [{}]...", listObjects.getObjectSummaries().size(), bucketName);
             }
 
             exchanges = createExchanges(listObjects.getObjectSummaries());
@@ -112,8 +109,8 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
     }
     
     protected Queue<Exchange> createExchanges(List<S3ObjectSummary> s3ObjectSummaries) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Received {} messages in this poll", s3ObjectSummaries.size());
+        if (log.isTraceEnabled()) {
+            log.trace("Received {} messages in this poll", s3ObjectSummaries.size());
         }
 
         Collection<S3Object> s3Objects = new ArrayList<>();
@@ -127,7 +124,7 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
                 answer.add(exchange);
             }
         } catch (Throwable e) {
-            LOG.warn("Error getting S3Object due: {}", e.getMessage(), e);
+            log.warn("Error getting S3Object due: {}", e.getMessage(), e);
             // ensure all previous gathered s3 objects are closed
             // if there was an exception creating the exchanges in this batch
             s3Objects.forEach(IOHelper::close);
@@ -167,11 +164,11 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
                 }
             });
 
-            LOG.trace("Processing exchange [{}]...", exchange);
+            log.trace("Processing exchange [{}]...", exchange);
             getAsyncProcessor().process(exchange, new AsyncCallback() {
                 @Override
                 public void done(boolean doneSync) {
-                    LOG.trace("Processing exchange [{}] done.", exchange);
+                    log.trace("Processing exchange [{}] done.", exchange);
                 }
             });
         }
@@ -190,11 +187,11 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
                 String bucketName = exchange.getIn().getHeader(S3Constants.BUCKET_NAME, String.class);
                 String key = exchange.getIn().getHeader(S3Constants.KEY, String.class);
                 
-                LOG.trace("Deleting object from bucket {} with key {}...", bucketName, key);
+                log.trace("Deleting object from bucket {} with key {}...", bucketName, key);
                 
                 getAmazonS3Client().deleteObject(bucketName, key);
 
-                LOG.trace("Deleted object from bucket {} with key {}...", bucketName, key);
+                log.trace("Deleted object from bucket {} with key {}...", bucketName, key);
             }
         } catch (AmazonClientException e) {
             getExceptionHandler().handleException("Error occurred during deleting object. This exception is ignored.", exchange, e);
@@ -209,9 +206,9 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
     protected void processRollback(Exchange exchange) {
         Exception cause = exchange.getException();
         if (cause != null) {
-            LOG.warn("Exchange failed, so rolling back message status: {}", exchange, cause);
+            log.warn("Exchange failed, so rolling back message status: {}", exchange, cause);
         } else {
-            LOG.warn("Exchange failed, so rolling back message status: {}", exchange);
+            log.warn("Exchange failed, so rolling back message status: {}", exchange);
         }
     }
 

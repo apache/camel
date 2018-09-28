@@ -26,16 +26,12 @@ import org.influxdb.dto.BatchPoints;
 import org.influxdb.dto.Point;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Producer for the InfluxDB components
  *
  */
 public class InfluxDbProducer extends DefaultProducer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(InfluxDbProducer.class);
 
     InfluxDbEndpoint endpoint;
     InfluxDB connection;
@@ -79,10 +75,10 @@ public class InfluxDbProducer extends DefaultProducer {
             Point p = exchange.getIn().getMandatoryBody(Point.class);
 
             try {
-                LOG.debug("Writing point {}", p.lineProtocol());
+                log.debug("Writing point {}", p.lineProtocol());
                 
                 if (!connection.databaseExists(dataBaseName)) {
-                    LOG.debug("Database {} doesn't exist. Creating it...", dataBaseName);
+                    log.debug("Database {} doesn't exist. Creating it...", dataBaseName);
                     connection.createDatabase(dataBaseName);
                 }
                 connection.write(dataBaseName, retentionPolicy, p);
@@ -93,7 +89,7 @@ public class InfluxDbProducer extends DefaultProducer {
             BatchPoints batchPoints = exchange.getIn().getMandatoryBody(BatchPoints.class);
 
             try {
-                LOG.debug("Writing BatchPoints {}", batchPoints.lineProtocol());
+                log.debug("Writing BatchPoints {}", batchPoints.lineProtocol());
 
                 connection.write(batchPoints);
             } catch (Exception ex) {

@@ -30,11 +30,8 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class EhcacheAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
-    private static final Logger LOG = LoggerFactory.getLogger(EhcacheAggregationRepository.class);
 
     private CamelContext camelContext;
     private CacheManager cacheManager;
@@ -146,7 +143,7 @@ public class EhcacheAggregationRepository extends ServiceSupport implements Reco
 
     @Override
     public Exchange add(final CamelContext camelContext, final String key, final Exchange exchange) {
-        LOG.trace("Adding an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
+        log.trace("Adding an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
 
         final DefaultExchangeHolder oldHolder = cache.get(key);
         final DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
@@ -163,13 +160,13 @@ public class EhcacheAggregationRepository extends ServiceSupport implements Reco
 
     @Override
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
-        LOG.trace("Removing an exchange with ID {} for key {}", exchange.getExchangeId(), key);
+        log.trace("Removing an exchange with ID {} for key {}", exchange.getExchangeId(), key);
         cache.remove(key);
     }
 
     @Override
     public void confirm(CamelContext camelContext, String exchangeId) {
-        LOG.trace("Confirming an exchange with ID {}.", exchangeId);
+        log.trace("Confirming an exchange with ID {}.", exchangeId);
         cache.remove(exchangeId);
     }
 
@@ -183,15 +180,15 @@ public class EhcacheAggregationRepository extends ServiceSupport implements Reco
 
     @Override
     public Set<String> scan(CamelContext camelContext) {
-        LOG.trace("Scanning for exchanges to recover in {} context", camelContext.getName());
+        log.trace("Scanning for exchanges to recover in {} context", camelContext.getName());
         Set<String> scanned = Collections.unmodifiableSet(getKeys());
-        LOG.trace("Found {} keys for exchanges to recover in {} context", scanned.size(), camelContext.getName());
+        log.trace("Found {} keys for exchanges to recover in {} context", scanned.size(), camelContext.getName());
         return scanned;
     }
 
     @Override
     public Exchange recover(CamelContext camelContext, String exchangeId) {
-        LOG.trace("Recovering an Exchange with ID {}.", exchangeId);
+        log.trace("Recovering an Exchange with ID {}.", exchangeId);
         return useRecovery ? unmarshallExchange(camelContext, cache.get(exchangeId)) : null;
     }
 

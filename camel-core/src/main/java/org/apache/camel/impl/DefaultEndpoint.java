@@ -57,7 +57,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint, HasId, CamelContextAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultEndpoint.class);
     private final String id = EndpointHelper.createEndpointId();
     private transient String endpointUriToString;
     private String endpointUri;
@@ -206,8 +205,8 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     public PollingConsumer createPollingConsumer() throws Exception {
         // should not call configurePollingConsumer when its EventDrivenPollingConsumer
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating EventDrivenPollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
+        if (log.isDebugEnabled()) {
+            log.debug("Creating EventDrivenPollingConsumer with queueSize: {} blockWhenFull: {} blockTimeout: {}",
                     new Object[]{getPollingConsumerQueueSize(), isPollingConsumerBlockWhenFull(), getPollingConsumerBlockTimeout()});
         }
         EventDrivenPollingConsumer consumer = new EventDrivenPollingConsumer(this, getPollingConsumerQueueSize());

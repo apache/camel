@@ -34,13 +34,9 @@ import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.consumer.common.NamespaceEvent;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class KubernetesNamespacesConsumer extends DefaultConsumer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KubernetesNamespacesConsumer.class);
-    
     private final Processor processor;
     private ExecutorService executor;
     private NamespacesConsumerTask nsWatcher;
@@ -68,7 +64,7 @@ public class KubernetesNamespacesConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         super.doStop();
         
-        LOG.debug("Stopping Kubernetes Namespace Consumer");
+        log.debug("Stopping Kubernetes Namespace Consumer");
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
                 if (nsWatcher != null) {
@@ -115,7 +111,7 @@ public class KubernetesNamespacesConsumer extends DefaultConsumer {
                 @Override
                 public void onClose(KubernetesClientException cause) {
                     if (cause != null) {
-                        LOG.error(cause.getMessage(), cause);
+                        log.error(cause.getMessage(), cause);
                     }                            
                 }
             });

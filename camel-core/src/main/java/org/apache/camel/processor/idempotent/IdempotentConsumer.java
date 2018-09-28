@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * @see org.apache.camel.spi.ExchangeIdempotentRepository
  */
 public class IdempotentConsumer extends ServiceSupport implements CamelContextAware, AsyncProcessor, Navigate<Processor>, IdAware {
-    private static final Logger LOG = LoggerFactory.getLogger(IdempotentConsumer.class);
+
     private CamelContext camelContext;
     private String id;
     private final Expression messageIdExpression;
@@ -147,7 +147,7 @@ public class IdempotentConsumer extends ServiceSupport implements CamelContextAw
 
                 if (skipDuplicate) {
                     // if we should skip duplicate then we are done
-                    LOG.debug("Ignoring duplicate message with id: {} for exchange: {}", messageId, exchange);
+                    log.debug("Ignoring duplicate message with id: {} for exchange: {}", messageId, exchange);
                     callback.done(true);
                     return true;
                 }

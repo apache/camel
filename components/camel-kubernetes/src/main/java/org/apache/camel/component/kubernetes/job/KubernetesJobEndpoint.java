@@ -32,8 +32,6 @@ import org.slf4j.LoggerFactory;
     syntax = "kubernetes-job:masterUrl", label = "container,cloud,paas")
 public class KubernetesJobEndpoint extends AbstractKubernetesEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KubernetesJobEndpoint.class);
-
     public KubernetesJobEndpoint(String uri, KubernetesJobComponent component, KubernetesConfiguration config) {
         super(uri, component, config);
     }

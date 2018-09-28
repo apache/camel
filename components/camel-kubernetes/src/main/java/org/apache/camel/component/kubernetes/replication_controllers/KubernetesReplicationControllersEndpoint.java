@@ -33,8 +33,6 @@ import org.slf4j.LoggerFactory;
     syntax = "kubernetes-replication-controllers:masterUrl", consumerClass = KubernetesReplicationControllersConsumer.class, label = "container,cloud,paas")
 public class KubernetesReplicationControllersEndpoint extends AbstractKubernetesEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KubernetesReplicationControllersEndpoint.class);
-
     public KubernetesReplicationControllersEndpoint(String uri, KubernetesReplicationControllersComponent component, KubernetesConfiguration config) {
         super(uri, component, config);
     }

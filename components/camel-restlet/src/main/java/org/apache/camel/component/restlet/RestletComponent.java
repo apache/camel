@@ -54,8 +54,6 @@ import org.restlet.data.Method;
 import org.restlet.engine.Engine;
 import org.restlet.security.ChallengeAuthenticator;
 import org.restlet.security.MapVerifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A Camel component embedded Restlet that produces and consumes exchanges.
@@ -63,7 +61,7 @@ import org.slf4j.LoggerFactory;
  * @version
  */
 public class RestletComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware, HeaderFilterStrategyAware {
-    private static final Logger LOG = LoggerFactory.getLogger(RestletComponent.class);
+
     private static final Object LOCK = new Object();
 
     private final Map<String, RestletHost> restletHostRegistry = new HashMap<>();
@@ -283,8 +281,8 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
                 router.removeRoute(method);
             }
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Detached restlet uriPattern: {} method: {}", router.getUriPattern(),
+            if (log.isDebugEnabled()) {
+                log.debug("Detached restlet uriPattern: {} method: {}", router.getUriPattern(),
                           endpoint.getRestletMethod());
             }
 
@@ -304,7 +302,7 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
             MethodBasedRouter result = routers.get(uriPattern);
             if (result == null && addIfEmpty) {
                 result = new MethodBasedRouter(uriPattern);
-                LOG.debug("Added method based router: {}", result);
+                log.debug("Added method based router: {}", result);
                 routers.put(uriPattern, result);
             }
             return result;
@@ -321,7 +319,7 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
                 host.configure(endpoint, component);
 
                 restletHostRegistry.put(key, host);
-                LOG.debug("Added host: {}", key);
+                log.debug("Added host: {}", key);
                 host.start();
             }
         }
@@ -397,7 +395,7 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
             guard.setVerifier(verifier);
             guard.setNext(target);
             target = guard;
-            LOG.debug("Target has been set to guard: {}", guard);
+            log.debug("Target has been set to guard: {}", guard);
         }
 
         List<Method> methods = new ArrayList<>();
@@ -409,24 +407,24 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
         }
         for (Method method : methods) {
             router.addRoute(method, target);
-            LOG.debug("Attached restlet uriPattern: {} method: {}", uriPattern, method);
+            log.debug("Attached restlet uriPattern: {} method: {}", uriPattern, method);
         }
 
         if (!router.hasBeenAttached()) {
             component.getDefaultHost().attach(
                     offsetPath == null ? uriPattern : offsetPath + uriPattern, router);
-            LOG.debug("Attached methodRouter uriPattern: {}", uriPattern);
+            log.debug("Attached methodRouter uriPattern: {}", uriPattern);
         }
 
         if (!router.isStarted()) {
             router.start();
-            LOG.debug("Started methodRouter uriPattern: {}", uriPattern);
+            log.debug("Started methodRouter uriPattern: {}", uriPattern);
         }
     }
 
     private void deAttachUriPatternFromRestlet(String uriPattern, RestletEndpoint endpoint, Restlet target) throws Exception {
         component.getDefaultHost().detach(target);
-        LOG.debug("De-attached methodRouter uriPattern: {}", uriPattern);
+        log.debug("De-attached methodRouter uriPattern: {}", uriPattern);
     }
 
     public Boolean getControllerDaemon() {

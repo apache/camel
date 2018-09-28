@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
 import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.FilePathResolver;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -38,9 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Default implementation of {@link StreamCachingStrategy}
  */
-public class DefaultStreamCachingStrategy extends org.apache.camel.support.ServiceSupport implements CamelContextAware, StreamCachingStrategy {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultStreamCachingStrategy.class);
+public class DefaultStreamCachingStrategy extends ServiceSupport implements CamelContextAware, StreamCachingStrategy {
 
     private CamelContext camelContext;
     private boolean enabled;
@@ -169,7 +168,7 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
         }
 
         boolean answer = anySpoolRules ? any : all;
-        LOG.debug("Should spool cache {} -> {}", length, answer);
+        log.debug("Should spool cache {} -> {}", length, answer);
         return answer;
     }
 
@@ -181,8 +180,8 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
         Message message = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
         StreamCache cache = message.getBody(StreamCache.class);
         if (cache != null) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Cached stream to {} -> {}", cache.inMemory() ? "memory" : "spool", cache);
+            if (log.isTraceEnabled()) {
+                log.trace("Cached stream to {} -> {}", cache.inMemory() ? "memory" : "spool", cache);
             }
             if (statistics.isStatisticsEnabled()) {
                 try {
@@ -192,7 +191,7 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
                         statistics.updateSpool(cache.length());
                     }
                 } catch (Exception e) {
-                    LOG.debug("Error updating cache statistics. This exception is ignored.", e);
+                    log.debug("Error updating cache statistics. This exception is ignored.", e);
                 }
             }
         }
@@ -222,7 +221,7 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
     @Override
     protected void doStart() throws Exception {
         if (!enabled) {
-            LOG.debug("StreamCaching is not enabled");
+            log.debug("StreamCaching is not enabled");
             return;
         }
 
@@ -249,16 +248,16 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
 
             if (spoolDirectory.exists()) {
                 if (spoolDirectory.isDirectory()) {
-                    LOG.debug("Using spool directory: {}", spoolDirectory);
+                    log.debug("Using spool directory: {}", spoolDirectory);
                 } else {
-                    LOG.warn("Spool directory: {} is not a directory. This may cause problems spooling to disk for the stream caching!", spoolDirectory);
+                    log.warn("Spool directory: {} is not a directory. This may cause problems spooling to disk for the stream caching!", spoolDirectory);
                 }
             } else {
                 boolean created = spoolDirectory.mkdirs();
                 if (!created) {
-                    LOG.warn("Cannot create spool directory: {}. This may cause problems spooling to disk for the stream caching!", spoolDirectory);
+                    log.warn("Cannot create spool directory: {}. This may cause problems spooling to disk for the stream caching!", spoolDirectory);
                 } else {
-                    LOG.debug("Created spool directory: {}", spoolDirectory);
+                    log.debug("Created spool directory: {}", spoolDirectory);
                 }
 
             }
@@ -275,24 +274,24 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
             }
         }
 
-        LOG.debug("StreamCaching configuration {}", this);
+        log.debug("StreamCaching configuration {}", this);
 
         if (spoolDirectory != null) {
-            LOG.info("StreamCaching in use with spool directory: {} and rules: {}", spoolDirectory.getPath(), spoolRules);
+            log.info("StreamCaching in use with spool directory: {} and rules: {}", spoolDirectory.getPath(), spoolRules);
         } else {
-            LOG.info("StreamCaching in use with rules: {}", spoolRules);
+            log.info("StreamCaching in use with rules: {}", spoolRules);
         }
     }
 
     @Override
     protected void doStop() throws Exception {
         if (spoolThreshold > 0 & spoolDirectory != null  && isRemoveSpoolDirectoryWhenStopping()) {
-            LOG.debug("Removing spool directory: {}", spoolDirectory);
+            log.debug("Removing spool directory: {}", spoolDirectory);
             FileUtil.removeDir(spoolDirectory);
         }
 
-        if (LOG.isDebugEnabled() && statistics.isStatisticsEnabled()) {
-            LOG.debug("Stopping StreamCachingStrategy with statistics: {}", statistics);
+        if (log.isDebugEnabled() && statistics.isStatisticsEnabled()) {
+            log.debug("Stopping StreamCachingStrategy with statistics: {}", statistics);
         }
 
         statistics.reset();
@@ -313,7 +312,7 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
 
         public boolean shouldSpoolCache(long length) {
             if (spoolThreshold > 0 && length > spoolThreshold) {
-                LOG.trace("Should spool cache fixed threshold {} > {} -> true", length, spoolThreshold);
+                log.trace("Should spool cache fixed threshold {} > {} -> true", length, spoolThreshold);
                 return true;
             }
             return false;
@@ -347,15 +346,15 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
                 double calc = (used / upper) * 100;
                 int percentage = (int) calc;
 
-                if (LOG.isTraceEnabled()) {
+                if (log.isTraceEnabled()) {
                     long u = heapUsage.getHeapMemoryUsage().getUsed();
                     long c = heapUsage.getHeapMemoryUsage().getCommitted();
                     long m = heapUsage.getHeapMemoryUsage().getMax();
-                    LOG.trace("Heap memory: [used={}M ({}%), committed={}M, max={}M]", u >> 20, percentage, c >> 20, m >> 20);
+                    log.trace("Heap memory: [used={}M ({}%), committed={}M, max={}M]", u >> 20, percentage, c >> 20, m >> 20);
                 }
 
                 if (percentage > spoolUsedHeapMemoryThreshold) {
-                    LOG.trace("Should spool cache heap memory threshold {} > {} -> true", percentage, spoolUsedHeapMemoryThreshold);
+                    log.trace("Should spool cache heap memory threshold {} > {} -> true", percentage, spoolUsedHeapMemoryThreshold);
                     return true;
                 }
             }

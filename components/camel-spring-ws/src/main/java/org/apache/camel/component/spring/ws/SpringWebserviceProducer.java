@@ -36,8 +36,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceTemplate;
@@ -57,7 +55,6 @@ import org.springframework.ws.transport.http.HttpUrlConnectionMessageSender;
 
 public class SpringWebserviceProducer extends DefaultProducer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SpringWebserviceProducer.class);
     private static final XmlConverter XML_CONVERTER = new XmlConverter();
 
     public SpringWebserviceProducer(Endpoint endpoint) {
@@ -179,7 +176,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
             WebServiceMessageSender messageSender = messageSenders[i];
             if (messageSender instanceof HttpComponentsMessageSender) {
                 if (configuration.getSslContextParameters() != null) {
-                    LOG.warn("Not applying SSLContextParameters based configuration to HttpComponentsMessageSender.  "
+                    log.warn("Not applying SSLContextParameters based configuration to HttpComponentsMessageSender.  "
                             + "If you are using this MessageSender, which you are not by default, you will need "
                             + "to configure SSL using the Commons HTTP 3.x Protocol registry.");
                 }
@@ -188,7 +185,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
                     if (messageSender.getClass().equals(HttpComponentsMessageSender.class)) {
                         ((HttpComponentsMessageSender) messageSender).setReadTimeout(configuration.getTimeout());
                     } else {
-                        LOG.warn("Not applying timeout configuration to HttpComponentsMessageSender based implementation.  "
+                        log.warn("Not applying timeout configuration to HttpComponentsMessageSender based implementation.  "
                                 + "You are using what appears to be a custom MessageSender, which you are not doing by default. "
                                 + "You will need configure timeout on your own.");
                     }
@@ -199,7 +196,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
                 messageSenders[i] = new AbstractHttpWebServiceMessageSenderDecorator((HttpUrlConnectionMessageSender) messageSender, configuration, getEndpoint().getCamelContext());
             } else {
                 // For example this will be the case during unit-testing with the net.javacrumbs.spring-ws-test API
-                LOG.warn("Ignoring the timeout and SSLContextParameters options for {}.  You will need to configure "
+                log.warn("Ignoring the timeout and SSLContextParameters options for {}.  You will need to configure "
                         + "these options directly on your custom configured WebServiceMessageSender", messageSender);
             }
         }

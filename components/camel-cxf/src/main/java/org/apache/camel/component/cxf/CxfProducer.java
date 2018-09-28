@@ -47,8 +47,6 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.service.model.BindingMessageInfo;
 import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.transport.Conduit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * CxfProducer binds a Camel exchange to a CXF exchange, acts as a CXF 
@@ -58,7 +56,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class CxfProducer extends DefaultProducer implements AsyncProcessor {
-    private static final Logger LOG = LoggerFactory.getLogger(CxfProducer.class);
+
     private Client client;
     private CxfEndpoint endpoint;
 
@@ -112,7 +110,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
     // As the cxf client async and sync api is implement different,
     // so we don't delegate the sync process call to the async process 
     public boolean process(Exchange camelExchange, AsyncCallback callback) {
-        LOG.trace("Process exchange: {} in an async way.", camelExchange);
+        log.trace("Process exchange: {} in an async way.", camelExchange);
         
         try {
             // create CXF exchange
@@ -150,7 +148,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
      * invokes the CXF client.
      */
     public void process(Exchange camelExchange) throws Exception {
-        LOG.trace("Process exchange: {} in sync way.", camelExchange);
+        log.trace("Process exchange: {} in sync way.", camelExchange);
         
         // create CXF exchange
         ExchangeImpl cxfExchange = new ExchangeImpl();
@@ -182,7 +180,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
                         endpoint.getCookieHandler().storeCookies(camelExchange, endpoint.getRequestUri(camelExchange), cxfHeaders);
                     }
                 } catch (IOException e) {
-                    LOG.error("Cannot store cookies", e);
+                    log.error("Cannot store cookies", e);
                 }
             }
             // bind the CXF response to Camel exchange
@@ -203,7 +201,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         // set data format mode in exchange
         DataFormat dataFormat = endpoint.getDataFormat();
         camelExchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, dataFormat);   
-        LOG.trace("Set Camel Exchange property: {}={}", DataFormat.class.getName(), dataFormat);
+        log.trace("Set Camel Exchange property: {}={}", DataFormat.class.getName(), dataFormat);
         
         if (endpoint.getMergeProtocolHeaders()) {
             camelExchange.setProperty(CxfConstants.CAMEL_CXF_PROTOCOL_HEADERS_MERGED, Boolean.TRUE);
@@ -215,7 +213,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         // don't let CXF ClientImpl close the input stream 
         if (dataFormat.dealias() == DataFormat.RAW) {
             cxfExchange.put(Client.KEEP_CONDUIT_ALIVE, true);
-            LOG.trace("Set CXF Exchange property: {}={}", Client.KEEP_CONDUIT_ALIVE, true);
+            log.trace("Set CXF Exchange property: {}={}", Client.KEEP_CONDUIT_ALIVE, true);
         }
      
         // bind the request CXF exchange
@@ -238,7 +236,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
                     requestContext.put(Message.PROTOCOL_HEADERS, transportHeaders);
                 }
             } catch (IOException e) {
-                LOG.warn("Cannot load cookies", e);
+                log.warn("Cannot load cookies", e);
             }
         }
 
@@ -264,13 +262,13 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         
         // store the original boi in the exchange
         camelExchange.setProperty(BindingOperationInfo.class.getName(), boi);
-        LOG.trace("Set exchange property: BindingOperationInfo: {}", boi);
+        log.trace("Set exchange property: BindingOperationInfo: {}", boi);
 
         // Unwrap boi before passing it to make a client call
         if (endpoint.getDataFormat() != DataFormat.PAYLOAD && !endpoint.isWrapped() && boi != null) {
             if (boi.isUnwrappedCapable()) {
                 boi = boi.getUnwrappedOperation();
-                LOG.trace("Unwrapped BOI {}", boi);
+                log.trace("Unwrapped BOI {}", boi);
             }
         }
         return  boi;
@@ -367,10 +365,10 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
             params[0] = exchange.getIn().getBody();
         }
 
-        if (LOG.isTraceEnabled()) {
+        if (log.isTraceEnabled()) {
             if (params != null) {
                 for (int i = 0; i < params.length; i++) {
-                    LOG.trace("params[{}] = {}", i, params[i]);
+                    log.trace("params[{}] = {}", i, params[i]);
                 }
             }
         }
@@ -393,11 +391,11 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         BindingOperationInfo answer = null;
         String lp = ex.getIn().getHeader(CxfConstants.OPERATION_NAME, String.class);
         if (lp == null) {
-            LOG.debug("CxfProducer cannot find the {} from message header, trying with defaultOperationName", CxfConstants.OPERATION_NAME);
+            log.debug("CxfProducer cannot find the {} from message header, trying with defaultOperationName", CxfConstants.OPERATION_NAME);
             lp = endpoint.getDefaultOperationName();
         }
         if (lp == null) {
-            LOG.debug("CxfProducer cannot find the {} from message header and there is no DefaultOperationName setting, CxfProducer will pick up the first available operation.",
+            log.debug("CxfProducer cannot find the {} from message header and there is no DefaultOperationName setting, CxfProducer will pick up the first available operation.",
                      CxfConstants.OPERATION_NAME);
             Collection<BindingOperationInfo> bois = 
                 client.getEndpoint().getEndpointInfo().getBinding().getOperations();
@@ -414,12 +412,12 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
             }
             if (ns == null) {
                 ns = client.getEndpoint().getService().getName().getNamespaceURI();
-                LOG.trace("Operation namespace not in header. Set it to: {}", ns);
+                log.trace("Operation namespace not in header. Set it to: {}", ns);
             }            
 
             QName qname = new QName(ns, lp);
 
-            LOG.trace("Operation qname = {}", qname);
+            log.trace("Operation qname = {}", qname);
             
             answer = client.getEndpoint().getEndpointInfo().getBinding().getOperation(qname);
             if (answer == null) {

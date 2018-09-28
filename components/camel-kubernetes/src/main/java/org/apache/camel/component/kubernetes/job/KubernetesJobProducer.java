@@ -33,12 +33,8 @@ import org.apache.camel.component.kubernetes.KubernetesOperations;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class KubernetesJobProducer extends DefaultProducer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(KubernetesJobProducer.class);
 
     public KubernetesJobProducer(AbstractKubernetesEndpoint endpoint) {
         super(endpoint);
@@ -96,7 +92,7 @@ public class KubernetesJobProducer extends DefaultProducer {
     protected void doListJobByLabel(Exchange exchange, String operation) {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_LABELS, Map.class);
         if (ObjectHelper.isEmpty(labels)) {
-            LOG.error("Get Job by labels require specify a labels set");
+            log.error("Get Job by labels require specify a labels set");
             throw new IllegalArgumentException("Get Job by labels require specify a labels set");
         }
 
@@ -116,11 +112,11 @@ public class KubernetesJobProducer extends DefaultProducer {
         String jobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(jobName)) {
-            LOG.error("Get a specific job require specify a job name");
+            log.error("Get a specific job require specify a job name");
             throw new IllegalArgumentException("Get a specific job require specify a job name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
-            LOG.error("Get a specific job require specify a namespace name");
+            log.error("Get a specific job require specify a namespace name");
             throw new IllegalArgumentException("Get a specific job require specify a namespace name");
         }
         job = getEndpoint().getKubernetesClient().batch().jobs().inNamespace(namespaceName).withName(jobName).get();
@@ -135,15 +131,15 @@ public class KubernetesJobProducer extends DefaultProducer {
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         JobSpec jobSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_SPEC, JobSpec.class);
         if (ObjectHelper.isEmpty(jobName)) {
-            LOG.error("Create a specific job require specify a job name");
+            log.error("Create a specific job require specify a job name");
             throw new IllegalArgumentException("Create a specific job require specify a job name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
-            LOG.error("Create a specific job require specify a namespace name");
+            log.error("Create a specific job require specify a namespace name");
             throw new IllegalArgumentException("Create a specific job require specify a namespace name");
         }
         if (ObjectHelper.isEmpty(jobSpec)) {
-            LOG.error("Create a specific job require specify a hpa spec bean");
+            log.error("Create a specific job require specify a hpa spec bean");
             throw new IllegalArgumentException("Create a specific job require specify a hpa spec bean");
         }
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_LABELS, Map.class);
@@ -158,11 +154,11 @@ public class KubernetesJobProducer extends DefaultProducer {
         String jobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_JOB_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (ObjectHelper.isEmpty(jobName)) {
-            LOG.error("Delete a specific job require specify a job name");
+            log.error("Delete a specific job require specify a job name");
             throw new IllegalArgumentException("Delete a specific job require specify a job name");
         }
         if (ObjectHelper.isEmpty(namespaceName)) {
-            LOG.error("Delete a specific job require specify a namespace name");
+            log.error("Delete a specific job require specify a namespace name");
             throw new IllegalArgumentException("Delete a specific job require specify a namespace name");
         }
 

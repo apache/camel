@@ -41,7 +41,6 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "2.14.0", scheme = "ahc-ws,ahc-wss", extendsScheme = "ahc,ahc", title = "AHC Websocket,AHC Secure Websocket",
         syntax = "ahc-ws:httpUri", consumerClass = WsConsumer.class, label = "websocket")
 public class WsEndpoint extends AhcEndpoint {
-    private static final transient Logger LOG = LoggerFactory.getLogger(WsEndpoint.class);
 
     private final Set<WsConsumer> consumers = new HashSet<>();
     private final WsListener listener = new WsListener();
@@ -120,7 +119,7 @@ public class WsEndpoint extends AhcEndpoint {
     public void connect() throws Exception {
         String uri = getHttpUri().toASCIIString();
 
-        LOG.debug("Connecting to {}", uri);
+        log.debug("Connecting to {}", uri);
         websocket = getClient().prepareGet(uri).execute(
             new WebSocketUpgradeHandler.Builder()
                 .addWebSocketListener(listener).build()).get();
@@ -129,8 +128,8 @@ public class WsEndpoint extends AhcEndpoint {
     @Override
     protected void doStop() throws Exception {
         if (websocket != null && websocket.isOpen()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Disconnecting from {}", getHttpUri().toASCIIString());
+            if (log.isDebugEnabled()) {
+                log.debug("Disconnecting from {}", getHttpUri().toASCIIString());
             }
             websocket.removeWebSocketListener(listener);
             websocket.sendCloseFrame();
@@ -151,7 +150,7 @@ public class WsEndpoint extends AhcEndpoint {
     void reConnect() throws Exception {
         if (websocket == null || !websocket.isOpen()) {
             String uri = getHttpUri().toASCIIString();
-            LOG.info("Reconnecting websocket: {}", uri);
+            log.info("Reconnecting websocket: {}", uri);
             connect();
         }
     }
@@ -160,22 +159,22 @@ public class WsEndpoint extends AhcEndpoint {
 
         @Override
         public void onOpen(WebSocket websocket) {
-            LOG.debug("Websocket opened");
+            log.debug("Websocket opened");
         }
 
         @Override
         public void onClose(WebSocket websocket, int code, String reason) {
-            LOG.debug("websocket closed - reconnecting");
+            log.debug("websocket closed - reconnecting");
             try {
                 reConnect();
             } catch (Exception e) {
-                LOG.warn("Error re-connecting to websocket", e);
+                log.warn("Error re-connecting to websocket", e);
             }
         }
 
         @Override
         public void onError(Throwable t) {
-            LOG.debug("websocket on error", t);
+            log.debug("websocket on error", t);
             if (isSendMessageOnError()) {
                 for (WsConsumer consumer : consumers) {
                     consumer.sendMessage(t);
@@ -185,7 +184,7 @@ public class WsEndpoint extends AhcEndpoint {
 
         @Override
         public void onBinaryFrame(byte[] message, boolean finalFragment, int rsv) {
-            LOG.debug("Received message --> {}", message);
+            log.debug("Received message --> {}", message);
             for (WsConsumer consumer : consumers) {
                 consumer.sendMessage(message);
             }
@@ -193,7 +192,7 @@ public class WsEndpoint extends AhcEndpoint {
 
         @Override
         public void onTextFrame(String message, boolean finalFragment, int rsv) {
-            LOG.debug("Received message --> {}", message);
+            log.debug("Received message --> {}", message);
             for (WsConsumer consumer : consumers) {
                 consumer.sendMessage(message);
             }

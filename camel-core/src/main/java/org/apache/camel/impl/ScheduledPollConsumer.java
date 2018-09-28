@@ -40,7 +40,6 @@ import org.slf4j.LoggerFactory;
  * A useful base class for any consumer which is polling based
  */
 public abstract class ScheduledPollConsumer extends DefaultConsumer implements Runnable, Suspendable, PollingConsumerPollingStrategy {
-    private static final Logger LOG = LoggerFactory.getLogger(ScheduledPollConsumer.class);
 
     private ScheduledPollConsumerScheduler scheduler;
     private ScheduledExecutorService scheduledExecutorService;
@@ -86,15 +85,15 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         try {
             // log starting
             if (LoggingLevel.ERROR == runLoggingLevel) {
-                LOG.error("Scheduled task started on:   {}", this.getEndpoint());
+                log.error("Scheduled task started on:   {}", this.getEndpoint());
             } else if (LoggingLevel.WARN == runLoggingLevel) {
-                LOG.warn("Scheduled task started on:   {}", this.getEndpoint());
+                log.warn("Scheduled task started on:   {}", this.getEndpoint());
             } else if (LoggingLevel.INFO == runLoggingLevel) {
-                LOG.info("Scheduled task started on:   {}", this.getEndpoint());
+                log.info("Scheduled task started on:   {}", this.getEndpoint());
             } else if (LoggingLevel.DEBUG == runLoggingLevel) {
-                LOG.debug("Scheduled task started on:   {}", this.getEndpoint());
+                log.debug("Scheduled task started on:   {}", this.getEndpoint());
             } else {
-                LOG.trace("Scheduled task started on:   {}", this.getEndpoint());
+                log.trace("Scheduled task started on:   {}", this.getEndpoint());
             }
 
             // execute scheduled task
@@ -102,26 +101,26 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
             // log completed
             if (LoggingLevel.ERROR == runLoggingLevel) {
-                LOG.error("Scheduled task completed on: {}", this.getEndpoint());
+                log.error("Scheduled task completed on: {}", this.getEndpoint());
             } else if (LoggingLevel.WARN == runLoggingLevel) {
-                LOG.warn("Scheduled task completed on: {}", this.getEndpoint());
+                log.warn("Scheduled task completed on: {}", this.getEndpoint());
             } else if (LoggingLevel.INFO == runLoggingLevel) {
-                LOG.info("Scheduled task completed on: {}", this.getEndpoint());
+                log.info("Scheduled task completed on: {}", this.getEndpoint());
             } else if (LoggingLevel.DEBUG == runLoggingLevel) {
-                LOG.debug("Scheduled task completed on: {}", this.getEndpoint());
+                log.debug("Scheduled task completed on: {}", this.getEndpoint());
             } else {
-                LOG.trace("Scheduled task completed on: {}", this.getEndpoint());
+                log.trace("Scheduled task completed on: {}", this.getEndpoint());
             }
 
         } catch (Error e) {
             // must catch Error, to ensure the task is re-scheduled
-            LOG.error("Error occurred during running scheduled task on: " + this.getEndpoint() + ", due: " + e.getMessage(), e);
+            log.error("Error occurred during running scheduled task on: " + this.getEndpoint() + ", due: " + e.getMessage(), e);
         }
     }
 
     private void doRun() {
         if (isSuspended()) {
-            LOG.trace("Cannot start to poll: {} as its suspended", this.getEndpoint());
+            log.trace("Cannot start to poll: {} as its suspended", this.getEndpoint());
             return;
         }
 
@@ -133,9 +132,9 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
             if (backoffCounter++ < backoffMultiplier) {
                 // yes we should backoff
                 if (idleCounter > 0) {
-                    LOG.debug("doRun() backoff due subsequent {} idles (backoff at {}/{})", idleCounter, backoffCounter, backoffMultiplier);
+                    log.debug("doRun() backoff due subsequent {} idles (backoff at {}/{})", idleCounter, backoffCounter, backoffMultiplier);
                 } else {
-                    LOG.debug("doRun() backoff due subsequent {} errors (backoff at {}/{})", errorCounter, backoffCounter, backoffMultiplier);
+                    log.debug("doRun() backoff due subsequent {} errors (backoff at {}/{})", errorCounter, backoffCounter, backoffMultiplier);
                 }
                 return;
             } else {
@@ -143,7 +142,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                 idleCounter = 0;
                 errorCounter = 0;
                 backoffCounter = 0;
-                LOG.trace("doRun() backoff finished, resetting counters.");
+                log.trace("doRun() backoff finished, resetting counters.");
             }
         }
 
@@ -160,9 +159,9 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                 if (isPollAllowed()) {
 
                     if (retryCounter == -1) {
-                        LOG.trace("Starting to poll: {}", this.getEndpoint());
+                        log.trace("Starting to poll: {}", this.getEndpoint());
                     } else {
-                        LOG.debug("Retrying attempt {} to poll: {}", retryCounter, this.getEndpoint());
+                        log.debug("Retrying attempt {} to poll: {}", retryCounter, this.getEndpoint());
                     }
 
                     // mark we are polling which should also include the begin/poll/commit
@@ -172,7 +171,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                         if (begin) {
                             retryCounter++;
                             polledMessages = poll();
-                            LOG.trace("Polled {} messages", polledMessages);
+                            log.trace("Polled {} messages", polledMessages);
 
                             if (polledMessages == 0 && isSendEmptyMessageWhenIdle()) {
                                 // send an "empty" exchange
@@ -184,17 +183,17 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                             if (polledMessages > 0 && isGreedy()) {
                                 done = false;
                                 retryCounter = -1;
-                                LOG.trace("Greedy polling after processing {} messages", polledMessages);
+                                log.trace("Greedy polling after processing {} messages", polledMessages);
                             }
                         } else {
-                            LOG.debug("Cannot begin polling as pollStrategy returned false: {}", pollStrategy);
+                            log.debug("Cannot begin polling as pollStrategy returned false: {}", pollStrategy);
                         }
                     } finally {
                         polling = false;
                     }
                 }
 
-                LOG.trace("Finished polling: {}", this.getEndpoint());
+                log.trace("Finished polling: {}", this.getEndpoint());
             } catch (Exception e) {
                 try {
                     boolean retry = pollStrategy.rollback(this, getEndpoint(), retryCounter, e);
@@ -221,7 +220,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                     getExceptionHandler().handleException("Consumer " + this + " failed polling endpoint: " + getEndpoint()
                             + ". Will try again at next poll", cause);
                 } catch (Throwable e) {
-                    LOG.warn("Error handling exception. This exception will be ignored.", e);
+                    log.warn("Error handling exception. This exception will be ignored.", e);
                 }
             }
         }
@@ -233,7 +232,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
             idleCounter = polledMessages == 0 ? ++idleCounter : 0;
             errorCounter = 0;
         }
-        LOG.trace("doRun() done with idleCounter={}, errorCounter={}", idleCounter, errorCounter);
+        log.trace("doRun() done with idleCounter={}, errorCounter={}", idleCounter, errorCounter);
 
         // avoid this thread to throw exceptions because the thread pool wont re-schedule a new thread
     }
@@ -411,7 +410,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
             if (backoffIdleThreshold <= 0 && backoffErrorThreshold <= 0) {
                 throw new IllegalArgumentException("backoffIdleThreshold and/or backoffErrorThreshold must be configured to a positive value when using backoffMultiplier");
             }
-            LOG.debug("Using backoff[multiplier={}, idleThreshold={}, errorThreshold={}] on {}", backoffMultiplier, backoffIdleThreshold, backoffErrorThreshold, getEndpoint());
+            log.debug("Using backoff[multiplier={}, idleThreshold={}, errorThreshold={}] on {}", backoffMultiplier, backoffIdleThreshold, backoffErrorThreshold, getEndpoint());
         }
 
         if (scheduler == null) {
@@ -490,7 +489,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
     @Override
     public long beforePoll(long timeout) throws Exception {
-        LOG.trace("Before poll {}", getEndpoint());
+        log.trace("Before poll {}", getEndpoint());
         // resume or start our self
         if (!ServiceHelper.resumeService(this)) {
             ServiceHelper.startService(this);
@@ -502,7 +501,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
     @Override
     public void afterPoll() throws Exception {
-        LOG.trace("After poll {}", getEndpoint());
+        log.trace("After poll {}", getEndpoint());
         // suspend or stop our self
         if (!ServiceHelper.suspendService(this)) {
             ServiceHelper.stopService(this);

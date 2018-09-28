@@ -42,8 +42,7 @@ import org.apache.camel.component.facebook.data.FacebookPropertiesHelper;
 import org.apache.camel.component.facebook.data.ReadingBuilder;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import static org.apache.camel.component.facebook.FacebookConstants.FACEBOOK_DATE_FORMAT;
 import static org.apache.camel.component.facebook.FacebookConstants.READING_PREFIX;
 import static org.apache.camel.component.facebook.FacebookConstants.READING_PROPERTY;
@@ -57,7 +56,6 @@ import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper
  */
 public class FacebookConsumer extends ScheduledPollConsumer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FacebookConsumer.class);
     private static final String SINCE_PREFIX = "since=";
 
     private final FacebookEndpoint endpoint;
@@ -96,10 +94,10 @@ public class FacebookConsumer extends ScheduledPollConsumer {
                 } catch (UnsupportedEncodingException e) {
                     throw new RuntimeCamelException(String.format("Error decoding %s.since with value %s due to: %s", READING_PREFIX, strSince, e.getMessage()), e);
                 }
-                LOG.debug("Using supplied property {}since value {}", READING_PREFIX, this.sinceTime);
+                log.debug("Using supplied property {}since value {}", READING_PREFIX, this.sinceTime);
             }
             if (queryString.contains("until=")) {
-                LOG.debug("Overriding configured property {}until", READING_PREFIX);
+                log.debug("Overriding configured property {}until", READING_PREFIX);
             }
         }
         this.endpointProperties = Collections.unmodifiableMap(properties);
@@ -135,7 +133,7 @@ public class FacebookConsumer extends ScheduledPollConsumer {
             result = filteredMethods.get(0);
         } else {
             result = getHighestPriorityMethod(filteredMethods);
-            LOG.warn("Using highest priority method {} from methods {}", method, filteredMethods);
+            log.warn("Using highest priority method {} from methods {}", method, filteredMethods);
         }
         return result;
     }

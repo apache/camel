@@ -22,15 +22,11 @@ import org.apache.camel.impl.DefaultProducer;
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventAdapter;
 import org.schwering.irc.lib.IRCUser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class IrcProducer extends DefaultProducer {
 
     public static final String[] COMMANDS = new String[] {"AWAY", "INVITE", "ISON", "JOIN", "KICK", "LIST", "NAMES",
         "PRIVMSG", "MODE", "NICK", "NOTICE", "PART", "PONG", "QUIT", "TOPIC", "WHO", "WHOIS", "WHOWAS", "USERHOST"};
-
-    private static final Logger LOG = LoggerFactory.getLogger(IrcProducer.class);
 
     private IRCConnection connection;
     private IrcEndpoint endpoint;
@@ -52,14 +48,14 @@ public class IrcProducer extends DefaultProducer {
 
         if (msg != null) {
             if (isMessageACommand(msg)) {
-                LOG.debug("Sending command: {}", msg);
+                log.debug("Sending command: {}", msg);
                 connection.send(msg);
             } else if (targetChannel != null) {
-                LOG.debug("Sending to: {} message: {}", targetChannel, msg);
+                log.debug("Sending to: {} message: {}", targetChannel, msg);
                 connection.doPrivmsg(targetChannel, msg);
             } else {
                 for (IrcChannel channel : endpoint.getConfiguration().getChannels()) {
-                    LOG.debug("Sending to: {} message: {}", channel, msg);
+                    log.debug("Sending to: {} message: {}", channel, msg);
                     connection.doPrivmsg(channel.getName(), msg);
                 }
             }
@@ -78,7 +74,7 @@ public class IrcProducer extends DefaultProducer {
     protected void doStop() throws Exception {
         if (connection != null) {
             for (IrcChannel channel : endpoint.getConfiguration().getChannels()) {
-                LOG.debug("Parting: {}", channel);
+                log.debug("Parting: {}", channel);
                 connection.doPart(channel.getName());
             }
             connection.removeIRCEventListener(listener);

@@ -59,7 +59,6 @@ import org.slf4j.LoggerFactory;
  */
 public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor, IdAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ThreadsProcessor.class);
     private String id;
     private final CamelContext camelContext;
     private final ExecutorService executorService;
@@ -80,7 +79,7 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor, 
 
         @Override
         public void run() {
-            LOG.trace("Continue routing exchange {}", exchange);
+            log.trace("Continue routing exchange {}", exchange);
             if (shutdown.get()) {
                 exchange.setException(new RejectedExecutionException("ThreadsProcessor is not running."));
             }
@@ -91,7 +90,7 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor, 
         public void reject() {
             // reject should mark the exchange with an rejected exception and mark not to route anymore
             exchange.setException(new RejectedExecutionException());
-            LOG.trace("Rejected routing exchange {}", exchange);
+            log.trace("Rejected routing exchange {}", exchange);
             if (shutdown.get()) {
                 exchange.setException(new RejectedExecutionException("ThreadsProcessor is not running."));
             }
@@ -126,7 +125,7 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor, 
         // we cannot execute this asynchronously for transacted exchanges, as the transaction manager doesn't support
         // using different threads in the same transaction
         if (exchange.isTransacted()) {
-            LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
+            log.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
             callback.done(true);
             return true;
         }
@@ -134,7 +133,7 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor, 
         try {
             // process the call in asynchronous mode
             ProcessCall call = new ProcessCall(exchange, callback, false);
-            LOG.trace("Submitting task {}", call);
+            log.trace("Submitting task {}", call);
             executorService.submit(call);
             // tell Camel routing engine we continue routing asynchronous
             return false;

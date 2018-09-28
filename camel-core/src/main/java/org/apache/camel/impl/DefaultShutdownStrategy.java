@@ -114,7 +114,6 @@ import org.slf4j.LoggerFactory;
  * @version
  */
 public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownStrategy, CamelContextAware {
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultShutdownStrategy.class);
 
     private CamelContext camelContext;
     private ExecutorService executor;
@@ -186,9 +185,9 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         routesOrdered.sort(comparator);
 
         if (suspendOnly) {
-            LOG.info("Starting to graceful suspend {} routes (timeout {} {})", routesOrdered.size(), timeout, timeUnit.toString().toLowerCase(Locale.ENGLISH));
+            log.info("Starting to graceful suspend {} routes (timeout {} {})", routesOrdered.size(), timeout, timeUnit.toString().toLowerCase(Locale.ENGLISH));
         } else {
-            LOG.info("Starting to graceful shutdown {} routes (timeout {} {})", routesOrdered.size(), timeout, timeUnit.toString().toLowerCase(Locale.ENGLISH));
+            log.info("Starting to graceful shutdown {} routes (timeout {} {})", routesOrdered.size(), timeout, timeUnit.toString().toLowerCase(Locale.ENGLISH));
         }
 
         // use another thread to perform the shutdowns so we can support timeout
@@ -215,7 +214,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
             // if set, stop processing and return false to indicate that the shutdown is aborting
             if (!forceShutdown && abortAfterTimeout) {
-                LOG.warn("Timeout occurred during graceful shutdown. Aborting the shutdown now."
+                log.warn("Timeout occurred during graceful shutdown. Aborting the shutdown now."
                         + " Notice: some resources may still be running as graceful shutdown did not complete successfully.");
 
                 // we attempt to force shutdown so lets log the current inflight exchanges which are affected
@@ -224,7 +223,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 return false;
             } else {
                 if (forceShutdown || shutdownNowOnTimeout) {
-                    LOG.warn("Timeout occurred during graceful shutdown. Forcing the routes to be shutdown now."
+                    log.warn("Timeout occurred during graceful shutdown. Forcing the routes to be shutdown now."
                             + " Notice: some resources may still be running as graceful shutdown did not complete successfully.");
 
                     // we attempt to force shutdown so lets log the current inflight exchanges which are affected
@@ -240,7 +239,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                         }
                     }
                 } else {
-                    LOG.warn("Timeout occurred during graceful shutdown. Will ignore shutting down the remainder routes."
+                    log.warn("Timeout occurred during graceful shutdown. Will ignore shutting down the remainder routes."
                             + " Notice: some resources may still be running as graceful shutdown did not complete successfully.");
 
                     logInflightExchanges(context, routes, isLogInflightExchangesOnTimeout());
@@ -253,7 +252,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         // convert to seconds as its easier to read than a big milli seconds number
         long seconds = TimeUnit.SECONDS.convert(watch.taken(), TimeUnit.MILLISECONDS);
 
-        LOG.info("Graceful shutdown of {} routes completed in {} seconds", routesOrdered.size(), seconds);
+        log.info("Graceful shutdown of {} routes completed in {} seconds", routesOrdered.size(), seconds);
         return true;
     }
 
@@ -342,7 +341,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             // it has completed its current task
             ShutdownRunningTask current = order.getRoute().getRouteContext().getShutdownRunningTask();
             if (current != ShutdownRunningTask.CompleteCurrentTaskOnly) {
-                LOG.debug("Changing shutdownRunningTask from {} to " +  ShutdownRunningTask.CompleteCurrentTaskOnly
+                log.debug("Changing shutdownRunningTask from {} to " +  ShutdownRunningTask.CompleteCurrentTaskOnly
                     + " on route {} to shutdown faster", current, order.getRoute().getId());
                 order.getRoute().getRouteContext().setShutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly);
             }
@@ -369,19 +368,19 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
      *
      * @param consumer the consumer to shutdown
      */
-    protected static void shutdownNow(Consumer consumer) {
-        LOG.trace("Shutting down: {}", consumer);
+    protected void shutdownNow(Consumer consumer) {
+        log.trace("Shutting down: {}", consumer);
 
         // allow us to do custom work before delegating to service helper
         try {
             ServiceHelper.stopService(consumer);
         } catch (Throwable e) {
-            LOG.warn("Error occurred while shutting down route: " + consumer + ". This exception will be ignored.", e);
+            log.warn("Error occurred while shutting down route: " + consumer + ". This exception will be ignored.", e);
             // fire event
             EventHelper.notifyServiceStopFailure(consumer.getEndpoint().getCamelContext(), consumer, e);
         }
 
-        LOG.trace("Shutdown complete for: {}", consumer);
+        log.trace("Shutdown complete for: {}", consumer);
     }
 
     /**
@@ -389,19 +388,19 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
      *
      * @param consumer the consumer to suspend
      */
-    protected static void suspendNow(Consumer consumer) {
-        LOG.trace("Suspending: {}", consumer);
+    protected void suspendNow(Consumer consumer) {
+        log.trace("Suspending: {}", consumer);
 
         // allow us to do custom work before delegating to service helper
         try {
             ServiceHelper.suspendService(consumer);
         } catch (Throwable e) {
-            LOG.warn("Error occurred while suspending route: " + consumer + ". This exception will be ignored.", e);
+            log.warn("Error occurred while suspending route: " + consumer + ". This exception will be ignored.", e);
             // fire event
             EventHelper.notifyServiceStopFailure(consumer.getEndpoint().getCamelContext(), consumer, e);
         }
 
-        LOG.trace("Suspend complete for: {}", consumer);
+        log.trace("Suspend complete for: {}", consumer);
     }
 
     private ExecutorService getExecutorService() {
@@ -443,7 +442,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
      * @param forced  whether to force shutdown
      * @param includeChildren whether to prepare the child of the service as well
      */
-    private static void prepareShutdown(Service service, boolean suspendOnly, boolean forced, boolean includeChildren, boolean suppressLogging) {
+    private void prepareShutdown(Service service, boolean suspendOnly, boolean forced, boolean includeChildren, boolean suppressLogging) {
         Set<Service> list;
         if (includeChildren) {
             // include error handlers as we want to prepare them for shutdown as well
@@ -456,13 +455,13 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         for (Service child : list) {
             if (child instanceof ShutdownPrepared) {
                 try {
-                    LOG.trace("Preparing {} shutdown on {}", forced ? "forced" : "", child);
+                    log.trace("Preparing {} shutdown on {}", forced ? "forced" : "", child);
                     ((ShutdownPrepared) child).prepareShutdown(suspendOnly, forced);
                 } catch (Exception e) {
                     if (suppressLogging) {
-                        LOG.trace("Error during prepare shutdown on " + child + ". This exception will be ignored.", e);
+                        log.trace("Error during prepare shutdown on " + child + ". This exception will be ignored.", e);
                     } else {
-                        LOG.warn("Error during prepare shutdown on " + child + ". This exception will be ignored.", e);
+                        log.warn("Error during prepare shutdown on " + child + ". This exception will be ignored.", e);
                     }
                 }
             }
@@ -493,7 +492,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     /**
      * Shutdown task which shutdown all the routes in a graceful manner.
      */
-    static class ShutdownTask implements Runnable {
+    class ShutdownTask implements Runnable {
 
         private final CamelContext context;
         private final List<RouteStartupOrder> routes;
@@ -524,7 +523,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             // 2) wait until all inflight and pending exchanges has been completed
             // 3) shutdown the deferred routes
 
-            LOG.debug("There are {} routes to {}", routes.size(), suspendOnly ? "suspend" : "shutdown");
+            log.debug("There are {} routes to {}", routes.size(), suspendOnly ? "suspend" : "shutdown");
 
             // list of deferred consumers to shutdown when all exchanges has been completed routed
             // and thus there are no more inflight exchanges so they can be safely shutdown at that time
@@ -534,8 +533,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 ShutdownRoute shutdownRoute = order.getRoute().getRouteContext().getShutdownRoute();
                 ShutdownRunningTask shutdownRunningTask = order.getRoute().getRouteContext().getShutdownRunningTask();
 
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("{}{} with options [{},{}]",
+                if (log.isTraceEnabled()) {
+                    log.trace("{}{} with options [{},{}]",
                             suspendOnly ? "Suspending route: " : "Shutting down route: ",
                             order.getRoute().getId(), shutdownRoute, shutdownRunningTask);
                 }
@@ -568,15 +567,15 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                         suspendNow(consumer);
                         // add it to the deferred list so the route will be shutdown later
                         deferredConsumers.add(new ShutdownDeferredConsumer(order.getRoute(), consumer));
-                        LOG.debug("Route: {} suspended and shutdown deferred, was consuming from: {}", order.getRoute().getId(), order.getRoute().getEndpoint());
+                        log.debug("Route: {} suspended and shutdown deferred, was consuming from: {}", order.getRoute().getId(), order.getRoute().getEndpoint());
                     } else if (shutdown) {
                         shutdownNow(consumer);
-                        LOG.info("Route: {} shutdown complete, was consuming from: {}", order.getRoute().getId(), order.getRoute().getEndpoint());
+                        log.info("Route: {} shutdown complete, was consuming from: {}", order.getRoute().getId(), order.getRoute().getEndpoint());
                     } else {
                         // we will stop it later, but for now it must run to be able to help all inflight messages
                         // be safely completed
                         deferredConsumers.add(new ShutdownDeferredConsumer(order.getRoute(), consumer));
-                        LOG.debug("Route: " + order.getRoute().getId() + (suspendOnly ? " shutdown deferred." : " suspension deferred."));
+                        log.debug("Route: " + order.getRoute().getId() + (suspendOnly ? " shutdown deferred." : " suspension deferred."));
                     }
                 }
             }
@@ -608,7 +607,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                         String routeId = order.getRoute().getId();
                         routeInflight.put(routeId, inflight);
                         size += inflight;
-                        LOG.trace("{} inflight and pending exchanges for route: {}", inflight, routeId);
+                        log.trace("{} inflight and pending exchanges for route: {}", inflight, routeId);
                     }
                 }
                 if (size > 0) {
@@ -624,7 +623,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                                 + (TimeUnit.SECONDS.convert(timeout, timeUnit) - (loopCount++ * loopDelaySeconds)) + " seconds.";
                         msg += " Inflights per route: [" + csb.toString() + "]";
 
-                        LOG.info(msg);
+                        log.info(msg);
 
                         // log verbose if DEBUG logging is enabled
                         logInflightExchanges(context, routes, logInflightExchangesOnTimeout);
@@ -632,10 +631,10 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                         Thread.sleep(loopDelaySeconds * 1000);
                     } catch (InterruptedException e) {
                         if (abortAfterTimeout) {
-                            LOG.warn("Interrupted while waiting during graceful shutdown, will abort.");
+                            log.warn("Interrupted while waiting during graceful shutdown, will abort.");
                             return;
                         } else {
-                            LOG.warn("Interrupted while waiting during graceful shutdown, will force shutdown now.");
+                            log.warn("Interrupted while waiting during graceful shutdown, will force shutdown now.");
                             break;
                         }
                     }
@@ -648,11 +647,11 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             for (ShutdownDeferredConsumer deferred : deferredConsumers) {
                 Consumer consumer = deferred.getConsumer();
                 if (consumer instanceof ShutdownAware) {
-                    LOG.trace("Route: {} preparing to shutdown.", deferred.getRoute().getId());
+                    log.trace("Route: {} preparing to shutdown.", deferred.getRoute().getId());
                     boolean forced = context.getShutdownStrategy().forceShutdown(consumer);
                     boolean suppress = context.getShutdownStrategy().isSuppressLoggingOnTimeout();
                     prepareShutdown(consumer, suspendOnly, forced, false, suppress);
-                    LOG.debug("Route: {} preparing to shutdown complete.", deferred.getRoute().getId());
+                    log.debug("Route: {} preparing to shutdown complete.", deferred.getRoute().getId());
                 }
             }
 
@@ -661,10 +660,10 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 Consumer consumer = deferred.getConsumer();
                 if (suspendOnly) {
                     suspendNow(consumer);
-                    LOG.info("Route: {} suspend complete, was consuming from: {}", deferred.getRoute().getId(), deferred.getConsumer().getEndpoint());
+                    log.info("Route: {} suspend complete, was consuming from: {}", deferred.getRoute().getId(), deferred.getConsumer().getEndpoint());
                 } else {
                     shutdownNow(consumer);
-                    LOG.info("Route: {} shutdown complete, was consuming from: {}", deferred.getRoute().getId(), deferred.getConsumer().getEndpoint());
+                    log.info("Route: {} shutdown complete, was consuming from: {}", deferred.getRoute().getId(), deferred.getConsumer().getEndpoint());
                 }
             }
 
@@ -709,9 +708,9 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
      *
      * @param infoLevel <tt>true</tt> to log at INFO level, <tt>false</tt> to log at DEBUG level
      */
-    protected static void logInflightExchanges(CamelContext camelContext, List<RouteStartupOrder> routes, boolean infoLevel) {
+    protected void logInflightExchanges(CamelContext camelContext, List<RouteStartupOrder> routes, boolean infoLevel) {
         // check if we need to log
-        if (!infoLevel && !LOG.isDebugEnabled()) {
+        if (!infoLevel && !log.isDebugEnabled()) {
             return;
         }
 
@@ -751,9 +750,9 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         }
 
         if (infoLevel) {
-            LOG.info(sb.toString());
+            log.info(sb.toString());
         } else {
-            LOG.debug(sb.toString());
+            log.debug(sb.toString());
         }
     }
 

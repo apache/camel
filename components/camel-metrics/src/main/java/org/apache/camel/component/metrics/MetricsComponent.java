@@ -28,8 +28,6 @@ import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.StringHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages metrics endpoints.
@@ -39,8 +37,6 @@ public class MetricsComponent extends DefaultComponent {
     public static final String METRIC_REGISTRY_NAME = "metricRegistry";
     public static final MetricsType DEFAULT_METRICS_TYPE = MetricsType.METER;
     public static final long DEFAULT_REPORTING_INTERVAL_SECONDS = 60L;
-
-    private static final Logger LOG = LoggerFactory.getLogger(MetricsComponent.class);
 
     @Metadata(label = "advanced")
     private MetricRegistry metricRegistry;
@@ -57,7 +53,7 @@ public class MetricsComponent extends DefaultComponent {
         String metricsName = getMetricsName(remaining);
         MetricsType metricsType = getMetricsType(remaining);
 
-        LOG.debug("Metrics type: {}; name: {}", metricsType, metricsName);
+        log.debug("Metrics type: {}; name: {}", metricsType, metricsName);
         Endpoint endpoint = new MetricsEndpoint(uri, this, metricRegistry, metricsType, metricsName);
         setProperties(endpoint, parameters);
         return endpoint;
@@ -83,11 +79,11 @@ public class MetricsComponent extends DefaultComponent {
     }
 
     MetricRegistry getOrCreateMetricRegistry(Registry camelRegistry, String registryName) {
-        LOG.debug("Looking up MetricRegistry from Camel Registry for name \"{}\"", registryName);
+        log.debug("Looking up MetricRegistry from Camel Registry for name \"{}\"", registryName);
         MetricRegistry result = getMetricRegistryFromCamelRegistry(camelRegistry, registryName);
         if (result == null) {
-            LOG.debug("MetricRegistry not found from Camel Registry for name \"{}\"", registryName);
-            LOG.info("Creating new default MetricRegistry");
+            log.debug("MetricRegistry not found from Camel Registry for name \"{}\"", registryName);
+            log.info("Creating new default MetricRegistry");
             result = createMetricRegistry();
         }
         return result;
@@ -109,7 +105,7 @@ public class MetricsComponent extends DefaultComponent {
     MetricRegistry createMetricRegistry() {
         MetricRegistry registry = new MetricRegistry();
         final Slf4jReporter reporter = Slf4jReporter.forRegistry(registry)
-                .outputTo(LOG)
+                .outputTo(log)
                 .convertRatesTo(TimeUnit.SECONDS)
                 .convertDurationsTo(TimeUnit.MILLISECONDS)
                 .withLoggingLevel(Slf4jReporter.LoggingLevel.DEBUG)

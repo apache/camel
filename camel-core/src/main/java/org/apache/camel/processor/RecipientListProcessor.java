@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
  */
 public class RecipientListProcessor extends MulticastProcessor {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RecipientListProcessor.class);
+    private static final Logger log = LoggerFactory.getLogger(RecipientListProcessor.class);
     private final Iterator<Object> iter;
     private boolean ignoreInvalidEndpoints;
     private ProducerCache producerCache;
@@ -110,20 +110,20 @@ public class RecipientListProcessor extends MulticastProcessor {
 
         public void begin() {
             // we have already acquired and prepare the producer
-            LOG.trace("RecipientProcessorExchangePair #{} begin: {}", index, exchange);
+            log.trace("RecipientProcessorExchangePair #{} begin: {}", index, exchange);
             exchange.setProperty(Exchange.RECIPIENT_LIST_ENDPOINT, endpoint.getEndpointUri());
             // ensure stream caching is reset
             MessageHelper.resetStreamCache(exchange.getIn());
             // if the MEP on the endpoint is different then
             if (pattern != null) {
                 originalPattern = exchange.getPattern();
-                LOG.trace("Using exchangePattern: {} on exchange: {}", pattern, exchange);
+                log.trace("Using exchangePattern: {} on exchange: {}", pattern, exchange);
                 exchange.setPattern(pattern);
             }
         }
 
         public void done() {
-            LOG.trace("RecipientProcessorExchangePair #{} done: {}", index, exchange);
+            log.trace("RecipientProcessorExchangePair #{} done: {}", index, exchange);
             try {
                 // preserve original MEP
                 if (originalPattern != null) {
@@ -132,8 +132,8 @@ public class RecipientListProcessor extends MulticastProcessor {
                 // when we are done we should release back in pool
                 producerCache.releaseProducer(endpoint, producer);
             } catch (Exception e) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Error releasing producer: " + producer + ". This exception will be ignored.", e);
+                if (log.isDebugEnabled()) {
+                    log.debug("Error releasing producer: " + producer + ". This exception will be ignored.", e);
                 }
             }
         }
@@ -194,8 +194,8 @@ public class RecipientListProcessor extends MulticastProcessor {
                 producer = producerCache.acquireProducer(endpoint);
             } catch (Exception e) {
                 if (isIgnoreInvalidEndpoints()) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
                     }
                     continue;
                 } else {

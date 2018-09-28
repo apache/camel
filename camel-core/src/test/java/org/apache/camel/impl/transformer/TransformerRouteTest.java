@@ -296,11 +296,11 @@ public class TransformerRouteTest extends ContextTestSupport {
                 public boolean process(Exchange exchange, AsyncCallback callback) {
                     Object input = exchange.getIn().getBody();
                     if (input instanceof XOrderResponse) {
-                        LOG.info("Endpoint: XOrderResponse -> XML");
+                        log.info("Endpoint: XOrderResponse -> XML");
                         exchange.getIn().setBody("<XOrderResponse/>");
                     } else {
                         assertEquals("<XOrder/>", input);
-                        LOG.info("Endpoint: XML -> XOrder");
+                        log.info("Endpoint: XML -> XOrder");
                         exchange.getIn().setBody(new XOrder());
                         
                     }
@@ -327,7 +327,7 @@ public class TransformerRouteTest extends ContextTestSupport {
         @Override
         public void transform(Message message, DataType from, DataType to) throws Exception {
             assertEquals("name=XOrder", message.getBody());
-            LOG.info("Bean: Other -> XOrder");
+            log.info("Bean: Other -> XOrder");
             message.setBody(new XOrder());
         }
     }
@@ -335,7 +335,7 @@ public class TransformerRouteTest extends ContextTestSupport {
     public static class XOrderResponseToOtherTransformer extends Transformer {
         @Override
         public void transform(Message message, DataType from, DataType to) throws Exception {
-            LOG.info("Bean: XOrderResponse -> Other");
+            log.info("Bean: XOrderResponse -> Other");
             message.setBody("name=XOrderResponse");
         }
     }

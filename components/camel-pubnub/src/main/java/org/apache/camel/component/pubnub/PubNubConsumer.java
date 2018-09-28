@@ -28,8 +28,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.pubnub.api.enums.PNStatusCategory.PNTimeoutCategory;
 import static com.pubnub.api.enums.PNStatusCategory.PNUnexpectedDisconnectCategory;
@@ -38,7 +36,7 @@ import static org.apache.camel.component.pubnub.PubNubConstants.CHANNEL;
 import static org.apache.camel.component.pubnub.PubNubConstants.TIMETOKEN;
 
 public class PubNubConsumer extends DefaultConsumer {
-    private static final Logger LOG = LoggerFactory.getLogger(PubNubConsumer.class);
+
     private final PubNubEndpoint endpoint;
     private final PubNubConfiguration pubNubConfiguration;
 
@@ -94,10 +92,10 @@ public class PubNubConsumer extends DefaultConsumer {
         @Override
         public void status(PubNub pubnub, PNStatus status) {
             if (status.getCategory() == PNUnexpectedDisconnectCategory || status.getCategory() == PNTimeoutCategory) {
-                LOG.trace("Got status: {}. Reconnecting to PubNub", status);
+                log.trace("Got status: {}. Reconnecting to PubNub", status);
                 pubnub.reconnect();
             } else {
-                LOG.trace("Status message: {}", status);
+                log.trace("Status message: {}", status);
             }
         }
 

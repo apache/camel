@@ -95,8 +95,6 @@ import org.eclipse.jetty.util.component.Container;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An HttpComponent which starts an embedded Jetty for to handle consuming from
@@ -109,7 +107,6 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
 
     protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<>();
 
-    private static final Logger LOG = LoggerFactory.getLogger(JettyHttpComponent.class);
     private static final String JETTY_SSL_KEYSTORE = "org.eclipse.jetty.ssl.keystore";
     private static final String JETTY_SSL_KEYPASSWORD = "org.eclipse.jetty.ssl.keypassword";
     private static final String JETTY_SSL_PASSWORD = "org.eclipse.jetty.ssl.password";
@@ -330,7 +327,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                 Server server = createServer();
                 Connector connector = getConnector(server, endpoint);
                 if ("localhost".equalsIgnoreCase(endpoint.getHttpUri().getHost())) {
-                    LOG.warn("You use localhost interface! It means that no external connections will be available."
+                    log.warn("You use localhost interface! It means that no external connections will be available."
                             + " Don't you want to use 0.0.0.0 instead (all network interfaces)? " + endpoint);
                 }
                 if (endpoint.isEnableJmx()) {
@@ -357,7 +354,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                     List<Handler> newHandlers = new ArrayList<>(endpoint.getHandlers());
                     boolean changed = !existingHandlers.containsAll(newHandlers) && !newHandlers.containsAll(existingHandlers);
                     if (changed) {
-                        LOG.debug("Restarting Jetty server due to adding new Jetty Handlers: {}", newHandlers);
+                        log.debug("Restarting Jetty server due to adding new Jetty Handlers: {}", newHandlers);
                         connectorRef.server.stop();
                         addJettyHandlers(connectorRef.server, endpoint.getHandlers());
                         connectorRef.server.start();
@@ -385,7 +382,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     private void enableJmx(Server server) {
         MBeanContainer containerToRegister = getMbContainer();
         if (containerToRegister != null) {
-            LOG.info("Jetty JMX Extensions is enabled");
+            log.info("Jetty JMX Extensions is enabled");
             addServerMBean(server);
             // Since we may have many Servers running, don't tie the MBeanContainer
             // to a Server lifecycle or we end up closing it while it is still in use.
@@ -458,7 +455,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             pathSpec = pathSpec.endsWith("/") ? pathSpec + "*" : pathSpec + "/*";
         }
         addFilter(context, filterHolder, pathSpec);
-        LOG.debug("using multipart filter implementation " + filter.getClass().getName() + " for path " + pathSpec);
+        log.debug("using multipart filter implementation " + filter.getClass().getName() + " for path " + pathSpec);
     }
 
     /**
@@ -726,14 +723,14 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             && ObjectHelper.isNotEmpty(context.getGlobalOption("http.proxyPort"))) {
             String host = context.getGlobalOption("http.proxyHost");
             int port = Integer.parseInt(context.getGlobalOption("http.proxyPort"));
-            LOG.debug("CamelContext properties http.proxyHost and http.proxyPort detected. Using http proxy host: {} port: {}", host, port);
+            log.debug("CamelContext properties http.proxyHost and http.proxyPort detected. Using http proxy host: {} port: {}", host, port);
             httpClient.setProxy(host, port);
         }
 
         if (ObjectHelper.isNotEmpty(endpoint.getProxyHost()) && endpoint.getProxyPort() > 0) {
             String host = endpoint.getProxyHost();
             int port = endpoint.getProxyPort();
-            LOG.debug("proxyHost and proxyPort options detected. Using http proxy host: {} port: {}", host, port);
+            log.debug("proxyHost and proxyPort options detected. Using http proxy host: {} port: {}", host, port);
             httpClient.setProxy(host, port);
         }
 
@@ -756,11 +753,11 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             httpClient.setThreadPoolOrExecutor(qtp);
         }
 
-        if (LOG.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             if (minThreads != null) {
-                LOG.debug("Created HttpClient with thread pool {}-{} -> {}", minThreads, maxThreads, httpClient);
+                log.debug("Created HttpClient with thread pool {}-{} -> {}", minThreads, maxThreads, httpClient);
             } else {
-                LOG.debug("Created HttpClient with default thread pool size -> {}", httpClient);
+                log.debug("Created HttpClient with default thread pool size -> {}", httpClient);
             }
         }
 
@@ -900,7 +897,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                 mbContainer = new MBeanContainer(mbs);
                 startMbContainer();
             } else {
-                LOG.warn("JMX disabled in CamelContext. Jetty JMX extensions will remain disabled.");
+                log.warn("JMX disabled in CamelContext. Jetty JMX extensions will remain disabled.");
             }
         }
 
@@ -1442,7 +1439,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                     mbContainer.getClass().getMethod("addBean", Object.class).invoke(mbContainer, mbContainer);
                 }
             } catch (Throwable e) {
-                LOG.warn("Could not start Jetty MBeanContainer. Jetty JMX extensions will remain disabled.", e);
+                log.warn("Could not start Jetty MBeanContainer. Jetty JMX extensions will remain disabled.", e);
             }
         }
     }

@@ -40,8 +40,6 @@ import org.slf4j.LoggerFactory;
  */
 public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSupport implements GenericFileExclusiveReadLockStrategy<File>, CamelContextAware {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(FileIdempotentRenameRepositoryReadLockStrategy.class);
-
     private final FileRenameExclusiveReadLockStrategy rename;
     private GenericFileEndpoint<File> endpoint;
     private LoggingLevel readLockLoggingLevel = LoggingLevel.DEBUG;
@@ -60,7 +58,7 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
     @Override
     public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) throws Exception {
         this.endpoint = endpoint;
-        LOG.info("Using FileIdempotentRepositoryReadLockStrategy: {} on endpoint: {}", idempotentRepository, endpoint);
+        log.info("Using FileIdempotentRepositoryReadLockStrategy: {} on endpoint: {}", idempotentRepository, endpoint);
 
         rename.prepareOnStartup(operations, endpoint);
     }
@@ -78,7 +76,7 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
         boolean answer = idempotentRepository.add(key);
         if (!answer) {
             // another node is processing the file so skip
-            CamelLogger.log(LOG, readLockLoggingLevel, "Cannot acquire read lock. Will skip the file: " + file);
+            CamelLogger.log(log, readLockLoggingLevel, "Cannot acquire read lock. Will skip the file: " + file);
         }
 
         if (answer) {

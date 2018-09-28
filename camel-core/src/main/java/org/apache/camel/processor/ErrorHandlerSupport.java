@@ -40,8 +40,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class ErrorHandlerSupport extends ChildServiceSupport implements ErrorHandler {
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
-
     protected final Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicies = new LinkedHashMap<>();
     protected ExceptionPolicyStrategy exceptionPolicy = createDefaultExceptionPolicyStrategy();
 

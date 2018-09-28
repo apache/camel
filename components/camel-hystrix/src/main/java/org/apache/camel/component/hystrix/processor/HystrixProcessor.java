@@ -43,7 +43,6 @@ import org.slf4j.LoggerFactory;
 @ManagedResource(description = "Managed Hystrix Processor")
 public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, org.apache.camel.Traceable, IdAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HystrixProcessor.class);
     private String id;
     private final HystrixCommandGroupKey groupKey;
     private final HystrixCommandKey commandKey;

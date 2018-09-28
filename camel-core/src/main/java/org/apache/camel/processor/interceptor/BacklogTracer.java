@@ -48,7 +48,6 @@ public final class BacklogTracer extends ServiceSupport implements InterceptStra
 
     // lets limit the tracer to 10 thousand messages in total
     public static final int MAX_BACKLOG_SIZE = 10 * 1000;
-    private static final Logger LOG = LoggerFactory.getLogger(BacklogTracer.class);
     private final CamelContext camelContext;
     private boolean enabled;
     private final AtomicLong traceCounter = new AtomicLong(0);
@@ -123,8 +122,8 @@ public final class BacklogTracer extends ServiceSupport implements InterceptStra
             filter = shouldTraceFilter(exchange);
         }
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Should trace evaluated {} -> pattern: {}, filter: {}", definition.getId(), pattern, filter);
+        if (log.isTraceEnabled()) {
+            log.trace("Should trace evaluated {} -> pattern: {}, filter: {}", definition.getId(), pattern, filter);
         }
         return pattern && filter;
     }

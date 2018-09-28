@@ -41,7 +41,6 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, IdAware {
-    private static final Logger LOG = LoggerFactory.getLogger(TryProcessor.class);
 
     protected String id;
     protected final Processor tryProcessor;
@@ -85,19 +84,19 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
 
             // continue as long its being processed synchronously
             if (!sync) {
-                LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
+                log.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
                 // the remainder of the try .. catch .. finally will be completed async
                 // so we break out now, then the callback will be invoked which then continue routing from where we left here
                 return false;
             }
 
-            LOG.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
+            log.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
         }
 
         ExchangeHelper.prepareOutToIn(exchange);
         exchange.removeProperty(Exchange.TRY_ROUTE_BLOCK);
         exchange.setProperty(Exchange.EXCEPTION_HANDLED, lastHandled);
-        LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+        log.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
         callback.done(true);
         return true;
     }
@@ -106,7 +105,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
                               final Iterator<Processor> processors, final AsyncProcessor processor,
                               final Object lastHandled) {
         // this does the actual processing so log at trace level
-        LOG.trace("Processing exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+        log.trace("Processing exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
 
         // implement asynchronous routing logic in callback so we can have the callback being
         // triggered and then continue routing where we left
@@ -127,7 +126,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
                     doneSync = process(exchange, callback, processors, processor, lastHandled);
 
                     if (!doneSync) {
-                        LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
+                        log.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
                         // the remainder of the try .. catch .. finally will be completed async
                         // so we break out now, then the callback will be invoked which then continue routing from where we left here
                         return;
@@ -137,7 +136,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
                 ExchangeHelper.prepareOutToIn(exchange);
                 exchange.removeProperty(Exchange.TRY_ROUTE_BLOCK);
                 exchange.setProperty(Exchange.EXCEPTION_HANDLED, lastHandled);
-                LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                log.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
                 callback.done(false);
             }
         });
@@ -150,7 +149,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
         if (stop != null) {
             boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
             if (doStop) {
-                LOG.debug("Exchange is marked to stop routing: {}", exchange);
+                log.debug("Exchange is marked to stop routing: {}", exchange);
                 return false;
             }
         }

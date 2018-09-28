@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * A useful base class for any consumer which is polling batch based
  */
 public abstract class ScheduledBatchPollingConsumer extends ScheduledPollConsumer implements BatchConsumer, ShutdownAware {
-    private static final Logger LOG = LoggerFactory.getLogger(ScheduledBatchPollingConsumer.class);
+
     protected volatile ShutdownRunningTask shutdownRunningTask;
     protected volatile int pendingExchanges;
     protected int maxMessagesPerPoll;
@@ -67,7 +67,7 @@ public abstract class ScheduledBatchPollingConsumer extends ScheduledPollConsume
             // in the processBatch method and until an exchange gets enlisted as in-flight
             // which happens later, so we need to signal back to the shutdown strategy that
             // there is a pending exchange. When we are no longer polling, then we will return 0
-            LOG.trace("Currently polling so returning 1 as pending exchanges");
+            log.trace("Currently polling so returning 1 as pending exchanges");
             answer = 1;
         }
 

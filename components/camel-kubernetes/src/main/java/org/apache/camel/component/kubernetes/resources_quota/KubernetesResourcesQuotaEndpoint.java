@@ -32,8 +32,6 @@ import org.slf4j.LoggerFactory;
     syntax = "kubernetes-resources-quota:masterUrl", producerOnly = true, label = "container,cloud,paas")
 public class KubernetesResourcesQuotaEndpoint extends AbstractKubernetesEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KubernetesResourcesQuotaEndpoint.class);
-
     public KubernetesResourcesQuotaEndpoint(String uri, KubernetesResourcesQuotaComponent component, KubernetesConfiguration config) {
         super(uri, component, config);
     }

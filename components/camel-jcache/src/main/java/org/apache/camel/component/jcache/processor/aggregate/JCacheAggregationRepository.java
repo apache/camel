@@ -32,11 +32,8 @@ import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class JCacheAggregationRepository extends ServiceSupport implements  OptimisticLockingAggregationRepository {
-    private static final Logger LOG = LoggerFactory.getLogger(JCacheAggregationRepository.class);
 
     private JCacheConfiguration configuration;
     private Cache<String, DefaultExchangeHolder> cache;
@@ -94,13 +91,13 @@ public class JCacheAggregationRepository extends ServiceSupport implements  Opti
             throw new UnsupportedOperationException();
         }
 
-        LOG.trace("Adding an Exchange with ID {} for key {} in an optimistic manner.", newExchange.getExchangeId(), key);
+        log.trace("Adding an Exchange with ID {} for key {} in an optimistic manner.", newExchange.getExchangeId(), key);
         if (oldExchange == null) {
             DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(newExchange, true, allowSerializedHeaders);
             DefaultExchangeHolder oldHolder = cache.getAndPut(key, newHolder);
             if (oldHolder != null) {
                 Exchange exchange = unmarshallExchange(camelContext, oldHolder);
-                LOG.error("Optimistic locking failed for exchange with key {}: IMap#putIfAbsend returned Exchange with ID {}, while it's expected no exchanges to be returned",
+                log.error("Optimistic locking failed for exchange with key {}: IMap#putIfAbsend returned Exchange with ID {}, while it's expected no exchanges to be returned",
                     key,
                     exchange != null ? exchange.getExchangeId() : "<null>");
 
@@ -110,11 +107,11 @@ public class JCacheAggregationRepository extends ServiceSupport implements  Opti
             DefaultExchangeHolder oldHolder = DefaultExchangeHolder.marshal(oldExchange, true, allowSerializedHeaders);
             DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(newExchange, true, allowSerializedHeaders);
             if (!cache.replace(key, oldHolder, newHolder)) {
-                LOG.error("Optimistic locking failed for exchange with key {}: IMap#replace returned no Exchanges, while it's expected to replace one", key);
+                log.error("Optimistic locking failed for exchange with key {}: IMap#replace returned no Exchanges, while it's expected to replace one", key);
                 throw new OptimisticLockingException();
             }
         }
-        LOG.trace("Added an Exchange with ID {} for key {} in optimistic manner.", newExchange.getExchangeId(), key);
+        log.trace("Added an Exchange with ID {} for key {} in optimistic manner.", newExchange.getExchangeId(), key);
         return oldExchange;
     }
 
@@ -123,7 +120,7 @@ public class JCacheAggregationRepository extends ServiceSupport implements  Opti
         if (optimistic) {
             throw new UnsupportedOperationException();
         }
-        LOG.trace("Adding an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
+        log.trace("Adding an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
         DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
         DefaultExchangeHolder oldHolder = cache.getAndPut(key, newHolder);
         return unmarshallExchange(camelContext, oldHolder);
@@ -138,12 +135,12 @@ public class JCacheAggregationRepository extends ServiceSupport implements  Opti
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
         DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
         if (optimistic) {
-            LOG.trace("Removing an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
+            log.trace("Removing an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
             if (!cache.remove(key, holder)) {
-                LOG.error("Optimistic locking failed for exchange with key {}: IMap#remove removed no Exchanges, while it's expected to remove one.", key);
+                log.error("Optimistic locking failed for exchange with key {}: IMap#remove removed no Exchanges, while it's expected to remove one.", key);
                 throw new OptimisticLockingException();
             }
-            LOG.trace("Removed an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
+            log.trace("Removed an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
         } else {
             cache.remove(key);
         }
@@ -151,7 +148,7 @@ public class JCacheAggregationRepository extends ServiceSupport implements  Opti
 
     @Override
     public void confirm(CamelContext camelContext, String exchangeId) {
-        LOG.trace("Confirming an exchange with ID {}.", exchangeId);
+        log.trace("Confirming an exchange with ID {}.", exchangeId);
     }
 
     @Override
