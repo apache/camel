@@ -71,11 +71,4 @@ public interface StatefulService extends SuspendableService, ShutdownableService
      */
     boolean isRunAllowed();
 
-    /**
-     * Returns the version of this service
-     *
-     * @return the version
-     */
-    String getVersion();
-
 }
