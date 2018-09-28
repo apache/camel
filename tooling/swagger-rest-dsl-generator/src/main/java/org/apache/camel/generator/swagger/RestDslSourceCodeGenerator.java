@@ -123,14 +123,14 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
             generatedAnnotation.addMember("date", "$S", generated());
         }
 
-        final TypeSpec generatedRouteBulder = TypeSpec.classBuilder(classNameToUse).superclass(RouteBuilder.class)
+        final TypeSpec generatedRouteBuilder = TypeSpec.classBuilder(classNameToUse).superclass(RouteBuilder.class)
             .addModifiers(Modifier.PUBLIC, Modifier.FINAL).addMethod(methodSpec)
             .addAnnotation(generatedAnnotation.build())
             .addJavadoc("Generated from Swagger specification by Camel REST DSL generator.\n").build();
 
         final String packageNameToUse = packageNameGenerator.apply(swagger);
 
-        return JavaFile.builder(packageNameToUse, generatedRouteBulder).indent(indent).build();
+        return JavaFile.builder(packageNameToUse, generatedRouteBuilder).indent(indent).build();
     }
 
     RestDslSourceCodeGenerator<T> withGeneratedTime(final Instant generated) {
