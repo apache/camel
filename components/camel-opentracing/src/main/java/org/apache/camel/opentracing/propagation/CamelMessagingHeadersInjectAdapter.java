@@ -23,13 +23,15 @@ import io.opentracing.propagation.TextMap;
 
 public final class CamelMessagingHeadersInjectAdapter implements TextMap {
 
-	// As per the JMS specs, header names must be valid Java identifier part characters.
-	// This means that any header names that contain illegal characters (- for example) should be handled correctly
-	// Opentracing java-jms does it as follows.
-	static final String JMS_DASH = "_$dash$_";
+    // As per the JMS specs, header names must be valid Java identifier part
+    // characters.
+    // This means that any header names that contain illegal characters (- for
+    // example) should be handled correctly
+    // Opentracing java-jms does it as follows.
+    static final String JMS_DASH = "_$dash$_";
 
-	private final Map<String, Object> map;
-	private final boolean jmsEncoding;
+    private final Map<String, Object> map;
+    private final boolean jmsEncoding;
 
     public CamelMessagingHeadersInjectAdapter(final Map<String, Object> map, boolean jmsEncoding) {
         this.map = map;
@@ -43,20 +45,22 @@ public final class CamelMessagingHeadersInjectAdapter implements TextMap {
 
     @Override
     public void put(String key, String value) {
-        // Assume any header property that begins with 'Camel' is for internal use
+        // Assume any header property that begins with 'Camel' is for internal
+        // use
         if (!key.startsWith("Camel")) {
             this.map.put(encodeDash(key), value);
         }
     }
-    
+
     /**
-     * Encode all dashes because JMS specification doesn't allow them in property name
+     * Encode all dashes because JMS specification doesn't allow them in
+     * property name
      */
     private String encodeDash(String key) {
-      if (key == null || key.isEmpty() || !jmsEncoding) {
-        return key;
-      }
+        if (key == null || key.isEmpty() || !jmsEncoding) {
+            return key;
+        }
 
-      return key.replace("-", JMS_DASH);
-   }
+        return key.replace("-", JMS_DASH);
+    }
 }

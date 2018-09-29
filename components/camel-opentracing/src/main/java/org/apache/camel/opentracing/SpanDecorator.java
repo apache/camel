@@ -16,11 +16,10 @@
  */
 package org.apache.camel.opentracing;
 
-import io.opentracing.propagation.TextMap;
-import io.opentracing.Span;
-
 import java.util.Map;
 
+import io.opentracing.Span;
+import io.opentracing.propagation.TextMap;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.opentracing.decorators.AbstractSpanDecorator;
