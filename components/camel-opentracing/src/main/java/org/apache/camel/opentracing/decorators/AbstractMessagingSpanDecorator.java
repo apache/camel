@@ -16,12 +16,11 @@
  */
 package org.apache.camel.opentracing.decorators;
 
+import java.util.Map;
+
 import io.opentracing.Span;
 import io.opentracing.propagation.TextMap;
 import io.opentracing.tag.Tags;
-
-import java.util.Map;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.opentracing.propagation.CamelMessagingHeadersExtractAdapter;
@@ -50,7 +49,8 @@ public abstract class AbstractMessagingSpanDecorator extends AbstractSpanDecorat
     }
 
     /**
-     * This method identifies the destination from the supplied exchange and/or endpoint.
+     * This method identifies the destination from the supplied exchange and/or
+     * endpoint.
      *
      * @param exchange The exchange
      * @param endpoint The endpoint
@@ -81,11 +81,11 @@ public abstract class AbstractMessagingSpanDecorator extends AbstractSpanDecorat
 
     @Override
     public TextMap getExtractAdapter(final Map<String, Object> map, final boolean jmsEncoding) {
-    	return new CamelMessagingHeadersExtractAdapter(map, jmsEncoding);
+        return new CamelMessagingHeadersExtractAdapter(map, jmsEncoding);
     }
 
     @Override
     public TextMap getInjectAdapter(final Map<String, Object> map, final boolean jmsEncoding) {
-    	return new CamelMessagingHeadersInjectAdapter(map, jmsEncoding);    	
+        return new CamelMessagingHeadersInjectAdapter(map, jmsEncoding);
     }
 }

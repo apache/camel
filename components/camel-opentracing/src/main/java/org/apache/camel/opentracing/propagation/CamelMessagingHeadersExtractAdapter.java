@@ -16,22 +16,21 @@
  */
 package org.apache.camel.opentracing.propagation;
 
-import io.opentracing.propagation.TextMap;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import io.opentracing.propagation.TextMap;
+
 public final class CamelMessagingHeadersExtractAdapter implements TextMap {
- 
+
     private final Map<String, String> map = new HashMap<>();
     private final boolean jmsEncoding;
 
     public CamelMessagingHeadersExtractAdapter(final Map<String, Object> map, boolean jmsEncoding) {
-    	// Extract string valued map entries
+        // Extract string valued map entries
         this.jmsEncoding = jmsEncoding;
-        map.entrySet().stream().filter(e -> e.getValue() instanceof String).forEach(e ->
-            this.map.put(decodeDash(e.getKey()), (String) e.getValue()));
+        map.entrySet().stream().filter(e -> e.getValue() instanceof String).forEach(e -> this.map.put(decodeDash(e.getKey()), (String)e.getValue()));
     }
 
     @Override
@@ -43,19 +42,21 @@ public final class CamelMessagingHeadersExtractAdapter implements TextMap {
     public void put(String key, String value) {
         throw new UnsupportedOperationException("CamelMessagingHeadersExtractAdapter should only be used with Tracer.extract()");
     }
-    
+
     /**
-     * Decode dashes (encoded in {@link CamelMessagingHeadersInjectAdapter}
-     * Dash encoding and decoding is required by JMS. This is implemented here
-     * rather than specifically to JMS so that other Camel messaging endpoints
-     * can take part in traces where the peer is using JMS. 
+     * Decode dashes (encoded in {@link CamelMessagingHeadersInjectAdapter} Dash
+     * encoding and decoding is required by JMS. This is implemented here rather
+     * than specifically to JMS so that other Camel messaging endpoints can take
+     * part in traces where the peer is using JMS.
+     * 
      * @param the source
      * @return the result
      */
     private String decodeDash(String key) {
-    	if (jmsEncoding)
-    		return key.replace(CamelMessagingHeadersInjectAdapter.JMS_DASH, "-");
-    	else
-    		return key;
-  }
+        if (jmsEncoding) {
+            return key.replace(CamelMessagingHeadersInjectAdapter.JMS_DASH, "-");
+        } else {
+            return key;
+        }
+    }
 }
