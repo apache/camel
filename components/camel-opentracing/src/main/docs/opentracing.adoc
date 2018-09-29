@@ -75,13 +75,14 @@ a `Tracer` bean has been defined by the application.
 === Spring Boot Auto-Configuration
 
 
-The component supports 1 options, which are listed below.
+The component supports 2 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.opentracing.encoding* | Activate or deactivate dash encoding in headers (required by JMS) for messaging |  | Boolean
 | *camel.opentracing.exclude-patterns* | Sets exclude pattern(s) that will disable tracing for Camel messages that matches the pattern. |  | Set
 |===
 // spring-boot-auto-configure options: END
