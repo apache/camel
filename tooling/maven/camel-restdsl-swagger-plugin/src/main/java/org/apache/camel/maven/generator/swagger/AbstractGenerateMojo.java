@@ -22,10 +22,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.camel.generator.swagger.DestinationGenerator;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -36,16 +39,16 @@ import org.twdata.maven.mojoexecutor.MojoExecutor;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.artifactId;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
-import static org.twdata.maven.mojoexecutor.MojoExecutor.element;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.executeMojo;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.executionEnvironment;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.goal;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.groupId;
-import static org.twdata.maven.mojoexecutor.MojoExecutor.name;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.plugin;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.version;
 
 abstract class AbstractGenerateMojo extends AbstractMojo {
+
+    public static final String[] DEFAULT_REST_CONSUMER_COMPONENTS = new String[]{"coap", "netty-http", "netty4-http", "jetty", "restlet", "servlet", "spark-java", "undertow"};
 
     @Parameter
     String destinationGenerator;
@@ -176,6 +179,19 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
             )
         );
 
+    }
+
+    protected String detectRestComponentFromClasspath() {
+        for (Dependency dep : mavenProject.getDependencies()) {
+            if ("org.apache.camel".equals(dep.getGroupId())) {
+                String aid = dep.getArtifactId();
+                Optional<String> comp = Arrays.asList(DEFAULT_REST_CONSUMER_COMPONENTS).stream().filter(c -> aid.startsWith("camel-" + c)).findFirst();
+                if (comp.isPresent()) {
+                    return comp.get();
+                }
+            }
+        }
+        return null;
     }
 
 }

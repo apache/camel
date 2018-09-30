@@ -77,6 +77,11 @@ public class GenerateXmlMojo extends AbstractGenerateMojo {
             generator.withDestinationGenerator(destinationGeneratorObject);
         }
 
+        String comp = detectRestComponentFromClasspath();
+        if (comp != null) {
+            generator.withRestComponent(comp);
+        }
+
         try {
             CamelContext camel = new DefaultCamelContext();
             String xml = generator.generate(camel);
