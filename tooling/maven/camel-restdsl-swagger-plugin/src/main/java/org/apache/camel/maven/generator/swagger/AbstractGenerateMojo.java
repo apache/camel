@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.camel.generator.swagger.DestinationGenerator;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
@@ -65,6 +66,9 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project.basedir}/src/spec/swagger.json", required = true)
     String specificationUri;
+
+    @Parameter(defaultValue = "true")
+    boolean restConfiguration;
 
     @Parameter(defaultValue = "2.3.1")
     String swaggerCodegenMavenPluginVersion;
@@ -179,7 +183,6 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
                 pluginManager
             )
         );
-
     }
 
     protected String detectRestComponentFromClasspath() {
@@ -193,6 +196,16 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
             }
         }
         return null;
+    }
+
+    protected boolean detectSpringBootFromClasspath() {
+        return mavenProject.getDependencies().stream().anyMatch(d -> "org.springframework.boot".equals(d.getGroupId()));
+    }
+
+    protected String detectCamelVersionFromClasspath() {
+        return mavenProject.getDependencies().stream().filter(
+                d -> "org.apache.camel".equals(d.getGroupId()) && ObjectHelper.isNotEmpty(d.getVersion()))
+            .findFirst().map(Dependency::getVersion).orElse(null);
     }
 
 }
