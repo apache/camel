@@ -35,6 +35,7 @@ public abstract class RestDslGenerator<G> {
     DestinationGenerator destinationGenerator = new DirectToOperationId();
     OperationFilter filter = new OperationFilter();
     String restComponent;
+    boolean springComponent;
 
     RestDslGenerator(final Swagger swagger) {
         this.swagger = notNull(swagger, "swagger");
@@ -74,6 +75,15 @@ public abstract class RestDslGenerator<G> {
 
     public G withRestComponent(String restComponent) {
         this.restComponent = restComponent;
+
+        @SuppressWarnings("unchecked")
+        final G that = (G) this;
+
+        return that;
+    }
+
+    public G asSpringComponent() {
+        this.springComponent = true;
 
         @SuppressWarnings("unchecked")
         final G that = (G) this;
