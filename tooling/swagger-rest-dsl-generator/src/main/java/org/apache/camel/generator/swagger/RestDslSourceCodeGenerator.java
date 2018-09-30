@@ -25,6 +25,7 @@ import javax.annotation.Generated;
 import javax.lang.model.element.Modifier;
 
 import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
@@ -123,15 +124,19 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
 
         final AnnotationSpec.Builder generatedAnnotation = AnnotationSpec.builder(Generated.class).addMember("value",
             "$S", getClass().getName());
-
         if (sourceCodeTimestamps) {
             generatedAnnotation.addMember("date", "$S", generated());
         }
 
-        final TypeSpec generatedRouteBuilder = TypeSpec.classBuilder(classNameToUse).superclass(RouteBuilder.class)
+        TypeSpec.Builder builder = TypeSpec.classBuilder(classNameToUse).superclass(RouteBuilder.class)
             .addModifiers(Modifier.PUBLIC, Modifier.FINAL).addMethod(methodSpec)
             .addAnnotation(generatedAnnotation.build())
-            .addJavadoc("Generated from Swagger specification by Camel REST DSL generator.\n").build();
+            .addJavadoc("Generated from Swagger specification by Camel REST DSL generator.\n");
+        if (springComponent) {
+            final AnnotationSpec.Builder springAnnotation = AnnotationSpec.builder(ClassName.bestGuess("org.springframework.stereotype.Component"));
+            builder.addAnnotation(springAnnotation.build());
+        }
+        TypeSpec generatedRouteBuilder = builder.build();
 
         final String packageNameToUse = packageNameGenerator.apply(swagger);
 

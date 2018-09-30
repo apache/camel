@@ -115,6 +115,10 @@ public class GenerateMojo extends AbstractGenerateMojo {
             }
         }
 
+        if (detectSpringBootFromClasspath()) {
+            generator.asSpringComponent();
+        }
+
         final Path outputPath = new File(outputDirectory).toPath();
 
         try {

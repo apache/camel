@@ -16,6 +16,34 @@ The Camel REST DSL Swagger Maven Plugin supports the following goals
  XML source code from Swagger specification  and with DTO model
  classes generated via the swagger-codegen-maven-plugin.
 
+== Adding plugin to Maven pom.xml
+
+This plugin can be added to your Maven pom.xml file by adding it to the `<plugins>` section,
+for example in a Spring Boot application:
+
+[source,xml]
+----
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-maven-plugin</artifactId>
+    </plugin>
+
+    <plugin>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-restdsl-swagger-plugin</artifactId>
+      <version>2.23.0</version>
+    </plugin>
+
+  </plugins>
+</build>
+----
+
+The plugin can then be executed via its prefix `camel-restdsl-swagger` as shown
+
+    $mvn camel-restdsl-swagger generate
+
 == camel-restdsl-swagger:generate
 
 The `camel-restdsl-swagger:generate` goal of the Camel REST DSL
