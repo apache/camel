@@ -89,6 +89,7 @@ public class GenerateMojo extends AbstractGenerateMojo {
 
         String comp = detectRestComponentFromClasspath();
         if (comp != null) {
+            getLog().info("Detected Camel Rest component: " + comp);
             generator.withRestComponent(comp);
         }
 

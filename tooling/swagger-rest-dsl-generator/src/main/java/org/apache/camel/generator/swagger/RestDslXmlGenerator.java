@@ -52,7 +52,7 @@ public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
 
         if (restComponent != null) {
             String extra = "<restConfiguration component=\"" + restComponent + "\"/>";
-            xml = xml.replaceFirst("<rest>", extra + "\n<rest>");
+            xml = xml.replaceFirst("<rest>", extra + "\n    <rest>");
         }
 
         return xml;
