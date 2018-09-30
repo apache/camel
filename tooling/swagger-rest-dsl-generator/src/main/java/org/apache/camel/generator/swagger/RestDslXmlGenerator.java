@@ -49,6 +49,12 @@ public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
         // remove all customId attributes as we do not want them in the output
         xml = xml.replaceAll(" customId=\"true\"", "");
         xml = xml.replaceAll(" customId=\"false\"", "");
+
+        if (restComponent != null) {
+            String extra = "<restConfiguration component=\"" + restComponent + "\"/>";
+            xml = xml.replaceFirst("<rest>", extra + "\n<rest>");
+        }
+
         return xml;
     }
 }

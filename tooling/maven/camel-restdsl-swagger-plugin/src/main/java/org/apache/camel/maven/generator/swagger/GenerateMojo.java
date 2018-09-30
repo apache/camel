@@ -87,6 +87,11 @@ public class GenerateMojo extends AbstractGenerateMojo {
             generator.withDestinationGenerator(destinationGeneratorObject);
         }
 
+        String comp = detectRestComponentFromClasspath();
+        if (comp != null) {
+            generator.withRestComponent(comp);
+        }
+
         final Path outputPath = new File(outputDirectory).toPath();
 
         try {

@@ -19,6 +19,10 @@ def File restdsl = new File(basedir, "target/generated-sources/restdsl-swagger/i
 
 assert restdsl.exists()
 
+def String data = restdsl.text
+
+assert data.contains('restConfiguration().component("servlet");')
+
 def File restdto = new File(basedir, "target/generated-sources/swagger/src/main/java/com/foo/Order.java")
 
 assert restdto.exists()
