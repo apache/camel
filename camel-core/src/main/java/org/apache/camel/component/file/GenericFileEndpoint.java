@@ -36,6 +36,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.component.file.strategy.FileMoveExistingStrategy;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.BrowsableEndpoint;
@@ -135,6 +136,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected Expression preMove;
     @UriParam(label = "producer", javaType = "java.lang.String")
     protected Expression moveExisting;
+    @UriParam(label = "producer,advanced")
+    protected FileMoveExistingStrategy moveExistingFileStrategy;
     @UriParam(label = "consumer,filter", defaultValue = "false")
     protected Boolean idempotent;
     @UriParam(label = "consumer,filter", javaType = "java.lang.String")
@@ -569,6 +572,18 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setMoveExisting(Expression moveExisting) {
         this.moveExisting = moveExisting;
+    }
+    
+    public FileMoveExistingStrategy getMoveExistingFileStrategy() {
+        return moveExistingFileStrategy;
+    }
+
+    /**
+     * Strategy (Custom Strategy) used to move file with special naming token to use when fileExist=Move is configured.
+     * By default, there is an implementation used if no custom strategy is provided
+     */
+    public void setMoveExistingFileStrategy(FileMoveExistingStrategy moveExistingFileStrategy) {
+        this.moveExistingFileStrategy = moveExistingFileStrategy;
     }
 
     public void setMoveExisting(String fileLanguageExpression) {

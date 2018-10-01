@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
+import org.apache.camel.component.file.strategy.FileMoveExistingStrategy;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -158,7 +159,9 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         } else if (getMoveExisting() != null && getFileExist() != GenericFileExist.Move) {
             throw new IllegalArgumentException("You must configure fileExist=Move when moveExisting has been set");
         }
-
+        if (this.getMoveExistingFileStrategy() == null) {
+            this.setMoveExistingFileStrategy(createDefaultMoveExistingFileStrategy());
+        }
         return new GenericFileProducer<>(this, operations);
     }
 
@@ -179,6 +182,10 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
      */
     protected FileConsumer newFileConsumer(Processor processor, GenericFileOperations<File> operations) {
         return new FileConsumer(this, processor, operations, processStrategy != null ? processStrategy : createGenericFileStrategy());
+    }
+
+    private FileMoveExistingStrategy createDefaultMoveExistingFileStrategy() {
+        return new GenericFileDefaultMoveExistingFileStrategy();
     }
 
     public File getFile() {
