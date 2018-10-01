@@ -386,6 +386,20 @@ public final class StringHelper {
      * @return the string capitalized (upper case first character)
      */
     public static String capitalize(String text) {
+        return capitalize(text, false);
+    }
+
+    /**
+     * Capitalize the string (upper case first character)
+     *
+     * @param text  the string
+     * @param dashToCamelCase whether to also convert dash format into camel case (hello-great-world -> helloGreatWorld)
+     * @return the string capitalized (upper case first character)
+     */
+    public static String capitalize(String text, boolean dashToCamelCase) {
+        if (dashToCamelCase) {
+            text = dashToCamelCase(text);
+        }
         if (text == null) {
             return null;
         }
@@ -398,6 +412,35 @@ public final class StringHelper {
             answer += text.substring(1, length);
         }
         return answer;
+    }
+
+    /**
+     * Converts the string from dash format into camel case (hello-great-world -> helloGreatWorld)
+     *
+     * @param text  the string
+     * @return the string camel cased
+     */
+    public static String dashToCamelCase(String text) {
+        if (text == null) {
+            return null;
+        }
+        int length = text.length();
+        if (length == 0) {
+            return text;
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < text.length(); ++i) {
+            char c = text.charAt(i);
+            if (c == '-') {
+                ++i;
+                sb.append(Character.toUpperCase(text.charAt(i)));
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
     }
 
     /**

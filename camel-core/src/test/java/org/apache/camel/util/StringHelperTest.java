@@ -292,4 +292,15 @@ public class StringHelperTest extends Assert {
     public void testHumanReadableBytesDefaultLocale() {
         assertNotNull(StringHelper.humanReadableBytes(110592));
     }
+
+    @Test
+    public void testCapitalizeDash() {
+        assertEquals(null, StringHelper.dashToCamelCase(null));
+        assertEquals("", StringHelper.dashToCamelCase(""));
+        assertEquals("hello", StringHelper.dashToCamelCase("hello"));
+        assertEquals("helloGreat", StringHelper.dashToCamelCase("helloGreat"));
+        assertEquals("helloGreat", StringHelper.dashToCamelCase("hello-great"));
+        assertEquals("helloGreatWorld", StringHelper.dashToCamelCase("hello-great-world"));
+    }
+
 }
