@@ -175,7 +175,7 @@ public final class GroupTokenIterator implements Iterator<Object>, Closeable {
                 bos.write(bytes);
             } else if (data != null) {
                 // convert to input stream
-                InputStream is = camelContext.getTypeConverter().mandatoryConvertTo(InputStream.class, data);
+                InputStream is = camelContext.getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, data);
                 IOHelper.copy(is, bos);
             }
 
