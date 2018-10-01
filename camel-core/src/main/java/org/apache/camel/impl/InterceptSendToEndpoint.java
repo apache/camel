@@ -94,7 +94,7 @@ public class InterceptSendToEndpoint implements Endpoint, ShutdownableService {
 
     @Override
     public AsyncProducer createAsyncProducer() throws Exception {
-        Producer producer = delegate.createProducer();
+        AsyncProducer producer = delegate.createAsyncProducer();
         return new InterceptSendToEndpointProcessor(this, delegate, producer, skip);
     }
 
