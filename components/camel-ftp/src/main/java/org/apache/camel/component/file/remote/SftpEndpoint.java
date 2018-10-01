@@ -72,6 +72,10 @@ public class SftpEndpoint extends RemoteFileEndpoint<SftpRemoteFile> {
         return new RemoteFileProducer<>(this, createRemoteFileOperations());
     }
 
+    /**
+     * Default Existing File Move Strategy
+     * @return the default implementation for sftp component
+     */
     private FileMoveExistingStrategy createDefaultSftpMoveExistingFileStrategy() {
         return new SftpDefaultMoveExistingFileStrategy();
     }
