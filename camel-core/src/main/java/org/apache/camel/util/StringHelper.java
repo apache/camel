@@ -428,13 +428,16 @@ public final class StringHelper {
         if (length == 0) {
             return text;
         }
+        if (text.indexOf('-') == -1) {
+            return text;
+        }
 
         StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < text.length(); ++i) {
+        for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
             if (c == '-') {
-                ++i;
+                i++;
                 sb.append(Character.toUpperCase(text.charAt(i)));
             } else {
                 sb.append(c);
