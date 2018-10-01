@@ -70,6 +70,8 @@ public class ThreadsRejectedExecutionWithDeadLetterTest extends ContextTestSuppo
         template.sendBody("seda:start", "Hi World");    // will be queued
         template.sendBody("seda:start", "Bye World");   // will be rejected
 
+        Thread.sleep(100);
+
         latch.countDown();
         latch.countDown();
         latch.countDown();
