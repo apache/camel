@@ -646,7 +646,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 throw new GenericFileOperationFailedException("File already exist: " + name + ". Cannot write new file.");
             } else if (existFile && endpoint.getFileExist() == GenericFileExist.Move) {
                 // move any existing file first
-                doMoveExistingFile(name, targetName);
+                this.endpoint.getMoveExistingFileStrategy().moveExistingFile(endpoint, this, targetName);
             }
         }
 
@@ -712,61 +712,6 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
         } finally {
             IOHelper.close(is, "store: " + name, log);
-        }
-    }
-
-    /**
-     * Moves any existing file due fileExists=Move is in use.
-     */
-    private void doMoveExistingFile(String name, String targetName) throws GenericFileOperationFailedException {
-        // need to evaluate using a dummy and simulate the file first, to have access to all the file attributes
-        // create a dummy exchange as Exchange is needed for expression evaluation
-        // we support only the following 3 tokens.
-        Exchange dummy = endpoint.createExchange();
-        // we only support relative paths for the ftp component, so dont provide any parent
-        String parent = null;
-        String onlyName = FileUtil.stripPath(targetName);
-        dummy.getIn().setHeader(Exchange.FILE_NAME, targetName);
-        dummy.getIn().setHeader(Exchange.FILE_NAME_ONLY, onlyName);
-        dummy.getIn().setHeader(Exchange.FILE_PARENT, parent);
-
-        String to = endpoint.getMoveExisting().evaluate(dummy, String.class);
-        // we only support relative paths for the ftp component, so strip any leading paths
-        to = FileUtil.stripLeadingSeparator(to);
-        // normalize accordingly to configuration
-        to = endpoint.getConfiguration().normalizePath(to);
-        if (ObjectHelper.isEmpty(to)) {
-            throw new GenericFileOperationFailedException("moveExisting evaluated as empty String, cannot move existing file: " + name);
-        }
-
-        // do we have a sub directory
-        String dir = FileUtil.onlyPath(to);
-        if (dir != null) {
-            // ensure directory exists
-            buildDirectory(dir, false);
-        }
-
-        // deal if there already exists a file
-        if (existsFile(to)) {
-            if (endpoint.isEagerDeleteTargetFile()) {
-                log.trace("Deleting existing file: {}", to);
-                boolean result;
-                try {
-                    result = client.deleteFile(to);
-                    if (!result) {
-                        throw new GenericFileOperationFailedException("Cannot delete file: " + to);
-                    }
-                } catch (IOException e) {
-                    throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), "Cannot delete file: " + to, e);
-                }
-            } else {
-                throw new GenericFileOperationFailedException("Cannot move existing file from: " + name + " to: " + to + " as there already exists a file: " + to);
-            }
-        }
-
-        log.trace("Moving existing file: {} to: {}", name, to);
-        if (!renameFile(targetName, to)) {
-            throw new GenericFileOperationFailedException("Cannot rename file from: " + name + " to: " + to);
         }
     }
 
@@ -979,6 +924,10 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
 
         return success;
+    }
+    
+    public FTPClient getClient() {
+        return client;
     }
 
 }
