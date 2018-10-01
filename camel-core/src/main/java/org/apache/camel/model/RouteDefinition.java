@@ -200,7 +200,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     public List<RouteContext> addRoutes(ModelCamelContext camelContext, Collection<Route> routes) throws Exception {
         List<RouteContext> answer = new ArrayList<>();
 
-        @SuppressWarnings("deprecation")
         ErrorHandlerFactory handler = camelContext.getErrorHandlerFactory();
         if (handler != null) {
             setErrorHandlerBuilderIfNull(handler);

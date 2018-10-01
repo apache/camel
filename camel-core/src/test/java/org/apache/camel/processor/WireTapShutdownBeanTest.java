@@ -49,7 +49,7 @@ public class WireTapShutdownBeanTest extends ContextTestSupport {
 
         LATCH.countDown();
 
-        // shutdown Camel which should let the inlfight wire-tap message route to completion
+        // shutdown Camel which should let the inflight wire-tap message route to completion
         context.stop();
 
         // should allow to shutdown nicely
