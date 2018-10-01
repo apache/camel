@@ -16,14 +16,17 @@
  */
 package org.apache.camel.impl;
 
+import java.util.Arrays;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.AsyncProducer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Producer;
+import org.apache.camel.processor.Pipeline;
+import org.apache.camel.util.AsyncProcessorConverterHelper;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
@@ -35,10 +38,10 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
 
     private final InterceptSendToEndpoint endpoint;
     private final Endpoint delegate;
-    private final Producer producer;
+    private final AsyncProducer producer;
     private final boolean skip;
 
-    public InterceptSendToEndpointProcessor(InterceptSendToEndpoint endpoint, Endpoint delegate, Producer producer, boolean skip) throws Exception {
+    public InterceptSendToEndpointProcessor(InterceptSendToEndpoint endpoint, Endpoint delegate, AsyncProducer producer, boolean skip) throws Exception {
         super(delegate);
         this.endpoint = endpoint;
         this.delegate = delegate;
@@ -61,18 +64,29 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
 
         if (endpoint.getDetour() != null) {
             // detour the exchange using synchronous processing
-            try {
-                endpoint.getDetour().process(exchange);
-            } catch (Exception e) {
-                exchange.setException(e);
-            }
+            AsyncProcessor detour = AsyncProcessorConverterHelper.convert(endpoint.getDetour());
+            AsyncProcessor ascb = new AsyncProcessor() {
+                @Override
+                public boolean process(Exchange exchange, AsyncCallback callback) {
+                    return callback(exchange, callback, true);
+                }
+                @Override
+                public void process(Exchange exchange) throws Exception {
+                    AsyncProcessorHelper.process(this, exchange);
+                }
+            };
+            return new Pipeline(exchange.getContext(), Arrays.asList(detour, ascb)).process(exchange, callback);
         }
 
+        return callback(exchange, callback, true);
+    }
+
+    private boolean callback(Exchange exchange, AsyncCallback callback, boolean doneSync) {
         // Decide whether to continue or not; similar logic to the Pipeline
         // check for error if so we should break out
         if (!continueProcessing(exchange, "skip sending to original intended destination: " + getEndpoint(), log)) {
-            callback.done(true);
-            return true;
+            callback.done(doneSync);
+            return doneSync;
         }
 
         // determine if we should skip or not
@@ -92,24 +106,16 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
             }
 
             // route to original destination leveraging the asynchronous routing engine if possible
-            if (producer instanceof AsyncProcessor) {
-                AsyncProcessor async = (AsyncProcessor) producer;
-                return async.process(exchange, callback);
-            } else {
-                try {
-                    producer.process(exchange);
-                } catch (Exception e) {
-                    exchange.setException(e);
-                }
-                callback.done(true);
-                return true;
-            }
+            boolean s = producer.process(exchange, ds -> {
+                callback.done(doneSync && ds);
+            });
+            return doneSync && s;
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("Stop() means skip sending exchange to original intended destination: {} for exchange: {}", getEndpoint(), exchange);
             }
-            callback.done(true);
-            return true;
+            callback.done(doneSync);
+            return doneSync;
         }
     }
 
