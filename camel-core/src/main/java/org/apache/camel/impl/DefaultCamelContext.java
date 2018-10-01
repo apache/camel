@@ -3962,7 +3962,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             } else {
                 // and start the route service (no need to start children as they are already warmed up)
                 try {
-                    routeService.start(false);
+                    routeService.start();
                     route.getProperties().remove("route.start.exception");
                 } catch (Exception e) {
                     route.getProperties().put("route.start.exception", e);
