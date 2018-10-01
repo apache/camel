@@ -132,7 +132,7 @@ public class ServiceSupportTest extends TestSupport {
 
         public ServiceSupportTestExOnStart() {
             // just for testing force it to not be stopped
-            stopped.set(false);
+            status = -1;
         }
 
         @Override

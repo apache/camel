@@ -508,7 +508,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
 
     @Override
     public void shutdown() throws Exception {
-        if (shutdown.get()) {
+        if (isShutdown()) {
             log.trace("Service already shut down");
             return;
         }

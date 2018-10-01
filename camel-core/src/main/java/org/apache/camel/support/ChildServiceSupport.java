@@ -16,118 +16,107 @@
  */
 package org.apache.camel.support;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.apache.camel.Service;
 
 /**
  * Base class to control lifecycle for a set of child {@link org.apache.camel.Service}s.
  */
 public abstract class ChildServiceSupport extends ServiceSupport {
-    private Set<Object> childServices;
-    
-    public void start() throws Exception {
-        start(true);
-    }
 
-    public void start(boolean startChildren) throws Exception {
-        if (!started.get()) {
-            if (starting.compareAndSet(false, true)) {
-                boolean childrenStarted = false;
-                Exception ex = null;
-                try {
-                    if (childServices != null && startChildren) {
-                        ServiceHelper.startService(childServices);
-                    }
-                    childrenStarted = true;
-                    doStart();
-                } catch (Exception e) {
-                    ex = e;
-                } finally {
-                    if (ex != null) {
-                        try {
-                            stop(childrenStarted);
-                        } catch (Exception e) {
-                            // Ignore exceptions as we want to show the original exception
-                        }
-                        throw ex;
-                    } else {
-                        started.set(true);
-                        starting.set(false);
-                        stopping.set(false);
-                        stopped.set(false);
-                        suspending.set(false);
-                        suspended.set(false);
-                        shutdown.set(false);
-                        shuttingdown.set(false);
-                    }
-                }
+    protected volatile List<Service> childServices;
+
+    public void start() throws Exception {
+        synchronized (lock) {
+            if (status == STARTED) {
+                log.trace("Service already started");
+                return;
             }
-        }
-    }
-    
-    private void stop(boolean childrenStarted) throws Exception {
-        if (stopping.compareAndSet(false, true)) {
+            if (status == STARTING) {
+                log.trace("Service already starting");
+                return;
+            }
+            status = STARTING;
+            log.trace("Starting service");
             try {
-                try {
-                    starting.set(false);
-                    suspending.set(false);
-                    if (childrenStarted) {
-                        doStop();
-                    }
-                } finally {
-                    started.set(false);
-                    suspended.set(false);
-                    if (childServices != null) {
-                        ServiceHelper.stopService(childServices);
-                    }
-                }
-            } finally {
-                stopped.set(true);
-                stopping.set(false);
-                starting.set(false);
-                started.set(false);
-                suspending.set(false);
-                suspended.set(false);
-                shutdown.set(false);
-                shuttingdown.set(false);
+                ServiceHelper.startService(childServices);
+                doStart();
+                status = STARTED;
+                log.trace("Service started");
+            } catch (Exception e) {
+                status = FAILED;
+                log.trace("Error while starting service", e);
+                ServiceHelper.stopService(childServices);
+                throw e;
             }
         }
     }
 
     public void stop() throws Exception {
-        if (!stopped.get()) {
-            stop(true);
+        synchronized (lock) {
+            if (status == STOPPED || status == SHUTTINGDOWN || status == SHUTDOWN) {
+                log.trace("Service already stopped");
+                return;
+            }
+            if (status == STOPPING) {
+                log.trace("Service already stopping");
+                return;
+            }
+            status = STOPPING;
+            log.trace("Stopping service");
+            try {
+                doStop();
+                ServiceHelper.stopService(childServices);
+                status = STOPPED;
+                log.trace("Service stopped service");
+            } catch (Exception e) {
+                status = FAILED;
+                log.trace("Error while stopping service", e);
+                throw e;
+            }
         }
     }
-    
-    public void shutdown() throws Exception {
-        // ensure we are stopped first
-        stop();
 
-        if (shuttingdown.compareAndSet(false, true)) {
+    @Override
+    public void shutdown() throws Exception {
+        synchronized (lock) {
+            if (status == SHUTDOWN) {
+                log.trace("Service already shut down");
+                return;
+            }
+            if (status == SHUTTINGDOWN) {
+                log.trace("Service already shutting down");
+                return;
+            }
+            stop();
+            status = SHUTDOWN;
+            log.trace("Shutting down service");
             try {
-                try {
-                    doShutdown();
-                } finally {
-                    if (childServices != null) {
-                        ServiceHelper.stopAndShutdownServices(childServices);
+                doShutdown();
+                ServiceHelper.stopAndShutdownServices(childServices);
+                log.trace("Service shut down");
+                status = SHUTDOWN;
+            } catch (Exception e) {
+                status = FAILED;
+                log.trace("Error shutting down service", e);
+                throw e;
+            }
+        }
+    }
+
+    protected void addChildService(Object childService) {
+        if (childService instanceof Service) {
+            if (childServices == null) {
+                synchronized (lock) {
+                    if (childServices == null) {
+                        childServices = new CopyOnWriteArrayList<>();
                     }
                 }
-            } finally {
-                // shutdown is also stopped so only set shutdown flags
-                shutdown.set(true);
-                shuttingdown.set(false);
             }
+            childServices.add((Service) childService);
         }
-    }
-    
-    protected void addChildService(Object childService) {
-        synchronized (this) {
-            if (childServices == null) {
-                childServices = new LinkedHashSet<>();
-            }
-        }
-        childServices.add(childService);
     }
 
     protected boolean removeChildService(Object childService) {
