@@ -27,8 +27,6 @@ import org.slf4j.MarkerFactory;
  * <p/>
  * The name <tt>CamelLogger</tt> has been chosen to avoid any name clash with log kits
  * which has a <tt>Logger</tt> class.
- *
- * @version 
  */
 public class CamelLogger {
     private Logger log;

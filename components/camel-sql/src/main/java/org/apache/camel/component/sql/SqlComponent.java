@@ -29,7 +29,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * The <a href="http://camel.apache.org/sql-component.html">SQL Component</a> is for working with databases using JDBC queries.
- * 
  */
 public class SqlComponent extends DefaultComponent {
 

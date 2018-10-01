@@ -21,9 +21,6 @@ import org.apache.camel.processor.interceptor.InterceptorStrategyOrderedTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringInterceptorStrategyOrderedTest extends InterceptorStrategyOrderedTest {
 
     protected CamelContext createCamelContext() throws Exception {

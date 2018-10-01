@@ -76,7 +76,6 @@ import org.slf4j.LoggerFactory;
  * <p>
  * If you want to provide the key access via keyrings in the format of a byte
  * array or file, then you should use the class {@link PGPDataFormat}.
- * 
  */
 public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 

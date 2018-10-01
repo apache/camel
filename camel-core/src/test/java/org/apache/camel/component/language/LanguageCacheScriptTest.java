@@ -23,9 +23,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class LanguageCacheScriptTest extends ContextTestSupport {
 
     private LanguageEndpoint endpoint;

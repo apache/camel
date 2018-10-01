@@ -20,9 +20,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class LRUCacheTest extends Assert {
 
     private LRUCache<String, Service> cache;

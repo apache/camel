@@ -26,8 +26,6 @@ import org.junit.Test;
 
 /**
  * A unit test which verifies disabling of JMX instrumentation.
- *
- * @version 
  */
 public class JmxInstrumentationDisableTest extends JmxInstrumentationUsingPropertiesTest {
 

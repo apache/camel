@@ -26,8 +26,6 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Serialization is a data format which uses the standard Java Serialization mechanism
  * to unmarshal a binary payload into Java objects or to marshal Java objects into a binary blob.
- *
- * @version 
  */
 @Metadata(firstVersion = "2.12.0", label = "dataformat,transformation,core", title = "Java Object Serialization")
 @XmlRootElement(name = "serialization")

@@ -22,9 +22,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class BeanParameterInfoTest extends ContextTestSupport {
 
     protected CamelContext camelContext = new DefaultCamelContext();

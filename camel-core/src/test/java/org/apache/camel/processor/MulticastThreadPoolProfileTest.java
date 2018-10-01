@@ -22,9 +22,6 @@ import org.apache.camel.builder.ThreadPoolProfileBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.ThreadPoolProfile;
 
-/**
- * @version 
- */
 public class MulticastThreadPoolProfileTest extends MulticastParallelTest {
 
     @Override

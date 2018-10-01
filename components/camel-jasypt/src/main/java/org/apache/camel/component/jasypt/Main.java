@@ -23,9 +23,6 @@ import java.util.List;
 
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 
-/**
- * @version 
- */
 public class Main {
 
     private final StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();

@@ -20,8 +20,6 @@ import org.apache.camel.Exchange;
 
 /**
  * Represents a strategy for testing endpoints with canned data.
- *
- * @version 
  */
 public interface DataSet {
 

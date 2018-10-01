@@ -20,8 +20,6 @@ package org.apache.camel.spi;
  * A pluggable strategy for creating and possibly dependency injecting objects
  * which could be implemented using straight forward reflection or using Spring
  * or Guice to perform dependency injection.
- * 
- * @version 
  */
 public interface Injector {
 

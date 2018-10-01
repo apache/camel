@@ -31,8 +31,6 @@ import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
  * A builder of expressions or predicates based on values.
- * 
- * @version 
  */
 public class ValueBuilder implements Expression, Predicate {
     private Expression expression;

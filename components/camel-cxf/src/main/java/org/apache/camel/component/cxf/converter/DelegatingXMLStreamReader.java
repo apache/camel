@@ -27,9 +27,6 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-/**
- * 
- */
 class DelegatingXMLStreamReader implements XMLStreamReader {
     private XMLStreamReader reader;
     private final String[] xprefixes;

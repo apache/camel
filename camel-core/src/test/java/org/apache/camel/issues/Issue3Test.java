@@ -23,9 +23,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class Issue3Test extends ContextTestSupport {
     protected String fromQueue = "direct:A";
 

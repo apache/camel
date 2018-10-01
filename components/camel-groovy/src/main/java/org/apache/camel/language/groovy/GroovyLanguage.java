@@ -22,9 +22,6 @@ import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.LRUSoftCache;
 import org.codehaus.groovy.runtime.InvokerHelper;
 
-/**
- * @version
- */
 public class GroovyLanguage extends LanguageSupport {
 
     // Cache used to stores the compiled scripts (aka their classes)

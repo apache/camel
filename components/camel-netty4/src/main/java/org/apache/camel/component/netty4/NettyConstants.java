@@ -18,8 +18,6 @@ package org.apache.camel.component.netty4;
 
 /**
  * Netty constants
- *
- * @version 
  */
 public final class NettyConstants {
 

@@ -100,7 +100,6 @@ import org.apache.cxf.message.MessageContentsList;
  * 
  * <b><tt>public Response doAction(DataHandler abcd);</tt></b><br/>
  * The DataHandler is unwrapped from the {@link MessageContentsList} and preserved as the IN message body.
- * 
  */
 public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
 

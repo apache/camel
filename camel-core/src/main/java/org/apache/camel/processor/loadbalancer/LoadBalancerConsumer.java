@@ -23,8 +23,6 @@ import org.apache.camel.impl.DefaultConsumer;
 /**
  * Represents a consumer which on starting registers itself with a {@link LoadBalancer} and on closing unregisters
  * itself with a load balancer
- *
- * @version 
  */
 public class LoadBalancerConsumer extends DefaultConsumer {
     private final LoadBalancer loadBalancer;

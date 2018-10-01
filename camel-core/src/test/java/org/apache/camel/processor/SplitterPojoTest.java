@@ -31,9 +31,6 @@ import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class SplitterPojoTest extends ContextTestSupport {
 
     @Override

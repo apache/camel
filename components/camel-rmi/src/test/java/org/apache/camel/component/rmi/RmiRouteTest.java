@@ -26,9 +26,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RmiRouteTest extends RmiRouteTestSupport {
 
     protected int getStartPort() {

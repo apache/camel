@@ -25,8 +25,6 @@ package org.apache.camel;
  * Notice if you use a {@link Processor} in a Camel route, then make sure to write the {@link Processor}
  * in a thread-safe way, as the Camel routes can potentially be executed by concurrent threads, and therefore
  * multiple threads can call the same {@link Processor} instance.
- * 
- * @version 
  */
 public interface Processor {
 

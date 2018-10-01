@@ -26,8 +26,6 @@ import org.apache.camel.util.ResolverHelper;
 
 /**
  * Default data format resolver
- *
- * @version
  */
 public class DefaultDataFormatResolver implements DataFormatResolver {
     public static final String DATAFORMAT_RESOURCE_PATH = "META-INF/services/org/apache/camel/dataformat/";

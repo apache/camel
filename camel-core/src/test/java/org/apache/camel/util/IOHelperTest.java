@@ -32,9 +32,6 @@ import org.apache.camel.impl.DefaultExchange;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class IOHelperTest extends Assert {
 
     @Test

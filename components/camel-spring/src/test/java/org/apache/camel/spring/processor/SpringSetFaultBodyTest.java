@@ -23,9 +23,6 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version
- */
 public class SpringSetFaultBodyTest extends SpringTestSupport {
 
     @Override

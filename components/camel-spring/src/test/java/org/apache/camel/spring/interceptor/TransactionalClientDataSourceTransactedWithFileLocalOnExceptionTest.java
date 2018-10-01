@@ -19,9 +19,6 @@ package org.apache.camel.spring.interceptor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
 
-/**
- * @version 
- */
 public class TransactionalClientDataSourceTransactedWithFileLocalOnExceptionTest extends TransactionalClientDataSourceTransactedWithFileOnExceptionTest {
 
     protected RouteBuilder createRouteBuilder() throws Exception {

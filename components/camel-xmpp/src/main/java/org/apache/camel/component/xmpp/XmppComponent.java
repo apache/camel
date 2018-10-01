@@ -27,9 +27,6 @@ import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.jivesoftware.smack.ReconnectionManager;
 
-/**
- * @version 
- */
 public class XmppComponent extends DefaultComponent {
 
     // keep a cache of endpoints so they can be properly cleaned up

@@ -20,9 +20,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.BeforeClass;
 import org.mockito.Mockito;
 
-/**
- * @version 
- */
 public class NagiosAsyncSendTest extends NagiosTest {
 
     @BeforeClass

@@ -33,7 +33,6 @@ import static org.junit.Assert.assertNotNull;
 
 /**
  * Waits for messages to arrive on the mock endpoint and performs assertions on the message bodies.
- * 
  */
 public class MockEndpointFixture {
     MockEndpoint mMockEndpoint;

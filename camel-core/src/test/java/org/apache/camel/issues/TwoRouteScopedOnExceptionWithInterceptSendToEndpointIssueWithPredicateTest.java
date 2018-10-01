@@ -31,8 +31,6 @@ import org.junit.Test;
 
 /**
  * Based on user forum issue
- *
- * @version 
  */
 public class TwoRouteScopedOnExceptionWithInterceptSendToEndpointIssueWithPredicateTest extends ContextTestSupport {
 

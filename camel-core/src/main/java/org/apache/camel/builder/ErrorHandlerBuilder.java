@@ -26,8 +26,6 @@ import org.apache.camel.spi.RouteContext;
 
 /**
  * A builder of a <a href="http://camel.apache.org/error-handler.html">Error Handler</a>
- *
- * @version 
  */
 public interface ErrorHandlerBuilder extends ErrorHandlerFactory {
 

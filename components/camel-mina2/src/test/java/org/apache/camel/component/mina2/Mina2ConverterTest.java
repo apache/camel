@@ -26,9 +26,6 @@ import org.apache.mina.core.buffer.IoBuffer;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class Mina2ConverterTest extends Assert {
 
     @Test

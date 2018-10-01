@@ -21,9 +21,6 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class JavaScriptFilterTest extends XPathFilterTest {
 
     @Override

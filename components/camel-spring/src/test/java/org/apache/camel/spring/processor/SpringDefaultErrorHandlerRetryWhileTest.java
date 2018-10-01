@@ -21,9 +21,6 @@ import org.apache.camel.processor.onexception.DefaultErrorHandlerRetryWhileTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringDefaultErrorHandlerRetryWhileTest extends DefaultErrorHandlerRetryWhileTest {
 
     protected CamelContext createCamelContext() throws Exception {

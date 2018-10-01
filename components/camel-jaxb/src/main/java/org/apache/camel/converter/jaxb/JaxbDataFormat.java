@@ -66,8 +66,6 @@ import org.apache.camel.util.ResourceHelper;
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using JAXB2 to marshal to and from XML
- *
- * @version
  */
 public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 

@@ -30,8 +30,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * To use XQuery (XML) in Camel expressions or predicates.
- *
- * @version 
  */
 @Metadata(firstVersion = "1.0.0", label = "language,xml", title = "XQuery")
 @XmlRootElement(name = "xquery")

@@ -26,8 +26,6 @@ import java.util.TreeMap;
  * <p/>
  * This map is <b>not</b> designed to be thread safe as concurrent access to it is not supposed to be performed
  * by the Camel routing engine.
- *
- * @version 
  */
 public class CaseInsensitiveMap extends TreeMap<String, Object> {
 

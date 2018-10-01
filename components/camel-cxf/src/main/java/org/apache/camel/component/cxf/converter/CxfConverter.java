@@ -39,8 +39,6 @@ import org.apache.cxf.message.MessageContentsList;
 /**
  * The <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
  * for CXF related types' converting .
- *
- * @version 
  */
 @Converter
 public final class CxfConverter {

@@ -35,7 +35,6 @@ import org.springframework.messaging.core.DestinationResolver;
  * Please specify the outputChannel in the endpoint url for this producer.
  * If the message pattern is inOut, the inputChannel property
  * should be set for receiving the response message.
- * @version 
  */
 public class SpringIntegrationProducer extends DefaultProducer implements Processor {    
     private final DestinationResolver<MessageChannel> destinationResolver;

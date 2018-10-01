@@ -31,7 +31,6 @@ import org.apache.camel.Service;
  * @see org.apache.camel.spi.EventFactory
  * @see org.apache.camel.spi.ManagementNamingStrategy
  * @see org.apache.camel.spi.ManagementAgent
- * @version 
  */
 public interface ManagementStrategy extends Service {
 

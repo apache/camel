@@ -26,8 +26,6 @@ import org.apache.camel.spi.RouteContext;
 
 /**
  * Routes the message to a sequence of processors.
- *
- * @version
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "pipeline")

@@ -21,9 +21,6 @@ import org.apache.camel.processor.ShutdownCompleteAllTasksTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringShutdownCompleteAllTasksTest extends ShutdownCompleteAllTasksTest {
 
     protected CamelContext createCamelContext() throws Exception {

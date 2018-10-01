@@ -23,9 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class TransactionalClientDataSourceRedeliveryTest extends TransactionalClientDataSourceTest {
 
     @Test

@@ -22,9 +22,6 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringLogMarkerTest extends SpringTestSupport {
     protected Object expectedBody = "Hello there!";
     protected String uri = "direct:start";

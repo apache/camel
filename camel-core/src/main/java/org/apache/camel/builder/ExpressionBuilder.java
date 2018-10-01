@@ -76,8 +76,6 @@ import org.apache.camel.util.StringHelper;
 
 /**
  * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a>.
- *
- * @version
  */
 public final class ExpressionBuilder {
 

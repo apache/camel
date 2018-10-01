@@ -25,9 +25,6 @@ import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class BindyPipeDelimiterTest extends CamelTestSupport {
 
     @Test

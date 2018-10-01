@@ -50,8 +50,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * The context used to activate new routing rules
- *
- * @version 
  */
 public class DefaultRouteContext implements RouteContext {
     private final Map<NamedNode, AtomicInteger> nodeIndex = new HashMap<>();

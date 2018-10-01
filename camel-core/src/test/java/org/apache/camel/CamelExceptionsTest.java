@@ -22,9 +22,6 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.impl.DefaultExchange;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class CamelExceptionsTest extends ContextTestSupport {
 
     @Test

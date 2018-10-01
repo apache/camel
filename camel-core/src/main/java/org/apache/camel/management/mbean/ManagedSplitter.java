@@ -22,9 +22,6 @@ import org.apache.camel.api.management.mbean.ManagedSplitterMBean;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.processor.Splitter;
 
-/**
- * @version 
- */
 @ManagedResource(description = "Managed Splitter")
 public class ManagedSplitter extends ManagedMulticast implements ManagedSplitterMBean {
     private final Splitter processor;

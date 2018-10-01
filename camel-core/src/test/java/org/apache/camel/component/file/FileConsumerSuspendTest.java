@@ -26,9 +26,6 @@ import org.apache.camel.support.RoutePolicySupport;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FileConsumerSuspendTest extends ContextTestSupport {
 
     @Override

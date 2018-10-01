@@ -52,10 +52,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- *
- * @version
- */
 public class HttpCompressionTest extends BaseHttpTest {
 
     private HttpServer localServer;

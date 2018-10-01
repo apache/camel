@@ -38,7 +38,6 @@ import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageFo
 /**
  * A Producer which sends messages to the Amazon Web Service Simple Queue Service
  * <a href="http://aws.amazon.com/sqs/">AWS SQS</a>
- * 
  */
 public class SqsProducer extends DefaultProducer {
 

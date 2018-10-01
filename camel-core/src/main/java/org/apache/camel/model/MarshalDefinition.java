@@ -69,8 +69,6 @@ import org.apache.camel.spi.RouteContext;
 
 /**
  * Marshals data into a specified format for transmission over a transport or component
- *
- * @version
  */
 @Metadata(label = "eip,transformation")
 @XmlRootElement(name = "marshal")

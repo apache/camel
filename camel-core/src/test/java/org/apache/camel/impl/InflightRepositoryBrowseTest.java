@@ -25,9 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.InflightRepository;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class InflightRepositoryBrowseTest extends ContextTestSupport {
 
     @Test

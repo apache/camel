@@ -23,9 +23,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class SimpleBuilderTest extends TestSupport {
 
     protected Exchange exchange = new DefaultExchange(new DefaultCamelContext());

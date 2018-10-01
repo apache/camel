@@ -19,9 +19,6 @@ package org.apache.camel.component.mina2;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class Mina2ComponentWithConfigurationTest extends CamelTestSupport {
 
     @Test

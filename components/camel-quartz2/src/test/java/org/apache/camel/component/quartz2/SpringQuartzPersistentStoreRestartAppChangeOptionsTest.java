@@ -30,8 +30,6 @@ import org.quartz.Trigger;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- */
 public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest extends TestSupport {
 
     private static AbstractXmlApplicationContext db;

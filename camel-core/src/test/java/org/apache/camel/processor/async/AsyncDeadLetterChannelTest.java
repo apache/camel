@@ -24,8 +24,6 @@ import org.junit.Test;
 
 /**
  * Unit test to verify that error handling using threads() also works as expected.
- *
- * @version 
  */
 public class AsyncDeadLetterChannelTest extends ContextTestSupport {
 

@@ -25,8 +25,6 @@ import org.junit.Test;
 
 /**
  * Unit test to verify that error handling using async() also works as expected.
- *
- * @version 
  */
 public class AsyncDeadLetterChannelExecutorServiceRefTest extends ContextTestSupport {
 

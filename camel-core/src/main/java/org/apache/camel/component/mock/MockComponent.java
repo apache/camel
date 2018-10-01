@@ -27,8 +27,6 @@ import org.apache.camel.util.CamelLogger;
 
 /**
  * The <a href="http://camel.apache.org/mock.html">Mock Component</a> provides mock endpoints for testing.
- *
- * @version 
  */
 public class MockComponent extends DefaultComponent {
 

@@ -25,8 +25,6 @@ import org.junit.Test;
 
 /**
  * Unit test for using http client SO timeout
- *
- * @version 
  */
 public class HttpProducerSOTimeoutTest extends BaseJettyTest {
 

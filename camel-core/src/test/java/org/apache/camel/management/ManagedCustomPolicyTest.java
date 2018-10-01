@@ -30,9 +30,6 @@ import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ManagedCustomPolicyTest extends ManagementTestSupport {
 
     private final AtomicInteger counter = new AtomicInteger();

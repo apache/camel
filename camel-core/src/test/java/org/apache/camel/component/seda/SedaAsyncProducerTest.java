@@ -32,8 +32,6 @@ import org.junit.Test;
  * The new Async API version of doing async routing based on the old AsyncProcessor API
  * In the old SedaAsyncProcessorTest a seda endpoint was needed to really turn it into async. This is not
  * needed by the new API so we send it using direct instead.
- *
- * @version 
  */
 public class SedaAsyncProducerTest extends ContextTestSupport {
 

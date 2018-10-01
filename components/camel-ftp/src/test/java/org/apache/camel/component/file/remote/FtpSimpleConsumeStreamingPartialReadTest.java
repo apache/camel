@@ -26,9 +26,6 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FtpSimpleConsumeStreamingPartialReadTest extends FtpServerTestSupport {
 
     @Test

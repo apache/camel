@@ -31,9 +31,6 @@ import org.junit.Test;
 
 import static org.apache.camel.ShutdownRoute.Defer;
 
-/**
- * @version 
- */
 public class ShutdownDeferTest extends ContextTestSupport {
 
     private static final AtomicBoolean CONSUMER_SUSPENDED = new AtomicBoolean();

@@ -28,9 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ManagedCamelContextUpdateRoutesWithPropertyPlaceholdersFromXmlPTest extends ManagementTestSupport {
 
     private Properties props;

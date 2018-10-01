@@ -29,8 +29,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * The Protobuf data format is used for serializing between Java objects and the Google Protobuf protocol.
- *
- * @version 
  */
 @Metadata(firstVersion = "2.2.0", label = "dataformat,transformation", title = "Protobuf")
 @XmlRootElement(name = "protobuf")

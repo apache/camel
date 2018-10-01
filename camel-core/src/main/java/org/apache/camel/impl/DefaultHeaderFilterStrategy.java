@@ -36,8 +36,6 @@ import org.apache.camel.spi.HeaderFilterStrategy;
  * to a native message like JMS and CXF message. You can see example of
  * DefaultHeaderFilterStrategy are being extended and invoked in camel-jms 
  * and camel-cxf components.
- *
- * @version 
  */
 public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     

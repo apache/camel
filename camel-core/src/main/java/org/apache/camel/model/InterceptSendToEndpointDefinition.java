@@ -38,8 +38,6 @@ import org.apache.camel.util.URISupport;
 
 /**
  * Intercepts messages being sent to an endpoint
- *
- * @version 
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "interceptSendToEndpoint")

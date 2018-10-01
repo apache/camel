@@ -29,8 +29,6 @@ import org.apache.camel.spi.Registry;
 
 /**
  * A command line tool for booting up a CamelContext
- *
- * @version 
  */
 public class Main extends MainSupport {
 

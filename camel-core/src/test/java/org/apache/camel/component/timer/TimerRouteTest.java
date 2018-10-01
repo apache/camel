@@ -28,9 +28,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
 public class TimerRouteTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(TimerRouteTest.class);
     private MyBean bean = new MyBean();

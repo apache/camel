@@ -36,9 +36,6 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.IntrospectionSupport;
 
-/**
- * @version
- */
 public class JdbcProducer extends DefaultProducer {
 
     private DataSource dataSource;

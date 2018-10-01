@@ -19,9 +19,6 @@ package org.apache.camel.component.file.remote.sftp;
 import org.apache.camel.Exchange;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class SftpConsumeTemplateTest extends SftpServerTestSupport {
 
     @Override

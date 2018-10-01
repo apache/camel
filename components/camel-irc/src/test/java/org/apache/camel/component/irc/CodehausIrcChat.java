@@ -28,9 +28,6 @@ import org.schwering.irc.lib.IRCUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
 public final class CodehausIrcChat {
 
     private static final Logger LOG = LoggerFactory.getLogger(CodehausIrcChat.class);

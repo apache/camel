@@ -43,8 +43,6 @@ import org.apache.camel.model.language.XQueryExpression;
 
 /**
  * A support class for building expression clauses.
- *
- * @version 
  */
 public class ExpressionClauseSupport<T> {
 

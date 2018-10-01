@@ -27,8 +27,6 @@ import org.junit.Test;
 
 /**
  * Unit testing using different encodings with the TCP protocol.
- *
- * @version 
  */
 public class Mina2EncodingTest extends BaseMina2Test {
 

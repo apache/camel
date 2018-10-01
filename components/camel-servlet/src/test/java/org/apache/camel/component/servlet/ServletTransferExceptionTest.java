@@ -27,9 +27,6 @@ import org.apache.camel.http.common.HttpConstants;
 import org.apache.camel.http.common.HttpHelper;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ServletTransferExceptionTest extends ServletCamelRouterTestSupport {
 
     @Test

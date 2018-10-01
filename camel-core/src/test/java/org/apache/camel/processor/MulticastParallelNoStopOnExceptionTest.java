@@ -27,9 +27,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class MulticastParallelNoStopOnExceptionTest extends ContextTestSupport {
     private ExecutorService service; 
     

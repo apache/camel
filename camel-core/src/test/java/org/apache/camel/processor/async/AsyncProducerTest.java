@@ -23,9 +23,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class AsyncProducerTest extends ContextTestSupport {
 
     private static String beforeThreadName;

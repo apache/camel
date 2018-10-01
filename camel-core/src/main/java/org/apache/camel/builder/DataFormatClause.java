@@ -67,8 +67,6 @@ import org.apache.camel.util.jsse.KeyStoreParameters;
 /**
  * An expression for constructing the different possible {@link org.apache.camel.spi.DataFormat}
  * options.
- *
- * @version 
  */
 public class DataFormatClause<T extends ProcessorDefinition<?>> {
     private final T processorType;

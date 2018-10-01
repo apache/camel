@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.file.remote;
 
-/**
- * @version 
- */
 public class FromFtpSimpleRelativeMoveToAbsoluteNotStepwiseTest extends FromFtpSimpleRelativeMoveToAbsoluteTest {
 
     protected String getFtpUrl() {

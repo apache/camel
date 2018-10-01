@@ -36,9 +36,6 @@ import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.eclipse.jetty.util.security.Constraint;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class HttpBasicAuthTest extends BaseJettyTest {
 
     @Override

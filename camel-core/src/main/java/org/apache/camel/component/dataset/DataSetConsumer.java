@@ -28,8 +28,6 @@ import org.apache.camel.util.URISupport;
 
 /**
  * DataSet consumer.
- *
- * @version 
  */
 public class DataSetConsumer extends DefaultConsumer {
     private final CamelContext camelContext;

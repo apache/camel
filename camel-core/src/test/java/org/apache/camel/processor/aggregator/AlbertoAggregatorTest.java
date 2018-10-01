@@ -30,9 +30,6 @@ import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class AlbertoAggregatorTest extends ContextTestSupport {
     private static final String SURNAME_HEADER = "surname";
     private static final String TYPE_HEADER = "type";

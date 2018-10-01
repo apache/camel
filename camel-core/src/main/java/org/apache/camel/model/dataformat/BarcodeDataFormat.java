@@ -28,8 +28,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * The Barcode data format is used for creating barccode images (such as QR-Code)
- *
- * @version 
  */
 @Metadata(firstVersion = "2.14.0", label = "dataformat,transformation", title = "Barcode")
 @XmlRootElement(name = "barcode")

@@ -32,9 +32,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version 
- */
 public class JmsDiscoveryTest extends CamelTestSupport {
     protected MyRegistry registry = new MyRegistry();
 

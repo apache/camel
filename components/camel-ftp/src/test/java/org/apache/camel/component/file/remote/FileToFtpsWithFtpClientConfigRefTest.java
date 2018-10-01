@@ -24,8 +24,6 @@ import org.junit.Test;
 
 /**
  * Test the ftps component over SSL (explicit) and without client authentication
- * 
- * @version 
  */
 public class FileToFtpsWithFtpClientConfigRefTest extends FtpsServerExplicitSSLWithoutClientAuthTestSupport {
     

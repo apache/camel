@@ -34,8 +34,6 @@ import org.slf4j.LoggerFactory;
  * or delayed processing.
  * <p/>
  * This implementation will block while waiting.
- * 
- * @version 
  */
 public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
 

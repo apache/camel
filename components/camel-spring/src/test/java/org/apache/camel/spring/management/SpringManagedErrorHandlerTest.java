@@ -21,9 +21,6 @@ import org.apache.camel.management.ManagedErrorHandlerTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringManagedErrorHandlerTest extends ManagedErrorHandlerTest {
 
     @Override

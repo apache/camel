@@ -24,9 +24,6 @@ import org.apache.camel.processor.validation.PredicateValidationException;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ValidateRegExpTest extends ContextTestSupport {
     
     protected Endpoint startEndpoint;

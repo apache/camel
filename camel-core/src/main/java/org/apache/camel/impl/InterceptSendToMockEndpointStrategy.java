@@ -32,8 +32,6 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  * <p/>
  * This strategy will only apply when new endpoints are being created. If you want to replace
  * existing endpoints, you will have to remove them from the {@link org.apache.camel.CamelContext} beforehand.
- *
- * @version 
  */
 public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
 

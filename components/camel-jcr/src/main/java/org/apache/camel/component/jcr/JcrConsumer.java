@@ -31,8 +31,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * A {@link org.apache.camel.Consumer} to consume JCR events.
- *
- * @version $Id$
  */
 public class JcrConsumer extends DefaultConsumer {
 

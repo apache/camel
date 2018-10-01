@@ -18,9 +18,6 @@ package org.apache.camel.spring.issues;
 
 import org.apache.camel.builder.RouteBuilder;
 
-/**
- * @version 
- */
 public class MyCoolRoute extends RouteBuilder {
 
     private String inputQueue;

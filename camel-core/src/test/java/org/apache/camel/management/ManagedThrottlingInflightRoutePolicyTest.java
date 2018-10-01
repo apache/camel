@@ -26,9 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ManagedThrottlingInflightRoutePolicyTest extends ManagementTestSupport {
 
     @Test

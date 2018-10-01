@@ -23,9 +23,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.junit.Ignore;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RestRestletGetTest extends RestletTestSupport {
     
     @Override

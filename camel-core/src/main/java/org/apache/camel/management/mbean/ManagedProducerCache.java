@@ -21,9 +21,6 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedProducerCacheMBean;
 import org.apache.camel.impl.ProducerCache;
 
-/**
- * @version 
- */
 @ManagedResource(description = "Managed ProducerCache")
 public class ManagedProducerCache extends ManagedService implements ManagedProducerCacheMBean {
     private final ProducerCache producerCache;

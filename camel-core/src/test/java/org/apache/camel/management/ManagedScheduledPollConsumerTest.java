@@ -26,9 +26,6 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ManagedScheduledPollConsumerTest extends ManagementTestSupport {
 
     @Test

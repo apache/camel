@@ -27,8 +27,6 @@ import org.junit.Test;
 
 /**
  * A unit test for java only CXF in payload mode
- * 
- * @version 
  */
 public class CxfJavaOnlyPayloadModeTest extends CamelTestSupport {
     private static int port1 = CXFTestSupport.getPort1(); 

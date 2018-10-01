@@ -22,9 +22,6 @@ import org.apache.camel.api.management.mbean.ManagedTopicLoadBalancerMBean;
 import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 
-/**
- * @version 
- */
 @ManagedResource(description = "Managed Topic LoadBalancer")
 public class ManagedTopicLoadBalancer extends ManagedProcessor implements ManagedTopicLoadBalancerMBean {
     private final TopicLoadBalancer processor;

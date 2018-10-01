@@ -24,8 +24,6 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Represents the kind of message exchange pattern
- *
- * @version 
  */
 @XmlType
 @XmlEnum

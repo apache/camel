@@ -25,8 +25,6 @@ import org.junit.Test;
 /**
  * Unit test for intercepting sending to endpoint with dynamic endpoints
  * and uri matching
- *
- * @version 
  */
 public class InterceptSendToEndpointDynamicTest extends ContextTestSupport {
 

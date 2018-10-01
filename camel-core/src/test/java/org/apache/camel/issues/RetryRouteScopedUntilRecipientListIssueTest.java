@@ -35,9 +35,6 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RetryRouteScopedUntilRecipientListIssueTest extends ContextTestSupport {
 
     protected static AtomicInteger invoked = new AtomicInteger();

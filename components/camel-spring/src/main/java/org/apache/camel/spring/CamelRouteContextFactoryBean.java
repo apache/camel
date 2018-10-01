@@ -31,8 +31,6 @@ import org.springframework.beans.factory.FactoryBean;
 
 /**
  * Configuration of routes using XML
- *
- * @version
  */
 @Metadata(label = "spring,configuration,routing")
 @XmlRootElement(name = "routeContext")

@@ -41,8 +41,6 @@ import org.apache.camel.util.ObjectHelper;
  * See more details at {@link org.apache.camel.util.CaseInsensitiveMap}.
  * The implementation of the map can be configured by the {@link HeadersMapFactory} which can be set
  * on the {@link CamelContext}. The default implementation uses the {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
- *
- * @version 
  */
 public class DefaultMessage extends MessageSupport {
     private boolean fault;

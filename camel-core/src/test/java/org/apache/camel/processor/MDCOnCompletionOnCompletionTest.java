@@ -27,9 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-/**
- * @version
- */
 public class MDCOnCompletionOnCompletionTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(MDCOnCompletionOnCompletionTest.class);

@@ -32,9 +32,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class StringSourceTest extends Assert {
     protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
             new ReflectionInjector(), new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()), false);

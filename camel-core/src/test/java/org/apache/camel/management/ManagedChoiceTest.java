@@ -24,9 +24,6 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ManagedChoiceTest extends ManagementTestSupport {
 
     @Test

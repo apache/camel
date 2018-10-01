@@ -30,9 +30,6 @@ import org.fusesource.hawtbuf.codec.Codec;
 import org.fusesource.hawtbuf.codec.ObjectCodec;
 import org.fusesource.hawtbuf.codec.StringCodec;
 
-/**
- * @version 
- */
 public final class LevelDBCamelCodec {
 
     private Codec<String> keyCodec = new StringCodec();

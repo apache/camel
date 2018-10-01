@@ -24,8 +24,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * To proxy a service call using a interface
- *
- * @version 
  */
 @Metadata(label = "spring,configuration")
 @XmlRootElement(name = "proxy")

@@ -30,10 +30,6 @@ import org.apache.cxf.security.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- * @version 
- */
 public class DefaultCxfMessageMapper implements CxfMessageMapper {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCxfMessageMapper.class);
     private static final String CXF_HTTP_REQUEST = "HTTP.REQUEST";

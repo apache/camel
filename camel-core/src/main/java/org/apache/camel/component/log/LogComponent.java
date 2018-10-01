@@ -32,8 +32,6 @@ import org.slf4j.LoggerFactory;
 /**
  * The <a href="http://camel.apache.org/log.html">Log Component</a>
  * is for logging message exchanges via the underlying logging mechanism.
- *
- * @version 
  */
 public class LogComponent extends DefaultComponent {
 

@@ -24,9 +24,6 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.Delayer;
 
-/**
- * @version 
- */
 @ManagedResource(description = "Managed Delayer")
 public class ManagedDelayer extends ManagedProcessor implements ManagedDelayerMBean {
     private final Delayer delayer;

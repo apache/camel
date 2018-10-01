@@ -31,8 +31,6 @@ import org.apache.camel.util.ServiceHelper;
 /**
  * A factory for creating a new {@link org.apache.camel.FluentProducerTemplate}
  * instance with a minimum of XML
- *
- * @version
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelFluentProducerTemplateFactoryBean extends AbstractCamelFactoryBean<FluentProducerTemplate> {

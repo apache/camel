@@ -31,8 +31,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * The Bindy data format is used for working with flat payloads (such as CSV, delimited, fixed length formats, or FIX messages).
- *
- * @version 
  */
 @Metadata(firstVersion = "2.0.0", label = "dataformat,transformation,csv", title = "Bindy")
 @XmlRootElement(name = "bindy")

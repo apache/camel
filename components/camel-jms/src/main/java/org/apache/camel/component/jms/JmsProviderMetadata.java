@@ -27,8 +27,6 @@ import org.springframework.jms.core.SessionCallback;
 /**
  * A class which represents some metadata about the underlying JMS provider
  * so that we can properly bridge JMS providers such as for dealing with temporary destinations.
- *
- * @version 
  */
 public class JmsProviderMetadata {
     private Class<? extends TemporaryQueue> temporaryQueueType;

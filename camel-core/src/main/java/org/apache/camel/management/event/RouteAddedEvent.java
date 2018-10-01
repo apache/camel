@@ -18,9 +18,6 @@ package org.apache.camel.management.event;
 
 import org.apache.camel.Route;
 
-/**
- * @version 
- */
 public class RouteAddedEvent extends AbstractRouteEvent {
 
     private static final long serialVersionUID = 9155960708789798708L;

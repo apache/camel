@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.bean.issues;
 
-/**
- * @version 
- */
 public class BaseClass implements MyMessageListener {
 
     public void onMessage(MyMessage message) {

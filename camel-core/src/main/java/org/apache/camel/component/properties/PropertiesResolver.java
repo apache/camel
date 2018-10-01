@@ -25,8 +25,6 @@ import org.apache.camel.CamelContext;
  * A resolver to load properties from a given source such as a file from a classpath.
  * <p/>
  * Implementations can also load properties from another source source as JNDI.
- *
- * @version 
  */
 public interface PropertiesResolver {
 

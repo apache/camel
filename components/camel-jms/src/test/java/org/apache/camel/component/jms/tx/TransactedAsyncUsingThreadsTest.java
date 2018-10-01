@@ -24,9 +24,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class TransactedAsyncUsingThreadsTest extends CamelSpringTestSupport {
 
     private static int counter;

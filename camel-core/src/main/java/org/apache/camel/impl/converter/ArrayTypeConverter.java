@@ -29,8 +29,6 @@ import org.apache.camel.support.TypeConverterSupport;
  * A type converter which is used to convert to and from array types
  * particularly for derived types of array component types and dealing with
  * primitive array types.
- *
- * @version 
  */
 public class ArrayTypeConverter extends TypeConverterSupport {
 

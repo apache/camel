@@ -21,8 +21,6 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 /**
  * Aggregate two numbers
- *
- * @version 
  */
 // START SNIPPET: e1
 public class NumberAggregationStrategy implements AggregationStrategy {

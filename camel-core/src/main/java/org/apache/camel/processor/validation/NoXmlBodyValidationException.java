@@ -21,8 +21,6 @@ import org.apache.camel.ValidationException;
 
 /**
  * An exception found if no XML body is available on the inbound message
- *
- * @version 
  */
 public class NoXmlBodyValidationException extends ValidationException {
     private static final long serialVersionUID = 4502520681354358599L;

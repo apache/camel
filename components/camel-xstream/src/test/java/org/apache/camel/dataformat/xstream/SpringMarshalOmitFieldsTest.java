@@ -22,9 +22,6 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringMarshalOmitFieldsTest extends XStreamDataFormatOmitFieldsTest {
 
     protected CamelContext createCamelContext() throws Exception {

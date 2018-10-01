@@ -31,8 +31,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * A helper class for working with predicates
- *
- * @version 
  */
 public final class PredicateBuilder {
 

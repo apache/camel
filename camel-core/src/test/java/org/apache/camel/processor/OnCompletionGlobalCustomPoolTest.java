@@ -22,9 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.After;
 import org.junit.Before;
 
-/**
- * @version 
- */
 public class OnCompletionGlobalCustomPoolTest extends OnCompletionGlobalTest {
 
     private ExecutorService pool; 

@@ -22,8 +22,6 @@ import org.apache.camel.Ordered;
 
 /**
  * A comparator to sort {@link Ordered}
- *
- * @version 
  */
 public final class OrderedComparator implements Comparator<Object> {
 

@@ -25,8 +25,6 @@ import org.junit.Test;
 
 /**
  * Concurrent producers test.
- *
- * @version 
  */
 public class FtpProducerConcurrentTest extends FtpServerTestSupport {
 

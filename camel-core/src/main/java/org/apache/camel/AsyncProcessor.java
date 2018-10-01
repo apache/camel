@@ -23,8 +23,6 @@ package org.apache.camel;
  * Any processor can be coerced to have an {@link AsyncProcessor} interface by using the
  * {@link org.apache.camel.util.AsyncProcessorConverterHelper#convert AsyncProcessorConverterHelper.convert}
  * method.
- *
- * @version 
  */
 public interface AsyncProcessor extends Processor {
 

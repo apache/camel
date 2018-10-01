@@ -19,9 +19,6 @@ package org.apache.camel.processor;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- *  @version 
- */
 public class RedeliveryPolicyDelayPatternTest extends Assert {
 
     private RedeliveryPolicy policy = new RedeliveryPolicy();

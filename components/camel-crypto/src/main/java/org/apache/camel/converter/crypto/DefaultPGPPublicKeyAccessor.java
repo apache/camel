@@ -32,7 +32,6 @@ import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
 
 /**
  * Caches a public key ring.
- * 
  */
 public class DefaultPGPPublicKeyAccessor implements PGPPublicKeyAccessor {
     

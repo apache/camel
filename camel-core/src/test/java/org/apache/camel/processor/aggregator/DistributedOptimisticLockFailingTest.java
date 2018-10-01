@@ -36,9 +36,6 @@ import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class DistributedOptimisticLockFailingTest extends AbstractDistributedTest {
 
     private static final class AlwaysFailingRepository extends MemoryAggregationRepository {

@@ -21,9 +21,6 @@ import org.apache.camel.processor.SplitSubUnitOfWorkTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringSplitSubUnitOfWorkTest extends SplitSubUnitOfWorkTest {
 
     protected CamelContext createCamelContext() throws Exception {

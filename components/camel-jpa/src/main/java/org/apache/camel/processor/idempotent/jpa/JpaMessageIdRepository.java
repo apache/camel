@@ -39,9 +39,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
 
-/**
- * @version
- */
 @ManagedResource(description = "JPA based message id repository")
 public class JpaMessageIdRepository extends ServiceSupport implements ExchangeIdempotentRepository<String> {
     protected static final String QUERY_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1 and x.messageId = ?2";

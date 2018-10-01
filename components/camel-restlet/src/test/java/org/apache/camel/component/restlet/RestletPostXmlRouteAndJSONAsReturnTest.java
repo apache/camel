@@ -21,9 +21,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RestletPostXmlRouteAndJSONAsReturnTest extends RestletTestSupport {
     
     private static final String REQUEST_MESSAGE = 

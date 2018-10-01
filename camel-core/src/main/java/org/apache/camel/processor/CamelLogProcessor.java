@@ -38,8 +38,6 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * The name <tt>CamelLogger</tt> has been chosen to avoid any name clash with log kits
  * which has a <tt>Logger</tt> class.
- *
- * @version 
  */
 public class CamelLogProcessor implements AsyncProcessor, IdAware {
 

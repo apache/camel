@@ -18,8 +18,6 @@ package org.apache.camel;
 
 /**
  * Is thrown if the payload from the exchange could not be retrieved because of being null, wrong class type etc.
- *
- * @version
  */
 public class InvalidPayloadException extends CamelExchangeException {
 

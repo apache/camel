@@ -24,9 +24,6 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.junit.After;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class TimerGracefulShutdownTest extends ContextTestSupport {
 
     private MyExceptionHandler eh = new MyExceptionHandler();

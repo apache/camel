@@ -37,9 +37,6 @@ import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
 public class CamelConduit extends AbstractConduit implements Configurable {
     protected static final String BASE_BEAN_NAME_SUFFIX = ".camel-conduit";
     private static final Logger LOG = LoggerFactory.getLogger(CamelConduit.class);

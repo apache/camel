@@ -19,9 +19,6 @@ package org.apache.camel.component.jms;
 import org.junit.Before;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class JmsRouteUsingSpringAndJmsNameTest extends JmsRouteUsingSpringTest {
 
     protected ClassPathXmlApplicationContext createApplicationContext() {

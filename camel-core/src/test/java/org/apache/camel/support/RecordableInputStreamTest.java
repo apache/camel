@@ -22,9 +22,6 @@ import java.io.ByteArrayInputStream;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * 
- */
 public class RecordableInputStreamTest extends Assert {
     private static final byte[] DATA;
     

@@ -22,8 +22,6 @@ import javax.xml.bind.annotation.XmlElementRef;
 
 /**
  * Container to hold {@link org.apache.camel.model.RouteDefinition Route}.
- *
- * @version 
  */
 public interface RouteContainer {
 

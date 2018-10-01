@@ -21,9 +21,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedProducerMBean;
 
-/**
- * @version 
- */
 @ManagedResource(description = "Managed Producer")
 public class ManagedProducer extends ManagedService implements ManagedProducerMBean {
     private final Producer producer;

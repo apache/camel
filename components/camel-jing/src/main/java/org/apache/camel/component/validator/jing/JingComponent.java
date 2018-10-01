@@ -24,8 +24,6 @@ import org.apache.camel.impl.DefaultComponent;
 /**
  * A component for validating XML payloads using the
  * <a href="http://www.thaiopensource.com/relaxng/jing.html">Jing library</a>
- *
- * @version 
  */
 public class JingComponent extends DefaultComponent {
 

@@ -21,9 +21,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.PollingConsumer;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class DefaultConsumerCacheTest extends ContextTestSupport {
 
     @Test

@@ -25,8 +25,6 @@ import org.apache.camel.Endpoint;
  * <p/>
  * The {@link org.apache.camel.model.InterceptSendToEndpointDefinition} uses this to allow it to proxy
  * endpoints so it can intercept sending to the given endpoint.
- *
- * @version 
  */
 public interface EndpointStrategy {
 

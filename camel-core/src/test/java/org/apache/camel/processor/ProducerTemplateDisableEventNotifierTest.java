@@ -23,9 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ProducerTemplateDisableEventNotifierTest extends ContextTestSupport {
 
     private MySentEventNotifier notifier = new MySentEventNotifier();

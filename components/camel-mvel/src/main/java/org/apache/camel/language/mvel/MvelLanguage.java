@@ -23,8 +23,6 @@ import org.apache.camel.support.LanguageSupport;
 
 /**
  * An <a href="http://mvel.codehaus.org/">MVEL</a> {@link Language} plugin
- * 
- * @version 
  */
 public class MvelLanguage extends LanguageSupport {
 

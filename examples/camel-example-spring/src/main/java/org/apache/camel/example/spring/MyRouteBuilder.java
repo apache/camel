@@ -21,8 +21,6 @@ import org.apache.camel.spring.Main;
 
 /**
  * A simple example router from a file system to an ActiveMQ queue and then to a file system
- *
- * @version 
  */
 public class MyRouteBuilder extends RouteBuilder {
 

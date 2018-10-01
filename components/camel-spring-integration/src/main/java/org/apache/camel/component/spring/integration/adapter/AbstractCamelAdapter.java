@@ -20,8 +20,6 @@ import org.apache.camel.CamelContext;
 
 /**
  * The Abstract class for the Spring Integration Camel Adapter
- *
- * @version 
  */
 public abstract class AbstractCamelAdapter {
     private CamelContext camelContext;

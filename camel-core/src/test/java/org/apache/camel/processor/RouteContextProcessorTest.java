@@ -27,8 +27,6 @@ import org.junit.Test;
 
 /**
  * This is a manual test to run
- *
- * @version
  */
 @Ignore("Manual test")
 public class RouteContextProcessorTest extends ContextTestSupport {

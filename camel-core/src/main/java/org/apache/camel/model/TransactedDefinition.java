@@ -41,8 +41,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Enables transaction on the route
- *
- * @version 
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "transacted")

@@ -29,8 +29,6 @@ import org.junit.Test;
 
 /**
  * This test stops a route, mutates it then restarts it
- *
- * @version 
  */
 public class StartAndStopRoutesTest extends ContextTestSupport {
     protected Endpoint endpointA;

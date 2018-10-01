@@ -18,8 +18,6 @@ package org.apache.camel;
 
 /**
  * Exception used for forcing an Exchange to be rolled back.
- *
- * @version 
  */
 public class RollbackExchangeException extends CamelExchangeException {
     private static final long serialVersionUID = -7837446508365767066L;

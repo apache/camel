@@ -18,8 +18,6 @@ package org.apache.camel;
 
 /**
  * Thrown if a message transformation fails
- * 
- * @version 
  */
 public class RuntimeTransformException extends RuntimeCamelException {
 

@@ -29,9 +29,6 @@ import org.apache.camel.http.common.HttpConverter;
 import org.apache.camel.http.common.HttpMessage;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class HttpConverterTest extends BaseJettyTest {
 
     @Override

@@ -23,8 +23,6 @@ import org.apache.camel.impl.DefaultComponent;
 
 /**
  * Represents the component that manages {@link LdapEndpoint}(s).
- *
- * @version
  */
 public class LdapComponent extends DefaultComponent {
 

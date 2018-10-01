@@ -25,9 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class BeanInfoSelectMethodTest extends ContextTestSupport {
 
     @Override

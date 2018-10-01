@@ -24,9 +24,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class CamelContextStandaloneTest extends Assert {
 
     @Test

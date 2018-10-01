@@ -42,8 +42,6 @@ import sun.misc.Unsafe;
  * (the capacity) services. The pool can contain an unbounded number of keys.
  * <p/>
  * By default the capacity is set to 100.
- *
- * @version 
  */
 public class ServicePool<S extends Service> extends ServiceSupport implements NonManagedService {
 

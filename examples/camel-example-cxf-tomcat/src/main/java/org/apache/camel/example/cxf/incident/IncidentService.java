@@ -20,8 +20,6 @@ package org.apache.camel.example.cxf.incident;
  * Interface with the services we want to expose as web services using code first.
  * <p/>
  * This is a basic example, you can use the JAX-WS annotations to control the contract.
- *
- * @version 
  */
 // START SNIPPET: e1
 public interface IncidentService {

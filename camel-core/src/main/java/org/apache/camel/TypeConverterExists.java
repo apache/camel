@@ -20,8 +20,6 @@ import javax.xml.bind.annotation.XmlEnum;
 
 /**
  * What to do if attempting to add a duplicate type converter
- *
- * @version 
  */
 @XmlEnum
 public enum TypeConverterExists {

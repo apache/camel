@@ -26,9 +26,6 @@ import org.apache.camel.component.sjms.support.MyAsyncComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class AsyncQueueProducerTest extends CamelTestSupport {
 
     private static String beforeThreadName;

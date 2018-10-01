@@ -47,8 +47,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Enables sagas on the route
- *
- * @version
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "saga")

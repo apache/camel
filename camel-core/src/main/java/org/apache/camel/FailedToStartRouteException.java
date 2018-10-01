@@ -18,8 +18,6 @@ package org.apache.camel;
 
 /**
  * Exception when failing to start a {@link Route}.
- *
- * @version 
  */
 public class FailedToStartRouteException extends CamelException {
     private static final long serialVersionUID = -6118520819865759888L;

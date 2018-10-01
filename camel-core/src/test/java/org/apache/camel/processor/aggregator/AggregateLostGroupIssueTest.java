@@ -26,8 +26,6 @@ import org.junit.Test;
 
 /**
  * Based on user forum issue
- *
- * @version 
  */
 public class AggregateLostGroupIssueTest extends ContextTestSupport {
 

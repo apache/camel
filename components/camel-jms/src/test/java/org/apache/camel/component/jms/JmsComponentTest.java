@@ -25,9 +25,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version 
- */
 public class JmsComponentTest extends CamelTestSupport {
 
     protected String componentName = "activemq123";

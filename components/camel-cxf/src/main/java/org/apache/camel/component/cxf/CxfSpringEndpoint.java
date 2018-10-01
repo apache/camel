@@ -32,8 +32,6 @@ import org.springframework.context.ApplicationContextAware;
 
 /**
  * Defines the <a href="http://camel.apache.org/cxf.html">CXF Endpoint</a>
- *
- * @version 
  */
 public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContextAware {
 

@@ -30,8 +30,6 @@ import org.apache.camel.spi.RouteContext;
 
 /**
  * Sets the exchange pattern on the message exchange
- *
- * @version 
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "setExchangePattern")

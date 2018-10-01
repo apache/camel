@@ -28,8 +28,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * A test case of the builder using Spring 2.0 to load the rules
- *
- * @version 
  */
 public class SpringXmlRouteBuilderTest extends RouteBuilderTest {
     protected AbstractXmlApplicationContext applicationContext;

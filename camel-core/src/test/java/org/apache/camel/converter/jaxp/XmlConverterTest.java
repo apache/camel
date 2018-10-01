@@ -44,9 +44,6 @@ import org.apache.camel.impl.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class XmlConverterTest extends ContextTestSupport {
 
     @Override

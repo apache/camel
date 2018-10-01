@@ -29,9 +29,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-/**
- * @version
- */
 @Ignore("We cannot run this test as default port 80 is not allows on most boxes")
 public class HttpDefaultPortNumberTest extends BaseHttpTest {
 

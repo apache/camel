@@ -25,8 +25,6 @@ import org.apache.camel.Service;
 /**
  * Information about a route to be started where we want to control the order
  * in which they are started by {@link org.apache.camel.CamelContext}.
- *
- * @version 
  */
 public interface RouteStartupOrder {
 

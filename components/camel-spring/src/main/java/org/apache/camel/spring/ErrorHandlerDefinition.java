@@ -29,8 +29,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * Error handler settings
- *
- * @version 
  */
 @Metadata(label = "spring,configuration,error")
 @XmlRootElement(name = "errorHandler")

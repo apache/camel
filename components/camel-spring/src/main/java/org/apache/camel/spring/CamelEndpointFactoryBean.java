@@ -33,8 +33,6 @@ import org.springframework.context.ApplicationContextAware;
 
 /**
  * Camel endpoint configuration
- *
- * @version 
  */
 @Metadata(label = "spring,configuration,endpoint")
 @XmlRootElement(name = "endpoint")

@@ -17,9 +17,6 @@
 package org.apache.camel.processor;
 import org.junit.Before;
 
-/**
- * @version 
- */
 public class UnitOfWorkWithAsyncFlowTest extends UnitOfWorkTest {
     @Override
     @Before

@@ -22,9 +22,6 @@ import org.apache.camel.api.management.mbean.ManagedUnmarshalMBean;
 import org.apache.camel.model.UnmarshalDefinition;
 import org.apache.camel.processor.UnmarshalProcessor;
 
-/**
- * @version 
- */
 @ManagedResource(description = "Managed Unmarshal")
 public class ManagedUnmarshal extends ManagedProcessor implements ManagedUnmarshalMBean {
     private final UnmarshalProcessor processor;

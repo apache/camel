@@ -48,7 +48,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version 
  *
  * Forwards messages from Camel to CXF and the CXF response back to Camel
  */

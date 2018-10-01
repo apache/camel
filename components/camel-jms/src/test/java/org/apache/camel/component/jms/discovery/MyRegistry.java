@@ -24,8 +24,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A simple POJO showing how to create a simple registry
- *
- * @version 
  */
 public class MyRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(MyRegistry.class);

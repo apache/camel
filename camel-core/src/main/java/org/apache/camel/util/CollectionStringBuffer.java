@@ -18,8 +18,6 @@ package org.apache.camel.util;
 
 /**
  * A little helper class for converting a collection of values to a (usually comma separated) string.
- *
- * @version 
  */
 public class CollectionStringBuffer {
     private final StringBuilder buffer = new StringBuilder();

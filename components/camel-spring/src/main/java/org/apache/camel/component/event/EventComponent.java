@@ -31,8 +31,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * The <a href="http://camel.apache.org/event.html">Event Component</a> is for working with Spring ApplicationEvents.
- * 
- * @version 
  */
 public class EventComponent extends DefaultComponent implements ApplicationContextAware {
     private static final Logger LOG = LoggerFactory.getLogger(EventComponent.class);

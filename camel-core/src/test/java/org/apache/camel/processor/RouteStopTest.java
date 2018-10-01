@@ -23,8 +23,6 @@ import org.junit.Test;
 
 /**
  * Unit test for stop() DSL
- *
- * @version 
  */
 public class RouteStopTest extends ContextTestSupport {
 

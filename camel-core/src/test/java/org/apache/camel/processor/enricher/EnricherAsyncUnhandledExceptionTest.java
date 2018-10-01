@@ -32,9 +32,6 @@ import org.apache.camel.processor.async.MyAsyncComponent;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class EnricherAsyncUnhandledExceptionTest extends ContextTestSupport {
 
     @Test

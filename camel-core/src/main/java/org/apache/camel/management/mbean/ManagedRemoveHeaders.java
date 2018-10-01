@@ -24,9 +24,6 @@ import org.apache.camel.api.management.mbean.ManagedRemoveHeadersMBean;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.RemoveHeadersProcessor;
 
-/**
- * @version 
- */
 @ManagedResource(description = "Managed RemoveHeaders")
 public class ManagedRemoveHeaders extends ManagedProcessor implements ManagedRemoveHeadersMBean {
     private final RemoveHeadersProcessor processor;

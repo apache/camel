@@ -27,9 +27,6 @@ import org.junit.Test;
 
 import static org.apache.camel.builder.PredicateBuilder.not;
 
-/**
- * @version 
- */
 public class InterceptCustomPredicateAsFilterTest extends ContextTestSupport {
 
     private MyFiler filter = new MyFiler();

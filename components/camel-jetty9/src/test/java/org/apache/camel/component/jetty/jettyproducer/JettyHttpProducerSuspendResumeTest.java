@@ -22,9 +22,6 @@ import org.apache.camel.http.common.HttpConsumer;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class JettyHttpProducerSuspendResumeTest extends BaseJettyTest {
 
     private String serverUri = "jetty://http://localhost:" + getPort() + "/cool";

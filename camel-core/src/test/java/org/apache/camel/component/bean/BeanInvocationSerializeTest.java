@@ -25,9 +25,6 @@ import java.lang.reflect.Method;
 import org.apache.camel.TestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class BeanInvocationSerializeTest extends TestSupport {
 
     @Test

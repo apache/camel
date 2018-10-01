@@ -18,9 +18,6 @@ package org.apache.camel.spring.processor;
 
 import org.springframework.test.context.ContextConfiguration;
 
-/**
- * @version 
- */
 @ContextConfiguration
 public class SpringTraceUsingPropertyTest extends SpringTraceTest {
 

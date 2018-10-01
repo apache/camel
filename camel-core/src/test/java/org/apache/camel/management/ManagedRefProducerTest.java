@@ -33,9 +33,6 @@ import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.spi.Registry;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class ManagedRefProducerTest extends ManagementTestSupport {
 
     private Map registry = new SimpleRegistry();

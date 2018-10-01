@@ -37,8 +37,6 @@ import org.apache.camel.util.IOHelper;
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a>
  * ({@link DataFormat}) using XStream to marshal to and from XML
- *
- * @version 
  */
 public class XStreamDataFormat extends AbstractXStreamWrapper  {
     private String encoding;

@@ -41,8 +41,6 @@ import org.slf4j.LoggerFactory;
  * ref will lookup the resource in the registry.
  * bean will call a method on a bean to be used as the resource.
  * For bean you can specify the method name after dot, eg bean:myBean.myMethod
- *
- * @version 
  */
 public class XsltUriResolver implements URIResolver {
 

@@ -20,8 +20,6 @@ import org.apache.camel.Exchange;
 
 /**
  * Interface to allow plug-able implementation to filter header to and from Camel message.
- *
- * @version 
  */
 public interface HeaderFilterStrategy {
 

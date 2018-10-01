@@ -62,8 +62,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * A Camel route
- *
- * @version
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "route")

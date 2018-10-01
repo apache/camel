@@ -29,8 +29,6 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * The work is for example to move the processed file into a backup folder, delete the file or
  * in case of processing failure do a rollback. 
- *
- * @version 
  */
 public class GenericFileOnCompletion<T> implements Synchronization {
 

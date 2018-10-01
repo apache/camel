@@ -16,9 +16,6 @@
  */
 package org.apache.camel.spring.remoting;
 
-/**
- * @version 
- */
 public interface Echo {
 
     String echo(String name);

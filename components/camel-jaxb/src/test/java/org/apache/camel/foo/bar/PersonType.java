@@ -44,7 +44,6 @@ import org.apache.camel.util.ObjectHelper;
  * &lt;/complexType>
  * </pre>
  * 
- * 
  */
 @XmlRootElement(name = "Person")
 @XmlAccessorType(XmlAccessType.FIELD)

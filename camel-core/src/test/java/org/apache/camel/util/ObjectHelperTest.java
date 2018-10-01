@@ -45,9 +45,6 @@ import org.apache.camel.impl.DefaultMessage;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ObjectHelperTest extends Assert {
 
     @Test

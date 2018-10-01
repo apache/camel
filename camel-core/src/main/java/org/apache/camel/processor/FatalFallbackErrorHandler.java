@@ -34,8 +34,6 @@ import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
  * This error handler is used as a fail-safe to ensure that error handling does not run in endless recursive looping
  * which potentially can happen if a new exception is thrown while error handling a previous exception which then
  * cause new error handling to process and this then keep on failing with new exceptions in an endless loop.
- *
- * @version
  */
 public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements ErrorHandler {
 

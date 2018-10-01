@@ -31,8 +31,6 @@ import org.springframework.jms.listener.SessionAwareMessageListener;
 /**
  * The {@link ReplyManager} is responsible for handling <a href="http://camel.apache.org/request-reply.html">request-reply</a>
  * over JMS.
- *
- * @version 
  */
 public interface ReplyManager extends SessionAwareMessageListener {
 

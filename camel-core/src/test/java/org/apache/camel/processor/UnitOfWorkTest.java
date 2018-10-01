@@ -26,9 +26,6 @@ import org.apache.camel.spi.Synchronization;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class UnitOfWorkTest extends ContextTestSupport {
     protected Synchronization synchronization;
     protected Exchange completed;

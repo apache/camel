@@ -24,9 +24,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class MulticastParallelFailureEndpointTest extends ContextTestSupport {
 
     @Test

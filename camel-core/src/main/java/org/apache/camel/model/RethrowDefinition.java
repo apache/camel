@@ -27,8 +27,6 @@ import org.apache.camel.spi.RouteContext;
 
 /**
  * Rethrow an exception inside a catch block
- *
- * @version 
  */
 @Metadata(label = "error")
 @XmlRootElement(name = "rethrow")

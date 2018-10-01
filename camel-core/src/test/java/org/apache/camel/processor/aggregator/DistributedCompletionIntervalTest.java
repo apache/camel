@@ -24,8 +24,6 @@ import org.junit.Test;
 
 /**
  * Unit test to verify that aggregate by interval only also works.
- *
- * @version 
  */
 public class DistributedCompletionIntervalTest extends AbstractDistributedTest {
 

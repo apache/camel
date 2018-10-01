@@ -23,8 +23,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * A Spring implementation of {@link Injector} allowing Spring to be used to dependency inject newly created POJOs
- *
- * @version 
  */
 public class SpringInjector implements Injector {
     private final ConfigurableApplicationContext applicationContext;

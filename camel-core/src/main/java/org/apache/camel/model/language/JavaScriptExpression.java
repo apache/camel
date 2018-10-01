@@ -24,8 +24,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * To use JavaScript in Camel expressions or predicates.
- *
- * @version 
  */
 @Metadata(firstVersion = "1.0.0", label = "language,script", title = "JavaScript")
 @XmlRootElement(name = "javaScript")

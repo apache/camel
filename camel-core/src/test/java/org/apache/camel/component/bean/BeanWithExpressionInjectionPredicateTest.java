@@ -24,9 +24,6 @@ import org.apache.camel.language.Simple;
 import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class BeanWithExpressionInjectionPredicateTest extends ContextTestSupport {
     protected MyBean myBean = new MyBean();
 

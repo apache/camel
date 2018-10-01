@@ -24,8 +24,6 @@ import org.apache.camel.Processor;
 
 /**
  * A builder of a number of different {@link Processor} implementations
- *
- * @version 
  */
 public final class ProcessorBuilder {
 

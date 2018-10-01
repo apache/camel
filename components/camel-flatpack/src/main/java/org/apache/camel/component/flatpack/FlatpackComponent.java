@@ -24,8 +24,6 @@ import org.apache.camel.impl.DefaultComponent;
 /**
  * A <a href="http://flatpack.sourceforge.net/">Flatpack Component</a>
  * for working with fixed width and delimited files
- *
- * @version 
  */
 public class FlatpackComponent extends DefaultComponent {
 

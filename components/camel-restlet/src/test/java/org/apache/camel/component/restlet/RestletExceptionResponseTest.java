@@ -24,10 +24,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
-/**
- *
- * @version
- */
 public class RestletExceptionResponseTest extends RestletTestSupport {
 
     @Override

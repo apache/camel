@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.bean.issues;
 
-/**
- * @version 
- */
 public interface MyMessageListener {
 
     void onMessage(MyMessage message);

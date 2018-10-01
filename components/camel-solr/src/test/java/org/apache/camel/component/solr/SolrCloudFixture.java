@@ -40,9 +40,6 @@ import org.apache.solr.common.params.CoreAdminParams;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.util.NamedList;
 
-/**
- * 
- */
 public class SolrCloudFixture {
 
     private static final Logger LOG;

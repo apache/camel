@@ -22,9 +22,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class SftpProducerFileWithPathTest extends SftpServerTestSupport {
 
     private String getFtpUrl() {

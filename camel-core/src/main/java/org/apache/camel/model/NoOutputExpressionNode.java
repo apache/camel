@@ -31,8 +31,6 @@ import org.apache.camel.model.language.ExpressionDefinition;
  * <p/>
  * This node is to be extended by definitions which need to support an expression but the definition should not
  * contain any outputs, such as {@link org.apache.camel.model.TransformDefinition}.
- *
- * @version 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class NoOutputExpressionNode extends ExpressionNode {

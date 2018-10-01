@@ -34,9 +34,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
-/**
- * @version 
- */
 public class MailMessageTest extends CamelTestSupport {
     private Session mailSession;
     private MimeMessage mimeMessage;

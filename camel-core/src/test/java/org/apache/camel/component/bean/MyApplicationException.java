@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.bean;
 
-/**
- * @version 
- */
 public class MyApplicationException extends Exception {
 
     private static final long serialVersionUID = 1L;

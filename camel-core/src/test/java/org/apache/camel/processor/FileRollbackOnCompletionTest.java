@@ -29,9 +29,6 @@ import org.apache.camel.util.FileUtil;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FileRollbackOnCompletionTest extends ContextTestSupport {
 
     private static final CountDownLatch LATCH = new CountDownLatch(1);

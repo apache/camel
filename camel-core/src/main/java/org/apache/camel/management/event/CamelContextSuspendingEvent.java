@@ -18,9 +18,6 @@ package org.apache.camel.management.event;
 
 import org.apache.camel.CamelContext;
 
-/**
- * @version 
- */
 public class CamelContextSuspendingEvent extends AbstractContextEvent {
     private static final long serialVersionUID = 6761726800283072241L;
 

@@ -52,8 +52,6 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  * href="http://camel.apache.org/type-converter.html">Type Converters</a>
  * as well as supporting accessing components and beans via the Spring
  * {@link ApplicationContext}
- *
- * @version 
  */
 public class SpringCamelContext extends DefaultCamelContext implements Lifecycle, ApplicationContextAware, Phased,
         ApplicationListener<ApplicationEvent>, Ordered {

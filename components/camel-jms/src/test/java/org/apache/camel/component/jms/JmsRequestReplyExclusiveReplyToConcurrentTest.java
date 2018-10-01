@@ -31,9 +31,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version
- */
 public class JmsRequestReplyExclusiveReplyToConcurrentTest extends CamelTestSupport {
 
     private final int size = 100;

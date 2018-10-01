@@ -27,8 +27,6 @@ import org.apache.camel.impl.DefaultExchange;
  * <p/>
  * <b>Important:</b> This strategy is not to be used with the <a href="http://camel.apache.org/content-enricher.html">Content Enricher</a> EIP
  * which is enrich or pollEnrich.
- *
- * @version 
  */
 public class GroupedExchangeAggregationStrategy extends AbstractListAggregationStrategy<Exchange> {
 

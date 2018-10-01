@@ -16,9 +16,6 @@
  */
 package org.apache.camel.util;
 
-/**
- * @version 
- */
 public class OtherExampleBean {
 
     private int customerId;

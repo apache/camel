@@ -27,8 +27,6 @@ import org.apache.camel.util.ServiceHelper;
 /**
  * A bridge to have regular interceptors implemented as {@link org.apache.camel.Processor}
  * work with the asynchronous routing engine without causing side effects.
- *
- * @version 
  */
 public class InterceptorToAsyncProcessorBridge extends ServiceSupport implements AsyncProcessor {
 

@@ -27,9 +27,6 @@ import org.apache.camel.support.ExpressionAdapter;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class NeilSplitterTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;

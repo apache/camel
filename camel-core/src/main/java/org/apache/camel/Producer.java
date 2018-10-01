@@ -19,8 +19,6 @@ package org.apache.camel;
 /**
  * Provides a channel on which clients can create and invoke message exchanges
  * on an {@link Endpoint}
- * 
- * @version 
  */
 public interface Producer extends Processor, Service, IsSingleton, EndpointAware {
 

@@ -29,8 +29,6 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A {@link TypeConverter} implementation which instantiates an object
  * so that an instance method can be used as a type converter
- *
- * @version 
  */
 public class InstanceMethodTypeConverter extends TypeConverterSupport {
     private final CachingInjector<?> injector;

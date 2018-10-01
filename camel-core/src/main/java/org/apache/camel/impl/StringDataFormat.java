@@ -28,8 +28,6 @@ import org.apache.camel.util.ExchangeHelper;
 /**
  * The text based <a href="http://camel.apache.org/data-format.html">data format</a> supporting
  * charset encoding.
- *
- * @version 
  */
 public class StringDataFormat extends org.apache.camel.support.ServiceSupport implements DataFormat, DataFormatName {
 

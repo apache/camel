@@ -21,9 +21,6 @@ import org.apache.camel.processor.SplitCustomExpressionTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringSplitCustomExpressionTest extends SplitCustomExpressionTest {
 
     protected CamelContext createCamelContext() throws Exception {

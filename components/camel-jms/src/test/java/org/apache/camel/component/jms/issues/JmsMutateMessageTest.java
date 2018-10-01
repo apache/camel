@@ -30,9 +30,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version 
- */
 public class JmsMutateMessageTest extends CamelTestSupport {
 
     private String uri = "activemq:queue:hello";

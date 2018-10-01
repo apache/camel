@@ -21,7 +21,6 @@ package org.apache.camel.spi;
  * injected {@link HeaderFilterStrategy}.
  * 
  * @since 1.5
- * @version 
  */
 public interface HeaderFilterStrategyAware {
 

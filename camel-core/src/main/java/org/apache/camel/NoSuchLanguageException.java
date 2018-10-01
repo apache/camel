@@ -21,8 +21,6 @@ package org.apache.camel;
  * language definition.
  * 
  * @see org.apache.camel.CamelContext#resolveLanguage(String)
- * 
- * @version 
  */
 public class NoSuchLanguageException extends RuntimeCamelException {
     private static final long serialVersionUID = -8721487431101572630L;

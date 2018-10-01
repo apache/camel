@@ -32,9 +32,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 
-/**
- * @version
- */
 public class LogProcessorWithProvidedLoggerTest extends ContextTestSupport {
 
     // to capture the logs

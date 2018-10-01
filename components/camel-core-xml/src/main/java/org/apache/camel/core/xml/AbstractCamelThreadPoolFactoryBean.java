@@ -32,8 +32,6 @@ import org.apache.camel.util.CamelContextHelper;
 
 /**
  * A factory which instantiates {@link java.util.concurrent.ExecutorService} objects
- *
- * @version 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFactoryBean<ExecutorService> {

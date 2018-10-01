@@ -36,7 +36,6 @@ import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
 /**
  * Caches a Secret Keyring. Assumes that the password for all private keys is
  * the same.
- * 
  */
 public class DefaultPGPSecretKeyAccessor implements PGPSecretKeyAccessor {
 

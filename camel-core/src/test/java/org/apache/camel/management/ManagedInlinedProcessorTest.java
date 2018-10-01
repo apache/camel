@@ -25,9 +25,6 @@ import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ManagedInlinedProcessorTest extends ManagementTestSupport {
 
     @Test

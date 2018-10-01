@@ -28,9 +28,6 @@ import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class MultiplePoliciesOnRouteTest extends CamelTestSupport {
     private String url = "seda:foo?concurrentConsumers=20";
     private int size = 100;

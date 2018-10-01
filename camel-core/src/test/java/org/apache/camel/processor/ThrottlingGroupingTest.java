@@ -27,9 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ThrottlingGroupingTest extends ContextTestSupport {
     private static final int INTERVAL = 500;
     private static final int MESSAGE_COUNT = 9;

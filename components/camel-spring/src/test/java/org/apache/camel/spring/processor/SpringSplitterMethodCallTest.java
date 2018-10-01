@@ -21,9 +21,6 @@ import org.apache.camel.processor.SplitterMethodCallTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringSplitterMethodCallTest extends SplitterMethodCallTest {
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/splitterMethodCallTest.xml");

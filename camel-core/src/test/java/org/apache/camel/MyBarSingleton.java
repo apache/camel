@@ -16,9 +16,6 @@
  */
 package org.apache.camel;
 
-/**
- * @version 
- */
 public class MyBarSingleton implements IsSingleton {
 
     private String name;

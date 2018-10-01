@@ -29,9 +29,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import static org.mockito.Mockito.*;
-/**
- * @version 
- */
 public class NagiosEventNotifierTest extends CamelTestSupport {
     protected boolean canRun;
 

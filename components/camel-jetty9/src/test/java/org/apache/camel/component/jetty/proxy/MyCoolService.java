@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.jetty.proxy;
 
-/**
- * @version 
- */
 public interface MyCoolService {
 
     String hello(String name) throws MyAppException;

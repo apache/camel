@@ -30,8 +30,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A base class for developing custom {@link RoutePolicy} implementations.
- *
- * @version 
  */
 public abstract class RoutePolicySupport extends ServiceSupport implements RoutePolicy {
 

@@ -25,9 +25,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.util.ObjectHelper;
 
-/**
- * @version 
- */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PurchaseOrder implements Serializable {

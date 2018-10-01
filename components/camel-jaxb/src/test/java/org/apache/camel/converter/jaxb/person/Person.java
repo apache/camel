@@ -44,7 +44,6 @@ import org.apache.camel.converter.jaxb.address.Address;
  * &lt;/complexType>
  * </pre>
  * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {"firstName", "lastName", "age", "address"})

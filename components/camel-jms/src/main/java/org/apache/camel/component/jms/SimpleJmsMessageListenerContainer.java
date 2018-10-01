@@ -23,8 +23,6 @@ import org.springframework.jms.listener.SimpleMessageListenerContainer;
  * on the JMS destination.
  * <p/>
  * This implementation extends Springs {@link org.springframework.jms.listener.SimpleMessageListenerContainer}.
- *
- * @version
  */
 public class SimpleJmsMessageListenerContainer extends SimpleMessageListenerContainer {
 

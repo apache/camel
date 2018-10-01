@@ -24,9 +24,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class EnricherRouteNumberOfProcessorTest extends ContextTestSupport {
 
     private static volatile boolean failed;

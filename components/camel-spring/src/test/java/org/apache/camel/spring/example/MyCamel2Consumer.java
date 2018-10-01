@@ -23,9 +23,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
 public class MyCamel2Consumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MyCamel2Consumer.class);

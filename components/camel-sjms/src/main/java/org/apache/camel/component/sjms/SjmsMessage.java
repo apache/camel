@@ -38,8 +38,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with JMS
- *
- * @version
  */
 public class SjmsMessage extends DefaultMessage {
     private static final Logger LOG = LoggerFactory.getLogger(SjmsMessage.class);

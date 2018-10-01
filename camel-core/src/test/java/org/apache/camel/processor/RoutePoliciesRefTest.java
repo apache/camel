@@ -25,9 +25,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.RoutePolicySupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RoutePoliciesRefTest extends ContextTestSupport {
 
     private final MyCustomRoutePolicy policyA = new MyCustomRoutePolicy("A");

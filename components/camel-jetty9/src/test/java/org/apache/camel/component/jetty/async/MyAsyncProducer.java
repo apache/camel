@@ -26,9 +26,6 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultAsyncProducer;
 
-/**
- * @version 
- */
 public class MyAsyncProducer extends DefaultAsyncProducer {
 
     private final ExecutorService executor = Executors.newCachedThreadPool();

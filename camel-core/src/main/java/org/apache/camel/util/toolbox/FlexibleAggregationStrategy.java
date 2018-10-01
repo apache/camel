@@ -46,7 +46,6 @@ import org.slf4j.LoggerFactory;
  * It also includes the ability to specify both aggregation batch completion actions and timeout actions, in an abbreviated manner.
  * <p/>
  * This Aggregation Strategy is suitable for usage in aggregate, split, multicast, enrich and recipient list EIPs.
- * 
  */
 public class FlexibleAggregationStrategy<E extends Object> implements AggregationStrategy, 
         CompletionAwareAggregationStrategy, TimeoutAwareAggregationStrategy {

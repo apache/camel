@@ -20,9 +20,6 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class VmInOutWithErrorTest extends AbstractVmTestSupport {
 
     @Test

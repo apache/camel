@@ -29,9 +29,6 @@ import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class AsyncEndpointCustomAsyncInterceptorTest extends ContextTestSupport {
 
     private static String beforeThreadName;

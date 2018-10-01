@@ -28,9 +28,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version 
- */
 public class MapJmsMessageTest extends CamelTestSupport {
 
     protected CamelContext createCamelContext() throws Exception {

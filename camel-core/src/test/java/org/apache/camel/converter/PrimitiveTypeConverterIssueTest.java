@@ -20,9 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class PrimitiveTypeConverterIssueTest extends ContextTestSupport {
 
     @Test

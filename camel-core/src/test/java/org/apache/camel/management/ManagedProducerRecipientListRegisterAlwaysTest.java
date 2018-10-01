@@ -27,9 +27,6 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class ManagedProducerRecipientListRegisterAlwaysTest extends ManagementTestSupport {
 
     @Override

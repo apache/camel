@@ -31,8 +31,6 @@ import static org.awaitility.Awaitility.await;
 
 /**
  * Extended test to see if mbeans is removed and stats are correct
- *
- * @version 
  */
 public class ManagedRouteStopAndStartCleanupTest extends ManagedRouteStopAndStartTest {
 

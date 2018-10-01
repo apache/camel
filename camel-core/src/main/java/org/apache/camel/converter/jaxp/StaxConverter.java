@@ -48,8 +48,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A converter of StAX objects
- *
- * @version 
  */
 @Converter
 public class StaxConverter {

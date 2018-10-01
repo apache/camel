@@ -16,9 +16,6 @@
  */
 package org.apache.camel.spring.issues;
 
-/**
- * @version 
- */
 public interface MyCoolStuff {
 
     String cool(String s);

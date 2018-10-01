@@ -25,9 +25,6 @@ import org.apache.camel.converter.stream.CachedOutputStream;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class HttpStreamCacheFileStopIssueTest extends BaseJettyTest {
 
     private String body = "12345678901234567890123456789012345678901234567890";

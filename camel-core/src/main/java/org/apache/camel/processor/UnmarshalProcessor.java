@@ -38,8 +38,6 @@ import org.apache.camel.util.ServiceHelper;
 /**
  * Unmarshals the body of the incoming message using the given
  * <a href="http://camel.apache.org/data-format.html">data format</a>
- *
- * @version 
  */
 public class UnmarshalProcessor extends ServiceSupport implements AsyncProcessor, Traceable, CamelContextAware, IdAware {
     private String id;

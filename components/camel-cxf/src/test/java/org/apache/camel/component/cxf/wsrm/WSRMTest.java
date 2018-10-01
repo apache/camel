@@ -30,10 +30,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.junit.Assert.assertEquals;
-/**
- *
- * @version 
- */
 @ContextConfiguration
 public class WSRMTest extends AbstractJUnit4SpringContextTests {
     

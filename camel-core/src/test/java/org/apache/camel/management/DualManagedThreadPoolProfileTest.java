@@ -24,9 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class DualManagedThreadPoolProfileTest extends ManagementTestSupport {
 
     @Test

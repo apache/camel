@@ -22,9 +22,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class XQueryWithExplicitTypeTest extends CamelSpringTestSupport {
     protected MockEndpoint raleighEndpoint;
     protected MockEndpoint tampaEndpoint;

@@ -21,9 +21,6 @@ import org.apache.camel.processor.aggregator.AggregateCompleteAllOnStopTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringAggregateCompleteAllOnStopTest extends AggregateCompleteAllOnStopTest {
 
     protected CamelContext createCamelContext() throws Exception {

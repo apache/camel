@@ -44,8 +44,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * Resequences (re-order) messages based on an expression
- *
- * @version 
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "resequence")

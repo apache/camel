@@ -23,9 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class MessageHistoryDumpRoutingTest extends ContextTestSupport {
 
     private String body = "Hello World 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";

@@ -31,8 +31,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * JacksonXML data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
- *
- * @version
  */
 @Metadata(firstVersion = "2.16.0", label = "dataformat,transformation,xml", title = "JacksonXML")
 @XmlRootElement(name = "jacksonxml")

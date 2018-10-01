@@ -29,9 +29,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version
- */
 public class MyBatisProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MyBatisProducer.class);

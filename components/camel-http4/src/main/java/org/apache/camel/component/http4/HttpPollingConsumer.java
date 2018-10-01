@@ -38,8 +38,6 @@ import org.apache.http.util.EntityUtils;
 
 /**
  * A polling HTTP consumer which by default performs a GET
- *
- * @version 
  */
 public class HttpPollingConsumer extends PollingConsumerSupport {
     private final HttpEndpoint endpoint;

@@ -21,9 +21,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class AggregateParallelProcessingTest extends ContextTestSupport {
 
     @Override

@@ -32,9 +32,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class XQueryWithExtensionTest extends CamelTestSupport {
 
     private Configuration conf;

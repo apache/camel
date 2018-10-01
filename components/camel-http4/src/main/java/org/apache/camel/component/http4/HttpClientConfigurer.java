@@ -20,8 +20,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 
 /**
  * A pluggable strategy for configuring the HttpClient used by this component
- *
- * @version 
  */
 public interface HttpClientConfigurer {
 

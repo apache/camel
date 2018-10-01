@@ -24,8 +24,6 @@ import org.apache.camel.Exchange;
  * <b>Notice:</b> This event may be emitted after an {@link ExchangeSendingEvent}, and
  * therefore its not guaranteed this event is the first event being send for a given {@link Exchange}
  * lifecycle.
- *
- * @version 
  */
 public class ExchangeCreatedEvent extends AbstractExchangeEvent {
     private static final long serialVersionUID = -19248832613958243L;

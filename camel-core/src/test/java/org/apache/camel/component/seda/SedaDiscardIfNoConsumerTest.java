@@ -23,9 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class SedaDiscardIfNoConsumerTest extends ContextTestSupport {
 
     @Test

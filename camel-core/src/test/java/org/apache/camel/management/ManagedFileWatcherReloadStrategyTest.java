@@ -23,9 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.FileWatcherReloadStrategy;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ManagedFileWatcherReloadStrategyTest extends ManagementTestSupport {
 
     @Test

@@ -22,9 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class JettyHttpProducerSynchronousTest extends BaseJettyTest {
 
     private static String beforeThreadName;

@@ -24,9 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.stream.InputStreamCache;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class OnExceptionUseOriginalMessageTest extends ContextTestSupport {
     
     private static final String HELLO_WORLD = "Hello World";

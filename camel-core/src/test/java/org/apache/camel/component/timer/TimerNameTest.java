@@ -20,9 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class TimerNameTest extends ContextTestSupport {
 
     private String uri = "timer://foo?delay=0&period=10&timerName=bar";

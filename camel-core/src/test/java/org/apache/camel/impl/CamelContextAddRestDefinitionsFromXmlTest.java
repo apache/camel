@@ -31,9 +31,6 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSupport {
 
     protected JAXBContext jaxbContext;

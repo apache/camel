@@ -28,9 +28,6 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RemoveRouteDefinitionTest extends ManagementTestSupport {
 
     @SuppressWarnings("deprecation")

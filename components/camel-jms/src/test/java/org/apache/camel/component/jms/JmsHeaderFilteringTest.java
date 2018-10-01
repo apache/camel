@@ -32,10 +32,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- *
- * @version 
- */
 public class JmsHeaderFilteringTest extends CamelTestSupport {
 
     private static final String IN_FILTER_PATTERN = "(org_apache_camel)[_|a-z|A-Z|0-9]*(test)[_|a-z|A-Z|0-9]*";

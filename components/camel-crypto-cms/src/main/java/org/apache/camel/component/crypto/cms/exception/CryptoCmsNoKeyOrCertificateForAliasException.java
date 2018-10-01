@@ -20,7 +20,6 @@ package org.apache.camel.component.crypto.cms.exception;
  * Exception which is thrown when for a specified alias a key or certificate is
  * not found in the keystore.
  * 
- * 
  */
 public class CryptoCmsNoKeyOrCertificateForAliasException extends CryptoCmsException {
 

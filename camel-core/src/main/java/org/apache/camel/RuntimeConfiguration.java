@@ -19,8 +19,6 @@ package org.apache.camel;
 /**
  * Various runtime configuration options used by {@link org.apache.camel.CamelContext} and {@link org.apache.camel.spi.RouteContext}
  * for cross cutting functions such as tracing, delayer, stream cache and the like.
- *
- * @version 
  */
 public interface RuntimeConfiguration {
 

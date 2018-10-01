@@ -45,8 +45,6 @@ import org.slf4j.LoggerFactory;
  * if its being stopped.
  * You must also invoke {@link #start()} to startup the timeout map, before its ready to be used.
  * And you must invoke {@link #stop()} to stop the map when no longer in use.
- *
- * @version 
  */
 public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMap<K, V>, Runnable {
 

@@ -22,9 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class AsyncEndpointSedaInOnlyTest extends ContextTestSupport {
 
     private static String beforeThreadName;

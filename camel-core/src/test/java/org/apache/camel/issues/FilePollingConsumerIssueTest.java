@@ -22,9 +22,6 @@ import org.apache.camel.PollingConsumer;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FilePollingConsumerIssueTest extends ContextTestSupport {
 
     @Override

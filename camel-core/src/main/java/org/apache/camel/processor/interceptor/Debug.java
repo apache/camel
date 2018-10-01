@@ -28,8 +28,6 @@ import org.apache.camel.util.StopWatch;
 
 /**
  * A debug interceptor to notify {@link Debugger} with {@link Exchange}s being processed.
- *
- * @version 
  */
 public class Debug implements InterceptStrategy {
 

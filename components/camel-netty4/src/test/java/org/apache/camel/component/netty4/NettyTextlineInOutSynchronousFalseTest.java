@@ -21,9 +21,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class NettyTextlineInOutSynchronousFalseTest extends BaseNettyTest {
 
     private static String beforeThreadName;

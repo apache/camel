@@ -24,9 +24,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ManagedListComponentsTest extends ManagementTestSupport {
 
     @Override

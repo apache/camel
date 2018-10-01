@@ -24,10 +24,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.protocol.HttpContext;
 
-/**
- *
- * @version 
- */
 public class AuthenticationValidationHandler extends BasicValidationHandler {
 
     protected String user;

@@ -22,9 +22,6 @@ import org.apache.camel.ProducerTemplate;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class DefaultCamelBeanPostProcessorTest extends ContextTestSupport {
 
     private DefaultCamelBeanPostProcessor postProcessor;

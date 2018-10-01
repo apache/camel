@@ -27,12 +27,10 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelExchangeException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NoSuchBeanException;
@@ -50,8 +48,6 @@ import org.apache.camel.spi.UnitOfWork;
 
 /**
  * Some helper methods for working with {@link Exchange} objects
- *
- * @version
  */
 public final class ExchangeHelper {
 

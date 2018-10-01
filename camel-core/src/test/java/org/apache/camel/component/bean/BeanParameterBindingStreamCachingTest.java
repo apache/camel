@@ -23,9 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.language.Simple;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class BeanParameterBindingStreamCachingTest extends ContextTestSupport {
 
     @Test

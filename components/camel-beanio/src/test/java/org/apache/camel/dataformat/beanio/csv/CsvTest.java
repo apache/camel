@@ -28,8 +28,6 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- */
 public class CsvTest extends CamelTestSupport {
     private static final String FIXED_DATA =
             "James,Strachan,22" + LS + "Claus,Ibsen,21" + LS;

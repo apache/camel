@@ -26,8 +26,6 @@ import org.apache.camel.Processor;
 /**
  * A base class for {@link LoadBalancer} implementations which choose a single
  * destination for each exchange (rather like JMS Queues)
- * 
- * @version 
  */
 public abstract class QueueLoadBalancer extends LoadBalancerSupport {
 

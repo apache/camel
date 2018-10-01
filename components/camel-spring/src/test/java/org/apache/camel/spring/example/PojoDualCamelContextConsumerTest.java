@@ -25,9 +25,6 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class PojoDualCamelContextConsumerTest extends TestSupport {
     private CamelContext camel1;
     private CamelContext camel2;

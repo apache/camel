@@ -57,8 +57,6 @@ import org.restlet.security.MapVerifier;
 
 /**
  * A Camel component embedded Restlet that produces and consumes exchanges.
- *
- * @version
  */
 public class RestletComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware, HeaderFilterStrategyAware {
 

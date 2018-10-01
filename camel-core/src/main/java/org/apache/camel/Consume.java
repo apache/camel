@@ -30,8 +30,6 @@ import java.lang.annotation.Target;
  * When a message {@link Exchange} is received from the {@link Endpoint} then the
  * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a>
  * mechanism is used to map the incoming {@link Message} to the method parameters.
- * 
- * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

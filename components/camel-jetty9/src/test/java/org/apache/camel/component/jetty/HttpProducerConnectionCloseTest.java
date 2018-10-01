@@ -23,9 +23,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class HttpProducerConnectionCloseTest extends BaseJettyTest {
 
     private String url = "http://127.0.0.1:" + getPort() + "/cheese";

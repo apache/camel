@@ -29,8 +29,6 @@ import org.apache.camel.util.PredicateToExpressionAdapter;
 
 /**
  * Default implementation of the {@link AnnotationExpressionFactory}.
- *
- * @version 
  */
 public class DefaultAnnotationExpressionFactory implements AnnotationExpressionFactory {
 

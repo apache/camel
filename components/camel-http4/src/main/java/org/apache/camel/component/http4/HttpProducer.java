@@ -72,9 +72,6 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
-/**
- * @version
- */
 public class HttpProducer extends DefaultProducer {
 
     private HttpClient httpClient;

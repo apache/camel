@@ -21,9 +21,6 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class RouteRefIncludeXmlFileTest extends SpringTestSupport {
 
     @Test

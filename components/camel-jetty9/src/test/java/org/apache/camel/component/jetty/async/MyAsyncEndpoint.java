@@ -22,9 +22,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 
-/**
- * @version 
- */
 public class MyAsyncEndpoint extends DefaultEndpoint {
 
     private String reply;

@@ -21,8 +21,6 @@ import org.apache.camel.ValidationException;
 
 /**
  * An exception thrown if the XML header is not available on the inbound message
- *
- * @version 
  */
 public class NoXmlHeaderValidationException extends ValidationException {
     private static final long serialVersionUID = 4502520681354358599L;

@@ -89,8 +89,6 @@ import org.slf4j.LoggerFactory;
  * <b>Important:</b> If using {@link #expectedMessageCount(int)} and also {@link #expectedBodiesReceived(java.util.List)} or
  * {@link #expectedHeaderReceived(String, Object)} then the latter overrides the number of expected message based on the
  * number of values provided in the bodies/headers.
- *
- * @version 
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "mock", title = "Mock", syntax = "mock:name", producerOnly = true, label = "core,testing", lenientProperties = true)
 public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {

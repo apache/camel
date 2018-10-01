@@ -22,9 +22,6 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ManagedCanekContextExchangeStatisticsTest extends ManagementTestSupport {
 
     @Test

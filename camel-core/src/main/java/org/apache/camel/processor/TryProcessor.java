@@ -37,8 +37,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Implements try/catch/finally type processing
- *
- * @version 
  */
 public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, IdAware {
 

@@ -22,8 +22,6 @@ import org.junit.Test;
 
 /**
  * Unit tests on the conditional skip support on InterceptSendToEndpoint.
- * 
- * @version
  */
 public class InterceptSendToEndpointConditionalSkip2Test extends ContextTestSupport {
 

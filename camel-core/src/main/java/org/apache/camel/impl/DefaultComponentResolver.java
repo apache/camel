@@ -32,8 +32,6 @@ import org.slf4j.LoggerFactory;
  * components by using the URI scheme prefix and searching for a file of the URI
  * scheme name in the <b>META-INF/services/org/apache/camel/component/</b>
  * directory on the classpath.
- *
- * @version
  */
 public class DefaultComponentResolver implements ComponentResolver {
 

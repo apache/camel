@@ -19,9 +19,6 @@ package org.apache.camel.dataformat.bindy.model.simple.pipeline;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 
-/**
- * @version 
- */
 @CsvRecord(separator = "\\|", generateHeaderColumns = true)
 public class MyData {
 

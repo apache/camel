@@ -29,8 +29,6 @@ import org.osgi.service.blueprint.container.BlueprintContainer;
 /**
  * A factory for creating a new {@link org.apache.camel.FluentProducerTemplate}
  * instance with a minimum of XML
- *
- * @version 
  */
 @XmlRootElement(name = "fluentTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)

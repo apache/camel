@@ -20,8 +20,6 @@ import org.apache.camel.Exchange;
 
 /**
  * Factory for {@link org.apache.camel.builder.xml.ResultHandler}
- *
- * @version 
  */
 public interface ResultHandlerFactory {
 

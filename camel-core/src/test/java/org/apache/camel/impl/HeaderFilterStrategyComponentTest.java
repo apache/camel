@@ -27,9 +27,6 @@ import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class HeaderFilterStrategyComponentTest extends Assert {
 
     private static class MyComponent extends HeaderFilterStrategyComponent {

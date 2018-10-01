@@ -21,9 +21,6 @@ import org.apache.camel.management.ManagedNamePatternTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringManagedNamePatternTest extends ManagedNamePatternTest {
 
     @Override

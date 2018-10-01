@@ -18,8 +18,6 @@ package org.apache.camel;
 
 /**
  * Thrown if Camel failed to create a consumer for a given endpoint.
- *
- * @version 
  */
 public class FailedToCreateConsumerException extends RuntimeCamelException {
     private static final long serialVersionUID = 1916718168052020246L;

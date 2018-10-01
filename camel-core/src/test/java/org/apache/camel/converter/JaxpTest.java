@@ -38,9 +38,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
 public class JaxpTest extends Assert {
     private static final Logger LOG = LoggerFactory.getLogger(JaxpTest.class);
     protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),

@@ -22,9 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.seda.SedaComponent;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ComponentResolvePropertyPlaceholdersTest extends ContextTestSupport {
 
     @Override

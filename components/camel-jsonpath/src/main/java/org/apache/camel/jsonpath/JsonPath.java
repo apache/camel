@@ -29,8 +29,6 @@ import org.apache.camel.language.LanguageAnnotation;
  * An annotation used to inject a <a href="http://commons.apache.org/jsonpath/">JsonPath</a>
  * expression into a method parameter when using
  * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a>
- *
- * @version
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

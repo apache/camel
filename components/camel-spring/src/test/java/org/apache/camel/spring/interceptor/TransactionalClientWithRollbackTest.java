@@ -31,8 +31,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * Transactional client test with rollback in the DSL.
- *
- * @version 
  */
 public class TransactionalClientWithRollbackTest extends SpringTestSupport {
 

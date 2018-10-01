@@ -29,9 +29,6 @@ import org.apache.camel.model.RouteDefinition;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class CamelContextAddRouteDefinitionsFromXmlTest extends ContextTestSupport {
 
     protected JAXBContext jaxbContext;

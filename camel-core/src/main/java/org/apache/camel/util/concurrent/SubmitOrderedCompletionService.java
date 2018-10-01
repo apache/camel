@@ -29,8 +29,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * A {@link java.util.concurrent.CompletionService} that orders the completed tasks
  * in the same order as they where submitted.
- *
- * @version 
  */
 public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
     

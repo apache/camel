@@ -25,9 +25,6 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.junit.After;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FileConfigureTest extends ContextTestSupport {
     private static final String EXPECT_PATH = "target" + File.separator + "foo" + File.separator + "bar";
     private static final String EXPECT_FILE = "some" + File.separator + "nested" + File.separator + "filename.txt";

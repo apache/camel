@@ -22,8 +22,6 @@ import org.apache.camel.Predicate;
 
 /**
  * A helper for doing {@link Predicate} assertions.
- *
- * @version 
  */
 public final class PredicateAssertHelper {
 

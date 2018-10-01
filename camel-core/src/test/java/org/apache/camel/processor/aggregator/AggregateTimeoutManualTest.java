@@ -24,8 +24,6 @@ import org.junit.Test;
 
 /**
  * To be run manually when testing the timeout aggregator
- *
- * @version 
  */
 public class AggregateTimeoutManualTest extends ContextTestSupport {
 

@@ -34,8 +34,6 @@ import org.apache.camel.util.ObjectHelper;
  * Implementation of this builder should favor build expressions using the definition classes
  * from the <tt>org.apache.camel.model.language</tt> package, to build the routes using the same
  * types as it would happen when using XML DSL.
- *
- * @version 
  */
 public final class Builder {
 

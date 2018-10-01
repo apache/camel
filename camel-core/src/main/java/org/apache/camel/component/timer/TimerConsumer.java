@@ -34,8 +34,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The timer consumer.
- *
- * @version 
  */
 public class TimerConsumer extends DefaultConsumer implements StartupListener, Suspendable {
 

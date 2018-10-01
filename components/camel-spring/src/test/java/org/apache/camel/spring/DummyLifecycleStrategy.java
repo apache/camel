@@ -20,8 +20,6 @@ import org.apache.camel.support.LifecycleStrategySupport;
 
 /**
  * Dummy LifecycleStrategy for LifecycleStrategy injection test.
- *
- * @version 
  */
 public class DummyLifecycleStrategy extends LifecycleStrategySupport {
 

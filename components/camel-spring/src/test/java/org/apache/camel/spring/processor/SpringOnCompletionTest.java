@@ -21,9 +21,6 @@ import org.apache.camel.processor.OnCompletionTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringOnCompletionTest extends OnCompletionTest {
 
     protected CamelContext createCamelContext() throws Exception {

@@ -26,9 +26,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-/**
- * @version 
- */
 @Ignore
 public class FtpConsumerIPV6BodyAsStringTest extends FtpServerTestSupport {
 

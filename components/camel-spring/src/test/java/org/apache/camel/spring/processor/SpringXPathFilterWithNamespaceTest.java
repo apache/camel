@@ -21,9 +21,6 @@ import org.junit.Before;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringXPathFilterWithNamespaceTest extends XPathFilterTest {
     @Override
     @Before

@@ -21,8 +21,6 @@ package org.apache.camel;
  * {@link org.apache.camel.processor.validation.SchemaValidationException} so
  * that it is easy to treat all validation errors in a similar way irrespective
  * of the particular validation technology used.
- * 
- * @version 
  */
 public class ValidationException extends CamelExchangeException {
     private static final long serialVersionUID = -7485357452450907415L;

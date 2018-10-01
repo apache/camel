@@ -36,7 +36,6 @@ import org.apache.camel.Exchange;
  * method to receive events for either of them.
  *
  * @see ExchangeSentEvent
- * @version 
  */
 public class ExchangeSendingEvent extends AbstractExchangeEvent {
     private static final long serialVersionUID = -19248832613958122L;

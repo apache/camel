@@ -18,9 +18,6 @@ package org.apache.camel.issues;
 
 import org.apache.camel.builder.RouteBuilder;
 
-/**
- * @version 
- */
 public class RetryRouteScopedUntilRecipientListParallelIssueTest extends RetryRouteScopedUntilRecipientListIssueTest {
 
     @Override

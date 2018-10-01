@@ -16,9 +16,6 @@
  */
 package org.apache.camel.converter;
 
-/**
- * @version 
- */
 public class MyCoolBean {
 
     private String cool;

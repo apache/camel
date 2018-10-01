@@ -25,9 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class AggregateTimeoutTest extends ContextTestSupport {
 
     private final AtomicInteger invoked = new AtomicInteger();

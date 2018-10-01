@@ -21,9 +21,6 @@ import java.net.URI;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 
-/**
- * @version 
- */
 public class RmiRouteEndpointTest extends RmiRouteTest {
 
     @Override

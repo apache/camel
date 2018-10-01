@@ -32,9 +32,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version 
- */
 public class RemoveEndpointsTest extends CamelTestSupport {
     @Test
     public void testRemoveAllEndpoints() throws Exception {

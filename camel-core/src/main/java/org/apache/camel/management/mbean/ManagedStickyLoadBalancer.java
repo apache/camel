@@ -24,9 +24,6 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
 
-/**
- * @version 
- */
 @ManagedResource(description = "Managed Sticky LoadBalancer")
 public class ManagedStickyLoadBalancer extends ManagedProcessor implements ManagedStickyLoadBalancerMBean {
     private final StickyLoadBalancer processor;

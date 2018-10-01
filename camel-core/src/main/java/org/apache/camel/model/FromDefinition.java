@@ -28,8 +28,6 @@ import org.apache.camel.spi.RouteContext;
 
 /**
  * Act as a message source as input to a route
- *
- * @version 
  */
 @Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "from")

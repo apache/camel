@@ -27,8 +27,6 @@ import org.slf4j.MDC;
 
 /**
  * This unit of work supports <a href="http://www.slf4j.org/api/org/slf4j/MDC.html">MDC</a>.
- *
- * @version 
  */
 public class MDCUnitOfWork extends DefaultUnitOfWork {
 

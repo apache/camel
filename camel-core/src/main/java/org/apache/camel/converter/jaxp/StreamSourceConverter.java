@@ -25,8 +25,6 @@ import org.apache.camel.Converter;
 
 /**
  * A converter from {@link StreamSource} objects
- *
- * @version 
  */
 @Converter
 public final class StreamSourceConverter {

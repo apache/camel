@@ -31,9 +31,6 @@ import org.mockito.Mockito;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-/**
- * @version 
- */
 public class NagiosXorEncryptionTest extends CamelTestSupport {
     protected boolean canRun;
 

@@ -22,8 +22,6 @@ import org.junit.Test;
 
 /**
  * Wire tap unit test
- *
- * @version 
  */
 public class WireTapExpressionTest extends ContextTestSupport {
 

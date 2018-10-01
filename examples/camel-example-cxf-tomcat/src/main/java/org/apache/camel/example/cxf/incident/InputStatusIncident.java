@@ -16,9 +16,6 @@
  */
 package org.apache.camel.example.cxf.incident;
 
-/**
- * @version 
- */
 public class InputStatusIncident {
 
     private String incidentId;

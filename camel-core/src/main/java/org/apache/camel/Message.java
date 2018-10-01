@@ -33,8 +33,6 @@ import org.apache.camel.spi.HeadersMapFactory;
  * is represented in Camel using a {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
  * The implementation of the map can be configured by the {@link HeadersMapFactory} which can be set
  * on the {@link CamelContext}. The default implementation uses the {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
- *
- * @version 
  */
 public interface Message {
 

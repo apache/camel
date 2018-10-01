@@ -48,7 +48,6 @@ import org.slf4j.LoggerFactory;
  * provided by Camel extends this class as well.
  *
  * @see ManagedManagementStrategy
- * @version 
  */
 public class DefaultManagementStrategy extends ServiceSupport implements ManagementStrategy, CamelContextAware {
 

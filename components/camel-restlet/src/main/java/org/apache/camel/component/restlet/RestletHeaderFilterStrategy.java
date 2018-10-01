@@ -21,8 +21,6 @@ import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 
 /**
  * Default header filtering strategy for Restlet
- * 
- * @version 
  */
 public class RestletHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 

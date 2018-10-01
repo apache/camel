@@ -21,9 +21,6 @@ import org.apache.camel.processor.FailoverMaximumFailoverAttemptsTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringFailoverMaximumFailoverAttemptsTest extends FailoverMaximumFailoverAttemptsTest {
 
     protected CamelContext createCamelContext() throws Exception {

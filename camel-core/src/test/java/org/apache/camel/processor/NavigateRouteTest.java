@@ -25,8 +25,6 @@ import org.junit.Test;
 
 /**
  * Unit test for navigating a route (runtime processors, not the model).
- *
- * @version 
  */
 public class NavigateRouteTest extends ContextTestSupport {
 

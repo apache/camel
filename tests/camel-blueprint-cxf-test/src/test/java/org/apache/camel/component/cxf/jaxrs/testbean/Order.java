@@ -24,10 +24,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.xml.bind.annotation.XmlRootElement;
 
-/**
- *
- * @version 
- */
 @XmlRootElement(name = "Order")
 public class Order {
     private long id;

@@ -41,9 +41,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-/**
- * @version 
- */
 public class JpaWithNamedQueryTest extends Assert {
     
     protected static final Logger LOG = LoggerFactory.getLogger(JpaWithNamedQueryTest.class);

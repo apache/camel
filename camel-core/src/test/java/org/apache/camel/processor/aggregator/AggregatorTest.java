@@ -25,9 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class AggregatorTest extends ContextTestSupport {
     protected int messageCount = 100;
 

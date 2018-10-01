@@ -21,9 +21,6 @@ import org.apache.camel.processor.RouteNoAutoStartupTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringRouteNoAutoStartupTest extends RouteNoAutoStartupTest {
 
     protected CamelContext createCamelContext() throws Exception {

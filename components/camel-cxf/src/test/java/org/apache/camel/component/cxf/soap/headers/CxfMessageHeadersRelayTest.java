@@ -72,8 +72,6 @@ import static org.junit.Assert.fail;
 
 /**
  * This test suite verifies message header filter features
- *
- * @version 
  */
 @ContextConfiguration
 public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests {

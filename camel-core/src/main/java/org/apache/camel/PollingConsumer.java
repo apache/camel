@@ -27,8 +27,6 @@ package org.apache.camel;
  * This is needed to ensure any {@link org.apache.camel.spi.Synchronization} works is being executed.
  * For example if you consumed from a file endpoint, then the consumed file is only moved/delete when
  * you done the {@link Exchange}.
- *
- * @version 
  */
 public interface PollingConsumer extends Consumer {
 

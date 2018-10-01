@@ -26,9 +26,6 @@ import org.apache.camel.component.log.LogComponent;
 import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class MultipleLifecycleStrategyTest extends TestSupport {
 
     private DummyLifecycleStrategy dummy1 = new DummyLifecycleStrategy();

@@ -35,8 +35,6 @@ import org.springframework.context.ApplicationContextAware;
 
 /**
  * Configures a {@link org.apache.camel.FluentProducerTemplate}
- * 
- * @version 
  */
 @Metadata(label = "spring,configuration")
 @XmlRootElement(name = "fluentTemplate")

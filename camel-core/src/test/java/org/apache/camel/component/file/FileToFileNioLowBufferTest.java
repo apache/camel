@@ -22,9 +22,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FileToFileNioLowBufferTest extends ContextTestSupport {
 
     @Override

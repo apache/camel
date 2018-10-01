@@ -28,9 +28,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class HttpStreamCacheFileTest extends BaseJettyTest {
 
     private final String responseBody = "12345678901234567890123456789012345678901234567890";

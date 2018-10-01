@@ -33,8 +33,6 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * This implementation honors the {@link org.apache.camel.spi.ShutdownStrategy#isSuppressLoggingOnTimeout()}
  * option to avoid logging if the logging should be suppressed.
- *
- * @version 
  */
 public class LoggingExceptionHandler implements ExceptionHandler {
     private final CamelLogger logger;

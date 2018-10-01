@@ -31,8 +31,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Unit test for the <tt>transferExchange=true</tt> option.
- *
- * @version
  */
 public class Mina2TransferExchangeOptionTest extends BaseMina2Test {
 

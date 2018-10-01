@@ -43,8 +43,6 @@ import org.apache.camel.spi.TypeConverterRegistry;
 
 /**
  * JavaMail specific converters.
- *
- * @version 
  */
 @Converter
 public final class MailConverters {

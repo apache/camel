@@ -18,8 +18,6 @@ package org.apache.camel.management;
 
 /**
  * This module contains jmx related system property key constants.
- *
- * @version 
  */
 public final class JmxSystemPropertyKeys {
 

@@ -24,9 +24,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.language.XPath;
 
-/**
- * @version 
- */
 public class StockService {
 
     private final List<String> symbols = new ArrayList<>();

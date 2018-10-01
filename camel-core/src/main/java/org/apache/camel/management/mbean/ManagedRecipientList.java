@@ -35,9 +35,6 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
-/**
- * @version 
- */
 @ManagedResource(description = "Managed RecipientList")
 public class ManagedRecipientList extends ManagedProcessor implements ManagedRecipientListMBean {
     private final RecipientList processor;

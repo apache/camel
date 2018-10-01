@@ -26,9 +26,6 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version
- */
 @Ignore("Fails with Address already in use")
 public class SpringJettyNoConnectionRedeliveryTest extends CamelSpringTestSupport {
 

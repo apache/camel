@@ -22,9 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class TypeConverterRegistryStatisticsEnabledTest extends ContextTestSupport {
 
     @Override

@@ -22,9 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.RestConfiguration;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RestRestletGetCorsTest extends RestletTestSupport {
 
     @Test

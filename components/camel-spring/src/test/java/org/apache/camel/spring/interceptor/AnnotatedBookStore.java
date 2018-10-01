@@ -16,9 +16,6 @@
  */
 package org.apache.camel.spring.interceptor;
 
-/**
- * @version 
- */
 public interface AnnotatedBookStore {
     
     void orderBook(String title) throws Exception;

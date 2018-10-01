@@ -24,9 +24,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class XQueryWithNamespacesFilterTest extends CamelTestSupport {
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;

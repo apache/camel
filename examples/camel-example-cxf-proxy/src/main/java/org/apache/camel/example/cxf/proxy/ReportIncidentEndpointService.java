@@ -22,8 +22,6 @@ import org.apache.camel.example.reportincident.ReportIncidentEndpoint;
 
 /**
  * This is the implementation of the real web service
- *
- * @version 
  */
 public class ReportIncidentEndpointService implements ReportIncidentEndpoint {
 

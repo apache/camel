@@ -39,8 +39,6 @@ import org.slf4j.LoggerFactory;
  * A default implementation of the {@link org.apache.camel.PollingConsumer} which uses the normal
  * asynchronous consumer mechanism along with a {@link BlockingQueue} to allow
  * the caller to pull messages on demand.
- *
- * @version 
  */
 public class EventDrivenPollingConsumer extends PollingConsumerSupport implements Processor, IsSingleton {
 

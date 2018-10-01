@@ -32,8 +32,6 @@ import org.junit.Test;
  * detects and uses a bridge to adapt to so the asynchronous engine can still run. Albeit not
  * the most optimal solution but it runs. Camel will log a WARN so user can see the issue
  * and change his interceptor to comply.
- *
- * @version 
  */
 public class AsyncEndpointCustomInterceptorTest extends ContextTestSupport {
 

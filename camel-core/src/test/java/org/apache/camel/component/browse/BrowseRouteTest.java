@@ -22,9 +22,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class BrowseRouteTest extends ContextTestSupport {
 
     @Test

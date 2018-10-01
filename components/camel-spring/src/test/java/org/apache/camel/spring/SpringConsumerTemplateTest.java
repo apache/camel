@@ -26,8 +26,6 @@ import org.springframework.test.context.ContextConfiguration;
 
 /**
  * Unit test using the ConsumerTemplate
- *
- * @version 
  */
 // START SNIPPET: e1
 @ContextConfiguration

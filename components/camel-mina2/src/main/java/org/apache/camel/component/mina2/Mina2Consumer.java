@@ -58,8 +58,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A {@link org.apache.camel.Consumer Consumer} implementation for Apache MINA.
- *
- * @version
  */
 public class Mina2Consumer extends DefaultConsumer {
 

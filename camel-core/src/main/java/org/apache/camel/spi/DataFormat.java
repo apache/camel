@@ -28,8 +28,6 @@ import org.apache.camel.Message;
  * used to marshal objects to and from streams
  * such as Java Serialization or using JAXB2 to encode/decode objects using XML
  * or using SOAP encoding.
- *
- * @version 
  */
 public interface DataFormat {
 

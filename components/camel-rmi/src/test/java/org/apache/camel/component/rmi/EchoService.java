@@ -18,9 +18,6 @@ package org.apache.camel.component.rmi;
 
 import java.rmi.RemoteException;
 
-/**
- * @version 
- */
 public class EchoService implements IEcho {
 
     public String echo(String s) throws RemoteException {

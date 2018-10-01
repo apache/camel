@@ -52,8 +52,6 @@ import org.apache.camel.util.concurrent.SynchronousExecutorService;
 
 /**
  * Aggregates many messages into a single message
- *
- * @version 
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "aggregate")

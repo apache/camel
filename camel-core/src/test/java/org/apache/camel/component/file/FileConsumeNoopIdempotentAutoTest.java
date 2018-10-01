@@ -20,8 +20,6 @@ import org.apache.camel.builder.RouteBuilder;
 
 /**
  * Auto works just as enabled so we can reuse this time
- *
- * @version 
  */
 public class FileConsumeNoopIdempotentAutoTest extends FileConsumeNoopIdempotentEnabledTest {
 

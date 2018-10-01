@@ -35,9 +35,6 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
-/**
- * @version 
- */
 @ManagedResource(description = "Managed SendDynamicProcessor")
 public class ManagedSendDynamicProcessor extends ManagedProcessor implements ManagedSendDynamicProcessorMBean {
     private final SendDynamicProcessor processor;

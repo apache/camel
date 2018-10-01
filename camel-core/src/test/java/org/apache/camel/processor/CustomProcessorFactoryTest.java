@@ -29,9 +29,6 @@ import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.RouteContext;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class CustomProcessorFactoryTest extends ContextTestSupport {
 
     @Override

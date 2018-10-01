@@ -36,8 +36,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The default error handler builder.
- *
- * @version 
  */
 public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 

@@ -23,9 +23,6 @@ import org.apache.camel.Service;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class NewProcessorAndServiceTest extends ContextTestSupport {
 
     private MyProcessor myProcessor;

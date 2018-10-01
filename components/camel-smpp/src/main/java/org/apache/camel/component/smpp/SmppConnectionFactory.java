@@ -69,8 +69,6 @@ import org.jsmpp.session.connection.socket.SocketConnection;
 
 /**
  * A Jsmpp ConnectionFactory that creates SSL Sockets.
- * 
- * @version 
  */
 public final class SmppConnectionFactory implements ConnectionFactory {
     private SmppConfiguration config;

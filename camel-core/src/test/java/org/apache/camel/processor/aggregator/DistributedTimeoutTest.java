@@ -28,9 +28,6 @@ import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
-/**
- * @version
- */
 public class DistributedTimeoutTest extends AbstractDistributedTest {
 
     private MemoryAggregationRepository sharedAggregationRepository = new MemoryAggregationRepository(true);

@@ -18,7 +18,6 @@ package org.apache.camel.component.aws.s3;
 
 /**
  * Constants used in Camel AWS S3 module
- * 
  */
 public interface S3Constants {
 

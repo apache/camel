@@ -25,8 +25,6 @@ import org.apache.camel.Processor;
 
 /**
  * Base class for DataSet
- *
- * @version 
  */
 public abstract class DataSetSupport implements DataSet {
     private Map<String, Object> defaultHeaders;

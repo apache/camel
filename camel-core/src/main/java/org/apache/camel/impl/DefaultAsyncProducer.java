@@ -25,8 +25,6 @@ import org.apache.camel.util.AsyncProcessorHelper;
 /**
  * A default implementation of {@link org.apache.camel.Producer} for implementation inheritance,
  * which can process {@link Exchange}s asynchronously.
- *
- * @version 
  */
 public abstract class DefaultAsyncProducer extends DefaultProducer implements AsyncProducer {
 

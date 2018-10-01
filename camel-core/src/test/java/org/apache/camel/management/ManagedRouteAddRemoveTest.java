@@ -30,8 +30,6 @@ import org.junit.Test;
 
 /**
  * Tests mbeans is registered when adding a 2nd route after CamelContext has been started.
- *
- * @version 
  */
 public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
     

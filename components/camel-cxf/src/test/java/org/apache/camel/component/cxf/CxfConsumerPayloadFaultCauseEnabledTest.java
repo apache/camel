@@ -48,8 +48,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Unit test to verify CxfConsumer to generate SOAP fault in PAYLOAD mode with the exception cause returned
- * 
- * @version 
  */
 public class CxfConsumerPayloadFaultCauseEnabledTest extends CamelTestSupport {
     protected static final QName SERVICE_QNAME = new QName("http://camel.apache.org/wsdl-first", "PersonService");

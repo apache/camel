@@ -24,9 +24,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.slf4j.MDC;
 
-/**
- * @version 
- */
 public class MDCTest extends ContextTestSupport {
 
     @Test

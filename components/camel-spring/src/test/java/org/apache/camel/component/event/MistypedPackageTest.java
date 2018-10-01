@@ -19,9 +19,6 @@ package org.apache.camel.component.event;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class MistypedPackageTest extends EventRouteTest {
 
     protected AbstractXmlApplicationContext createApplicationContext() {

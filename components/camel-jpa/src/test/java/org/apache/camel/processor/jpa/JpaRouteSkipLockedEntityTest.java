@@ -29,9 +29,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-/**
- * @version
- */
 @Ignore("Need the fix of OPENJPA-2461")
 public class JpaRouteSkipLockedEntityTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + VersionedItem.class.getName() + " x";

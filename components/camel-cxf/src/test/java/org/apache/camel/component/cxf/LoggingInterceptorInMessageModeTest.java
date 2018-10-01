@@ -37,10 +37,6 @@ import static org.junit.Assert.assertNotNull;
 
 
 
-/**
- *
- * @version 
- */
 @ContextConfiguration
 public class LoggingInterceptorInMessageModeTest extends AbstractJUnit4SpringContextTests {
     protected static int port1 = CXFTestSupport.getPort1(); 

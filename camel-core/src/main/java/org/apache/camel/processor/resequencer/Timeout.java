@@ -24,8 +24,6 @@ import java.util.TimerTask;
  * 
  * @see Timer
  * @see TimerTask
- * 
- * @version 
  */
 public class Timeout extends TimerTask {
     

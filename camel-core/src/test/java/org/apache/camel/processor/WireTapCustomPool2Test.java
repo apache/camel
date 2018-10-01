@@ -27,8 +27,6 @@ import org.junit.Test;
 
 /**
  * Wire tap unit test
- *
- * @version 
  */
 public class WireTapCustomPool2Test extends ContextTestSupport {
     protected MockEndpoint tap;

@@ -23,8 +23,6 @@ package org.apache.camel;
  * This allows customization of behavior when stopping or shutting down.
  * <p/>
  * For example to shutdown thread pools during shutdown and <b>not</b> at CamelContext termination.
- *
- * @version 
  */
 public interface ShutdownableService extends Service {
 

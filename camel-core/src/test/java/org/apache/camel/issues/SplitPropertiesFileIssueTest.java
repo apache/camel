@@ -27,9 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class SplitPropertiesFileIssueTest extends ContextTestSupport {
 
     private String body = "foo=1" + LS + "bar=2" + LS + "bar=3" + LS + "foo=4";

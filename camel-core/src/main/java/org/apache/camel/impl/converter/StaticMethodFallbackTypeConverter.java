@@ -26,8 +26,6 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A {@link org.apache.camel.TypeConverter} implementation which invokes a static method
  * as a fallback type converter from a type to another type
- *
- * @version 
  */
 public class StaticMethodFallbackTypeConverter extends TypeConverterSupport {
     private final Method method;

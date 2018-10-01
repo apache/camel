@@ -23,9 +23,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.util.URISupport;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class DefaultEndpointTest extends ContextTestSupport {
 
     @Test

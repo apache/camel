@@ -24,7 +24,6 @@ import org.junit.Test;
 
 /**
  * Test concurrent consumers.
- * 
  */
 public class HazelcastSedaConcurrentConsumersTest extends CamelTestSupport {
 

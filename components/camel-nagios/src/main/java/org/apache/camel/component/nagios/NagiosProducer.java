@@ -29,9 +29,6 @@ import static org.apache.camel.component.nagios.NagiosConstants.HOST_NAME;
 import static org.apache.camel.component.nagios.NagiosConstants.LEVEL;
 import static org.apache.camel.component.nagios.NagiosConstants.SERVICE_NAME;
 
-/**
- * @version 
- */
 public class NagiosProducer extends DefaultProducer {
 
     private final PassiveCheckSender sender;

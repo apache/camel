@@ -30,9 +30,6 @@ import org.w3c.dom.Element;
 import net.sf.flatpack.DataSet;
 import org.apache.camel.Converter;
 
-/**
- * @version 
- */
 @Converter
 public final class FlatpackConverter {
 

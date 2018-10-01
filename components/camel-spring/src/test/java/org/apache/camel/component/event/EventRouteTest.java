@@ -24,9 +24,6 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class EventRouteTest extends SpringTestSupport {
 
     protected Object expectedBody = "Hello there!";

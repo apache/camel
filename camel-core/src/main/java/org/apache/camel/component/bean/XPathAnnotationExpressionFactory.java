@@ -27,8 +27,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * Factory for the XPath expression annotations.
- *
- * @version 
  */
 public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {
 

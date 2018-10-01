@@ -25,8 +25,6 @@ import org.junit.Test;
 /**
  * Tests to ensure a consistent return value when using the different ways of
  * configuring the RecipientList pattern
- *
- * @version 
  */
 public class RecipientListReturnValueTest extends ContextTestSupport {
 

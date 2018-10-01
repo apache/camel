@@ -26,8 +26,6 @@ import org.junit.Test;
 
 /**
  * A testcase for exception handler when management is enabled (by default).
- * 
- * @version 
  */
 public class ExceptionWithManagementTest extends ContextTestSupport {
 

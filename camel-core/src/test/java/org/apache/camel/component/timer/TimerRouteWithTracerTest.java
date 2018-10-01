@@ -18,9 +18,6 @@ package org.apache.camel.component.timer;
 
 import org.apache.camel.builder.RouteBuilder;
 
-/**
- * @version 
- */
 public class TimerRouteWithTracerTest extends TimerRouteTest {
 
     @Override

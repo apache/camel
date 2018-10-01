@@ -30,8 +30,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents a proxy to an error handler builder which is resolved by named reference
- *
- * @version 
  */
 public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
     public static final String DEFAULT_ERROR_HANDLER_BUILDER = "CamelDefaultErrorHandlerBuilder";

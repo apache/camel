@@ -34,8 +34,6 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Base class for implementation inheritance for different clauses in the <a
  * href="http://camel.apache.org/dsl.html">Java DSL</a>
- *
- * @version
  */
 public abstract class BuilderSupport {
     private ModelCamelContext context;

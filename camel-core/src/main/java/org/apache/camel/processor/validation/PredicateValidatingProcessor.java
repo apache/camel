@@ -27,8 +27,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A processor which validates the content of the inbound message body against a {@link Predicate}.
- * 
- * @version 
  */
 public class PredicateValidatingProcessor extends ServiceSupport implements Processor, Traceable {
     

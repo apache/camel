@@ -27,9 +27,6 @@ import java.util.Set;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class CollectionHelperTest extends Assert {
 
     private String[] names = new String[]{"Claus", "Willem", "Jonathan"};

@@ -22,9 +22,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ReaderCacheTest extends ContextTestSupport {
 
     @Test

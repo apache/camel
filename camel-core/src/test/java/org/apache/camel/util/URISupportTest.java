@@ -26,9 +26,6 @@ import org.apache.camel.ContextTestSupport;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class URISupportTest extends ContextTestSupport {
 
     @Test

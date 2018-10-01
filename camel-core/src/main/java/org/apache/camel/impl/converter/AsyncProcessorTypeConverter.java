@@ -26,8 +26,6 @@ import org.apache.camel.util.AsyncProcessorConverterHelper;
  * A simple converter that can convert any {@link Processor} to an {@link AsyncProcessor}.
  * Processing will still occur synchronously but it will provide the required
  * notifications that the caller expects.
- *
- * @version
  */
 public class AsyncProcessorTypeConverter extends TypeConverterSupport {
 

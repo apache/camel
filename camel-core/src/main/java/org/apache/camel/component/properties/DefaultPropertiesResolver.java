@@ -36,8 +36,6 @@ import org.apache.camel.util.IOHelper;
  * <p/>
  * You can denote <tt>classpath:</tt> or <tt>file:</tt> as prefix in the uri to select whether the file
  * is located in the classpath or on the file system.
- *
- * @version 
  */
 public class DefaultPropertiesResolver implements PropertiesResolver {
 

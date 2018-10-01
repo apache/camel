@@ -38,8 +38,6 @@ import java.util.Random;
  * If the value of {@code maximumRetries} is set above zero, retry attempts will stop at the value specified.
  * <p/>
  * The default behaviour of this policy is to retry forever and exponentially increase the back-off delay starting with 50ms.
- *
- * @version
  */
 public class OptimisticLockRetryPolicy {
     private static final long DEFAULT_MAXIMUM_RETRY_DELAY = 1000L;

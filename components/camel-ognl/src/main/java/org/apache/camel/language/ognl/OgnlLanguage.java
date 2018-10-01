@@ -23,8 +23,6 @@ import org.apache.camel.support.LanguageSupport;
 
 /**
  * An <a href="http://www.ognl.org/">OGNL</a> {@link Language} plugin
- *
- * @version 
  */
 public class OgnlLanguage extends LanguageSupport {
 

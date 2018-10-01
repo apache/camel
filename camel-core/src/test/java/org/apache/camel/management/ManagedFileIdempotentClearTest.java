@@ -33,9 +33,6 @@ import org.apache.camel.util.FileUtil;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ManagedFileIdempotentClearTest extends ManagementTestSupport {
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;

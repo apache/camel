@@ -33,8 +33,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * Calls a Camel processor
- *
- * @version 
  */
 @Metadata(label = "eip,endpoint")
 @XmlRootElement(name = "process")

@@ -25,8 +25,6 @@ import org.apache.camel.component.rabbitmq.RabbitMQEndpoint;
 /**
  * The {@link ReplyManager} is responsible for handling <a href="http://camel.apache.org/request-reply.html">request-reply</a>
  * over RabbitMQ.
- *
- * @version
  */
 public interface ReplyManager {
 

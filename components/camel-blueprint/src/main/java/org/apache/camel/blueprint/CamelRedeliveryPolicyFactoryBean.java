@@ -28,8 +28,6 @@ import org.osgi.service.blueprint.container.BlueprintContainer;
 
 /**
  * A factory which instantiates {@link org.apache.camel.processor.RedeliveryPolicy} objects
- *
- * @version 
  */
 @XmlRootElement(name = "redeliveryPolicyProfile")
 @XmlAccessorType(XmlAccessType.FIELD)

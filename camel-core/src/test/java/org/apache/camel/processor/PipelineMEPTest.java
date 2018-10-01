@@ -26,8 +26,6 @@ import org.junit.Test;
 
 /**
  * Unit test for pipeline keeping the MEP (CAMEL-1233)
- *
- * @version 
  */
 public class PipelineMEPTest extends ContextTestSupport {
 

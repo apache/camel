@@ -22,8 +22,6 @@ import org.apache.camel.ValidationException;
 
 /**
  * A predicate validation exception occurred
- * 
- * @version 
  */
 public class PredicateValidationException extends ValidationException {
 

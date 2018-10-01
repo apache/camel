@@ -20,8 +20,6 @@ import org.apache.camel.Exchange;
 
 /**
  * A specialized {@link AggregationStrategy} which has callback when the aggregated {@link Exchange} is completed.
- *
- * @version
  */
 public interface CompletionAwareAggregationStrategy extends AggregationStrategy {
 

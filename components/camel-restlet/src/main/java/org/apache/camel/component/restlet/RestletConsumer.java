@@ -27,8 +27,6 @@ import org.restlet.Uniform;
 
 /**
  * A Restlet consumer acts as a server to listen client requests.
- *
- * @version 
  */
 public class RestletConsumer extends DefaultConsumer {
 

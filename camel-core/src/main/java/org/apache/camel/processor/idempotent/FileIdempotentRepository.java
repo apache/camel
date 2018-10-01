@@ -48,8 +48,6 @@ import org.slf4j.LoggerFactory;
  * The file store has a maximum capacity of 32mb by default (you can turn this off and have unlimited size).
  * If the file store grows bigger than the maximum capacity, then the {@link #getDropOldestFileStore()} (is default 1000)
  * number of entries from the file store is dropped to reduce the file store and make room for newer entries.
- *
- * @version 
  */
 @ManagedResource(description = "File based idempotent repository")
 public class FileIdempotentRepository extends ServiceSupport implements IdempotentRepository<String> {

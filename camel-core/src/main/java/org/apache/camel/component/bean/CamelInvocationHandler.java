@@ -26,8 +26,6 @@ import org.apache.camel.Producer;
 /**
  * An {@link java.lang.reflect.InvocationHandler} which invokes a message
  * exchange on a camel {@link Endpoint}
- * 
- * @version
  */
 public class CamelInvocationHandler extends AbstractCamelInvocationHandler implements InvocationHandler {
     private final MethodInfoCache methodInfoCache;

@@ -38,8 +38,6 @@ import org.apache.camel.Exchange;
  * what is required by Camel to allow using the idempotent repository with the Idempotent Consumer EIP
  * and also as file consumer read-lock. It was a mistake to make {@link IdempotentRepository} parameterized,
  * as it should have been a pre-configured to use a <tt>String</tt> type.
- *
- * @version 
  */
 public interface ExchangeIdempotentRepository<E> extends IdempotentRepository<E> {
 

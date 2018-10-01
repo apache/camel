@@ -21,9 +21,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.component.xquery.XQueryBuilder;
 import org.apache.camel.support.LanguageSupport;
 
-/**
- * @version 
- */
 public class XQueryLanguage extends LanguageSupport {
 
     public Predicate createPredicate(String expression) {

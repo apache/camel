@@ -25,9 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RestletHeaderFilterStrategyTest extends RestletTestSupport {
 
     private static final String HEADER_FILTER = "filter";

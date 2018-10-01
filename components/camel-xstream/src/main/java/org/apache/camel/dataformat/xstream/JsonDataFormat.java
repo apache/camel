@@ -40,8 +40,6 @@ import org.codehaus.jettison.mapped.MappedXMLOutputFactory;
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a>
  * ({@link org.apache.camel.spi.DataFormat}) using XStream and Jettison to marshal to and from JSON
- *
- * @version
  */
 public class JsonDataFormat extends AbstractXStreamWrapper {
     private final MappedXMLOutputFactory mof;

@@ -50,8 +50,6 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * In this implementation there is a little <i>slack period</i> when you suspend/stop the consumer, by which
  * the consumer may pickup a newly arrived messages and process it. That period is up till 1 second.
- *
- * @version 
  */
 public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, ShutdownAware, Suspendable {
 

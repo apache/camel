@@ -21,9 +21,6 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
 
-/**
- * @version 
- */
 public class QuartzComponentTest extends BaseQuartzTest {
 
     @Test

@@ -24,8 +24,6 @@ import org.junit.Test;
 
 /**
  * Delay interceptor unit test.
- *
- * @version 
  */
 public class DelayInterceptorTest extends ContextTestSupport {
 

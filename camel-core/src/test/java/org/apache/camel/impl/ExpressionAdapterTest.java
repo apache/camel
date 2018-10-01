@@ -21,9 +21,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.ExpressionAdapter;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ExpressionAdapterTest extends ContextTestSupport {
 
     private static class MyExpression extends ExpressionAdapter {

@@ -29,8 +29,6 @@ import org.junit.Test;
 
 /**
  * Unit test that show custom header filter useful to send Connection Close header
- *
- * @version 
  */
 public class HttpProducerExplicitConnectionCloseTest extends BaseHttpTest {
 

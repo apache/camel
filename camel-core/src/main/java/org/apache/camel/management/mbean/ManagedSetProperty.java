@@ -22,9 +22,6 @@ import org.apache.camel.api.management.mbean.ManagedSetPropertyMBean;
 import org.apache.camel.model.SetPropertyDefinition;
 import org.apache.camel.processor.SetPropertyProcessor;
 
-/**
- * @version 
- */
 @ManagedResource(description = "Managed SetProperty")
 public class ManagedSetProperty extends ManagedProcessor implements ManagedSetPropertyMBean {
     private final SetPropertyProcessor processor;

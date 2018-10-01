@@ -24,8 +24,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The direct producer.
- *
- * @version 
  */
 public class DirectProducer extends DefaultAsyncProducer {
 

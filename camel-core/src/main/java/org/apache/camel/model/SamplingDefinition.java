@@ -33,8 +33,6 @@ import org.apache.camel.spi.RouteContext;
 
 /**
  * Extract a sample of the messages passing through a route
- *
- * @version 
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "sample")

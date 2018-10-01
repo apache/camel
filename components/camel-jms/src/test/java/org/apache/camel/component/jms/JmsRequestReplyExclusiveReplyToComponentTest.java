@@ -29,8 +29,6 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 /**
  * Using exclusive fixed replyTo queues should be faster as there is no need for
  * JMSMessage selectors.
- *
- * @version 
  */
 public class JmsRequestReplyExclusiveReplyToComponentTest extends CamelTestSupport {
 

@@ -23,9 +23,6 @@ import org.junit.Test;
 
 import static org.apache.camel.builder.ExpressionBuilder.messageExpression;
 
-/**
- * @version 
- */
 public class ExpressionFunctionTest extends ContextTestSupport {
 
     @Test

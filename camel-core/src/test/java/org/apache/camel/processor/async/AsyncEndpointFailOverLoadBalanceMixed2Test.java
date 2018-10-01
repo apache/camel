@@ -22,9 +22,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class AsyncEndpointFailOverLoadBalanceMixed2Test extends ContextTestSupport {
 
     private static String beforeThreadName;

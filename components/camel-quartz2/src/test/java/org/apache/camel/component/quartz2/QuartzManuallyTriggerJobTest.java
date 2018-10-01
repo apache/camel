@@ -28,7 +28,6 @@ import org.quartz.impl.matchers.GroupMatcher;
 
 /**
  * This test the  CronTrigger as a timer endpoint in a route.
- * @version 
  */
 public class QuartzManuallyTriggerJobTest extends BaseQuartzTest {
 

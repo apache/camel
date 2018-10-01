@@ -23,9 +23,6 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.Resequencer;
 import org.apache.camel.processor.StreamResequencer;
 
-/**
- * @version 
- */
 @ManagedResource(description = "Managed Resequencer")
 public class ManagedResequencer extends ManagedProcessor implements ManagedResequencerMBean {
     private final Resequencer processor;

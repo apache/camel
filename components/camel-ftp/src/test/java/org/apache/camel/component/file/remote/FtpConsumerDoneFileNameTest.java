@@ -22,9 +22,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FtpConsumerDoneFileNameTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {

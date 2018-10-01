@@ -33,8 +33,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * A logger for logging message throughput.
- *
- * @version 
  */
 public class ThroughputLogger extends ServiceSupport implements AsyncProcessor, IdAware {
 

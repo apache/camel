@@ -33,8 +33,6 @@ import org.springframework.messaging.MessageHeaders;
  * CamelTargetAdapter will redirect the Spring Integration message to the Camel context.
  * When we inject the camel context into it, we need also specify the Camel endpoint url
  * we will route the Spring Integration message to the Camel context
- *
- * @version 
  */
 public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageHandler {
     private ProducerTemplate camelTemplate;

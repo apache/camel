@@ -32,8 +32,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A default error handler which just stores all the errors so they can be reported or transformed.
- *
- * @version 
  */
 public class DefaultValidationErrorHandler implements ValidatorErrorHandler {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultValidationErrorHandler.class);

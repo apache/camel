@@ -28,8 +28,6 @@ import org.junit.Test;
 
 /**
  * Test for handling a StreamSource in a content-based router with XPath predicates
- *
- * @version 
  */
 public class StreamSourceContentBasedRouterTest extends ContextTestSupport {
     protected MockEndpoint x;

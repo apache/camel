@@ -76,8 +76,6 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * If you want to set a starting delay, then use 0 as the first limit, eg: <tt>0:1000;5:5000</tt> will use 1 sec delay
  * until attempt number 5 where it will use 5 seconds going forward.
- *
- * @version 
  */
 public class RedeliveryPolicy implements Cloneable, Serializable {
     protected static Random randomNumberGenerator;

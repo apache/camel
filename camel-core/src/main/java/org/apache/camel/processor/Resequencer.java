@@ -54,8 +54,6 @@ import org.apache.camel.util.ServiceHelper;
 /**
  * An implementation of the <a href="http://camel.apache.org/resequencer.html">Resequencer</a>
  * which can reorder messages within a batch.
- *
- * @version 
  */
 public class Resequencer extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, IdAware, Traceable {
 

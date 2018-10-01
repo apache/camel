@@ -25,8 +25,6 @@ import org.apache.camel.Exchange;
 /**
  * Holder which contains the {@link Exchange} and {@link org.apache.camel.AsyncCallback} to be used
  * when the reply arrives, so we can set the reply on the {@link Exchange} and continue routing using the callback.
- *
- * @version 
  */
 public class ReplyHolder {
 

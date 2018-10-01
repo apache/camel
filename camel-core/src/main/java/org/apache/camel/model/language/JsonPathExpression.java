@@ -30,8 +30,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * To use JsonPath in Camel expressions or predicates.
- *
- * @version 
  */
 @Metadata(firstVersion = "2.13.0", label = "language,json", title = "JsonPath")
 @XmlRootElement(name = "jsonpath")

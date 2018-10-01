@@ -32,7 +32,6 @@ import org.junit.Before;
 
 /**
  * JcrRouteDifferentWorkspaceTestSupport
- * 
  */
 public abstract class JcrRouteDifferentWorkspaceTestSupport extends CamelTestSupport {
 

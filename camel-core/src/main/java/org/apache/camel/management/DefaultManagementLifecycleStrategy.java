@@ -113,7 +113,6 @@ import org.apache.camel.util.ObjectHelper;
  * {@link org.apache.camel.spi.ManagementStrategy}.
  *
  * @see org.apache.camel.spi.ManagementStrategy
- * @version 
  */
 @SuppressWarnings("deprecation")
 public class DefaultManagementLifecycleStrategy extends ServiceSupport implements LifecycleStrategy, CamelContextAware {

@@ -24,8 +24,6 @@ import org.junit.Before;
 /**
  * A base class for a test which requires a {@link org.apache.camel.CamelContext} and
  * a populated {@link Exchange}
- *
- * @version 
  */
 public abstract class ExchangeTestSupport extends CamelTestSupport {
     protected Exchange exchange;

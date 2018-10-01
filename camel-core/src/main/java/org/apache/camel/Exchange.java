@@ -67,7 +67,6 @@ import org.apache.camel.spi.UnitOfWork;
  * <p/>
  * See this <a href="http://camel.apache.org/using-getin-or-getout-methods-on-exchange.html">FAQ entry</a> 
  * for more details.
- * 
  */
 public interface Exchange {
 

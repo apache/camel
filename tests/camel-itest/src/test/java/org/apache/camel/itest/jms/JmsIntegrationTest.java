@@ -31,9 +31,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version 
- */
 public class JmsIntegrationTest extends CamelTestSupport {
     protected CountDownLatch receivedCountDown = new CountDownLatch(1);
     protected MyBean myBean = new MyBean();

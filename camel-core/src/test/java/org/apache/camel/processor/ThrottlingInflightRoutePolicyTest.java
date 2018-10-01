@@ -21,9 +21,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ThrottlingInflightRoutePolicyTest extends ContextTestSupport {
 
     private String url = "seda:foo?concurrentConsumers=20";

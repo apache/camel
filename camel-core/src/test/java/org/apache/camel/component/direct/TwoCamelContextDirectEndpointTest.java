@@ -24,9 +24,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class TwoCamelContextDirectEndpointTest extends Assert {
     private DefaultCamelContext camel1;
     private DefaultCamelContext camel2;

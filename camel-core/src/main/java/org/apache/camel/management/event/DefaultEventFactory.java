@@ -28,8 +28,6 @@ import org.apache.camel.spi.EventFactory;
 
 /**
  * Default implementation of the {@link org.apache.camel.spi.EventFactory}.
- *
- * @version 
  */
 public class DefaultEventFactory implements EventFactory {
 

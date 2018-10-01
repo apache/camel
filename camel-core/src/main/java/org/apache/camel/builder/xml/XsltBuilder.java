@@ -68,8 +68,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * <p/>
  * Will by default output the result as a String. You can chose which kind of output
  * you want using the <tt>outputXXX</tt> methods.
- *
- * @version 
  */
 public class XsltBuilder implements Processor {
     private static final Logger LOG = LoggerFactory.getLogger(XsltBuilder.class);

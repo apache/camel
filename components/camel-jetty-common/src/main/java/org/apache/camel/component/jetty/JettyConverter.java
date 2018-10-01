@@ -23,9 +23,6 @@ import org.apache.camel.spi.TypeConverterRegistry;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
 
-/**
- * @version 
- */
 @Converter
 public final class JettyConverter {
 

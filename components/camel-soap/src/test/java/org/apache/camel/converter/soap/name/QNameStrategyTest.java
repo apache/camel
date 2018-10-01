@@ -23,9 +23,6 @@ import org.apache.camel.dataformat.soap.name.QNameStrategy;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * 
- */
 public class QNameStrategyTest {
     
     /**

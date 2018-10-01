@@ -27,7 +27,6 @@ import org.quartz.Trigger;
 
 /**
  * This not only set SimpleTrigger as a timer endpoint in a route, and also test the trigger.XXX properties setter.
- * @version 
  */
 public class QuartzSimpleRouteTest extends BaseQuartzTest {
 

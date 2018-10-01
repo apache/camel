@@ -21,9 +21,6 @@ import net.sf.flatpack.Parser;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 
-/**
- * @version
- */
 class FlatpackProducer extends DefaultProducer {
     private FlatpackEndpoint endpoint;
 

@@ -38,8 +38,6 @@ import org.apache.camel.util.CamelContextHelper;
 
 /**
  * Splits a single message into many sub-messages.
- *
- * @version 
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "split")

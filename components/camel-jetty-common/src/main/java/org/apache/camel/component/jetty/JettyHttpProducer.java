@@ -44,9 +44,6 @@ import org.apache.camel.util.URISupport;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.util.component.LifeCycle;
 
-/**
- * @version 
- */
 @Deprecated
 public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProcessor {
 

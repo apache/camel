@@ -20,7 +20,6 @@ package org.apache.camel.component.crypto.cms.exception;
  * Exception thrown during singing if the key type does not fit to the signature
  * algorithm.
  * 
- * 
  */
 public class CryptoCmsInvalidKeyException extends CryptoCmsException {
 

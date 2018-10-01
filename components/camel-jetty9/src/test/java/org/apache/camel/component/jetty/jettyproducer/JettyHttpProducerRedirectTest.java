@@ -24,9 +24,6 @@ import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class JettyHttpProducerRedirectTest extends BaseJettyTest {
 
     @Test

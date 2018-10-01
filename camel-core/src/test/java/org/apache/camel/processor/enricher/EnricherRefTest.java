@@ -26,9 +26,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class EnricherRefTest extends ContextTestSupport {
 
     private MockEndpoint cool = new MockEndpoint("mock:cool", new MockComponent(context));

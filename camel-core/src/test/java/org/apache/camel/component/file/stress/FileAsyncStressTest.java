@@ -26,9 +26,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-/**
- * @version 
- */
 @Ignore("Manual test")
 public class FileAsyncStressTest extends ContextTestSupport {
 

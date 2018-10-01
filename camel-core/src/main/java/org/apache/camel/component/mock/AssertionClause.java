@@ -32,8 +32,6 @@ import org.apache.camel.util.PredicateAssertHelper;
 
 /**
  * A builder of assertions on message exchanges
- *
- * @version 
  */
 public abstract class AssertionClause extends ExpressionClauseSupport<ValueBuilder> implements Runnable {
 

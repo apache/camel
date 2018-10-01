@@ -36,8 +36,6 @@ import org.slf4j.LoggerFactory;
  * Demonstrates how you can use a custom id factory to assign ids to Camel Java routes
  * and then attach your own debugger and be able to use the custom ids to know at what
  * point you are debugging
- *
- * @version 
  */
 public class CustomIdFactoryTest extends ContextTestSupport {
 

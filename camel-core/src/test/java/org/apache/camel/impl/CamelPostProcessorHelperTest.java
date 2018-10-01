@@ -44,9 +44,6 @@ import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
-/**
- * @version
- */
 public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
     private MySynchronization mySynchronization = new MySynchronization();

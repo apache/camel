@@ -29,8 +29,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  * <p/>
  * This implementation extends Springs {@link DefaultMessageListenerContainer} supporting
  * automatic recovery and throttling.
- *
- * @version 
  */
 public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerContainer {
 

@@ -30,8 +30,6 @@ import org.apache.camel.spi.RouteContext;
 
 /**
  * Validates a message based on an expression
- *
- * @version 
  */
 @Metadata(label = "eip,transformation") @AsPredicate
 @XmlRootElement(name = "validate")

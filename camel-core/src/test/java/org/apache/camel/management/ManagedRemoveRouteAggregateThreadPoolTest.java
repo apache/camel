@@ -25,9 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ManagedRemoveRouteAggregateThreadPoolTest extends ManagementTestSupport {
 
     @Test

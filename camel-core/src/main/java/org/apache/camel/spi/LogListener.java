@@ -23,7 +23,6 @@ import org.apache.camel.util.CamelLogger;
 /**
  * An event listener SPI for logging. Listeners are registered into {@link org.apache.camel.processor.LogProcessor} and
  * {@link org.apache.camel.processor.CamelLogProcessor} so that the logging events are delivered for both of Log Component and Log EIP.
- * 
  */
 public interface LogListener {
 

@@ -21,9 +21,6 @@ import org.apache.camel.issues.CharlesSplitAndTryCatchRollbackIssueTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringCharlesSplitAndTryCatchRollbackIssueTest extends CharlesSplitAndTryCatchRollbackIssueTest {
 
     protected CamelContext createCamelContext() throws Exception {

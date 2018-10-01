@@ -22,9 +22,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class HttpPollingConsumerTest extends BaseJettyTest {
 
     @Test

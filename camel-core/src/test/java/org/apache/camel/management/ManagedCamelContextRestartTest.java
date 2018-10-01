@@ -26,9 +26,6 @@ import org.apache.camel.support.EventNotifierSupport;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ManagedCamelContextRestartTest extends ManagementTestSupport {
 
     private int starts;

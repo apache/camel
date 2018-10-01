@@ -25,8 +25,6 @@ import org.junit.Test;
 /**
  * Unit test for verifying that error handler is wrapped each individual node in a pipeline.
  * Based on CAMEL-1548.
- *
- * @version 
  */
 public class ErrorHandlerWrappedEachNodeTest extends ContextTestSupport {
 

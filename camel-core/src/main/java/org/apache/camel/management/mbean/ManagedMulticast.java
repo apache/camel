@@ -22,9 +22,6 @@ import org.apache.camel.api.management.mbean.ManagedMulticastMBean;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.MulticastProcessor;
 
-/**
- * @version 
- */
 @ManagedResource(description = "Managed Multicast")
 public class ManagedMulticast extends ManagedProcessor implements ManagedMulticastMBean {
     private final MulticastProcessor processor;

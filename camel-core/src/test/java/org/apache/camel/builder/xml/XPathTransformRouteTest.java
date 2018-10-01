@@ -25,9 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 
-/**
- * @version 
- */
 public class XPathTransformRouteTest extends ContextTestSupport {
 
     public Document replaceMe(Document doc) throws Exception {

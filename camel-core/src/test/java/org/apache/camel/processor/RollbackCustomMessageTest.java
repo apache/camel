@@ -22,9 +22,6 @@ import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RollbackCustomMessageTest extends ContextTestSupport {
 
     @Test

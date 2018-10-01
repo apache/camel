@@ -24,9 +24,6 @@ import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
-/**
- * @version 
- */
 public class NagiosComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")

@@ -25,9 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.InterceptStrategy;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class InterceptorStrategyNotOrderedTest extends ContextTestSupport {
 
     @Test

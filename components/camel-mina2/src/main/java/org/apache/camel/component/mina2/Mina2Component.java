@@ -30,8 +30,6 @@ import org.apache.mina.core.filterchain.IoFilter;
 
 /**
  * Component for Apache MINA 2.x.
- *
- * @version 
  */
 public class Mina2Component extends DefaultComponent implements SSLContextParametersAware {
 

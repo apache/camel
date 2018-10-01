@@ -23,9 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class AsyncEndpointSplitUseLatestAggregationStrategyTest extends ContextTestSupport {
 
     private static String beforeThreadName;

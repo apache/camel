@@ -20,9 +20,6 @@ import org.w3c.dom.Document;
 
 import org.apache.camel.Header;
 
-/**
- * @version 
- */
 public class BeanWithHeaderAnnotation {
 
     public String hello(String body, @Header("foo") Document doc) {

@@ -24,8 +24,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * The <a href="http://camel.apache.org/validation.html">Validator Component</a> is for validating XML against a schema
- *
- * @version
  */
 public class ValidatorComponent extends DefaultComponent {
 

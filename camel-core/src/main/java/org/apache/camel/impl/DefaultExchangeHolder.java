@@ -61,8 +61,6 @@ import org.slf4j.LoggerFactory;
  * primitive, String, and Number types (and Exception types for exchange properties). Any other type is skipped.
  * Any message body object that is not serializable will be skipped and Camel will log this at <tt>WARN</tt> level.
  * And any message header values that is not a primitive value will be skipped and Camel will log this at <tt>DEBUG</tt> level.
- *
- * @version 
  */
 public class DefaultExchangeHolder implements Serializable {
 

@@ -24,9 +24,6 @@ import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.impl.DefaultProducer;
 
-/**
- * @version 
- */
 public class RmiProducer extends DefaultProducer {
 
     private BeanProcessor beanProcessor;

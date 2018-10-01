@@ -19,9 +19,6 @@ package org.apache.camel.language.ognl;
 import org.apache.camel.test.junit4.LanguageTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class OgnlTest extends LanguageTestSupport {
 
     @Test

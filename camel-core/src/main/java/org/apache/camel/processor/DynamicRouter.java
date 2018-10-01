@@ -29,8 +29,6 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * This implementation builds on top of {@link org.apache.camel.processor.RoutingSlip} which contains
  * the most logic.
- *
- * @version 
  */
 public class DynamicRouter extends RoutingSlip {
     

@@ -19,9 +19,6 @@ package org.apache.camel.util;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class KeyValueHolderTest extends Assert {
 
     @Test

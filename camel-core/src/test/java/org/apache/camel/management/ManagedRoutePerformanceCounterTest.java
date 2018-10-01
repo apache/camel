@@ -27,9 +27,6 @@ import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
-/**
- * @version 
- */
 public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
 
     @Test

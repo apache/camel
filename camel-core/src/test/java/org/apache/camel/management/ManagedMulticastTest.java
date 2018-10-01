@@ -23,9 +23,6 @@ import javax.management.openmbean.TabularData;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ManagedMulticastTest extends ManagementTestSupport {
 
     @Test

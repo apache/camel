@@ -20,9 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
-/**
- * @version 
- */
 public class FtpConsumerLocalWorkDirectoryWorkOnPayloadTest extends FtpConsumerLocalWorkDirectoryTest {
 
     protected RouteBuilder createRouteBuilder() throws Exception {

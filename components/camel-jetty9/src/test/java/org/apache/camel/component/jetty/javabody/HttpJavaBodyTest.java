@@ -27,9 +27,6 @@ import org.apache.camel.http.common.HttpConstants;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class HttpJavaBodyTest extends BaseJettyTest {
 
     @Override

@@ -25,9 +25,6 @@ import org.apache.camel.api.management.mbean.ManagedBacklogTracerMBean;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.spi.ManagementStrategy;
 
-/**
- * @version 
- */
 @ManagedResource(description = "Managed BacklogTracer")
 public class ManagedBacklogTracer implements ManagedBacklogTracerMBean {
     private final CamelContext camelContext;

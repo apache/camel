@@ -25,9 +25,6 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ManagedShutdownStrategyTest extends ManagementTestSupport {
 
     @Test

@@ -23,8 +23,6 @@ import org.junit.Test;
 
 /**
  * Test the ftps component over TLS (explicit) and without client authentication
- * 
- * @version 
  */
 @Ignore
 public class FileToFtpsWithDefaultSettingsIPV6Test extends FtpsServerExplicitTLSWithoutClientAuthTestSupport {

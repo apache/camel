@@ -29,9 +29,6 @@ import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class DistributedConcurrentPerCorrelationKeyTest extends AbstractDistributedTest {
 
     private MemoryAggregationRepository sharedAggregationRepository = new MemoryAggregationRepository(true);

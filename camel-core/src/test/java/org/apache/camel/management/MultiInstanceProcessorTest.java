@@ -28,8 +28,6 @@ import org.junit.Test;
 
 /**
  * A unit test to verify mbean registration of multi-instances of a processor
- *
- * @version 
  */
 public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsTest {
 

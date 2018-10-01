@@ -21,9 +21,6 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class PlainSpringCustomPostProcessorOnRouteBuilderTest extends Assert {
 
     @Test

@@ -33,8 +33,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * Defines a policy the route will use
- *
- * @version 
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "policy")

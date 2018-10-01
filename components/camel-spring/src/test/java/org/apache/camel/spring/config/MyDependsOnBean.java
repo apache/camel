@@ -16,9 +16,6 @@
  */
 package org.apache.camel.spring.config;
 
-/**
- * @version 
- */
 public class MyDependsOnBean {
 
     private long time;

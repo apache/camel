@@ -25,9 +25,6 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class AsyncEndpointJmsTXMulticastTest extends CamelSpringTestSupport {
     private static String beforeThreadName;
     private static String afterThreadName;

@@ -23,9 +23,6 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class PropertiesComponentTest extends ContextTestSupport {
 
     @Override

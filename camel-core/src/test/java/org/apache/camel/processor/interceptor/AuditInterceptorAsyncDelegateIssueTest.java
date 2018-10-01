@@ -27,9 +27,6 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class AuditInterceptorAsyncDelegateIssueTest extends ContextTestSupport {
 
     private MyIntercepStrategy strategy;

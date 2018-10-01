@@ -26,8 +26,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Some helper methods for new resolvers (like {@link org.apache.camel.spi.ComponentResolver}, {@link org.apache.camel.spi.DataFormatResolver}, etc.).
- *
- * @version
  */
 public final class ResolverHelper {
 

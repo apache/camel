@@ -21,8 +21,6 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 
 /**
  * A simple post processor
- *
- * @version 
  */
 public class MyPostProcessor implements BeanPostProcessor {
     
