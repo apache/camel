@@ -22,9 +22,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FileConsumeSimpleRelativeMoveToRelativeTest extends ContextTestSupport {
 
     private String fileUrl = "file://target/move";

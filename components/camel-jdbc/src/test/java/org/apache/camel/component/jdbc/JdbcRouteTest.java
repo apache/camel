@@ -29,7 +29,6 @@ import org.junit.Test;
  * <p><b>Don't</b> add new test methods; it's likely to break the sub-classes.
  * <p>Sub-classes should override {@link #testJdbcRoutes()} unless they create routes that
  * are semantically equivalent to what this class creates.
- * @version 
  */
 public class JdbcRouteTest extends AbstractJdbcTestSupport {
 

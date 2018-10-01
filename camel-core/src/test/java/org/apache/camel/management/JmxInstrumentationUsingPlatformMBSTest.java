@@ -28,8 +28,6 @@ import org.junit.Test;
 
 /**
  * This test verifies the system property to un-select platform mbean server.
- * 
- * @version 
  */
 public class JmxInstrumentationUsingPlatformMBSTest extends JmxInstrumentationUsingPropertiesTest {
 

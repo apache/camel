@@ -23,9 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ZipDataFormatFileDeleteTest extends ContextTestSupport {
 
     @Override

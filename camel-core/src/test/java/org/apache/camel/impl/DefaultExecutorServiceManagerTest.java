@@ -28,9 +28,6 @@ import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
 import org.junit.Ignore;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     
     @Test

@@ -32,8 +32,6 @@ import org.junit.Test;
 
 /**
  * Restlet producer concurrent test
- * 
- * @version 
  */
 public class RestletProducerConcurrentTest extends RestletTestSupport {
 

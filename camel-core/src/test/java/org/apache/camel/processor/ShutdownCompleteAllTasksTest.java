@@ -28,9 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
 
     private static String url = "file:target/pending?initialDelay=0&delay=10";

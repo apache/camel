@@ -22,8 +22,6 @@ import org.apache.camel.Exchange;
 
 /**
  * Base class for {@link Exchange} events.
- *
- * @version 
  */
 public abstract class AbstractExchangeEvent extends EventObject {
     private static final long serialVersionUID = 1L;

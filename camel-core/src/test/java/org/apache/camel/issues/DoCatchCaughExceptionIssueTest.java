@@ -24,8 +24,6 @@ import org.junit.Test;
 
 /**
  * Based on user forum issue
- *
- * @version 
  */
 public class DoCatchCaughExceptionIssueTest extends ContextTestSupport {
 

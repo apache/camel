@@ -36,8 +36,6 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 
 /**
  * Represents the configuration data for communicating over email
- *
- * @version
  */
 @UriParams
 public class MailConfiguration implements Cloneable {

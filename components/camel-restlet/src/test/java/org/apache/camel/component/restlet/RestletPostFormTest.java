@@ -31,10 +31,6 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.message.BasicNameValuePair;
 import org.junit.Test;
 
-/**
- *
- * @version 
- */
 public class RestletPostFormTest extends RestletTestSupport {
 
     @Override

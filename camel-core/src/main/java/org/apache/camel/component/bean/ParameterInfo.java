@@ -23,8 +23,6 @@ import org.apache.camel.Expression;
 
 /**
  * Parameter information to be used for method invocation.
- *
- * @version 
  */
 public class ParameterInfo {
     private final int index;

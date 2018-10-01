@@ -27,8 +27,6 @@ import org.apache.camel.Exchange;
  * not implement this interface.
  *
  * @see org.apache.camel.processor.aggregate.MemoryAggregationRepository
- *
- * @version
  */
 public interface OptimisticLockingAggregationRepository extends AggregationRepository {
 

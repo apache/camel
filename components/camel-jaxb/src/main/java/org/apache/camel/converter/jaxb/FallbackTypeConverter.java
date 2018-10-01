@@ -55,9 +55,6 @@ import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 
-/**
- * @version
- */
 public class FallbackTypeConverter extends ServiceSupport implements TypeConverter, TypeConverterAware, CamelContextAware {
 
     public static final String PRETTY_PRINT = "CamelJaxbPrettyPrint";

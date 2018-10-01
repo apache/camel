@@ -26,9 +26,6 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class JaxbConcurrentDataFormatTest extends CamelTestSupport {
 
     @Test

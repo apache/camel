@@ -22,8 +22,6 @@ import org.apache.camel.spi.FactoryFinderResolver;
 
 /**
  * Default factory finder.
- *
- * @version 
  */
 public class DefaultFactoryFinderResolver implements FactoryFinderResolver {
 

@@ -25,9 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class StreamSourceCacheTest extends ContextTestSupport {
 
     @Test

@@ -33,8 +33,6 @@ import org.springframework.context.ApplicationContextAware;
 
 /**
  * Configuration of thread pools
- *
- * @version 
  */
 @Metadata(label = "spring,configuration")
 @XmlRootElement(name = "threadPool")

@@ -18,9 +18,6 @@ package org.apache.camel.spring.issues;
 
 import org.apache.camel.Produce;
 
-/**
- * @version 
- */
 public class CoolService {
 
     @Produce(uri = "direct:start")

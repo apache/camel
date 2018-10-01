@@ -21,9 +21,6 @@ import org.apache.camel.Message;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class DefaultMessageHeaderTest extends Assert {
     
     private CamelContext camelContext = new DefaultCamelContext();

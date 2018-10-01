@@ -23,8 +23,6 @@ package org.apache.camel;
  * <a href="http://camel.apache.org/xquery.html">XQuery</a>
  * or <a href="http://camel.apache.org/sql.html">SQL</a> as well
  * as any arbitrary Java expression.
- *
- * @version 
  */
 public interface Expression {
 

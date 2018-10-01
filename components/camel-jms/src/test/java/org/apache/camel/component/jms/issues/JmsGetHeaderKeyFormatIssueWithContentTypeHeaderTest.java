@@ -34,8 +34,6 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  * Unit test to verify that we can route a JMS message and do header lookup by name
  * without mutating it and that it can handle the default keyFormatStrategy with _HYPHEN_
  * in the key name 
- *
- * @version 
  */
 public class JmsGetHeaderKeyFormatIssueWithContentTypeHeaderTest extends CamelTestSupport {
 

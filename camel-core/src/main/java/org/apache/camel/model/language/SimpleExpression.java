@@ -31,8 +31,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * To use Camels built-in Simple language in Camel expressions or predicates.
- *
- * @version 
  */
 @Metadata(firstVersion = "1.1.0", label = "language,core,java", title = "Simple")
 @XmlRootElement(name = "simple")

@@ -21,9 +21,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.quartz.JobDetail;
 
-/**
- * @version 
- */
 public class QuartzJobRouteUnderscoreTest extends BaseQuartzTest {
 
     @Test

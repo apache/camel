@@ -39,8 +39,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * A default implementation of {@link Exchange}
- *
- * @version 
  */
 public final class DefaultExchange implements Exchange {
 

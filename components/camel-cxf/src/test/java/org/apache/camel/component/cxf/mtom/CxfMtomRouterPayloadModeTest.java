@@ -42,8 +42,6 @@ import static org.junit.Assert.assertNotNull;
 
 /**
  * Unit test for exercising MTOM enabled end-to-end router in PAYLOAD mode
- * 
- * @version 
  */
 @ContextConfiguration
 public class CxfMtomRouterPayloadModeTest extends AbstractJUnit4SpringContextTests {

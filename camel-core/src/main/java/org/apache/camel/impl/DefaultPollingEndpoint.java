@@ -22,8 +22,6 @@ import org.apache.camel.Processor;
 
 /**
  * A base class for an endpoint which the default consumer mode is to use a {@link org.apache.camel.PollingConsumer}
- *
- * @version 
  */
 public abstract class DefaultPollingEndpoint extends ScheduledPollEndpoint  {
 

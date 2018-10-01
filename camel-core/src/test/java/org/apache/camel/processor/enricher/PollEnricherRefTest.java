@@ -26,9 +26,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class PollEnricherRefTest extends ContextTestSupport {
 
     private SedaEndpoint cool = new SedaEndpoint();

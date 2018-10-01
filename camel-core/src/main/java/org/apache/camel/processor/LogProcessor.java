@@ -34,8 +34,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A processor which evaluates an {@link Expression} and logs it.
- *
- * @version 
  */
 public class LogProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
 

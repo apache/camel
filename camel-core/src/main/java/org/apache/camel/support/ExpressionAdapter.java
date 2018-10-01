@@ -23,8 +23,6 @@ import org.apache.camel.Exchange;
  * using Java code with a minimum amount of code to write so that the developer only needs
  * to implement one of the {@link #evaluate(org.apache.camel.Exchange, Class)} or
  * {@link #evaluate(org.apache.camel.Exchange)} methods.
- *
- * @version 
  */
 public abstract class ExpressionAdapter extends ExpressionSupport {
 

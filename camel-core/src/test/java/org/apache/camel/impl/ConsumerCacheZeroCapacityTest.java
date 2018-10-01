@@ -26,9 +26,6 @@ import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
-/**
- * @version 
- */
 public class ConsumerCacheZeroCapacityTest extends ContextTestSupport {
 
     @Test

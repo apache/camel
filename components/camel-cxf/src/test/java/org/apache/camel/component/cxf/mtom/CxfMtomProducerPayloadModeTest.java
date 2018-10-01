@@ -56,10 +56,8 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 
 /**
-* Unit test for exercising MTOM feature of a CxfProducer in PAYLOAD mode
-* 
-* @version 
-*/
+ * Unit test for exercising MTOM feature of a CxfProducer in PAYLOAD mode
+ */
 @ContextConfiguration
 public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextTests {
     static int port = CXFTestSupport.getPort1();

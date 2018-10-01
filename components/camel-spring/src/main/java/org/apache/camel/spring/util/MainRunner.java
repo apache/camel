@@ -31,8 +31,6 @@ import static org.apache.camel.util.ObjectHelper.name;
  * A simple helper bean for running main classes from within the spring.xml
  * usually asynchronous in a background thread; which is useful for demos such
  * as running Swing programs in the same JVM.
- *
- * @version 
  */
 public class MainRunner implements InitializingBean, Runnable {
     private static final Logger LOG = LoggerFactory.getLogger(MainRunner.class);

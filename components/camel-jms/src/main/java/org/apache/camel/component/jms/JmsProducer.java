@@ -50,9 +50,6 @@ import static org.apache.camel.component.jms.JmsMessageHelper.isQueuePrefix;
 import static org.apache.camel.component.jms.JmsMessageHelper.isTopicPrefix;
 import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinationName;
 
-/**
- * @version 
- */
 public class JmsProducer extends DefaultAsyncProducer {
 
     private static final String GENERATED_CORRELATION_ID_PREFIX = "Camel-";

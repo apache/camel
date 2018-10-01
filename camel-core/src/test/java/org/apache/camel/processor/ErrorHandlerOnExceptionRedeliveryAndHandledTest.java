@@ -26,9 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ErrorHandlerOnExceptionRedeliveryAndHandledTest extends ContextTestSupport {
 
     private static String counter = "";

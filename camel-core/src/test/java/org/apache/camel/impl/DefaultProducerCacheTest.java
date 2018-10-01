@@ -30,9 +30,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class DefaultProducerCacheTest extends ContextTestSupport {
 
     private final AtomicInteger stopCounter = new AtomicInteger();

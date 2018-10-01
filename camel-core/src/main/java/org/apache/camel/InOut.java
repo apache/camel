@@ -38,8 +38,6 @@ import java.lang.annotation.Target;
  * @see org.apache.camel.Exchange#getPattern()
  * @see InOnly
  * @see Pattern
- *
- * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

@@ -23,8 +23,6 @@ import org.apache.camel.NoFactoryAvailableException;
 
 /**
  * Finder to find factories from the resource classpath, usually <b>META-INF/services/org/apache/camel/</b>.
- *
- * @version 
  */
 public interface FactoryFinder {
 

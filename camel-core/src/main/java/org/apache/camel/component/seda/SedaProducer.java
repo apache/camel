@@ -28,9 +28,6 @@ import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ExchangeHelper;
 
-/**
- * @version 
- */
 public class SedaProducer extends DefaultAsyncProducer {
     
     private final SedaEndpoint endpoint;

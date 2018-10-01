@@ -24,9 +24,6 @@ import org.apache.camel.component.bean.MyFooBean;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class PropertiesComponentRegistryTest extends ContextTestSupport {
 
     private MyFooBean foo;

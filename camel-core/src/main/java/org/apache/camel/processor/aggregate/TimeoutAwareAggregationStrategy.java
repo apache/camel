@@ -20,8 +20,6 @@ import org.apache.camel.Exchange;
 
 /**
  * A specialized {@link org.apache.camel.processor.aggregate.AggregationStrategy} which can handle timeouts as well.
- *
- * @version 
  */
 public interface TimeoutAwareAggregationStrategy extends AggregationStrategy {
 

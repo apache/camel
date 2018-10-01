@@ -18,8 +18,6 @@ package org.apache.camel;
 
 /**
  * Runtime version of the {@link InvalidPayloadException}.
- *
- * @version
  */
 public class InvalidPayloadRuntimeException extends RuntimeExchangeException {
 

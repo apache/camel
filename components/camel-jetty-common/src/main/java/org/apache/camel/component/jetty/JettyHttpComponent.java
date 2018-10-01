@@ -99,8 +99,6 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 /**
  * An HttpComponent which starts an embedded Jetty for to handle consuming from
  * the http endpoints.
- *
- * @version
  */
 public abstract class JettyHttpComponent extends HttpCommonComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware {
     public static final String TMP_DIR = "CamelJettyTempDir";

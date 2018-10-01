@@ -35,8 +35,6 @@ import org.junit.Before;
 /**
  * A useful base class which creates a {@link CamelContext} with some routes
  * along with a {@link ProducerTemplate} for use in the test case
- *
- * @version 
  */
 public abstract class ContextTestSupport extends TestSupport {
     

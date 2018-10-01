@@ -38,9 +38,6 @@ import org.springframework.jms.core.MessageCreator;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version 
- */
 public class JmsRequestReplyManualReplyTest extends CamelTestSupport {
 
     private static volatile String tempName;

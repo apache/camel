@@ -27,9 +27,6 @@ import org.junit.Test;
 
 import static org.apache.camel.util.ObjectHelper.equal;
 
-/**
- * @version 
- */
 public class DataFormatTest extends ContextTestSupport {
 
     @Test

@@ -21,8 +21,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Some helper methods for working with Java packages and versioning.
- *
- * @version 
  */
 public final class PackageHelper {
     private static final Logger LOG = LoggerFactory.getLogger(PackageHelper.class);

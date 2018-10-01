@@ -22,8 +22,6 @@ import org.apache.camel.impl.DefaultConsumer;
 /**
  * An <a href="http://camel.apache.org/event.html">Event Consumer</a>
  * for working with Spring ApplicationEvents
- *
- * @version 
  */
 public class EventConsumer extends DefaultConsumer {
     private EventEndpoint endpoint;

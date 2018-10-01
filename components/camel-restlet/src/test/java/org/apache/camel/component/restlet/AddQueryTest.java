@@ -19,10 +19,6 @@ package org.apache.camel.component.restlet;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * 
- * @version 
- */
 public class AddQueryTest extends Assert {
     
     @Test

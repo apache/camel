@@ -29,9 +29,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class DisruptorRouteTest extends TestSupport {
     @Test
     public void testDisruptorQueue() throws Exception {

@@ -28,7 +28,6 @@ import org.apache.cxf.message.Exchange;
  * {@link org.apache.cxf.service.model.BindingOperationInfo} 
  * in Camel Exchange property before calling into these methods.  
  * 
- * @version 
  * @since 2.0
  */
 public interface CxfBinding {

@@ -22,8 +22,6 @@ import org.apache.camel.Message;
 
 /**
  * A strategy for handling XSLT results
- *
- * @version 
  */
 public interface ResultHandler {
 

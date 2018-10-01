@@ -29,8 +29,6 @@ import org.apache.camel.impl.DefaultExchangeHolder;
  * <p/>
  * This helper ensures that we can also transfer exchange objects over the wire using the
  * <tt>transferExchange=true</tt> option.
- *
- * @version 
  */
 public final class NettyPayloadHelper {
     

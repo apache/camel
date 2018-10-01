@@ -29,9 +29,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.restlet.data.MediaType.APPLICATION_OCTET_STREAM;
 import static org.restlet.data.MediaType.AUDIO_MPEG;
 
-/**
- * @version
- */
 public class RestletProducerBinaryStreamTest extends RestletTestSupport {
 
     @Test

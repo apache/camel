@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.bean;
 
-/**
- * @version 
- */
 public interface MyService {
 
     String method(String in) throws MyApplicationException;

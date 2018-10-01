@@ -34,8 +34,6 @@ import org.apache.camel.Exchange;
  * on the value identity.
  *
  * @see java.util.concurrent.ConcurrentHashMap
- *
- * @version
  */
 public interface OptimisticLockingAwareAggregationStrategy extends AggregationStrategy {
 

@@ -26,9 +26,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.StopWatch;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class ThrottlerMethodCallTest extends ContextTestSupport {
     private static final int INTERVAL = 100;
     protected int messageCount = 10;

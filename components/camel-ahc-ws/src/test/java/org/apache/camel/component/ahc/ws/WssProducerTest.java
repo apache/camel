@@ -28,8 +28,6 @@ import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.Ignore;
 
-/**
- */
 @Ignore("Not yet migrated to work with Jetty 9")
 public class WssProducerTest extends WsProducerTestBase {
     protected static final String PW = "changeit";

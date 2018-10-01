@@ -23,9 +23,6 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class XQueryStripWhitespaceTest extends CamelTestSupport {
 
     @Override

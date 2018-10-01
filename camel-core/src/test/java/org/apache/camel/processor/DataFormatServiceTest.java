@@ -30,8 +30,6 @@ import org.junit.Test;
 
 /**
  * Test that data format receives callback if its a service / CamelContextAware
- *
- * @version 
  */
 public class DataFormatServiceTest extends ContextTestSupport {
 

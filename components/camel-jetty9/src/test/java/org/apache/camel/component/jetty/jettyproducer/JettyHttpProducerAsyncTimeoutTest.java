@@ -21,9 +21,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class JettyHttpProducerAsyncTimeoutTest extends BaseJettyTest {
 
     private String url = "jetty://http://127.0.0.1:" + getPort() + "/timeout?httpClient.timeout=2000";

@@ -22,8 +22,6 @@ import java.util.Date;
  * A very simple stop watch.
  * <p/>
  * This implementation is not thread safe and can only time one task at any given time.
- *
- * @version 
  */
 public final class StopWatch {
 

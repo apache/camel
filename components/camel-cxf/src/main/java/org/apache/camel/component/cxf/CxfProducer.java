@@ -52,8 +52,6 @@ import org.apache.cxf.transport.Conduit;
  * CxfProducer binds a Camel exchange to a CXF exchange, acts as a CXF 
  * client, and sends the request to a CXF to a server.  Any response will 
  * be bound to Camel exchange. 
- *
- * @version 
  */
 public class CxfProducer extends DefaultProducer implements AsyncProcessor {
 

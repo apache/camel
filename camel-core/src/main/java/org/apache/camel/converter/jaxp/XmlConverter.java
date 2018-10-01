@@ -78,8 +78,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A helper class to transform to and from various JAXB types such as {@link Source} and {@link Document}
- *
- * @version
  */
 @Converter
 public class XmlConverter {

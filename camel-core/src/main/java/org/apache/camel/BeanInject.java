@@ -26,8 +26,6 @@ import java.lang.annotation.Target;
  * Used to indicate an injection point of a bean obtained from the {@link org.apache.camel.spi.Registry}, into a POJO.
  *
  * If no name is specified then the lookup is anonymous and based on lookup up by the type.
- *
- * @version
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

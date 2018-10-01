@@ -34,8 +34,6 @@ import org.apache.camel.support.EventNotifierSupport;
 
 /**
  * An {@link org.apache.camel.spi.EventNotifier} which sends alters to Nagios.
- *
- * @version 
  */
 public class NagiosEventNotifier extends EventNotifierSupport {
 

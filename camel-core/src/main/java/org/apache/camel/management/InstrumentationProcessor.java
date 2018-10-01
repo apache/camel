@@ -34,8 +34,6 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * This implementation has been optimised to work in dual mode, either as an advice or as a processor.
  * The former is faster and the latter is required when the error handler has been configured with redelivery enabled.
- *
- * @version 
  */
 public class InstrumentationProcessor extends DelegateAsyncProcessor implements CamelInternalProcessorAdvice<StopWatch>, Ordered {
 

@@ -26,8 +26,6 @@ import org.junit.Test;
 /**
  * Tests mbeans is NOT registered when adding a 2nd route after CamelContext has been started,
  * because the registerNewRoutes is set to false
- *
- * @version 
  */
 public class ManagedRouteAddSecondRouteNotRegisterNewRoutesTest extends ManagementTestSupport {
 

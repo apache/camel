@@ -26,9 +26,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class BindyPatternLocaleTest extends CamelTestSupport {
     private Locale origLocale;
 

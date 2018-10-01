@@ -28,8 +28,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * To refer to an XML file with rest services defined using the rest-dsl
- *
- * @version 
  */
 @Metadata(label = "configuration,rest")
 @XmlRootElement(name = "restContextRef")

@@ -28,7 +28,6 @@ import org.junit.Assert;
 
 /**
  * Hello Test Impl class
- * @version 
  */
 public class HelloImpl implements Hello {
 

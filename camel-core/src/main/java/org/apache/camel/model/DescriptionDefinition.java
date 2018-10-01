@@ -26,8 +26,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * To provide comments about the node.
- *
- * @version 
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "description")

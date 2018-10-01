@@ -27,8 +27,6 @@ import org.apache.http.protocol.HttpProcessor;
 /**
  * Abstract base class for unit testing using a http server.
  * This class contains an empty configuration to be used.
- *
- * @version
  */
 public abstract class HttpServerTestSupport extends CamelTestSupport {
 

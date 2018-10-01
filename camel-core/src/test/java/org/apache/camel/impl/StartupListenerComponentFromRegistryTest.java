@@ -23,9 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectComponent;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class StartupListenerComponentFromRegistryTest extends ContextTestSupport {
 
     private MyComponent my;

@@ -23,8 +23,6 @@ import org.apache.camel.util.ExchangeHelper;
 
 /**
  * Factory for {@link javax.xml.transform.stream.StreamResult} which is streamed to file.
- *
- * @version 
  */
 public class FileResultHandlerFactory implements ResultHandlerFactory {
 

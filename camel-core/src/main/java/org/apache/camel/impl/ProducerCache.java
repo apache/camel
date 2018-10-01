@@ -41,8 +41,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Cache containing created {@link Producer}.
- *
- * @version
  */
 public class ProducerCache extends ServiceSupport {
 
@@ -483,8 +481,7 @@ public class ProducerCache extends ServiceSupport {
      * Using this callback as a template pattern ensures that Camel handles the resource handling and will
      * start and stop the given producer, to avoid resource leaks.
      *
-     * @version
-     */
+         */
     public interface AsyncProducerCallback {
 
         /**

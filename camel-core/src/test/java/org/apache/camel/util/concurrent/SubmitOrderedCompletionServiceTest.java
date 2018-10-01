@@ -26,9 +26,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class SubmitOrderedCompletionServiceTest extends Assert {
 
     private ExecutorService executor;

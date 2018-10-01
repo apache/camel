@@ -35,7 +35,6 @@ import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
  * enable encryption and decryption in the PGP format.
  * <p>
  * See also {@link PGPKeyAccessDataFormat}.
- * 
  */
 public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKeyAccessor, PGPSecretKeyAccessor {
     

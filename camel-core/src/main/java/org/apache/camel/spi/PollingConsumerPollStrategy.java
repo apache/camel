@@ -25,8 +25,6 @@ import org.apache.camel.Endpoint;
  * This pluggable strategy allows to plugin different implementations what to do, most noticeable what to
  * do in case the polling goes wrong. This can be handled in the
  * {@link #rollback(org.apache.camel.Consumer , org.apache.camel.Endpoint , int, Exception) rollback} method.
- *
- * @version 
  */
 public interface PollingConsumerPollStrategy {
 

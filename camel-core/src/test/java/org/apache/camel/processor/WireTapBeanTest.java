@@ -23,8 +23,6 @@ import org.junit.Test;
 
 /**
  * Wire tap unit test
- *
- * @version 
  */
 public class WireTapBeanTest extends ContextTestSupport {
     protected MockEndpoint tap;

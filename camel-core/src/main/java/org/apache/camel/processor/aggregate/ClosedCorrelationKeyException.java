@@ -21,8 +21,6 @@ import org.apache.camel.Exchange;
 
 /**
  * The correlation key has been closed and the Exchange cannot be aggregated.
- *
- * @version 
  */
 public class ClosedCorrelationKeyException extends CamelExchangeException {
     private static final long serialVersionUID = 1L;

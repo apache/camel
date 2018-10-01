@@ -21,9 +21,6 @@ import org.apache.camel.processor.FailoverRoundRobinStickyTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringFailoverRoundRobinStickyTest extends FailoverRoundRobinStickyTest {
 
     protected CamelContext createCamelContext() throws Exception {

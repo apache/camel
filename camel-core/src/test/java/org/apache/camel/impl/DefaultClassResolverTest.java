@@ -22,9 +22,6 @@ import java.net.URL;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class DefaultClassResolverTest extends Assert {
 
     @Test

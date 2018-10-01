@@ -41,8 +41,6 @@ import org.apache.camel.spi.ThreadPoolProfile;
 
 /**
  * Specifies that all steps after this node are processed asynchronously
- *
- * @version 
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "threads")

@@ -26,8 +26,6 @@ import org.junit.Test;
 
 /**
  * Tests bridging between two mqtt topic using Camel
- * 
- * @version
  */
 public class MQTTBrigeTest extends MQTTBaseTest {
     

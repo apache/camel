@@ -34,8 +34,6 @@ import org.springframework.messaging.core.DestinationResolver;
  * Please specify the inputChannel in the endpoint url for this consumer.
  * If the message pattern is inOut, the outputChannel property
  * should be set for the outgoing message.
- *
- * @version 
  */
 public class SpringIntegrationConsumer  extends DefaultConsumer implements MessageHandler {
     private final SpringCamelContext context;

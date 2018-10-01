@@ -49,8 +49,6 @@ import org.restlet.util.Series;
 
 /**
  * A Camel producer that acts as a client to Restlet server.
- *
- * @version 
  */
 public class RestletProducer extends DefaultAsyncProducer {
     private static final class PredefinedSslContextFactory extends SslContextFactory {

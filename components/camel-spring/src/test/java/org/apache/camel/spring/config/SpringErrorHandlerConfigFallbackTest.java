@@ -19,9 +19,6 @@ package org.apache.camel.spring.config;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringErrorHandlerConfigFallbackTest extends SpringErrorHandlerConfigTest {
 
     @Override

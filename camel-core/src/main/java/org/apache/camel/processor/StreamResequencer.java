@@ -63,8 +63,7 @@ import org.slf4j.LoggerFactory;
  * <code>endpoint</code>. Resequencing work and the delivery of messages to
  * the next <code>processor</code> is done within the single polling thread.
  * 
- * @version 
- * 
+ *
  * @see ResequencerEngine
  */
 public class StreamResequencer extends ServiceSupport implements SequenceSender<Exchange>, AsyncProcessor, Navigate<Processor>, Traceable, IdAware {

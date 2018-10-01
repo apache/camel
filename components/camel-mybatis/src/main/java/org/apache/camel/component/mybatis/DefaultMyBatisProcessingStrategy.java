@@ -21,9 +21,6 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.ibatis.session.SqlSession;
 
-/**
- * @version 
- */
 public class DefaultMyBatisProcessingStrategy implements MyBatisProcessingStrategy {
 
     public void commit(MyBatisEndpoint endpoint, Exchange exchange, Object data, String consumeStatements) throws Exception {

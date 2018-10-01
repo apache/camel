@@ -37,8 +37,6 @@ import org.junit.Test;
  * password: password
  * <br/>
  * A SMSC for test is available here: http://www.seleniumsoftware.com/downloads.html
- * 
- * @version 
  */
 @Ignore("Must be manually tested")
 public class SmppComponentIntegrationTest extends CamelTestSupport {

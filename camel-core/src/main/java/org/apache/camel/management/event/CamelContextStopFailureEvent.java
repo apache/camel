@@ -18,9 +18,6 @@ package org.apache.camel.management.event;
 
 import org.apache.camel.CamelContext;
 
-/**
- * @version 
- */
 public class CamelContextStopFailureEvent extends AbstractContextEvent implements FailureEvent {
     private static final long serialVersionUID = -802046840118188292L;
 

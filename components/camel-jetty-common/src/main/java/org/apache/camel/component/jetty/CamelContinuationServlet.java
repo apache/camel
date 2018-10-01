@@ -42,8 +42,6 @@ import org.eclipse.jetty.continuation.ContinuationSupport;
 
 /**
  * Servlet which leverage <a href="http://wiki.eclipse.org/Jetty/Feature/Continuations">Jetty Continuations</a>.
- *
- * @version 
  */
 public class CamelContinuationServlet extends CamelServlet {
 

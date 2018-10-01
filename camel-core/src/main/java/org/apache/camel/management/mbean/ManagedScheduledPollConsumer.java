@@ -23,9 +23,6 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedSchedulePollConsumerMBean;
 import org.apache.camel.impl.ScheduledPollConsumer;
 
-/**
- * @version 
- */
 @ManagedResource(description = "Managed Scheduled Polling Consumer")
 public class ManagedScheduledPollConsumer extends ManagedConsumer implements ManagedSchedulePollConsumerMBean {
     private final ScheduledPollConsumer consumer;

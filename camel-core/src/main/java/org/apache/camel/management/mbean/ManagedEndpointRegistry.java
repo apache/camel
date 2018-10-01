@@ -34,9 +34,6 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
-/**
- * @version 
- */
 @ManagedResource(description = "Managed EndpointRegistry")
 public class ManagedEndpointRegistry extends ManagedService implements ManagedEndpointRegistryMBean {
     private final EndpointRegistry endpointRegistry;

@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.nagios;
 
-/**
- * @version 
- */
 public final class NagiosConstants {
 
     public static final String HOST_NAME = "CamelNagiosHostName";

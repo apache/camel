@@ -30,8 +30,6 @@ import org.junit.Test;
 
 /**
  * To test camel-mina2 component using a TCP client that communicates using TCP socket communication.
- *
- * @version 
  */
 public class Mina2TcpWithInOutUsingPlainSocketTest extends BaseMina2Test {
 

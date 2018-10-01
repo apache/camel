@@ -23,9 +23,6 @@ import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 
-/**
- * @version 
- */
 @ManagedResource(description = "Managed RoundRobin LoadBalancer")
 public class ManagedRoundRobinLoadBalancer extends ManagedProcessor implements ManagedRoundRobinLoadBalancerMBean {
     private final RoundRobinLoadBalancer processor;

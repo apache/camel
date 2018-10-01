@@ -38,9 +38,6 @@ import org.eclipse.jetty.util.security.Constraint;
 import org.junit.Ignore;
 import org.junit.Test;
 
-/**
- * @version 
- */
 @Ignore
 public class HttpAuthMethodPriorityTest extends BaseJettyTest {
 

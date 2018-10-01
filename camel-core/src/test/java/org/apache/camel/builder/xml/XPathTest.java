@@ -46,9 +46,6 @@ import org.junit.Test;
 
 import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
-/**
- * @version 
- */
 public class XPathTest extends ContextTestSupport {
 
     @Override

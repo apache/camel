@@ -54,8 +54,6 @@ import org.slf4j.LoggerFactory;
  * This builder can be used for testing purposes where you want to know when a test is supposed to be done.
  * The idea is that you can build an expression that explains when the test is done. For example when Camel
  * have finished routing 5 messages. You can then in your test await for this condition to occur.
- *
- * @version 
  */
 public class NotifyBuilder {
 

@@ -19,9 +19,6 @@ package org.apache.camel.spring;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class MainVetoTest extends Assert {
 
     @Test

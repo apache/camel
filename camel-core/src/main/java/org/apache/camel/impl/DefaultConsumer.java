@@ -34,8 +34,6 @@ import org.apache.camel.util.UnitOfWorkHelper;
 
 /**
  * A default consumer useful for implementation inheritance.
- *
- * @version 
  */
 public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAware {
 

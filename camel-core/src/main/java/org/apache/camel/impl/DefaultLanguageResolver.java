@@ -29,8 +29,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Default language resolver that looks for language factories in <b>META-INF/services/org/apache/camel/language/</b> and
  * language resolvers in <b>META-INF/services/org/apache/camel/language/resolver/</b>.
- *
- * @version
  */
 public class DefaultLanguageResolver implements LanguageResolver {
     public static final String LANGUAGE_RESOURCE_PATH = "META-INF/services/org/apache/camel/language/";

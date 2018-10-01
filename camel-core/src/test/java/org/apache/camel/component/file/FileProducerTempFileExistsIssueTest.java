@@ -23,9 +23,6 @@ import org.apache.camel.Exchange;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
 
     @Override

@@ -27,8 +27,6 @@ import java.lang.annotation.Target;
  * converting from a type to another type which are then auto-discovered using
  * the <a href="http://camel.apache.org/type-converter.html">Type
  * Conversion Support</a>
- * 
- * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

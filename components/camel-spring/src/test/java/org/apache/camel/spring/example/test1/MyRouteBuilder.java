@@ -18,9 +18,6 @@ package org.apache.camel.spring.example.test1;
 
 import org.apache.camel.builder.RouteBuilder;
 
-/**
- * @version 
- */
 public class MyRouteBuilder extends RouteBuilder {
     public void configure() {
         from("seda:test.a").to("seda:test.b");

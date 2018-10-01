@@ -18,7 +18,6 @@ package org.apache.camel.converter.crypto;
 
 /**
  * Access to the password for a user Id.
- * 
  */
 public interface PGPPassphraseAccessor {
 

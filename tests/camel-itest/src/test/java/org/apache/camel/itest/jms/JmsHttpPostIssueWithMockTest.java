@@ -36,8 +36,6 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 
 /**
  * Based on user forum.
- *
- * @version 
  */
 public class JmsHttpPostIssueWithMockTest extends CamelTestSupport {
 

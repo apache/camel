@@ -31,8 +31,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The <a href="http://camel.apache.org/seda.html">SEDA Component</a> is for asynchronous SEDA exchanges on a {@link BlockingQueue} within a CamelContext
- *
- * @version 
  */
 public class SedaComponent extends DefaultComponent {
     protected final Logger log = LoggerFactory.getLogger(getClass());

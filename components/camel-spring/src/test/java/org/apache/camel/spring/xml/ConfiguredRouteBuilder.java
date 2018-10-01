@@ -19,9 +19,6 @@ package org.apache.camel.spring.xml;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.ObjectHelper;
 
-/**
- * @version 
- */
 public class ConfiguredRouteBuilder extends RouteBuilder {
     private String fromUri;
     private String toUri;

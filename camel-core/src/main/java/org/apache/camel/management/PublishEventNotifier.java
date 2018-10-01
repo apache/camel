@@ -35,8 +35,6 @@ import org.apache.camel.util.URISupport;
  * This notifier is only enabled when {@link CamelContext} is started. This avoids problems when
  * sending notifications during start/shutdown of {@link CamelContext} which causes problems by
  * sending those events to Camel routes by this notifier.
- *
- * @version 
  */
 public class PublishEventNotifier extends EventNotifierSupport implements CamelContextAware {
 

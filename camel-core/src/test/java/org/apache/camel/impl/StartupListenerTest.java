@@ -22,9 +22,6 @@ import org.apache.camel.StartupListener;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class StartupListenerTest extends ContextTestSupport {
 
     private MyStartupListener my = new MyStartupListener();

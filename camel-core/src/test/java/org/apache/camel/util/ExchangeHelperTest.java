@@ -31,9 +31,6 @@ import org.apache.camel.impl.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ExchangeHelperTest extends ContextTestSupport {
 
     protected Exchange exchange;

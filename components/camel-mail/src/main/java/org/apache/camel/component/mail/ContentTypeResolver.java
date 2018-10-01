@@ -24,8 +24,6 @@ package org.apache.camel.component.mail;
  * Note using SUN mail jar have no problem with resolving Content-Type based on file attachments. This resolver
  * is thus only needed to work around mail providers having bugs or when you a new mime type is unknown by the
  * mail provider allowing you to determine it.
- *
- * @version 
  */
 public interface ContentTypeResolver {
 

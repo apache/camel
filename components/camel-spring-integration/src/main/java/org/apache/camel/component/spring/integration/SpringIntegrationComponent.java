@@ -22,8 +22,6 @@ import org.apache.camel.impl.DefaultComponent;
 
 /**
  * Represents the component that manages {@link SpringIntegrationEndpoint}.
- *
- * @version 
  */
 public class SpringIntegrationComponent extends DefaultComponent {
 

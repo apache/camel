@@ -50,10 +50,8 @@ import static org.junit.Assert.assertEquals;
 
 
 /**
-* Unit test for exercising MTOM feature of a CxfConsumer in PAYLOAD mode
-* 
-* @version 
-*/
+ * Unit test for exercising MTOM feature of a CxfConsumer in PAYLOAD mode
+ */
 @ContextConfiguration
 public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextTests {
     static int port = CXFTestSupport.getPort1();

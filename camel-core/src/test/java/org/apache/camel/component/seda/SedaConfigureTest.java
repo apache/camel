@@ -24,9 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.util.SedaConstants;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class SedaConfigureTest extends ContextTestSupport {
     
 

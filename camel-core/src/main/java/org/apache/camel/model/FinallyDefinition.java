@@ -27,8 +27,6 @@ import org.apache.camel.spi.RouteContext;
 
 /**
  * Path traversed when a try, catch, finally block exits
- *
- * @version 
  */
 @Metadata(label = "error")
 @XmlRootElement(name = "doFinally")

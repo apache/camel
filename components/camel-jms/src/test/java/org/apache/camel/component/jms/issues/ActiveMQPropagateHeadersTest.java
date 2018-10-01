@@ -35,9 +35,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version 
- */
 public class ActiveMQPropagateHeadersTest extends CamelTestSupport {
 
     protected Object expectedBody = "<time>" + new Date() + "</time>";

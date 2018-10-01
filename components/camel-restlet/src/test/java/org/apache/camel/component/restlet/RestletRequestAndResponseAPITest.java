@@ -31,8 +31,6 @@ import org.restlet.data.Status;
 /**
  * Testing that end users can use the {@link Response} API from Restlet directly to have fine grained
  * control of the response they want to use.
- *
- * @version 
  */
 public class RestletRequestAndResponseAPITest extends RestletTestSupport {
 

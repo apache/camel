@@ -25,9 +25,6 @@ import org.apache.camel.impl.DefaultCamelContextNameStrategy;
 import org.junit.After;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class TwoManagedCamelContextAutoAssignedNameClashTest extends TestSupport {
 
     private CamelContext camel1;

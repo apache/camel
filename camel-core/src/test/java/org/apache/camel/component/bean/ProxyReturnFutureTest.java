@@ -23,9 +23,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ProxyReturnFutureTest extends ContextTestSupport {
 
     // START SNIPPET: e2

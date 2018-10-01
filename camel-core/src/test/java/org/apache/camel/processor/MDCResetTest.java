@@ -27,8 +27,6 @@ import org.slf4j.MDC;
 /**
  * Tests that MDC works as a stack remembering old values
  * when using a producer template to send in new messages during routing.
- *
- * @version 
  */
 public class MDCResetTest extends ContextTestSupport {
 

@@ -77,8 +77,6 @@ import org.slf4j.LoggerFactory;
  * and install routes either explicitly configured in
  * Blueprint XML or found by searching the classpath for Java classes which extend
  * {@link RouteBuilder} using the nested {@link #setPackages(String[])}.
- *
- * @version 
  */
 @XmlRootElement(name = "camelContext")
 @XmlAccessorType(XmlAccessType.FIELD)

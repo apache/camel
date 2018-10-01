@@ -19,9 +19,6 @@ package org.apache.camel.spring.remoting;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringRemotingWithServiceExportRouteTest extends SpringRemotingRouteTest {
 
     protected AbstractXmlApplicationContext createApplicationContext() {

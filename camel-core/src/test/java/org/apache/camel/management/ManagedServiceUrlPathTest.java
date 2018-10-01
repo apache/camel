@@ -26,9 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.After;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ManagedServiceUrlPathTest extends ManagementTestSupport {
 
     private static final String JMXSERVICEURL = "service:jmx:rmi:///jndi/rmi://localhost:2113/foo/bar";

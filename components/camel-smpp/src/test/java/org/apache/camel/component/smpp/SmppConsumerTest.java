@@ -36,8 +36,6 @@ import static org.mockito.Mockito.when;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppConsumer</code>
- * 
- * @version 
  */
 public class SmppConsumerTest {
     

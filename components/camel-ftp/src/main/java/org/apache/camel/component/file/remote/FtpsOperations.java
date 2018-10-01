@@ -27,8 +27,6 @@ import org.apache.commons.net.ftp.FTPSClient;
 
 /**
  * FTP Secure (FTP over SSL/TLS) operations
- *
- * @version 
  */
 public class FtpsOperations extends FtpOperations {
 

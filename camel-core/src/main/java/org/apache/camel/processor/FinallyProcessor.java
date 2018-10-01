@@ -27,8 +27,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Processor to handle do finally supporting asynchronous routing engine
- *
- * @version
  */
 public class FinallyProcessor extends DelegateAsyncProcessor implements Traceable, IdAware {
 

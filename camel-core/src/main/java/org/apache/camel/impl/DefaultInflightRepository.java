@@ -37,8 +37,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Default {@link org.apache.camel.spi.InflightRepository}.
- *
- * @version 
  */
 public class DefaultInflightRepository extends ServiceSupport implements InflightRepository {
 

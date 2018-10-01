@@ -29,8 +29,6 @@ import static org.apache.camel.component.http4.HttpMethods.POST;
 
 /**
  * Unit test to verify the algorithm for selecting either GET or POST.
- *
- * @version 
  */
 public class HttpProducerSelectMethodTest extends BaseHttpTest {
 

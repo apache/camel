@@ -52,8 +52,6 @@ import org.slf4j.LoggerFactory;
  * reused by both the <a href="http://camel.apache.org/spring.html">Spring</a>,
  * <a href="http://camel.apache.org/guice.html">Guice</a> and
  * <a href="http://camel.apache.org/blueprint.html">Blueprint</a> support.
- *
- * @version
  */
 public class CamelPostProcessorHelper implements CamelContextAware {
 

@@ -20,9 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.Producer;
 
-/**
- * @version 
- */
 public class MyProduceBean {
 
     @Produce(uri = "direct:start")

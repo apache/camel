@@ -27,9 +27,6 @@ import org.apache.camel.converter.IOConverter;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FtpConsumerLocalWorkDirectoryDirectTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {

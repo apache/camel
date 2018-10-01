@@ -18,9 +18,6 @@ package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.builder.RouteBuilder;
 
-/**
- * @version 
- */
 public class AdviceWithTwoRoutesContextScopedOnExceptionTest extends AdviceWithTwoRoutesOnExceptionTest {
 
     @Override

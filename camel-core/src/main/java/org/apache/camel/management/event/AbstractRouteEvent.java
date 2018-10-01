@@ -23,8 +23,6 @@ import org.apache.camel.Route;
 
 /**
  * Base class for {@link CamelContext} events.
- *
- * @version 
  */
 public abstract class AbstractRouteEvent extends EventObject {
     private static final long serialVersionUID = 1L;

@@ -18,9 +18,6 @@ package org.apache.camel.component.properties;
 
 import org.apache.camel.CamelContext;
 
-/**
- * @version 
- */
 public class PropertiesComponentLoadPropertiesFromFileTest extends PropertiesComponentTest {
 
     @Override

@@ -28,8 +28,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Time utils.
- *
- * @version
  */
 public final class TimeUtils {
 

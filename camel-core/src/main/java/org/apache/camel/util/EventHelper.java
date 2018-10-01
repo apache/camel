@@ -33,8 +33,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Helper for easily sending event notifications in a single line of code
- *
- * @version 
  */
 public final class EventHelper {
 

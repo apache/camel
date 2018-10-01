@@ -41,9 +41,6 @@ import org.springframework.jms.listener.SimpleMessageListenerContainer;
 import org.springframework.jms.support.converter.SimpleMessageConverter;
 import org.springframework.util.ErrorHandler;
 
-/**
- * @version 
- */
 public class JmsEndpointConfigurationTest extends CamelTestSupport {
 
     private final Processor failProcessor = new Processor() {

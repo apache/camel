@@ -21,8 +21,6 @@ import org.apache.camel.TypeConverterLoaderException;
 /**
  * A pluggable strategy to load type converters into a
  * {@link TypeConverterRegistry} from some kind of mechanism.
- *
- * @version 
  */
 public interface TypeConverterLoader {
 

@@ -35,9 +35,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-/**
- * @version 
- */
 public class DebugExceptionEventBreakpointTest extends ContextTestSupport {
 
     private List<String> logs = new ArrayList<>();

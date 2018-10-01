@@ -18,9 +18,6 @@ package org.apache.camel.spring.issues;
 
 import org.apache.camel.builder.RouteBuilder;
 
-/**
- * @version 
- */
 public class MyRouteBuilder extends RouteBuilder {
 
     public void configure() throws Exception {

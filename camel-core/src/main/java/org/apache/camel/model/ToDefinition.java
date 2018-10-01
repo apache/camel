@@ -27,8 +27,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * Sends the message to a static endpoint
- *
- * @version 
  */
 @Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "to")

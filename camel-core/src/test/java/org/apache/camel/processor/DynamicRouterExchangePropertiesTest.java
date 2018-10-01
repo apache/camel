@@ -25,9 +25,6 @@ import org.apache.camel.ExchangeProperties;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class DynamicRouterExchangePropertiesTest extends ContextTestSupport {
 
     private static List<String> bodies = new ArrayList<>();

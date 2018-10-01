@@ -23,9 +23,6 @@ import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 
-/**
- * @version 
- */
 @Ignore("This test is flaky on CI server")
 public class XmppRouteChatTest extends CamelTestSupport {
 

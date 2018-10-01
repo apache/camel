@@ -23,8 +23,6 @@ import org.junit.Test;
 
 /**
  * CAMEL-4795, there should be no exceptions in the logs (before the fix there was a NPE)
- *
- * @version
  */
 public class JettyAsyncThrottleTest extends BaseJettyTest {
 

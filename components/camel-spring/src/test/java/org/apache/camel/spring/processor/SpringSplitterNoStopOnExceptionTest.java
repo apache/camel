@@ -21,9 +21,6 @@ import org.apache.camel.processor.SplitterNoStopOnExceptionTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringSplitterNoStopOnExceptionTest extends SplitterNoStopOnExceptionTest {
 
     protected CamelContext createCamelContext() throws Exception {

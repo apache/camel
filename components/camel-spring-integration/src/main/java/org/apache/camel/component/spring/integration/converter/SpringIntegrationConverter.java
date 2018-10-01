@@ -27,8 +27,6 @@ import org.springframework.messaging.support.GenericMessage;
 /**
  * The <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
  * for turning the Spring Integration types into Camel native type.
- *
- * @version 
  */
 @Converter
 public final class SpringIntegrationConverter {

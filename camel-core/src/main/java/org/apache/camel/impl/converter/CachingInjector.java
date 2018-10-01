@@ -20,8 +20,6 @@ import org.apache.camel.spi.TypeConverterRegistry;
 
 /**
  * A caching proxy
- *
- * @version 
  */
 public class CachingInjector<T> {
     private final TypeConverterRegistry repository;

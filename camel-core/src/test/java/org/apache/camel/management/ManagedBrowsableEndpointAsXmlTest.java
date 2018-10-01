@@ -27,9 +27,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
 
     @Test

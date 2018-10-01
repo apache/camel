@@ -23,8 +23,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * A useful base class for {@link Predicate} and {@link Expression} implementations
- *
- * @version 
  */
 public abstract class ExpressionSupport implements Expression, Predicate {
 

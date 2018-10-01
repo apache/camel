@@ -25,8 +25,6 @@ import static org.apache.camel.util.ExchangeHelper.hasExceptionBeenHandledByErro
 /**
  * Helper for processing {@link org.apache.camel.Exchange} in a
  * <a href="http://camel.apache.org/pipes-and-filters.html">pipeline</a>.
- *
- * @version 
  */
 public final class PipelineHelper {
 

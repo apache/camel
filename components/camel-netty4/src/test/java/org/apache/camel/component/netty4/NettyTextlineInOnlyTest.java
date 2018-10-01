@@ -19,9 +19,6 @@ package org.apache.camel.component.netty4;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class NettyTextlineInOnlyTest extends BaseNettyTest {
 
     @Test

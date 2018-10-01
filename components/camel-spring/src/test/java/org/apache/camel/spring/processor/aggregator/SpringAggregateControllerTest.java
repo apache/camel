@@ -23,9 +23,6 @@ import org.junit.Ignore;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 @Ignore
 public class SpringAggregateControllerTest extends AggregateControllerTest {
 

@@ -20,8 +20,6 @@ import org.apache.camel.CamelContext;
 
 /**
  * Represents a resolver of data formats.
- *
- * @version 
  */
 public interface DataFormatResolver {
 

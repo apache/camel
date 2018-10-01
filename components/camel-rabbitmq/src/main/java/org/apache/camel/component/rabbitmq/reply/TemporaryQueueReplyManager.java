@@ -30,8 +30,6 @@ import org.apache.camel.Exchange;
 
 /**
  * A {@link ReplyManager} when using temporary queues.
- *
- * @version 
  */
 public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 

@@ -27,8 +27,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Filters out all entries which occur before the last time of the entry we saw (assuming
  * entries arrive sorted in order).
- *
- * @version 
  */
 public class UpdatedDateFilter implements EntryFilter {
 

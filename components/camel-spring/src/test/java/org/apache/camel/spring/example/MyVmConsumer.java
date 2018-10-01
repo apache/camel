@@ -26,8 +26,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An example POJO which is injected with a CamelTemplate
- *
- * @version 
  */
 public class MyVmConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(MyVmConsumer.class);

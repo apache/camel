@@ -26,8 +26,6 @@ import org.apache.camel.Route;
  * at runtime where it suspends and resume the {@link org.apache.camel.Route#getConsumer()}.
  * <p/>
  * See also {@link Route} class javadoc about controlling the lifecycle of a {@link Route}
- *
- * @version
  * @see Route
  */
 public interface RoutePolicy {

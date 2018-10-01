@@ -29,9 +29,6 @@ import static org.apache.camel.impl.MDCUnitOfWork.MDC_CAMEL_CONTEXT_ID;
 import static org.apache.camel.impl.MDCUnitOfWork.MDC_EXCHANGE_ID;
 import static org.apache.camel.impl.MDCUnitOfWork.MDC_ROUTE_ID;
 
-/**
- * @version 
- */
 public class AsyncMDCTest extends ContextTestSupport {
 
     @Test

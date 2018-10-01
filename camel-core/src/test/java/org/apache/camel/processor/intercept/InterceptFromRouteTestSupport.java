@@ -19,9 +19,6 @@ package org.apache.camel.processor.intercept;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 
-/**
- * @version 
- */
 public abstract class InterceptFromRouteTestSupport extends ContextTestSupport {
     protected MockEndpoint a;
     protected MockEndpoint b;

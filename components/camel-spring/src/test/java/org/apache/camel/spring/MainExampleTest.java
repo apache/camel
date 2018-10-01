@@ -21,9 +21,6 @@ import org.apache.camel.spring.example.MyProcessor;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class MainExampleTest extends Assert {
 
     @Test

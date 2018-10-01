@@ -30,8 +30,6 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 
 /**
  * Unit test for using JMS as DLQ
- *
- * @version 
  */
 public class JmsDeadLetterQueueTest extends CamelTestSupport {
 

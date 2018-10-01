@@ -22,8 +22,6 @@ import org.junit.Test;
 
 /**
  * Test how to add routes at runtime using a RouteBuilder
- *
- * @version 
  */
 public class AddRoutesAtRuntimeTest extends ContextTestSupport {
 

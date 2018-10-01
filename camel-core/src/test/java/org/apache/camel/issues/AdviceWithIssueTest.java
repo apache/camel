@@ -24,9 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class AdviceWithIssueTest extends ContextTestSupport {
 
     @Test

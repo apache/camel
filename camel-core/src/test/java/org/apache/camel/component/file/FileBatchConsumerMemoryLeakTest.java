@@ -25,8 +25,6 @@ import org.junit.Test;
 
 /**
  * Unit test to test CAMEL-1652
- *
- * @version 
  */
 @Ignore("Manual test")
 public class FileBatchConsumerMemoryLeakTest extends ContextTestSupport {

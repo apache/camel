@@ -32,9 +32,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version
- */
 public class JmsPerformanceTest extends CamelTestSupport {
     private List<Integer> receivedHeaders = new ArrayList<>(getMessageCount());
     private List<Object> receivedMessages = new ArrayList<>(getMessageCount());

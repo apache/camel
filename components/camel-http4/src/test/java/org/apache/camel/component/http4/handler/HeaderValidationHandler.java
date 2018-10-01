@@ -27,10 +27,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.protocol.HttpContext;
 
-/**
- *
- * @version 
- */
 public class HeaderValidationHandler extends BasicValidationHandler {
 
     protected Map<String, String> expectedHeaders;

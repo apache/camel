@@ -22,9 +22,6 @@ import org.apache.camel.api.management.mbean.ManagedMarshalMBean;
 import org.apache.camel.model.MarshalDefinition;
 import org.apache.camel.processor.MarshalProcessor;
 
-/**
- * @version 
- */
 @ManagedResource(description = "Managed Marshal")
 public class ManagedMarshal extends ManagedProcessor implements ManagedMarshalMBean {
     private final MarshalProcessor processor;

@@ -18,8 +18,6 @@ package org.apache.camel.component.weather.http;
 
 /**
  * Authentication policy
- *
- * @version
  */
 public enum AuthenticationMethod {
 

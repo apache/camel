@@ -22,9 +22,6 @@ import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class LifecycleStrategyFailOnStartupTest extends TestSupport {
 
     private MyLifecycleStrategy dummy1 = new MyLifecycleStrategy();

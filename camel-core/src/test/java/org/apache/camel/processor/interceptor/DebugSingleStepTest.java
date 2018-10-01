@@ -31,9 +31,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-/**
- * @version 
- */
 public class DebugSingleStepTest extends ContextTestSupport {
 
     private List<String> logs = new ArrayList<>();

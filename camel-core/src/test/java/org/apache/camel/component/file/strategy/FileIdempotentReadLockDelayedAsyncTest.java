@@ -28,9 +28,6 @@ import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class FileIdempotentReadLockDelayedAsyncTest extends ContextTestSupport {
 
     MemoryIdempotentRepository myRepo = new MemoryIdempotentRepository();

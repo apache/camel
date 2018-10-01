@@ -33,8 +33,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * Base class for builders of error handling.
- *
- * @version 
  */
 public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder {
     private Map<RouteContext, List<OnExceptionDefinition>> onExceptions = new HashMap<>();

@@ -22,9 +22,6 @@ import org.apache.camel.Consume;
 import org.apache.camel.ContextTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class CamelPostProcessorHelperConsumePredicateTest extends ContextTestSupport {
 
     @Test

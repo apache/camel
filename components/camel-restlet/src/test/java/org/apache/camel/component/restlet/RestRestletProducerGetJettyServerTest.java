@@ -23,9 +23,6 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RestRestletProducerGetJettyServerTest extends CamelTestSupport {
     
     @Test

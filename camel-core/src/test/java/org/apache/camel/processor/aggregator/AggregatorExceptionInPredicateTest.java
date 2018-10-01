@@ -27,8 +27,6 @@ import org.junit.Test;
 
 /**
  * Based on CAMEL-1546
- *
- * @version 
  */
 public class AggregatorExceptionInPredicateTest extends ContextTestSupport {
 

@@ -30,8 +30,6 @@ import org.apache.camel.util.ServiceHelper;
  * <p/>
  * If Camel cannot successfully consumer from a given consumer, then after X consecutive failed attempts the consumer
  * will be suspended/stopped. This prevents the log to get flooded with failed attempts, for example during nightly runs.
- *
- * @version 
  */
 public class LimitedPollingConsumerPollStrategy extends DefaultPollingConsumerPollStrategy implements Service {
 

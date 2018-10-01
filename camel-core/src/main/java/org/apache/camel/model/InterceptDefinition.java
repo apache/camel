@@ -36,8 +36,6 @@ import org.apache.camel.spi.RouteContext;
 
 /**
  * Intercepts a message at each step in the route
- *
- * @version 
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "intercept")

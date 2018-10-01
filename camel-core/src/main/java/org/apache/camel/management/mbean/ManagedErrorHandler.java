@@ -26,9 +26,6 @@ import org.apache.camel.processor.RedeliveryErrorHandler;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RouteContext;
 
-/**
- * @version 
- */
 @ManagedResource(description = "Managed ErrorHandler")
 public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
     private final RouteContext routeContext;

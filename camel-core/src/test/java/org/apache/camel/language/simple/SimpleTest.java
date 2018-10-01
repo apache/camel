@@ -42,9 +42,6 @@ import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.spi.Language;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class SimpleTest extends LanguageTestSupport {
 
     private static final String JAVA8_INDEX_OUT_OF_BOUNDS_ERROR_MSG = "Index: 2, Size: 2";

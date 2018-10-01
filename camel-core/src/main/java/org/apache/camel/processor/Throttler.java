@@ -58,8 +58,6 @@ import org.slf4j.LoggerFactory;
  * block if necessary. The end result is a rolling window of time. Where from the
  * callers point of view in the last timePeriodMillis no more than
  * maxRequestsPerPeriod have been allowed to be acquired.
- *
- * @version
  */
 public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAware {
 

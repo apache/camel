@@ -88,8 +88,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The Default CXF binding implementation.
- * 
- * @version 
  */
 public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCxfBinding.class);

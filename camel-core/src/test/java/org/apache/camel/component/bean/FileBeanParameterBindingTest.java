@@ -24,9 +24,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FileBeanParameterBindingTest extends ContextTestSupport {
 
     @Override

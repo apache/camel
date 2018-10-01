@@ -25,9 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RmiConcurrencyTest extends RmiRouteTestSupport {
 
     protected int getStartPort() {

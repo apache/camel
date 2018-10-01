@@ -23,9 +23,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class DisruptorInOutChainedTimeoutTest extends CamelTestSupport {
     @Test
     public void testDisruptorInOutChainedTimeout() throws Exception {

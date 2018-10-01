@@ -21,9 +21,6 @@ import java.util.Map;
 import org.apache.camel.Body;
 import org.apache.camel.Headers;
 
-/**
- * @version 
- */
 public interface MyListener {
 
     String greet(@Headers Map<String, Object> headers, @Body String name);

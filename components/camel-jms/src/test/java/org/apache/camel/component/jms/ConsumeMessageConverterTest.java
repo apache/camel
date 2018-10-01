@@ -34,9 +34,6 @@ import org.springframework.jms.support.converter.MessageConverter;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version 
- */
 public class ConsumeMessageConverterTest extends CamelTestSupport {
 
     @Override

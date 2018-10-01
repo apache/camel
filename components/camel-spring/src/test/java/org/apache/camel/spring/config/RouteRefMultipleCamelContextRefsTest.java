@@ -24,9 +24,6 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class RouteRefMultipleCamelContextRefsTest extends Assert {
 
     protected AbstractXmlApplicationContext createApplicationContext() {

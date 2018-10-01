@@ -32,8 +32,6 @@ import org.apache.camel.spi.DataTypeAware;
  *
  * Unless a specific provider wishes to do something particularly clever with
  * headers you probably want to just derive from {@link DefaultMessage}
- *
- * @version
  */
 public abstract class MessageSupport implements Message, CamelContextAware, DataTypeAware {
     private CamelContext camelContext;

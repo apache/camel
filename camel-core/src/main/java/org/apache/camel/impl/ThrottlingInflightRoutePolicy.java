@@ -46,8 +46,6 @@ import org.slf4j.LoggerFactory;
  * method. If the route scope is selected then <b>no</b> {@link org.apache.camel.spi.EventNotifier} is in use, as there is already
  * a {@link org.apache.camel.spi.Synchronization} callback on the current {@link Exchange} which triggers the
  * {@link #throttle(org.apache.camel.Route, org.apache.camel.Exchange)} when the current {@link Exchange} is done.
- *
- * @version 
  */
 public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements CamelContextAware {
 

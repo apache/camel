@@ -28,9 +28,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class BindyCarQuoteAndCommaDelimiterTest extends CamelTestSupport {
 
     private static final String HEADER = "\"stockid\";\"make\";\"model\";\"deriv\";\"series\";\"registration\";\"chassis\";\"engine\";\"year\""

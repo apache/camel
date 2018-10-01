@@ -23,9 +23,6 @@ import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
 
-/**
- * @version 
- */
 @ManagedResource(description = "Managed Random LoadBalancer")
 public class ManagedRandomLoadBalancer extends ManagedProcessor implements ManagedRandomLoadBalancerMBean {
     private final RandomLoadBalancer processor;

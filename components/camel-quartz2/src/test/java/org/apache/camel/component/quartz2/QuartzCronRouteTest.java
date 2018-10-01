@@ -27,7 +27,6 @@ import org.quartz.Trigger;
 
 /**
  * This test the  CronTrigger as a timer endpoint in a route.
- * @version 
  */
 public class QuartzCronRouteTest extends BaseQuartzTest {
 

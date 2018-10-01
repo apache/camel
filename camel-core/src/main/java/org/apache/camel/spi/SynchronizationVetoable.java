@@ -27,8 +27,6 @@ package org.apache.camel.spi;
  * <p/>
  * However there may be situations where you do not want to handover certain {@link org.apache.camel.spi.Synchronization},
  * such as when doing asynchronously request/reply over SEDA or VM endpoints.
- *
- * @version 
  */
 public interface SynchronizationVetoable extends Synchronization {
 

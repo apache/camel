@@ -30,8 +30,6 @@ import org.apache.camel.util.StringHelper;
  * Mail utility class.
  * <p>
  * Parts of the code copied from Apache ServiceMix.
- *
- * @version 
  */
 public final class MailUtils {
 

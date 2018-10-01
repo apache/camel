@@ -30,9 +30,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-/**
- * @version 
- */
 @Ignore("Manual test")
 public class SplitterParallelBigFileTest extends ContextTestSupport {
 

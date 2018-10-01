@@ -25,9 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FtpConsumerAsyncStressTest extends FtpServerTestSupport {
 
     private int files = 100;

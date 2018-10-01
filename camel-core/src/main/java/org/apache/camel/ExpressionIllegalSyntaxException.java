@@ -18,8 +18,6 @@ package org.apache.camel;
 
 /**
  * An exception thrown if the expression contains illegal syntax.
- *
- * @version 
  */
 public class ExpressionIllegalSyntaxException extends RuntimeCamelException {
     private static final long serialVersionUID = 6545652894842621836L;

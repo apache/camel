@@ -22,8 +22,6 @@ import org.apache.camel.ExecutorServiceAware;
 
 /**
  * Enables definitions to support concurrency using {@link java.util.concurrent.ExecutorService}
- *
- * @version 
  */
 public interface ExecutorServiceAwareDefinition<Type extends ProcessorDefinition<?>> extends ExecutorServiceAware {
 

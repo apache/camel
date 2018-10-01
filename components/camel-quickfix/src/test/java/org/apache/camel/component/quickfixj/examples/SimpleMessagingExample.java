@@ -38,7 +38,6 @@ import quickfix.fix42.Email;
 /**
  * This example demonstrates several features of the QuickFIX/J component. It uses
  * QFJ session events to synchronize application behavior (e.g., Session logon).
- * 
  */
 public class SimpleMessagingExample {
     private static final Logger LOG = LoggerFactory.getLogger(SimpleMessagingExample.class);

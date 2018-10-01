@@ -30,9 +30,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.processor.DelegateProcessor;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class BuilderWithScopesTest extends TestSupport {
 
     final List<String> order = new ArrayList<>();

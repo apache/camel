@@ -20,9 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.TypeConverter;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FallbackPromoteTest extends ContextTestSupport {
 
     @Override

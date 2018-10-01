@@ -32,8 +32,6 @@ import java.lang.annotation.Target;
  * mechanism.
  *
  * @see InOnly
- *
- * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

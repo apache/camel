@@ -25,9 +25,6 @@ import org.apache.camel.spring.SpringRunWithTestSupport;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 
-/**
- * @version 
- */
 @ContextConfiguration
 public class ProducerTemplateMixedAutoRegisterTwoCamelContextsTest extends SpringRunWithTestSupport {
 

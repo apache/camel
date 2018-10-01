@@ -32,8 +32,6 @@ import org.springframework.context.ApplicationContextAware;
 
 /**
  * Configuration of redelivery policy.
- *
- * @version 
  */
 @Metadata(label = "spring,configuration")
 @XmlRootElement(name = "redeliveryPolicyProfile")

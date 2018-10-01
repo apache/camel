@@ -22,10 +22,6 @@ import org.apache.camel.util.IOHelper;
 import org.junit.After;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- *
- * @version 
- */
 public class JmsHeaderFilteringWithSpringTest extends JmsHeaderFilteringTest {
     
     private ClassPathXmlApplicationContext applicationContext;

@@ -30,8 +30,6 @@ import org.junit.Test;
  * Unit test to verify that using DLC with redelivery and delays with blocking threads.
  * As threads comes cheap these days in the modern JVM its no biggie. And for transactions
  * you should use the same thread anyway.
- *
- * @version 
  */
 public class DeadLetterChannelRedeliverWithDelayBlockingTest extends ContextTestSupport {
 

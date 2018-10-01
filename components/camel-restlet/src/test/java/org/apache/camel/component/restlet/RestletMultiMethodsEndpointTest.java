@@ -32,8 +32,6 @@ import org.restlet.data.Status;
 
 /**
  * This unit test verifies a single route can service multiple methods.
- * 
- * @version 
  */
 public class RestletMultiMethodsEndpointTest extends RestletTestSupport {
 

@@ -35,8 +35,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Utility class to propagate headers to and from CXF message.
- *
- * @version 
  */
 public final class CxfHeaderHelper {
     private static final Logger LOG = LoggerFactory.getLogger(CxfHeaderHelper.class);

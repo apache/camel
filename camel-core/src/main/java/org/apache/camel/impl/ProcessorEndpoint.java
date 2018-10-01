@@ -34,8 +34,6 @@ import org.apache.camel.Producer;
  * If your producers/consumers need more control of its lifecycle it is advised instead to extend
  * {@link org.apache.camel.impl.DefaultEndpoint}, {@link org.apache.camel.impl.DefaultProducer}
  * and {@link org.apache.camel.impl.DefaultConsumer}.
- *
- * @version 
  */
 public class ProcessorEndpoint extends DefaultPollingEndpoint {
     private Processor processor;

@@ -21,7 +21,6 @@ import com.google.zxing.BarcodeFormat;
 
 /**
  * All configuration parameters for the code component.
- * 
  */
 public class BarcodeParameters {
     

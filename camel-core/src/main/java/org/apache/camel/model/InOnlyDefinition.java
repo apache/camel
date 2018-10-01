@@ -26,8 +26,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * Marks the exchange pattern for the route to one way
- *
- * @version 
  */
 @Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "inOnly")

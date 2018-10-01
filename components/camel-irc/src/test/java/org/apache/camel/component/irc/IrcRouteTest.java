@@ -26,9 +26,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class IrcRouteTest extends CamelTestSupport {
     protected MockEndpoint resultEndpoint;
     protected String body1 = "Message One";

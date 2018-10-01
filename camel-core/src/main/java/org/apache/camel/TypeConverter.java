@@ -22,8 +22,6 @@ package org.apache.camel;
  * href="http://camel.apache.org/type-converter.html">to different
  * types</a> such as to and from String, InputStream/OutputStream,
  * Reader/Writer, Document, byte[], ByteBuffer etc
- * 
- * @version 
  */
 public interface TypeConverter {
 

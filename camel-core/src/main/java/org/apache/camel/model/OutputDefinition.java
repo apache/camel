@@ -28,8 +28,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * A useful base class for output types
- *
- * @version 
  */
 @Metadata(label = "configuration")
 @XmlType(name = "output")

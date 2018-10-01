@@ -30,8 +30,6 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 
 /**
  * A unit test for testing reading SOAP body in PAYLOAD mode.
- * 
- * @version 
  */
 public class CxfPayLoadMessageRouterTest extends CxfSimpleRouterTest {
 

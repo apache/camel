@@ -49,8 +49,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A builder class for creating {@link Processor}, {@link Expression} and
  * {@link Predicate} objects using the JSR 223 scripting engine.
- *
- * @version
  */
 public class ScriptBuilder implements Expression, Predicate, Processor {
 

@@ -20,8 +20,6 @@ import org.apache.camel.component.jetty.JettyHandle404Test;
 
 /**
  * Based on end user on forum how to get the 404 error code in his enrich aggregator
- *
- * @version
  */
 public class JettyProducerHandle404Test extends JettyHandle404Test {
 

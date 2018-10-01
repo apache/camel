@@ -25,9 +25,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class PropertiesComponentRestartTest extends ContextTestSupport {
 
     private int resolvedCount;

@@ -25,9 +25,6 @@ import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class BeanLanguageOGNLWithDotInParameterPropertyPlaceholderTest extends ContextTestSupport {
 
     private Properties myProp;

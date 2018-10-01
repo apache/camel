@@ -30,8 +30,6 @@ import static org.awaitility.Awaitility.await;
 
 /**
  * Wire tap unit test
- *
- * @version 
  */
 public class WireTapBeanAsProcessorTest extends ContextTestSupport {
     private MyBean myBean = new MyBean();

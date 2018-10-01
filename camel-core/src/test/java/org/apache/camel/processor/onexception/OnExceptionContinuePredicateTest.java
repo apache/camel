@@ -24,9 +24,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class OnExceptionContinuePredicateTest extends OnExceptionContinueTest {
 
     private final AtomicInteger predicateInvoked = new AtomicInteger();

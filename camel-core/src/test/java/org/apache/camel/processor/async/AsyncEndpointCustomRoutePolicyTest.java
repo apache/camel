@@ -30,9 +30,6 @@ import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
-/**
- * @version 
- */
 public class AsyncEndpointCustomRoutePolicyTest extends ContextTestSupport {
 
     private static String beforeThreadName;

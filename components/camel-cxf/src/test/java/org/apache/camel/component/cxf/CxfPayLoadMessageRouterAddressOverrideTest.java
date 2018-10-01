@@ -30,8 +30,6 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 
 /**
  * A unit test for testing reading SOAP body with address override in PAYLOAD mode.
- * 
- * @version 
  */
 public class CxfPayLoadMessageRouterAddressOverrideTest extends CxfPayLoadMessageRouterTest {
 

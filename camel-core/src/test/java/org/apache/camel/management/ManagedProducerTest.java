@@ -26,9 +26,6 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class ManagedProducerTest extends ManagementTestSupport {
 
     @Test

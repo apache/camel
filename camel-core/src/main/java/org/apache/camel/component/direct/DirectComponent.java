@@ -26,8 +26,6 @@ import org.apache.camel.util.ServiceHelper;
 
 /**
  * The <a href="http://camel.apache.org/direct.html">Direct Component</a> manages {@link DirectEndpoint} and holds the list of named direct endpoints.
- *
- * @version
  */
 public class DirectComponent extends DefaultComponent {
 

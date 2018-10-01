@@ -24,8 +24,6 @@ import org.junit.Test;
 
 /**
  * Unit test to verify that aggregate by timeout only also works.
- * 
- * @version 
  */
 public class AggregateTimeoutOnlyTest extends ContextTestSupport {
 

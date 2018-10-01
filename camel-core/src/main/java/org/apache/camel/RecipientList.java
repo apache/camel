@@ -36,8 +36,6 @@ import java.lang.annotation.Target;
  * to an {@link Endpoint} or {@link String}.
  *
  * Then for each endpoint or URI the message is forwarded a separate copy.
- *
- * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

@@ -29,8 +29,6 @@ import org.apache.camel.Processor;
  * Implements a sticky load balancer using an {@link Expression} to calculate
  * a correlation key to perform the sticky load balancing; rather like jsessionid in the web
  * or JMSXGroupID in JMS.
- *
- * @version 
  */
 public class StickyLoadBalancer extends QueueLoadBalancer {
     private Expression correlationExpression;

@@ -44,8 +44,6 @@ import org.apache.camel.util.CamelContextHelper;
 
 /**
  * Routes messages to a number of dynamically specified recipients (dynamic to)
- *
- * @version 
  */
 @Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "recipientList")

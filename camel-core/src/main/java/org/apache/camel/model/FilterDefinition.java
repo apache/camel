@@ -30,8 +30,6 @@ import org.apache.camel.spi.RouteContext;
 
 /**
  * Filter out messages based using a predicate
- *
- * @version 
  */
 @Metadata(label = "eip,routing") @AsPredicate
 @XmlRootElement(name = "filter")

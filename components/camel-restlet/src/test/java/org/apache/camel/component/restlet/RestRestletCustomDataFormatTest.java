@@ -19,9 +19,6 @@ package org.apache.camel.component.restlet;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
 
-/**
- * @version 
- */
 public class RestRestletCustomDataFormatTest extends RestRestletPojoInOutCustomErrorResponseTest {
 
     @Override

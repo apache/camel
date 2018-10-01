@@ -25,9 +25,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.After;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class TwoManagedCamelContextClashTest extends TestSupport {
 
     private CamelContext camel1;

@@ -43,9 +43,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-/**
- * @version 
- */
 public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Map<String, Object> NOWAIT;

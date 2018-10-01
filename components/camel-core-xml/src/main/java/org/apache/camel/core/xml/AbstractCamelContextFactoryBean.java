@@ -126,8 +126,6 @@ import org.slf4j.LoggerFactory;
  * {@link CamelContext} and install routes either explicitly configured
  * or found by searching the classpath for Java classes which extend
  * {@link org.apache.camel.builder.RouteBuilder}.
- *
- * @version 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContext> extends IdentifiedType implements RouteContainer, RestContainer {

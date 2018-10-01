@@ -58,8 +58,6 @@ import org.apache.camel.util.URISupport;
  * <p/>
  * This implementation should contain all the error handling logic and the sub classes
  * should only configure it according to what they support.
- *
- * @version
  */
 public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport implements AsyncProcessor, ShutdownPrepared, Navigate<Processor> {
 

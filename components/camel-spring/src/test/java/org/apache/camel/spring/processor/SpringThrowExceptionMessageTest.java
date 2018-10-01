@@ -21,9 +21,6 @@ import org.apache.camel.processor.ThrowExceptionMessageTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringThrowExceptionMessageTest extends ThrowExceptionMessageTest {
 
     protected CamelContext createCamelContext() throws Exception {

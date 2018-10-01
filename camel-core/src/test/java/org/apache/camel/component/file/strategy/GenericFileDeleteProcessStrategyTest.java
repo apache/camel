@@ -30,8 +30,6 @@ import org.junit.Test;
 /**
  * Unit test about retrying deleting processed file, that can be a bit more tricky
  * on some OS as java.io.delete can return wrong answer
- *
- * @version 
  */
 public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
 

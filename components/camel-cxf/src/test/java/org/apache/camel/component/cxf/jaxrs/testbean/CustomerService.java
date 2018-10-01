@@ -34,10 +34,6 @@ import javax.ws.rs.core.Response;
 
 import org.apache.cxf.common.util.StringUtils;
 
-/**
- *
- * @version 
- */
 @Path("/customerservice/")
 public class CustomerService {
     private final AtomicLong currentId = new AtomicLong(123L);

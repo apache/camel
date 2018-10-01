@@ -27,9 +27,6 @@ import org.apache.camel.processor.async.MyAsyncComponent;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class AsyncLoopTest extends ContextTestSupport {
     
     private static final String BASE_PAYLOAD = "<Hello n='4'/>";

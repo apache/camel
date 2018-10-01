@@ -24,8 +24,6 @@ package org.apache.camel;
  * <p/>
  * This predicate offers the {@link #matchesReturningFailureMessage} method
  * which evaluates and returns a detailed failure message if the predicate did not match.
- *
- * @version 
  */
 public interface BinaryPredicate extends Predicate {
 

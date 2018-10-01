@@ -23,9 +23,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class PojoRouteTest extends Assert {
 
     @Test

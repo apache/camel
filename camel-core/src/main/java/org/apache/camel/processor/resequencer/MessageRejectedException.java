@@ -20,8 +20,6 @@ import org.apache.camel.RuntimeCamelException;
 
 /**
  * An exception thrown if message is rejected by the resequencer
- *
- * @version
  */
 public class MessageRejectedException extends RuntimeCamelException {
     private static final long serialVersionUID = 5755929795399134568L;

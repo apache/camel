@@ -22,9 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RestRestletPojoInOutCustomErrorResponseTest extends RestletTestSupport {
 
     @Test

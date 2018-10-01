@@ -19,9 +19,6 @@ package org.apache.camel.component.jetty;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class JettySessionSupportTest extends BaseJettyTest {
 
     @Override

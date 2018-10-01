@@ -35,8 +35,6 @@ import org.apache.camel.util.ServiceHelper;
  * if the logic in the {@link #process(org.apache.camel.Exchange)} does not invoke EIPs; as it forces using
  * synchronous processing during the {@link #process(org.apache.camel.Exchange)} method call.
  * If you are implementing a EIP pattern please use this as the delegate, for simple EIPs.
- *
- * @version
  * @see DelegateAsyncProcessor
  * @see org.apache.camel.processor.DelegateProcessor
  */

@@ -31,8 +31,6 @@ import org.springframework.beans.factory.FactoryBean;
 
 /**
  * Configuration of REST services using rest-dsl using XML
- *
- * @version 
  */
 @Metadata(label = "spring,configuration,rest")
 @XmlRootElement(name = "restContext")

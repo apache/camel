@@ -27,9 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class AsyncProcessorAwaitManagerInterruptTest extends ContextTestSupport {
 
     @Test

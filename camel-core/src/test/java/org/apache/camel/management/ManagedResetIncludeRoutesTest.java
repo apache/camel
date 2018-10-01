@@ -28,9 +28,6 @@ import javax.management.StringValueExp;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ManagedResetIncludeRoutesTest extends ManagementTestSupport {
 
     @Test

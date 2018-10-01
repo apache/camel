@@ -24,9 +24,6 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class CamelContextAwareTest extends SpringTestSupport {
     protected CamelContextAwareBean bean1;
 

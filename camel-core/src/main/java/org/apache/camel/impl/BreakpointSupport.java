@@ -27,8 +27,6 @@ import org.apache.camel.spi.Breakpoint;
  * A support class for {@link Breakpoint} implementations to use as base class.
  * <p/>
  * Will be in active state.
- *
- * @version 
  */
 public abstract class BreakpointSupport implements Breakpoint {
 

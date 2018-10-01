@@ -24,8 +24,6 @@ package org.apache.camel;
  * to be continued routed. This allows to implement asynchronous {@link Producer} which can continue
  * routing {@link Exchange} when all the data has been gathered. This allows to build non blocking
  * request/reply communication.
- *
- * @version 
  */
 public interface AsyncCallback {
 

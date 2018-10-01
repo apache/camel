@@ -28,9 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class HL7XmlDataFormatTest extends CamelTestSupport {
 
     private HL7DataFormat hl7;

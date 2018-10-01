@@ -25,8 +25,6 @@ import org.junit.Test;
 
 /**
  * Unit test based on user forum problem - CAMEL-1463.
- *
- * @version 
  */
 public class ChoiceNoErrorHandlerTest extends ContextTestSupport {
 

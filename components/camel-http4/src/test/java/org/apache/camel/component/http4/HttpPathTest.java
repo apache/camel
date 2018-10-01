@@ -25,10 +25,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- *
- * @version 
- */
 public class HttpPathTest extends BaseHttpTest {
 
     private HttpServer localServer;

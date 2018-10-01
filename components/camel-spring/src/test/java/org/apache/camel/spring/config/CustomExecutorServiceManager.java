@@ -19,9 +19,6 @@ package org.apache.camel.spring.config;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultExecutorServiceManager;
 
-/**
- * @version 
- */
 public class CustomExecutorServiceManager extends DefaultExecutorServiceManager {
 
     public CustomExecutorServiceManager(CamelContext camelContext) {

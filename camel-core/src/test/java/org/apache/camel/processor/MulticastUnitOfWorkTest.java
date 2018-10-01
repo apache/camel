@@ -26,8 +26,6 @@ import org.junit.Test;
 
 /**
  * Unit test to verify unit of work with multicast.
- *
- * @version 
  */
 public class MulticastUnitOfWorkTest extends ContextTestSupport {
 

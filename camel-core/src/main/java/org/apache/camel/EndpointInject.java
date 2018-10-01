@@ -31,8 +31,6 @@ import java.lang.annotation.Target;
  * {@link org.apache.camel.spi.Registry} such as in your Spring ApplicationContext.
  *
  * If no ref or uri is specified then the ref is defaulted from the field, property or method name.
- *
- * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

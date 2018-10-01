@@ -27,8 +27,6 @@ package org.apache.camel;
  * for objects to have this value dynamically changed.
  * <p/>
  * Camel component are very often singleton based, only a few components are not.
- *
- * @version 
  */
 public interface IsSingleton {
 

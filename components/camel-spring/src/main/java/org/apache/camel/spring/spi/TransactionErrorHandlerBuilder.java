@@ -32,8 +32,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * A transactional error handler that supports leveraging Spring TransactionManager.
- *
- * @version 
  */
 public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
 

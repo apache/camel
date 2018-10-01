@@ -26,8 +26,6 @@ import org.junit.Test;
 
 /**
  * Unit test for useOriginalnBody option on DeadLetterChannel
- *
- * @version 
  */
 public class DeadLetterChannelUseOriginalInBodyTest extends ContextTestSupport {
 

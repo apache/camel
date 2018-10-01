@@ -30,8 +30,6 @@ import org.apache.camel.api.management.PerformanceCounter;
  * <p/>
  * This delegation is needed as how Camel is designed to register services in the
  * {@link org.apache.camel.spi.LifecycleStrategy} in various stages.
- *
- * @version 
  */
 public class DelegatePerformanceCounter implements PerformanceCounter {
 

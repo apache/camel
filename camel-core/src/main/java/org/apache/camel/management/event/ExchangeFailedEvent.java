@@ -18,9 +18,6 @@ package org.apache.camel.management.event;
 
 import org.apache.camel.Exchange;
 
-/**
- * @version 
- */
 public class ExchangeFailedEvent extends AbstractExchangeEvent implements FailureEvent {
     private static final long serialVersionUID = -8484326904627268101L;
 

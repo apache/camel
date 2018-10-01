@@ -21,9 +21,6 @@ import org.w3c.dom.Document;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.util.ObjectHelper;
 
-/**
- * @version 
- */
 public class SoapPayloadBean {
 
     public String doSomething(@XQuery("//payload") Document payload, TypeConverter converter) {

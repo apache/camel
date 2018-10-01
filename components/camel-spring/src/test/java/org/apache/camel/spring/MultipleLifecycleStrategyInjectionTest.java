@@ -22,8 +22,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Test for LifecycleStrategy injection.
- *
- * @version 
  */
 public class MultipleLifecycleStrategyInjectionTest extends SpringTestSupport {
 

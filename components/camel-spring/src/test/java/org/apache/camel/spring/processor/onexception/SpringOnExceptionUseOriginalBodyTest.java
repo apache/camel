@@ -21,9 +21,6 @@ import org.apache.camel.processor.onexception.OnExceptionUseOriginalBodyTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringOnExceptionUseOriginalBodyTest extends OnExceptionUseOriginalBodyTest {
 
     protected CamelContext createCamelContext() throws Exception {

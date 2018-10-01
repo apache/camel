@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.jpa;
 
-/**
- * @version 
- */
 public interface Callback<R, P> {
     R callback(P parameter);
 }

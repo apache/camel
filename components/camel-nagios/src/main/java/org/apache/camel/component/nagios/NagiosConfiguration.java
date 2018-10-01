@@ -27,9 +27,6 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.StringHelper;
 
-/**
- * @version 
- */
 @UriParams
 public class NagiosConfiguration implements Cloneable {
 

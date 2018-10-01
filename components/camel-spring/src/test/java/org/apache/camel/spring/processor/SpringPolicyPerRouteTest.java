@@ -21,9 +21,6 @@ import org.apache.camel.processor.PolicyPerRouteTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringPolicyPerRouteTest extends PolicyPerRouteTest {
 
     protected CamelContext createCamelContext() throws Exception {

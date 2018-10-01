@@ -28,8 +28,6 @@ import org.apache.camel.spi.RouteContext;
 
 /**
  * String data format is a textual based format that supports character encoding.
- *
- * @version 
  */
 @Metadata(firstVersion = "2.12.0", label = "dataformat,transformation,core", title = "String Encoding")
 @XmlRootElement(name = "string")

@@ -39,8 +39,6 @@ import org.apache.camel.util.OgnlHelper;
 
 /**
  * To use a Java bean (aka method call) in Camel expressions or predicates.
- *
- * @version
  */
 @Metadata(firstVersion = "1.3.0", label = "language,core,java", title = "Bean method")
 @XmlRootElement(name = "method")

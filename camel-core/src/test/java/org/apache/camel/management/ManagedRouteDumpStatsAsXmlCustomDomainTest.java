@@ -24,9 +24,6 @@ import org.w3c.dom.Document;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class ManagedRouteDumpStatsAsXmlCustomDomainTest extends ManagementTestSupport {
 
     private static final String CUSTOM_DOMAIN_NAME = "custom";

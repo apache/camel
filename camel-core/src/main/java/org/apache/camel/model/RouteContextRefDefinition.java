@@ -27,8 +27,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * To refer to an XML file with routes defined using the xml-dsl
- *
- * @version 
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "routeContextRef")

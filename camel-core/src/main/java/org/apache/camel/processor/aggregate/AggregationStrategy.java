@@ -46,8 +46,6 @@ import org.apache.camel.Exchange;
  * If an implementation also implements {@link org.apache.camel.CamelContextAware} then any <a href="http://camel.apache.org/eip">EIP</a>
  * that allowing configuring a {@link AggregationStrategy} will inject the {@link org.apache.camel.CamelContext} prior
  * to using the aggregation strategy.
- *
- * @version 
  */
 public interface AggregationStrategy {
 

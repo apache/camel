@@ -50,9 +50,6 @@ import org.springframework.util.ErrorHandler;
 
 import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinationName;
 
-/**
- * @version
- */
 @UriParams
 public class JmsConfiguration implements Cloneable {
 

@@ -35,7 +35,6 @@ package org.apache.camel;
  * Instead use the {@link ExtendedStartupListener} if you wish to add new routes.
  *
  * @see ExtendedStartupListener
- * @version
  */
 public interface StartupListener {
 

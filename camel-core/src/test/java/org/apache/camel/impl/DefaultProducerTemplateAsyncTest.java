@@ -33,9 +33,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 
     private static final AtomicInteger ORDER = new AtomicInteger(0);

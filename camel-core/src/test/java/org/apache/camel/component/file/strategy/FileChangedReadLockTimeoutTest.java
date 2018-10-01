@@ -18,9 +18,6 @@ package org.apache.camel.component.file.strategy;
 
 import org.apache.camel.builder.RouteBuilder;
 
-/**
- * @version 
- */
 public class FileChangedReadLockTimeoutTest extends FileChangedReadLockTest {
 
     @Override

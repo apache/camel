@@ -23,9 +23,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FileConvertBodyToUTF8Test extends ContextTestSupport {
 
     private byte[] body;

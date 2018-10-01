@@ -22,8 +22,6 @@ import java.util.Set;
 /**
  * Represents a service registry which may be implemented via a Spring ApplicationContext,
  * via JNDI, a simple Map or the OSGi Service Registry
- *
- * @version 
  */
 public interface Registry {
 

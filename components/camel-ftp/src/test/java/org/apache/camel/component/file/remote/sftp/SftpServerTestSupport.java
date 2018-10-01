@@ -34,9 +34,6 @@ import org.apache.sshd.server.subsystem.sftp.SftpSubsystemFactory;
 import org.junit.After;
 import org.junit.Before;
 
-/**
- * @version 
- */
 public class SftpServerTestSupport extends BaseServerTestSupport {
 
     protected static final String FTP_ROOT_DIR = "target/res/home";

@@ -21,9 +21,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * @version 
- */
 public class MyRouteBuilderWithAutowiredPojo extends SpringRouteBuilder {
 
     @Autowired

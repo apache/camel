@@ -30,8 +30,6 @@ import org.apache.camel.Producer;
  * This delegate allows the component developers easily to support their
  * existing asynchronous producer to behave synchronously by wrapping their
  * producer in this synchronous delegate.
- *
- * @version 
  */
 public class SynchronousDelegateProducer implements Producer {
 

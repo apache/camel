@@ -21,9 +21,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
 
-/**
- * @version 
- */
 public class UnitOfWorkSynchronizationAdapterTest extends UnitOfWorkTest {
 
     protected RouteBuilder createRouteBuilder() {

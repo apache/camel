@@ -66,8 +66,6 @@ import org.apache.http.ssl.SSLContexts;
 /**
  * Defines the <a href="http://camel.apache.org/http4.html">HTTP4
  * Component</a>
- *
- * @version 
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
 public class HttpComponent extends HttpCommonComponent implements RestProducerFactory, SSLContextParametersAware {

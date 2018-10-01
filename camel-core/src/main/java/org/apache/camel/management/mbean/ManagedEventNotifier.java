@@ -27,9 +27,6 @@ import org.apache.camel.api.management.JmxNotificationBroadcasterAware;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementStrategy;
 
-/**
- * @version 
- */
 public class ManagedEventNotifier extends NotificationBroadcasterSupport implements ManagedEventNotifierMBean {
     private final CamelContext context;
     private final EventNotifier eventNotifier;

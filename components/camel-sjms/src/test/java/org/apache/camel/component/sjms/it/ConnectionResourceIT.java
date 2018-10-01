@@ -35,7 +35,6 @@ import org.junit.Test;
 /**
  * Integration test that verifies we can replace the internal
  * ConnectionFactoryResource with another provider.
- * 
  */
 public class ConnectionResourceIT extends JmsTestSupport {
 

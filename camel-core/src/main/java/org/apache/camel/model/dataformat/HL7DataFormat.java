@@ -29,8 +29,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * The HL7 data format can be used to marshal or unmarshal HL7 (Health Care) model objects.
- *
- * @version 
  */
 @Metadata(firstVersion = "2.0.0", label = "dataformat,transformation,hl7", title = "HL7")
 @XmlRootElement(name = "hl7")

@@ -23,9 +23,6 @@ import org.apache.camel.component.vm.AbstractVmTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class DisruptorVmInOutChainedTimeoutTest extends AbstractVmTestSupport {
 
     @Test

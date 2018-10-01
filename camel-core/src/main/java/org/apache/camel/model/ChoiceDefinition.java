@@ -40,8 +40,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * Routes messages based on a series of predicates
- *
- * @version
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "choice")

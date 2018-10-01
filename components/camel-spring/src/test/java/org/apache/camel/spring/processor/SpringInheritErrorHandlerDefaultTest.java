@@ -21,9 +21,6 @@ import org.apache.camel.processor.InheritErrorHandlerDefaultTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringInheritErrorHandlerDefaultTest extends InheritErrorHandlerDefaultTest {
 
     protected CamelContext createCamelContext() throws Exception {

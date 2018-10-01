@@ -49,8 +49,6 @@ import static org.junit.Assert.fail;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppBinding</code>
- * 
- * @version 
  */
 public class SmppBindingTest {
     

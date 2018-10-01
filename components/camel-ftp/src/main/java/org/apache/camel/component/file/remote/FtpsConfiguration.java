@@ -23,8 +23,6 @@ import org.apache.camel.spi.UriParams;
 
 /**
  * FTP Secure (FTP over SSL/TLS) configuration
- * 
- * @version 
  */
 @UriParams
 public class FtpsConfiguration extends FtpConfiguration {

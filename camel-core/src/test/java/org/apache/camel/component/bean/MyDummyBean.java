@@ -21,9 +21,6 @@ import java.io.Reader;
 
 import org.apache.camel.Handler;
 
-/**
- * @version 
- */
 public class MyDummyBean {
 
     public String hello(String s) {

@@ -36,9 +36,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 
-/**
- * @version 
- */
 public class NagiosTest extends CamelTestSupport {
     @Mock
     protected static PassiveCheckSender nagiosPassiveCheckSender;

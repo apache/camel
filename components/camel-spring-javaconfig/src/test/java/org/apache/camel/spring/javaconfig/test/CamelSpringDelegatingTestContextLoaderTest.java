@@ -33,7 +33,6 @@ import org.springframework.test.context.ContextConfiguration;
 
 /**
  * Test for CamelSpringDelegatingTestContextLoader.
- * 
  */
 //START SNIPPET: example
 // tag::example[]

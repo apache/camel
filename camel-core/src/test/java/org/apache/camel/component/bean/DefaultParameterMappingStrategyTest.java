@@ -27,9 +27,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Registry;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class DefaultParameterMappingStrategyTest extends ContextTestSupport {
 
     @Override

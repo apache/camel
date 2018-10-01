@@ -18,8 +18,6 @@ package org.apache.camel;
 
 /**
  * Base class for all Camel checked exceptions typically thrown by a {@link Processor}
- *
- * @version 
  */
 public class CamelException extends Exception {
     private static final long serialVersionUID = -8721487434390572630L;

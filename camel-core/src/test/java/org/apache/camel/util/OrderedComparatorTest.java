@@ -23,9 +23,6 @@ import org.apache.camel.Ordered;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class OrderedComparatorTest extends Assert {
 
     @Test

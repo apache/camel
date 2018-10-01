@@ -30,9 +30,6 @@ import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class AsyncEndpointPolicyTest extends ContextTestSupport {
 
     private static String beforeThreadName;

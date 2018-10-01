@@ -20,8 +20,6 @@ import java.io.Serializable;
 
 /**
  * Represents the status of a {@link Service} instance
- *
- * @version 
  */
 public enum ServiceStatus implements Serializable {
     Starting, Started, Stopping, Stopped, Suspending, Suspended;

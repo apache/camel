@@ -31,8 +31,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * To configure thread pools
- *
- * @version 
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "threadPoolProfile")

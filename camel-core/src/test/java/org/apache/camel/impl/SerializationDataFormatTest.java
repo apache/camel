@@ -20,9 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * 
- */
 public class SerializationDataFormatTest extends ContextTestSupport {
     
     @Test

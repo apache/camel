@@ -31,8 +31,6 @@ import org.apache.camel.spi.RouteContext;
 
 /**
  * Processes a message multiple times
- *
- * @version 
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "loop")

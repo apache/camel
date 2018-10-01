@@ -22,8 +22,6 @@ import org.apache.camel.CamelContext;
 
 /**
  * Base class for {@link CamelContext} events.
- *
- * @version 
  */
 public abstract class AbstractContextEvent extends EventObject {
     private static final long serialVersionUID = 1L;

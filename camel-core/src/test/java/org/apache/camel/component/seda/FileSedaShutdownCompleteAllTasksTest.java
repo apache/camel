@@ -27,9 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FileSedaShutdownCompleteAllTasksTest extends ContextTestSupport {
 
     private String url = "file:target/seda?initialDelay=0&delay=10";

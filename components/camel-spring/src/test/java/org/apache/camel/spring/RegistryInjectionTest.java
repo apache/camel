@@ -25,8 +25,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Test for Registry injection.
- *
- * @version 
  */
 public class RegistryInjectionTest extends SpringTestSupport {
 

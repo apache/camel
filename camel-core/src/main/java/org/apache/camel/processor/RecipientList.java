@@ -47,8 +47,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * href="http://camel.apache.org/recipient-list.html">Recipient List</a>
  * pattern where the list of actual endpoints to send a message exchange to are
  * dependent on some dynamic expression.
- *
- * @version 
  */
 public class RecipientList extends ServiceSupport implements AsyncProcessor, IdAware {
 

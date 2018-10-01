@@ -34,9 +34,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
 
-/**
- * @version 
- */
 public class JpaProducer extends DefaultProducer {
 
     private final EntityManagerFactory entityManagerFactory;

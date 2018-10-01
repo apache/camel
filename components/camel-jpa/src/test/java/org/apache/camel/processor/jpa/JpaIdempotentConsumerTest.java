@@ -37,9 +37,6 @@ import org.springframework.transaction.support.TransactionCallback;
 
 import static org.apache.camel.processor.idempotent.jpa.JpaMessageIdRepository.jpaMessageIdRepository;
 
-/**
- * @version 
- */
 public class JpaIdempotentConsumerTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
     protected static final String PROCESSOR_NAME = "myProcessorName";

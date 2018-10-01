@@ -24,9 +24,6 @@ import org.w3c.dom.Document;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ManagedCamelContextDumpStatsAsXmlTest extends ManagementTestSupport {
 
     @Test

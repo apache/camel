@@ -23,8 +23,6 @@ import org.apache.camel.RuntimeCamelException;
 /**
  * An exception thrown if no message ID could be found on a message which is to be used with the
  * <a href="http://camel.apache.org/idempotent-consumer.html">Idempotent Consumer</a> pattern.
- *
- * @version 
  */
 public class NoMessageIdException extends RuntimeCamelException {
     private static final long serialVersionUID = 5755929795399134568L;

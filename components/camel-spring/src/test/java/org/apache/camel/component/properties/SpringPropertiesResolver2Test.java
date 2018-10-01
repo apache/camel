@@ -19,9 +19,6 @@ package org.apache.camel.component.properties;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringPropertiesResolver2Test extends SpringPropertiesResolverTest {
 
     @Override

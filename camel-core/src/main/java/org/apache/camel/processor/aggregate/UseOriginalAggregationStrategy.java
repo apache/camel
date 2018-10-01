@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
  * and then you may want to keep routing using the original {@link Exchange}.
  *
  * @see org.apache.camel.processor.Splitter
- * @version
  */
 public class UseOriginalAggregationStrategy implements AggregationStrategy {
 

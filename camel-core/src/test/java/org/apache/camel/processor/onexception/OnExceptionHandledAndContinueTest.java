@@ -21,9 +21,6 @@ import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class OnExceptionHandledAndContinueTest extends ContextTestSupport {
 
     @Override

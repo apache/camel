@@ -24,8 +24,6 @@ import org.apache.camel.support.DefaultTimeoutMap;
  * A {@link org.apache.camel.TimeoutMap} which is used to track reply messages which
  * has been timed out, and thus should trigger the waiting {@link org.apache.camel.Exchange} to
  * timeout as well.
- *
- * @version 
  */
 public class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandler> {
 

@@ -22,9 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class HttpReturnFaultTest extends BaseJettyTest {
 
     @Test

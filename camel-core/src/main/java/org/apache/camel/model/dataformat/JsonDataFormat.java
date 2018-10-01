@@ -33,8 +33,6 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * JSon data format is used for unmarshal a JSon payload to POJO or to marshal
  * POJO back to JSon payload.
- *
- * @version
  */
 @Metadata(label = "dataformat,transformation,json", title = "JSon")
 @XmlRootElement(name = "json")

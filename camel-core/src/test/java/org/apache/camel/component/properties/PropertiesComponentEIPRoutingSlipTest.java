@@ -21,9 +21,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class PropertiesComponentEIPRoutingSlipTest extends ContextTestSupport {
 
     @Test

@@ -27,8 +27,6 @@ import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 
 /**
  * Used to configure the error handler type
- *
- * @version 
  */
 @Metadata(label = "spring,configuration,error")
 @XmlType

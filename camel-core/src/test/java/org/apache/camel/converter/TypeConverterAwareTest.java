@@ -19,9 +19,6 @@ package org.apache.camel.converter;
 import org.apache.camel.ContextTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class TypeConverterAwareTest extends ContextTestSupport {
 
     @Override

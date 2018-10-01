@@ -19,8 +19,6 @@ package org.apache.camel;
 /**
  * An interface to represent an object which wishes to be injected with
  * a {@link CamelContext} such as when working with Spring or Guice
- *
- * @version 
  */
 public interface CamelContextAware {
 

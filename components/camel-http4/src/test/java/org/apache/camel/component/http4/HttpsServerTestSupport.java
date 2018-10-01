@@ -26,10 +26,6 @@ import javax.net.ssl.TrustManagerFactory;
 import org.junit.After;
 import org.junit.Before;
 
-/**
- *
- * @version 
- */
 public abstract class HttpsServerTestSupport extends HttpServerTestSupport {
 
     protected static final String KEYSTORE_PATH = "./src/test/resources/localhost.ks";

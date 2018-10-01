@@ -52,8 +52,6 @@ import org.slf4j.LoggerFactory;
  * endpoint allows Camel end users to dictate whether they want the asynchronous
  * model or not. The option is default <tt>false</tt> which means asynchronous
  * processing is allowed.
- * 
- * @version
  */
 public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint, HasId, CamelContextAware {
 

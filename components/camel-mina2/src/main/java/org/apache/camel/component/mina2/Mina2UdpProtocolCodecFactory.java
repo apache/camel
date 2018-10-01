@@ -28,9 +28,6 @@ import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 
-/**
- * @version
- */
 public class Mina2UdpProtocolCodecFactory implements ProtocolCodecFactory {
 
     private final CamelContext context;

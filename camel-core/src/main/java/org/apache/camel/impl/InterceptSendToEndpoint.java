@@ -34,8 +34,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This is an endpoint when sending to it, is intercepted and is routed in a detour
- *
- * @version 
  */
 public class InterceptSendToEndpoint implements Endpoint, ShutdownableService {
 

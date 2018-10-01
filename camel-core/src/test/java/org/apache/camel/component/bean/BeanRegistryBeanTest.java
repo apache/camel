@@ -22,9 +22,6 @@ import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class BeanRegistryBeanTest extends ContextTestSupport {
 
     @Override

@@ -22,9 +22,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class BeanRefNoCacheTest extends ContextTestSupport {
 
     private static final AtomicInteger COUNTER = new AtomicInteger();

@@ -30,8 +30,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Helper class used internally by camel-netty using Netty.
- *
- * @version 
  */
 public final class NettyHelper {
 

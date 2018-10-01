@@ -24,9 +24,6 @@ import org.junit.Test;
 
 import static org.apache.camel.builder.PredicateBuilder.not;
 
-/**
- * @version 
- */
 public class FilterNotTest extends ContextTestSupport {
 
     @Test

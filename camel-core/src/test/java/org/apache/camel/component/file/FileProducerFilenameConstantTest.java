@@ -21,9 +21,6 @@ import org.apache.camel.ContextTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FileProducerFilenameConstantTest extends ContextTestSupport {
 
     @Override

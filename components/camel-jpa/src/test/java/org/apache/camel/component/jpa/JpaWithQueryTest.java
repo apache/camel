@@ -18,9 +18,6 @@ package org.apache.camel.component.jpa;
 
 import org.apache.camel.examples.MultiSteps;
 
-/**
- * @version 
- */
 public class JpaWithQueryTest extends JpaWithNamedQueryTest {
 
     @Override

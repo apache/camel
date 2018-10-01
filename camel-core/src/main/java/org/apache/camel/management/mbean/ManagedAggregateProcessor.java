@@ -25,9 +25,6 @@ import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.spi.ManagementStrategy;
 
-/**
- * @version 
- */
 @ManagedResource(description = "Managed AggregateProcessor")
 public class ManagedAggregateProcessor extends ManagedProcessor implements ManagedAggregateProcessorMBean {
     private final AggregateProcessor processor;

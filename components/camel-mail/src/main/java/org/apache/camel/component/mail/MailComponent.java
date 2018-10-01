@@ -34,8 +34,6 @@ import org.apache.camel.util.StringHelper;
 
 /**
  * Component for JavaMail.
- *
- * @version
  */
 public class MailComponent extends DefaultComponent implements SSLContextParametersAware {
 

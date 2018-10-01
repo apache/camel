@@ -54,8 +54,6 @@ import org.slf4j.LoggerFactory;
  * <li>unmarshal = from <tt>InputStream</tt> (such as a File) to {@link org.apache.camel.component.flatpack.DataSetList}.
  * </ul>
  * <b>Notice:</b> The Flatpack library does currently not support header and trailers for the marshal operation.
- *
- * @version 
  */
 public class FlatpackDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private static final Logger LOG = LoggerFactory.getLogger(FlatpackDataFormat.class);

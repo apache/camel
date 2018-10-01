@@ -36,8 +36,6 @@ import static org.junit.Assert.fail;
  * <p/>
  * We use Spring Testing for unit test, eg we extend AbstractJUnit4SpringContextTests
  * that is a Spring class.
- *
- * @version 
  */
 @ContextConfiguration
 public class JmsToHttpTXWithOnExceptionAndNoTransactionErrorHandlerConfiguredTest extends AbstractJUnit4SpringContextTests {

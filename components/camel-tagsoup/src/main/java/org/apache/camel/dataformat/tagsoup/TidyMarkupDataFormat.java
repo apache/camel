@@ -52,7 +52,6 @@ import org.slf4j.LoggerFactory;
  * be XHTML) This dataformat is intended to convert bad HTML from a site (or
  * file) into a well formed HTML document which can then be sent to XSLT or
  * xpath'ed on.
- * 
  */
 public class TidyMarkupDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 

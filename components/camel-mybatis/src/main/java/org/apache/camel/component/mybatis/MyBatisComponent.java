@@ -29,9 +29,6 @@ import org.apache.camel.util.ResourceHelper;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
-/**
- * @version 
- */
 public class MyBatisComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")

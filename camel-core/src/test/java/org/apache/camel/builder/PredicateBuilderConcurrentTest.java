@@ -31,9 +31,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.impl.DefaultExchange;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class PredicateBuilderConcurrentTest extends ContextTestSupport {
 
     @Override

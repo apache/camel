@@ -21,9 +21,6 @@ import org.apache.camel.processor.MulticastNoStopOnExceptionTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringMulticastNoStopOnExceptionTest extends MulticastNoStopOnExceptionTest {
 
     protected CamelContext createCamelContext() throws Exception {

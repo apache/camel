@@ -23,8 +23,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * A constant (singleton) bean implementation of {@link BeanHolder}
- *
- * @version 
  */
 public class ConstantBeanHolder implements BeanHolder {
     private final Object bean;

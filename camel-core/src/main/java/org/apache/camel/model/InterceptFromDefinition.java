@@ -29,8 +29,6 @@ import org.apache.camel.support.ExpressionAdapter;
 
 /**
  * Intercepts incoming messages
- *
- * @version 
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "interceptFrom")

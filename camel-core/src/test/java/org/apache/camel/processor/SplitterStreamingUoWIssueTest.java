@@ -21,9 +21,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class SplitterStreamingUoWIssueTest extends ContextTestSupport {
 
     @Override

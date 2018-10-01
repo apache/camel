@@ -27,9 +27,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version
- */
 public class JmsInOnlyDisableTimeToLiveTest extends CamelTestSupport {
 
     private String urlTimeout = "activemq:queue.in?timeToLive=2000";

@@ -28,9 +28,6 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class MultiThreadedHttpGetTest extends BaseJettyTest {
 
     @Test

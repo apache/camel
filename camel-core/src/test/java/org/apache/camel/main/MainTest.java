@@ -24,9 +24,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class MainTest extends Assert {
 
     @Test

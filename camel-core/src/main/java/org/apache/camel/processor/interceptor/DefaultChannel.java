@@ -57,8 +57,6 @@ import org.slf4j.LoggerFactory;
  * With this {@link Channel} we can in the future implement better strategies for routing the
  * {@link Exchange} in the route graph, as we have a {@link Channel} between each and every node
  * in the graph.
- *
- * @version 
  */
 public class DefaultChannel extends CamelInternalProcessor implements ModelChannel {
 

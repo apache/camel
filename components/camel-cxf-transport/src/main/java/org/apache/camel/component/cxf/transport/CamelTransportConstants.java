@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.cxf.transport;
 
-/**
- * @version 
- */
 public final class CamelTransportConstants {
 
     public static final String TEXT_MESSAGE_TYPE = "text";

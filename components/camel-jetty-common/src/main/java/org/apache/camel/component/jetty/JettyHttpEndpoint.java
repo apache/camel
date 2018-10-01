@@ -37,9 +37,6 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.server.Handler;
 
-/**
- * @version 
- */
 public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
 
     @UriParam(label = "producer,advanced",

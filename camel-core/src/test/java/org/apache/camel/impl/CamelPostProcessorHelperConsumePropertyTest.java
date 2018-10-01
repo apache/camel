@@ -23,9 +23,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class CamelPostProcessorHelperConsumePropertyTest extends ContextTestSupport {
 
     @Test

@@ -28,9 +28,6 @@ import org.apache.camel.support.EventNotifierSupport;
 import org.junit.After;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class UnitOfWorkProducerTest extends ContextTestSupport {
 
     private static List<EventObject> events = new ArrayList<>();

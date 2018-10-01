@@ -36,9 +36,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.impl.DefaultProducer;
 
-/**
- * @version $
- */
 public class LdapProducer extends DefaultProducer {
     private String remaining;
     private SearchControls searchControls;

@@ -23,8 +23,6 @@ import org.apache.camel.Processor;
 
 /**
  * A strategy for load balancing across a number of {@link Processor} instances
- *
- * @version 
  */
 public interface LoadBalancer extends AsyncProcessor {
 

@@ -28,8 +28,6 @@ import org.apache.camel.Message;
  * <p/>
  * For example when transforming big files you can stream directly to a file output
  * to avoid consuming to much memory.
- *
- * @version 
  */
 public class FileResultHandler implements ResultHandler {
 

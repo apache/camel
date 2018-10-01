@@ -22,9 +22,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ResourceHelper;
 
-/**
- * @version 
- */
 public class StringTemplateComponent extends DefaultComponent {
 
     public StringTemplateComponent() {

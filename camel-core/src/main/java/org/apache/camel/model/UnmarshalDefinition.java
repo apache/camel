@@ -68,8 +68,6 @@ import org.apache.camel.spi.RouteContext;
 
 /**
  * Converts the message data received from the wire into a format that Apache Camel processors can consume
- *
- * @version
  */
 @Metadata(label = "eip,transformation")
 @XmlRootElement(name = "unmarshal")

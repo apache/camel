@@ -37,8 +37,6 @@ import org.jsmpp.util.DefaultComposer;
 
 /**
  * An implementation of @{link Producer} which use the SMPP protocol
- *
- * @version
  */
 public class SmppProducer extends DefaultProducer {
 

@@ -23,8 +23,6 @@ import org.slf4j.Logger;
 
 /**
  * A helper class which logs errors
- *
- * @version 
  */
 public class IrcLogger extends IRCEventAdapter {
     private Logger log;

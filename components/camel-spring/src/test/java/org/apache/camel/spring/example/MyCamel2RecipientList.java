@@ -21,9 +21,6 @@ import org.apache.camel.RecipientList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
 public class MyCamel2RecipientList {
 
     private static final Logger LOG = LoggerFactory.getLogger(MyCamel2RecipientList.class);

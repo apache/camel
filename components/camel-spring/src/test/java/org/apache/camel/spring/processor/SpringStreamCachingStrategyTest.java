@@ -23,9 +23,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.apache.camel.util.FileUtil.normalizePath;
 
-/**
- * @version 
- */
 public class SpringStreamCachingStrategyTest extends SpringTestSupport {
 
     @Override

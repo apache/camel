@@ -35,8 +35,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * YAML is a data format to marshal and unmarshal Java objects to and from YAML.
- *
- * @version 
  */
 @Metadata(firstVersion = "2.17.0", label = "dataformat,transformation,yaml", title = "YAML")
 @XmlRootElement(name = "yaml")

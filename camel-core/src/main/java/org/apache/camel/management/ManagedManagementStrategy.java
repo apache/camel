@@ -51,7 +51,6 @@ import org.slf4j.LoggerFactory;
  *
  * @see org.apache.camel.spi.ManagementStrategy
  * @see org.apache.camel.management.DefaultManagementStrategy
- * @version 
  */
 public class ManagedManagementStrategy extends DefaultManagementStrategy {
 

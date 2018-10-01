@@ -29,8 +29,6 @@ import org.junit.Test;
 
 /**
  * Unit test for the <tt>transferExchange=true</tt> option.
- *
- * @version 
  */
 public class Mina2VMTransferExchangeOptionTest extends BaseMina2Test {
 

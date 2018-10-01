@@ -28,8 +28,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * Properties placeholder
- *
- * @version 
  */
 @Metadata(label = "spring,configuration")
 @XmlRootElement(name = "propertyPlaceholder")

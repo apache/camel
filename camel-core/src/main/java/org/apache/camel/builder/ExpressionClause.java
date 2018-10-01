@@ -32,8 +32,6 @@ import org.apache.camel.support.ExpressionAdapter;
 /**
  * Represents an expression clause within the DSL which when the expression is
  * complete the clause continues to another part of the DSL
- * 
- * @version 
  */
 public class ExpressionClause<T> extends ExpressionDefinition {
     private ExpressionClauseSupport<T> delegate;

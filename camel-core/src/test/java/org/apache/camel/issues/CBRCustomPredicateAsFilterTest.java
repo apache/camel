@@ -25,9 +25,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class CBRCustomPredicateAsFilterTest extends ContextTestSupport {
 
     private MyFiler filter = new MyFiler();

@@ -28,8 +28,6 @@ import org.junit.Test;
 
 /**
  * Concurreny test for idempotent consumer
- *
- * @version 
  */
 public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
     protected Endpoint startEndpoint;

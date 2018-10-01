@@ -20,9 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FilterPojoIssueTest extends ContextTestSupport {
 
     public String doSomething(String body) {

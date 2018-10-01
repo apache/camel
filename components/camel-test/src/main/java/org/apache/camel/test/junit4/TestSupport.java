@@ -46,8 +46,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A bunch of useful testing methods
- *
- * @version 
  */
 public abstract class TestSupport extends Assert {
 

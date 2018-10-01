@@ -26,9 +26,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class IrcOnReplyTest extends CamelTestSupport {
     protected MockEndpoint resultEndpoint;
     protected String command = "WHO #camel-test";

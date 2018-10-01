@@ -27,8 +27,6 @@ import org.apache.camel.util.ObjectHelper;
  * A {@link Registry} which delegates to the real registry.
  * <p/>
  * This is used to ensure that Camel performs property placeholder resolution on every lookup.
- *
- * @version 
  */
 public class PropertyPlaceholderDelegateRegistry implements Registry {
 

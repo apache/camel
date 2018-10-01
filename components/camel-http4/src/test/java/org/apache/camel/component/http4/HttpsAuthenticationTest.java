@@ -37,10 +37,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- *
- * @version 
- */
 public class HttpsAuthenticationTest extends BaseHttpsTest {
 
     private String user = "camel";

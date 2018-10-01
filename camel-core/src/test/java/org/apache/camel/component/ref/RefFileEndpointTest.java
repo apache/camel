@@ -25,9 +25,6 @@ import org.apache.camel.impl.SimpleRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RefFileEndpointTest extends ContextTestSupport {
 
     private SimpleRegistry registry = new SimpleRegistry();

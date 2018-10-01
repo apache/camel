@@ -21,9 +21,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedConsumerMBean;
 
-/**
- * @version 
- */
 @ManagedResource(description = "Managed Consumer")
 public class ManagedConsumer extends ManagedService implements ManagedConsumerMBean {
     private final Consumer consumer;

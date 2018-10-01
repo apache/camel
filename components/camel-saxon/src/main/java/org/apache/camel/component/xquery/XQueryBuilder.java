@@ -84,8 +84,6 @@ import org.slf4j.LoggerFactory;
  * Creates an XQuery builder.
  * <p/>
  * The XQueryExpression, as you would expect, can be executed repeatedly, as often as you want, in the same or in different threads.
- *
- * @version 
  */
 public abstract class XQueryBuilder implements Expression, Predicate, NamespaceAware, Processor {
     private static final Logger LOG = LoggerFactory.getLogger(XQueryBuilder.class);

@@ -26,8 +26,6 @@ import org.apache.camel.Processor;
 /**
  * Some useful converters for Camel APIs such as to convert a {@link Predicate} or {@link Expression}
  * to a {@link Processor}
- *
- * @version 
  */
 @Converter
 public final class CamelConverter {

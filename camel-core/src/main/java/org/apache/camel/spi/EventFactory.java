@@ -28,8 +28,6 @@ import org.apache.camel.Route;
  * Factory to create {@link java.util.EventObject events} that are emitted when such an event occur.
  * <p/>
  * For example when an {@link Exchange} is being created and then later when its done.
- *
- * @version 
  */
 public interface EventFactory {
 

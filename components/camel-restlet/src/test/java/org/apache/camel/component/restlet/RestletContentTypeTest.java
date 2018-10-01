@@ -25,9 +25,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RestletContentTypeTest extends RestletTestSupport {
     
     private static final String REQUEST_MESSAGE = 

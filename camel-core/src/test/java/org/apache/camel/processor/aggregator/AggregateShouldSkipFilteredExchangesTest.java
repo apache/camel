@@ -26,8 +26,6 @@ import org.junit.Test;
 
 /**
  * Unit test to verify that Aggregate aggregator does not included filtered exchanges.
- *
- * @version 
  */
 public class AggregateShouldSkipFilteredExchangesTest extends ContextTestSupport {
 

@@ -23,9 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.async.MyAsyncComponent;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class AsyncLoopCopyTest extends ContextTestSupport {
 
     private static String beforeThreadName;

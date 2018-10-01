@@ -25,9 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FromFileDoNotDeleteFileIfProcessFailsTest extends ContextTestSupport {
 
     private String body = "Hello World this file will NOT be deleted";

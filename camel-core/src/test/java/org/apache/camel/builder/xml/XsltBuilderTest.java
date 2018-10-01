@@ -39,9 +39,6 @@ import org.apache.camel.util.UnitOfWorkHelper;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class XsltBuilderTest extends ContextTestSupport {
 
     @Override

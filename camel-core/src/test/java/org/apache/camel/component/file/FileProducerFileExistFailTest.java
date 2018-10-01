@@ -24,9 +24,6 @@ import org.apache.camel.util.FileUtil;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FileProducerFileExistFailTest extends ContextTestSupport {
 
     @Override

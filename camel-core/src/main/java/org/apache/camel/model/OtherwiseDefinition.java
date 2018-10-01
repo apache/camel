@@ -29,8 +29,6 @@ import org.apache.camel.util.CollectionStringBuffer;
 
 /**
  * Route to be executed when all other choices evaluate to <tt>false</tt>
- *
- * @version 
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "otherwise")

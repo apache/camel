@@ -20,9 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ValidationException;
 
-/**
- * @version 
- */
 public class MyValidator implements Processor {
     public void process(Exchange exchange) throws Exception {
         Object value = exchange.getIn().getHeader("foo");

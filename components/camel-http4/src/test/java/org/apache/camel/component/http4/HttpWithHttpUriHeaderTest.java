@@ -25,10 +25,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- *
- * @version 
- */
 public class HttpWithHttpUriHeaderTest extends BaseHttpTest {
 
     private HttpServer localServer;

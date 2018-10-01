@@ -22,9 +22,6 @@ import org.apache.camel.api.management.mbean.ManagedRuntimeCamelCatalogMBean;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.ManagementStrategy;
 
-/**
- * @version 
- */
 @ManagedResource(description = "Managed RuntimeCamelCatalog")
 public class ManagedRuntimeCamelCatalog extends ManagedService implements ManagedRuntimeCamelCatalogMBean {
     private final CamelContext camelContext;

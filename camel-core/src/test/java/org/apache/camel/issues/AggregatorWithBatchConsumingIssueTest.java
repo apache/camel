@@ -24,9 +24,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class AggregatorWithBatchConsumingIssueTest extends ContextTestSupport {
 
     @Test

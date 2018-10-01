@@ -24,8 +24,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A simple aggregator which just appends the message bodies together
- *
- * @version 
  */
 public class MyAggregator implements AggregationStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(MyAggregator.class);

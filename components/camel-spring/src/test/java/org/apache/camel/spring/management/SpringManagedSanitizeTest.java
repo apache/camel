@@ -21,9 +21,6 @@ import org.apache.camel.management.ManagedSanitizeTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringManagedSanitizeTest extends ManagedSanitizeTest {
 
     @Override

@@ -29,9 +29,6 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class LoadRestFromXmlTest extends ContextTestSupport {
 
     @Override

@@ -21,9 +21,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RestRestletBindingInJaxbOutStringWithXmlTest extends RestletTestSupport {
 
     @Test

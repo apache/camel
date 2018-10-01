@@ -21,9 +21,6 @@ import org.apache.camel.processor.MulticastSubUnitOfWorkTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringMulticastSubUnitOfWorkTest extends MulticastSubUnitOfWorkTest {
 
     protected CamelContext createCamelContext() throws Exception {

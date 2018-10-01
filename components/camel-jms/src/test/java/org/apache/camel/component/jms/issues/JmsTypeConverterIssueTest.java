@@ -39,8 +39,6 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 
 /**
  * Unit test based on user forum issue.
- *
- * @version 
  */
 public class JmsTypeConverterIssueTest extends CamelTestSupport {
 

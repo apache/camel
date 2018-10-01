@@ -26,9 +26,6 @@ import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class ThreadsRejectedExecutionWithDeadLetterTest extends ContextTestSupport {
 
     @Override

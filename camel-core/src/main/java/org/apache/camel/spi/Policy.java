@@ -32,8 +32,6 @@ import org.apache.camel.Processor;
  * Mind that not all frameworks supports asynchronous routing, for example some transaction managers, such as
  * Spring Transaction uses the current thread to store state of the transaction, and thus can't transfer this
  * state to other threads when routing continues asynchronously.
- *
- * @version 
  */
 public interface Policy {
 

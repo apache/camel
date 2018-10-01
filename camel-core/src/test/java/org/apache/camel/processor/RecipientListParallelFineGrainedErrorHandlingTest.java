@@ -24,9 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RecipientListParallelFineGrainedErrorHandlingTest extends ContextTestSupport {
 
     private static int counter;

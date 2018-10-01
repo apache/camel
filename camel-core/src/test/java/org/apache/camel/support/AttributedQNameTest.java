@@ -23,9 +23,6 @@ import org.apache.camel.support.XMLTokenExpressionIterator.AttributedQName;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * 
- */
 public class AttributedQNameTest extends Assert {
 
     @Test

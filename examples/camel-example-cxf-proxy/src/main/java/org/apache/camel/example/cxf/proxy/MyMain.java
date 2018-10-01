@@ -21,8 +21,6 @@ import org.apache.camel.spring.Main;
 /**
  * A Main to let you easily start the application from a IDE.
  * Usually you can just right click and choose Run
- *
- * @version 
  */
 public final class MyMain {
 

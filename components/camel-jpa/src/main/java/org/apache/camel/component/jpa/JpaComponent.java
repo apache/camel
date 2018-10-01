@@ -29,8 +29,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * A JPA Component
- *
- * @version 
  */
 public class JpaComponent extends DefaultComponent {
 

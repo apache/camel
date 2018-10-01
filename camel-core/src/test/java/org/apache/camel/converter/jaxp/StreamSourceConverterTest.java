@@ -24,9 +24,6 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.camel.ContextTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class StreamSourceConverterTest extends ContextTestSupport {
 
     @Test

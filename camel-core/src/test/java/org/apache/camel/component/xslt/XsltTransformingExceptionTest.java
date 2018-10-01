@@ -22,9 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-/**
- * 
- */
 public class XsltTransformingExceptionTest extends ContextTestSupport {
     private static final String GOOD_XML_STRING = "<name>Camel</name>";
     private static final String BAD_XML_STRING = "<staff><programmer></programmer></staff>";

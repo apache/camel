@@ -22,9 +22,6 @@ import org.apache.camel.api.management.mbean.ManagedScriptMBean;
 import org.apache.camel.model.ScriptDefinition;
 import org.apache.camel.processor.ScriptProcessor;
 
-/**
- * @version 
- */
 @ManagedResource(description = "Managed Script")
 public class ManagedScript extends ManagedProcessor implements ManagedScriptMBean {
     private final ScriptProcessor processor;

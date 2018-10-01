@@ -26,9 +26,6 @@ import org.apache.camel.api.management.mbean.ManagedThreadsMBean;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.ThreadsProcessor;
 
-/**
- * @version 
- */
 @ManagedResource(description = "Managed Threads")
 public class ManagedThreads extends ManagedProcessor implements ManagedThreadsMBean {
     private final ThreadsProcessor processor;

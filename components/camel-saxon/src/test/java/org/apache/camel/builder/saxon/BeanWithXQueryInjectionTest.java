@@ -26,9 +26,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
 public class BeanWithXQueryInjectionTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BeanWithXQueryInjectionTest.class);
     protected MyBean myBean = new MyBean();

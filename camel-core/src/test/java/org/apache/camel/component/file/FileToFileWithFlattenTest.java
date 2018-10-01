@@ -23,9 +23,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FileToFileWithFlattenTest extends ContextTestSupport {
 
     private String fileUrl = "file://target/flatten-in";

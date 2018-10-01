@@ -35,9 +35,6 @@ import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
 
-/**
- * @version
- */
 public class XPathTransformTest extends ContextTestSupport {
 
     @Override

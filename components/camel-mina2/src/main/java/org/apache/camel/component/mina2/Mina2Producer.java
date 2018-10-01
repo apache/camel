@@ -59,8 +59,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A {@link org.apache.camel.Producer} implementation for MINA
- *
- * @version
  */
 public class Mina2Producer extends DefaultProducer {
 

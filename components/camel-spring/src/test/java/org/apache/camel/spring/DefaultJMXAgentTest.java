@@ -34,8 +34,6 @@ import static org.awaitility.Awaitility.await;
 
 /**
  * Test that verifies JMX is enabled by default.
- *
- * @version 
  */
 public class DefaultJMXAgentTest extends SpringTestSupport {
 

@@ -27,9 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class SplitterUsingBeanReturningMessageTest extends ContextTestSupport {
 
     @Override

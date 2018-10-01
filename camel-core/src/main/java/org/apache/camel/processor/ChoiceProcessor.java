@@ -40,8 +40,6 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  * Implements a Choice structure where one or more predicates are used which if
  * they are true their processors are used, with a default otherwise clause used
  * if none match.
- * 
- * @version 
  */
 public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, IdAware {
 

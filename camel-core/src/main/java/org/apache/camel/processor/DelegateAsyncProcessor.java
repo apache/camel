@@ -37,8 +37,6 @@ import org.apache.camel.util.ServiceHelper;
  * <p/>
  * <b>Important:</b> This implementation <b>does</b> support the asynchronous routing engine.
  * If you are implementing a EIP pattern please use this as the delegate.
- *
- * @version
  * @see DelegateSyncProcessor
  * @see org.apache.camel.processor.DelegateProcessor
  */

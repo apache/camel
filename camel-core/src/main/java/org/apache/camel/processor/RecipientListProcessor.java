@@ -55,8 +55,6 @@ import org.slf4j.LoggerFactory;
  * lookup endpoints and create producers which should act as the processors for the multicast processors which
  * runs under the hood. Also this implementation supports the asynchronous routing engine which makes the code
  * more trickier.
- *
- * @version 
  */
 public class RecipientListProcessor extends MulticastProcessor {
 

@@ -32,9 +32,6 @@ import org.apache.camel.dataformat.jibx.model.PurchaseOrder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class JibxDataFormatMarshallTest extends CamelTestSupport {
 
     @Test

@@ -27,8 +27,6 @@ import javax.naming.NamingException;
  * <p/>
  * This implementation is singleton based, by creating a <b>new</b> context once, and reusing it on each call to
  * {@link #getInitialContext(java.util.Hashtable)}.
- *
- * @version
  */
 public class CamelSingletonInitialContextFactory extends CamelInitialContextFactory {
 

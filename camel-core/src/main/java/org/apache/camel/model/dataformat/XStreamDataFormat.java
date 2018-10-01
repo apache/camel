@@ -44,8 +44,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * XSTream data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
- *
- * @version 
  */
 @Metadata(firstVersion = "1.3.0", label = "dataformat,transformation,xml,json", title = "XStream")
 @XmlRootElement(name = "xstream")

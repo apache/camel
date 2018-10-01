@@ -18,8 +18,6 @@ package org.apache.camel;
 
 /**
  * Exception when failing during type conversion.
- *
- * @version 
  */
 public class TypeConversionException extends RuntimeCamelException {
     private static final long serialVersionUID = -6118520819865759886L;

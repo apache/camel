@@ -25,9 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class PendingExchangesShutdownGracefulTest extends ContextTestSupport {
 
     private static String foo = "";

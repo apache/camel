@@ -21,8 +21,6 @@ import org.apache.camel.impl.DefaultExchange;
 /**
  * A base class for a test which requires a {@link CamelContext} and
  * a populated {@link Exchange}
- *
- * @version 
  */
 public abstract class ExchangeTestSupport extends ContextTestSupport {
     protected Exchange exchange;

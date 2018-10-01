@@ -29,9 +29,6 @@ import org.junit.Test;
 
 import static org.apache.camel.builder.xml.XsltBuilder.xslt;
 
-/**
- * @version 
- */
 public class XsltOutputFileTest extends ContextTestSupport {
 
     @Test

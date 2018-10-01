@@ -29,9 +29,6 @@ import org.apache.camel.component.jms.JmsProviderMetadata;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class JmsProviderTest extends CamelTestSupport {
     @Test
     public void testTemporaryDestinationTypes() throws Exception {

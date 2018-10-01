@@ -27,8 +27,6 @@ import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
  * Processor for marking an {@link org.apache.camel.Exchange} to rollback.
- *
- * @version 
  */
 public class RollbackProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
 

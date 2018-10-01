@@ -51,8 +51,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * Route to be executed when an exception is thrown
- *
- * @version 
  */
 @Metadata(label = "error")
 @XmlRootElement(name = "onException")

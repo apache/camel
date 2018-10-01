@@ -24,8 +24,6 @@ import org.apache.camel.Converter;
 /**
  * Some useful converters for {@link Attachment}
  * to a {@link DataHandler}
- *
- * @version 
  */
 @Converter
 public final class AttachmentConverter {

@@ -23,9 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.vm.AbstractVmTestSupport;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class DisruptorVmWaitForTaskNewerTest extends AbstractVmTestSupport {
 
     @Test

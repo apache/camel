@@ -23,8 +23,6 @@ import org.junit.Assert;
 
 /**
  * Package local test helper
- * 
- * @version 
  */
 public final class MtomTestHelper {
     

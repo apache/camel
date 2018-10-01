@@ -21,9 +21,6 @@ import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class TimeTest extends Assert {
 
     @Test

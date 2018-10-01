@@ -23,9 +23,6 @@ import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class MockPredicateTest extends ContextTestSupport {
 
     @Test

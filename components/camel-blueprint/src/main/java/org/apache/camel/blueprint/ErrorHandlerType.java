@@ -26,8 +26,6 @@ import org.apache.camel.builder.NoErrorHandlerBuilder;
 
 /**
  * Used to configure the errorHandler type
- *
- * @version 
  */
 @XmlType
 @XmlEnum(String.class)

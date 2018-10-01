@@ -27,8 +27,6 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A {@link org.apache.camel.TypeConverter} implementation which instantiates an object
  * so that an instance method can be used as a fallback type converter
- *
- * @version 
  */
 public class InstanceMethodFallbackTypeConverter extends TypeConverterSupport {
     private final CachingInjector<?> injector;

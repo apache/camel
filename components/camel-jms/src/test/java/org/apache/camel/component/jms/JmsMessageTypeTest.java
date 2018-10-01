@@ -34,9 +34,6 @@ import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.component.jms.JmsConstants.JMS_MESSAGE_TYPE;
 
-/**
- * @version 
- */
 public class JmsMessageTypeTest extends CamelTestSupport {
 
     protected CamelContext createCamelContext() throws Exception {

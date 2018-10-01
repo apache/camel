@@ -30,9 +30,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class BodyAndHeaderConvertTest extends Assert {
     protected Exchange exchange;
 

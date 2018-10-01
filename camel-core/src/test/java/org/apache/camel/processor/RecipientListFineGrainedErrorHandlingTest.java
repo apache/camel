@@ -25,9 +25,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSupport {
 
     private static int counter;

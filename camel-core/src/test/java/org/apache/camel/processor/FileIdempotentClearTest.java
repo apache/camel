@@ -25,9 +25,6 @@ import org.apache.camel.spi.IdempotentRepository;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FileIdempotentClearTest extends ContextTestSupport {
 
     private File store = new File("target/idempotentfilestore.dat");

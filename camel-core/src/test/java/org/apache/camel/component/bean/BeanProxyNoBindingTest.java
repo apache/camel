@@ -25,9 +25,6 @@ import org.apache.camel.builder.ProxyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class BeanProxyNoBindingTest extends ContextTestSupport {
 
     @Test

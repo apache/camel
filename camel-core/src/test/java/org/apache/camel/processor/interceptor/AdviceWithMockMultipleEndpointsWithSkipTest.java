@@ -22,9 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.seda.SedaEndpoint;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class AdviceWithMockMultipleEndpointsWithSkipTest extends ContextTestSupport {
 
     // START SNIPPET: e1

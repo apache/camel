@@ -25,9 +25,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FileMarkerFileRecursiveFilterDeleteOldLockFilesTest extends ContextTestSupport {
 
     @Override

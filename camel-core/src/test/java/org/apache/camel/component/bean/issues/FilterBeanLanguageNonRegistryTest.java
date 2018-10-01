@@ -21,9 +21,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.language.bean.BeanLanguage;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FilterBeanLanguageNonRegistryTest extends ContextTestSupport {
 
     @Test

@@ -25,9 +25,6 @@ import org.apache.camel.util.ServiceHelper;
 import org.junit.After;
 import org.junit.Before;
 
-/**
- * @version 
- */
 public abstract class AbstractVmTestSupport extends ContextTestSupport {
     
     protected CamelContext context2;

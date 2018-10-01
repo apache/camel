@@ -24,9 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ManagedEndpointUtilizationStatisticsTest extends ManagementTestSupport {
 
     @Override

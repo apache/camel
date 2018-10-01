@@ -25,9 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class NoStreamCachingTest extends ContextTestSupport {
 
     private static final String MESSAGE = "<hello>world!</hello>";

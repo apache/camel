@@ -26,9 +26,6 @@ import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
 
-/**
- * @version 
- */
 public class QuartzEndpointConfigureTest extends BaseQuartzTest {
 
     @Test

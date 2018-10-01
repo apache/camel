@@ -21,9 +21,6 @@ import org.apache.camel.issues.TryCatchWithSplitIssueTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringTryCatchWithSplitIssueTest extends TryCatchWithSplitIssueTest {
 
     protected CamelContext createCamelContext() throws Exception {

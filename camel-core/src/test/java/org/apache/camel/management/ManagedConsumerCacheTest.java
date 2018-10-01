@@ -30,9 +30,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.ConsumerCache;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ManagedConsumerCacheTest extends ManagementTestSupport {
 
     @Test

@@ -28,9 +28,6 @@ import org.apache.camel.support.TypeConverterSupport;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class TypeConverterRegistryTest extends Assert {
 
     @Test

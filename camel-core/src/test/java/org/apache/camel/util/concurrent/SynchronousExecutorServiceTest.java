@@ -21,9 +21,6 @@ import java.util.concurrent.ExecutorService;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class SynchronousExecutorServiceTest extends Assert {
 
     private static boolean invoked;

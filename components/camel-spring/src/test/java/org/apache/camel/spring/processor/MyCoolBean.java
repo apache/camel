@@ -16,9 +16,6 @@
  */
 package org.apache.camel.spring.processor;
 
-/**
-* @version 
-*/
 public class MyCoolBean {
 
     public String cool(String body) {

@@ -28,9 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ManagedDualCamelContextTest extends TestSupport {
 
     protected CamelContext createCamelContext() throws Exception {

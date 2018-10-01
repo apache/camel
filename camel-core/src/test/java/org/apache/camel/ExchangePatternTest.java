@@ -19,9 +19,6 @@ package org.apache.camel;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class ExchangePatternTest extends Assert {
     @Test
     public void testExchangePattern() throws Exception {

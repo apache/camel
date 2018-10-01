@@ -34,9 +34,6 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class AggregateProcessorTest extends ContextTestSupport {
 
     private ExecutorService executorService;

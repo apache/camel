@@ -19,9 +19,6 @@ package org.apache.camel;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class SuspendableServiceTest extends Assert {
 
     private static class MyService implements SuspendableService {

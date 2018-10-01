@@ -25,8 +25,6 @@ import org.junit.Test;
 
 /**
  * Default error handler test
- *
- * @version 
  */
 public class DefaultErrorHandlerOnExceptionTest extends ContextTestSupport {
 

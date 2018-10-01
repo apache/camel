@@ -42,8 +42,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Logs the defined message to the logger
- *
- * @version 
  */
 @Metadata(label = "eip,configuration")
 @XmlRootElement(name = "log")

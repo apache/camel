@@ -29,9 +29,6 @@ import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class AsyncEndpointEventNotifierTest extends ContextTestSupport {
 
     private final CountDownLatch latch = new CountDownLatch(1);

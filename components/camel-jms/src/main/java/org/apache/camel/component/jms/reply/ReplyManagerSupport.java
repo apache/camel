@@ -44,8 +44,6 @@ import org.springframework.jms.listener.AbstractMessageListenerContainer;
 
 /**
  * Base class for {@link ReplyManager} implementations.
- *
- * @version 
  */
 public abstract class ReplyManagerSupport extends ServiceSupport implements ReplyManager {
 

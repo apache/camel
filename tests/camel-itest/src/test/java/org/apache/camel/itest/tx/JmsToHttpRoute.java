@@ -32,8 +32,6 @@ import org.apache.camel.test.AvailablePortFinder;
  * <p/>
  * Notice we use the SpringRouteBuilder that supports transacted
  * error handler.
- *
- * @version 
  */
 public class JmsToHttpRoute extends SpringRouteBuilder {
     protected static int counter;

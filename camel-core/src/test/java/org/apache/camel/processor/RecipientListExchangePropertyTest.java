@@ -20,9 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RecipientListExchangePropertyTest extends ContextTestSupport {
 
     private final MyStuff myStuff = new MyStuff("Blah");

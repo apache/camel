@@ -25,8 +25,6 @@ import org.apache.camel.spi.PackageScanClassResolver;
  * <a href="http://camel.apache.org/type-converter.html">type converters</a> in Camel.
  * <p/>
  * This implementation will load type converters up-front on startup.
- *
- * @version 
  */
 public class DefaultTypeConverter extends BaseTypeConverterRegistry {
 

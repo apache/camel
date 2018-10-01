@@ -63,8 +63,6 @@ import static org.apache.camel.util.ObjectHelper.asString;
 
 /**
  * Information about a method to be used for invocation.
- *
- * @version 
  */
 public class MethodInfo {
     private static final Logger LOG = LoggerFactory.getLogger(MethodInfo.class);

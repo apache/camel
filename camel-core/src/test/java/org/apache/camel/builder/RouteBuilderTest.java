@@ -45,9 +45,6 @@ import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RouteBuilderTest extends TestSupport {
     protected Processor myProcessor = new MyProcessor();
     protected DelegateProcessor interceptor1;

@@ -18,8 +18,6 @@ package org.apache.camel;
 
 /**
  * Represents the core lifecycle API for POJOs which can be started and stopped
- * 
- * @version 
  */
 public interface Service {
 

@@ -22,9 +22,6 @@ import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RouteDirectSuspendResumeTest extends ContextTestSupport {
 
     @Test

@@ -28,8 +28,6 @@ import org.apache.camel.Service;
 /**
  * A debugger which allows tooling to attach breakpoints which is is being invoked
  * when {@link Exchange}s is being routed.
- *
- * @version 
  */
 public interface Debugger extends Service, CamelContextAware {
 

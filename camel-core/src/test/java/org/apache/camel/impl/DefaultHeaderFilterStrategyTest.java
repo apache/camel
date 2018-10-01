@@ -23,9 +23,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
 
     @Test

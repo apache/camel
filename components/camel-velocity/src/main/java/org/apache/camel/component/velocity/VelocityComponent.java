@@ -24,9 +24,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ResourceHelper;
 import org.apache.velocity.app.VelocityEngine;
 
-/**
- * @version 
- */
 public class VelocityComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")

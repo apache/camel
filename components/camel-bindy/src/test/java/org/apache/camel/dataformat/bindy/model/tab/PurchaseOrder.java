@@ -19,9 +19,6 @@ package org.apache.camel.dataformat.bindy.model.tab;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 
-/**
- * @version
- */
 @CsvRecord(separator = "\t", crlf = "UNIX")
 public class PurchaseOrder {
 

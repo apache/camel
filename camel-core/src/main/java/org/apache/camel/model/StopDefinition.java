@@ -27,8 +27,6 @@ import org.apache.camel.spi.RouteContext;
 
 /**
  * Stops the processing of the current message
- *
- * @version 
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "stop")

@@ -25,7 +25,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * Test that verifies JMX can be disabled via Spring.
  * 
- * @version 
  *
  */
 public class DisableJmxAgentTest extends DefaultJMXAgentTest {

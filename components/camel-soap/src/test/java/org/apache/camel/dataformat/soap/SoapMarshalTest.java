@@ -33,9 +33,6 @@ import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * 
- */
 public class SoapMarshalTest extends CamelTestSupport {
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;

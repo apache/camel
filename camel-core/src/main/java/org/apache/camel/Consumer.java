@@ -18,8 +18,6 @@ package org.apache.camel;
 
 /**
  * A consumer of message exchanges from an {@link Endpoint}
- *
- * @version 
  */
 public interface Consumer extends Service, EndpointAware {
 }

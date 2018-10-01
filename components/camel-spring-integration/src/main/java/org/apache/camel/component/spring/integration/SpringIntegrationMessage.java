@@ -27,8 +27,6 @@ import org.springframework.messaging.Message;
 /**
  * The Message {@link DefaultMessage} implementation
  * for accessing the SpringIntegrationMessage
- *
- * @version 
  */
 public class SpringIntegrationMessage extends DefaultMessage {
     private org.springframework.messaging.Message<?> siMessage;

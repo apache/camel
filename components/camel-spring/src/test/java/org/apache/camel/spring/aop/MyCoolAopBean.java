@@ -22,9 +22,6 @@ import org.apache.camel.Body;
 import org.apache.camel.Header;
 import org.apache.camel.Headers;
 
-/**
- * @version 
- */
 public class MyCoolAopBean {
 
     public String hello(@Body String body, @Header("foo") String foo, @Headers Map<String, Object> headers) {

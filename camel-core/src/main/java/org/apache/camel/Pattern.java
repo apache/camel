@@ -43,8 +43,6 @@ import java.lang.annotation.Target;
  * @see InOnly
  * @see ExchangePattern
  * @see Exchange#getPattern()
- *
- * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

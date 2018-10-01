@@ -27,9 +27,6 @@ import org.apache.camel.Headers;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class DynamicRouterExchangeHeaders2Test extends ContextTestSupport {
 
     private static List<String> bodies = new ArrayList<>();
