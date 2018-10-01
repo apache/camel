@@ -128,6 +128,14 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                     throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), "Server refused connection");
                 }
             } catch (Exception e) {
+                if (client.isConnected()) {
+                    log.trace("Disconnecting due to exception during connect");
+                    try {
+                        client.disconnect(); // ensures socket is closed
+                    } catch (IOException ignore) {
+                        log.trace("Ignore exception during disconnect: {}", ignore.getMessage());
+                    }
+                }
                 // check if we are interrupted so we can break out
                 if (Thread.currentThread().isInterrupted()) {
                     throw new GenericFileOperationFailedException("Interrupted during connecting", new InterruptedException("Interrupted during connecting"));
