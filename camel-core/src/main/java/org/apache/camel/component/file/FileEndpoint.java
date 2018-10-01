@@ -184,6 +184,10 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         return new FileConsumer(this, processor, operations, processStrategy != null ? processStrategy : createGenericFileStrategy());
     }
 
+    /**
+     * Default Existing File Move Strategy
+     * @return the default implementation for file component
+     */
     private FileMoveExistingStrategy createDefaultMoveExistingFileStrategy() {
         return new GenericFileDefaultMoveExistingFileStrategy();
     }

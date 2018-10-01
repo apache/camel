@@ -113,6 +113,10 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         }
     }
 
+    /**
+     * Default Existing File Move Strategy
+     * @return the default implementation for ftp components
+     */
     private FileMoveExistingStrategy createDefaultFtpMoveExistingFileStrategy() {
         return new FtpDefaultMoveExistingFileStrategy();
     }
