@@ -214,7 +214,7 @@
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
     <fabric8-maven-plugin-version>3.5.41</fabric8-maven-plugin-version>
     <facebook4j-core-version>2.4.12</facebook4j-core-version>
-    <facebook4j-core-bundle-version>2.4.11_2</facebook4j-core-bundle-version>
+    <facebook4j-core-bundle-version>2.4.12_1</facebook4j-core-bundle-version>
     <fastinfoset-version>1.2.13_1</fastinfoset-version>
     <fastjson-version>1.2.49</fastjson-version>
     <fastjson-bundle-version>1.2.49_1</fastjson-bundle-version>
