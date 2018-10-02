@@ -59,6 +59,7 @@ import com.amazonaws.services.mq.model.UpdateConfigurationRequest;
 import com.amazonaws.services.mq.model.UpdateConfigurationResult;
 import com.amazonaws.services.mq.model.UpdateUserRequest;
 import com.amazonaws.services.mq.model.UpdateUserResult;
+import com.sun.corba.se.pept.broker.Broker;
 
 public class AmazonMQClientMock implements AmazonMQ {
 
@@ -98,7 +99,11 @@ public class AmazonMQClientMock implements AmazonMQ {
 
     @Override
     public DescribeBrokerResult describeBroker(DescribeBrokerRequest describeBrokerRequest) {
-        throw new UnsupportedOperationException();
+        DescribeBrokerResult result = new DescribeBrokerResult();
+        result.setBrokerId("1");
+        result.setBrokerName("Test");
+        result.setBrokerState(BrokerState.RUNNING.toString());
+        return result;
     }
 
     @Override
