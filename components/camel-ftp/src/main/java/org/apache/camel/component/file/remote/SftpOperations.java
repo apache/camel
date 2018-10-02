@@ -605,8 +605,13 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         // if it starts with the root path then a little special handling for that
         if (FileUtil.hasLeadingSeparator(path)) {
             // change to root path
-            doChangeDirectory(path.substring(0, 1));
-            path = path.substring(1);
+            if (!FileUtil.isWindows()) {
+                doChangeDirectory(path.substring(0, 1));
+                path = path.substring(1);
+            } else {
+                doChangeDirectory(path.substring(0, 4));
+                path = path.substring(4);
+            }
         }
 
         // split into multiple dirs
