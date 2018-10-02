@@ -65,7 +65,7 @@ public class RestDslGeneratorTest {
     public void shouldGenerateSourceCodeWithRestComponent() throws IOException, URISyntaxException {
         final StringBuilder code = new StringBuilder();
 
-        RestDslGenerator.toAppendable(swagger).withGeneratedTime(generated).withRestComponent("servlet").generate(code);
+        RestDslGenerator.toAppendable(swagger).withGeneratedTime(generated).withRestComponent("servlet").withRestContextPath("/").generate(code);
 
         final URI file = RestDslGeneratorTest.class.getResource("/SwaggerPetstoreWithRestComponent.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);

@@ -17,16 +17,20 @@
 package org.apache.camel.maven.generator.swagger;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.camel.generator.swagger.DestinationGenerator;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
@@ -204,8 +208,54 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
 
     protected String detectCamelVersionFromClasspath() {
         return mavenProject.getDependencies().stream().filter(
-                d -> "org.apache.camel".equals(d.getGroupId()) && ObjectHelper.isNotEmpty(d.getVersion()))
+            d -> "org.apache.camel".equals(d.getGroupId()) && ObjectHelper.isNotEmpty(d.getVersion()))
             .findFirst().map(Dependency::getVersion).orElse(null);
+    }
+
+    protected String detectSpringBootMainPackage() throws IOException {
+        for (String src : mavenProject.getCompileSourceRoots()) {
+            String d = findSpringSpringBootPackage(new File(src));
+            if (d != null) {
+                return d;
+            }
+        }
+        return null;
+    }
+
+    protected String findSpringSpringBootPackage(File dir) throws IOException {
+        File[] files = dir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.getName().endsWith(".java")) {
+                    String content = IOHelper.loadText(new FileInputStream(file));
+                    if (content.contains("@SpringBootApplication")) {
+                        return grabPackageName(content);
+                    }
+                } else if (file.isDirectory()) {
+                    String packageName = findSpringSpringBootPackage(file);
+                    if (packageName != null) {
+                        return packageName;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    protected String grabPackageName(String content) {
+        String[] lines = content.split("\\n");
+        for (String line : lines) {
+            line = line.trim();
+            if (line.startsWith("package ")) {
+                line = line.substring(8);
+                line = line.trim();
+                if (line.endsWith(";")) {
+                    line = line.substring(0, line.length() - 1);
+                }
+                return line;
+            }
+        }
+        return null;
     }
 
 }

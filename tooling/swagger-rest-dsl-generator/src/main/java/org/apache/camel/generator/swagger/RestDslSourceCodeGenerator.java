@@ -104,7 +104,11 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
 
         if (restComponent != null) {
             configure.addCode("\n");
-            configure.addCode("restConfiguration().component(\"" + restComponent + "\");\n\n");
+            configure.addCode("restConfiguration().component(\"" + restComponent + "\")");
+            if (restContextPath != null) {
+                configure.addCode(".contextPath(\"" + restContextPath + "\")");
+            }
+            configure.addCode(";\n\n");
         }
 
         final PathVisitor<MethodSpec> restDslStatement = new PathVisitor<>(emitter, filter, destinationGenerator());
