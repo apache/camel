@@ -21,7 +21,7 @@ import java.util.List;
 
 import com.amazonaws.AmazonWebServiceRequest;
 import com.amazonaws.ResponseMetadata;
-import com.amazonaws.services.mq.AmazonMQ;
+import com.amazonaws.services.mq.AbstractAmazonMQ;
 import com.amazonaws.services.mq.model.BrokerState;
 import com.amazonaws.services.mq.model.BrokerSummary;
 import com.amazonaws.services.mq.model.ConfigurationId;
@@ -59,9 +59,8 @@ import com.amazonaws.services.mq.model.UpdateConfigurationRequest;
 import com.amazonaws.services.mq.model.UpdateConfigurationResult;
 import com.amazonaws.services.mq.model.UpdateUserRequest;
 import com.amazonaws.services.mq.model.UpdateUserResult;
-import com.sun.corba.se.pept.broker.Broker;
 
-public class AmazonMQClientMock implements AmazonMQ {
+public class AmazonMQClientMock extends AbstractAmazonMQ {
 
     public AmazonMQClientMock() {
         super();
