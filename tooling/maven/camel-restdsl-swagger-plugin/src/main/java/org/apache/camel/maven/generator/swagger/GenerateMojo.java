@@ -122,11 +122,14 @@ public class GenerateMojo extends AbstractGenerateMojo {
             // if its a spring boot project and we use servlet then we should generate additional source code
             if (detectSpringBootFromClasspath() && "servlet".equals(comp)) {
                 try {
-                    String pName = detectSpringBootMainPackage();
-                    if (pName != null) {
-                        packageName = pName;
-                        generator.withPackageName(packageName);
-                        getLog().info("Detected @SpringBootApplication, and will be using its package name: " + packageName);
+                    if (ObjectHelper.isEmpty(packageName)) {
+                        // if not explicit package name then try to use package where the spring boot application is located
+                        String pName = detectSpringBootMainPackage();
+                        if (pName != null) {
+                            packageName = pName;
+                            generator.withPackageName(packageName);
+                            getLog().info("Detected @SpringBootApplication, and will be using its package name: " + packageName);
+                        }
                     }
                     getLog().info("Generating Camel Rest Controller source with package name " + packageName + " in source directory: " + outputPath);
                     SpringBootProjectSourceCodeGenerator.generator().withPackageName(packageName).generate(outputPath);

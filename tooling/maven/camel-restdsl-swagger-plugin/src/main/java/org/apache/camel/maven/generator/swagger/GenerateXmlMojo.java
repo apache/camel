@@ -18,6 +18,7 @@ package org.apache.camel.maven.generator.swagger;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
@@ -25,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.generator.swagger.DestinationGenerator;
 import org.apache.camel.generator.swagger.RestDslGenerator;
 import org.apache.camel.generator.swagger.RestDslXmlGenerator;
+import org.apache.camel.generator.swagger.SpringBootProjectSourceCodeGenerator;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -83,6 +85,8 @@ public class GenerateXmlMojo extends AbstractGenerateMojo {
                 getLog().info("Detected Camel Rest component from classpath: " + comp);
                 generator.withRestComponent(comp);
             } else {
+                comp = "servlet";
+
                 // is it spring boot?
                 String aid = "camel-servlet";
                 if (detectSpringBootFromClasspath()) {
@@ -101,7 +105,7 @@ public class GenerateXmlMojo extends AbstractGenerateMojo {
                 getLog().info("Cannot detect Rest component from classpath. Will use servlet as Rest component.");
                 getLog().info("Add the following dependency in the Maven pom.xml file:\n" + dep + "\n");
 
-                generator.withRestComponent("servlet");
+                generator.withRestComponent(comp);
             }
         }
 
