@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URL;
-import java.security.KeyPair;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,7 +30,7 @@ import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.AmazonWebServiceRequest;
 import com.amazonaws.HttpMethod;
-import com.amazonaws.services.s3.AmazonS3EncryptionClient;
+import com.amazonaws.services.s3.AbstractAmazonS3;
 import com.amazonaws.services.s3.S3ResponseMetadata;
 import com.amazonaws.services.s3.model.AbortMultipartUploadRequest;
 import com.amazonaws.services.s3.model.AccessControlList;
@@ -49,7 +48,6 @@ import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.amazonaws.services.s3.model.DeleteBucketRequest;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.DeleteVersionRequest;
-import com.amazonaws.services.s3.model.EncryptionMaterials;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.GetObjectMetadataRequest;
 import com.amazonaws.services.s3.model.GetObjectRequest;
@@ -72,7 +70,6 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.services.s3.model.SetBucketLoggingConfigurationRequest;
 import com.amazonaws.services.s3.model.SetBucketVersioningConfigurationRequest;
-import com.amazonaws.services.s3.model.StaticEncryptionMaterialsProvider;
 import com.amazonaws.services.s3.model.StorageClass;
 import com.amazonaws.services.s3.model.UploadPartRequest;
 import com.amazonaws.services.s3.model.UploadPartResult;
@@ -81,7 +78,7 @@ import com.amazonaws.services.s3.model.VersionListing;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Assert;
 
-public class AmazonS3EncryptionClientMock extends AmazonS3EncryptionClient {
+public class AmazonS3EncryptionClientMock extends AbstractAmazonS3 {
     
     List<S3Object> objects = new CopyOnWriteArrayList<>();
     List<PutObjectRequest> putObjectRequests = new CopyOnWriteArrayList<>();
@@ -91,7 +88,7 @@ public class AmazonS3EncryptionClientMock extends AmazonS3EncryptionClient {
     private int maxCapacity = 100;
     
     public AmazonS3EncryptionClientMock() {
-        super(new StaticEncryptionMaterialsProvider(new EncryptionMaterials(new KeyPair(null, null))));
+        super();
     }
 
     @Override
