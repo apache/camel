@@ -23,7 +23,7 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.AmazonWebServiceRequest;
 import com.amazonaws.ResponseMetadata;
 import com.amazonaws.regions.Region;
-import com.amazonaws.services.lambda.AWSLambda;
+import com.amazonaws.services.lambda.AbstractAWSLambda;
 import com.amazonaws.services.lambda.model.AddPermissionRequest;
 import com.amazonaws.services.lambda.model.AddPermissionResult;
 import com.amazonaws.services.lambda.model.CreateAliasRequest;
@@ -54,7 +54,6 @@ import com.amazonaws.services.lambda.model.GetFunctionResult;
 import com.amazonaws.services.lambda.model.GetPolicyRequest;
 import com.amazonaws.services.lambda.model.GetPolicyResult;
 import com.amazonaws.services.lambda.model.InvokeAsyncRequest;
-import com.amazonaws.services.lambda.model.InvokeAsyncResult;
 import com.amazonaws.services.lambda.model.InvokeRequest;
 import com.amazonaws.services.lambda.model.InvokeResult;
 import com.amazonaws.services.lambda.model.ListAliasesRequest;
@@ -92,7 +91,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.joda.time.DateTime;
 
-public class AmazonLambdaClientMock implements AWSLambda {
+public class AmazonLambdaClientMock extends AbstractAWSLambda {
 
     public AmazonLambdaClientMock() {
         super();
