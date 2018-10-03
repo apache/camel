@@ -31,7 +31,7 @@
       <serviceCall name="myService" component="jetty">
         <!-- static list of servers -->
         <staticServiceDiscovery>
-          <servers>localhost:9090,localhost:9091</servers>
+          <servers>localhost:9096,localhost:9097</servers>
         </staticServiceDiscovery>
 
         <!-- enable ribbon load balancer -->
@@ -41,18 +41,18 @@
     </route>
 
     <route>
-      <from uri="jetty:http://localhost:9090"/>
-      <to uri="mock:9090"/>
+      <from uri="jetty:http://localhost:9096"/>
+      <to uri="mock:9096"/>
       <transform>
-        <constant>9090</constant>
+        <constant>9096</constant>
       </transform>
     </route>
 
     <route>
-      <from uri="jetty:http://localhost:9091"/>
-      <to uri="mock:9091"/>
+      <from uri="jetty:http://localhost:9097"/>
+      <to uri="mock:9097"/>
       <transform>
-        <constant>9091</constant>
+        <constant>9097</constant>
       </transform>
     </route>
   </camelContext>
