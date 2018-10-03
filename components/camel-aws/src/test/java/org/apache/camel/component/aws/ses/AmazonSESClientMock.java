@@ -18,19 +18,18 @@ package org.apache.camel.component.aws.ses;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClient;
+import com.amazonaws.services.simpleemail.AbstractAmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.model.SendEmailRequest;
 import com.amazonaws.services.simpleemail.model.SendEmailResult;
 import com.amazonaws.services.simpleemail.model.SendRawEmailRequest;
 import com.amazonaws.services.simpleemail.model.SendRawEmailResult;
 
-public class AmazonSESClientMock extends AmazonSimpleEmailServiceClient {
+public class AmazonSESClientMock extends AbstractAmazonSimpleEmailService {
     private SendEmailRequest sendEmailRequest;
     private SendRawEmailRequest sendRawEmailRequest;
 
     public AmazonSESClientMock() {
-        super(new BasicAWSCredentials("myAccessKey", "mySecretKey"));
+        super();
     }
 
     @Override
