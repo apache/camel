@@ -25,7 +25,7 @@ import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.FatalFallbackErrorHandler;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.CamelLogger;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.LoggerFactory;
 

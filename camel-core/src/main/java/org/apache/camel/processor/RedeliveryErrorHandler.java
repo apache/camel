@@ -44,7 +44,7 @@ import org.apache.camel.spi.SubUnitOfWorkCallback;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.CamelLogger;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;

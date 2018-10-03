@@ -29,7 +29,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.processor.RedeliveryErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
-import org.apache.camel.support.CamelLogger;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.transaction.TransactionDefinition;

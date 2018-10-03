@@ -131,6 +131,22 @@
     </dependency>
 
     <!-- required dependencies by camel-core -->
+    <!-- it will be shade into camel-core by bnd plugin -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-util</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- required dependencies by camel-core -->
+    <!-- it will be shade into camel-core by bnd plugin -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- required dependencies by camel-core -->
     <!-- which we shade into camel-core so its available for everybody out of the box -->
     <dependency>
       <groupId>com.github.ben-manes.caffeine</groupId>

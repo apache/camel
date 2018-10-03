@@ -120,7 +120,7 @@ import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.Debug;
 import org.apache.camel.processor.interceptor.HandleFault;
-import org.apache.camel.runtimecatalog.DefaultRuntimeCamelCatalog;
+import org.apache.camel.runtimecatalog.impl.DefaultRuntimeCamelCatalog;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelContextNameStrategy;

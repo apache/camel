@@ -17,18 +17,18 @@
 package org.apache.camel.catalog.maven;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import groovy.grape.Grape;
 import groovy.lang.GroovyClassLoader;
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.CollectionStringBuffer;
 import org.apache.camel.catalog.connector.CamelConnectorCatalog;
 
 import static org.apache.camel.catalog.maven.ComponentArtifactHelper.extractComponentJavaType;
@@ -154,19 +154,16 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
                     String scheme = tree.get("scheme").textValue();
                     String javaType = tree.get("javaType").textValue();
                     String description = tree.get("description").textValue();
-                    Iterator<JsonNode> it = tree.withArray("labels").iterator();
 
-                    CollectionStringBuffer csb = new CollectionStringBuffer(",");
-                    while (it.hasNext()) {
-                        String text = it.next().textValue();
-                        csb.append(text);
-                    }
+                    String csb = StreamSupport.stream(tree.withArray("labels").spliterator(), false)
+                            .map(JsonNode::textValue)
+                            .collect(Collectors.joining(","));
 
                     if (log) {
                         System.out.println("Adding connector: " + name + " with scheme: " + scheme);
                     }
                     camelConnectorCatalog.addConnector(groupId, artifactId, version,
-                        name, scheme, javaType, description, csb.toString(), json[0], json[1], json[2]);
+                        name, scheme, javaType, description, csb, json[0], json[1], json[2]);
 
                     names.add(name);
                 } catch (Throwable e) {

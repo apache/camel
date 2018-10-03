@@ -34,7 +34,7 @@ import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.CamelLogger;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;

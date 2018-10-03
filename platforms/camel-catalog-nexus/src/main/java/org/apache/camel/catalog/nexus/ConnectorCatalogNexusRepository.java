@@ -20,12 +20,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Iterator;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.camel.catalog.CollectionStringBuffer;
 import org.apache.camel.catalog.connector.CamelConnectorCatalog;
 
 import static org.apache.camel.catalog.CatalogHelper.loadText;
@@ -114,15 +114,12 @@ public class ConnectorCatalogNexusRepository extends BaseNexusRepository {
                 String scheme = tree.get("scheme").textValue();
                 String javaType = tree.get("javaType").textValue();
                 String description = tree.get("description").textValue();
-                Iterator<JsonNode> it = tree.withArray("labels").iterator();
 
-                CollectionStringBuffer csb = new CollectionStringBuffer(",");
-                while (it.hasNext()) {
-                    String text = it.next().textValue();
-                    csb.append(text);
-                }
+                String csb = StreamSupport.stream(tree.withArray("labels").spliterator(), false)
+                        .map(JsonNode::textValue)
+                        .collect(Collectors.joining(","));
 
-                addConnector(dto, name, scheme, javaType, description, csb.toString(), json[0], json[1], json[2]);
+                addConnector(dto, name, scheme, javaType, description, csb, json[0], json[1], json[2]);
             }
         } catch (IOException e) {
             logger.warn("Error scanning JAR for custom Camel connectors", e);

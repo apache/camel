@@ -49,7 +49,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.support.CamelLogger;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ServiceSupport;

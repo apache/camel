@@ -17,7 +17,6 @@
 ExchangePattern
 LoggingLevel
 ManagementStatisticsLevel
-ThreadPoolRejectedPolicy
 TypeConverterExists
 ShutdownRoute
 ShutdownRunningTask

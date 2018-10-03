@@ -18,8 +18,8 @@ package org.apache.camel.spring.boot;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.LogListener;
-import org.apache.camel.support.CamelLogger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
