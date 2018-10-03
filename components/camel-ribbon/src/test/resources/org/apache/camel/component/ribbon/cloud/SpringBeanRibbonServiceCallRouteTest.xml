@@ -27,7 +27,7 @@
 
   <!-- setup a static ribbon server list with these 2 servers to start with -->
   <bean id="discovery" class="org.apache.camel.impl.cloud.StaticServiceDiscovery">
-    <property name="servers" value="localhost:9090,localhost:9091"/>
+    <property name="servers" value="localhost:9092,localhost:9093"/>
   </bean>
 
   <bean id="balancer" class="org.apache.camel.component.ribbon.cloud.RibbonServiceLoadBalancer">
@@ -48,18 +48,18 @@
     </route>
 
     <route>
-      <from uri="jetty:http://localhost:9090"/>
-      <to uri="mock:9090"/>
+      <from uri="jetty:http://localhost:9092"/>
+      <to uri="mock:9092"/>
       <transform>
-        <constant>9090</constant>
+        <constant>9092</constant>
       </transform>
     </route>
 
     <route>
-      <from uri="jetty:http://localhost:9091"/>
-      <to uri="mock:9091"/>
+      <from uri="jetty:http://localhost:9093"/>
+      <to uri="mock:9093"/>
       <transform>
-        <constant>9091</constant>
+        <constant>9093</constant>
       </transform>
     </route>
   </camelContext>

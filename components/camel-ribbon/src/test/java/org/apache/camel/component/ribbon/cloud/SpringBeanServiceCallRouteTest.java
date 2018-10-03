@@ -42,5 +42,13 @@ public class SpringBeanServiceCallRouteTest extends SpringRibbonServiceCallRoute
         RibbonServiceLoadBalancer loadBalancer = (RibbonServiceLoadBalancer)processor.getLoadBalancer();
         Assert.assertTrue(loadBalancer.getServiceDiscovery() instanceof StaticServiceDiscovery);
     }
+    
+    protected String getFirstPort() {
+        return "9092";
+    }
+    
+    protected String getSecondPort() {
+        return "9093";
+    }
 }
 
