@@ -21,7 +21,8 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.services.ec2.AbstractAmazonEC2;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.amazonaws.services.ec2.model.CreateTagsRequest;
 import com.amazonaws.services.ec2.model.CreateTagsResult;
 import com.amazonaws.services.ec2.model.DeleteTagsRequest;
@@ -58,10 +59,10 @@ import com.amazonaws.services.ec2.model.UnmonitorInstancesResult;
 
 import org.apache.camel.util.ObjectHelper;
 
-public class AmazonEC2ClientMock extends AbstractAmazonEC2 {
+public class AmazonEC2ClientMock extends AmazonEC2Client {
 
     public AmazonEC2ClientMock() {
-        super();
+        super(new BasicAWSCredentials("user", "secret"));
     }
     
     @Override
