@@ -24,7 +24,7 @@ import java.security.cert.Certificate;
 import javax.annotation.Generated;
 import org.apache.camel.component.crypto.CryptoOperation;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**

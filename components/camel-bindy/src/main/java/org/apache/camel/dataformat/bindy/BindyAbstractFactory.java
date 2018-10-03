@@ -30,7 +30,7 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.annotation.OneToMany;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,7 +146,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
                 String toClassName = field.getType().getName();
                 Object to = model.get(toClassName);
 
-                ObjectHelper.notNull(to, "No @link annotation has been defined for the object to link");
+                org.apache.camel.util.ObjectHelper.notNull(to, "No @link annotation has been defined for the object to link");
                 field.set(model.get(field.getDeclaringClass().getName()), to);
             }
         }

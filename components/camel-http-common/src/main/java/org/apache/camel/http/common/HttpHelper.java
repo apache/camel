@@ -32,12 +32,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Producer;
 import org.apache.camel.RuntimeExchangeException;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.CamelObjectInputStream;
+import org.apache.camel.support.CamelObjectInputStream;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;

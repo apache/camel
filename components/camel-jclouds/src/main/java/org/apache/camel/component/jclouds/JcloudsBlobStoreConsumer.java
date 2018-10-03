@@ -24,7 +24,7 @@ import com.google.common.base.Strings;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.converter.stream.CachedOutputStream;
-import org.apache.camel.impl.ScheduledBatchPollingConsumer;
+import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;

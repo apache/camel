@@ -23,7 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.iec60870.AbstractIecEndpoint;
 import org.apache.camel.component.iec60870.ObjectAddress;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 

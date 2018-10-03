@@ -26,7 +26,7 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.util.StringHelper.removeStartingCharacters;

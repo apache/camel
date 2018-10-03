@@ -32,7 +32,7 @@ import javax.naming.NamingException;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.util.jndi.CamelInitialContextFactory;
+import org.apache.camel.support.jndi.CamelInitialContextFactory;
 
 /**
  * A {@link Registry} implementation which looks up the objects in JNDI
@@ -158,7 +158,7 @@ public class JndiRegistry implements Registry {
         }
         // must include a factory if none provided in standalone mode
         if (standalone && !properties.containsKey("java.naming.factory.initial")) {
-            properties.put("java.naming.factory.initial", "org.apache.camel.util.jndi.CamelInitialContextFactory");
+            properties.put("java.naming.factory.initial", "org.apache.camel.support.jndi.CamelInitialContextFactory");
         }
         return new InitialContext(properties);
     }

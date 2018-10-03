@@ -42,12 +42,12 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
-import java.nio.charset.UnsupportedCharsetException;
 import java.util.Properties;
 import java.util.function.Supplier;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,7 +96,7 @@ public final class IOConverter {
 
     @Converter
     public static BufferedReader toReader(File file, Exchange exchange) throws IOException {
-        return toReader(file, IOHelper.getCharsetName(exchange));
+        return toReader(file, ExchangeHelper.getCharsetName(exchange));
     }
 
     public static BufferedReader toReader(File file, String charset) throws IOException {
@@ -117,7 +117,7 @@ public final class IOConverter {
     @Converter
     public static BufferedWriter toWriter(File file, Exchange exchange) throws IOException {
         FileOutputStream os = new FileOutputStream(file, false);
-        return toWriter(os, IOHelper.getCharsetName(exchange));
+        return toWriter(os, ExchangeHelper.getCharsetName(exchange));
     }
 
     public static BufferedWriter toWriter(File file, boolean append, String charset) throws IOException {
@@ -130,7 +130,7 @@ public final class IOConverter {
 
     @Converter
     public static Reader toReader(InputStream in, Exchange exchange) throws IOException {
-        return IOHelper.buffered(new InputStreamReader(in, IOHelper.getCharsetName(exchange)));
+        return IOHelper.buffered(new InputStreamReader(in, ExchangeHelper.getCharsetName(exchange)));
     }
 
     @Converter
@@ -140,7 +140,7 @@ public final class IOConverter {
 
     @Converter
     public static Writer toWriter(OutputStream out, Exchange exchange) throws IOException {
-        return IOHelper.buffered(new OutputStreamWriter(out, IOHelper.getCharsetName(exchange)));
+        return IOHelper.buffered(new OutputStreamWriter(out, ExchangeHelper.getCharsetName(exchange)));
     }
 
     @Converter
@@ -152,7 +152,7 @@ public final class IOConverter {
 
     @Converter
     public static InputStream toInputStream(String text, Exchange exchange) throws IOException {
-        return toInputStream(text.getBytes(IOHelper.getCharsetName(exchange)));
+        return toInputStream(text.getBytes(ExchangeHelper.getCharsetName(exchange)));
     }
     
     @Converter
@@ -172,7 +172,7 @@ public final class IOConverter {
 
     @Converter
     public static String toString(byte[] data, Exchange exchange) throws IOException {
-        return new String(data, IOHelper.getCharsetName(exchange));
+        return new String(data, ExchangeHelper.getCharsetName(exchange));
     }
 
     @Converter
@@ -235,7 +235,7 @@ public final class IOConverter {
 
     @Converter
     public static byte[] toByteArray(String value, Exchange exchange) throws IOException {
-        return value.getBytes(IOHelper.getCharsetName(exchange));
+        return value.getBytes(ExchangeHelper.getCharsetName(exchange));
     }
 
     @Converter
@@ -309,7 +309,7 @@ public final class IOConverter {
 
     @Converter
     public static String toString(ByteArrayOutputStream os, Exchange exchange) throws IOException {
-        return os.toString(IOHelper.getCharsetName(exchange));
+        return os.toString(ExchangeHelper.getCharsetName(exchange));
     }
 
     @Converter

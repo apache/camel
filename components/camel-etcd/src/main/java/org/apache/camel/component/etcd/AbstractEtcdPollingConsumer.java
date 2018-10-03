@@ -18,7 +18,7 @@ package org.apache.camel.component.etcd;
 
 import mousio.etcd4j.EtcdClient;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.support.ScheduledPollConsumer;
 
 /**
  * The etcd consumer.

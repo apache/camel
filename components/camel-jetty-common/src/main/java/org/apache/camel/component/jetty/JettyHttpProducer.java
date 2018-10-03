@@ -35,11 +35,11 @@ import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.http.common.HttpConstants;
 import org.apache.camel.http.common.HttpHelper;
-import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.util.component.LifeCycle;
@@ -173,14 +173,14 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
                     // so we only do an instanceof check and accept String if the body is really a String
                     // do not fallback to use the default charset as it can influence the request
                     // (for example application/x-www-form-urlencoded forms being sent)
-                    String charset = IOHelper.getCharsetName(exchange, false);
+                    String charset = ExchangeHelper.getCharsetName(exchange, false);
                     httpExchange.setRequestContent(data, charset);
                 } else {
                     // then fallback to input stream
                     InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, exchange.getIn().getBody());
                     // setup the content length if it is possible
                     String length = exchange.getIn().getHeader(Exchange.CONTENT_LENGTH, String.class);
-                    if (ObjectHelper.isNotEmpty(length)) {
+                    if (org.apache.camel.util.ObjectHelper.isNotEmpty(length)) {
                         httpExchange.addRequestHeader(Exchange.CONTENT_LENGTH, length);
                         //send with content-length
                         httpExchange.setRequestContent(is, new Integer(length));

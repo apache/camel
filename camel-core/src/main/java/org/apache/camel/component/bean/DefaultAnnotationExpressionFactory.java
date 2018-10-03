@@ -24,8 +24,8 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.LanguageAnnotation;
 import org.apache.camel.spi.Language;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.PredicateToExpressionAdapter;
+import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.PredicateToExpressionAdapter;
 
 /**
  * Default implementation of the {@link AnnotationExpressionFactory}.

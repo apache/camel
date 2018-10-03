@@ -21,10 +21,9 @@ import javax.sql.DataSource;
 
 import com.opengamma.elsql.ElSqlConfig;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.IntrospectionSupport;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 public class ElsqlComponent extends DefaultComponent {

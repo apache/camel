@@ -19,7 +19,7 @@ package org.apache.camel.component.zookeepermaster.group.internal;
 import java.util.concurrent.Callable;
 
 import org.apache.camel.spi.ClassResolver;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.curator.framework.CuratorFramework;
 
 public final class ManagedGroupFactoryBuilder {

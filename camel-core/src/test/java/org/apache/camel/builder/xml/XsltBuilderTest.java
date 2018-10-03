@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.builder.xml;
+
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Files;
@@ -33,9 +34,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpectedBodyTypeException;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.Synchronization;
-import org.apache.camel.util.UnitOfWorkHelper;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.UnitOfWorkHelper;
 import org.junit.Before;
 import org.junit.Test;
 

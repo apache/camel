@@ -25,7 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulConstants;
 import org.apache.camel.component.consul.ConsulEndpoint;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 
 abstract class AbstractConsulConsumer<C> extends DefaultConsumer {

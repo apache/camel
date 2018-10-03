@@ -23,9 +23,9 @@ import io.vertx.core.eventbus.Message;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadRuntimeException;
-import org.apache.camel.impl.DefaultAsyncProducer;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.MessageHelper;
+import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.MessageHelper;
 
 import static org.apache.camel.component.vertx.VertxHelper.getVertxBody;
 

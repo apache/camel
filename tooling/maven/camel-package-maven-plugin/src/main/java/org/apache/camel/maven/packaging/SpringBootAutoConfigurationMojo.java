@@ -477,7 +477,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.addImport("java.util.Map");
         javaClass.addImport("java.util.HashMap");
         javaClass.addImport("org.apache.camel.util.CollectionHelper");
-        javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
+        javaClass.addImport("org.apache.camel.support.IntrospectionSupport");
         javaClass.addImport("org.apache.camel.spring.boot.util.CamelPropertiesHelper");
         javaClass.addImport("org.apache.camel.CamelContext");
         javaClass.addImport("org.apache.camel.model.rest.RestConstants");
@@ -526,22 +526,22 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             + "definition.setEnableCORS(config.getEnableCors());\n"
             + "\n"
             + "if (config.getApiProperty() != null) {\n"
-            + "    definition.setApiProperties(new HashMap<>(CollectionHelper.flatternKeysInMap(config.getApiProperty(), \".\")));\n"
+            + "    definition.setApiProperties(new HashMap<>(CollectionHelper.flattenKeysInMap(config.getApiProperty(), \".\")));\n"
             + "}\n"
             + "if (config.getComponentProperty() != null) {\n"
-            + "    definition.setComponentProperties(new HashMap<>(CollectionHelper.flatternKeysInMap(config.getComponentProperty(), \".\")));\n"
+            + "    definition.setComponentProperties(new HashMap<>(CollectionHelper.flattenKeysInMap(config.getComponentProperty(), \".\")));\n"
             + "}\n"
             + "if (config.getConsumerProperty() != null) {\n"
-            + "    definition.setConsumerProperties(new HashMap<>(CollectionHelper.flatternKeysInMap(config.getConsumerProperty(), \".\")));\n"
+            + "    definition.setConsumerProperties(new HashMap<>(CollectionHelper.flattenKeysInMap(config.getConsumerProperty(), \".\")));\n"
             + "}\n"
             + "if (config.getDataFormatProperty() != null) {\n"
-            + "    definition.setDataFormatProperties(new HashMap<>(CollectionHelper.flatternKeysInMap(config.getDataFormatProperty(), \".\")));\n"
+            + "    definition.setDataFormatProperties(new HashMap<>(CollectionHelper.flattenKeysInMap(config.getDataFormatProperty(), \".\")));\n"
             + "}\n"
             + "if (config.getEndpointProperty() != null) {\n"
-            + "    definition.setEndpointProperties(new HashMap<>(CollectionHelper.flatternKeysInMap(config.getEndpointProperty(), \".\")));\n"
+            + "    definition.setEndpointProperties(new HashMap<>(CollectionHelper.flattenKeysInMap(config.getEndpointProperty(), \".\")));\n"
             + "}\n"
             + "if (config.getCorsHeaders() != null) {\n"
-            + "    Map<String, Object> map = CollectionHelper.flatternKeysInMap(config.getCorsHeaders(), \".\");\n"
+            + "    Map<String, Object> map = CollectionHelper.flattenKeysInMap(config.getCorsHeaders(), \".\");\n"
             + "    Map<String, String> target = new HashMap<>();\n"
             + "    map.forEach((k, v) -> target.put(k, v.toString()));\n"
             + "    definition.setCorsHeaders(target);\n"
@@ -1365,7 +1365,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.addImport("org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans");
         javaClass.addImport("org.apache.camel.spring.boot.util.GroupCondition");
         javaClass.addImport("org.apache.camel.spring.boot.util.HierarchicalPropertiesEvaluator");
-        javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
+        javaClass.addImport("org.apache.camel.support.IntrospectionSupport");
         javaClass.addImport("org.apache.camel.util.ObjectHelper");
         javaClass.addImport("org.apache.camel.spi.HasId");
         javaClass.addImport(model.getJavaType());
@@ -1473,7 +1473,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.addImport("org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans");
         javaClass.addImport("org.apache.camel.spring.boot.util.GroupCondition");
         javaClass.addImport("org.apache.camel.spring.boot.util.HierarchicalPropertiesEvaluator");
-        javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
+        javaClass.addImport("org.apache.camel.support.IntrospectionSupport");
         javaClass.addImport("org.apache.camel.util.ObjectHelper");
         javaClass.addImport("org.apache.camel.RuntimeCamelException");
         javaClass.addImport("org.apache.camel.spi.DataFormat");
@@ -1586,7 +1586,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.addImport("org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans");
         javaClass.addImport("org.apache.camel.spring.boot.util.GroupCondition");
         javaClass.addImport("org.apache.camel.spring.boot.util.HierarchicalPropertiesEvaluator");
-        javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
+        javaClass.addImport("org.apache.camel.support.IntrospectionSupport");
         javaClass.addImport("org.apache.camel.util.ObjectHelper");
         javaClass.addImport("org.apache.camel.spi.HasId");
         javaClass.addImport("org.apache.camel.spi.LanguageCustomizer");

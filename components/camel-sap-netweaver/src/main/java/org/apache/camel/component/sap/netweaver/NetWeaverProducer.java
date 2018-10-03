@@ -21,9 +21,9 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.codehaus.jackson.map.ObjectMapper;
 

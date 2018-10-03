@@ -29,6 +29,7 @@ import java.util.stream.Stream;
 import com.orbitz.consul.Consul;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckConfiguration;
 import org.apache.camel.health.HealthCheckRepository;
@@ -50,7 +51,7 @@ public class ConsulHealthCheckRepository implements HealthCheckRepository, Camel
     private ConsulHealthCheckRepository(ConsulHealthCheckRepositoryConfiguration configuration) {
         this.checks = new ConcurrentHashMap<>();
         this.configuration = configuration;
-        this.client = Suppliers.memorize(this::createConsul, ObjectHelper::wrapRuntimeCamelException);
+        this.client = Suppliers.memorize(this::createConsul, RuntimeCamelException::wrapRuntimeCamelException);
     }
 
     // *************************************

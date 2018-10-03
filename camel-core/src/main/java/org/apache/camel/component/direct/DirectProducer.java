@@ -18,9 +18,7 @@ package org.apache.camel.component.direct;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultAsyncProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultAsyncProducer;
 
 /**
  * The direct producer.

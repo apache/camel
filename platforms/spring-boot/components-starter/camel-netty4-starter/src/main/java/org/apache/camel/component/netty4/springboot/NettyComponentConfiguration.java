@@ -32,7 +32,7 @@ import org.apache.camel.component.netty4.NettyServerBootstrapFactory;
 import org.apache.camel.component.netty4.ServerInitializerFactory;
 import org.apache.camel.component.netty4.TextLineDelimiter;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 
@@ -72,7 +72,7 @@ public class NettyComponentConfiguration
     private Boolean useGlobalSslContextParameters = false;
     /**
      * To configure security using SSLContextParameters. The option is a
-     * org.apache.camel.util.jsse.SSLContextParameters type.
+     * org.apache.camel.support.jsse.SSLContextParameters type.
      */
     private String sslContextParameters;
     /**

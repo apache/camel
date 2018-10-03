@@ -24,9 +24,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.LifecycleStrategySupport;
-import org.apache.camel.util.ObjectHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
@@ -61,7 +61,7 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
                 service = bundleContext.getService(sr);
             }
         } catch (Exception ex) {
-            throw ObjectHelper.wrapRuntimeCamelException(ex);
+            throw RuntimeCamelException.wrapRuntimeCamelException(ex);
         }
         return type.cast(service);
     }
@@ -120,7 +120,7 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
                 }
             }
         } catch (Exception ex) {
-            throw ObjectHelper.wrapRuntimeCamelException(ex);
+            throw RuntimeCamelException.wrapRuntimeCamelException(ex);
         }
         return result;
     }

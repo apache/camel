@@ -63,7 +63,7 @@ public class CometdComponentConfiguration
     private List<Extension> extensions;
     /**
      * To configure security using SSLContextParameters. The option is a
-     * org.apache.camel.util.jsse.SSLContextParameters type.
+     * org.apache.camel.support.jsse.SSLContextParameters type.
      */
     private String sslContextParameters;
     /**

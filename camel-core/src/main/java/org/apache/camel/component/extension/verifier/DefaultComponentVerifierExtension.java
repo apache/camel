@@ -29,9 +29,9 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.runtimecatalog.EndpointValidationResult;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.IntrospectionSupport;
 
 import static org.apache.camel.util.StreamUtils.stream;
 

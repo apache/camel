@@ -26,7 +26,7 @@ import org.apache.camel.model.LoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.StringHelper;
 
 /**

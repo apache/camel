@@ -42,18 +42,19 @@ import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Pattern;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.StreamCache;
-import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
 import org.slf4j.Logger;
@@ -97,7 +98,7 @@ public class MethodInfo {
             try {
                 return invoke(method, pojo, arguments, exchange);
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 
@@ -138,7 +139,7 @@ public class MethodInfo {
             try {
                 camelContext.addService(routingSlip);
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 
@@ -154,7 +155,7 @@ public class MethodInfo {
             try {
                 camelContext.addService(dynamicRouter);
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 
@@ -172,7 +173,7 @@ public class MethodInfo {
             recipientList.setTimeout(recipientListAnnotation.timeout());
             recipientList.setShareUnitOfWork(recipientListAnnotation.shareUnitOfWork());
 
-            if (ObjectHelper.isNotEmpty(recipientListAnnotation.executorServiceRef())) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(recipientListAnnotation.executorServiceRef())) {
                 ExecutorService executor = camelContext.getExecutorServiceManager().newDefaultThreadPool(this, recipientListAnnotation.executorServiceRef());
                 recipientList.setExecutorService(executor);
             }
@@ -183,12 +184,12 @@ public class MethodInfo {
                 recipientList.setExecutorService(executor);
             }
 
-            if (ObjectHelper.isNotEmpty(recipientListAnnotation.strategyRef())) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(recipientListAnnotation.strategyRef())) {
                 AggregationStrategy strategy = CamelContextHelper.mandatoryLookup(camelContext, recipientListAnnotation.strategyRef(), AggregationStrategy.class);
                 recipientList.setAggregationStrategy(strategy);
             }
 
-            if (ObjectHelper.isNotEmpty(recipientListAnnotation.onPrepareRef())) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(recipientListAnnotation.onPrepareRef())) {
                 Processor onPrepare = CamelContextHelper.mandatoryLookup(camelContext, recipientListAnnotation.onPrepareRef(), Processor.class);
                 recipientList.setOnPrepare(onPrepare);
             }
@@ -197,7 +198,7 @@ public class MethodInfo {
             try {
                 camelContext.addService(recipientList);
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
     }
@@ -232,7 +233,7 @@ public class MethodInfo {
      * Does the given context match this camel context
      */
     private boolean matchContext(String context) {
-        if (ObjectHelper.isNotEmpty(context)) {
+        if (org.apache.camel.util.ObjectHelper.isNotEmpty(context)) {
             if (!camelContext.getName().equals(context)) {
                 return false;
             }
@@ -431,7 +432,7 @@ public class MethodInfo {
 
     public boolean bodyParameterMatches(Class<?> bodyType) {
         Class<?> actualType = getBodyParameterType();
-        return actualType != null && ObjectHelper.isAssignableFrom(bodyType, actualType);
+        return actualType != null && org.apache.camel.util.ObjectHelper.isAssignableFrom(bodyType, actualType);
     }
 
     public List<ParameterInfo> getParameters() {
@@ -780,11 +781,11 @@ public class MethodInfo {
                             // its a valid parameter value, so convert it to the expected type of the parameter
                             answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, exchange, parameterValue);
                             if (LOG.isTraceEnabled()) {
-                                LOG.trace("Parameter #{} evaluated as: {} type: ", index, answer, ObjectHelper.type(answer));
+                                LOG.trace("Parameter #{} evaluated as: {} type: ", index, answer, org.apache.camel.util.ObjectHelper.type(answer));
                             }
                         } catch (Exception e) {
                             if (LOG.isDebugEnabled()) {
-                                LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}", ObjectHelper.type(parameterValue), parameterType, index);
+                                LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}", org.apache.camel.util.ObjectHelper.type(parameterValue), parameterType, index);
                             }
                             throw new ParameterBindingException(e, method, index, parameterType, parameterValue);
                         }
@@ -813,11 +814,11 @@ public class MethodInfo {
                         answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, result);
                     }
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("Parameter #{} evaluated as: {} type: ", index, answer, ObjectHelper.type(answer));
+                        LOG.trace("Parameter #{} evaluated as: {} type: ", index, answer, org.apache.camel.util.ObjectHelper.type(answer));
                     }
                 } catch (NoTypeConversionAvailableException e) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}", ObjectHelper.type(result), parameterType, index);
+                        LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}", org.apache.camel.util.ObjectHelper.type(result), parameterType, index);
                     }
                     throw new ParameterBindingException(e, method, index, parameterType, result);
                 }

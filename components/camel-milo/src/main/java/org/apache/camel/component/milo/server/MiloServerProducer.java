@@ -19,7 +19,7 @@ package org.apache.camel.component.milo.server;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.milo.server.internal.CamelServerItem;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 
 public class MiloServerProducer extends DefaultProducer {
 

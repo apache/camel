@@ -18,7 +18,7 @@ package org.apache.camel.component.etcd.springboot;
 
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -44,7 +44,7 @@ public class EtcdComponentConfiguration
     private String uris;
     /**
      * To configure security using SSLContextParameters. The option is a
-     * org.apache.camel.util.jsse.SSLContextParameters type.
+     * org.apache.camel.support.jsse.SSLContextParameters type.
      */
     private String sslContextParameters;
     /**

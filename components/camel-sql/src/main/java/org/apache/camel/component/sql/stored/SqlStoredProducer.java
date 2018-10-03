@@ -21,7 +21,7 @@ import java.util.Iterator;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sql.SqlHelper;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.springframework.dao.DataAccessException;
 
 public class SqlStoredProducer extends DefaultProducer {

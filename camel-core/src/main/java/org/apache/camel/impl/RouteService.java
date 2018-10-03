@@ -39,15 +39,14 @@ import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.ChildServiceSupport;
-import org.apache.camel.util.EventHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.EventHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.slf4j.MDC;
 
 import static org.apache.camel.impl.MDCUnitOfWork.MDC_CAMEL_CONTEXT_ID;
@@ -140,7 +139,7 @@ public class RouteService extends ChildServiceSupport {
         try {
             doWarmUp();
         } catch (Exception e) {
-            throw new FailedToCreateRouteException(routeDefinition.getId(), routeDefinition.toString(), e);
+            throw new FailedToCreateRouteException(routeDefinition.getId(), RouteDefinitionHelper.getRouteMessage(routeDefinition.toString()), e);
         }
     }
 

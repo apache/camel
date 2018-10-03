@@ -17,7 +17,7 @@
 package org.apache.camel.component.google.mail.internal;
 
 import org.apache.camel.component.google.mail.GoogleMailConfiguration;
-import org.apache.camel.util.component.ApiMethodPropertiesHelper;
+import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
 /**
  * Singleton {@link ApiMethodPropertiesHelper} for GoogleMail component.

@@ -40,7 +40,7 @@ import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;

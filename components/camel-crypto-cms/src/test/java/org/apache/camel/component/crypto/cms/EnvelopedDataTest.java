@@ -35,7 +35,7 @@ import org.apache.camel.component.crypto.cms.exception.CryptoCmsNoCertificateFor
 import org.apache.camel.component.crypto.cms.exception.CryptoCmsNoKeyOrCertificateForAliasException;
 import org.apache.camel.component.crypto.cms.util.ExchangeUtil;
 import org.apache.camel.component.crypto.cms.util.KeystoreUtil;
-import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Assert;
 import org.junit.BeforeClass;

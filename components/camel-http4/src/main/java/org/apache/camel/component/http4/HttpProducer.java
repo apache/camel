@@ -44,14 +44,14 @@ import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.http.common.HttpProtocolHeaderFilterStrategy;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.SynchronizationAdapter;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.GZIPHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.GZIPHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.MessageHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -535,7 +535,7 @@ public class HttpProducer extends DefaultProducer {
                         // so we only do an instanceof check and accept String if the body is really a String
                         // do not fallback to use the default charset as it can influence the request
                         // (for example application/x-www-form-urlencoded forms being sent)
-                        String charset = IOHelper.getCharsetName(exchange, false);
+                        String charset = ExchangeHelper.getCharsetName(exchange, false);
                         if (charset == null && contentType != null) {
                             // okay try to get the charset from the content-type
                             Charset cs = contentType.getCharset();

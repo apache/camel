@@ -23,14 +23,12 @@ import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.apache.camel.util.UnitOfWorkHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.UnitOfWorkHelper;
 
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 /**
  * Template (named like Spring's TransactionTemplate & JmsTemplate

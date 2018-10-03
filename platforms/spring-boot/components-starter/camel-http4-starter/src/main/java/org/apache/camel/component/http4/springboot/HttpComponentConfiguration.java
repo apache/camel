@@ -56,10 +56,10 @@ public class HttpComponentConfiguration
     private String httpContext;
     /**
      * To configure security using SSLContextParameters. Important: Only one
-     * instance of org.apache.camel.util.jsse.SSLContextParameters is supported
-     * per HttpComponent. If you need to use 2 or more different instances, you
-     * need to define a new HttpComponent per instance you need. The option is a
-     * org.apache.camel.util.jsse.SSLContextParameters type.
+     * instance of org.apache.camel.support.jsse.SSLContextParameters is
+     * supported per HttpComponent. If you need to use 2 or more different
+     * instances, you need to define a new HttpComponent per instance you need.
+     * The option is a org.apache.camel.support.jsse.SSLContextParameters type.
      */
     private String sslContextParameters;
     /**

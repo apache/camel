@@ -25,9 +25,9 @@ import javax.net.ssl.TrustManager;
 import com.rabbitmq.client.Address;
 import com.rabbitmq.client.ConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.IntrospectionSupport;
 
 public class RabbitMQComponent extends DefaultComponent {
 

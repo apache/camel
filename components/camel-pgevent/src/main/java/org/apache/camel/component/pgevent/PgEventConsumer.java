@@ -23,7 +23,7 @@ import com.impossibl.postgres.api.jdbc.PGNotificationListener;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 
 /**
  * The PgEvent consumer.

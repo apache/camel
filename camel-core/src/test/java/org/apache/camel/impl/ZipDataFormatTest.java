@@ -29,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.support.DefaultExchange;
 import org.junit.Test;
 
 /**

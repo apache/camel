@@ -27,9 +27,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorConverterHelper;
-import org.apache.camel.util.ServiceHelper;
 
 /**
  * A Delegate pattern which delegates processing to a nested {@link AsyncProcessor} which can
@@ -87,7 +87,7 @@ public class DelegateAsyncProcessor extends ServiceSupport implements DelegatePr
     }
 
     public void process(Exchange exchange) throws Exception {
-        // inline org.apache.camel.util.AsyncProcessorHelper.process(org.apache.camel.AsyncProcessor, org.apache.camel.Exchange)
+        // inline org.apache.camel.support.AsyncProcessorHelper.process(org.apache.camel.AsyncProcessor, org.apache.camel.Exchange)
         // to optimize and reduce stacktrace lengths
         final AsyncProcessorAwaitManager awaitManager = exchange.getContext().getAsyncProcessorAwaitManager();
         final CountDownLatch latch = new CountDownLatch(1);

@@ -52,16 +52,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.converter.jaxp.ThreadSafeNodeList;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -1049,7 +1050,7 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
                     }
                 }
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 
@@ -1232,7 +1233,7 @@ public class XPathBuilder extends ServiceSupport implements CamelContextAware, E
         try {
             return doGetDocument(exchange, body);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         } finally {
             // call the reset if the in message body is StreamCache
             MessageHelper.resetStreamCache(exchange.getIn());

@@ -18,6 +18,8 @@ package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.DefaultMessage;
 import org.junit.Assert;
 import org.junit.Test;
 

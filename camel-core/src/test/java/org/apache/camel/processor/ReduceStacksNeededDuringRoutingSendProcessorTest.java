@@ -26,8 +26,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultAsyncProducer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.DefaultEndpoint;
 import org.junit.Test;
 
 public class ReduceStacksNeededDuringRoutingSendProcessorTest extends ContextTestSupport {

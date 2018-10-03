@@ -21,8 +21,8 @@ import java.lang.reflect.Method;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.TypeConverterSupport;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * A {@link org.apache.camel.TypeConverter} implementation which instantiates an object
@@ -60,7 +60,7 @@ public class InstanceMethodFallbackTypeConverter extends TypeConverterSupport {
             throw new RuntimeCamelException("Could not instantiate an instance of: " + type.getCanonicalName());
         }
         return useExchange
-            ? (T)ObjectHelper.invokeMethod(method, instance, type, exchange, value, registry) : (T)ObjectHelper
+            ? (T)ObjectHelper.invokeMethod(method, instance, type, exchange, value, registry) : (T) ObjectHelper
                 .invokeMethod(method, instance, type, value, registry);
     }
 

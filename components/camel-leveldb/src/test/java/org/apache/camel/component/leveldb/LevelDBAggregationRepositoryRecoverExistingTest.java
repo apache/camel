@@ -18,7 +18,7 @@ package org.apache.camel.component.leveldb;
 import java.io.File;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;

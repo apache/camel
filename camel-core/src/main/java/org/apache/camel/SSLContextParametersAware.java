@@ -16,7 +16,7 @@
  */
 package org.apache.camel;
 
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 
 /**
  * Indicates that an object is able to use the global {@link SSLContextParameters} if configured.

@@ -19,7 +19,7 @@ package org.apache.camel.component.http4;
 import org.apache.camel.Exchange;
 import org.apache.camel.http.common.HttpHeaderFilterStrategy;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;

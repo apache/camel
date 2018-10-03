@@ -24,11 +24,9 @@ import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.cxf.message.Message;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Defines the <a href="http://camel.apache.org/cxf.html">CXF Component</a>

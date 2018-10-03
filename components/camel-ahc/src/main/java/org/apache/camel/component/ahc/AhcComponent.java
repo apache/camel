@@ -24,18 +24,16 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.AsyncHttpClientConfig;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.Realm;
 import org.asynchttpclient.Realm.Builder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *  To call external HTTP services using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>
@@ -188,7 +186,7 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
     }
 
     /**
-     * Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry.
+     * Reference to a org.apache.camel.support.jsse.SSLContextParameters in the Registry.
      * Note that configuring this option will override any SSL/TLS configuration options provided through the
      * clientConfig option at the endpoint or component level.
      */

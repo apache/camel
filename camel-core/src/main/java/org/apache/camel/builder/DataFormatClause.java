@@ -61,8 +61,8 @@ import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.YAMLLibrary;
 import org.apache.camel.model.dataformat.ZipDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.util.CollectionStringBuffer;
-import org.apache.camel.util.jsse.KeyStoreParameters;
 
 /**
  * An expression for constructing the different possible {@link org.apache.camel.spi.DataFormat}

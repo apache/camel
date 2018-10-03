@@ -29,7 +29,7 @@ import javax.xml.transform.dom.DOMSource;
 
 import org.apache.camel.component.cxf.common.header.CxfHeaderFilterStrategy;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IOHelper;
 import org.apache.cxf.helpers.CastUtils;

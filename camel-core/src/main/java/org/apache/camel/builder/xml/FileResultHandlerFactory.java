@@ -19,7 +19,7 @@ package org.apache.camel.builder.xml;
 import java.io.File;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 
 /**
  * Factory for {@link javax.xml.transform.stream.StreamResult} which is streamed to file.

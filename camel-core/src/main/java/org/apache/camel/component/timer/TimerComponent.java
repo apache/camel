@@ -25,7 +25,7 @@ import java.util.Timer;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * The <a href="http://camel.apache.org/timer.html">Timer Component</a> is for generating message exchanges when a timer fires.

@@ -25,6 +25,7 @@ import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedSendDynamicProcessorMBean;
@@ -32,7 +33,6 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 @ManagedResource(description = "Managed SendDynamicProcessor")
@@ -126,7 +126,7 @@ public class ManagedSendDynamicProcessor extends ManagedProcessor implements Man
             }
             return answer;
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

@@ -21,7 +21,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

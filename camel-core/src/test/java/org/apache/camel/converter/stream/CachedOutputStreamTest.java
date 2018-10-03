@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.converter.stream;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -27,9 +28,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultUnitOfWork;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.IOHelper;
 import org.junit.Before;

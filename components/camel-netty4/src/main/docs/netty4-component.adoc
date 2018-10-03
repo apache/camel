@@ -255,7 +255,7 @@ The component supports 78 options, which are listed below.
 | *camel.component.netty4.executor-service* | To use the given EventExecutorGroup. The option is a io.netty.util.concurrent.EventExecutorGroup type. |  | String
 | *camel.component.netty4.maximum-pool-size* | The thread pool size for the EventExecutorGroup if its in use. The default value is 16. | 16 | Integer
 | *camel.component.netty4.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
-| *camel.component.netty4.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.util.jsse.SSLContextParameters type. |  | String
+| *camel.component.netty4.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
 | *camel.component.netty4.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 |===
 // spring-boot-auto-configure options: END

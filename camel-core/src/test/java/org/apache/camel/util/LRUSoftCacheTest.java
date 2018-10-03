@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.TestSupport;
+import org.apache.camel.support.LRUSoftCache;
 import org.junit.Test;
 
 /**

@@ -25,11 +25,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.processor.RedeliveryErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
-import org.apache.camel.util.CamelLogger;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.CamelLogger;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -185,7 +186,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
 
                     // wrap exception in transacted exception
                     if (exchange.getException() != null) {
-                        rce = ObjectHelper.wrapRuntimeCamelException(exchange.getException());
+                        rce = RuntimeCamelException.wrapRuntimeCamelException(exchange.getException());
                     } else {
                         // create dummy exception to force spring transaction manager to rollback
                         rce = new TransactionRollbackException();

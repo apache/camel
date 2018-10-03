@@ -49,8 +49,8 @@ import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.felix.connect.PojoServiceRegistryFactoryImpl;
 import org.apache.felix.connect.felix.framework.util.Util;
 import org.apache.felix.connect.launch.BundleDescriptor;
@@ -211,7 +211,7 @@ public final class CamelBlueprintHelper {
                 }
             }
         } catch (Exception e) {
-            IllegalStateException ise = ObjectHelper.getException(IllegalStateException.class, e);
+            IllegalStateException ise = org.apache.camel.util.ObjectHelper.getException(IllegalStateException.class, e);
             if (ise != null) {
                 // we dont care about illegal state exception as that may happen from OSGi
                 LOG.debug("Error during disposing BundleContext. This exception will be ignored.", e);
@@ -457,7 +457,7 @@ public final class CamelBlueprintHelper {
         List<URL> answer = new ArrayList<>();
         if (descriptors != null) {
             // there may be more resources separated by comma
-            Iterator<Object> it = ObjectHelper.createIterator(descriptors);
+            Iterator<?> it = ObjectHelper.createIterator(descriptors);
             while (it.hasNext()) {
                 String s = (String) it.next();
                 LOG.trace("Resource descriptor: {}", s);
@@ -469,7 +469,7 @@ public final class CamelBlueprintHelper {
                 if (s.endsWith("*.xml")) {
                     String packageName = s.substring(0, s.length() - 5);
                     // remove trailing / to be able to load resource from the classpath
-                    Enumeration<URL> urls = ObjectHelper.loadResourcesAsURL(packageName);
+                    Enumeration<URL> urls = org.apache.camel.util.ObjectHelper.loadResourcesAsURL(packageName);
                     while (urls.hasMoreElements()) {
                         URL url = urls.nextElement();
                         File dir = new File(url.getFile());
@@ -480,7 +480,7 @@ public final class CamelBlueprintHelper {
                                     if (file.isFile() && file.exists() && file.getName().endsWith(".xml")) {
                                         String name = packageName + file.getName();
                                         LOG.debug("Resolving resource: {}", name);
-                                        URL xmlUrl = ObjectHelper.loadResourceAsURL(name);
+                                        URL xmlUrl = org.apache.camel.util.ObjectHelper.loadResourceAsURL(name);
                                         if (xmlUrl != null) {
                                             answer.add(xmlUrl);
                                         }

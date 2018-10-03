@@ -29,7 +29,7 @@ import org.apache.camel.component.github.producer.GetCommitFileProducer;
 import org.apache.camel.component.github.producer.PullRequestCommentProducer;
 import org.apache.camel.component.github.producer.PullRequestFilesProducer;
 import org.apache.camel.component.github.producer.PullRequestStateProducer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;

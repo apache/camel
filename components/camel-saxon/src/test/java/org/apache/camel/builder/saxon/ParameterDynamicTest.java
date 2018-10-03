@@ -25,7 +25,7 @@ import net.sf.saxon.value.BooleanValue;
 import net.sf.saxon.value.ObjectValue;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
 

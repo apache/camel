@@ -29,9 +29,9 @@ import org.apache.camel.component.google.mail.internal.GoogleMailConstants;
 import org.apache.camel.component.google.mail.internal.GoogleMailPropertiesHelper;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.component.AbstractApiEndpoint;
-import org.apache.camel.util.component.ApiMethod;
-import org.apache.camel.util.component.ApiMethodPropertiesHelper;
+import org.apache.camel.support.component.AbstractApiEndpoint;
+import org.apache.camel.support.component.ApiMethod;
+import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
 /**
  * The google-mail component provides access to Google Mail.

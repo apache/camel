@@ -19,8 +19,8 @@ package org.apache.camel.component.directvm;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.DefaultAsyncProducer;
 
 /**
  * The Direct-VM producer.

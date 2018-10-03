@@ -21,7 +21,7 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.camel.util.LRUSoftCache;
+import org.apache.camel.support.LRUSoftCache;
 
 public final class StAXUtil {
     private static final Map<Class<?>, String> TAG_NAMES = new LRUSoftCache<>(1000);

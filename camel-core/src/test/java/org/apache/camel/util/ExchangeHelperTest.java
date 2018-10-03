@@ -27,7 +27,8 @@ import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.NoSuchPropertyException;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.ExchangeHelper;
 import org.junit.Before;
 import org.junit.Test;
 

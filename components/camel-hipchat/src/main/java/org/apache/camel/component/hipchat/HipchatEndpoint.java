@@ -19,7 +19,7 @@ package org.apache.camel.component.hipchat;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 

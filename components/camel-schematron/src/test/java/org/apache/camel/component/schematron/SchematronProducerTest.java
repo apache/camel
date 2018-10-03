@@ -25,7 +25,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.schematron.constant.Constants;
 import org.apache.camel.component.schematron.processor.ClassPathURIResolver;
 import org.apache.camel.component.schematron.processor.TemplatesFactory;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.BeforeClass;
 import org.junit.Test;

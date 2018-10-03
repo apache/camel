@@ -30,10 +30,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 
-import static org.apache.camel.util.EndpointHelper.isReferenceParameter;
+import static org.apache.camel.support.EndpointHelper.isReferenceParameter;
 
 /**
  * Represents a Camel data format

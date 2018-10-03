@@ -20,8 +20,8 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.quartz2.QuartzComponent;
-import org.apache.camel.util.ObjectHelper;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
@@ -45,7 +45,7 @@ public class SimpleScheduledRoutePolicy extends ScheduledRoutePolicy {
         try {
             doOnInit(route);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

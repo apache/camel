@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-import static org.apache.camel.util.toolbox.AggregationStrategies.groupedExchange;
+import static org.apache.camel.builder.AggregationStrategies.groupedExchange;
 
 /**
  * Unit test for aggregate grouped exchanges.

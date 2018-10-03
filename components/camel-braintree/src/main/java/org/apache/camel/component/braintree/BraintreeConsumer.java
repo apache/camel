@@ -18,7 +18,7 @@ package org.apache.camel.component.braintree;
 
 import org.apache.camel.Processor;
 import org.apache.camel.component.braintree.internal.BraintreeApiName;
-import org.apache.camel.util.component.AbstractApiConsumer;
+import org.apache.camel.support.component.AbstractApiConsumer;
 
 /**
  * The Braintree consumer.

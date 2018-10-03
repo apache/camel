@@ -16,7 +16,7 @@
  */
 package org.apache.camel;
 
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 
 /**
  * A base class for a test which requires a {@link CamelContext} and

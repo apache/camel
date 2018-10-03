@@ -34,10 +34,10 @@ import com.sun.mail.imap.IMAPStore;
 import com.sun.mail.imap.SortTerm;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.ScheduledBatchPollingConsumer;
+import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.CastUtils;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
 

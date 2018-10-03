@@ -19,7 +19,7 @@ package org.apache.camel.component.rest.swagger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.IntrospectionSupport;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 

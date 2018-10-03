@@ -17,7 +17,6 @@
 package org.apache.camel.management;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.api.management.PerformanceCounter;
 
 /**
  * A composite {@link PerformanceCounter} is used for tracking performance statistics on both a per

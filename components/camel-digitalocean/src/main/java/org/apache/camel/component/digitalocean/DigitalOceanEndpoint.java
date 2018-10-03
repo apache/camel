@@ -31,7 +31,7 @@ import org.apache.camel.component.digitalocean.producer.DigitalOceanRegionsProdu
 import org.apache.camel.component.digitalocean.producer.DigitalOceanSizesProducer;
 import org.apache.camel.component.digitalocean.producer.DigitalOceanSnapshotsProducer;
 import org.apache.camel.component.digitalocean.producer.DigitalOceanTagsProducer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.http.HttpHost;

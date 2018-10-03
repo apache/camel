@@ -22,8 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.iec60870.ObjectAddress;
-import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.DefaultMessage;
 import org.eclipse.neoscada.protocol.iec60870.asdu.types.Value;
 
 public class ClientConsumer extends DefaultConsumer {

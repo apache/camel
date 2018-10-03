@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.netty4;
 
+import java.io.File;
 import java.util.Map;
 
 import io.netty.channel.EventLoopGroup;
@@ -25,7 +26,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 
 @UriParams
 public class NettyServerBootstrapConfiguration implements Cloneable {

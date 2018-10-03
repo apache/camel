@@ -30,7 +30,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.NamespaceAware;
-import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 
 /**
  * The XML Security data format facilitates encryption and decryption of XML payloads.

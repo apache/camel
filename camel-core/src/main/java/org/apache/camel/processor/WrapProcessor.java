@@ -19,7 +19,7 @@ package org.apache.camel.processor;
 import java.util.List;
 
 import org.apache.camel.Processor;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ServiceHelper;
 
 /**
  * A processor which ensures wrapping processors is having lifecycle handled.

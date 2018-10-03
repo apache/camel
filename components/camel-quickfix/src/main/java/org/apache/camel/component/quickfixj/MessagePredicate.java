@@ -19,6 +19,7 @@ package org.apache.camel.component.quickfixj;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
 import quickfix.Field;
 import quickfix.FieldMap;
@@ -58,7 +59,7 @@ public class MessagePredicate {
                     value = fieldMap.getString(c.getField());
                 }
             } catch (FieldNotFound e) {
-                ObjectHelper.wrapRuntimeCamelException(e);
+                RuntimeCamelException.wrapRuntimeCamelException(e);
             }
             if (!c.getObject().equals(value)) {
                 return false;

@@ -28,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.boon.json.JsonFactory;
@@ -77,14 +78,14 @@ public class BoonDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-        BufferedWriter writer = IOHelper.buffered(new OutputStreamWriter(stream, IOHelper.getCharsetName(exchange)));
+        BufferedWriter writer = IOHelper.buffered(new OutputStreamWriter(stream, ExchangeHelper.getCharsetName(exchange)));
         objectMapper.toJson(graph, writer);
         writer.close();
     }
 
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        BufferedReader reader = IOHelper.buffered(new InputStreamReader(stream, IOHelper.getCharsetName(exchange)));
+        BufferedReader reader = IOHelper.buffered(new InputStreamReader(stream, ExchangeHelper.getCharsetName(exchange)));
         Object result;
         try {
             if (unmarshalType != null) {

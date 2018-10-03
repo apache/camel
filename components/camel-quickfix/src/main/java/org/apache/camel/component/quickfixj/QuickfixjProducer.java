@@ -20,7 +20,7 @@ import java.util.concurrent.Callable;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import quickfix.Message;
 import quickfix.MessageUtils;
 import quickfix.Session;

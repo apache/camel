@@ -28,7 +28,7 @@ import org.apache.camel.component.pdf.text.LineTerminationWriterAbstractFactory;
 import org.apache.camel.component.pdf.text.SplitStrategy;
 import org.apache.camel.component.pdf.text.TextProcessingAbstractFactory;
 import org.apache.camel.component.pdf.text.WriteStrategy;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.ProtectionPolicy;
 import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;

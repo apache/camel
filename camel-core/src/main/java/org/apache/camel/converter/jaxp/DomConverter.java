@@ -33,8 +33,8 @@ import org.w3c.dom.Text;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ObjectHelper;
 
 /**
  * Converts from some DOM types to Java types
@@ -60,7 +60,7 @@ public final class DomConverter {
         if (nodeList instanceof Node) {
             Node node = (Node) nodeList;
             String s = toString(node, exchange);
-            if (ObjectHelper.isNotEmpty(s)) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(s)) {
                 found = true;
                 buffer.append(s);
             }
@@ -70,7 +70,7 @@ public final class DomConverter {
             for (int i = 0; i < size; i++) {
                 Node node = nodeList.item(i);
                 String s = toString(node, exchange);
-                if (ObjectHelper.isNotEmpty(s)) {
+                if (org.apache.camel.util.ObjectHelper.isNotEmpty(s)) {
                     found = true;
                     buffer.append(s);
                 }
@@ -125,7 +125,7 @@ public final class DomConverter {
     @Converter
     public static List<?> toList(NodeList nodeList) {
         List<Object> answer = new ArrayList<>();
-        Iterator<Object> it = ObjectHelper.createIterator(nodeList);
+        Iterator<?> it = ObjectHelper.createIterator(nodeList);
         while (it.hasNext()) {
             answer.add(it.next());
         }
@@ -140,7 +140,7 @@ public final class DomConverter {
     @Converter
     public byte[] toByteArray(NodeList nodeList, Exchange exchange) throws TransformerException, UnsupportedEncodingException {
         String data = toString(nodeList, exchange);
-        return data.getBytes(IOHelper.getCharsetName(exchange));
+        return data.getBytes(ExchangeHelper.getCharsetName(exchange));
     }
 
     private static void append(StringBuilder buffer, NodeList nodeList) {

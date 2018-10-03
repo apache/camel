@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.TypeConverterSupport;
 import org.junit.Test;
 
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 /**
  * Unit test to test that onException handles wrapped exceptions

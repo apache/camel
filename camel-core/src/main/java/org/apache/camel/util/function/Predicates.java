@@ -16,9 +16,8 @@
  */
 package org.apache.camel.util.function;
 
+import java.util.Objects;
 import java.util.function.Predicate;
-
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Predicate helpers, inspired by http://minborgsjavapot.blogspot.it/2016/03/put-your-java-8-method-references-to.html
@@ -32,7 +31,7 @@ public final class Predicates {
      * Wrap a predicate, useful for method references.
      */
     public static <T> Predicate<T> of(Predicate<T> predicate) {
-        ObjectHelper.notNull(predicate, "Predicate");
+        Objects.requireNonNull(predicate, "Predicate must be specified");
 
         return predicate;
     }
@@ -48,7 +47,7 @@ public final class Predicates {
      * </pre>
      */
     public static <T> Predicate<T> negate(Predicate<T> predicate) {
-        ObjectHelper.notNull(predicate, "Predicate");
+        Objects.requireNonNull(predicate, "Predicate must be specified");
 
         return predicate.negate();
     }

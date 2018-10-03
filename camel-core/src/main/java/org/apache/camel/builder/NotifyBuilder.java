@@ -33,16 +33,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.management.event.ExchangeFailedEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventNotifierSupport;
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,7 +92,7 @@ public class NotifyBuilder {
         try {
             ServiceHelper.startService(eventNotifier);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
         context.getManagementStrategy().addEventNotifier(eventNotifier);
     }
@@ -102,7 +103,7 @@ public class NotifyBuilder {
      *
      * @param endpointUri uri of endpoint or pattern (see the EndpointHelper javadoc)
      * @return the builder
-     * @see org.apache.camel.util.EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String, String)
+     * @see EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String, String)
      */
     public NotifyBuilder from(final String endpointUri) {
         stack.add(new EventPredicateSupport() {
@@ -138,7 +139,7 @@ public class NotifyBuilder {
      *
      * @param routeId id of route or pattern (see the EndpointHelper javadoc)
      * @return the builder
-     * @see org.apache.camel.util.EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String, String)
+     * @see EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String, String)
      */
     public NotifyBuilder fromRoute(final String routeId) {
         stack.add(new EventPredicateSupport() {
@@ -288,7 +289,7 @@ public class NotifyBuilder {
      *
      * @param endpointUri uri of endpoint or pattern (see the EndpointHelper javadoc)
      * @return the builder
-     * @see org.apache.camel.util.EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String, String)
+     * @see EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String, String)
      */
     public NotifyBuilder wereSentTo(final String endpointUri) {
         // insert in start of stack but after the previous wereSentTo
@@ -867,7 +868,7 @@ public class NotifyBuilder {
                     }
                     producer.process(exchange);
                 } catch (Exception e) {
-                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
             }
 
@@ -875,7 +876,7 @@ public class NotifyBuilder {
                 try {
                     return mock.await(0, TimeUnit.SECONDS);
                 } catch (InterruptedException e) {
-                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
             }
 
@@ -966,7 +967,7 @@ public class NotifyBuilder {
                     }
                     producer.process(exchange);
                 } catch (Exception e) {
-                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
             }
 
@@ -974,7 +975,7 @@ public class NotifyBuilder {
                 try {
                     return !mock.await(0, TimeUnit.SECONDS);
                 } catch (InterruptedException e) {
-                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
             }
 
@@ -1179,7 +1180,7 @@ public class NotifyBuilder {
         try {
             ServiceHelper.stopService(eventNotifier);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
         created = false;
     }
@@ -1215,7 +1216,7 @@ public class NotifyBuilder {
         try {
             latch.await(timeout, timeUnit);
         } catch (InterruptedException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
         return matches();
     }

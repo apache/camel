@@ -30,6 +30,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.sjms.jms.ConnectionFactoryResource;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
 import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
@@ -44,7 +45,7 @@ import org.apache.camel.component.sjms.jms.MessageCreatedStrategy;
 import org.apache.camel.component.sjms.jms.SessionAcknowledgementType;
 import org.apache.camel.component.sjms.producer.InOnlyProducer;
 import org.apache.camel.component.sjms.producer.InOutProducer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -52,8 +53,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.LoggingExceptionHandler;
-import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.EndpointHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -278,7 +278,7 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
             connections.fillPool();
             return connections;
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

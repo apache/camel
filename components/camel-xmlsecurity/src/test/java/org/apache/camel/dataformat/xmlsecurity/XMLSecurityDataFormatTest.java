@@ -31,7 +31,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.commons.codec.Charsets;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.junit.Assert;

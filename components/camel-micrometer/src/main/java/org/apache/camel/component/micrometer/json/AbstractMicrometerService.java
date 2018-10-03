@@ -26,10 +26,10 @@ import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.micrometer.MicrometerConstants;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ObjectHelper;
 
 public class AbstractMicrometerService extends ServiceSupport {
 
@@ -98,7 +98,7 @@ public class AbstractMicrometerService extends ServiceSupport {
         try {
             return writer.writeValueAsString(getMeterRegistry());
         } catch (JsonProcessingException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -110,7 +110,7 @@ public class AbstractMicrometerService extends ServiceSupport {
         try {
             return writer.writeValueAsString(getMeterRegistry());
         } catch (JsonProcessingException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

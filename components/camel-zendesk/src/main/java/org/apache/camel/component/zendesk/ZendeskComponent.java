@@ -25,7 +25,7 @@ import org.apache.camel.component.zendesk.internal.ZendeskApiName;
 import org.apache.camel.component.zendesk.internal.ZendeskHelper;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.component.AbstractApiComponent;
+import org.apache.camel.support.component.AbstractApiComponent;
 import org.zendesk.client.v2.Zendesk;
 
 /**

@@ -30,7 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.examples.SendEmail;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

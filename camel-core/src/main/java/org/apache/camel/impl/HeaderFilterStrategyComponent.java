@@ -21,6 +21,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * Base class for components to support configuring a {@link org.apache.camel.spi.HeaderFilterStrategy}.

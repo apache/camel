@@ -32,17 +32,17 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.support.DefaultPollingEndpoint;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.support.ResourceHelper;
 
 /**
  * The flatpack component supports fixed width and delimited file parsing via the FlatPack library.
@@ -139,7 +139,7 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
             parser = getParserFactory().newDelimitedParser(bodyReader, delimiter, textQualifier);
         } else {
             InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), resourceUri);
-            InputStreamReader reader = new InputStreamReader(is, IOHelper.getCharsetName(exchange));
+            InputStreamReader reader = new InputStreamReader(is, ExchangeHelper.getCharsetName(exchange));
             parser = getParserFactory().newDelimitedParser(reader, bodyReader, delimiter, textQualifier, ignoreFirstRecord);
         }
 

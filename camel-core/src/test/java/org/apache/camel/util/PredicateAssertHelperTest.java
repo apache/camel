@@ -20,7 +20,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.PredicateBuilder;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.PredicateAssertHelper;
 import org.junit.Test;
 
 import static org.apache.camel.builder.Builder.constant;

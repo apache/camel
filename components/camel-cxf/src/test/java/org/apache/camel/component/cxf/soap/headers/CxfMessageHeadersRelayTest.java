@@ -48,7 +48,7 @@ import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.camel.component.cxf.common.header.CxfHeaderFilterStrategy;
 import org.apache.camel.component.cxf.common.header.MessageHeaderFilter;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.headers.Header;

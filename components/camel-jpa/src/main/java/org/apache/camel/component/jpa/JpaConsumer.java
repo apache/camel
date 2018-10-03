@@ -35,9 +35,9 @@ import javax.persistence.Query;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.ScheduledBatchPollingConsumer;
+import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -174,7 +174,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
         for (int index = 0; index < total && isBatchAllowed(); index++) {
             // only loop if we are started (allowed to run)
-            DataHolder holder = ObjectHelper.cast(DataHolder.class, exchanges.poll());
+            DataHolder holder = org.apache.camel.util.ObjectHelper.cast(DataHolder.class, exchanges.poll());
             EntityManager entityManager = holder.manager;
             Exchange exchange = holder.exchange;
             Object result = holder.result;
@@ -410,7 +410,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         final Class<?> entityType = getEndpoint().getEntityType();
         if (entityType != null) {
             // Inspect the method(s) annotated with @PreConsumed
-            List<Method> methods = ObjectHelper.findMethodsWithAnnotation(entityType, PreConsumed.class);
+            List<Method> methods = org.apache.camel.util.ObjectHelper.findMethodsWithAnnotation(entityType, PreConsumed.class);
             if (methods.size() > 1) {
                 throw new IllegalStateException("Only one method can be annotated with the @PreConsumed annotation but found: " + methods);
             } else if (methods.size() == 1) {
@@ -446,7 +446,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         // look for @Consumed to allow custom callback when the Entity has been consumed
         final Class<?> entityType = getEndpoint().getEntityType();
         if (entityType != null) {
-            List<Method> methods = ObjectHelper.findMethodsWithAnnotation(entityType, Consumed.class);
+            List<Method> methods = org.apache.camel.util.ObjectHelper.findMethodsWithAnnotation(entityType, Consumed.class);
             if (methods.size() > 1) {
                 throw new IllegalArgumentException("Only one method can be annotated with the @Consumed annotation but found: " + methods);
             } else if (methods.size() == 1) {

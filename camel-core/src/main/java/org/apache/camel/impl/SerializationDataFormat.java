@@ -25,7 +25,7 @@ import java.io.OutputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 
 /**
  * The <a href="http://camel.apache.org/data-format.html">data format</a>

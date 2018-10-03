@@ -29,20 +29,18 @@ import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Message;
 import org.apache.camel.Traceable;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ProducerCache.AsyncProducerCallback;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.MessageHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 import static org.apache.camel.util.ObjectHelper.notNull;
@@ -196,7 +194,7 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
             throw exchange.getException();
         }
 
-        final Iterator<Object> delegate = ObjectHelper.createIterator(slip, uriDelimiter);
+        final Iterator<?> delegate = ObjectHelper.createIterator(slip, uriDelimiter);
 
         return new RoutingSlipIterator() {
             public boolean hasNext(Exchange exchange) {

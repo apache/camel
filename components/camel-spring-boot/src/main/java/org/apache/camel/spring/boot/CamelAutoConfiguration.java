@@ -68,7 +68,7 @@ import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.spi.XmlCamelContextConfigurer;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
+import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

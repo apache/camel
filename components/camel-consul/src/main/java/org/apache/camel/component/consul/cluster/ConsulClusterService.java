@@ -18,7 +18,7 @@ package org.apache.camel.component.consul.cluster;
 
 import org.apache.camel.impl.cluster.AbstractCamelClusterService;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

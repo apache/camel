@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.wordpress.WordpressComponentConfiguration;
 import org.apache.camel.component.wordpress.WordpressEndpoint;
 import org.apache.camel.component.wordpress.api.WordpressServiceProvider;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

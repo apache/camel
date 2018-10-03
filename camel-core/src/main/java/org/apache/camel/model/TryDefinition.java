@@ -26,16 +26,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.processor.TryProcessor;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
  * Marks the beginning of a try, catch, finally block

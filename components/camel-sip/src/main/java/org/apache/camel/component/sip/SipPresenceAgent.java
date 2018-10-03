@@ -23,7 +23,7 @@ import javax.sip.SipStack;
 
 import org.apache.camel.Processor;
 import org.apache.camel.component.sip.listener.SipPresenceAgentListener;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 
 public class SipPresenceAgent extends DefaultConsumer {
     private SipConfiguration configuration;

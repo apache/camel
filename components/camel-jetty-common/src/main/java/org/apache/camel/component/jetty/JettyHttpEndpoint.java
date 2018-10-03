@@ -32,8 +32,8 @@ import org.apache.camel.http.common.HttpConsumer;
 import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.server.Handler;
 

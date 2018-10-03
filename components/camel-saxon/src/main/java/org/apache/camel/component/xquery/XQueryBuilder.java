@@ -75,7 +75,7 @@ import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.MessageHelper;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

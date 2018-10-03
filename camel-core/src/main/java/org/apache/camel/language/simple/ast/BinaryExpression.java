@@ -32,7 +32,7 @@ import org.apache.camel.language.simple.types.BinaryOperatorType;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 
 /**
  * Represents a binary expression in the AST.
@@ -72,8 +72,8 @@ public class BinaryExpression extends BaseSimpleNode {
 
     @Override
     public Expression createExpression(String expression) {
-        ObjectHelper.notNull(left, "left node", this);
-        ObjectHelper.notNull(right, "right node", this);
+        org.apache.camel.util.ObjectHelper.notNull(left, "left node", this);
+        org.apache.camel.util.ObjectHelper.notNull(right, "right node", this);
 
         final Expression leftExp = left.createExpression(expression);
         final Expression rightExp = right.createExpression(expression);
@@ -172,7 +172,7 @@ public class BinaryExpression extends BaseSimpleNode {
                 // okay the in operator is a bit more complex as we need to build a list of values
                 // from the right hand side expression.
                 // each element on the right hand side must be separated by comma (default for create iterator)
-                Iterator<Object> it = ObjectHelper.createIterator(rightExp.evaluate(exchange, Object.class));
+                Iterator<?> it = ObjectHelper.createIterator(rightExp.evaluate(exchange, Object.class));
                 List<Object> values = new ArrayList<>();
                 while (it.hasNext()) {
                     values.add(it.next());

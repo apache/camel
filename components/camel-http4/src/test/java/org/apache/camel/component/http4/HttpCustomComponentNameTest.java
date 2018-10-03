@@ -20,7 +20,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.junit.Test;
 
 public class HttpCustomComponentNameTest extends CamelTestSupport {

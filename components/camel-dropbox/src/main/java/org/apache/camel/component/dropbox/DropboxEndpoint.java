@@ -30,7 +30,7 @@ import org.apache.camel.component.dropbox.integration.producer.DropboxSearchProd
 import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxException;
 import org.apache.camel.component.dropbox.util.DropboxOperation;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.slf4j.Logger;

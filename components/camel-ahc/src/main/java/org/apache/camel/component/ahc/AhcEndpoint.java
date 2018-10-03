@@ -28,7 +28,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.http.common.cookie.CookieHandler;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -36,7 +36,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.AsyncHttpClientConfig;
 import org.asynchttpclient.DefaultAsyncHttpClient;
@@ -211,7 +211,7 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     }
 
     /**
-     * Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry.
+     * Reference to a org.apache.camel.support.jsse.SSLContextParameters in the Registry.
      * This reference overrides any configured SSLContextParameters at the component level.
      * See Using the JSSE Configuration Utility.
      * Note that configuring this option will override any SSL/TLS configuration options provided through the clientConfig option at the endpoint or component level.

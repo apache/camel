@@ -31,14 +31,12 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StringHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -90,7 +88,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor, IdA
 
     public RecipientList(CamelContext camelContext, Expression expression, String delimiter) {
         notNull(camelContext, "camelContext");
-        ObjectHelper.notNull(expression, "expression");
+        org.apache.camel.util.ObjectHelper.notNull(expression, "expression");
         StringHelper.notEmpty(delimiter, "delimiter");
         this.camelContext = camelContext;
         this.expression = expression;
@@ -133,7 +131,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor, IdA
      * Sends the given exchange to the recipient list
      */
     public boolean sendToRecipientList(Exchange exchange, Object recipientList, AsyncCallback callback) {
-        Iterator<Object> iter;
+        Iterator<?> iter;
 
         if (delimiter != null && delimiter.equalsIgnoreCase(IGNORE_DELIMITER_MARKER)) {
             iter = ObjectHelper.createIterator(recipientList, null);

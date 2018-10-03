@@ -122,7 +122,7 @@ public class ParserTest extends CamelTestSupport {
         pc.setLocation("classpath:jndi.properties");
         Exchange exchange = createExchangeWithBody(1);
         Template template = parser.parseTemplate("ADDNUMBERS2(-1342 ${properties:java.naming.factory.initial})");
-        assertEquals("org.apache.camel.util.jndi.CamelInitialContextFactory",
+        assertEquals("org.apache.camel.support.jndi.CamelInitialContextFactory",
             ((InParameter) template.getParameterList().get(0)).getValueExtractor().eval(exchange, null));
     }
 

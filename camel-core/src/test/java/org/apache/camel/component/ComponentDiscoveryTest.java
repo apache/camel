@@ -23,7 +23,7 @@ import java.util.SortedMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

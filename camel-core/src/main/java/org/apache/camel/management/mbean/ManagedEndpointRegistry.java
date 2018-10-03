@@ -26,12 +26,12 @@ import javax.management.openmbean.TabularDataSupport;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedEndpointRegistryMBean;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 @ManagedResource(description = "Managed EndpointRegistry")
@@ -97,7 +97,7 @@ public class ManagedEndpointRegistry extends ManagedService implements ManagedEn
             }
             return answer;
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

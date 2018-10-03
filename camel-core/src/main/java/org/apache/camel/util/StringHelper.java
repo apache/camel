@@ -26,8 +26,6 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.apache.camel.util.StringQuoteHelper.doubleQuote;
-
 /**
  * Helper methods for working with Strings.
  */
@@ -291,9 +289,9 @@ public final class StringHelper {
      */
     public static String toJson(String name, String value, boolean isMap) {
         if (isMap) {
-            return "{ " + doubleQuote(name) + ": " + doubleQuote(value) + " }";
+            return "{ " + StringQuoteHelper.doubleQuote(name) + ": " + StringQuoteHelper.doubleQuote(value) + " }";
         } else {
-            return doubleQuote(name) + ": " + doubleQuote(value);
+            return StringQuoteHelper.doubleQuote(name) + ": " + StringQuoteHelper.doubleQuote(value);
         }
     }
 

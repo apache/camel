@@ -19,7 +19,7 @@ package org.apache.camel.language.groovy;
 import groovy.lang.Script;
 import org.apache.camel.Service;
 import org.apache.camel.support.LanguageSupport;
-import org.apache.camel.util.LRUSoftCache;
+import org.apache.camel.support.LRUSoftCache;
 import org.codehaus.groovy.runtime.InvokerHelper;
 
 public class GroovyLanguage extends LanguageSupport {

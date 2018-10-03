@@ -24,7 +24,7 @@ import org.apache.camel.component.docker.consumer.DockerStatsConsumer;
 import org.apache.camel.component.docker.exception.DockerException;
 import org.apache.camel.component.docker.producer.AsyncDockerProducer;
 import org.apache.camel.component.docker.producer.DockerProducer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 

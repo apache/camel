@@ -25,7 +25,7 @@ import net.fortuna.ical4j.model.property.DateProperty;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.support.ExchangeHelper;
 
 /**
  * ICal related converter.
@@ -43,7 +43,7 @@ public final class ICalConverter {
 
     @Converter
     public static ByteArrayInputStream toStream(Calendar calendar, Exchange exchange) throws UnsupportedEncodingException {
-        return new ByteArrayInputStream(calendar.toString().getBytes(IOHelper.getCharsetName(exchange)));
+        return new ByteArrayInputStream(calendar.toString().getBytes(ExchangeHelper.getCharsetName(exchange)));
     }
 
 }

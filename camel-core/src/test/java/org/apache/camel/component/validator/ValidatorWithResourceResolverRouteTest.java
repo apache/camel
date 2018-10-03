@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.processor.validation.CatalogLSResourceResolver;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.xml.resolver.CatalogManager;
 import org.apache.xml.resolver.tools.CatalogResolver;
 import org.junit.Before;

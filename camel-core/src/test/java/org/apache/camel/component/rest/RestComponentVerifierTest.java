@@ -28,11 +28,11 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorHelper;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.support.DefaultComponent;
 import org.junit.Assert;
 import org.junit.Test;
 

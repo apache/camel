@@ -19,7 +19,7 @@ package org.apache.camel.component.browse;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * The <a href="http://camel.apache.org/browse.html">Browse Component</a> provides a simple

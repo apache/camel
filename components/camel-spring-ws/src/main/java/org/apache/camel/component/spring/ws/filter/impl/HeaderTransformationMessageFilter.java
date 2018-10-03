@@ -32,7 +32,7 @@ import org.apache.camel.component.spring.ws.filter.MessageFilter;
 import org.apache.camel.component.xslt.XsltComponent;
 import org.apache.camel.component.xslt.XsltEndpoint;
 import org.apache.camel.spi.ClassResolver;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ws.WebServiceMessage;

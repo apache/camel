@@ -35,7 +35,7 @@ import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.format.FormatException;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -434,7 +434,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                     Object value = field.get(obj);
 
                     // If the field value is empty, populate it with the default value
-                    if (ObjectHelper.isNotEmpty(datafield.defaultValue()) && ObjectHelper.isEmpty(value)) {
+                    if (org.apache.camel.util.ObjectHelper.isNotEmpty(datafield.defaultValue()) && org.apache.camel.util.ObjectHelper.isEmpty(value)) {
                         value = datafield.defaultValue();
                     }
 

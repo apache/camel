@@ -24,7 +24,7 @@ import com.couchbase.client.protocol.views.ViewRow;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultScheduledPollConsumer;
+import org.apache.camel.support.DefaultScheduledPollConsumer;
 
 import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_DESIGN_DOCUMENT_NAME;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_ID;

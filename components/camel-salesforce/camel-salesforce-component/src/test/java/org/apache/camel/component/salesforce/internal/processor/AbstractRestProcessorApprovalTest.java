@@ -35,8 +35,8 @@ import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest.Ac
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequests;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.DefaultMessage;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

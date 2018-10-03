@@ -26,7 +26,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
-import org.apache.camel.util.jndi.JndiContext;
+import org.apache.camel.support.jndi.JndiContext;
 import org.junit.Before;
 import org.junit.Test;
 

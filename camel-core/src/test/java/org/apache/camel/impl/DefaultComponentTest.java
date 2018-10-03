@@ -27,6 +27,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.TypeConversionException;
+import org.apache.camel.support.DefaultComponent;
 import org.junit.Test;
 
 /**

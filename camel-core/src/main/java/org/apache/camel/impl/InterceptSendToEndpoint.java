@@ -28,7 +28,7 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ShutdownableService;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

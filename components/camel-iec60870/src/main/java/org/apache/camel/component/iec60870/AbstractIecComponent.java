@@ -25,7 +25,7 @@ import static java.util.Objects.requireNonNull;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.iec60870.client.ClientOptions;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 import org.eclipse.neoscada.protocol.iec60870.ProtocolOptions;
 
 public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> extends DefaultComponent {

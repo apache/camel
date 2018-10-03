@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-import static org.apache.camel.ThreadPoolRejectedPolicy.DiscardOldest;
+import static org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy.DiscardOldest;
 
 public class ThreadsRejectedPolicyTest extends ContextTestSupport {
 

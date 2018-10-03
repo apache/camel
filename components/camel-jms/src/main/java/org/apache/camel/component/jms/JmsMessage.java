@@ -28,8 +28,8 @@ import javax.jms.Topic;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
-import org.apache.camel.impl.DefaultMessage;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

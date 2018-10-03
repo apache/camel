@@ -22,11 +22,11 @@ import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * The ref component is used for lookup of existing endpoints bound in the Registry.

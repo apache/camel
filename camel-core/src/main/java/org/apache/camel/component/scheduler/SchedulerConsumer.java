@@ -21,7 +21,7 @@ import java.util.Date;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.support.ScheduledPollConsumer;
 
 public class SchedulerConsumer extends ScheduledPollConsumer {
 

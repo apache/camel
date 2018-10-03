@@ -31,7 +31,7 @@ public class FailedToCreateRouteException extends CamelException {
     }
 
     public FailedToCreateRouteException(String routeId, String route, String at, Throwable cause) {
-        super("Failed to create route " + routeId + " at: >>> " + at + " <<< in route: " + getRouteMessage(route) + " because of " + cause.getMessage(), cause);
+        super("Failed to create route " + routeId + " at: >>> " + at + " <<< in route: " + getRouteMessage(route) + " because of " + getExceptionMessage(cause), cause);
         this.routeId = routeId;
     }
 
@@ -40,11 +40,7 @@ public class FailedToCreateRouteException extends CamelException {
     }
     
     protected static String getExceptionMessage(Throwable cause) {
-        if (cause.getMessage() != null) {
-            return cause.getMessage();
-        } else {
-            return cause.getClass().getSimpleName();
-        }
+        return cause.getMessage() != null ? cause.getMessage() : cause.getClass().getSimpleName();
     }
 
     protected static String getRouteMessage(String route) {
@@ -59,4 +55,5 @@ public class FailedToCreateRouteException extends CamelException {
             return route;
         }
     }
+
 }

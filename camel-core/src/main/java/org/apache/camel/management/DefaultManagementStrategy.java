@@ -24,16 +24,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.NamedNode;
 import org.apache.camel.management.event.DefaultEventFactory;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementNamingStrategy;
 import org.apache.camel.spi.ManagementObjectStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

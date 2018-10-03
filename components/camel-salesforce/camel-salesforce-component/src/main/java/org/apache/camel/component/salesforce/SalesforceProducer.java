@@ -27,8 +27,8 @@ import org.apache.camel.component.salesforce.internal.processor.CompositeApiProc
 import org.apache.camel.component.salesforce.internal.processor.JsonRestProcessor;
 import org.apache.camel.component.salesforce.internal.processor.SalesforceProcessor;
 import org.apache.camel.component.salesforce.internal.processor.XmlRestProcessor;
-import org.apache.camel.impl.DefaultAsyncProducer;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.ServiceHelper;
 
 /**
  * The Salesforce producer.

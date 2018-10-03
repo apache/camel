@@ -32,20 +32,19 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ShutdownAware;
+import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Processor for wire tapping exchanges to an endpoint destination.
@@ -194,7 +193,7 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
                 try {
                     processor.process(answer);
                 } catch (Exception e) {
-                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
             }
         }
@@ -215,7 +214,7 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
             try {
                 onPrepare.process(answer);
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 

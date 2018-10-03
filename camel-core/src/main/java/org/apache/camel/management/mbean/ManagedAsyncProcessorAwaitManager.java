@@ -25,11 +25,11 @@ import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedAsyncProcessorAwaitManagerMBean;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  *
@@ -84,7 +84,7 @@ public class ManagedAsyncProcessorAwaitManager extends ManagedService implements
             }
             return answer;
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

@@ -19,7 +19,7 @@ package org.apache.camel.component.dns;
 import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.StringHelper;
 import org.xbill.DNS.DClass;
 import org.xbill.DNS.Lookup;

@@ -30,11 +30,13 @@ import org.w3c.dom.Node;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.builder.AggregationStrategies;
+import org.apache.camel.builder.FlexibleAggregationStrategy;
+import org.apache.camel.builder.FlexibleAggregationStrategy.CompletionAwareMixin;
+import org.apache.camel.builder.FlexibleAggregationStrategy.TimeoutAwareMixin;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
-import org.apache.camel.util.toolbox.FlexibleAggregationStrategy.CompletionAwareMixin;
-import org.apache.camel.util.toolbox.FlexibleAggregationStrategy.TimeoutAwareMixin;
 import org.junit.Test;
 
 /**

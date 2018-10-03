@@ -24,9 +24,9 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.camel.util.component.ApiMethodArg;
-import org.apache.camel.util.component.ApiMethodParser;
-import org.apache.camel.util.component.ArgumentSubstitutionParser;
+import org.apache.camel.support.component.ApiMethodArg;
+import org.apache.camel.support.component.ApiMethodParser;
+import org.apache.camel.support.component.ArgumentSubstitutionParser;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;

@@ -32,8 +32,8 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultAttachment;
-import org.apache.camel.util.jndi.JndiContext;
+import org.apache.camel.support.DefaultAttachment;
+import org.apache.camel.support.jndi.JndiContext;
 import org.junit.Test;
 
 public class BeanWithAttachmentAnnotationTest extends ContextTestSupport {

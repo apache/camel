@@ -48,11 +48,11 @@ import org.apache.camel.Attachment;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.impl.DefaultAttachment;
+import org.apache.camel.support.DefaultAttachment;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.MessageHelper;
+import org.apache.camel.support.MessageHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

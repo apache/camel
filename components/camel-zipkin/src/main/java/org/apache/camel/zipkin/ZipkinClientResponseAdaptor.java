@@ -20,7 +20,7 @@ import brave.SpanCustomizer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
-import org.apache.camel.util.MessageHelper;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.zipkin.ZipkinHelper.prepareBodyForLogging;

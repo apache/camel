@@ -20,7 +20,7 @@ import java.util.Map;
 
 import com.google.common.eventbus.EventBus;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * Camel component for Guava EventBus

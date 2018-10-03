@@ -28,12 +28,12 @@ import com.github.dozermapper.core.metadata.MappingMetadata;
 import com.github.dozermapper.core.util.DozerClassLoader;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.support.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +78,7 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
         try {
             camelContext.addService(this);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -108,7 +108,7 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
 
             camelContext.addService(this);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         } finally {
             Thread.currentThread().setContextClassLoader(tccl);
         }
@@ -250,7 +250,7 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
             try {
                 camelContext.addService(this);
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
     }

@@ -25,7 +25,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
-import org.apache.camel.util.CamelLogger;
+import org.apache.camel.support.CamelLogger;
 import org.apache.camel.util.StopWatch;
 import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;

@@ -21,7 +21,7 @@ import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.event.EventComponent;
 import org.apache.camel.component.event.EventEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.support.ProcessorEndpoint;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ModelJAXBContextFactory;
@@ -43,7 +43,7 @@ import org.springframework.context.Phased;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
 
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 /**
  * A Spring aware implementation of {@link org.apache.camel.CamelContext} which

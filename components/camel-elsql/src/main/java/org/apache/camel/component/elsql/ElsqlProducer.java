@@ -32,7 +32,7 @@ import org.apache.camel.component.sql.ResultSetIteratorCompletion;
 import org.apache.camel.component.sql.SqlConstants;
 import org.apache.camel.component.sql.SqlOutputType;
 import org.apache.camel.component.sql.SqlPrepareStatementStrategy;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.PreparedStatementCreator;

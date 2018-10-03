@@ -21,9 +21,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.seda.SedaEndpoint;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.apache.camel.support.DefaultExchange;
 import org.junit.Test;
 
 public class PollEnricherRefTest extends ContextTestSupport {

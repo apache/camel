@@ -32,7 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.transport.CamelDestination.ConsumerProcessor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.UnknownPersonFault;
 import org.apache.cxf.Bus;

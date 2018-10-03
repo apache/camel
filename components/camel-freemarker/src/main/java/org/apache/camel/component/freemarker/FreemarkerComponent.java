@@ -23,10 +23,10 @@ import freemarker.cache.NullCacheStorage;
 import freemarker.cache.URLTemplateLoader;
 import freemarker.template.Configuration;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.support.ResourceHelper;
 
 /**
  * Freemarker component.

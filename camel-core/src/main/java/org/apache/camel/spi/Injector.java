@@ -33,16 +33,6 @@ public interface Injector {
     <T> T newInstance(Class<T> type);
 
     /**
-     * Instantiates a new instance of the given object type possibly injecting values
-     * into the object in the process
-     *
-     * @param type the type of object to create
-     * @param instance an instance of the type to create
-     * @return a newly created instance
-     */
-    <T> T newInstance(Class<T> type, Object instance);
-
-    /**
      * Whether the injector supports creating new instances using auto-wiring.
      * If this is possible then bean instances is attempt first to be created this way
      * and if not, then the bean can only be created if there is a public no-arg constructor.

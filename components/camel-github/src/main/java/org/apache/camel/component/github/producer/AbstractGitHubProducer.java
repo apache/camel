@@ -19,7 +19,7 @@ package org.apache.camel.component.github.producer;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.github.GitHubConstants;
 import org.apache.camel.component.github.GitHubEndpoint;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.spi.Registry;
 import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.service.GitHubService;

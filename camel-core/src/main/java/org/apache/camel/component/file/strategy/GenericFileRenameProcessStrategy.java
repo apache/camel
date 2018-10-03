@@ -21,7 +21,7 @@ import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperations;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 
 public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrategySupport<T> {
     private GenericFileRenamer<T> beginRenamer;

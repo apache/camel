@@ -22,12 +22,12 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.StaticService;
 import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.LRUCache;
+import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.LanguageSupport;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.LRUCache;
-import org.apache.camel.util.LRUCacheFactory;
+import org.apache.camel.support.PredicateToExpressionAdapter;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.PredicateToExpressionAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -25,11 +25,11 @@ import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedTypeConverterRegistryMBean;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  *
@@ -102,7 +102,7 @@ public class ManagedTypeConverterRegistry extends ManagedService implements Mana
             Class<?> to = getContext().getClassResolver().resolveMandatoryClass(toType);
             return registry.lookup(to, from) != null;
         } catch (ClassNotFoundException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -121,7 +121,7 @@ public class ManagedTypeConverterRegistry extends ManagedService implements Mana
             }
             return answer;
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 }

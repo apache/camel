@@ -17,10 +17,10 @@
 package org.apache.camel.processor.aggregate;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ServiceHelper;
 
-import static org.apache.camel.util.ExchangeHelper.hasExceptionBeenHandledByErrorHandler;
+import static org.apache.camel.support.ExchangeHelper.hasExceptionBeenHandledByErrorHandler;
 
 /**
  * An {@link AggregationStrategy} which are used when the option <tt>shareUnitOfWork</tt> is enabled

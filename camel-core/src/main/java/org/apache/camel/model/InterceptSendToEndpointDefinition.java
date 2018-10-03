@@ -33,7 +33,7 @@ import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.URISupport;
 
 /**

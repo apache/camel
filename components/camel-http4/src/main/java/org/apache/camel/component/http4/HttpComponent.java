@@ -42,13 +42,13 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.spi.RestProducerFactoryHelper;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;
@@ -78,7 +78,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     @Metadata(label = "advanced", description = "To use a custom org.apache.http.protocol.HttpContext when executing requests.")
     protected HttpContext httpContext;
     @Metadata(label = "security", description = "To configure security using SSLContextParameters."
-        + " Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent."
+        + " Important: Only one instance of org.apache.camel.support.jsse.SSLContextParameters is supported per HttpComponent."
         + " If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.")
     protected SSLContextParameters sslContextParameters;
     @Metadata(label = "security", description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier.")
@@ -511,7 +511,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
     /**
      * To configure security using SSLContextParameters.
-     * Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent.
+     * Important: Only one instance of org.apache.camel.support.jsse.SSLContextParameters is supported per HttpComponent.
      * If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {

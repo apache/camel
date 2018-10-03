@@ -32,12 +32,10 @@ import org.apache.camel.spi.ExchangeIdempotentRepository;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorConverterHelper;
-import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of the <a

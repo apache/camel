@@ -18,7 +18,7 @@
 package org.apache.camel.component.hazelcast;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 
 public abstract class HazelcastDefaultProducer extends DefaultProducer {
     public HazelcastDefaultProducer(HazelcastDefaultEndpoint endpoint) {

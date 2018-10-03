@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.apache.camel.ThreadPoolRejectedPolicy;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.xml.TimeUnitAdapter;
 import org.apache.camel.spi.Metadata;
 

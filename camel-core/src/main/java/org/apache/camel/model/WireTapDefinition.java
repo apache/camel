@@ -37,7 +37,7 @@ import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.processor.WireTapProcessor;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
 
 /**
  * Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original message.

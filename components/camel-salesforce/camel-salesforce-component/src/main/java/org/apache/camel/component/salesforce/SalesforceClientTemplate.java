@@ -21,7 +21,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.salesforce.internal.client.HttpClientHolder;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ServiceHelper;
 
 final class SalesforceClientTemplate {
 

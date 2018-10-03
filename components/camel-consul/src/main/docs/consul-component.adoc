@@ -45,7 +45,7 @@ The Consul component supports 9 options, which are listed below.
 | Name | Description | Default | Type
 | *url* (common) | The Consul agent URL |  | String
 | *datacenter* (common) | The data center |  | String
-| *sslContextParameters* (common) | SSL configuration using an org.apache.camel.util.jsse.SSLContextParameters instance. |  | SSLContextParameters
+| *sslContextParameters* (common) | SSL configuration using an org.apache.camel.support.jsse.SSLContextParameters instance. |  | SSLContextParameters
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *aclToken* (common) | Sets the ACL token to be used with Consul |  | String
 | *userName* (common) | Sets the username to be used for basic authentication |  | String
@@ -145,7 +145,7 @@ The component supports 90 options, which are listed below.
 | *camel.component.consul.configuration.ping-instance* | Configure if the AgentClient should attempt a ping before returning the Consul instance |  | Boolean
 | *camel.component.consul.configuration.read-timeout-millis* | Read timeout for OkHttpClient |  | Long
 | *camel.component.consul.configuration.recursive* | Recursively watch, default false |  | Boolean
-| *camel.component.consul.configuration.ssl-context-parameters* | SSL configuration using an org.apache.camel.util.jsse.SSLContextParameters instance. |  | SSLContextParameters
+| *camel.component.consul.configuration.ssl-context-parameters* | SSL configuration using an org.apache.camel.support.jsse.SSLContextParameters instance. |  | SSLContextParameters
 | *camel.component.consul.configuration.tags* | Set tags. You can separate multiple tags by comma. |  | Set
 | *camel.component.consul.configuration.url* | The Consul agent URL |  | String
 | *camel.component.consul.configuration.user-name* | Sets the username to be used for basic authentication |  | String
@@ -188,7 +188,7 @@ The component supports 90 options, which are listed below.
 | *camel.component.consul.service-registry.url* |  |  | String
 | *camel.component.consul.service-registry.user-name* |  |  | String
 | *camel.component.consul.service-registry.write-timeout-millis* |  |  | Long
-| *camel.component.consul.ssl-context-parameters* | SSL configuration using an org.apache.camel.util.jsse.SSLContextParameters instance. The option is a org.apache.camel.util.jsse.SSLContextParameters type. |  | String
+| *camel.component.consul.ssl-context-parameters* | SSL configuration using an org.apache.camel.support.jsse.SSLContextParameters instance. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
 | *camel.component.consul.url* | The Consul agent URL |  | String
 | *camel.component.consul.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 | *camel.component.consul.user-name* | Sets the username to be used for basic authentication |  | String

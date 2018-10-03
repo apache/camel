@@ -25,8 +25,8 @@ import org.apache.camel.component.linkedin.api.LinkedInException;
 import org.apache.camel.component.linkedin.api.model.Error;
 import org.apache.camel.component.linkedin.internal.LinkedInApiName;
 import org.apache.camel.component.linkedin.internal.LinkedInPropertiesHelper;
-import org.apache.camel.util.component.AbstractApiProducer;
-import org.apache.camel.util.component.ApiMethod;
+import org.apache.camel.support.component.AbstractApiProducer;
+import org.apache.camel.support.component.ApiMethod;
 
 /**
  * The LinkedIn producer.

@@ -18,7 +18,7 @@ package org.apache.camel.component.grape
 
 import groovy.grape.Grape
 import org.apache.camel.Exchange
-import org.apache.camel.impl.DefaultProducer
+import org.apache.camel.support.DefaultProducer
 
 import static GrapeCommand.clearPatches
 import static GrapeCommand.grab

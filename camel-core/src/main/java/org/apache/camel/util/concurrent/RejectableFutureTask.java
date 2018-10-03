@@ -19,8 +19,6 @@ package org.apache.camel.util.concurrent;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
-import org.apache.camel.Rejectable;
-
 /**
  * A {@link Rejectable} {@link FutureTask} used by {@link RejectableThreadPoolExecutor}.
  *

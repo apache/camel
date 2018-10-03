@@ -41,11 +41,11 @@ import org.apache.camel.model.OtherAttributesAware;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.ExpressionToPredicateAdapter;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.CollectionStringBuffer;
-import org.apache.camel.util.ExpressionToPredicateAdapter;
-import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
 
 /**
  * A useful base class for an expression

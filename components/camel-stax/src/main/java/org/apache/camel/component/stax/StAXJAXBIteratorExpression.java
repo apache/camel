@@ -34,7 +34,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ExpressionAdapter;
-import org.apache.camel.util.LRUSoftCache;
+import org.apache.camel.support.LRUSoftCache;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.component.stax.StAXUtil.getTagName;

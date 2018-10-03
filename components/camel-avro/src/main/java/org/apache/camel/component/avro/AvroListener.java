@@ -28,7 +28,7 @@ import org.apache.avro.ipc.Server;
 import org.apache.avro.ipc.specific.SpecificResponder;
 import org.apache.avro.specific.SpecificData;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.commons.lang.StringUtils;
 import org.mortbay.log.Log;
 

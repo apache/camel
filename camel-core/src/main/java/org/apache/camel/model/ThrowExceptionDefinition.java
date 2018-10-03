@@ -23,10 +23,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.processor.ThrowExceptionProcessor;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Throws an exception
@@ -78,7 +78,7 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
             try {
                 this.exceptionClass = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(exceptionType, Exception.class);
             } catch (ClassNotFoundException e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 

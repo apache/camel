@@ -19,11 +19,11 @@ package org.apache.camel.core.osgi;
 import java.util.Collection;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatFactory;
 import org.apache.camel.spi.DataFormatResolver;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResolverHelper;
+import org.apache.camel.support.ResolverHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
@@ -82,7 +82,7 @@ public class OsgiDataFormatResolver implements DataFormatResolver {
             }
             return null;
         } catch (InvalidSyntaxException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

@@ -20,10 +20,10 @@ import java.util.EventObject;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.management.event.ExchangeFailedEvent;
 import org.apache.camel.support.EventNotifierSupport;
-import org.apache.camel.util.toolbox.AggregationStrategies;
 import org.junit.Test;
 
 public class SplitterUseOriginalNotPropagateExceptionTest extends ContextTestSupport {

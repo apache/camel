@@ -18,7 +18,7 @@ package org.apache.camel.component.dozer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.processor.MarshalProcessor;
 import org.apache.camel.processor.UnmarshalProcessor;

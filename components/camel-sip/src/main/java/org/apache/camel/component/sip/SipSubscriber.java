@@ -27,7 +27,7 @@ import javax.sip.message.Request;
 
 import org.apache.camel.Processor;
 import org.apache.camel.component.sip.listener.SipSubscriptionListener;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 
 public class SipSubscriber extends DefaultConsumer {
     private SipConfiguration configuration;

@@ -24,8 +24,8 @@ import org.apache.camel.builder.xml.XsltBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.ProcessorEndpoint;
-import org.apache.camel.util.jndi.JndiContext;
+import org.apache.camel.support.ProcessorEndpoint;
+import org.apache.camel.support.jndi.JndiContext;
 import org.junit.Before;
 import org.junit.Test;
 

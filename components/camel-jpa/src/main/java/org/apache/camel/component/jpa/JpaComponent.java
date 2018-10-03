@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutorService;
 import javax.persistence.EntityManagerFactory;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.transaction.PlatformTransactionManager;

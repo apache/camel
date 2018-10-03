@@ -36,18 +36,16 @@ import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.util.SedaConstants;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.

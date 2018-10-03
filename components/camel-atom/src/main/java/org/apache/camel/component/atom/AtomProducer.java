@@ -17,7 +17,7 @@
 package org.apache.camel.component.atom;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 
 /**
  * AtomProducer is currently not implemented

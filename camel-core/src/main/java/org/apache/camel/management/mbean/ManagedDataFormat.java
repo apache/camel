@@ -26,6 +26,7 @@ import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.ManagedInstance;
@@ -36,7 +37,6 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.JsonSchemaHelper;
-import org.apache.camel.util.ObjectHelper;
 
 @ManagedResource(description = "Managed DataFormat")
 public class ManagedDataFormat implements ManagedInstance, ManagedDataFormatMBean {
@@ -131,7 +131,7 @@ public class ManagedDataFormat implements ManagedInstance, ManagedDataFormatMBea
 
                 return answer;
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         } else {
             return null;

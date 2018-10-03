@@ -18,6 +18,8 @@ package org.apache.camel.spi;
 
 import java.util.Map;
 
+import org.apache.camel.support.EndpointHelper;
+
 /**
  * Configuration use by {@link org.apache.camel.spi.RestConsumerFactory} and {@link org.apache.camel.spi.RestApiConsumerFactory}
  * for Camel components to support the Camel {@link org.apache.camel.model.rest.RestDefinition rest} DSL.
@@ -268,7 +270,7 @@ public class RestConfiguration {
      * Optional CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name matches the pattern.
      * <p/>
      * The pattern <tt>#name#</tt> refers to the CamelContext name, to match on the current CamelContext only.
-     * For any other value, the pattern uses the rules from {@link org.apache.camel.util.EndpointHelper#matchPattern(String, String)}
+     * For any other value, the pattern uses the rules from {@link EndpointHelper#matchPattern(String, String)}
      *
      * @param apiContextIdPattern  the pattern
      */

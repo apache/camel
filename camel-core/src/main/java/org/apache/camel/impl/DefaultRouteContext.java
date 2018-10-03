@@ -33,7 +33,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.model.FromDefinition;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
@@ -45,8 +44,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteError;
 import org.apache.camel.spi.RoutePolicy;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.CamelContextHelper;
 
 /**
  * The context used to activate new routing rules
@@ -181,7 +179,7 @@ public class DefaultRouteContext implements RouteContext {
                         try {
                             camelContext.addService(policy);
                         } catch (Exception e) {
-                            throw ObjectHelper.wrapRuntimeCamelException(e);
+                            throw RuntimeCamelException.wrapRuntimeCamelException(e);
                         }
                     }
                 }
@@ -203,7 +201,7 @@ public class DefaultRouteContext implements RouteContext {
                 try {
                     internal.addAdvice(route.getRestBindingDefinition().createRestBindingAdvice(this));
                 } catch (Exception e) {
-                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
             }
 
@@ -260,7 +258,7 @@ public class DefaultRouteContext implements RouteContext {
 
                         edcr.getProperties().put(key, val);
                     } catch (Exception e) {
-                        throw ObjectHelper.wrapRuntimeCamelException(e);
+                        throw RuntimeCamelException.wrapRuntimeCamelException(e);
                     }
                 }
             }

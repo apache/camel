@@ -21,8 +21,8 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
-import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

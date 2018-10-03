@@ -18,7 +18,7 @@ package org.apache.camel.component.telegram;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.telegram.model.OutgoingMessage;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 
 /**
  * A producer that sends messages to Telegram through the bot API.

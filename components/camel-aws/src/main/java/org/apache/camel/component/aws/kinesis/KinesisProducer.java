@@ -22,7 +22,7 @@ import com.amazonaws.services.kinesis.model.PutRecordRequest;
 import com.amazonaws.services.kinesis.model.PutRecordResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 
 import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageForResponse;
 

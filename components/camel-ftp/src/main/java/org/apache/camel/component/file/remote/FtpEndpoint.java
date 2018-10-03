@@ -33,7 +33,7 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.PlatformHelper;
+import org.apache.camel.support.PlatformHelper;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;

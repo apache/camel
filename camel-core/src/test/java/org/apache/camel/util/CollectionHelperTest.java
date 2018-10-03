@@ -17,7 +17,7 @@
 package org.apache.camel.util;
 
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,18 +29,13 @@ import org.junit.Test;
 
 public class CollectionHelperTest extends Assert {
 
-    private String[] names = new String[]{"Claus", "Willem", "Jonathan"};
-    private List<String> list = Arrays.asList(names);
-
     @Test
     public void testCollectionAsCommaDelimitedString() {
-        assertEquals("Claus,Willem,Jonathan", CollectionHelper.collectionAsCommaDelimitedString(names));
-        assertEquals("Claus,Willem,Jonathan", CollectionHelper.collectionAsCommaDelimitedString(list));
+        assertEquals("Claus,Willem,Jonathan", CollectionHelper.collectionAsCommaDelimitedString(Arrays.asList("Claus", "Willem", "Jonathan")));
 
-        assertEquals("", CollectionHelper.collectionAsCommaDelimitedString((String[]) null));
-        assertEquals("", CollectionHelper.collectionAsCommaDelimitedString((Collection<?>) null));
+        assertEquals("", CollectionHelper.collectionAsCommaDelimitedString(null));
 
-        assertEquals("Claus", CollectionHelper.collectionAsCommaDelimitedString(new String[]{"Claus"}));
+        assertEquals("Claus", CollectionHelper.collectionAsCommaDelimitedString(Collections.singletonList("Claus")));
     }
 
     @Test
@@ -86,7 +81,7 @@ public class CollectionHelperTest extends Assert {
     }
 
     @Test
-    public void testFlatternKeysInMap() throws Exception {
+    public void testflattenKeysInMap() throws Exception {
         Map<String, Object> root = new LinkedHashMap<>();
         Map<String, Object> api = new LinkedHashMap<>();
         Map<String, Object> contact = new LinkedHashMap<>();
@@ -97,7 +92,7 @@ public class CollectionHelperTest extends Assert {
         root.put("api", api);
         root.put("cors", true);
 
-        Map<String, Object> flattern = CollectionHelper.flatternKeysInMap(root, ".");
+        Map<String, Object> flattern = CollectionHelper.flattenKeysInMap(root, ".");
         assertEquals(4, flattern.size());
         assertEquals(true, flattern.get("cors"));
         assertEquals("1.0.0", flattern.get("api.version"));

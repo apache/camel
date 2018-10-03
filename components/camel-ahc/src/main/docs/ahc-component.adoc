@@ -81,7 +81,7 @@ with the following path and query parameters:
 | *clientConfigOptions* (advanced) | To configure the AsyncHttpClientConfig using the key/values from the Map. |  | Map
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *clientConfigRealmOptions* (security) | To configure the AsyncHttpClientConfig Realm using the key/values from the Map. |  | Map
-| *sslContextParameters* (security) | Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry. This reference overrides any configured SSLContextParameters at the component level. See Using the JSSE Configuration Utility. Note that configuring this option will override any SSL/TLS configuration options provided through the clientConfig option at the endpoint or component level. |  | SSLContextParameters
+| *sslContextParameters* (security) | Reference to a org.apache.camel.support.jsse.SSLContextParameters in the Registry. This reference overrides any configured SSLContextParameters at the component level. See Using the JSSE Configuration Utility. Note that configuring this option will override any SSL/TLS configuration options provided through the clientConfig option at the endpoint or component level. |  | SSLContextParameters
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
@@ -102,7 +102,7 @@ The component supports 9 options, which are listed below.
 | *camel.component.ahc.enabled* | Enable ahc component | true | Boolean
 | *camel.component.ahc.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
 | *camel.component.ahc.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
-| *camel.component.ahc.ssl-context-parameters* | Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry. Note that configuring this option will override any SSL/TLS configuration options provided through the clientConfig option at the endpoint or component level. The option is a org.apache.camel.util.jsse.SSLContextParameters type. |  | String
+| *camel.component.ahc.ssl-context-parameters* | Reference to a org.apache.camel.support.jsse.SSLContextParameters in the Registry. Note that configuring this option will override any SSL/TLS configuration options provided through the clientConfig option at the endpoint or component level. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
 | *camel.component.ahc.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
@@ -136,7 +136,7 @@ The AHC component supports 8 options, which are listed below.
 | *client* (advanced) | To use a custom AsyncHttpClient |  | AsyncHttpClient
 | *binding* (advanced) | To use a custom AhcBinding which allows to control how to bind between AHC and Camel. |  | AhcBinding
 | *clientConfig* (advanced) | To configure the AsyncHttpClient to use a custom com.ning.http.client.AsyncHttpClientConfig instance. |  | AsyncHttpClientConfig
-| *sslContextParameters* (security) | Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry. Note that configuring this option will override any SSL/TLS configuration options provided through the clientConfig option at the endpoint or component level. |  | SSLContextParameters
+| *sslContextParameters* (security) | Reference to a org.apache.camel.support.jsse.SSLContextParameters in the Registry. Note that configuring this option will override any SSL/TLS configuration options provided through the clientConfig option at the endpoint or component level. |  | SSLContextParameters
 | *allowJavaSerialized Object* (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy

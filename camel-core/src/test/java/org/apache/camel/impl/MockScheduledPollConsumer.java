@@ -20,6 +20,8 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ScheduledPollConsumer;
 
 public class MockScheduledPollConsumer extends ScheduledPollConsumer {
 

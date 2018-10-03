@@ -34,8 +34,8 @@ import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.log.LogComponent;
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.CamelContextHelper;
 import org.junit.Test;
 
 public class DefaultCamelContextTest extends TestSupport {

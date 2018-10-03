@@ -27,8 +27,8 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultScheduledPollConsumerScheduler;
-import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.support.DefaultScheduledPollConsumerScheduler;
+import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 

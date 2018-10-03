@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.grpc.GrpcConfiguration;
 import org.apache.camel.component.grpc.GrpcConstants;
 import org.apache.camel.impl.ProducerCache;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
 
 /**
  * A stream observer that routes all responses to another endpoint.

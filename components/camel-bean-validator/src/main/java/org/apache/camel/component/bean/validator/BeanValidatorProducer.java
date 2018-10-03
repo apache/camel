@@ -22,7 +22,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ValidatorFactory;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 
 /**
  * Bean validator that uses the JSR 303 reference implementation (Hibernate Validator).

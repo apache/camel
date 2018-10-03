@@ -19,7 +19,7 @@ package org.apache.camel.component.twitter;
 import org.apache.camel.Consumer;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.component.twitter.data.EndpointType;
-import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.support.DefaultPollingEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**

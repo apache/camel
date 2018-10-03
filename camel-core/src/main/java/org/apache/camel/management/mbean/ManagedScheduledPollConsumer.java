@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedSchedulePollConsumerMBean;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.support.ScheduledPollConsumer;
 
 @ManagedResource(description = "Managed Scheduled Polling Consumer")
 public class ManagedScheduledPollConsumer extends ManagedConsumer implements ManagedSchedulePollConsumerMBean {

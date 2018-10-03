@@ -18,7 +18,7 @@ package org.apache.camel.component.avro;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 
 public class AvroConsumer extends DefaultConsumer {
 

@@ -37,8 +37,8 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
@@ -107,7 +107,7 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
     protected void doStart() throws Exception {
         super.doStart();
 
-        ObjectHelper.notNull(resourceUri, "resourceUri", this);
+        org.apache.camel.util.ObjectHelper.notNull(resourceUri, "resourceUri", this);
 
         if (elSqlConfig == null && databaseVendor != null) {
             elSqlConfig = databaseVendor.asElSqlConfig();

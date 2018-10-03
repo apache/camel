@@ -132,7 +132,7 @@ The component supports 9 options, which are listed below.
 | *camel.component.cometd.extensions* | To use a list of custom BayeuxServer.Extension that allows modifying incoming and outgoing requests. |  | List
 | *camel.component.cometd.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.cometd.security-policy* | To use a custom configured SecurityPolicy to control authorization. The option is a org.cometd.bayeux.server.SecurityPolicy type. |  | String
-| *camel.component.cometd.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.util.jsse.SSLContextParameters type. |  | String
+| *camel.component.cometd.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
 | *camel.component.cometd.ssl-key-password* | The password for the keystore when using SSL. |  | String
 | *camel.component.cometd.ssl-keystore* | The path to the keystore. |  | String
 | *camel.component.cometd.ssl-password* | The password when using SSL. |  | String

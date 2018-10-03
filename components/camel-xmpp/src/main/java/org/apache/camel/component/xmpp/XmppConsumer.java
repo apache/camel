@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.URISupport;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.SmackException;

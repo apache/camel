@@ -34,7 +34,6 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 
-import org.apache.camel.Exchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -336,12 +335,7 @@ public final class IOHelper {
       */
     public static void closeWithException(Closeable closeable) throws IOException {
         if (closeable != null) {
-            try {
-                closeable.close();
-            } catch (IOException e) {
-                // don't catch the exception here
-                throw e;
-            }
+            closeable.close();
         }
     }
 
@@ -400,15 +394,6 @@ public final class IOHelper {
             if (ioException != null) {
                 throw ioException;
             }
-        } else if (it instanceof Scanner) {
-            // special for Scanner which implement the Closeable since JDK7
-            Scanner scanner = (Scanner) it;
-            scanner.close();
-            IOException ioException = scanner.ioException();
-            if (ioException != null) {
-                throw ioException;
-            }
-
         } else if (it instanceof Closeable) {
             IOHelper.closeWithException((Closeable) it);
         }
@@ -422,61 +407,6 @@ public final class IOHelper {
             }
         }
         throw new UnsupportedCharsetException(charset);
-    }
-
-    /**
-     * This method will take off the quotes and double quotes of the charset
-     */
-    public static String normalizeCharset(String charset) {
-        if (charset != null) {
-            String answer = charset.trim();
-            if (answer.startsWith("'") || answer.startsWith("\"")) {
-                answer = answer.substring(1);
-            }
-            if (answer.endsWith("'") || answer.endsWith("\"")) {
-                answer = answer.substring(0, answer.length() - 1);
-            }
-            return answer.trim();
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * @see #getCharsetName(org.apache.camel.Exchange, boolean)
-     */
-    public static String getCharsetName(Exchange exchange) {
-        return getCharsetName(exchange, true);
-    }
-
-    /**
-     * Gets the charset name if set as header or property {@link Exchange#CHARSET_NAME}.
-     * <b>Notice:</b> The lookup from the header has priority over the property.
-     *
-     * @param exchange  the exchange
-     * @param useDefault should we fallback and use JVM default charset if no property existed?
-     * @return the charset, or <tt>null</tt> if no found
-     */
-    public static String getCharsetName(Exchange exchange, boolean useDefault) {
-        if (exchange != null) {
-            // header takes precedence
-            String charsetName = exchange.getIn().getHeader(Exchange.CHARSET_NAME, String.class);
-            if (charsetName == null) {
-                charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
-            }
-            if (charsetName != null) {
-                return IOHelper.normalizeCharset(charsetName);
-            }
-        }
-        if (useDefault) {
-            return getDefaultCharsetName();
-        } else {
-            return null;
-        }
-    }
-    
-    private static String getDefaultCharsetName() {
-        return ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
     }
 
     /**
@@ -526,7 +456,25 @@ public final class IOHelper {
         if ("".equals(charset)) {
             charset = "UTF-8"; 
         }
-        return IOHelper.normalizeCharset(charset);
+        return normalizeCharset(charset);
 
+    }
+
+    /**
+     * This method will take off the quotes and double quotes of the charset
+     */
+    public static String normalizeCharset(String charset) {
+        if (charset != null) {
+            String answer = charset.trim();
+            if (answer.startsWith("'") || answer.startsWith("\"")) {
+                answer = answer.substring(1);
+            }
+            if (answer.endsWith("'") || answer.endsWith("\"")) {
+                answer = answer.substring(0, answer.length() - 1);
+            }
+            return answer.trim();
+        } else {
+            return null;
+        }
     }
 }

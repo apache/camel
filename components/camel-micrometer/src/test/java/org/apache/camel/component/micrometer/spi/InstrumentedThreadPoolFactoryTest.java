@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.internal.TimedExecutorService;
-import org.apache.camel.ThreadPoolRejectedPolicy;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.junit.After;

@@ -20,7 +20,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
-import org.apache.camel.api.management.PerformanceCounter;
 import org.apache.camel.management.mbean.ManagedPerformanceCounter;
 import org.apache.camel.processor.CamelInternalProcessorAdvice;
 import org.apache.camel.processor.DelegateAsyncProcessor;

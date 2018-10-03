@@ -23,7 +23,7 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.ModificationItem;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.ContextSource;

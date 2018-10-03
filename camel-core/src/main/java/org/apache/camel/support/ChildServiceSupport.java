@@ -19,8 +19,6 @@ package org.apache.camel.support;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.apache.camel.util.ServiceHelper;
-
 /**
  * Base class to control lifecycle for a set of child {@link org.apache.camel.Service}s.
  */

@@ -22,9 +22,10 @@ import ca.uhn.hl7v2.util.Terser;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.ExpressionAdapter;
-import org.apache.camel.util.ExpressionToPredicateAdapter;
+import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.util.ObjectHelper;
 
 
@@ -40,7 +41,7 @@ public class TerserLanguage implements Language {
                 try {
                     return new Terser(message).get(expression.trim());
                 } catch (HL7Exception e) {
-                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
             }
 

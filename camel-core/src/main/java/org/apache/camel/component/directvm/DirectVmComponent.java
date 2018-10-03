@@ -24,9 +24,9 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * The <a href="http://camel.apache.org/direct-vm.html">Direct VM Component</a> manages {@link DirectVmEndpoint} and holds the list of named direct-vm endpoints.

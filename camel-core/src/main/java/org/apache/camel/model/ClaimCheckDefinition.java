@@ -29,8 +29,8 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.ObjectHelper;
 
 /**
  * The Claim Check EIP allows you to replace message content with a claim check (a unique key),
@@ -78,7 +78,7 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        ObjectHelper.notNull(operation, "operation", this);
+        org.apache.camel.util.ObjectHelper.notNull(operation, "operation", this);
 
         ClaimCheckProcessor claim = new ClaimCheckProcessor();
         claim.setOperation(operation.name());
@@ -97,7 +97,7 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
 
         // validate filter, we cannot have both +/- at the same time
         if (getFilter() != null) {
-            Iterable it = ObjectHelper.createIterable(filter, ",");
+            Iterable<?> it = ObjectHelper.createIterable(filter, ",");
             boolean includeBody = false;
             boolean excludeBody = false;
             for (Object o : it) {

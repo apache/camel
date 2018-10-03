@@ -20,7 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.support.EndpointHelper;
 
 /**
  * {@link org.apache.camel.spi.RoutePolicyFactory} which executes for a duration and then triggers an action.

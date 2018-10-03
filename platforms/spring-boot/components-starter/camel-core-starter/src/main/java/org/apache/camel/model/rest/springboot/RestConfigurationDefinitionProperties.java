@@ -106,7 +106,7 @@ public class RestConfigurationDefinitionProperties {
      * services within CamelContext's which name matches the pattern. The
      * pattern #name# refers to the CamelContext name, to match on the current
      * CamelContext only. For any other value, the pattern uses the rules from
-     * link org.apache.camel.util.EndpointHelper#matchPattern(String, String)
+     * link EndpointHelper#matchPattern(String, String)
      */
     private String apiContextIdPattern;
     /**

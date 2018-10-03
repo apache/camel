@@ -20,7 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceDiscoveryFactory;
 import org.apache.camel.component.consul.ConsulConfiguration;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 
 public class ConsulServiceDiscoveryFactory implements ServiceDiscoveryFactory {
     private final ConsulConfiguration configuration;

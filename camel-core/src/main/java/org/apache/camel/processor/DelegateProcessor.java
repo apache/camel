@@ -22,8 +22,8 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ServiceHelper;
 
 /**
  * A Delegate pattern which delegates processing to a nested {@link Processor} which can

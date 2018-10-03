@@ -28,7 +28,7 @@ public class NettySharedHttpServerTest extends BaseNettyTest {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         nettySharedHttpServer = new DefaultNettySharedHttpServer();
-        nettySharedHttpServer.setClassResolver(new DefaultClassResolver(context));
+        nettySharedHttpServer.setCamelContext(context);
 
         NettySharedHttpServerBootstrapConfiguration configuration = new NettySharedHttpServerBootstrapConfiguration();
         configuration.setPort(getPort());

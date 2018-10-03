@@ -23,7 +23,7 @@ import org.apache.camel.component.box.internal.BoxApiCollection;
 import org.apache.camel.component.box.internal.BoxApiName;
 import org.apache.camel.component.box.internal.BoxConnectionHelper;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.component.AbstractApiComponent;
+import org.apache.camel.support.component.AbstractApiComponent;
 
 public class BoxComponent extends AbstractApiComponent<BoxApiName, BoxConfiguration, BoxApiCollection> {
 

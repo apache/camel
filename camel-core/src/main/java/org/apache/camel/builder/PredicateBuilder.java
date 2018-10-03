@@ -24,8 +24,8 @@ import java.util.regex.Pattern;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.util.ExpressionToPredicateAdapter;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ExpressionToPredicateAdapter;
+import org.apache.camel.support.ObjectHelper;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 

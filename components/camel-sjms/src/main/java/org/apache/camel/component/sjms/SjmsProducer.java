@@ -26,10 +26,10 @@ import javax.jms.Session;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
 import org.apache.camel.component.sjms.tx.SessionTransactionSynchronization;
-import org.apache.camel.impl.DefaultAsyncProducer;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.commons.pool.BasePoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
 
@@ -248,7 +248,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
                             try {
                                 sendMessage(exchange, callback, producer, releaseProducerCallback);
                             } catch (Exception e) {
-                                ObjectHelper.wrapRuntimeCamelException(e);
+                                RuntimeCamelException.wrapRuntimeCamelException(e);
                             }
                         }
                     });

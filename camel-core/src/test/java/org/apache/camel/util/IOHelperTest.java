@@ -28,7 +28,8 @@ import java.nio.file.Paths;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.ExchangeHelper;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -116,14 +117,14 @@ public class IOHelperTest extends Assert {
     public void testCharsetName() throws Exception {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext());
 
-        assertNull(IOHelper.getCharsetName(exchange, false));
+        assertNull(ExchangeHelper.getCharsetName(exchange, false));
 
         exchange.getIn().setHeader(Exchange.CHARSET_NAME, "iso-8859-1");
-        assertEquals("iso-8859-1", IOHelper.getCharsetName(exchange, false));
+        assertEquals("iso-8859-1", ExchangeHelper.getCharsetName(exchange, false));
 
         exchange.getIn().removeHeader(Exchange.CHARSET_NAME);
         exchange.setProperty(Exchange.CHARSET_NAME, "iso-8859-1");
-        assertEquals("iso-8859-1", IOHelper.getCharsetName(exchange, false));
+        assertEquals("iso-8859-1", ExchangeHelper.getCharsetName(exchange, false));
         
     }
     

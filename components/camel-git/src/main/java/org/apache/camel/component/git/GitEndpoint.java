@@ -24,7 +24,7 @@ import org.apache.camel.component.git.consumer.GitCommitConsumer;
 import org.apache.camel.component.git.consumer.GitTagConsumer;
 import org.apache.camel.component.git.consumer.GitType;
 import org.apache.camel.component.git.producer.GitProducer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;

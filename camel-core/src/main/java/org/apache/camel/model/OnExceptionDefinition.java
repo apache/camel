@@ -45,8 +45,8 @@ import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ExpressionToPredicateAdapter;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.util.ObjectHelper;
 
 /**

@@ -21,10 +21,10 @@ import java.util.Date;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.api.management.PerformanceCounter;
 import org.apache.camel.api.management.mbean.ManagedPerformanceCounterMBean;
+import org.apache.camel.management.PerformanceCounter;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 
 @ManagedResource(description = "Managed PerformanceCounter")
 public abstract class ManagedPerformanceCounter extends ManagedCounter implements PerformanceCounter, ManagedPerformanceCounterMBean {

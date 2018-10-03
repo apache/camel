@@ -23,9 +23,9 @@ import java.util.Map;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.ModuleURIResolver;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.support.ResourceHelper;
 
 /**
  * An <a href="http://camel.apache.org/xquery.html">XQuery Component</a>

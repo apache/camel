@@ -32,10 +32,9 @@ import org.apache.camel.component.facebook.config.FacebookEndpointConfiguration;
 import org.apache.camel.component.facebook.data.FacebookMethodsType;
 import org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper;
 import org.apache.camel.component.facebook.data.FacebookPropertiesHelper;
-import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.ThreadPoolProfile;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,7 +114,7 @@ public class FacebookProducer extends DefaultAsyncProducer {
                     }
 
                 } catch (Throwable t) {
-                    exchange.setException(ObjectHelper.wrapRuntimeCamelException(t));
+                    exchange.setException(RuntimeCamelException.wrapRuntimeCamelException(t));
                 } finally {
                     callback.done(false);
                 }

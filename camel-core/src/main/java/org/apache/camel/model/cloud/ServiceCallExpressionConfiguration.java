@@ -42,8 +42,8 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 
 @Metadata(label = "routing,cloud")

@@ -37,7 +37,7 @@ import org.apache.camel.component.salesforce.api.dto.composite.SObjectTreeRespon
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.client.CompositeApiClient;
 import org.apache.camel.component.salesforce.internal.client.DefaultCompositeApiClient;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ServiceHelper;
 
 public final class CompositeApiProcessor extends AbstractSalesforceProcessor {
 

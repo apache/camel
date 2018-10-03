@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.file.remote;
 
-import org.apache.camel.util.CamelLogger;
+import org.apache.camel.support.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;

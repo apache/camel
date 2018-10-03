@@ -30,7 +30,7 @@ import org.apache.camel.component.extension.ComponentVerifierExtension.Result;
 import org.apache.camel.component.extension.ComponentVerifierExtension.Scope;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 import org.junit.Test;
 
 public class ManagedComponentTest extends ManagementTestSupport {

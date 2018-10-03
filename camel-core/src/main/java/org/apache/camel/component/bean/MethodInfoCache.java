@@ -20,7 +20,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.util.LRUCacheFactory;
+import org.apache.camel.support.LRUCacheFactory;
 
 /**
  * Represents a cache of {@link MethodInfo} objects to avoid the expense of introspection for each

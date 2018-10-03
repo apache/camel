@@ -25,6 +25,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,9 +85,9 @@ public class BeanInvocation implements Externalizable {
             LOG.trace("Got response: {}", response);
             exchange.getOut().setBody(response);
         } catch (InvocationTargetException e) {
-            exchange.setException(ObjectHelper.wrapRuntimeCamelException(e.getCause()));
+            exchange.setException(RuntimeCamelException.wrapRuntimeCamelException(e.getCause()));
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

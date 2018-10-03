@@ -17,7 +17,7 @@
 package org.apache.camel.component.etcd;
 
 import mousio.etcd4j.EtcdClient;
-import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.support.DefaultPollingEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;

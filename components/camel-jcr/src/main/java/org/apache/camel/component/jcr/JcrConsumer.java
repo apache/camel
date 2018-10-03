@@ -26,7 +26,7 @@ import javax.jcr.Session;
 import javax.jcr.observation.EventListener;
 
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 
 /**

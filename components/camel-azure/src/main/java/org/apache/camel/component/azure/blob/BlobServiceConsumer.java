@@ -20,7 +20,7 @@ import com.microsoft.azure.storage.StorageException;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.support.ScheduledPollConsumer;
 
 /**
  * A Consumer of the blob content from the Azure Blob Service

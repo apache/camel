@@ -20,7 +20,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.util.AsyncProcessorConverterHelper;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.jgroups.Message;
 import org.jgroups.ReceiverAdapter;

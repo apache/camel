@@ -40,7 +40,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * A Camel {@link Endpoint} that bridges the CDI events facility with Camel routes so that CDI events

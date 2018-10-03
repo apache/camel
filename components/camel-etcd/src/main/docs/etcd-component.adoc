@@ -113,7 +113,7 @@ The component supports 17 options, which are listed below.
 | *camel.component.etcd.enabled* | Enable etcd component | true | Boolean
 | *camel.component.etcd.password* | The password to use for basic authentication. |  | String
 | *camel.component.etcd.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
-| *camel.component.etcd.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.util.jsse.SSLContextParameters type. |  | String
+| *camel.component.etcd.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
 | *camel.component.etcd.uris* | To set the URIs the client connects. |  | String
 | *camel.component.etcd.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 | *camel.component.etcd.user-name* | The user name to use for basic authentication. |  | String

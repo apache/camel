@@ -31,6 +31,7 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.support.ResourceHelper;
 import org.junit.Test;
 
 /**

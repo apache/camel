@@ -22,7 +22,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ThreadPoolRejectedPolicy;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;

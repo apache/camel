@@ -26,7 +26,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.EventDrivenPollingConsumer;
+import org.apache.camel.support.ServiceHelper;
 import org.junit.Before;
 import org.junit.Test;
 

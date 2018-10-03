@@ -27,7 +27,7 @@ import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.itest.CamelJmsTestHelper;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.jndi.JndiContext;
+import org.apache.camel.support.jndi.JndiContext;
 import org.junit.Test;
 
 import static org.apache.camel.Exchange.CONTENT_TYPE;

@@ -35,6 +35,7 @@ import javax.management.openmbean.TabularType;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
@@ -50,7 +51,6 @@ import org.apache.camel.component.reactive.streams.util.MonoPublisher;
 import org.apache.camel.component.reactive.streams.util.UnwrapStreamProcessor;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.Suppliers;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -349,13 +349,13 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
                         new Object[] {name, inflight, requested});
                     answer.put(data);
                 } catch (Exception e) {
-                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
             });
 
             return answer;
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -388,13 +388,13 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
                         new Object[] {name, subscribers, subscriptionData});
                     answer.put(data);
                 } catch (Exception e) {
-                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
             });
 
             return answer;
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

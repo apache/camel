@@ -22,8 +22,8 @@ import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
-import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +66,7 @@ public class ClaimCheckAggregationStrategy implements AggregationStrategy {
             return oldExchange;
         }
 
-        if (ObjectHelper.isEmpty(filter) || "*".equals(filter)) {
+        if (org.apache.camel.util.ObjectHelper.isEmpty(filter) || "*".equals(filter)) {
             // grab everything
             oldExchange.getMessage().setBody(newExchange.getMessage().getBody());
             LOG.trace("Including: body");
@@ -127,8 +127,8 @@ public class ClaimCheckAggregationStrategy implements AggregationStrategy {
         }
 
         // filter body and all headers
-        if (ObjectHelper.isNotEmpty(filter)) {
-            Iterable it = ObjectHelper.createIterable(filter, ",");
+        if (org.apache.camel.util.ObjectHelper.isNotEmpty(filter)) {
+            Iterable<?> it = ObjectHelper.createIterable(filter, ",");
             for (Object k : it) {
                 String part = k.toString();
                 if (("body".equals(part) || "+body".equals(part)) && !"-body".equals(part)) {
@@ -142,7 +142,7 @@ public class ClaimCheckAggregationStrategy implements AggregationStrategy {
         }
 
         // filter with remove (--) take precedence at the end
-        Iterable it = ObjectHelper.createIterable(filter, ",");
+        Iterable<?> it = ObjectHelper.createIterable(filter, ",");
         for (Object k : it) {
             String part = k.toString();
             if ("--body".equals(part)) {
@@ -152,7 +152,7 @@ public class ClaimCheckAggregationStrategy implements AggregationStrategy {
             } else if (part.startsWith("--header:")) {
                 // pattern matching for headers, eg header:foo, header:foo*, header:(foo|bar)
                 String after = StringHelper.after(part, "--header:");
-                Iterable i = ObjectHelper.createIterable(after, ",");
+                Iterable<?> i = ObjectHelper.createIterable(after, ",");
                 Set<String> toRemoveKeys = new HashSet<>();
                 for (Object o : i) {
                     String pattern = o.toString();

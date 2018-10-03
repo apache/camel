@@ -33,8 +33,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultPollingConsumerPollStrategy;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.support.DefaultPollingConsumerPollStrategy;
+import org.apache.camel.support.ScheduledPollConsumer;
 import org.junit.Test;
 
 public class FacebookComponentConsumerTest extends CamelFacebookTestSupport {

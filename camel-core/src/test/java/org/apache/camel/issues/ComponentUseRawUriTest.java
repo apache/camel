@@ -22,8 +22,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.DefaultEndpoint;
 import org.junit.Before;
 import org.junit.Test;
 

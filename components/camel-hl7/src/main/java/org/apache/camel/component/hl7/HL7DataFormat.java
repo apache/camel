@@ -35,8 +35,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.support.ExchangeHelper;
 
 import static org.apache.camel.component.hl7.HL7Constants.HL7_CHARSET;
 import static org.apache.camel.component.hl7.HL7Constants.HL7_CONTEXT;
@@ -204,14 +203,14 @@ public class HL7DataFormat extends ServiceSupport implements DataFormat, DataFor
      * using 3rd party libraries like ICU4J that provide a CharsetDetector.
      *
      * The implementation in this class just assumes the charset defined in the exchange property or header by
-     * calling {@link org.apache.camel.util.IOHelper#getCharsetName(org.apache.camel.Exchange)}.
+     * calling {@link ExchangeHelper#getCharsetName(Exchange)}.
      *
      * @param b byte array
      * @param exchange the exchange
      * @return charset name
      */
     protected String guessCharsetName(byte[] b, Exchange exchange) {
-        return IOHelper.getCharsetName(exchange);
+        return ExchangeHelper.getCharsetName(exchange);
     }
 
 }

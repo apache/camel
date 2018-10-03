@@ -44,7 +44,7 @@ import static org.apache.camel.cdi.CdiSpiHelper.createCamelContextWithTCCL;
 import static org.apache.camel.cdi.CdiSpiHelper.getRawType;
 import static org.apache.camel.cdi.CdiSpiHelper.isAnnotationType;
 import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 final class CamelContextProducer<T extends CamelContext> extends DelegateProducer<T> {
 

@@ -19,7 +19,7 @@ package org.apache.camel.impl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
 import org.apache.camel.VetoCamelContextStartException;
-import org.apache.camel.util.jndi.JndiContext;
+import org.apache.camel.support.jndi.JndiContext;
 import org.junit.Test;
 
 public class LifecycleStrategyFailOnStartupTest extends TestSupport {

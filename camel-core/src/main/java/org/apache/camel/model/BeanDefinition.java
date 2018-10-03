@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.BeanInfo;
 import org.apache.camel.component.bean.BeanProcessor;
@@ -33,7 +34,7 @@ import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.component.bean.RegistryBean;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -192,7 +193,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
                     try {
                         clazz = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(beanType);
                     } catch (ClassNotFoundException e) {
-                        throw ObjectHelper.wrapRuntimeCamelException(e);
+                        throw RuntimeCamelException.wrapRuntimeCamelException(e);
                     }
                 } else {
                     clazz = beanClass;
@@ -254,12 +255,12 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
                 if (bean != null) {
                     // there is a bean instance, so check for any methods
                     if (!beanInfo.hasMethod(method)) {
-                        throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(null, bean, method));
+                        throw RuntimeCamelException.wrapRuntimeCamelException(new MethodNotFoundException(null, bean, method));
                     }
                 } else if (clazz != null) {
                     // there is no bean instance, so check for static methods only
                     if (!beanInfo.hasStaticMethod(method)) {
-                        throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(null, clazz, method, true));
+                        throw RuntimeCamelException.wrapRuntimeCamelException(new MethodNotFoundException(null, clazz, method, true));
                     }
                 }
             }

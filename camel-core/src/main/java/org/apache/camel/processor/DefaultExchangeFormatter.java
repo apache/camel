@@ -27,7 +27,7 @@ import org.apache.camel.Message;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.util.MessageHelper;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 

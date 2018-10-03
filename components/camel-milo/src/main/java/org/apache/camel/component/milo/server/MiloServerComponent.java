@@ -41,7 +41,7 @@ import static java.util.Collections.singletonList;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.milo.KeyStoreLoader;
 import org.apache.camel.component.milo.server.internal.CamelNamespace;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 import org.eclipse.milo.opcua.sdk.server.OpcUaServer;
 import org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig;
 import org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfigBuilder;

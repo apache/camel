@@ -27,7 +27,7 @@ import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 
 import static com.pubnub.api.enums.PNStatusCategory.PNTimeoutCategory;
 import static com.pubnub.api.enums.PNStatusCategory.PNUnexpectedDisconnectCategory;

@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.slf4j.Logger;
 
-import static org.apache.camel.util.ExchangeHelper.hasExceptionBeenHandledByErrorHandler;
+import static org.apache.camel.support.ExchangeHelper.hasExceptionBeenHandledByErrorHandler;
 
 /**
  * Helper for processing {@link org.apache.camel.Exchange} in a

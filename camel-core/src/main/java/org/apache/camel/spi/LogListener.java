@@ -18,7 +18,7 @@ package org.apache.camel.spi;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.util.CamelLogger;
+import org.apache.camel.support.CamelLogger;
 
 /**
  * An event listener SPI for logging. Listeners are registered into {@link org.apache.camel.processor.LogProcessor} and

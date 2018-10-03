@@ -23,8 +23,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.DefaultComponent;
 
 public class SchedulerComponent extends DefaultComponent {
 

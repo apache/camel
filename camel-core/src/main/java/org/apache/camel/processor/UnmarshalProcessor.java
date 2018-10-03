@@ -29,11 +29,11 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 
 /**
  * Unmarshals the body of the incoming message using the given

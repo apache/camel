@@ -25,7 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.support.ResourceHelper;
 import org.infinispan.AdvancedCache;
 import org.infinispan.Cache;
 import org.infinispan.client.hotrod.RemoteCache;

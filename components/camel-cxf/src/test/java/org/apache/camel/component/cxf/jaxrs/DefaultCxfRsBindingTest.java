@@ -25,10 +25,10 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
-import org.apache.camel.impl.DefaultMessage;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.cxf.message.MessageImpl;
 import org.junit.Assert;
 import org.junit.Test;
@@ -43,12 +43,12 @@ public class DefaultCxfRsBindingTest extends Assert {
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/xml;charset=ISO-8859-1");
         cxfRsBinding.setCharsetWithContentType(exchange);
         
-        String charset = IOHelper.getCharsetName(exchange);
+        String charset = ExchangeHelper.getCharsetName(exchange);
         assertEquals("Get a wrong charset", "ISO-8859-1", charset);
         
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/xml");
         cxfRsBinding.setCharsetWithContentType(exchange);
-        charset = IOHelper.getCharsetName(exchange);
+        charset = ExchangeHelper.getCharsetName(exchange);
         assertEquals("Get a worng charset name", "UTF-8", charset);
     }
     

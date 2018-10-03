@@ -37,6 +37,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consumer;
 import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
@@ -46,14 +47,12 @@ import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.ShutdownStrategy;
+import org.apache.camel.support.EventHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CollectionStringBuffer;
-import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Default {@link org.apache.camel.spi.ShutdownStrategy} which uses graceful shutdown.
@@ -196,7 +195,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             currentShutdownTaskFuture.get(timeout, timeUnit);
         } catch (ExecutionException e) {
             // unwrap execution exception
-            throw ObjectHelper.wrapRuntimeCamelException(e.getCause());
+            throw RuntimeCamelException.wrapRuntimeCamelException(e.getCause());
         } catch (Exception e) {
             // either timeout or interrupted exception was thrown so this is okay
             // as interrupted would mean cancel was called on the currentShutdownTaskFuture to signal a forced timeout

@@ -28,7 +28,7 @@ import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.quartz2.QuartzComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.junit.Test;
 
 public class CronScheduledRoutePolicyTest extends CamelTestSupport {

@@ -17,7 +17,7 @@
 package org.apache.camel.component.grape
 
 import org.apache.camel.CamelContext
-import org.apache.camel.impl.DefaultComponent
+import org.apache.camel.support.DefaultComponent
 import org.apache.camel.spi.Metadata
 
 class GrapeComponent extends DefaultComponent {

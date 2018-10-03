@@ -34,7 +34,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 
-import static org.apache.camel.util.IOHelper.getCharsetName;
+import static org.apache.camel.support.ExchangeHelper.getCharsetName;
 
 /**
  * This abstract class contains all the common parts for all the uniVocity parsers.

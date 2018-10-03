@@ -35,8 +35,8 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.IntrospectionSupport;
 
 /**
  * To configure rest binding

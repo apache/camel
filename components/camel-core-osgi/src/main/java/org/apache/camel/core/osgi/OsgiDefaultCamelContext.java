@@ -26,7 +26,7 @@ import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.util.LoadPropertiesException;
+import org.apache.camel.LoadPropertiesException;
 import org.osgi.framework.BundleContext;
 
 public class OsgiDefaultCamelContext extends DefaultCamelContext {

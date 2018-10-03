@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
@@ -40,7 +41,7 @@ import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -735,7 +736,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             try {
                 query = URISupport.createQueryString(options);
             } catch (URISyntaxException e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
             from = from + "?" + query;
         }
@@ -768,7 +769,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                     ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, param);
                 }
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
 
             // add the binding
@@ -891,7 +892,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 try {
                     query = URISupport.createQueryString(options);
                 } catch (URISyntaxException e) {
-                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
                 from = from + "?" + query;
             }
@@ -916,7 +917,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                     try {
                         a = camelContext.resolvePropertyPlaceholders(a);
                     } catch (Exception e) {
-                        throw ObjectHelper.wrapRuntimeCamelException(e);
+                        throw RuntimeCamelException.wrapRuntimeCamelException(e);
                     }
                     if (a.startsWith("{") && a.endsWith("}")) {
                         String key = a.substring(1, a.length() - 1);
@@ -930,7 +931,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                             try {
                                 name = camelContext.resolvePropertyPlaceholders(name);
                             } catch (Exception e) {
-                                throw ObjectHelper.wrapRuntimeCamelException(e);
+                                throw RuntimeCamelException.wrapRuntimeCamelException(e);
                             }
                             if (name.equalsIgnoreCase(key)) {
                                 param.type(RestParamType.path);

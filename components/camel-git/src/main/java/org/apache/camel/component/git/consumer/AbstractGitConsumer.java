@@ -21,7 +21,7 @@ import java.io.IOException;
 
 import org.apache.camel.Processor;
 import org.apache.camel.component.git.GitEndpoint;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.support.ScheduledPollConsumer;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;

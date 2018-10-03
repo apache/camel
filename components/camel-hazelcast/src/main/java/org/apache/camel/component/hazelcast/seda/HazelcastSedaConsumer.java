@@ -28,9 +28,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.impl.DefaultExchangeHolder;
-import org.apache.camel.util.AsyncProcessorConverterHelper;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
 
 /**
  * Implementation of Hazelcast SEDA {@link Consumer} component.

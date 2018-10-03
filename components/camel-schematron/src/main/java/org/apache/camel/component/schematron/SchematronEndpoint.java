@@ -31,12 +31,12 @@ import org.apache.camel.component.schematron.constant.Constants;
 import org.apache.camel.component.schematron.exception.SchematronConfigException;
 import org.apache.camel.component.schematron.processor.ClassPathURIResolver;
 import org.apache.camel.component.schematron.processor.TemplatesFactory;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.commons.io.FileUtils;
 
 import static org.apache.camel.component.schematron.constant.Constants.LINE_NUMBERING;

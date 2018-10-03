@@ -20,7 +20,7 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.twitter.TwitterConstants;
 import org.apache.camel.component.twitter.TwitterEndpoint;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
 import twitter4j.User;

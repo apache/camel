@@ -20,11 +20,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -24,7 +24,7 @@ import org.apache.camel.component.dropbox.util.DropboxOperation;
 import org.apache.camel.component.dropbox.util.DropboxPropertyManager;
 import org.apache.camel.component.dropbox.util.DropboxUploadMode;
 import org.apache.camel.component.dropbox.validator.DropboxConfigurationValidator;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

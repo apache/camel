@@ -26,11 +26,11 @@ import javax.management.openmbean.TabularDataSupport;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedRestRegistryMBean;
 import org.apache.camel.spi.RestRegistry;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  *
@@ -82,7 +82,7 @@ public class ManagedRestRegistry extends ManagedService implements ManagedRestRe
             }
             return answer;
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

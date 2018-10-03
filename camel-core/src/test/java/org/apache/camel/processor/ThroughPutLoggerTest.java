@@ -18,8 +18,8 @@ package org.apache.camel.processor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.util.CamelLogger;
+import org.apache.camel.support.CamelLogger;
+import org.apache.camel.support.DefaultExchange;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;

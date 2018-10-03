@@ -26,7 +26,7 @@ import org.apache.camel.Route;
 import org.apache.camel.component.file.remote.SftpEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

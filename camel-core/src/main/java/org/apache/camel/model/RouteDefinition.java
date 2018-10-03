@@ -40,7 +40,6 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
-import org.apache.camel.StatefulService;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.AdviceWithTask;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
@@ -57,7 +56,7 @@ import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.Validator;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -211,7 +210,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
                 throw e;
             } catch (Exception e) {
                 // wrap in exception which provide more details about which route was failing
-                throw new FailedToCreateRouteException(getId(), toString(), e);
+                throw new FailedToCreateRouteException(getId(), RouteDefinitionHelper.getRouteMessage(toString()), e);
             }
             answer.add(routeContext);
         }
@@ -1329,7 +1328,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
             String at = fromType.toString();
             Exception cause = new IllegalArgumentException("Route " + route.getId() + " has no output processors."
                     + " You need to add outputs to the route such as to(\"log:foo\").");
-            throw new FailedToCreateRouteException(route.getId(), route.toString(), at, cause);
+            throw new FailedToCreateRouteException(route.getId(), RouteDefinitionHelper.getRouteMessage(route.toString()), at, cause);
         }
 
         List<ProcessorDefinition<?>> list = new ArrayList<>(outputs);
@@ -1338,7 +1337,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
                 output.addRoutes(routeContext, routes);
             } catch (Exception e) {
                 RouteDefinition route = (RouteDefinition) routeContext.getRoute();
-                throw new FailedToCreateRouteException(route.getId(), route.toString(), output.toString(), e);
+                throw new FailedToCreateRouteException(route.getId(), RouteDefinitionHelper.getRouteMessage(route.toString()), output.toString(), e);
             }
         }
 

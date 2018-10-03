@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -92,7 +93,7 @@ abstract class CsvUnmarshaller {
         }
 
         public Object unmarshal(Exchange exchange, InputStream inputStream) throws IOException {
-            CSVParser parser = new CSVParser(new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange)), format);
+            CSVParser parser = new CSVParser(new InputStreamReader(inputStream, ExchangeHelper.getCharsetName(exchange)), format);
             try {
                 return asList(parser.iterator(), converter);
             } finally {
@@ -123,7 +124,7 @@ abstract class CsvUnmarshaller {
         public Object unmarshal(Exchange exchange, InputStream inputStream) throws IOException {
             Reader reader = null;
             try {
-                reader = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
+                reader = new InputStreamReader(inputStream, ExchangeHelper.getCharsetName(exchange));
                 CSVParser parser = new CSVParser(reader, format);
                 CsvIterator answer = new CsvIterator(parser, converter);
                 // add to UoW so we can close the iterator so it can release any resources

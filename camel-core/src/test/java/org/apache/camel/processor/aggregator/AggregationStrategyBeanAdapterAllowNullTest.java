@@ -22,8 +22,8 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.util.toolbox.AggregationStrategies;
 import org.junit.Test;
 
 public class AggregationStrategyBeanAdapterAllowNullTest extends ContextTestSupport {

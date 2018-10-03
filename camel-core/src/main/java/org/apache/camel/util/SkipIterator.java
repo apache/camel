@@ -21,16 +21,11 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-
 /**
  * Skip based {@link Iterator} which skips the given {@link Iterator} a number of times.
  */
 public final class SkipIterator implements Iterator<Object>, Closeable {
 
-    private final CamelContext camelContext;
-    private final Exchange exchange;
     private final Iterator<?> it;
     private final int skip;
     private boolean closed;
@@ -39,14 +34,11 @@ public final class SkipIterator implements Iterator<Object>, Closeable {
     /**
      * Creates a new skip iterator
      *
-     * @param exchange  the exchange used to create this group iterator
      * @param it        the iterator
      * @param skip      number of times to skip
      * @throws IllegalArgumentException is thrown if skip is not a positive number
      */
-    public SkipIterator(Exchange exchange, Iterator<?> it, int skip) {
-        this.exchange = exchange;
-        this.camelContext = exchange.getContext();
+    public SkipIterator(Iterator<?> it, int skip) {
         this.it = it;
         this.skip = skip;
         if (skip < 0) {

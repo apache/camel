@@ -31,7 +31,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.CamelJmsTestHelper;
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.jndi.JndiContext;
+import org.apache.camel.support.jndi.JndiContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;

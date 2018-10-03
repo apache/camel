@@ -45,6 +45,7 @@ import org.w3c.dom.Document;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.TimerListener;
 import org.apache.camel.api.management.ManagedResource;
@@ -132,7 +133,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             }
             return answer;
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

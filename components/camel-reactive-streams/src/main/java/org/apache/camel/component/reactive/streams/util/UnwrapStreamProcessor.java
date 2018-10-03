@@ -22,7 +22,7 @@ import java.util.List;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorHelper;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;

@@ -25,7 +25,7 @@ import javax.cache.configuration.Configuration;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * Represents the component that manages {@link JCacheEndpoint}.

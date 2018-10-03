@@ -35,11 +35,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.concurrent.SynchronousExecutorService;
 
 /**

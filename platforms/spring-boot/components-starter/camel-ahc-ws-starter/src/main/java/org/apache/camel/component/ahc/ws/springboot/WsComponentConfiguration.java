@@ -54,11 +54,11 @@ public class WsComponentConfiguration
      */
     private String clientConfig;
     /**
-     * Reference to a org.apache.camel.util.jsse.SSLContextParameters in the
+     * Reference to a org.apache.camel.support.jsse.SSLContextParameters in the
      * Registry. Note that configuring this option will override any SSL/TLS
      * configuration options provided through the clientConfig option at the
      * endpoint or component level. The option is a
-     * org.apache.camel.util.jsse.SSLContextParameters type.
+     * org.apache.camel.support.jsse.SSLContextParameters type.
      */
     private String sslContextParameters;
     /**

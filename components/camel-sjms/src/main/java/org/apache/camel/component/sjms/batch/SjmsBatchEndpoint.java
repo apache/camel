@@ -34,7 +34,7 @@ import org.apache.camel.component.sjms.jms.DestinationNameParser;
 import org.apache.camel.component.sjms.jms.JmsBinding;
 import org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.MessageCreatedStrategy;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;

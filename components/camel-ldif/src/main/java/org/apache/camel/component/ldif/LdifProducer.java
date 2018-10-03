@@ -27,7 +27,7 @@ import java.util.List;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.directory.api.ldap.model.exception.LdapException;

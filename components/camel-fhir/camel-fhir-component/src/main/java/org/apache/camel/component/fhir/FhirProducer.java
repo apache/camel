@@ -18,7 +18,7 @@ package org.apache.camel.component.fhir;
 
 import org.apache.camel.component.fhir.internal.FhirApiName;
 import org.apache.camel.component.fhir.internal.FhirPropertiesHelper;
-import org.apache.camel.util.component.AbstractApiProducer;
+import org.apache.camel.support.component.AbstractApiProducer;
 
 /**
  * The FHIR producer.

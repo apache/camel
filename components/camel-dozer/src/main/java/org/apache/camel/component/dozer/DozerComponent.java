@@ -21,9 +21,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.converter.dozer.DozerBeanMapperConfiguration;
-import org.apache.camel.impl.DefaultComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultComponent;
 
 public class DozerComponent extends DefaultComponent {
 

@@ -23,8 +23,8 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.milo.Messages;
 import org.apache.camel.component.milo.client.MiloClientConnection.MonitorHandle;
-import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.DefaultMessage;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 

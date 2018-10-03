@@ -31,8 +31,8 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;
 import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.MessageHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**

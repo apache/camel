@@ -20,7 +20,7 @@ import java.io.Serializable;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.ThreadPoolRejectedPolicy;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 
 /**
  * A profile which defines thread pool settings.

@@ -27,7 +27,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.validation.DefaultValidationErrorHandler;
 import org.apache.camel.processor.validation.SchemaReader;
 import org.apache.camel.processor.validation.ValidatingProcessor;
@@ -36,6 +35,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 
 
 /**

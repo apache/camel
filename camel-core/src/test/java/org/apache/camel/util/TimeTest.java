@@ -18,6 +18,7 @@ package org.apache.camel.util;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.component.mock.Time;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,44 +26,40 @@ public class TimeTest extends Assert {
 
     @Test
     public void testTimeSeconds() {
-        Time time = Time.seconds(5);
+        Time time = new Time(5, TimeUnit.SECONDS);
         assertNotNull(time);
 
         assertEquals(5, time.getNumber());
         assertEquals(TimeUnit.SECONDS, time.getTimeUnit());
 
-        assertNotNull(time.toDate());
-        assertNotNull(time.toMillis());
+        assertTrue(time.toMillis() > 0);
         assertNotNull(time.toString());
     }
 
     @Test
     public void testTimeMinutes() {
-        Time time = Time.minutes(3);
+        Time time = new Time(3, TimeUnit.MINUTES);
         assertNotNull(time);
 
-        assertNotNull(time.toDate());
-        assertNotNull(time.toMillis());
+        assertTrue(time.toMillis() > 0);
         assertNotNull(time.toString());
     }
 
     @Test
     public void testTimeHours() {
-        Time time = Time.hours(4);
+        Time time = new Time(4, TimeUnit.HOURS);
         assertNotNull(time);
 
-        assertNotNull(time.toDate());
-        assertNotNull(time.toMillis());
+        assertTrue(time.toMillis() > 0);
         assertNotNull(time.toString());
     }
 
     @Test
     public void testTimeDays() {
-        Time time = Time.days(2);
+        Time time = new Time(2, TimeUnit.DAYS);
         assertNotNull(time);
 
-        assertNotNull(time.toDate());
-        assertNotNull(time.toMillis());
+        assertTrue(time.toMillis() > 0);
         assertNotNull(time.toString());
     }
 

@@ -20,8 +20,8 @@ import java.lang.reflect.Method;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.TypeConverterSupport;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * A {@link TypeConverter} implementation which invokes a static method to convert from a type to another type
@@ -50,7 +50,7 @@ public class StaticMethodTypeConverter extends TypeConverterSupport {
     @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         return useExchange ? (T)ObjectHelper.invokeMethod(method, null, value, exchange)
-            : (T)ObjectHelper.invokeMethod(method, null, value);
+            : (T) ObjectHelper.invokeMethod(method, null, value);
     }
 
 }

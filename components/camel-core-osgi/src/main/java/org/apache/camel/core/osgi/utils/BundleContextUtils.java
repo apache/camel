@@ -26,8 +26,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.LoadPropertiesException;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.LoadPropertiesException;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 

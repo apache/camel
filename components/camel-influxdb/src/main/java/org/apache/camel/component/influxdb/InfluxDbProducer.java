@@ -18,8 +18,8 @@ package org.apache.camel.component.influxdb;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.MessageHelper;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.influxdb.InfluxDB;
 import org.influxdb.dto.BatchPoints;

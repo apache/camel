@@ -19,6 +19,7 @@ package org.apache.camel.spi;
 import java.util.Map;
 
 import org.apache.camel.StaticService;
+import org.apache.camel.support.LRUCache;
 
 /**
  * Registry to cache validators in memory.
@@ -26,7 +27,7 @@ import org.apache.camel.StaticService;
  * The registry contains two caches:
  * <ul>
  *     <li>static - which keeps all the validators in the cache for the entire lifecycle</li>
- *     <li>dynamic - which keeps the validators in a {@link org.apache.camel.util.LRUCache} and may evict validators which hasn't been requested recently</li>
+ *     <li>dynamic - which keeps the validators in a {@link LRUCache} and may evict validators which hasn't been requested recently</li>
  * </ul>
  * The static cache stores all the validators that are created as part of setting up and starting routes.
  * The static cache has no upper limit.

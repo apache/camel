@@ -17,7 +17,7 @@
 package org.apache.camel.component.ignite;
 
 import org.apache.camel.Component;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.ignite.Ignite;
 

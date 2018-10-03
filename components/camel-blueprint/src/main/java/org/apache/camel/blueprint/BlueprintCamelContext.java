@@ -34,7 +34,7 @@ import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.util.LoadPropertiesException;
+import org.apache.camel.LoadPropertiesException;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;

@@ -23,17 +23,15 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Function;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointAware;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Service;
+import org.apache.camel.support.LRUCache;
+import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.LRUCache;
-import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.function.ThrowingFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.misc.Unsafe;
 
 /**
  * A service pool is like a connection pool but can pool any kind of objects.

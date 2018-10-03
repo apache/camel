@@ -41,8 +41,8 @@ import org.apache.camel.spi.Condition;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

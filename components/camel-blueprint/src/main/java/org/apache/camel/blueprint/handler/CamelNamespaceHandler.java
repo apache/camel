@@ -93,15 +93,15 @@ import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.NamespaceAware;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.blueprint.KeyStoreParametersFactoryBean;
 import org.apache.camel.util.blueprint.SSLContextParametersFactoryBean;
 import org.apache.camel.util.blueprint.SecureRandomParametersFactoryBean;
-import org.apache.camel.util.jsse.KeyStoreParameters;
-import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.SecureRandomParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SecureRandomParameters;
 import org.osgi.framework.Bundle;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.container.ComponentDefinitionException;
@@ -230,7 +230,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         boolean implicitId = false;
 
         // let's avoid folks having to explicitly give an ID to a camel context
-        if (ObjectHelper.isEmpty(contextId)) {
+        if (org.apache.camel.util.ObjectHelper.isEmpty(contextId)) {
             // if no explicit id was set then use a default auto generated name
             CamelContextNameStrategy strategy = new DefaultCamelContextNameStrategy();
             contextId = strategy.getName();
@@ -271,7 +271,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         factory2.addProperty("bundleContext", createRef(context, "blueprintBundleContext"));
         factory2.addDependsOn(propertiesComponentResolver.getId());
         // We need to add other components which the camel context dependsOn
-        if (ObjectHelper.isNotEmpty(ccfb.getDependsOn())) {
+        if (org.apache.camel.util.ObjectHelper.isNotEmpty(ccfb.getDependsOn())) {
             factory2.setDependsOn(Arrays.asList(ccfb.getDependsOn().split(" |,")));
         }
         context.getComponentDefinitionRegistry().registerComponentDefinition(factory2);
@@ -908,7 +908,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                 if (parameterTypes.length != 1) {
                     LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
                 } else {
-                    String propertyName = ObjectHelper.getPropertyName(method);
+                    String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
                     Object value = getInjectionPropertyValue(parameterTypes[0], propertyValue, propertyDefaultValue, propertyName, bean, beanName);
                     ObjectHelper.invokeMethod(method, bean, value);
                 }
@@ -933,7 +933,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                 if (parameterTypes.length != 1) {
                     LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
                 } else {
-                    String propertyName = ObjectHelper.getPropertyName(method);
+                    String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
                     Object value = getInjectionValue(parameterTypes[0], endpointUri, endpointRef, endpointProperty, propertyName, bean, beanName);
                     ObjectHelper.invokeMethod(method, bean, value);
                 }

@@ -22,9 +22,9 @@ import javax.sql.DataSource;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchBeanException;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.IntrospectionSupport;
 
 public class JdbcComponent extends DefaultComponent {
 

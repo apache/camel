@@ -19,7 +19,7 @@ package org.apache.camel.component.jms;
 import javax.jms.Message;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.PollingConsumerSupport;
+import org.apache.camel.support.PollingConsumerSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;

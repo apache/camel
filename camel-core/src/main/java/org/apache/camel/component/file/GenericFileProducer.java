@@ -23,12 +23,12 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.LRUCacheFactory;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

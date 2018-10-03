@@ -21,7 +21,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.infinispan.embedded.InfinispanConsumerEmbeddedHandler;
 import org.apache.camel.component.infinispan.remote.InfinispanConsumerRemoteHandler;
 import org.apache.camel.component.infinispan.remote.InfinispanRemoteOperation;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.Search;
 import org.infinispan.commons.api.BasicCache;

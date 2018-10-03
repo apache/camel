@@ -24,9 +24,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.olingo2.api.Olingo2ResponseHandler;
 import org.apache.camel.component.olingo2.internal.Olingo2ApiName;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.component.AbstractApiConsumer;
-import org.apache.camel.util.component.ApiConsumerHelper;
+import org.apache.camel.support.component.AbstractApiConsumer;
+import org.apache.camel.support.component.ApiConsumerHelper;
 
 /**
  * The Olingo2 consumer.
@@ -85,7 +84,7 @@ public class Olingo2Consumer extends AbstractApiConsumer<Olingo2ApiName, Olingo2
             return ApiConsumerHelper.getResultsProcessed(this, result[0], isSplitResult());
 
         } catch (Throwable t) {
-            throw ObjectHelper.wrapRuntimeCamelException(t);
+            throw RuntimeCamelException.wrapRuntimeCamelException(t);
         }
     }
 

@@ -20,9 +20,9 @@ import java.util.Map;
 
 import com.ibm.as400.access.AS400ConnectionPool;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.support.EndpointHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

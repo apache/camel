@@ -22,11 +22,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.quartz2.QuartzComponent;
 import org.apache.camel.support.RoutePolicySupport;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
@@ -99,7 +99,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
             // stop and un-schedule jobs
             doStop();
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

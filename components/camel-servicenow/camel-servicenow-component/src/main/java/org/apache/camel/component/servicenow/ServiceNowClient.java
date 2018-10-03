@@ -28,10 +28,11 @@ import javax.ws.rs.core.Response;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.servicenow.annotations.ServiceNowSysParm;
 import org.apache.camel.component.servicenow.auth.AuthenticationRequestFilter;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.configuration.security.ProxyAuthorizationPolicy;
 import org.apache.cxf.jaxrs.client.WebClient;
@@ -232,7 +233,7 @@ public final class ServiceNowClient {
 
                 conduit.setTlsClientParameters(tlsClientParams);
             } catch (IOException | GeneralSecurityException e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
     }

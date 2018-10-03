@@ -33,10 +33,10 @@ import org.apache.camel.component.twilio.internal.TwilioConstants;
 import org.apache.camel.component.twilio.internal.TwilioPropertiesHelper;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.component.AbstractApiEndpoint;
-import org.apache.camel.util.component.ApiMethod;
-import org.apache.camel.util.component.ApiMethodPropertiesHelper;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.component.AbstractApiEndpoint;
+import org.apache.camel.support.component.ApiMethod;
+import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
 /**
  * The Twilio component allows you to interact with the Twilio REST APIs using Twilio Java SDK.

@@ -20,7 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
 
 public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent {
 

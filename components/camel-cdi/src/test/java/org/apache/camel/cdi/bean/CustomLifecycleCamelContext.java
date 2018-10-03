@@ -21,8 +21,8 @@ import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.cdi.CdiCamelContext;
-import org.apache.camel.util.ObjectHelper;
 
 @ApplicationScoped
 public class CustomLifecycleCamelContext extends CdiCamelContext {
@@ -37,7 +37,7 @@ public class CustomLifecycleCamelContext extends CdiCamelContext {
         try {
             super.start();
         } catch (Exception cause) {
-            throw ObjectHelper.wrapRuntimeCamelException(cause);
+            throw RuntimeCamelException.wrapRuntimeCamelException(cause);
         }
     }
 
@@ -46,7 +46,7 @@ public class CustomLifecycleCamelContext extends CdiCamelContext {
         try {
             super.stop();
         } catch (Exception cause) {
-            throw ObjectHelper.wrapRuntimeCamelException(cause);
+            throw RuntimeCamelException.wrapRuntimeCamelException(cause);
         }
     }
 }

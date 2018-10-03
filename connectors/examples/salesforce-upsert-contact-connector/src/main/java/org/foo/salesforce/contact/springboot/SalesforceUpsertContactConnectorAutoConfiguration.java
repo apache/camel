@@ -26,7 +26,7 @@ import org.apache.camel.component.connector.ConnectorCustomizer;
 import org.apache.camel.spi.HasId;
 import org.apache.camel.spring.boot.util.CamelPropertiesHelper;
 import org.apache.camel.spring.boot.util.HierarchicalPropertiesEvaluator;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.foo.salesforce.contact.SalesforceUpsertContactComponent;
 import org.slf4j.Logger;

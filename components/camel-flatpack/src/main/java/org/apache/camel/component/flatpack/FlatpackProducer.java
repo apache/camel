@@ -19,7 +19,7 @@ package org.apache.camel.component.flatpack;
 import net.sf.flatpack.DataSet;
 import net.sf.flatpack.Parser;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 
 class FlatpackProducer extends DefaultProducer {
     private FlatpackEndpoint endpoint;

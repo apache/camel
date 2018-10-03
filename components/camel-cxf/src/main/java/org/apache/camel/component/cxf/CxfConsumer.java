@@ -32,7 +32,7 @@ import org.apache.camel.Suspendable;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.interceptors.UnitOfWorkCloserInterceptor;
 import org.apache.camel.component.cxf.util.CxfUtils;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.continuations.Continuation;
 import org.apache.cxf.continuations.ContinuationProvider;

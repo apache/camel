@@ -27,7 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.jcache.JCacheConfiguration;
 import org.apache.camel.component.jcache.JCacheHelper;
 import org.apache.camel.component.jcache.JCacheManager;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.support.ServiceSupport;

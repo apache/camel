@@ -16,9 +16,9 @@
  */
 package org.apache.camel.spring.boot;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.spi.XmlCamelContextConfigurer;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -40,7 +40,7 @@ public class SpringBootXmlCamelContextConfigurer implements XmlCamelContextConfi
                 LOG.debug("Merging XML based CamelContext with Spring Boot configuration properties");
                 CamelAutoConfiguration.doConfigureCamelContext(applicationContext, camelContext, config);
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
     }

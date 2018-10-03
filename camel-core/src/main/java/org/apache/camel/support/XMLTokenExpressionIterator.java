@@ -127,7 +127,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         InputStream in = null;
         try {
             in = exchange.getIn().getMandatoryBody(InputStream.class);
-            String charset = IOHelper.getCharsetName(exchange);
+            String charset = ExchangeHelper.getCharsetName(exchange);
             return createIterator(in, charset);
         } catch (InvalidPayloadException e) {
             exchange.setException(e);

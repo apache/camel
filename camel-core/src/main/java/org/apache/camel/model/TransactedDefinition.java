@@ -34,8 +34,8 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +74,7 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
     @Override
     public String toString() {
         String desc = description();
-        if (ObjectHelper.isEmpty(desc)) {
+        if (org.apache.camel.util.ObjectHelper.isEmpty(desc)) {
             return "Transacted";
         } else {
             return "Transacted[" + desc + "]";
@@ -99,7 +99,7 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
     @Override
     public String getLabel() {
         String desc = description();
-        if (ObjectHelper.isEmpty(desc)) {
+        if (org.apache.camel.util.ObjectHelper.isEmpty(desc)) {
             return "transacted";
         } else {
             return "transacted[" + desc + "]";
@@ -160,7 +160,7 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Policy policy = resolvePolicy(routeContext);
-        ObjectHelper.notNull(policy, "policy", this);
+        org.apache.camel.util.ObjectHelper.notNull(policy, "policy", this);
 
         // before wrap
         policy.beforeWrap(routeContext, this);
@@ -187,7 +187,7 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
 
     protected static Policy doResolvePolicy(RouteContext routeContext, String ref, Class<? extends Policy> type) {
         // explicit ref given so lookup by it
-        if (ObjectHelper.isNotEmpty(ref)) {
+        if (org.apache.camel.util.ObjectHelper.isNotEmpty(ref)) {
             return CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), ref, Policy.class);
         }
 

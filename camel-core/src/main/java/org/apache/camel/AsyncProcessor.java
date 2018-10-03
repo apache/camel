@@ -21,7 +21,7 @@ package org.apache.camel;
  * and signal completion by invoking the {@link AsyncCallback}.
  * <p/>
  * Any processor can be coerced to have an {@link AsyncProcessor} interface by using the
- * {@link org.apache.camel.util.AsyncProcessorConverterHelper#convert AsyncProcessorConverterHelper.convert}
+ * {@link org.apache.camel.support.AsyncProcessorConverterHelper#convert AsyncProcessorConverterHelper.convert}
  * method.
  */
 public interface AsyncProcessor extends Processor {

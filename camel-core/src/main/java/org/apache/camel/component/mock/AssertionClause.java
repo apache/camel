@@ -28,7 +28,7 @@ import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ExpressionClauseSupport;
 import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.util.PredicateAssertHelper;
+import org.apache.camel.support.PredicateAssertHelper;
 
 /**
  * A builder of assertions on message exchanges

@@ -22,7 +22,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 

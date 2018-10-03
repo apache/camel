@@ -20,7 +20,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
 import org.apache.camel.component.cxf.interceptors.UnitOfWorkCloserInterceptor;
 import org.apache.camel.component.cxf.util.CxfUtils;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;

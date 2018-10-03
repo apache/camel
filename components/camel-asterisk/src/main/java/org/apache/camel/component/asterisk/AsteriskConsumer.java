@@ -18,7 +18,7 @@ package org.apache.camel.component.asterisk;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 import org.asteriskjava.manager.ManagerEventListener;
 import org.asteriskjava.manager.event.ManagerEvent;
 

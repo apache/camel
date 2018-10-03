@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.schwering.irc.lib.ssl.SSLDefaultTrustManager;
 import org.schwering.irc.lib.ssl.SSLTrustManager;
 import org.slf4j.Logger;
@@ -441,7 +441,7 @@ public class IrcConfiguration implements Cloneable {
 
     /**
      * Used for configuring security using SSL.
-     * Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry.
+     * Reference to a org.apache.camel.support.jsse.SSLContextParameters in the Registry.
      * This reference overrides any configured SSLContextParameters at the component level.
      * Note that this setting overrides the trustManager option.
      */

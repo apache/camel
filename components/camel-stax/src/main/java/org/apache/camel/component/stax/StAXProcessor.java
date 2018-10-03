@@ -24,7 +24,7 @@ import org.xml.sax.XMLReader;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 
 /**
  * It uses SAX content handler to handle events.

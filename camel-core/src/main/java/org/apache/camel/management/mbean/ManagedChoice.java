@@ -25,6 +25,7 @@ import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedChoiceMBean;
@@ -33,7 +34,6 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
-import org.apache.camel.util.ObjectHelper;
 
 @ManagedResource(description = "Managed Choice")
 public class ManagedChoice extends ManagedProcessor implements ManagedChoiceMBean {
@@ -96,7 +96,7 @@ public class ManagedChoice extends ManagedProcessor implements ManagedChoiceMBea
 
             return answer;
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 }

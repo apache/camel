@@ -19,7 +19,7 @@ package org.apache.camel.component.github.consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.component.github.GitHubConstants;
 import org.apache.camel.component.github.GitHubEndpoint;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.spi.Registry;
 import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.service.GitHubService;

@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileOperations;
-import org.apache.camel.util.CamelLogger;
+import org.apache.camel.support.CamelLogger;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

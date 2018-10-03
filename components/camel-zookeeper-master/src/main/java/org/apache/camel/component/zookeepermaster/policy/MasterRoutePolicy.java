@@ -33,7 +33,7 @@ import org.apache.camel.component.zookeepermaster.DefaultContainerIdFactory;
 import org.apache.camel.component.zookeepermaster.ZookeeperGroupListenerSupport;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.curator.framework.CuratorFramework;
 

@@ -43,10 +43,8 @@ import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.OrderedComparator;
-import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.OrderedComparator;
+import org.apache.camel.support.ServiceHelper;
 
 /**
  * DefaultChannel is the default {@link Channel}.

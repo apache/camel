@@ -34,10 +34,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A <a href="http://camel.apache.org/throttler.html">Throttler</a>

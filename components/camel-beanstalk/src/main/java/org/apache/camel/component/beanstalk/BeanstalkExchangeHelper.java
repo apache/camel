@@ -19,7 +19,7 @@ package org.apache.camel.component.beanstalk;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 
 public final class BeanstalkExchangeHelper {
 

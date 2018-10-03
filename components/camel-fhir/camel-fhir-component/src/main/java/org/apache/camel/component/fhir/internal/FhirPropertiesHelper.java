@@ -17,7 +17,7 @@
 package org.apache.camel.component.fhir.internal;
 
 import org.apache.camel.component.fhir.FhirConfiguration;
-import org.apache.camel.util.component.ApiMethodPropertiesHelper;
+import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
 /**
  * Singleton {@link ApiMethodPropertiesHelper} for FHIR component.

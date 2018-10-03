@@ -29,7 +29,7 @@ import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.fusesource.hawtbuf.Buffer;
 import org.iq80.leveldb.DBIterator;

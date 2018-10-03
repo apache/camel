@@ -26,8 +26,8 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ServiceHelper;
 
 /**
  * An {@link AggregationStrategy} that adapts to a POJO.

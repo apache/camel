@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.MessageHelper;
+import org.apache.camel.support.MessageHelper;
 import org.apache.cxf.helpers.CastUtils;
 import org.junit.Test;
 

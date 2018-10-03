@@ -28,12 +28,13 @@ import com.rabbitmq.client.Connection;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateProducerException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.rabbitmq.pool.PoolableChannelFactory;
 import org.apache.camel.component.rabbitmq.reply.ReplyManager;
 import org.apache.camel.component.rabbitmq.reply.TemporaryQueueReplyManager;
-import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.commons.pool.ObjectPool;
 import org.apache.commons.pool.impl.GenericObjectPool;
 
@@ -357,7 +358,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
                 ServiceHelper.stopService(replyManager);
             }
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         } finally {
             started.set(false);
         }

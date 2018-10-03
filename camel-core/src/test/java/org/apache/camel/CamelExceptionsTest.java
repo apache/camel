@@ -19,7 +19,7 @@ package org.apache.camel;
 import java.util.Date;
 
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.junit.Test;
 
 public class CamelExceptionsTest extends ContextTestSupport {

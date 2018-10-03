@@ -52,7 +52,7 @@ import org.apache.camel.component.docker.DockerEndpoint;
 import org.apache.camel.component.docker.DockerHelper;
 import org.apache.camel.component.docker.DockerOperation;
 import org.apache.camel.component.docker.exception.DockerException;
-import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

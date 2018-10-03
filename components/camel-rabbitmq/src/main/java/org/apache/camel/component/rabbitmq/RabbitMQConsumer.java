@@ -27,8 +27,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.rabbitmq.client.Connection;
 import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
-import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.ServiceHelper;
 
 public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
     private ExecutorService executor;

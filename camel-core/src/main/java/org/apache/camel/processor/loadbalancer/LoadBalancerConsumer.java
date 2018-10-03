@@ -18,7 +18,7 @@ package org.apache.camel.processor.loadbalancer;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 
 /**
  * Represents a consumer which on starting registers itself with a {@link LoadBalancer} and on closing unregisters

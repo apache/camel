@@ -19,8 +19,8 @@ package org.apache.camel.component.bean;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchBeanException;
-import org.apache.camel.impl.DefaultAsyncProducer;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.ServiceHelper;
 
 /**
  * Bean {@link org.apache.camel.Producer}

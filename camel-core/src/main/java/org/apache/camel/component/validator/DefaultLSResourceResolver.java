@@ -26,9 +26,10 @@ import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.LSResourceResolver;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
 
 /**
  * Default {@link LSResourceResolver} which can included schema resources.
@@ -130,7 +131,7 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
             try {
                 return ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, uri);
             } catch (IOException e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 

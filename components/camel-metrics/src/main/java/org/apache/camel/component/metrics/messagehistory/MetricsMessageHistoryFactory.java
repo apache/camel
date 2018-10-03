@@ -25,6 +25,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NonManagedService;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.support.ServiceSupport;
@@ -155,7 +156,7 @@ public class MetricsMessageHistoryFactory extends ServiceSupport implements Came
                 camelContext.addService(messageHistoryService);
             }
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
         // use metrics registry from service if not explicit configured

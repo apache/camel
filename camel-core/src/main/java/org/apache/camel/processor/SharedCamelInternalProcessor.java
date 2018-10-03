@@ -32,7 +32,7 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
-import org.apache.camel.util.OrderedComparator;
+import org.apache.camel.support.OrderedComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

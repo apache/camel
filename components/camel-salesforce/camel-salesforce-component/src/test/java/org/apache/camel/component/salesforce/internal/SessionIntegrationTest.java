@@ -19,7 +19,7 @@ package org.apache.camel.component.salesforce.internal;
 import org.apache.camel.component.salesforce.LoginConfigHelper;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.Assert;
 import org.junit.Test;

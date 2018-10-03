@@ -22,7 +22,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.Constants;
 import org.apache.camel.spi.MaskingFormatter;
-import org.apache.camel.util.jndi.JndiTest;
+import org.apache.camel.support.jndi.JndiTest;
 import org.junit.Assert;
 import org.junit.Test;
 

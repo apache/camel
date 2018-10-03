@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.StaticService;
+import org.apache.camel.support.LRUCache;
 
 /**
  * Registry to cache endpoints in memory.
@@ -27,7 +28,7 @@ import org.apache.camel.StaticService;
  * The registry contains two caches:
  * <ul>
  *     <li>static - which keeps all the endpoints in the cache for the entire lifecycle</li>
- *     <li>dynamic - which keeps the endpoints in a {@link org.apache.camel.util.LRUCache} and may evict endpoints which hasn't been requested recently</li>
+ *     <li>dynamic - which keeps the endpoints in a {@link LRUCache} and may evict endpoints which hasn't been requested recently</li>
  * </ul>
  * The static cache stores all the endpoints that are created as part of setting up and starting routes.
  * The static cache has no upper limit.

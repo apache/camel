@@ -21,7 +21,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.seda.SedaConsumer;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 
 public class VmConsumer extends SedaConsumer implements CamelContextAware {
 

@@ -33,7 +33,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 
 import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_ENDPOINT_URI_PREFIX;
 import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_RESOURCE_URI;

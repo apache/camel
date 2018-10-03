@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * A {@link Registry} which delegates to the real registry.
@@ -47,7 +47,7 @@ public class PropertyPlaceholderDelegateRegistry implements Registry {
             }
             return delegate.lookupByName(name);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -60,7 +60,7 @@ public class PropertyPlaceholderDelegateRegistry implements Registry {
             }
             return delegate.lookupByNameAndType(name, type);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

@@ -23,7 +23,7 @@ import org.apache.camel.Component;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.util.ResolverHelper;
+import org.apache.camel.support.ResolverHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

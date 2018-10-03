@@ -25,9 +25,9 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarPropertiesHelper;
-import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.component.AbstractApiProducer;
-import org.apache.camel.util.component.ApiMethod;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.component.AbstractApiProducer;
+import org.apache.camel.support.component.ApiMethod;
 
 /**
  * The GoogleCalendar producer.

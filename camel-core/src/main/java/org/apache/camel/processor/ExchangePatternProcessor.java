@@ -21,8 +21,8 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.support.AsyncProcessorHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
  * Processor to set {@link org.apache.camel.ExchangePattern} on the {@link org.apache.camel.Exchange}.

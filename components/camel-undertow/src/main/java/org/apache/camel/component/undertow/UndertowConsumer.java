@@ -38,7 +38,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.undertow.UndertowConstants.EventType;
 import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 

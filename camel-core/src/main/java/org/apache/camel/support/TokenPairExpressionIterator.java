@@ -78,7 +78,7 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
         try {
             in = exchange.getIn().getMandatoryBody(InputStream.class);
             // we may read from a file, and want to support custom charset defined on the exchange
-            String charset = IOHelper.getCharsetName(exchange);
+            String charset = ExchangeHelper.getCharsetName(exchange);
             return createIterator(exchange, in, charset);
         } catch (InvalidPayloadException e) {
             exchange.setException(e);

@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.johnzon.mapper.reflection.JohnzonParameterizedType;
 import org.junit.Test;
 

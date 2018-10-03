@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.salesforce;
 
-import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

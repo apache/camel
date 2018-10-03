@@ -49,10 +49,10 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.component.netty4.NettyConstants;
 import org.apache.camel.component.netty4.NettyConverter;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.MessageHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
@@ -220,7 +220,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             } finally {
                 buffer.release();
             }
-            if (ObjectHelper.isNotEmpty(body)) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(body)) {
                 for (String param : body.split("&")) {
                     String[] pair = param.split("=", 2);
                     if (pair.length == 2) {

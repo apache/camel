@@ -35,7 +35,7 @@ import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 
 /**
  * Default implementation for the key selector. The key is read from a key-store

@@ -29,7 +29,7 @@ import org.apache.camel.Suspendable;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.support.EndpointHelper;
 
 /**
  * A {@link DefaultRoute} which starts with an
