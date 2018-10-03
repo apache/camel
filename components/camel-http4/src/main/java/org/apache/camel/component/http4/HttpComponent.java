@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+
 import javax.net.ssl.HostnameVerifier;
 
 import org.apache.camel.CamelContext;
@@ -40,15 +41,15 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
-import org.apache.camel.spi.RestProducerFactoryHelper;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.support.IntrospectionSupport;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.RestProducerFactoryHelper;
 import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;

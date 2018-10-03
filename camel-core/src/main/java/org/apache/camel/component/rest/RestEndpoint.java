@@ -39,7 +39,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 
-import static org.apache.camel.spi.RestProducerFactoryHelper.setupComponent;
+import static org.apache.camel.support.RestProducerFactoryHelper.setupComponent;
 
 /**
  * The rest component is used for either hosting REST services (consumer) or calling external REST services (producer).

@@ -21,6 +21,7 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.RollbackExchangeException;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExceptionHandler;
 import org.slf4j.LoggerFactory;
 

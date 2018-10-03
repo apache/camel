@@ -28,7 +28,7 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.support.AsyncProcessorHelper;
-import org.apache.camel.support.CamelLogger;
+import org.apache.camel.spi.CamelLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

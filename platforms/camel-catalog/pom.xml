@@ -118,21 +118,26 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>src/main/java/org/apache/camel/catalog</outputDirectory>
+              <outputDirectory>target/generated-sources/java/org/apache/camel/catalog</outputDirectory>
               <overwrite>true</overwrite>
               <resources>
                 <resource>
-                  <directory>../../camel-core/src/main/java/org/apache/camel/runtimecatalog</directory>
+                  <directory>../../camel-api/src/main/java/org/apache/camel/runtimecatalog</directory>
+                  <!-- the following files are maintained in camel-core and not here, so they are copied over -->
+                  <includes>
+                    <include>EndpointValidationResult.java</include>
+                    <include>JSonSchemaResolver.java</include>
+                    <include>LanguageValidationResult.java</include>
+                  </includes>
+                </resource>
+                <resource>
+                  <directory>../../camel-core/src/main/java/org/apache/camel/runtimecatalog/impl</directory>
                   <!-- the following files are maintained in camel-core and not here, so they are copied over -->
                   <includes>
                     <include>AbstractCamelCatalog.java</include>
+                    <include>CamelContextJsonSchemaResolver.java</include>
                     <include>CatalogHelper.java</include>
-                    <include>CollectionStringBuffer.java</include>
-                    <include>EndpointValidationResult.java</include>
                     <include>JSonSchemaHelper.java</include>
-                    <include>JSonSchemaResolver.java</include>
-                    <include>LanguageValidationResult.java</include>
-                    <include>SimpleValidationResult.java</include>
                     <include>SuggestionStrategy.java</include>
                     <include>TimePatternConverter.java</include>
                     <include>UnsafeUriCharactersEncoder.java</include>
@@ -159,26 +164,38 @@
         </executions>
         <configuration>
           <includes>
-            <include>${basedir}/src/main/java/org/apache/camel/catalog/AbstractCamelCatalog.java</include>
-            <include>${basedir}/src/main/java/org/apache/camel/catalog/CatalogHelper.java</include>
-            <include>${basedir}/src/main/java/org/apache/camel/catalog/CollectionStringBuffer.java</include>
-            <include>${basedir}/src/main/java/org/apache/camel/catalog/EndpointValidationResult.java</include>
-            <include>${basedir}/src/main/java/org/apache/camel/catalog/JSonSchemaHelper.java</include>
-            <include>${basedir}/src/main/java/org/apache/camel/catalog/JSonSchemaResolver.java</include>
-            <include>${basedir}/src/main/java/org/apache/camel/catalog/LanguageValidationResult.java</include>
-            <include>${basedir}/src/main/java/org/apache/camel/catalog/SimpleValidationResult.java</include>
-            <include>${basedir}/src/main/java/org/apache/camel/catalog/SuggestionStrategy.java</include>
-            <include>${basedir}/src/main/java/org/apache/camel/catalog/TimePatternConverter.java</include>
-            <include>${basedir}/src/main/java/org/apache/camel/catalog/UnsafeUriCharactersEncoder.java</include>
-            <include>${basedir}/src/main/java/org/apache/camel/catalog/URISupport.java</include>
+            <include>${basedir}/target/generated-sources/java/org/apache/camel/catalog/**.java</include>
           </includes>
           <replacements>
+            <replacement>
+              <token>org.apache.camel.runtimecatalog.impl</token>
+              <value>org.apache.camel.catalog</value>
+            </replacement>
             <replacement>
               <token>org.apache.camel.runtimecatalog</token>
               <value>org.apache.camel.catalog</value>
             </replacement>
           </replacements>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>1.7</version>
+        <executions>
+          <execution>
+            <id>add-source</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${basedir}/target/generated-sources/java</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
       <!-- shade caffeine cache for faster Camel and spi-annotations as needed by everybody -->
