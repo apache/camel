@@ -59,9 +59,7 @@ public class FtpBadLoginInProducerConnectionLeakTest extends FtpServerTestSuppor
             }
         }
 
-        // maximumReconnectAttempts is related to TCP connects, not to FTP login attempts
-        // but having this parameter > 0 leads to two connection attempts
-        assertEquals("Expected 4 socket connections to be created", 4, socketAudits.size());
+        assertEquals("Expected 2 socket connections to be created", 2, socketAudits.size());
 
         for (Map.Entry<Integer, boolean[]> socketStats : socketAudits.entrySet()) {
             assertTrue("Socket should be connected", socketStats.getValue()[0]);
