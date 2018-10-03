@@ -30,11 +30,9 @@ import org.apache.camel.InvokeOnHeader;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.atomix.AtomixAsyncMessageProcessor;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT;
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_NAME;

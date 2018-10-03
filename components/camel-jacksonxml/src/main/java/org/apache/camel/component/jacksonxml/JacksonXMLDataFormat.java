@@ -41,8 +41,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.ObjectHelper;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a>
@@ -483,7 +483,7 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
         }
 
         if (enableFeatures != null) {
-            Iterator<Object> it = ObjectHelper.createIterator(enableFeatures);
+            Iterator<?> it = ObjectHelper.createIterator(enableFeatures);
             while (it.hasNext()) {
                 String enable = it.next().toString();
                 // it can be different kind
@@ -507,7 +507,7 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
             }
         }
         if (disableFeatures != null) {
-            Iterator<Object> it = ObjectHelper.createIterator(disableFeatures);
+            Iterator<?> it = ObjectHelper.createIterator(disableFeatures);
             while (it.hasNext()) {
                 String disable = it.next().toString();
                 // it can be different kind
@@ -538,7 +538,7 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
             }
         }
         if (moduleClassNames != null) {
-            Iterable<Object> it = ObjectHelper.createIterable(moduleClassNames);
+            Iterable<?> it = ObjectHelper.createIterable(moduleClassNames);
             for (Object o : it) {
                 String name = o.toString();
                 Class<Module> clazz = camelContext.getClassResolver().resolveMandatoryClass(name, Module.class);
@@ -548,7 +548,7 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
             }
         }
         if (moduleRefs != null) {
-            Iterable<Object> it = ObjectHelper.createIterable(moduleRefs);
+            Iterable<?> it = ObjectHelper.createIterable(moduleRefs);
             for (Object o : it) {
                 String name = o.toString();
                 if (name.startsWith("#")) {
@@ -559,7 +559,7 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
                 xmlMapper.registerModule(module);
             }
         }
-        if (ObjectHelper.isNotEmpty(timezone)) {
+        if (org.apache.camel.util.ObjectHelper.isNotEmpty(timezone)) {
             log.debug("Setting timezone to XML Mapper: {}", timezone);
             xmlMapper.setTimeZone(timezone);
         }

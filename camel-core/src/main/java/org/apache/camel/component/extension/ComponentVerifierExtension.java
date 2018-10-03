@@ -28,8 +28,6 @@ import org.apache.camel.component.extension.ComponentVerifierExtensionHelper.Exc
 import org.apache.camel.component.extension.ComponentVerifierExtensionHelper.GroupErrorAttribute;
 import org.apache.camel.component.extension.ComponentVerifierExtensionHelper.HttpErrorAttribute;
 import org.apache.camel.component.extension.ComponentVerifierExtensionHelper.StandardErrorCode;
-import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Defines the interface used for validating component/endpoint parameters. The central method of this
@@ -121,8 +119,6 @@ public interface ComponentVerifierExtension extends ComponentExtension {
          */
         CONNECTIVITY;
 
-        private static final ComponentVerifierExtension.Scope[] VALUES = values();
-
         /**
          * Get an instance of this scope from a string representation
          *
@@ -130,12 +126,7 @@ public interface ComponentVerifierExtension extends ComponentExtension {
          * @return the scope enum represented by this string
          */
         public static Scope fromString(String scope) {
-            for (Scope value : VALUES) {
-                if (ObjectHelper.equal(scope, value.name(), true)) {
-                    return value;
-                }
-            }
-            throw new IllegalArgumentException("Unknown scope <" + scope + ">");
+            return Scope.valueOf(scope != null ? scope.toUpperCase() : null);
         }
     }
 
@@ -219,8 +210,8 @@ public interface ComponentVerifierExtension extends ComponentExtension {
          * Convert a string to an {@link Attribute}
          *
          * @param attribute the string representation of an attribute to convert. It should be in all lower case (with
-         *                  underscore as a separator) to avoid overlap with standard attributes like {@linkExceptionAttribute},
-         *                  {@linkHttpAttribute} or {@link GroupAttribute}
+         *                  underscore as a separator) to avoid overlap with standard attributes like {@link ExceptionAttribute},
+         *                  {@link HttpAttribute} or {@link GroupAttribute}
          * @return generated attribute
          */
         static Attribute asAttribute(String attribute) {
@@ -315,7 +306,8 @@ public interface ComponentVerifierExtension extends ComponentExtension {
          * Interface defining an attribute which is a key for the detailed error messages. This is implemented by several
          * standard enums like {@link ExceptionAttribute}, {@link HttpAttribute} or {@link GroupAttribute} but can also
          * implemented for component specific details. This is best done via {@link #asAttribute(String)}
-         * or using one of the other builder method in this error builder (like {@link ResultErrorBuilder#detail(String, Object)}
+         * or using one of the other builder method in this error builder (like
+         * {@link org.apache.camel.component.extension.verifier.ResultErrorBuilder#detail(String, Object)}
          * <p>
          * With respecting to name, the same rules as for {@link Code} apply: Standard attributes are all upper case with _
          * as separators, whereas custom attributes are lower case with underscore separators.

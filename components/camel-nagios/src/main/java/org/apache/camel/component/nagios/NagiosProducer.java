@@ -23,7 +23,7 @@ import com.googlecode.jsendnsca.MessagePayload;
 import com.googlecode.jsendnsca.NonBlockingNagiosPassiveCheckSender;
 import com.googlecode.jsendnsca.PassiveCheckSender;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 
 import static org.apache.camel.component.nagios.NagiosConstants.HOST_NAME;
 import static org.apache.camel.component.nagios.NagiosConstants.LEVEL;

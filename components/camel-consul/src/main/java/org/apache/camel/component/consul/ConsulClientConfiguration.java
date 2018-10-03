@@ -29,7 +29,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 
 @UriParams
 public class ConsulClientConfiguration implements Cloneable {
@@ -171,7 +171,7 @@ public class ConsulClientConfiguration implements Cloneable {
     }
 
     /**
-     * SSL configuration using an org.apache.camel.util.jsse.SSLContextParameters
+     * SSL configuration using an org.apache.camel.support.jsse.SSLContextParameters
      * instance.
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {

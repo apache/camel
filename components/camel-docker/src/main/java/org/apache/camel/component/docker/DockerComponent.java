@@ -22,10 +22,8 @@ import java.util.Map;
 import com.github.dockerjava.api.DockerClient;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.docker.exception.DockerException;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link DockerEndpoint}.

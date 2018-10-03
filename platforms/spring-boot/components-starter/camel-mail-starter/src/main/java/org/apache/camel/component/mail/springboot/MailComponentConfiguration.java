@@ -22,7 +22,7 @@ import javax.mail.Session;
 import org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver;
 import org.apache.camel.component.mail.JavaMailSender;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.crypto.cms.util;
 
-import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 
 public final class KeystoreUtil {
 

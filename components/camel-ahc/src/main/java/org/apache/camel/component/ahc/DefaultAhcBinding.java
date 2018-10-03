@@ -37,10 +37,10 @@ import org.apache.camel.Message;
 import org.apache.camel.component.ahc.helper.AhcHelper;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.GZIPHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.GZIPHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.MessageHelper;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.asynchttpclient.HttpResponseStatus;
 import org.asynchttpclient.Request;
@@ -146,7 +146,7 @@ public class DefaultAhcBinding implements AhcBinding {
 
         String contentType = ExchangeHelper.getContentType(exchange);
         BodyGenerator body = in.getBody(BodyGenerator.class);
-        String charset = IOHelper.getCharsetName(exchange, false);
+        String charset = ExchangeHelper.getCharsetName(exchange, false);
 
         if (body == null) {
             try {

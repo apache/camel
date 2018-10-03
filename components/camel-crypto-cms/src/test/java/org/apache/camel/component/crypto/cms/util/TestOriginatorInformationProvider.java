@@ -21,7 +21,7 @@ import java.security.cert.X509Certificate;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.crypto.cms.common.OriginatorInformationProvider;
 import org.apache.camel.component.crypto.cms.exception.CryptoCmsException;
-import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cms.OriginatorInfoGenerator;
 import org.bouncycastle.cms.OriginatorInformation;

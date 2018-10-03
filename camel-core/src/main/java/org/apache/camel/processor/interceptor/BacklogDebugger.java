@@ -35,6 +35,7 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 import org.apache.camel.impl.BreakpointSupport;
 import org.apache.camel.impl.DefaultDebugger;
@@ -44,13 +45,10 @@ import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.spi.Condition;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.support.CamelLogger;
+import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.CamelLogger;
-import org.apache.camel.util.MessageHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A {@link org.apache.camel.spi.Debugger} that has easy debugging functionality which
@@ -153,7 +151,7 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
             ServiceHelper.startService(debugger);
             enabled.set(true);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

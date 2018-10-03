@@ -44,9 +44,9 @@ import org.apache.camel.WrappedFile;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.MessageHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.http.NameValuePair;
@@ -209,7 +209,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                 // use string based for forms
                 String body = exchange.getIn().getBody(String.class);
                 if (body != null) {
-                    List<NameValuePair> pairs = URLEncodedUtils.parse(body, Charset.forName(IOHelper.getCharsetName(exchange, true)));
+                    List<NameValuePair> pairs = URLEncodedUtils.parse(body, Charset.forName(ExchangeHelper.getCharsetName(exchange, true)));
                     for (NameValuePair p : pairs) {
                         form.add(p.getName(), p.getValue());
                     }

@@ -24,6 +24,7 @@ import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.MessageHistoryFactory;
+import org.apache.camel.support.DefaultExchange;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;

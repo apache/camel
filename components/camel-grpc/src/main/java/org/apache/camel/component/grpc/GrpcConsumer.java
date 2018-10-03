@@ -37,10 +37,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.grpc.auth.jwt.JwtServerInterceptor;
 import org.apache.camel.component.grpc.server.GrpcHeaderInterceptor;
 import org.apache.camel.component.grpc.server.GrpcMethodHandler;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.support.ResourceHelper;
 
 /**
  * Represents gRPC server consumer implementation

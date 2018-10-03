@@ -37,7 +37,7 @@ import org.apache.camel.dataformat.bindy.annotation.OneToMany;
 import org.apache.camel.dataformat.bindy.annotation.Section;
 import org.apache.camel.dataformat.bindy.format.FormatException;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -202,7 +202,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     }
 
     private int setDataFieldValue(CamelContext camelContext, Map<String, Object> model, int line, int pos, int counterMandatoryFields, String data, DataField dataField) throws Exception {
-        ObjectHelper.notNull(dataField, "No position " + pos + " defined for the field: " + data + ", line: " + line);
+        org.apache.camel.util.ObjectHelper.notNull(dataField, "No position " + pos + " defined for the field: " + data + ", line: " + line);
 
         if (dataField.trim()) {
             data = data.trim();
@@ -300,7 +300,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         Map<Integer, List<String>> results = new HashMap<>();
 
         // Check if separator exists
-        ObjectHelper.notNull(this.separator, "The separator has not been instantiated or property not defined in the @CsvRecord annotation");
+        org.apache.camel.util.ObjectHelper.notNull(this.separator, "The separator has not been instantiated or property not defined in the @CsvRecord annotation");
 
         char separator = ConverterUtils.getCharDelimiter(this.getSeparator());
 
@@ -472,7 +472,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     Object value = field.get(obj);
 
                     // If the field value is empty, populate it with the default value
-                    if (ObjectHelper.isNotEmpty(datafield.defaultValue()) && ObjectHelper.isEmpty(value)) {
+                    if (org.apache.camel.util.ObjectHelper.isNotEmpty(datafield.defaultValue()) && org.apache.camel.util.ObjectHelper.isEmpty(value)) {
                         value = datafield.defaultValue();
                     }
 
@@ -632,7 +632,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     LOG.debug("Generate header column names parameter of the CSV: {}", generateHeaderColumnNames);
 
                     // Get Separator parameter
-                    ObjectHelper.notNull(record.separator(), "No separator has been defined in the @Record annotation");
+                    org.apache.camel.util.ObjectHelper.notNull(record.separator(), "No separator has been defined in the @Record annotation");
                     separator = record.separator();
                     LOG.debug("Separator defined for the CSV: {}", separator);
 
@@ -644,7 +644,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     messageOrdered = record.isOrdered();
                     LOG.debug("Must CSV record be ordered: {}", messageOrdered);
 
-                    if (ObjectHelper.isNotEmpty(record.quote())) {
+                    if (org.apache.camel.util.ObjectHelper.isNotEmpty(record.quote())) {
                         quote = record.quote();
                         LOG.debug("Quoting columns with: {}", quote);
                     }
@@ -673,7 +673,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                 if (section != null) {
                     // BigIntegerFormatFactory if section number is not null
-                    ObjectHelper.notNull(section.number(), "No number has been defined for the section");
+                    org.apache.camel.util.ObjectHelper.notNull(section.number(), "No number has been defined for the section");
 
                     // Get section number and add it to the sections
                     sections.put(cl.getName(), section.number());

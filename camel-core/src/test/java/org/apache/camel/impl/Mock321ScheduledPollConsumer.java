@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.Processor;
+import org.apache.camel.support.DefaultEndpoint;
 
 public class Mock321ScheduledPollConsumer extends MockScheduledPollConsumer {
 

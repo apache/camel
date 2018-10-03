@@ -19,7 +19,7 @@ package org.apache.camel.component.zookeepermaster;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

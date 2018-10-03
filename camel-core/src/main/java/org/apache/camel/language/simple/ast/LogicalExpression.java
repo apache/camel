@@ -23,7 +23,7 @@ import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.language.simple.types.LogicalOperatorType;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
-import org.apache.camel.util.ExpressionToPredicateAdapter;
+import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.util.ObjectHelper;
 
 /**

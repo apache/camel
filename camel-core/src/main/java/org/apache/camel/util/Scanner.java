@@ -33,16 +33,22 @@ import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.InputMismatchException;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class Scanner implements Iterator<String>, Closeable {
 
-    private static final Map<String, Pattern> CACHE = LRUCacheFactory.newLRUCache(7);
+    private static final Map<String, Pattern> CACHE = new LinkedHashMap<String, Pattern>() {
+        @Override
+        protected boolean removeEldestEntry(Entry<String, Pattern> eldest) {
+            return size() >= 7;
+        }
+    };
 
     private static final String WHITESPACE_PATTERN = "\\s+";
 
@@ -271,8 +277,9 @@ public final class Scanner implements Iterator<String>, Closeable {
         }
     }
 
-    public void close() {
+    public void close() throws IOException {
         if (!closed) {
+            closed = true;
             if (source instanceof Closeable) {
                 try {
                     ((Closeable) source).close();
@@ -280,24 +287,17 @@ public final class Scanner implements Iterator<String>, Closeable {
                     lastIOException = e;
                 }
             }
-            closed = true;
         }
-    }
-
-    public IOException ioException() {
-        return lastIOException;
+        if (lastIOException != null) {
+            throw lastIOException;
+        }
     }
 
     private static Pattern cachePattern(String pattern) {
         if (pattern == null) {
             return null;
         }
-        return CACHE.computeIfAbsent(pattern, new Function<String, Pattern>() {
-            @Override
-            public Pattern apply(String s) {
-                return Pattern.compile(s);
-            }
-        });
+        return CACHE.computeIfAbsent(pattern, Pattern::compile);
     }
 
 }

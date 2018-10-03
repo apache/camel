@@ -32,4 +32,20 @@ public class CamelExecutionException extends RuntimeExchangeException {
     public CamelExecutionException(String message, Exchange exchange, Throwable cause) {
         super(message, exchange, cause);
     }
+
+    /**
+     * Wraps the caused exception in a {@link CamelExecutionException} if its not
+     * already such an exception.
+     *
+     * @param e the caused exception
+     * @return the wrapper exception
+     */
+    public static CamelExecutionException wrapCamelExecutionException(Exchange exchange, Throwable e) {
+        if (e instanceof CamelExecutionException) {
+            // don't double wrap
+            return (CamelExecutionException) e;
+        } else {
+            return new CamelExecutionException("Exception occurred during execution", exchange, e);
+        }
+    }
 }

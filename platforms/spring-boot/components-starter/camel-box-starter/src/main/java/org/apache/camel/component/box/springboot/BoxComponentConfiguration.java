@@ -21,7 +21,7 @@ import javax.annotation.Generated;
 import com.box.sdk.IAccessTokenCache;
 import org.apache.camel.component.box.internal.BoxApiName;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**

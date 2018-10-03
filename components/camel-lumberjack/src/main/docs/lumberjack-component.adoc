@@ -103,7 +103,7 @@ The component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.lumberjack.enabled* | Enable lumberjack component | true | Boolean
 | *camel.component.lumberjack.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
-| *camel.component.lumberjack.ssl-context-parameters* | Sets the default SSL configuration to use for all the endpoints. You can also configure it directly at the endpoint level. The option is a org.apache.camel.util.jsse.SSLContextParameters type. |  | String
+| *camel.component.lumberjack.ssl-context-parameters* | Sets the default SSL configuration to use for all the endpoints. You can also configure it directly at the endpoint level. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
 | *camel.component.lumberjack.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 |===
 // spring-boot-auto-configure options: END

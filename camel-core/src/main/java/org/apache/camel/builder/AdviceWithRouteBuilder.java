@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -81,7 +82,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      *
      * @param pattern the pattern(s).
      * @throws Exception can be thrown if error occurred
-     * @see org.apache.camel.util.EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String, String)
+     * @see EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String, String)
      */
     public void mockEndpoints(String... pattern) throws Exception {
         for (String s : pattern) {
@@ -94,7 +95,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      *
      * @param pattern the pattern(s).
      * @throws Exception can be thrown if error occurred
-     * @see org.apache.camel.util.EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String, String)
+     * @see EndpointHelper#matchEndpoint(org.apache.camel.CamelContext, String, String)
      */
     public void mockEndpointsAndSkip(String... pattern) throws Exception {
         for (String s : pattern) {
@@ -125,11 +126,11 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     /**
      * Weaves by matching id of the nodes in the route (incl onException etc).
      * <p/>
-     * Uses the {@link org.apache.camel.util.EndpointHelper#matchPattern(String, String)} matching algorithm.
+     * Uses the {@link EndpointHelper#matchPattern(String, String)} matching algorithm.
      *
      * @param pattern the pattern
      * @return the builder
-     * @see org.apache.camel.util.EndpointHelper#matchPattern(String, String)
+     * @see EndpointHelper#matchPattern(String, String)
      */
     public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveById(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
@@ -139,11 +140,11 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     /**
      * Weaves by matching the to string representation of the nodes in the route (incl onException etc).
      * <p/>
-     * Uses the {@link org.apache.camel.util.EndpointHelper#matchPattern(String, String)} matching algorithm.
+     * Uses the {@link EndpointHelper#matchPattern(String, String)} matching algorithm.
      *
      * @param pattern the pattern
      * @return the builder
-     * @see org.apache.camel.util.EndpointHelper#matchPattern(String, String)
+     * @see EndpointHelper#matchPattern(String, String)
      */
     public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveByToString(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
@@ -153,11 +154,11 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     /**
      * Weaves by matching sending to endpoints with the given uri of the nodes in the route (incl onException etc).
      * <p/>
-     * Uses the {@link org.apache.camel.util.EndpointHelper#matchPattern(String, String)} matching algorithm.
+     * Uses the {@link EndpointHelper#matchPattern(String, String)} matching algorithm.
      *
      * @param pattern the pattern
      * @return the builder
-     * @see org.apache.camel.util.EndpointHelper#matchPattern(String, String)
+     * @see EndpointHelper#matchPattern(String, String)
      */
     public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveByToUri(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);

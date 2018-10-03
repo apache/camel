@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.language.ExchangePropertyExpression;
@@ -178,7 +179,7 @@ public abstract class BuilderSupport {
         try {
             value = getContext().resolvePropertyPlaceholders(value);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
         return XPathBuilder.xpath(value, resultType);
     }

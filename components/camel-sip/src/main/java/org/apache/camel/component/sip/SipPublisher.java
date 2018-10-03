@@ -26,7 +26,7 @@ import javax.sip.message.Request;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sip.listener.SipPublishListener;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 
 public class SipPublisher extends DefaultProducer {
     private SipConfiguration configuration;

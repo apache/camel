@@ -17,7 +17,7 @@
 package org.apache.camel.spring.config;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ThreadPoolRejectedPolicy;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.Test;

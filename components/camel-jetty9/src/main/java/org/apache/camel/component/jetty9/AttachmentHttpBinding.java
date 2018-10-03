@@ -33,7 +33,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.http.common.HttpMessage;
-import org.apache.camel.impl.DefaultAttachment;
+import org.apache.camel.support.DefaultAttachment;
 import org.eclipse.jetty.util.MultiPartInputStreamParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

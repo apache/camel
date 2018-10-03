@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jclouds;
 
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 

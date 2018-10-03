@@ -18,7 +18,7 @@ package org.apache.camel.util.spring;
 
 import javax.annotation.Resource;
 
-import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;

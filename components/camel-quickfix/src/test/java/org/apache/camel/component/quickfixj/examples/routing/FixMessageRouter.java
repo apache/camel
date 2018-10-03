@@ -17,7 +17,7 @@
 package org.apache.camel.component.quickfixj.examples.routing;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import quickfix.FieldMap;
@@ -98,7 +98,7 @@ public class FixMessageRouter {
             try {
                 return fieldMap.getString(tag);
             } catch (Exception e) {
-                ObjectHelper.wrapRuntimeCamelException(e);
+                RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
         return null;

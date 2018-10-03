@@ -24,7 +24,7 @@ import java.util.Arrays;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.restlet.Component;
 import org.restlet.Server;
 import org.restlet.data.Parameter;

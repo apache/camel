@@ -20,12 +20,12 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedBacklogDebuggerMBean;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.util.ObjectHelper;
 
 @ManagedResource(description = "Managed BacklogDebugger")
 public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
@@ -111,7 +111,7 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
             Class<?> classType = camelContext.getClassResolver().resolveMandatoryClass(type);
             backlogDebugger.setMessageBodyOnBreakpoint(nodeId, body, classType);
         } catch (ClassNotFoundException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -123,7 +123,7 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
         try {
             backlogDebugger.setMessageHeaderOnBreakpoint(nodeId, headerName, value);
         } catch (NoTypeConversionAvailableException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -132,7 +132,7 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
             Class<?> classType = camelContext.getClassResolver().resolveMandatoryClass(type);
             backlogDebugger.setMessageHeaderOnBreakpoint(nodeId, headerName, value, classType);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

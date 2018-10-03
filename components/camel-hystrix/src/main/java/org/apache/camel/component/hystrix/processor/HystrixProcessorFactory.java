@@ -33,11 +33,11 @@ import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.HystrixDefinition;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.function.Suppliers;
 
-import static org.apache.camel.util.CamelContextHelper.lookup;
-import static org.apache.camel.util.CamelContextHelper.mandatoryLookup;
+import static org.apache.camel.support.CamelContextHelper.lookup;
+import static org.apache.camel.support.CamelContextHelper.mandatoryLookup;
 
 /**
  * To integrate camel-hystrix with the Camel routes using the Hystrix EIP.

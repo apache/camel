@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * The Bindy data format is used for working with flat payloads (such as CSV, delimited, fixed length formats, or FIX messages).
@@ -121,7 +121,7 @@ public class BindyDataFormat extends DataFormatDefinition {
             try {
                 clazz = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(classType);
             } catch (ClassNotFoundException e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
         return super.createDataFormat(routeContext);

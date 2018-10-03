@@ -48,14 +48,14 @@ import javax.mail.util.ByteArrayDataSource;
 import org.apache.camel.Attachment;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.converter.ObjectConverter;
-import org.apache.camel.impl.DefaultAttachment;
+import org.apache.camel.support.DefaultAttachment;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,7 +113,7 @@ public class MailBinding {
         // and headers the headers win.
         String subject = endpoint.getConfiguration().getSubject();
         if (subject != null) {
-            mimeMessage.setSubject(subject, IOHelper.getCharsetName(exchange, false));
+            mimeMessage.setSubject(subject, ExchangeHelper.getCharsetName(exchange, false));
         }
 
         // append the rest of the headers (no recipients) that could be subject, reply-to etc.
@@ -196,7 +196,7 @@ public class MailBinding {
         }
 
         // Using the charset header of exchange as a fall back
-        return IOHelper.getCharsetName(exchange, false);
+        return ExchangeHelper.getCharsetName(exchange, false);
     }
 
     protected String populateContentOnMimeMessage(MimeMessage part, MailConfiguration configuration, Exchange exchange)
@@ -256,7 +256,7 @@ public class MailBinding {
             return message; // raw message
         } catch (Exception e) {
             // try to fix message in case it has an unsupported encoding in the Content-Type header
-            UnsupportedEncodingException uee = ObjectHelper.getException(UnsupportedEncodingException.class, e);
+            UnsupportedEncodingException uee = org.apache.camel.util.ObjectHelper.getException(UnsupportedEncodingException.class, e);
             if (uee != null) {
                 LOG.debug("Unsupported encoding detected: {}", uee.getMessage());
                 try {
@@ -653,7 +653,7 @@ public class MailBinding {
         for (String line : splitRecipients(recipient)) {
             String address = line.trim();
             // Only add the address which is not empty
-            if (ObjectHelper.isNotEmpty(address)) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(address)) {
                 recipientsAddresses.add(asEncodedInternetAddress(address, determineCharSet(configuration, exchange)));
             }
         }

@@ -19,7 +19,7 @@ package org.apache.camel.component.bean.validator;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * Bean Validator Component for validating Java beans against reference implementation of JSR 303 Validator (Hibernate

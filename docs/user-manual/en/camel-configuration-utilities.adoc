@@ -57,7 +57,7 @@ configuration in the JSSE utility.
 
 [NOTE]
 =====================================
-All non-native classes are in the org.apache.camel.util.jsse package. 
+All non-native classes are in the org.apache.camel.support.jsse package. 
 All non-W3C schema defined types are in the
 http://camel.apache.org/schema/spring[http://camel.apache.org/schema/spring]
 or

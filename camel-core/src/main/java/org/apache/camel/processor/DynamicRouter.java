@@ -21,7 +21,7 @@ import java.util.Iterator;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 
 /**
  * Implements a <a href="http://camel.apache.org/dynamic-router.html">Dynamic Router</a> pattern

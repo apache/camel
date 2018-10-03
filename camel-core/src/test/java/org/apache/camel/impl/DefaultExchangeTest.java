@@ -26,7 +26,8 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConversionException;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.DefaultMessage;
 import org.junit.Test;
 
 public class DefaultExchangeTest extends ExchangeTestSupport {
@@ -65,7 +66,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
 
     @Test
     public void testExceptionAsType() throws Exception {
-        exchange.setException(ObjectHelper.wrapRuntimeCamelException(new ConnectException("Cannot connect to remote server")));
+        exchange.setException(RuntimeCamelException.wrapRuntimeCamelException(new ConnectException("Cannot connect to remote server")));
 
         ConnectException ce = exchange.getException(ConnectException.class);
         assertNotNull(ce);

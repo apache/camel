@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.support.ResourceHelper;
 
 /**
  * Provides support for mapping a Camel expression to a target field in a 

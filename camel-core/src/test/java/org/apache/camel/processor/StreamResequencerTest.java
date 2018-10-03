@@ -29,7 +29,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.junit.Test;
 
 public class StreamResequencerTest extends ContextTestSupport {

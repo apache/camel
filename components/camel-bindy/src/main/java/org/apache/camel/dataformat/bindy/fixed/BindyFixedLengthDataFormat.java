@@ -21,7 +21,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -35,8 +34,9 @@ import org.apache.camel.dataformat.bindy.BindyFixedLengthFactory;
 import org.apache.camel.dataformat.bindy.FormatFactory;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +69,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
         BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory();
-        ObjectHelper.notNull(factory, "not instantiated");
+        org.apache.camel.util.ObjectHelper.notNull(factory, "not instantiated");
 
         // Get CRLF
         byte[] bytesCRLF = ConverterUtils.getByteReturn(factory.getCarriageReturn());
@@ -79,9 +79,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
         // the body is not a prepared list so help a bit here and create one for us
         if (!isPreparedList(body)) {
             models = new ArrayList<>();
-            Iterator<?> it = ObjectHelper.createIterator(body);
-            while (it.hasNext()) {
-                Object model = it.next();
+            for (Object model : ObjectHelper.createIterable(body)) {
                 String name = model.getClass().getName();
                 Map<String, Object> row = new HashMap<>();
                 row.put(name, model);
@@ -177,7 +175,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
         BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory();
-        ObjectHelper.notNull(factory, "not instantiated");
+        org.apache.camel.util.ObjectHelper.notNull(factory, "not instantiated");
 
         // List of Pojos
         List<Map<String, Object>> models = new ArrayList<>();
@@ -185,7 +183,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
         // Pojos of the model
         Map<String, Object> model;
 
-        InputStreamReader in = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
+        InputStreamReader in = new InputStreamReader(inputStream, ExchangeHelper.getCharsetName(exchange));
 
         // Scanner is used to read big file
         Scanner scanner = new Scanner(in);
@@ -261,7 +259,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
 
     private String getNextNonEmptyLine(Scanner scanner, AtomicInteger count, boolean isEolSet) {
         String line = "";
-        while (ObjectHelper.isEmpty(line) && ((isEolSet && scanner.hasNext()) || (!isEolSet && scanner.hasNextLine()))) {
+        while (org.apache.camel.util.ObjectHelper.isEmpty(line) && ((isEolSet && scanner.hasNext()) || (!isEolSet && scanner.hasNextLine()))) {
             count.incrementAndGet();
             if (!isEolSet) {
                 line = scanner.nextLine();
@@ -270,7 +268,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
             }
         }
 
-        if (ObjectHelper.isEmpty(line)) {
+        if (org.apache.camel.util.ObjectHelper.isEmpty(line)) {
             return null;
         } else {
             return line;

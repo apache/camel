@@ -18,7 +18,7 @@ package org.apache.camel.component.netty4.http;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.junit.Ignore;
 import org.junit.Test;
 

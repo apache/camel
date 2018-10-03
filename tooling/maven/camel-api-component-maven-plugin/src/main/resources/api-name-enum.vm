@@ -21,7 +21,7 @@
  */
 package $packageName;
 
-import org.apache.camel.util.component.ApiName;
+import org.apache.camel.support.component.ApiName;
 
 /**
  * Camel {@link ApiName} Enumeration for Component $componentName

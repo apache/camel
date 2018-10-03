@@ -24,8 +24,8 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ServiceHelper;
 
 /**
  * A Delegate pattern which delegates synchronous processing to a nested {@link org.apache.camel.Processor} which can

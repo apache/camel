@@ -70,6 +70,7 @@ import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.StringSource;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -204,7 +205,7 @@ public class XmlConverter {
             StringWriter buffer = new StringWriter();
             if (exchange != null) {
                 // check the camelContext properties first
-                Properties properties = ObjectHelper.getCamelPropertiesWithPrefix(OUTPUT_PROPERTIES_PREFIX, exchange.getContext());
+                Properties properties = CamelContextHelper.getCamelPropertiesWithPrefix(OUTPUT_PROPERTIES_PREFIX, exchange.getContext());
                 if (properties.size() > 0) {
                     toResult(source, new StreamResult(buffer), properties);
                     return buffer.toString();
@@ -227,7 +228,7 @@ public class XmlConverter {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             if (exchange != null) {
                 // check the camelContext properties first
-                Properties properties = ObjectHelper.getCamelPropertiesWithPrefix(OUTPUT_PROPERTIES_PREFIX,
+                Properties properties = CamelContextHelper.getCamelPropertiesWithPrefix(OUTPUT_PROPERTIES_PREFIX,
                                                                                   exchange.getContext());
                 if (properties.size() > 0) {
                     toResult(source, new StreamResult(buffer), properties);

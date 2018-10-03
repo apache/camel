@@ -43,8 +43,8 @@ import org.apache.camel.component.netty4.http.HttpPrincipal;
 import org.apache.camel.component.netty4.http.NettyHttpConsumer;
 import org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration;
 import org.apache.camel.component.netty4.http.SecurityAuthenticator;
-import org.apache.camel.util.CamelLogger;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.CamelLogger;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -202,9 +202,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         }
 
         // see if any of the user roles is contained in the roles list
-        Iterator<Object> it = ObjectHelper.createIterator(userRoles);
-        while (it.hasNext()) {
-            String userRole = it.next().toString();
+        for (String userRole : ObjectHelper.createIterable(userRoles)) {
             if (roles.contains(userRole)) {
                 return true;
             }

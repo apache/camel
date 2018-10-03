@@ -36,6 +36,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -46,6 +47,7 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -57,17 +59,17 @@ import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
+import org.apache.camel.support.GroupIterator;
+import org.apache.camel.support.GroupTokenIterator;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.TokenPairExpressionIterator;
 import org.apache.camel.support.TokenXMLExpressionIterator;
 import org.apache.camel.support.XMLTokenExpressionIterator;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.GroupIterator;
-import org.apache.camel.util.GroupTokenIterator;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.Scanner;
@@ -231,7 +233,7 @@ public final class ExpressionBuilder {
                     String text = simpleExpression(typeName).evaluate(exchange, String.class);
                     type = exchange.getContext().getClassResolver().resolveMandatoryClass(text);
                 } catch (ClassNotFoundException e) {
-                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                    throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
 
                 String text = simpleExpression(headerName).evaluate(exchange, String.class);
@@ -824,7 +826,7 @@ public final class ExpressionBuilder {
                     }
                 }
 
-                throw ObjectHelper.wrapCamelExecutionException(exchange, new ClassNotFoundException("Cannot find type " + text));
+                throw CamelExecutionException.wrapCamelExecutionException(exchange, new ClassNotFoundException("Cannot find type " + text));
             }
 
             @Override
@@ -1076,7 +1078,7 @@ public final class ExpressionBuilder {
                 try {
                     type = exchange.getContext().getClassResolver().resolveMandatoryClass(text);
                 } catch (ClassNotFoundException e) {
-                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                    throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
                 return exchange.getIn().getBody(type);
             }
@@ -1100,7 +1102,7 @@ public final class ExpressionBuilder {
                 try {
                     type = exchange.getContext().getClassResolver().resolveMandatoryClass(text);
                 } catch (ClassNotFoundException e) {
-                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                    throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
                 Object body = exchange.getIn().getBody(type);
                 if (body != null) {
@@ -1134,12 +1136,12 @@ public final class ExpressionBuilder {
                 try {
                     type = exchange.getContext().getClassResolver().resolveMandatoryClass(text);
                 } catch (ClassNotFoundException e) {
-                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                    throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
                 try {
                     return exchange.getIn().getMandatoryBody(type);
                 } catch (InvalidPayloadException e) {
-                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                    throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
             }
 
@@ -1162,13 +1164,13 @@ public final class ExpressionBuilder {
                 try {
                     type = exchange.getContext().getClassResolver().resolveMandatoryClass(text);
                 } catch (ClassNotFoundException e) {
-                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                    throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
                 Object body;
                 try {
                     body = exchange.getIn().getMandatoryBody(type);
                 } catch (InvalidPayloadException e) {
-                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                    throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
                 // ognl is able to evaluate method name if it contains nested functions
                 // so we should not eager evaluate ognl as a string
@@ -1258,7 +1260,7 @@ public final class ExpressionBuilder {
                 try {
                     return exchange.getIn().getMandatoryBody(type);
                 } catch (InvalidPayloadException e) {
-                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                    throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
             }
 
@@ -1523,7 +1525,7 @@ public final class ExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 String text = simpleExpression(token).evaluate(exchange, String.class);
                 Object value = expression.evaluate(exchange, Object.class);
-                Scanner scanner = ObjectHelper.getScanner(exchange, value, text);
+                Scanner scanner = ExchangeHelper.getScanner(exchange, value, text);
                 return scanner;
             }
 
@@ -1592,7 +1594,7 @@ public final class ExpressionBuilder {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 Object value = expression.evaluate(exchange, Object.class);
-                Scanner scanner = ObjectHelper.getScanner(exchange, value, regexTokenizer);
+                Scanner scanner = ExchangeHelper.getScanner(exchange, value, regexTokenizer);
                 return scanner;
             }
 
@@ -1660,7 +1662,7 @@ public final class ExpressionBuilder {
                 // evaluate expression as iterator
                 Iterator<?> it = expression.evaluate(exchange, Iterator.class);
                 ObjectHelper.notNull(it, "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
-                return new SkipIterator(exchange, it, skip);
+                return new SkipIterator(it, skip);
             }
 
             @Override
@@ -1892,7 +1894,7 @@ public final class ExpressionBuilder {
                         long value = exchange.getContext().getTypeConverter().mandatoryConvertTo(long.class, exchange, offsetMatcher.group(2).trim());
                         offsets.add(offsetMatcher.group(1).equals("+") ? value : -value);
                     } catch (NoTypeConversionAvailableException e) {
-                        throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                        throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                     }
                 }
 
@@ -2033,7 +2035,7 @@ public final class ExpressionBuilder {
                     producer.process(exchange);
                     producer.stop();
                 } catch (Exception e) {
-                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
 
                 // return the OUT body, but check for exchange pattern
@@ -2286,7 +2288,7 @@ public final class ExpressionBuilder {
                     if (defaultValue != null) {
                         return defaultValue;
                     }
-                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
             }
 
@@ -2413,7 +2415,7 @@ public final class ExpressionBuilder {
                                 def.setMaxChars(maxChars);
                             }
                         } catch (Exception e) {
-                            throw ObjectHelper.wrapRuntimeCamelException(e);
+                            throw RuntimeCamelException.wrapRuntimeCamelException(e);
                         }
                         formatter = def;
                     }

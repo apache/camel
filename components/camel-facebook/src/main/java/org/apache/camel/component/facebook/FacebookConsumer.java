@@ -40,8 +40,7 @@ import org.apache.camel.component.facebook.data.FacebookMethodsType;
 import org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.MatchType;
 import org.apache.camel.component.facebook.data.FacebookPropertiesHelper;
 import org.apache.camel.component.facebook.data.ReadingBuilder;
-import org.apache.camel.impl.ScheduledPollConsumer;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ScheduledPollConsumer;
 
 import static org.apache.camel.component.facebook.FacebookConstants.FACEBOOK_DATE_FORMAT;
 import static org.apache.camel.component.facebook.FacebookConstants.READING_PREFIX;
@@ -172,7 +171,7 @@ public class FacebookConsumer extends ScheduledPollConsumer {
                 return 1; // number of messages polled
             }
         } catch (Throwable t) {
-            throw ObjectHelper.wrapRuntimeCamelException(t);
+            throw RuntimeCamelException.wrapRuntimeCamelException(t);
         }
     }
 

@@ -34,6 +34,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -46,6 +47,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
 import org.apache.camel.model.RouteDefinition;
@@ -56,22 +58,18 @@ import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.EventHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorConverterHelper;
-import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.CastUtils;
-import org.apache.camel.util.EventHelper;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
-import org.apache.camel.util.concurrent.AtomicException;
-import org.apache.camel.util.concurrent.AtomicExchange;
 import org.apache.camel.util.concurrent.SubmitOrderedCompletionService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -220,7 +218,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        final AtomicExchange result = new AtomicExchange();
+        final AtomicReference<Exchange> result = new AtomicReference<>();
         Iterable<ProcessorExchangePair> pairs = null;
 
         try {
@@ -256,7 +254,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         return true;
     }
 
-    protected void doProcessParallel(final Exchange original, final AtomicExchange result, final Iterable<ProcessorExchangePair> pairs,
+    protected void doProcessParallel(final Exchange original, final AtomicReference<Exchange> result, final Iterable<ProcessorExchangePair> pairs,
                                      final boolean streaming, final AsyncCallback callback) throws Exception {
 
         ObjectHelper.notNull(executorService, "ExecutorService", this);
@@ -279,7 +277,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             final AtomicBoolean running = new AtomicBoolean(true);
             final AtomicBoolean allTasksSubmitted = new AtomicBoolean();
             final CountDownLatch aggregationOnTheFlyDone = new CountDownLatch(1);
-            final AtomicException executionException = new AtomicException();
+            final AtomicReference<Exception> executionException = new AtomicReference<>();
 
             // issue task to execute in separate thread so it can aggregate on-the-fly
             // while we submit new tasks, and those tasks complete concurrently
@@ -347,7 +345,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 if (e instanceof Exception) {
                     executionException.set((Exception) e);
                 } else {
-                    executionException.set(ObjectHelper.wrapRuntimeCamelException(e));
+                    executionException.set(RuntimeCamelException.wrapRuntimeCamelException(e));
                 }
                 // and because of the exception we must signal we are done so the latch can open and let the other thread continue processing
                 log.debug("Signaling we are done aggregating on the fly for exchangeId: {}", original.getExchangeId());
@@ -391,19 +389,19 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      */
     private final class AggregateOnTheFlyTask implements Runnable {
 
-        private final AtomicExchange result;
+        private final AtomicReference<Exchange> result;
         private final Exchange original;
         private final AtomicInteger total;
         private final CompletionService<Exchange> completion;
         private final AtomicBoolean running;
         private final CountDownLatch aggregationOnTheFlyDone;
         private final AtomicBoolean allTasksSubmitted;
-        private final AtomicException executionException;
+        private final AtomicReference<Exception> executionException;
 
-        private AggregateOnTheFlyTask(AtomicExchange result, Exchange original, AtomicInteger total,
+        private AggregateOnTheFlyTask(AtomicReference<Exchange> result, Exchange original, AtomicInteger total,
                                       CompletionService<Exchange> completion, AtomicBoolean running,
                                       CountDownLatch aggregationOnTheFlyDone, AtomicBoolean allTasksSubmitted,
-                                      AtomicException executionException) {
+                                      AtomicReference<Exception> executionException) {
             this.result = result;
             this.original = original;
             this.total = total;
@@ -423,7 +421,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 if (e instanceof Exception) {
                     executionException.set((Exception) e);
                 } else {
-                    executionException.set(ObjectHelper.wrapRuntimeCamelException(e));
+                    executionException.set(RuntimeCamelException.wrapRuntimeCamelException(e));
                 }
             } finally {
                 // must signal we are done so the latch can open and let the other thread continue processing
@@ -523,11 +521,11 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      */
     private final class ParallelAggregateTask implements Runnable {
 
-        private final AtomicExchange result;
+        private final AtomicReference<Exchange> result;
         private final Exchange subExchange;
         private final AtomicInteger aggregated;
 
-        private ParallelAggregateTask(AtomicExchange result, Exchange subExchange, AtomicInteger aggregated) {
+        private ParallelAggregateTask(AtomicReference<Exchange> result, Exchange subExchange, AtomicInteger aggregated) {
             this.result = result;
             this.subExchange = subExchange;
             this.aggregated = aggregated;
@@ -562,13 +560,13 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     private final class ParallelAggregateTimeoutTask implements Runnable {
 
         private final Exchange original;
-        private final AtomicExchange result;
+        private final AtomicReference<Exchange> result;
         private final CompletionService<Exchange> completion;
         private final AtomicInteger aggregated;
         private final AtomicInteger total;
         private final AtomicBoolean timedOut;
 
-        private ParallelAggregateTimeoutTask(Exchange original, AtomicExchange result, CompletionService<Exchange> completion,
+        private ParallelAggregateTimeoutTask(Exchange original, AtomicReference<Exchange> result, CompletionService<Exchange> completion,
                                              AtomicInteger aggregated, AtomicInteger total, AtomicBoolean timedOut) {
             this.original = original;
             this.result = result;
@@ -610,7 +608,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         }
     }
 
-    protected boolean doProcessSequential(Exchange original, AtomicExchange result, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) throws Exception {
+    protected boolean doProcessSequential(Exchange original, AtomicReference<Exchange> result, Iterable<ProcessorExchangePair> pairs, AsyncCallback callback) throws Exception {
         AtomicInteger total = new AtomicInteger();
         Iterator<ProcessorExchangePair> it = pairs.iterator();
 
@@ -669,7 +667,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         return true;
     }
 
-    private boolean doProcessSequential(final Exchange original, final AtomicExchange result,
+    private boolean doProcessSequential(final Exchange original, final AtomicReference<Exchange> result,
                                         final Iterable<ProcessorExchangePair> pairs, final Iterator<ProcessorExchangePair> it,
                                         final ProcessorExchangePair pair, final AsyncCallback callback, final AtomicInteger total) {
         boolean sync = true;
@@ -916,9 +914,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      * @param strategy the aggregation strategy to use
      * @param result   the current result
      * @param exchange the exchange to be added to the result
-     * @see #doAggregateInternal(org.apache.camel.processor.aggregate.AggregationStrategy, org.apache.camel.util.concurrent.AtomicExchange, org.apache.camel.Exchange)
+     * @see #doAggregateInternal(org.apache.camel.processor.aggregate.AggregationStrategy, AtomicReference, org.apache.camel.Exchange)
      */
-    protected synchronized void doAggregate(AggregationStrategy strategy, AtomicExchange result, Exchange exchange) {
+    protected synchronized void doAggregate(AggregationStrategy strategy, AtomicReference<Exchange> result, Exchange exchange) {
         doAggregateInternal(strategy, result, exchange);
     }
 
@@ -930,9 +928,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      * @param strategy the aggregation strategy to use
      * @param result   the current result
      * @param exchange the exchange to be added to the result
-     * @see #doAggregate(org.apache.camel.processor.aggregate.AggregationStrategy, org.apache.camel.util.concurrent.AtomicExchange, org.apache.camel.Exchange)
+     * @see #doAggregate
      */
-    protected void doAggregateInternal(AggregationStrategy strategy, AtomicExchange result, Exchange exchange) {
+    protected void doAggregateInternal(AggregationStrategy strategy, AtomicReference<Exchange> result, Exchange exchange) {
         if (strategy != null) {
             // prepare the exchanges for aggregation
             Exchange oldExchange = result.get();
@@ -1086,7 +1084,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 }
 
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         } else {
             // and wrap in unit of work processor so the copy exchange also can run under UoW

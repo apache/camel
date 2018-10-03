@@ -43,7 +43,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultAttachment;
+import org.apache.camel.support.DefaultAttachment;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.InputStreamDataSource;

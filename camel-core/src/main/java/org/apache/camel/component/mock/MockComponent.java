@@ -21,9 +21,9 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.processor.ThroughputLogger;
-import org.apache.camel.util.CamelLogger;
+import org.apache.camel.support.CamelLogger;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * The <a href="http://camel.apache.org/mock.html">Mock Component</a> provides mock endpoints for testing.

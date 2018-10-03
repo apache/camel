@@ -23,7 +23,7 @@ import java.security.cert.X509Certificate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 
 /**
  * Default implementation for the XAdES signature properties which determines

@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.junit.Test;
 
-import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
+import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern;
 
 public class FtpPollEnrichBridgeErrorHandlerTest extends BaseServerTestSupport {
 

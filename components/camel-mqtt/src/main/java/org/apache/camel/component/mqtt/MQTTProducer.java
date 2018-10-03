@@ -19,7 +19,7 @@ package org.apache.camel.component.mqtt;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.support.DefaultAsyncProducer;
 import org.fusesource.mqtt.client.Callback;
 import org.fusesource.mqtt.client.QoS;
 

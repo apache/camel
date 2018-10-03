@@ -22,7 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.ModelCamelContext;
-import org.apache.camel.util.jndi.JndiTest;
+import org.apache.camel.support.jndi.JndiTest;
 import org.junit.Assert;
 import org.junit.Test;
 

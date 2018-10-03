@@ -24,19 +24,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.support.LRUCache;
+import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.LRUCache;
-import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.Scanner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A file based implementation of {@link org.apache.camel.spi.IdempotentRepository}.
@@ -70,7 +69,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     }
 
     /**
-     * Creates a new file based repository using a {@link org.apache.camel.util.LRUCache}
+     * Creates a new file based repository using a {@link LRUCache}
      * as 1st level cache with a default of 1000 entries in the cache.
      *
      * @param fileStore  the file store
@@ -80,7 +79,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     }
 
     /**
-     * Creates a new file based repository using a {@link org.apache.camel.util.LRUCache}
+     * Creates a new file based repository using a {@link LRUCache}
      * as 1st level cache.
      *
      * @param fileStore  the file store
@@ -92,7 +91,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
     }
 
     /**
-     * Creates a new file based repository using a {@link org.apache.camel.util.LRUCache}
+     * Creates a new file based repository using a {@link LRUCache}
      * as 1st level cache.
      *
      * @param fileStore  the file store
@@ -295,7 +294,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
                 }
             }
         } catch (IOException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
         return false;
     }
@@ -328,7 +327,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
             fos.write(key.getBytes());
             fos.write(STORE_DELIMITER.getBytes());
         } catch (IOException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         } finally {
             IOHelper.close(fos, "Appending to file idempotent repository", log);
         }
@@ -341,23 +340,19 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
         List<String> lines = new ArrayList<>();
 
         boolean found = false;
-        Scanner scanner = null;
         try {
-            scanner = new Scanner(fileStore, null, STORE_DELIMITER);
-            while (scanner.hasNext()) {
-                String line = scanner.next();
-                if (key.equals(line)) {
-                    found = true;
-                } else {
-                    lines.add(line);
+            try (Scanner scanner = new Scanner(fileStore, null, STORE_DELIMITER)) {
+                while (scanner.hasNext()) {
+                    String line = scanner.next();
+                    if (key.equals(line)) {
+                        found = true;
+                    } else {
+                        lines.add(line);
+                    }
                 }
             }
         } catch (IOException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
-        } finally {
-            if (scanner != null) {
-                scanner.close();
-            }
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
         if (found) {
@@ -371,7 +366,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
                     fos.write(STORE_DELIMITER.getBytes());
                 }
             } catch (IOException e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             } finally {
                 IOHelper.close(fos, "Rewriting file idempotent repository", log);
             }
@@ -386,7 +381,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
             FileUtil.deleteFile(fileStore);
             FileUtil.createNewFile(fileStore);
         } catch (IOException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -403,23 +398,19 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
         // we need to re-load the entire file and remove the key and then re-write the file
         List<String> lines = new ArrayList<>();
 
-        Scanner scanner = null;
         int count = 0;
         try {
-            scanner = new Scanner(fileStore, null, STORE_DELIMITER);
-            while (scanner.hasNext()) {
-                String line = scanner.next();
-                count++;
-                if (count > dropOldestFileStore) {
-                    lines.add(line);
+            try (Scanner scanner = new Scanner(fileStore, null, STORE_DELIMITER)) {
+                while (scanner.hasNext()) {
+                    String line = scanner.next();
+                    count++;
+                    if (count > dropOldestFileStore) {
+                        lines.add(line);
+                    }
                 }
             }
         } catch (IOException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
-        } finally {
-            if (scanner != null) {
-                scanner.close();
-            }
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
         if (!lines.isEmpty()) {
@@ -433,7 +424,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
                     fos.write(STORE_DELIMITER.getBytes());
                 }
             } catch (IOException e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             } finally {
                 IOHelper.close(fos, "Rewriting file idempotent repository", log);
             }
@@ -480,7 +471,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
                 cache.put(line, line);
             }
         } catch (IOException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
         log.debug("Loaded {} to the 1st level cache from idempotent filestore: {}", cache.size(), fileStore);

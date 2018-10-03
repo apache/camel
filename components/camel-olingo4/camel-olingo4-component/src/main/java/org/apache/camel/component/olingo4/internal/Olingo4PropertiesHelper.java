@@ -17,7 +17,7 @@
 package org.apache.camel.component.olingo4.internal;
 
 import org.apache.camel.component.olingo4.Olingo4Configuration;
-import org.apache.camel.util.component.ApiMethodPropertiesHelper;
+import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
 /**
  * Singleton {@link ApiMethodPropertiesHelper} for Olingo4 component.

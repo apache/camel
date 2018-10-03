@@ -19,7 +19,7 @@ package org.apache.camel.component.aws.xray.component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 
 public class TestXRayEndpoint extends DefaultEndpoint {
 

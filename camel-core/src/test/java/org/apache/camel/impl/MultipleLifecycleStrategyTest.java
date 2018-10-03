@@ -23,7 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.TestSupport;
 import org.apache.camel.component.log.LogComponent;
-import org.apache.camel.util.jndi.JndiContext;
+import org.apache.camel.support.jndi.JndiContext;
 import org.junit.Test;
 
 public class MultipleLifecycleStrategyTest extends TestSupport {

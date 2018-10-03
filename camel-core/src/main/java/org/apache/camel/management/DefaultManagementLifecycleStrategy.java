@@ -42,11 +42,11 @@ import org.apache.camel.NonManagedService;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.StartupListener;
 import org.apache.camel.TimerListener;
 import org.apache.camel.VetoCamelContextStartException;
-import org.apache.camel.api.management.PerformanceCounter;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.impl.ConsumerCache;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -186,7 +186,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         } catch (Exception e) {
             // must rethrow to allow CamelContext fallback to non JMX agent to allow
             // Camel to continue to run
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
         // set the name we are going to use
@@ -199,7 +199,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         } catch (Exception e) {
             // must rethrow to allow CamelContext fallback to non JMX agent to allow
             // Camel to continue to run
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
         // yes we made it and are initialized

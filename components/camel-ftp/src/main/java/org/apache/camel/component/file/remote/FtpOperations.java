@@ -37,7 +37,7 @@ import org.apache.camel.component.file.GenericFileExist;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.apache.commons.net.ftp.FTP;
@@ -371,7 +371,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         boolean answer;
         try {
             log.trace("retrieveFile({})", name);
-            if (ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
                 // local work directory is configured so we should store file content as files in this local directory
                 answer = retrieveFileToFileInLocalWorkDirectory(name, exchange, endpoint.isResumeDownload());
             } else {
@@ -408,7 +408,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         boolean result;
         try {
             GenericFile<FTPFile> target = (GenericFile<FTPFile>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
-            ObjectHelper.notNull(target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
+            org.apache.camel.util.ObjectHelper.notNull(target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
             
             String remoteName = name;
             String currentDir = null;
@@ -468,7 +468,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         try {
             // use relative filename in local work directory
             GenericFile<FTPFile> target = (GenericFile<FTPFile>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
-            ObjectHelper.notNull(target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
+            org.apache.camel.util.ObjectHelper.notNull(target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
             String relativeName = target.getRelativeFilePath();
 
             temp = new File(local, relativeName + ".inprogress");
@@ -704,7 +704,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
             // after storing file, we may set chmod on the file
             String chmod = endpoint.getConfiguration().getChmod();
-            if (ObjectHelper.isNotEmpty(chmod)) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(chmod)) {
                 log.debug("Setting chmod: {} on file: {}", chmod, targetName);
                 String command = "chmod " + chmod + " " + targetName;
                 log.trace("Client sendSiteCommand: {}", command);
@@ -781,7 +781,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
         log.trace("changeCurrentDirectory({})", path);
-        if (ObjectHelper.isEmpty(path)) {
+        if (org.apache.camel.util.ObjectHelper.isEmpty(path)) {
             return;
         }
 
@@ -818,7 +818,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     private void doChangeDirectory(String path) {
-        if (path == null || ".".equals(path) || ObjectHelper.isEmpty(path)) {
+        if (path == null || ".".equals(path) || org.apache.camel.util.ObjectHelper.isEmpty(path)) {
             return;
         }
 
@@ -869,7 +869,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         clientActivityListener.onScanningForFiles(endpoint.remoteServerInformation(), path);
 
         // use current directory if path not given
-        if (ObjectHelper.isEmpty(path)) {
+        if (org.apache.camel.util.ObjectHelper.isEmpty(path)) {
             path = ".";
         }
 

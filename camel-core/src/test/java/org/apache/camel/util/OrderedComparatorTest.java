@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Ordered;
+import org.apache.camel.support.OrderedComparator;
 import org.junit.Assert;
 import org.junit.Test;
 

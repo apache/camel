@@ -151,7 +151,7 @@ public class SimpleTest extends LanguageTestSupport {
         assertEquals(exchange.getExchangeId(), exp.evaluate(exchange, Object.class));
 
         assertExpression("${exchange.exchangeId}", exchange.getExchangeId());
-        assertExpression("${exchange.class.name}", "org.apache.camel.impl.DefaultExchange");
+        assertExpression("${exchange.class.name}", "org.apache.camel.support.DefaultExchange");
     }
 
     @Test

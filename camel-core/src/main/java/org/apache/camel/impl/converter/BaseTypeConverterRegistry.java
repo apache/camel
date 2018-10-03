@@ -36,6 +36,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterExists;
@@ -48,10 +49,10 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.support.CamelLogger;
+import org.apache.camel.support.LRUCacheFactory;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.CamelLogger;
-import org.apache.camel.util.LRUCacheFactory;
-import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,7 +146,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             boolean execution = ObjectHelper.getException(ExecutionException.class, e) != null
                     || ObjectHelper.getException(CamelExecutionException.class, e) != null;
             if (execution) {
-                throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
             }
 
             // error occurred during type conversion
@@ -447,7 +448,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             TypeConvertersLoader loader = new TypeConvertersLoader(typeConverters);
             loader.load(this);
         } catch (TypeConverterLoaderException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

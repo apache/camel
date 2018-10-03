@@ -38,18 +38,16 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.xml.ResultHandlerFactory;
 import org.apache.camel.builder.xml.XsltBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.ProcessorEndpoint;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Transforms the message using a XSLT template.

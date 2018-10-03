@@ -21,8 +21,8 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.IsSingleton;
-import org.apache.camel.impl.PollingConsumerSupport;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.PollingConsumerSupport;
 
 public class SedaPollingConsumer extends PollingConsumerSupport implements IsSingleton {
 
@@ -41,7 +41,7 @@ public class SedaPollingConsumer extends PollingConsumerSupport implements IsSin
             return getEndpoint().getQueue().take();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -56,7 +56,7 @@ public class SedaPollingConsumer extends PollingConsumerSupport implements IsSin
             return getEndpoint().getQueue().poll(timeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

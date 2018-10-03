@@ -22,7 +22,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatFactory;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.util.ResolverHelper;
+import org.apache.camel.support.ResolverHelper;
 
 /**
  * Default data format resolver

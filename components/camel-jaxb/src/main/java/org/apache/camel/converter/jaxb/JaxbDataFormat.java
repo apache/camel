@@ -56,11 +56,12 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.support.ResourceHelper;
 
 
 /**
@@ -291,7 +292,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
     }
 
     private NonXmlFilterReader createNonXmlFilterReader(Exchange exchange, InputStream stream) throws UnsupportedEncodingException {
-        return new NonXmlFilterReader(new InputStreamReader(stream, IOHelper.getCharsetName(exchange)));
+        return new NonXmlFilterReader(new InputStreamReader(stream, ExchangeHelper.getCharsetName(exchange)));
     }
 
     protected boolean needFiltering(Exchange exchange) {

@@ -52,6 +52,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.converter.jaxp.StaxConverter;
 import org.apache.camel.spi.TypeConverterAware;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 
@@ -328,7 +329,7 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
                 xmlReader = (XMLStreamReader) value;
             } else if (value instanceof InputStream) {
                 if (needFiltering(exchange)) {
-                    xmlReader = staxConverter.createXMLStreamReader(new NonXmlFilterReader(new InputStreamReader((InputStream)value, IOHelper.getCharsetName(exchange))));
+                    xmlReader = staxConverter.createXMLStreamReader(new NonXmlFilterReader(new InputStreamReader((InputStream)value, ExchangeHelper.getCharsetName(exchange))));
                 } else {
                     xmlReader = staxConverter.createXMLStreamReader((InputStream)value, exchange);
                 }

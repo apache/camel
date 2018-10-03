@@ -21,7 +21,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
-import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorHelper;
 
 /**
  * A {@link org.apache.camel.Processor} which evaluates an {@link Expression}

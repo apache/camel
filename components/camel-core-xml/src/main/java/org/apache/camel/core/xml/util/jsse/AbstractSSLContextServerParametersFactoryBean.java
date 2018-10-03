@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.util.jsse.SSLContextServerParameters;
+import org.apache.camel.support.jsse.SSLContextServerParameters;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlTransient

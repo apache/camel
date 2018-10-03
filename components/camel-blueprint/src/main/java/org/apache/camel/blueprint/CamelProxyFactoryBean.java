@@ -30,7 +30,7 @@ import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Producer;
 import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.core.xml.AbstractCamelFactoryBean;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ServiceHelper;
 
 /**
  * A factory to create a Proxy to a a Camel Pojo Endpoint.

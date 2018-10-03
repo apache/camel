@@ -20,7 +20,7 @@ import java.util.Map;
 
 import com.notnoop.apns.ApnsService;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 
 /**

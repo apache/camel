@@ -47,7 +47,7 @@ import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.TokenType;
-import org.apache.camel.util.ExpressionToPredicateAdapter;
+import org.apache.camel.support.ExpressionToPredicateAdapter;
 
 /**
  * A parser to parse simple language as a Camel {@link Predicate}

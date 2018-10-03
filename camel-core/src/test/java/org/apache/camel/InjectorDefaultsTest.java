@@ -42,19 +42,5 @@ public class InjectorDefaultsTest extends ContextTestSupport {
         assertNull(foo2.getName());
     }
 
-    @Test
-    public void testSharedInstance() throws Exception {
-        Injector injector = context.getInjector();
-
-        MyBarSingleton bar = injector.newInstance(MyBarSingleton.class, new MyBarSingleton());
-        bar.setName("Claus");
-
-        MyBarSingleton bar2 = injector.newInstance(MyBarSingleton.class, bar);
-        assertSame(bar, bar2);
-
-        assertEquals("Claus", bar.getName());
-        assertEquals("Claus", bar2.getName());
-    }
-
 
 }

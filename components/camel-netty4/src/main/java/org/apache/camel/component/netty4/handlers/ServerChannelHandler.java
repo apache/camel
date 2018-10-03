@@ -28,7 +28,7 @@ import org.apache.camel.component.netty4.NettyConstants;
 import org.apache.camel.component.netty4.NettyConsumer;
 import org.apache.camel.component.netty4.NettyHelper;
 import org.apache.camel.component.netty4.NettyPayloadHelper;
-import org.apache.camel.util.CamelLogger;
+import org.apache.camel.support.CamelLogger;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -24,16 +24,14 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.Rejectable;
-
 /**
  * Thread pool executor that creates {@link RejectableFutureTask} instead of
  * {@link java.util.concurrent.FutureTask} when registering new tasks for execution.
  * <p/>
- * Instances of {@link RejectableFutureTask} are required to handle {@link org.apache.camel.ThreadPoolRejectedPolicy#Discard}
- * and {@link org.apache.camel.ThreadPoolRejectedPolicy#DiscardOldest} policies correctly, e.g. notify
+ * Instances of {@link RejectableFutureTask} are required to handle {@link ThreadPoolRejectedPolicy#Discard}
+ * and {@link ThreadPoolRejectedPolicy#DiscardOldest} policies correctly, e.g. notify
  * {@link Callable} and {@link Runnable} tasks when they are rejected.
- * To be notified of rejection tasks have to implement {@link org.apache.camel.Rejectable} interface: <br/>
+ * To be notified of rejection tasks have to implement {@link Rejectable} interface: <br/>
  * <code><pre>
  * public class RejectableTask implements Runnable, Rejectable {
  *     &#064;Override
@@ -47,11 +45,11 @@ import org.apache.camel.Rejectable;
  * }
  * </pre></code>
  * <p/>
- * If the task does not implement {@link org.apache.camel.Rejectable} interface the behavior is exactly the same as with
+ * If the task does not implement {@link Rejectable} interface the behavior is exactly the same as with
  * ordinary {@link ThreadPoolExecutor}.
  *
  * @see RejectableFutureTask
- * @see org.apache.camel.Rejectable
+ * @see Rejectable
  * @see RejectableScheduledThreadPoolExecutor
  */
 public class RejectableThreadPoolExecutor extends ThreadPoolExecutor {

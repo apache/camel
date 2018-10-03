@@ -45,7 +45,7 @@ import org.apache.camel.component.extension.MetaDataExtension;
 import org.apache.camel.component.servicenow.ServiceNowComponent;
 import org.apache.camel.component.servicenow.annotations.ServiceNowSysParm;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;

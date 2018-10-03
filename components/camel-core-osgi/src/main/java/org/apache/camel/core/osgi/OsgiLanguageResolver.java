@@ -18,10 +18,10 @@ package org.apache.camel.core.osgi;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoSuchLanguageException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResolverHelper;
+import org.apache.camel.support.ResolverHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
@@ -71,7 +71,7 @@ public class OsgiLanguageResolver implements LanguageResolver {
 
             return null;
         } catch (InvalidSyntaxException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -90,7 +90,7 @@ public class OsgiLanguageResolver implements LanguageResolver {
             }
             return null;
         } catch (InvalidSyntaxException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

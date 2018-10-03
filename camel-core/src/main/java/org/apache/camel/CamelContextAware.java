@@ -35,5 +35,16 @@ public interface CamelContextAware {
      * @return camelContext the Camel context
      */
     CamelContext getCamelContext();
-    
+
+    /**
+     * Set the {@link CamelContext} context if the component is an instance of {@link CamelContextAware}.
+     */
+    static <T> T trySetCamelContext(T object, CamelContext camelContext) {
+        if (object instanceof CamelContextAware) {
+            ((CamelContextAware) object).setCamelContext(camelContext);
+        }
+
+        return object;
+    }
+
 }

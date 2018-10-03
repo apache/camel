@@ -30,7 +30,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.SortProcessor;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 
 import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
 
@@ -77,7 +77,7 @@ public class SortDefinition<T> extends NoOutputExpressionNode {
     @SuppressWarnings("unchecked")
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         // lookup in registry
-        if (ObjectHelper.isNotEmpty(comparatorRef)) {
+        if (org.apache.camel.util.ObjectHelper.isNotEmpty(comparatorRef)) {
             comparator = routeContext.getCamelContext().getRegistry().lookupByNameAndType(comparatorRef, Comparator.class);
         }
 

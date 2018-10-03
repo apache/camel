@@ -28,6 +28,7 @@ import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
 import org.apache.camel.Component;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.ManagedInstance;
@@ -40,7 +41,6 @@ import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.JsonSchemaHelper;
-import org.apache.camel.util.ObjectHelper;
 
 @ManagedResource(description = "Managed Component")
 public class ManagedComponent implements ManagedInstance, ManagedComponentMBean {
@@ -95,7 +95,7 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
             String target = defaultName != null ? defaultName : name;
             return component.getCamelContext().getComponentParameterJsonSchema(target);
         } catch (IOException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -133,7 +133,7 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
 
             return answer;
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

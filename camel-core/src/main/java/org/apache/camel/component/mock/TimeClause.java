@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.BinaryPredicateSupport;
-import org.apache.camel.util.Time;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

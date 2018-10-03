@@ -44,22 +44,20 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.ProcessorBuilder;
-import org.apache.camel.impl.DefaultAsyncProducer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ExpressionComparator;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ExpressionComparator;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The mock component is used for testing routes and mediation rules using mocks.

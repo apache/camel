@@ -32,13 +32,13 @@ import org.apache.camel.component.wordpress.consumer.WordpressUserConsumer;
 import org.apache.camel.component.wordpress.producer.WordpressPostProducer;
 import org.apache.camel.component.wordpress.producer.WordpressUserProducer;
 import org.apache.camel.component.wordpress.proxy.WordpressOperationType;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**

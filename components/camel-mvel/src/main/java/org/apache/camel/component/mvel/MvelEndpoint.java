@@ -27,7 +27,7 @@ import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.mvel2.ParserContext;
 import org.mvel2.templates.CompiledTemplate;

@@ -45,9 +45,9 @@ import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.util.CamelVersionHelper;
-import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.support.EndpointHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

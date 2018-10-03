@@ -22,7 +22,7 @@ import java.rmi.RemoteException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.BeanProcessor;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 
 public class RmiProducer extends DefaultProducer {
 

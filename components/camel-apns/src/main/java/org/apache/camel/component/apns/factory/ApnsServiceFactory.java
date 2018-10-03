@@ -29,15 +29,16 @@ import com.notnoop.apns.internal.Utilities;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.apns.model.ConnectionStrategy;
 import org.apache.camel.component.apns.model.ReconnectionPolicy;
 import org.apache.camel.component.apns.util.AssertUtils;
 import org.apache.camel.component.apns.util.ParamUtils;
 import org.apache.camel.component.apns.util.ResourceUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 
 public class ApnsServiceFactory implements CamelContextAware {
 
@@ -178,9 +179,9 @@ public class ApnsServiceFactory implements CamelContextAware {
         try {
             configureApnsCertificate(builder);
         } catch (IOException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         } catch (GeneralSecurityException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
         ApnsService apnsService = builder.build();

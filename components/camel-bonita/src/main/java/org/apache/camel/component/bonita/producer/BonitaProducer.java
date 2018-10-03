@@ -19,7 +19,7 @@ package org.apache.camel.component.bonita.producer;
 
 import org.apache.camel.component.bonita.BonitaConfiguration;
 import org.apache.camel.component.bonita.BonitaEndpoint;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 
 /**
  * The bonita producer.

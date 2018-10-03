@@ -24,7 +24,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -36,8 +35,8 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.beanio.BeanReader;
 import org.beanio.BeanReaderErrorHandler;
 import org.beanio.BeanWriter;
@@ -71,7 +70,7 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
 
     @Override
     protected void doStart() throws Exception {
-        ObjectHelper.notNull(getStreamName(), "Stream name not configured.");
+        org.apache.camel.util.ObjectHelper.notNull(getStreamName(), "Stream name not configured.");
         if (factory == null) {
             // Create the stream factory that will be used to read/write objects.
             factory = StreamFactory.newInstance();
@@ -125,9 +124,8 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
         List<Object> models;
         if ((models = exchange.getContext().getTypeConverter().convertTo(List.class, body)) == null) {
             models = new ArrayList<>();
-            Iterator<Object> it = ObjectHelper.createIterator(body);
-            while (it.hasNext()) {
-                models.add(it.next());
+            for (Object model : ObjectHelper.createIterable(body)) {
+                models.add(model);
             }
         }
         return models;

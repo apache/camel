@@ -32,11 +32,9 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.StringHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A tracer used for message tracing, storing a copy of the message details in a backlog.

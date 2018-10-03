@@ -21,10 +21,10 @@ import java.io.InputStream;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ResourceHelper;
-import org.apache.camel.util.ServiceHelper;
 
 /**
  * Language producer.

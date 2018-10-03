@@ -24,7 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceRegistry;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.impl.cloud.ServiceRegistryHelper;
 import org.apache.camel.impl.cloud.ServiceRegistrySelectors;
 import org.apache.camel.spi.Metadata;

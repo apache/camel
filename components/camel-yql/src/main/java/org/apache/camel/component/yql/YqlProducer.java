@@ -21,7 +21,7 @@ import org.apache.camel.component.yql.client.YqlClient;
 import org.apache.camel.component.yql.client.YqlResponse;
 import org.apache.camel.component.yql.configuration.YqlConfiguration;
 import org.apache.camel.component.yql.exception.YqlHttpException;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.http.HttpStatus;
 
 /**

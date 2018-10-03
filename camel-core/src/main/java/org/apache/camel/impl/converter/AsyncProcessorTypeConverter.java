@@ -19,8 +19,8 @@ package org.apache.camel.impl.converter;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.TypeConverterSupport;
-import org.apache.camel.util.AsyncProcessorConverterHelper;
 
 /**
  * A simple converter that can convert any {@link Processor} to an {@link AsyncProcessor}.

@@ -32,7 +32,7 @@ import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportIns
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata;
 import org.apache.camel.component.salesforce.internal.client.AnalyticsApiClient;
 import org.apache.camel.component.salesforce.internal.client.DefaultAnalyticsApiClient;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ServiceHelper;
 
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.INCLUDE_DETAILS;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.INSTANCE_ID;

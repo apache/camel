@@ -17,15 +17,12 @@
 package org.apache.camel.component.schematron;
 
 
-import java.nio.charset.Charset;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
 import org.apache.camel.component.schematron.constant.Constants;
-import org.apache.camel.component.schematron.exception.SchematronValidationException;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;

@@ -30,9 +30,9 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.TimeoutMap;
 import org.apache.camel.support.DefaultTimeoutMap;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.CamelLogger;
+import org.apache.camel.support.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

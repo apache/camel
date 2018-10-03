@@ -17,7 +17,7 @@
 package org.apache.camel.component.bar;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 
 public class BarProducer extends DefaultProducer {
 

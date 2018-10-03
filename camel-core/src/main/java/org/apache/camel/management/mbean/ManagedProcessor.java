@@ -28,6 +28,7 @@ import javax.management.openmbean.TabularDataSupport;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.ManagedInstance;
@@ -37,9 +38,8 @@ import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.util.JsonSchemaHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 
 @ManagedResource(description = "Managed Processor")
 public class ManagedProcessor extends ManagedPerformanceCounter implements ManagedInstance, ManagedProcessorMBean {
@@ -175,7 +175,7 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
 
             return answer;
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.URISupport;
 

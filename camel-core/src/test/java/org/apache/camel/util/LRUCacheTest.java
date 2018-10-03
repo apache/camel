@@ -16,6 +16,7 @@
  */
 package org.apache.camel.util;
 import org.apache.camel.Service;
+import org.apache.camel.support.LRUCache;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

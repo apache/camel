@@ -17,7 +17,7 @@
 package ${package};
 
 import org.apache.camel.Processor;
-import org.apache.camel.util.component.AbstractApiConsumer;
+import org.apache.camel.support.component.AbstractApiConsumer;
 
 import ${package}.internal.${name}ApiName;
 

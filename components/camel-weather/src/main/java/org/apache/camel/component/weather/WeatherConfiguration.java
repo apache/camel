@@ -21,13 +21,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.weather.geolocation.FreeGeoIpGeoLocationProvider;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.commons.httpclient.HttpConnectionManager;
 
 import static org.apache.camel.component.weather.WeatherLanguage.en;

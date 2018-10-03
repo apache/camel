@@ -22,6 +22,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.support.SimpleUuidGenerator;
 import org.junit.Test;
 
 public class MessageSupportTest extends ContextTestSupport {

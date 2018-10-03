@@ -26,7 +26,7 @@ import javax.net.ssl.SSLSocketFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.schwering.irc.lib.ssl.SSLIRCConnection;
 import org.schwering.irc.lib.ssl.SSLNotSupportedException;
 

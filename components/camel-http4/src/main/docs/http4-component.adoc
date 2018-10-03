@@ -62,7 +62,7 @@ The HTTP4 component supports 18 options, which are listed below.
 | *httpClientConfigurer* (advanced) | To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used. |  | HttpClientConfigurer
 | *clientConnectionManager* (advanced) | To use a custom and shared HttpClientConnectionManager to manage connections. If this has been configured then this is always used for all endpoints created by this component. |  | HttpClientConnection Manager
 | *httpContext* (advanced) | To use a custom org.apache.http.protocol.HttpContext when executing requests. |  | HttpContext
-| *sslContextParameters* (security) | To configure security using SSLContextParameters. Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need. |  | SSLContextParameters
+| *sslContextParameters* (security) | To configure security using SSLContextParameters. Important: Only one instance of org.apache.camel.support.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need. |  | SSLContextParameters
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *x509HostnameVerifier* (security) | To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or org.apache.http.conn.ssl.NoopHostnameVerifier. |  | HostnameVerifier
 | *maxTotalConnections* (advanced) | The maximum number of connections. | 200 | int
@@ -191,7 +191,7 @@ The component supports 19 options, which are listed below.
 | *camel.component.http4.max-total-connections* | The maximum number of connections. | 200 | Integer
 | *camel.component.http4.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.http4.socket-timeout* | Defines the socket timeout (SO_TIMEOUT) in milliseconds, which is the timeout for waiting for data or, put differently, a maximum period inactivity between two consecutive data packets). A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined (system default). Default: code -1 | -1 | Integer
-| *camel.component.http4.ssl-context-parameters* | To configure security using SSLContextParameters. Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need. The option is a org.apache.camel.util.jsse.SSLContextParameters type. |  | String
+| *camel.component.http4.ssl-context-parameters* | To configure security using SSLContextParameters. Important: Only one instance of org.apache.camel.support.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
 | *camel.component.http4.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 | *camel.component.http4.x509-hostname-verifier* | To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or org.apache.http.conn.ssl.NoopHostnameVerifier. The option is a javax.net.ssl.HostnameVerifier type. |  | String
 |===
@@ -703,7 +703,7 @@ public class HttpContextFactory {
 Using different SSLContextParameters
 
 The <<http4-component,HTTP4>> component only support one instance of
-`org.apache.camel.util.jsse.SSLContextParameters` per component. If you
+`org.apache.camel.support.jsse.SSLContextParameters` per component. If you
 need to use 2 or more different instances, then you need to setup
 multiple <<http4-component,HTTP4>> components as shown below. Where we have
 2 components, each using their own instance of `sslContextParameters`

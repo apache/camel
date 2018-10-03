@@ -35,20 +35,21 @@ import org.apache.camel.Message;
 import org.apache.camel.Navigate;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.SubUnitOfWorkCallback;
 import org.apache.camel.spi.UnitOfWork;
-import org.apache.camel.util.AsyncProcessorConverterHelper;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.CamelLogger;
-import org.apache.camel.util.EventHelper;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.MessageHelper;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.CamelLogger;
+import org.apache.camel.support.EventHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.URISupport;
 
@@ -293,7 +294,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                     formatter.setMaxChars(maxChars);
                 }
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
             this.exchangeFormatter = formatter;
         }
@@ -398,7 +399,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             return;
         }
 
-        // inline org.apache.camel.util.AsyncProcessorHelper.process(org.apache.camel.AsyncProcessor, org.apache.camel.Exchange)
+        // inline org.apache.camel.support.AsyncProcessorHelper.process(org.apache.camel.AsyncProcessor, org.apache.camel.Exchange)
         // to optimize and reduce stacktrace lengths
         final CountDownLatch latch = new CountDownLatch(1);
         boolean sync = process(exchange, new AsyncCallback() {

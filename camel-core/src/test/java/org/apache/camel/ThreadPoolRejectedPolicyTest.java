@@ -25,7 +25,9 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.util.concurrent.Rejectable;
 import org.apache.camel.util.concurrent.RejectableThreadPoolExecutor;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.junit.Test;
 
 public class ThreadPoolRejectedPolicyTest extends TestSupport {

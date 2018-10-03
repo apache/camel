@@ -23,15 +23,15 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultAsyncProducer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.MarshalProcessor;
 import org.apache.camel.processor.UnmarshalProcessor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ServiceHelper;
 
 /**
  * The dataformat component is used for working with Data Formats as if it was a regular Component supporting Endpoints and URIs.

@@ -30,9 +30,9 @@ import org.apache.camel.component.rabbitmq.RabbitMQConstants;
 import org.apache.camel.component.rabbitmq.RabbitMQEndpoint;
 import org.apache.camel.component.rabbitmq.RabbitMQMessageConverter;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

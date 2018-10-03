@@ -23,7 +23,7 @@ import static java.lang.Boolean.TRUE;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.support.DefaultAsyncProducer;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 
 public class MiloClientProducer extends DefaultAsyncProducer {

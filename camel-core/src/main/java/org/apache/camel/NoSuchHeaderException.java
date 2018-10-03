@@ -20,7 +20,7 @@ package org.apache.camel;
  * An exception caused when a mandatory header is not available on a message
  * {@link Exchange}
  *
- * @see org.apache.camel.util.ExchangeHelper#getMandatoryHeader(Exchange, String, Class)
+ * @see org.apache.camel.support.ExchangeHelper#getMandatoryHeader(Exchange, String, Class)
  */
 public class NoSuchHeaderException extends CamelExchangeException {
     private static final long serialVersionUID = -8721487431101572630L;

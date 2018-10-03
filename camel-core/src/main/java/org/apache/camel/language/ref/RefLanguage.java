@@ -23,8 +23,8 @@ import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.ExpressionAdapter;
-import org.apache.camel.util.ExpressionToPredicateAdapter;
-import org.apache.camel.util.PredicateToExpressionAdapter;
+import org.apache.camel.support.ExpressionToPredicateAdapter;
+import org.apache.camel.support.PredicateToExpressionAdapter;
 
 /**
  * A language for referred expressions or predicates.

@@ -36,10 +36,10 @@ import org.apache.camel.component.grpc.client.GrpcExchangeForwarder;
 import org.apache.camel.component.grpc.client.GrpcExchangeForwarderFactory;
 import org.apache.camel.component.grpc.client.GrpcResponseAggregationStreamObserver;
 import org.apache.camel.component.grpc.client.GrpcResponseRouterStreamObserver;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.support.ResourceHelper;
 
 /**
  * Represents asynchronous and synchronous gRPC producer implementations.

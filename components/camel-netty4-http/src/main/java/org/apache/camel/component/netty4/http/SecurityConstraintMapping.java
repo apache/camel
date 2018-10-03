@@ -20,7 +20,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.support.EndpointHelper;
 
 /**
  * A default {@link SecurityConstraint} which can be used to define a set of mappings to

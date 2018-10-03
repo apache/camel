@@ -23,7 +23,7 @@ import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirApiName;
 import org.apache.camel.component.fhir.internal.FhirHelper;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.component.AbstractApiComponent;
+import org.apache.camel.support.component.AbstractApiComponent;
 
 /**
  * Represents the component that manages {@link FhirEndpoint}.

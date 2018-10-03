@@ -29,7 +29,7 @@ import org.apache.camel.component.http4.HttpEndpoint;
 import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.http.common.HttpMethods;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

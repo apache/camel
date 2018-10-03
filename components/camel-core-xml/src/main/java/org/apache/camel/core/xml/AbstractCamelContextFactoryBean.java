@@ -19,7 +19,6 @@ package org.apache.camel.core.xml;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -115,8 +114,8 @@ import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -160,7 +159,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     //CHECKSTYLE:OFF
     public void afterPropertiesSet() throws Exception {
-        if (ObjectHelper.isEmpty(getId())) {
+        if (org.apache.camel.util.ObjectHelper.isEmpty(getId())) {
             throw new IllegalArgumentException("Id must be set");
         }
 
@@ -349,7 +348,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         // Health check repository
         Set<HealthCheckRepository> repositories = getContext().getRegistry().findByType(HealthCheckRepository.class);
-        if (ObjectHelper.isNotEmpty(repositories)) {
+        if (org.apache.camel.util.ObjectHelper.isNotEmpty(repositories)) {
             for (HealthCheckRepository repository: repositories) {
                 healthCheckRegistry.addRepository(repository);
             }
@@ -607,9 +606,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         String spoolRules = CamelContextHelper.parseText(getContext(), streamCaching.getSpoolRules());
         if (spoolRules != null) {
-            Iterator<Object> it = ObjectHelper.createIterator(spoolRules);
-            while (it.hasNext()) {
-                String name = it.next().toString();
+            for (String name : ObjectHelper.createIterable(spoolRules)) {
                 StreamCachingStrategy.SpoolRule rule = getContext().getRegistry().lookupByNameAndType(name, StreamCachingStrategy.SpoolRule.class);
                 if (rule != null) {
                     getContext().getStreamCachingStrategy().addSpoolRule(rule);
@@ -626,7 +623,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
             if (def.getLocation() != null) {
                 ObjectHelper.createIterable(def.getLocation()).forEach(
-                    location -> locations.add(new PropertiesLocation((String) location))
+                    location -> locations.add(new PropertiesLocation(location))
                 );
             }
             if (def.getLocations() != null) {
@@ -648,14 +645,14 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             }
 
             // if using a custom resolver
-            if (ObjectHelper.isNotEmpty(def.getPropertiesResolverRef())) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(def.getPropertiesResolverRef())) {
                 PropertiesResolver resolver = CamelContextHelper.mandatoryLookup(getContext(), def.getPropertiesResolverRef(),
                                                                                  PropertiesResolver.class);
                 pc.setPropertiesResolver(resolver);
             }
 
             // if using a custom parser
-            if (ObjectHelper.isNotEmpty(def.getPropertiesParserRef())) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(def.getPropertiesParserRef())) {
                 PropertiesParser parser = CamelContextHelper.mandatoryLookup(getContext(), def.getPropertiesParserRef(),
                                                                              PropertiesParser.class);
                 pc.setPropertiesParser(parser);
@@ -1108,7 +1105,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             // it may use property placeholders
             name = context.resolvePropertyPlaceholders(name);
             name = StringHelper.normalizeClassName(name);
-            if (ObjectHelper.isNotEmpty(name)) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(name)) {
                 LOG.trace("Using package: {} to scan for RouteBuilder classes", name);
                 packages.add(name);
             }

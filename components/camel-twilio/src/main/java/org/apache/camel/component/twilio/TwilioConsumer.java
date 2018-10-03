@@ -20,7 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Processor;
 import org.apache.camel.component.twilio.internal.TwilioApiName;
-import org.apache.camel.util.component.AbstractApiConsumer;
+import org.apache.camel.support.component.AbstractApiConsumer;
 
 /**
  * The Twilio consumer.

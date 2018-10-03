@@ -17,7 +17,7 @@
 package org.apache.camel.component.iec60870.server;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.eclipse.neoscada.protocol.iec60870.asdu.types.Value;
 
 public class ServerProducer extends DefaultProducer {

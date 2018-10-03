@@ -28,7 +28,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.Language;
-import org.apache.camel.util.jndi.JndiTest;
+import org.apache.camel.support.jndi.JndiTest;
 import org.junit.After;
 import org.junit.Before;
 

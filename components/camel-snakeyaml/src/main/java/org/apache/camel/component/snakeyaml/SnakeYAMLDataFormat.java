@@ -35,8 +35,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.IOHelper;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
@@ -95,14 +95,14 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
 
     @Override
     public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
-        try (OutputStreamWriter osw = new OutputStreamWriter(stream, IOHelper.getCharsetName(exchange))) {
+        try (OutputStreamWriter osw = new OutputStreamWriter(stream, ExchangeHelper.getCharsetName(exchange))) {
             getYaml(exchange.getContext()).dump(graph, osw);
         }
     }
 
     @Override
     public Object unmarshal(final Exchange exchange, final InputStream stream) throws Exception {
-        try (InputStreamReader isr = new InputStreamReader(stream, IOHelper.getCharsetName(exchange))) {
+        try (InputStreamReader isr = new InputStreamReader(stream, ExchangeHelper.getCharsetName(exchange))) {
             Class<?> unmarshalObjectType = unmarshalType != null ? unmarshalType : Object.class;
             return getYaml(exchange.getContext()).loadAs(isr, unmarshalObjectType);
         }

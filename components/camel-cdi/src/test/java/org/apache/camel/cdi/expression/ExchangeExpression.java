@@ -19,7 +19,7 @@ package org.apache.camel.cdi.expression;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.util.PredicateToExpressionAdapter;
+import org.apache.camel.support.PredicateToExpressionAdapter;
 
 public final class ExchangeExpression {
 

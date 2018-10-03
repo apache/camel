@@ -19,7 +19,7 @@ package org.apache.camel.converter;
 import java.util.Iterator;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 
 /**
  * Optimised {@link ObjectConverter}

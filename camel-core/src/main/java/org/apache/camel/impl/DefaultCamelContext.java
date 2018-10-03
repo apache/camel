@@ -60,6 +60,7 @@ import org.apache.camel.ExtendedStartupListener;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.IsSingleton;
+import org.apache.camel.LoadPropertiesException;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NoFactoryAvailableException;
@@ -172,25 +173,25 @@ import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.EventHelper;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.OrderedComparator;
+import org.apache.camel.support.ProcessorEndpoint;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.CollectionStringBuffer;
-import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.JsonSchemaHelper;
-import org.apache.camel.util.LoadPropertiesException;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.OrderedComparator;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.function.ThrowingRunnable;
-import org.apache.camel.util.jsse.SSLContextParameters;
 import org.slf4j.MDC;
 
 import static org.apache.camel.impl.MDCUnitOfWork.MDC_CAMEL_CONTEXT_ID;
@@ -929,7 +930,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForProcessor(this, processor, def);
                 return getManagementStrategy().getManagementAgent().newProxyClient(on, type);
             } catch (MalformedObjectNameException e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 
@@ -949,7 +950,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForRoute(route);
                 return getManagementStrategy().getManagementAgent().newProxyClient(on, type);
             } catch (MalformedObjectNameException e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 
@@ -966,7 +967,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForCamelContext(this);
             return getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedCamelContextMBean.class);
         } catch (MalformedObjectNameException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -2385,7 +2386,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     try {
                         startService((Service) answer);
                     } catch (Exception e) {
-                        throw ObjectHelper.wrapRuntimeCamelException(e);
+                        throw RuntimeCamelException.wrapRuntimeCamelException(e);
                     }
                 }
 
@@ -2455,7 +2456,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     // must add service eager and force start it
                     addService(typeConverter, true, true);
                 } catch (Exception e) {
-                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
             }
         }
@@ -2468,7 +2469,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             // must add service eager and force start it
             addService(typeConverter, true, true);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -2823,7 +2824,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         try {
             startService(answer);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
         return answer;
     }
@@ -2839,7 +2840,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         try {
             startService(answer);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
         return answer;
     }
@@ -2855,7 +2856,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         try {
             startService(answer);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
         return answer;
     }

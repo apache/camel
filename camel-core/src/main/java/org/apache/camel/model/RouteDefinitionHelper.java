@@ -27,9 +27,10 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
@@ -380,7 +381,7 @@ public final class RouteDefinitionHelper {
             try {
                 ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, input);
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
     }
@@ -508,7 +509,7 @@ public final class RouteDefinitionHelper {
                     try {
                         pattern = context.resolvePropertyPlaceholders(intercept.getUri());
                     } catch (Exception e) {
-                        throw ObjectHelper.wrapRuntimeCamelException(e);
+                        throw RuntimeCamelException.wrapRuntimeCamelException(e);
                     }
                     boolean isRefPattern = pattern.startsWith("ref*") || pattern.startsWith("ref:");
 
@@ -658,7 +659,7 @@ public final class RouteDefinitionHelper {
                     });
                 }
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 
@@ -670,4 +671,15 @@ public final class RouteDefinitionHelper {
         }
     }
 
+    public static String getRouteMessage(String route) {
+        // ensure to sanitize uri's in the route so we do not show sensitive information such as passwords
+        route = URISupport.sanitizeUri(route);
+        // cut the route after 60 chars so it won't be too big in the message
+        // users just need to be able to identify the route so they know where to look
+        if (route.length() > 60) {
+            return route.substring(0, 60) + "...";
+        } else {
+            return route;
+        }
+    }
 }

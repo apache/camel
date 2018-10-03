@@ -28,6 +28,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.DefaultProducer;
 import org.junit.Test;
 
 public class DefaultProducerCacheTest extends ContextTestSupport {

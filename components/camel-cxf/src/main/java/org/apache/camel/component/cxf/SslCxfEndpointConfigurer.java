@@ -18,7 +18,7 @@ package org.apache.camel.component.cxf;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.common.AbstractSslEndpointConfigurer;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;

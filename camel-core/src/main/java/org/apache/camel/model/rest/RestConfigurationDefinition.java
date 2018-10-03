@@ -30,7 +30,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.EndpointHelper;
 
 /**
  * To configure rest
@@ -282,7 +283,7 @@ public class RestConfigurationDefinition {
      * Sets an CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name matches the pattern.
      * <p/>
      * The pattern <tt>#name#</tt> refers to the CamelContext name, to match on the current CamelContext only.
-     * For any other value, the pattern uses the rules from {@link org.apache.camel.util.EndpointHelper#matchPattern(String, String)}
+     * For any other value, the pattern uses the rules from {@link EndpointHelper#matchPattern(String, String)}
      *
      * @param apiContextIdPattern  the pattern
      */
@@ -589,7 +590,7 @@ public class RestConfigurationDefinition {
     /**
      * Sets an CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name matches the pattern.
      * <p/>
-     * The pattern uses the rules from {@link org.apache.camel.util.EndpointHelper#matchPattern(String, String)}
+     * The pattern uses the rules from {@link EndpointHelper#matchPattern(String, String)}
      */
     public RestConfigurationDefinition apiContextIdPattern(String pattern) {
         setApiContextIdPattern(pattern);

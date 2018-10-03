@@ -25,7 +25,7 @@ import org.apache.camel.Ordered;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Service;
 import org.apache.camel.StartupListener;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ServiceHelper;
 
 /**
  * A {@link org.apache.camel.StartupListener} that defers starting {@link Service}s, until as late as possible during

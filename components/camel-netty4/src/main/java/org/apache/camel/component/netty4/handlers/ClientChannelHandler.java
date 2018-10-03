@@ -29,7 +29,7 @@ import org.apache.camel.component.netty4.NettyConstants;
 import org.apache.camel.component.netty4.NettyHelper;
 import org.apache.camel.component.netty4.NettyPayloadHelper;
 import org.apache.camel.component.netty4.NettyProducer;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -56,12 +56,12 @@ import org.apache.camel.WrappedFile;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -339,7 +339,7 @@ public class JmsBinding {
                 // create jms message containing the caused exception
                 answer = createJmsMessage(cause, session);
             } else {
-                ObjectHelper.notNull(camelMessage, "message");
+                org.apache.camel.util.ObjectHelper.notNull(camelMessage, "message");
                 // create regular jms message using the camel message body
                 answer = createJmsMessage(exchange, camelMessage, session, exchange.getContext());
                 appendJmsProperties(answer, exchange, camelMessage);
@@ -572,7 +572,7 @@ public class JmsBinding {
         if (body != null && LOG.isWarnEnabled()) {
             LOG.warn("Cannot determine specific JmsMessage type to use from body class."
                     + " Will use generic JmsMessage."
-                    + " Body class: " + ObjectHelper.classCanonicalName(body)
+                    + " Body class: " + org.apache.camel.util.ObjectHelper.classCanonicalName(body)
                     + ". If you want to send a POJO then your class might need to implement java.io.Serializable"
                     + ", or you can force a specific type by setting the jmsMessageType option on the JMS endpoint.");
         }

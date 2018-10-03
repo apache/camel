@@ -24,8 +24,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiName;
-import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.component.AbstractApiConsumer;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.component.AbstractApiConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

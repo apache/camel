@@ -31,9 +31,9 @@ import com.thaiopensource.xml.sax.Jaxp11XMLReaderCreator;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.processor.validation.DefaultValidationErrorHandler;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 
 /**
  * A validator which uses the <a

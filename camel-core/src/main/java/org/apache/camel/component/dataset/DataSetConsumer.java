@@ -21,9 +21,9 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.processor.ThroughputLogger;
-import org.apache.camel.util.CamelLogger;
+import org.apache.camel.support.CamelLogger;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.URISupport;
 
 /**

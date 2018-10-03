@@ -18,9 +18,9 @@ package org.apache.camel.component.saga;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.saga.CamelSagaService;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultAsyncProducer;
 
 /**
  * A producer that finalizes the current saga.

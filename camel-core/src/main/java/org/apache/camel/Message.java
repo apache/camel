@@ -29,7 +29,7 @@ import org.apache.camel.spi.HeadersMapFactory;
  * href="http://camel.apache.org/message.html">Message</a> pattern and
  * represents an inbound or outbound message as part of an {@link Exchange}.
  * <p/>
- * See {@link org.apache.camel.impl.DefaultMessage DefaultMessage} for how headers
+ * See {@link org.apache.camel.support.DefaultMessage DefaultMessage} for how headers
  * is represented in Camel using a {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
  * The implementation of the map can be configured by the {@link HeadersMapFactory} which can be set
  * on the {@link CamelContext}. The default implementation uses the {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
@@ -173,7 +173,7 @@ public interface Message {
     /**
      * Returns all of the headers associated with the message.
      * <p/>
-     * See {@link org.apache.camel.impl.DefaultMessage DefaultMessage} for how headers
+     * See {@link org.apache.camel.support.DefaultMessage DefaultMessage} for how headers
      * is represented in Camel using a {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
      * The implementation of the map can be configured by the {@link HeadersMapFactory} which can be set
      * on the {@link CamelContext}. The default implementation uses the {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.

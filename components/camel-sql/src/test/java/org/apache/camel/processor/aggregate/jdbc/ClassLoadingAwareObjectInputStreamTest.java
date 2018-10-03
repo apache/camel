@@ -28,7 +28,7 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.impl.DefaultExchangeHolder;
 import org.junit.Test;
 

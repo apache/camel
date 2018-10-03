@@ -18,14 +18,12 @@ package org.apache.camel.component.file;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.EventDrivenPollingConsumer;
-import org.apache.camel.impl.ScheduledBatchPollingConsumer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.EventDrivenPollingConsumer;
+import org.apache.camel.support.ScheduledBatchPollingConsumer;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.util.StopWatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
 
@@ -193,7 +191,7 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
         }
 
         if (cause != null) {
-            throw ObjectHelper.wrapRuntimeCamelException(cause);
+            throw RuntimeCamelException.wrapRuntimeCamelException(cause);
         }
 
         return polledMessages;

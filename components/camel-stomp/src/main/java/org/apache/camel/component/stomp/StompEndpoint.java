@@ -27,7 +27,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -109,7 +109,7 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
                 connection.receive(new Callback<StompFrame>() {
                     @Override
                     public void onFailure(Throwable value) {
-                        if (started.get()) {
+                        if (isStarted()) {
                             connection.close(null);
                         }
                     }

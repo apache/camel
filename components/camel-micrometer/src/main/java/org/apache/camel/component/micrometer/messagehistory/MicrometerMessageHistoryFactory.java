@@ -24,11 +24,12 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NonManagedService;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.component.micrometer.MicrometerUtils;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ObjectHelper;
+
 import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.SERVICE_NAME;
 
@@ -122,7 +123,7 @@ public class MicrometerMessageHistoryFactory extends ServiceSupport implements C
                 camelContext.addService(messageHistoryService);
             }
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
     }

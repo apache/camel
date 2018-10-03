@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.apache.camel.impl.DefaultModelJAXBContextFactory;
 import org.apache.camel.impl.DefaultUuidGenerator;
-import org.apache.camel.impl.SimpleUuidGenerator;
+import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.junit.Assert;

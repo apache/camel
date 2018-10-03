@@ -28,13 +28,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.metrics.MetricsComponent;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Service holding the {@link MetricRegistry} which registers all metrics.
@@ -160,7 +160,7 @@ public final class MetricsRegistryService extends ServiceSupport implements Came
         try {
             return writer.writeValueAsString(getMetricsRegistry());
         } catch (JsonProcessingException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -172,7 +172,7 @@ public final class MetricsRegistryService extends ServiceSupport implements Came
         try {
             return writer.writeValueAsString(getMetricsRegistry());
         } catch (JsonProcessingException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

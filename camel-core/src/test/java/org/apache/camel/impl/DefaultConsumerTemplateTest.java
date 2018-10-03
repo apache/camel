@@ -23,6 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.DefaultExchange;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

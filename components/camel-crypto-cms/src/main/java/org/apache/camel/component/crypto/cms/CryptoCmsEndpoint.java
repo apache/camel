@@ -23,7 +23,7 @@ import org.apache.camel.component.crypto.cms.crypt.DefaultEnvelopedDataDecryptor
 import org.apache.camel.component.crypto.cms.crypt.EnvelopedDataEncryptorConfiguration;
 import org.apache.camel.component.crypto.cms.sig.DefaultSignedDataVerifierConfiguration;
 import org.apache.camel.component.crypto.cms.sig.SignedDataCreatorConfiguration;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;

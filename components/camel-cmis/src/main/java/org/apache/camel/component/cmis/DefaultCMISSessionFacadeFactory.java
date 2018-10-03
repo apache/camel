@@ -19,7 +19,7 @@ package org.apache.camel.component.cmis;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.support.EndpointHelper;
 
 public class DefaultCMISSessionFacadeFactory implements CMISSessionFacadeFactory {
 

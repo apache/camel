@@ -132,7 +132,7 @@ The component supports 15 options, which are listed below.
 | *camel.component.websocket.port* | The port number. The default value is 9292 | 9292 | Integer
 | *camel.component.websocket.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.websocket.socket-factory* | To configure a map which contains custom WebSocketFactory for sub protocols. The key in the map is the sub protocol. The default key is reserved for the default implementation. The option is a java.util.Map<java .lang.String,org.apache.camel.component.websocket.WebSocketFactory> type. |  | String
-| *camel.component.websocket.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.util.jsse.SSLContextParameters type. |  | String
+| *camel.component.websocket.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
 | *camel.component.websocket.ssl-key-password* | The password for the keystore when using SSL. |  | String
 | *camel.component.websocket.ssl-keystore* | The path to the keystore. |  | String
 | *camel.component.websocket.ssl-password* | The password when using SSL. |  | String

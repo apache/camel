@@ -23,10 +23,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.CamelContextHelper;
 
 /**
  * To configure re-delivery for error handling
@@ -173,7 +173,7 @@ public class RedeliveryPolicyDefinition {
                 answer.setExchangeFormatterRef(CamelContextHelper.parseText(context, exchangeFormatterRef));
             }
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
         return answer;
@@ -664,7 +664,7 @@ public class RedeliveryPolicyDefinition {
         try {
             return CamelContextHelper.parseBoolean(context, getAsyncDelayedRedelivery());
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

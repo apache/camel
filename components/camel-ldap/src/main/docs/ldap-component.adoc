@@ -265,7 +265,7 @@ the InitialDirContext bean - see below sample.
 
 [source,java]
 -----------------------------------------------------------------------------------------------------
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;

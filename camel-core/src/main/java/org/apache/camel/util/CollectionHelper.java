@@ -100,16 +100,7 @@ public final class CollectionHelper {
     }
 
     public static <T> Set<T> createSetContaining(T... contents) {
-        Set<T> contentsAsSet = new HashSet<>();
-        contentsAsSet.addAll(Arrays.asList(contents));
-        return contentsAsSet;
-    }
-
-    public static String collectionAsCommaDelimitedString(String[] col) {
-        if (col == null || col.length == 0) {
-            return "";
-        }
-        return collectionAsCommaDelimitedString(Arrays.asList(col));
+        return new HashSet<>(Arrays.asList(contents));
     }
 
     public static String collectionAsCommaDelimitedString(Collection<?> col) {
@@ -136,13 +127,13 @@ public final class CollectionHelper {
      * @param separator optional separator to use in key name, for example a hyphen or dot.
      * @return the map with flattern keys
      */
-    public static Map<String, Object> flatternKeysInMap(Map<String, Object> map, String separator) {
+    public static Map<String, Object> flattenKeysInMap(Map<String, Object> map, String separator) {
         Map<String, Object> answer = new LinkedHashMap<>();
-        doFlatternKeysInMap(map, "", ObjectHelper.isNotEmpty(separator) ? separator : "", answer);
+        doFlattenKeysInMap(map, "", ObjectHelper.isNotEmpty(separator) ? separator : "", answer);
         return answer;
     }
 
-    private static void doFlatternKeysInMap(Map<String, Object> source, String prefix, String separator, Map<String, Object> target) {
+    private static void doFlattenKeysInMap(Map<String, Object> source, String prefix, String separator, Map<String, Object> target) {
         for (Map.Entry<String, Object> entry : source.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
@@ -150,7 +141,7 @@ public final class CollectionHelper {
 
             if (value instanceof Map) {
                 Map map = (Map) value;
-                doFlatternKeysInMap(map, newKey, separator, target);
+                doFlattenKeysInMap(map, newKey, separator, target);
             } else {
                 target.put(newKey, value);
             }

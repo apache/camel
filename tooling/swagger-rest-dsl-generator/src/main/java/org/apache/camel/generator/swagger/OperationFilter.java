@@ -18,7 +18,7 @@ package org.apache.camel.generator.swagger;
 
 import java.util.Arrays;
 
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.support.EndpointHelper;
 
 class OperationFilter {
 

@@ -23,7 +23,7 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.preparser.PreParser;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.support.ExchangeHelper;
 
 /**
  * This enumerates the defined charsets for HL7 as defined in Table 0211,
@@ -95,7 +95,7 @@ public enum HL7Charset {
      * @return Java charset name
      */
     public static String getCharsetName(Message message, Exchange exchange) throws HL7Exception {
-        String defaultCharsetName = IOHelper.getCharsetName(exchange);
+        String defaultCharsetName = ExchangeHelper.getCharsetName(exchange);
         String msh18 = ((Segment)message.get("MSH")).getField(18, 0).toString();
         return getCharsetName(msh18, defaultCharsetName);
     }

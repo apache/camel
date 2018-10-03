@@ -47,9 +47,9 @@ import org.apache.camel.component.cxf.CxfEndpointUtils;
 import org.apache.camel.component.cxf.CxfOperationException;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.http.common.cookie.CookieHandler;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.LRUSoftCache;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.LRUSoftCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
@@ -238,7 +238,7 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
             String queryString = inMessage.getHeader(Exchange.HTTP_QUERY, String.class);
             if (queryString != null) {
                 maps = getQueryParametersFromQueryString(queryString,
-                                                         IOHelper.getCharsetName(exchange));
+                                                         ExchangeHelper.getCharsetName(exchange));
             }
         }
         if (maps == null) {
@@ -266,7 +266,7 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
             if (requestURL != null && matrixStart > 0) {
                 matrixParam = requestURL.substring(matrixStart + 1, matrixEnd);
                 if (matrixParam != null) {
-                    maps = getMatrixParametersFromMatrixString(matrixParam, IOHelper.getCharsetName(exchange));
+                    maps = getMatrixParametersFromMatrixString(matrixParam, ExchangeHelper.getCharsetName(exchange));
                 }
             }
             if (maps != null) {

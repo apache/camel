@@ -20,8 +20,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.Suspendable;
-import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.spi.ShutdownAware;
+import org.apache.camel.support.DefaultConsumer;
 
 /**
  * The direct consumer.

@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.junit.Test;
 
-import static org.apache.camel.ThreadPoolRejectedPolicy.Abort;
+import static org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy.Abort;
 
 public class ThreadsInvalidConfigTest extends ContextTestSupport {
 

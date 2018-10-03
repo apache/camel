@@ -25,7 +25,7 @@ import com.jayway.jsonpath.Option;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.spi.Language;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;

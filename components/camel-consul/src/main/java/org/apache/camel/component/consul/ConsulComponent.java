@@ -33,9 +33,9 @@ import org.apache.camel.component.consul.endpoint.ConsulKeyValueProducer;
 import org.apache.camel.component.consul.endpoint.ConsulPreparedQueryProducer;
 import org.apache.camel.component.consul.endpoint.ConsulSessionProducer;
 import org.apache.camel.component.consul.endpoint.ConsulStatusProducer;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 
 /**
  * Represents the component that manages {@link ConsulEndpoint}.
@@ -87,7 +87,7 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
     }
 
     /**
-     * SSL configuration using an org.apache.camel.util.jsse.SSLContextParameters
+     * SSL configuration using an org.apache.camel.support.jsse.SSLContextParameters
      * instance.
      * @param sslContextParameters
      */

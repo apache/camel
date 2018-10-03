@@ -24,7 +24,6 @@ import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ResourceHelper;
 
 /**
  * Base language for {@link Language} implementations.

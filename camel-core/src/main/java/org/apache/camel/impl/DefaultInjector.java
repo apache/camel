@@ -19,7 +19,7 @@ package org.apache.camel.impl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Injector;
-import org.apache.camel.util.ReflectionInjector;
+import org.apache.camel.support.ObjectHelper;
 
 /**
  * A default implementation of {@link Injector} which just uses reflection to
@@ -27,13 +27,10 @@ import org.apache.camel.util.ReflectionInjector;
  * and then performing bean post processing using {@link DefaultCamelBeanPostProcessor}.
  * <p/>
  * For more complex implementations try the Spring or Guice implementations.
- *
- * @see ReflectionInjector
  */
 public class DefaultInjector implements Injector  {
 
     // use the reflection injector
-    private final Injector delegate = new ReflectionInjector();
     private final DefaultCamelBeanPostProcessor postProcessor;
 
     public DefaultInjector(CamelContext context) {
@@ -42,21 +39,7 @@ public class DefaultInjector implements Injector  {
 
     @Override
     public <T> T newInstance(Class<T> type) {
-        T answer = delegate.newInstance(type);
-        if (answer != null) {
-            try {
-                postProcessor.postProcessBeforeInitialization(answer, answer.getClass().getName());
-                postProcessor.postProcessAfterInitialization(answer, answer.getClass().getName());
-            } catch (Exception e) {
-                throw new RuntimeCamelException("Error during post processing of bean " + answer, e);
-            }
-        }
-        return answer;
-    }
-
-    @Override
-    public <T> T newInstance(Class<T> type, Object instance) {
-        T answer = delegate.newInstance(type, instance);
+        T answer = ObjectHelper.newInstance(type);
         if (answer != null) {
             try {
                 postProcessor.postProcessBeforeInitialization(answer, answer.getClass().getName());
@@ -70,6 +53,6 @@ public class DefaultInjector implements Injector  {
 
     @Override
     public boolean supportsAutoWiring() {
-        return delegate.supportsAutoWiring();
+        return false;
     }
 }

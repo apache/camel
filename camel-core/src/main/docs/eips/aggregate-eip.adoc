@@ -491,7 +491,7 @@ public class MyBodyAppender {
 
 And then in the Camel route we create an instance of our bean, and then
 refer to the bean in the route using `bean` method from
-`org.apache.camel.util.toolbox.AggregationStrategies` as shown:
+`org.apache.camel.builder.AggregationStrategies` as shown:
 
 [source,java]
 ----

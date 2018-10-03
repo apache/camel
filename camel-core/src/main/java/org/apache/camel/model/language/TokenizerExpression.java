@@ -26,7 +26,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.tokenizer.TokenizeLanguage;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.ExpressionToPredicateAdapter;
+import org.apache.camel.support.ExpressionToPredicateAdapter;
 
 /**
  * To use Camel message body or header with a tokenizer in Camel expressions or predicates.

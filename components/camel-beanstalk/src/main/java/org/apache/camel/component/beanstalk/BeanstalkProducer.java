@@ -25,7 +25,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.beanstalk.processors.Command;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 
 public class BeanstalkProducer extends DefaultProducer implements AsyncProcessor {
     private ExecutorService executor;

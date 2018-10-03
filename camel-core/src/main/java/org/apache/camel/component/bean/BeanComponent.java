@@ -19,13 +19,11 @@ package org.apache.camel.component.bean;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.LRUCache;
-import org.apache.camel.util.LRUCacheFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.LRUCache;
+import org.apache.camel.support.LRUCacheFactory;
 
 /**
  * The <a href="http://camel.apache.org/bean.html">Bean Component</a> is for invoking Java beans from Camel.

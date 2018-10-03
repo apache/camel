@@ -26,6 +26,7 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
@@ -206,14 +207,14 @@ public class XPathExpression extends NamespaceAwareExpression {
             try {
                 documentType = camelContext.getClassResolver().resolveMandatoryClass(documentTypeName);
             } catch (ClassNotFoundException e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
         if (resultType == null && resultTypeName != null) {
             try {
                 resultType = camelContext.getClassResolver().resolveMandatoryClass(resultTypeName);
             } catch (ClassNotFoundException e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
         resolveXPathFactory(camelContext);
@@ -226,7 +227,7 @@ public class XPathExpression extends NamespaceAwareExpression {
             try {
                 documentType = camelContext.getClassResolver().resolveMandatoryClass(documentTypeName);
             } catch (ClassNotFoundException e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
         resolveXPathFactory(camelContext);

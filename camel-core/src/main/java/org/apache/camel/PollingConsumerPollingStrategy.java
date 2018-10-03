@@ -22,7 +22,7 @@ package org.apache.camel;
  * For example this is used by schedule based consumers to be able to suspend/resume
  * upon polling using a {@link PollingConsumer}.
  *
- * @see org.apache.camel.impl.EventDrivenPollingConsumer
+ * @see org.apache.camel.support.EventDrivenPollingConsumer
  */
 public interface PollingConsumerPollingStrategy {
 

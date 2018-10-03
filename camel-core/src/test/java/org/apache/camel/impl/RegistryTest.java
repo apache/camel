@@ -18,7 +18,7 @@ package org.apache.camel.impl;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.camel.util.jndi.JndiTest;
+import org.apache.camel.support.jndi.JndiTest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

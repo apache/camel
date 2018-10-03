@@ -80,6 +80,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.Language;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
@@ -185,7 +186,7 @@ public abstract class CamelTestSupport extends TestSupport {
      * <p/>
      * Return <tt>*</tt> to mock all endpoints.
      *
-     * @see org.apache.camel.util.EndpointHelper#matchEndpoint(CamelContext, String, String)
+     * @see EndpointHelper#matchEndpoint(CamelContext, String, String)
      */
     public String isMockEndpoints() {
         return null;
@@ -197,7 +198,7 @@ public abstract class CamelTestSupport extends TestSupport {
      * <p/>
      * Return <tt>*</tt> to mock all endpoints.
      *
-     * @see org.apache.camel.util.EndpointHelper#matchEndpoint(CamelContext, String, String)
+     * @see EndpointHelper#matchEndpoint(CamelContext, String, String)
      */
     public String isMockEndpointsAndSkip() {
         return null;
@@ -787,7 +788,7 @@ public abstract class CamelTestSupport extends TestSupport {
             log.debug("Using jndi.properties from classpath root");
             properties.load(in);
         } else {
-            properties.put("java.naming.factory.initial", "org.apache.camel.util.jndi.CamelInitialContextFactory");
+            properties.put("java.naming.factory.initial", "org.apache.camel.support.jndi.CamelInitialContextFactory");
         }
         return new InitialContext(new Hashtable<>(properties));
     }

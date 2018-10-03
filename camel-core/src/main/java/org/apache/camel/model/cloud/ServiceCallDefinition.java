@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
@@ -52,13 +53,13 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.NoOutputDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.Suppliers;
 import org.apache.camel.util.function.ThrowingHelper;
 
-import static org.apache.camel.util.CamelContextHelper.findByType;
-import static org.apache.camel.util.CamelContextHelper.lookup;
+import static org.apache.camel.support.CamelContextHelper.findByType;
+import static org.apache.camel.support.CamelContextHelper.lookup;
 
 /**
  * To call remote services
@@ -765,10 +766,10 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         final ServiceChooser serviceChooser = retrieveServiceChooser(camelContext);
         final ServiceLoadBalancer loadBalancer = retrieveLoadBalancer(camelContext);
 
-        ObjectHelper.trySetCamelContext(serviceDiscovery, camelContext);
-        ObjectHelper.trySetCamelContext(serviceFilter, camelContext);
-        ObjectHelper.trySetCamelContext(serviceChooser, camelContext);
-        ObjectHelper.trySetCamelContext(loadBalancer, camelContext);
+        CamelContextAware.trySetCamelContext(serviceDiscovery, camelContext);
+        CamelContextAware.trySetCamelContext(serviceFilter, camelContext);
+        CamelContextAware.trySetCamelContext(serviceChooser, camelContext);
+        CamelContextAware.trySetCamelContext(loadBalancer, camelContext);
 
         if (loadBalancer instanceof ServiceDiscoveryAware) {
             ((ServiceDiscoveryAware) loadBalancer).setServiceDiscovery(serviceDiscovery);

@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.schematron.constant.Constants;
 import org.apache.camel.component.schematron.exception.SchematronValidationException;
 import org.apache.camel.component.schematron.processor.SchematronProcessorFactory;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

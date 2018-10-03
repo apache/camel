@@ -25,7 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.RedeliveryErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
-import org.apache.camel.util.CamelLogger;
+import org.apache.camel.support.CamelLogger;
 
 /**
  * This error handler does redelivering. If the transaction fails it can be

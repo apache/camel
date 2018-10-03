@@ -18,7 +18,7 @@ package org.apache.camel.processor.aggregate;
 
 import org.apache.camel.Exchange;
 
-import static org.apache.camel.util.ExchangeHelper.hasExceptionBeenHandledByErrorHandler;
+import static org.apache.camel.support.ExchangeHelper.hasExceptionBeenHandledByErrorHandler;
 
 /**
  * An {@link AggregationStrategy} which just uses the latest exchange which is useful

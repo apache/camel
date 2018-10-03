@@ -30,10 +30,8 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.ObjectHelper;
 
 /**
  * The test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.
@@ -82,7 +80,7 @@ public class TestEndpoint extends MockEndpoint {
                 }
                 if (split) {
                     // use new lines in both styles
-                    Iterator it = ObjectHelper.createIterator(body, delimiter, false, true);
+                    Iterator<?> it = ObjectHelper.createIterator(body, delimiter, false, true);
                     while (it.hasNext()) {
                         Object line = it.next();
                         log.trace("Received message body {}", line);

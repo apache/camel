@@ -44,7 +44,7 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 
 /**
  * An abstract class which implement <a href="http://camel.apache.org/data-format.html">data format</a>
@@ -377,7 +377,7 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements C
 
     @Override
     protected void doStart() throws Exception {
-        ObjectHelper.notNull(camelContext, "camelContext");
+        org.apache.camel.util.ObjectHelper.notNull(camelContext, "camelContext");
         // initialize xstream
         if (xstream == null) {
             xstream = createXStream(camelContext.getClassResolver(), camelContext.getApplicationContextClassLoader());

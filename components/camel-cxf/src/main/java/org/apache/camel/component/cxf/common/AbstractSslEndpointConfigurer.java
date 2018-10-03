@@ -22,7 +22,7 @@ import java.security.GeneralSecurityException;
 import javax.net.ssl.SSLSocketFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.transport.http.HTTPConduit;
 

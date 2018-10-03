@@ -21,7 +21,7 @@ import java.util.Arrays;
 import com.amazonaws.services.simpleworkflow.flow.worker.GenericActivityWorker;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

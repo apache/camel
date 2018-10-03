@@ -19,7 +19,7 @@ package org.apache.camel.component.stomp;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.support.DefaultAsyncProducer;
 
 public class StompProducer extends DefaultAsyncProducer implements Processor {
 

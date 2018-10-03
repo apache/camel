@@ -41,8 +41,8 @@ import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import javax.security.auth.Subject;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.felix.service.command.CommandProcessor;
 import org.apache.felix.service.command.CommandSession;
 import org.apache.karaf.features.Feature;
@@ -304,7 +304,7 @@ public class CamelKarafTestSupport extends CamelTestSupport {
             }
             fail("Feature " + featureName + " should be installed but is not");
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -318,7 +318,7 @@ public class CamelKarafTestSupport extends CamelTestSupport {
             }
             fail("Feature " + featureName + "/" + featureVersion + " should be installed but is not");
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
     
@@ -382,7 +382,7 @@ public class CamelKarafTestSupport extends CamelTestSupport {
                 }
             }
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

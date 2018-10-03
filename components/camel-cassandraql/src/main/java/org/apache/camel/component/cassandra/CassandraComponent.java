@@ -20,8 +20,8 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.StringHelper;
 
 /**

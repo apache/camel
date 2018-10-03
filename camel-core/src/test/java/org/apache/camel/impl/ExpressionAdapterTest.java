@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExpressionAdapter;
 import org.junit.Test;
 

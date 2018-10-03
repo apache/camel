@@ -38,8 +38,9 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.SynchronizationAdapter;
-import org.apache.camel.util.ObjectHelper;
 import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
@@ -169,7 +170,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
         Class<?>[] parameterTypes = method.getParameterTypes();
         for (Class<?> type : parameterTypes) {
-            String propertyName = ObjectHelper.getPropertyName(method);
+            String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
             Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), endpointInject.property(), propertyName, bean, "foo");
             ObjectHelper.invokeMethod(method, bean, value);
         }
@@ -193,7 +194,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
         Class<?>[] parameterTypes = method.getParameterTypes();
         for (Class<?> type : parameterTypes) {
-            String propertyName = ObjectHelper.getPropertyName(method);
+            String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
             Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), endpointInject.property(), propertyName, bean, "foo");
             ObjectHelper.invokeMethod(method, bean, value);
         }
@@ -221,7 +222,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
         Class<?>[] parameterTypes = method.getParameterTypes();
         for (Class<?> type : parameterTypes) {
-            String propertyName = ObjectHelper.getPropertyName(method);
+            String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
             Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), endpointInject.property(), propertyName, bean, "foo");
             ObjectHelper.invokeMethod(method, bean, value);
         }

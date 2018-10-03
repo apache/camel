@@ -19,9 +19,7 @@ package org.apache.camel.component.atmos.integration.consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.component.atmos.AtmosConfiguration;
 import org.apache.camel.component.atmos.AtmosEndpoint;
-import org.apache.camel.impl.ScheduledPollConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.ScheduledPollConsumer;
 
 
 public abstract class AtmosScheduledPollConsumer extends ScheduledPollConsumer {

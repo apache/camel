@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.apache.camel.spi.EndpointUtilizationStatistics;
-import org.apache.camel.util.LRUCacheFactory;
+import org.apache.camel.support.LRUCacheFactory;
 
 public class DefaultEndpointUtilizationStatistics implements EndpointUtilizationStatistics {
 

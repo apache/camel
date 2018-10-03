@@ -27,7 +27,7 @@ import org.apache.camel.component.wordpress.api.model.SearchCriteria;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.StringHelper;
 
 @UriParams

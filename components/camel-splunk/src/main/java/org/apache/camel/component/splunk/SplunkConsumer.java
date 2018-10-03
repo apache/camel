@@ -27,7 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.splunk.event.SplunkEvent;
 import org.apache.camel.component.splunk.support.SplunkDataReader;
 import org.apache.camel.component.splunk.support.SplunkResultProcessor;
-import org.apache.camel.impl.ScheduledBatchPollingConsumer;
+import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 

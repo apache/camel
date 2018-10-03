@@ -29,7 +29,7 @@ import org.apache.camel.component.beanstalk.processors.KickCommand;
 import org.apache.camel.component.beanstalk.processors.PutCommand;
 import org.apache.camel.component.beanstalk.processors.ReleaseCommand;
 import org.apache.camel.component.beanstalk.processors.TouchCommand;
-import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;

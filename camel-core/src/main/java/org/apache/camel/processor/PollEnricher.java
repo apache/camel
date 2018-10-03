@@ -26,22 +26,20 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.PollingConsumer;
-import org.apache.camel.impl.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.impl.ConsumerCache;
-import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.impl.EventDrivenPollingConsumer;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
+import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.EventDrivenPollingConsumer;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
+import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern;
 
 /**
  * A content enricher that enriches input data by first obtaining additional

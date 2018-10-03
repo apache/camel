@@ -33,10 +33,10 @@ import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.component.bean.BeanInfo;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.processor.CamelInternalProcessor;
+import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 
 /**
  * A {@link Processor} which is used for POJO @Consume where you can have multiple @Consume on the same endpoint/consumer

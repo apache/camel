@@ -20,8 +20,8 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionMessage;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;

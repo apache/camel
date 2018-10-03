@@ -33,7 +33,6 @@ import org.apache.camel.Service;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.log.LogEndpoint;
-import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.management.mbean.ManagedAggregateProcessor;
 import org.apache.camel.management.mbean.ManagedBeanProcessor;
 import org.apache.camel.management.mbean.ManagedBrowsableEndpoint;
@@ -164,6 +163,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementObjectStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.ScheduledPollConsumer;
 
 /**
  * Default {@link org.apache.camel.spi.ManagementObjectStrategy}.

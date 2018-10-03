@@ -26,7 +26,7 @@ import java.util.Map.Entry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.apns.model.InactiveDevice;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.support.ScheduledPollConsumer;
 
 public class ApnsConsumer extends ScheduledPollConsumer {
 

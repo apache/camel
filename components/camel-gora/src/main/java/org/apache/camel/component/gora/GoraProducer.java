@@ -19,11 +19,9 @@ package org.apache.camel.component.gora;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.gora.persistency.Persistent;
 import org.apache.gora.store.DataStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.gora.utils.GoraUtils.constractQueryFromPropertiesMap;
 import static org.apache.camel.component.gora.utils.GoraUtils.getKeyFromExchange;

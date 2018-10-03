@@ -22,8 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.support.AsyncProcessorHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
  * Processor for marking an {@link org.apache.camel.Exchange} to rollback.

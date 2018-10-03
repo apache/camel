@@ -89,7 +89,7 @@ public class RestSwaggerComponentConfiguration
     /**
      * Customize TLS parameters used by the component. If not set defaults to
      * the TLS parameters set in the Camel context. The option is a
-     * org.apache.camel.util.jsse.SSLContextParameters type.
+     * org.apache.camel.support.jsse.SSLContextParameters type.
      */
     private String sslContextParameters;
     /**

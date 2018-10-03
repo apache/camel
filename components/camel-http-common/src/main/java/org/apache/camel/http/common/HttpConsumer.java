@@ -18,7 +18,7 @@ package org.apache.camel.http.common;
 
 import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 
 public class HttpConsumer extends DefaultConsumer implements Suspendable {
     private volatile boolean suspended;

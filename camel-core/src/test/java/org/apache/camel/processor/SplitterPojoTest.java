@@ -27,8 +27,8 @@ import org.apache.camel.Header;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.support.DefaultMessage;
 import org.junit.Test;
 
 public class SplitterPojoTest extends ContextTestSupport {

@@ -19,7 +19,7 @@ package org.apache.camel.component.zookeeper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.support.DefaultMessage;
 import org.apache.zookeeper.CreateMode;
 import org.junit.Test;
 

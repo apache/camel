@@ -22,7 +22,7 @@ import java.util.Map;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.spi.Language;
-import org.apache.camel.util.jndi.JndiTest;
+import org.apache.camel.support.jndi.JndiTest;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -70,7 +70,7 @@ public class JndiRegistryTest extends Assert {
     @Test
     public void testCamelContextFactory() throws Exception {
         Map<Object, Object> env = new HashMap<>();
-        env.put("java.naming.factory.initial", "org.apache.camel.util.jndi.CamelInitialContextFactory");
+        env.put("java.naming.factory.initial", "org.apache.camel.support.jndi.CamelInitialContextFactory");
 
         JndiRegistry jndi = new JndiRegistry(env);
         jndi.bind("bar", "Hello bar");

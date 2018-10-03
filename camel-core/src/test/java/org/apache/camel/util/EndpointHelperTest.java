@@ -27,6 +27,7 @@ import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.support.EndpointHelper;
 import org.junit.Test;
 
 public class EndpointHelperTest extends ContextTestSupport {

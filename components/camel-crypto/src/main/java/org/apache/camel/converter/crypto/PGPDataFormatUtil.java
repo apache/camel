@@ -28,7 +28,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.support.ResourceHelper;
 import org.bouncycastle.bcpg.sig.KeyFlags;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPrivateKey;

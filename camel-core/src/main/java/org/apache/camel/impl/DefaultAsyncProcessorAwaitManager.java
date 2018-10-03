@@ -28,14 +28,12 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.camel.Exchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.processor.DefaultExchangeFormatter;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ExchangeFormatter;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.MessageHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements AsyncProcessorAwaitManager {
 
@@ -153,7 +151,7 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
                 log.warn(sb.toString());
 
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             } finally {
                 if (statistics.isStatisticsEnabled()) {
                     interruptedCounter.incrementAndGet();

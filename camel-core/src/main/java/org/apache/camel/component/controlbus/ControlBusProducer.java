@@ -27,10 +27,10 @@ import org.apache.camel.Expression;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.Language;
-import org.apache.camel.util.CamelLogger;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.CamelLogger;
+import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**

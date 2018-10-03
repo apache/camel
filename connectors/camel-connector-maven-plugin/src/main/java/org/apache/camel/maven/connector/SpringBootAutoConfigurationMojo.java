@@ -313,7 +313,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.addImport("org.apache.camel.spi.HasId");
         javaClass.addImport("org.apache.camel.spring.boot.util.HierarchicalPropertiesEvaluator");
         javaClass.addImport("org.apache.camel.util.ObjectHelper");
-        javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
+        javaClass.addImport("org.apache.camel.support.IntrospectionSupport");
 
         javaClass.addField()
             .setPrivate()

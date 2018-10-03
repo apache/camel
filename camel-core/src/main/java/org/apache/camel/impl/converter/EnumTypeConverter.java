@@ -20,8 +20,8 @@ import java.lang.reflect.Method;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.TypeConverterSupport;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * A type converter which is used to convert from String to enum type

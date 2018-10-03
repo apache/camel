@@ -21,8 +21,8 @@ import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ExpressionAdapter;
-import org.apache.camel.util.ObjectHelper;
 
 public class AckExpression extends ExpressionAdapter {
 
@@ -56,7 +56,7 @@ public class AckExpression extends ExpressionAdapter {
             }
             return msg.generateACK(code == null ? AcknowledgmentCode.AA : code, hl7e);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

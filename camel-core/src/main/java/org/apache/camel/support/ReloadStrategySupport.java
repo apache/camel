@@ -22,20 +22,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.model.ModelCamelContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.util.CollectionStringBuffer;
-import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.XmlLineNumberParser;
@@ -124,7 +124,7 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
                     }
                 } catch (Exception e) {
                     failed++;
-                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
             }
         }
@@ -151,7 +151,7 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
                 log.info("Reloaded routes: [{}] from XML resource: {}", csb, name);
             } catch (Exception e) {
                 failed++;
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
 
         }

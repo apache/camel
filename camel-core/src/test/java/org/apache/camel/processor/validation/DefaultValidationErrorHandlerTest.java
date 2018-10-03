@@ -26,7 +26,7 @@ import org.xml.sax.SAXParseException;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.junit.Test;
 
 public class DefaultValidationErrorHandlerTest extends ContextTestSupport {

@@ -20,6 +20,7 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.UnaryOperatorType;
@@ -89,7 +90,7 @@ public class UnaryExpression extends BaseSimpleNode {
                     try {
                         left = exchange.getContext().getTypeConverter().mandatoryConvertTo(left.getClass(), exchange, val);
                     } catch (NoTypeConversionAvailableException e) {
-                        throw ObjectHelper.wrapRuntimeCamelException(e);
+                        throw RuntimeCamelException.wrapRuntimeCamelException(e);
                     }
 
                     // and return the result
@@ -97,7 +98,7 @@ public class UnaryExpression extends BaseSimpleNode {
                 }
                 // cannot convert the expression as a number
                 Exception cause = new CamelExchangeException("Cannot evaluate " + leftExp + " as a number", exchange);
-                throw ObjectHelper.wrapRuntimeCamelException(cause);
+                throw RuntimeCamelException.wrapRuntimeCamelException(cause);
             }
 
             @Override
@@ -121,7 +122,7 @@ public class UnaryExpression extends BaseSimpleNode {
                     try {
                         left = exchange.getContext().getTypeConverter().mandatoryConvertTo(left.getClass(), exchange, val);
                     } catch (NoTypeConversionAvailableException e) {
-                        throw ObjectHelper.wrapRuntimeCamelException(e);
+                        throw RuntimeCamelException.wrapRuntimeCamelException(e);
                     }
 
                     // and return the result
@@ -129,7 +130,7 @@ public class UnaryExpression extends BaseSimpleNode {
                 }
                 // cannot convert the expression as a number
                 Exception cause = new CamelExchangeException("Cannot evaluate " + leftExp + " as a number", exchange);
-                throw ObjectHelper.wrapRuntimeCamelException(cause);
+                throw RuntimeCamelException.wrapRuntimeCamelException(cause);
             }
 
             @Override

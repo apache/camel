@@ -17,7 +17,7 @@
 package org.apache.camel.component.paho;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.support.DefaultMessage;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 public class PahoMessage extends DefaultMessage {

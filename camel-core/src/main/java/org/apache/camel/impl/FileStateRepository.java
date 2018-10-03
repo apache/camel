@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
@@ -32,8 +33,6 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.Scanner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This {@link FileStateRepository} class is a file-based implementation of a {@link StateRepository}.
@@ -169,7 +168,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
             fos.write(value.getBytes());
             fos.write(STORE_DELIMITER.getBytes());
         } catch (IOException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         } finally {
             IOHelper.close(fos, "Appending to file state repository", log);
         }
@@ -191,7 +190,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
                 fos.write(STORE_DELIMITER.getBytes());
             }
         } catch (IOException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         } finally {
             IOHelper.close(fos, "Trunking file state repository", log);
         }
@@ -226,7 +225,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
                 cache.put(key, value);
             }
         } catch (IOException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
         log.debug("Loaded {} to the 1st level cache from state filestore: {}", cache.size(), fileStore);

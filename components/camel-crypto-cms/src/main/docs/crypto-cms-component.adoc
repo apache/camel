@@ -120,7 +120,7 @@ The following example shows how you can create an Enveloped Data message and how
 
 [source,java]
 ----
-import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.component.crypto.cms.crypt.DefaultKeyTransRecipientInfo;
 ...
 KeyStoreParameters keystore  = new KeyStoreParameters();
@@ -166,7 +166,7 @@ from("direct:start")
 
 [source,java]
 ----
-import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.component.crypto.cms.crypt.DefaultKeyTransRecipientInfo;
 ...
 KeyStoreParameters keystore  = new KeyStoreParameters();
@@ -230,7 +230,7 @@ The following example shows how you can create a Signed Data message and how you
 
 [source,java]
 ----
-import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.component.crypto.cms.sig.DefaultSignerInfo;
 ...
 KeyStoreParameters keystore  = new KeyStoreParameters();
@@ -285,7 +285,7 @@ from("direct:start")
 
 [source,java]
 ----
-import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.component.crypto.cms.sig.DefaultSignerInfo;
 ...
 KeyStoreParameters keystore  = new KeyStoreParameters();
@@ -356,7 +356,7 @@ from("direct:start")
 
 [source,java]
 ----
-import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.component.crypto.cms.sig.DefaultSignerInfo;
 ...
 KeyStoreParameters keystore  = new KeyStoreParameters();

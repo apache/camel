@@ -17,6 +17,8 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.SimpleUuidGenerator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

@@ -22,8 +22,8 @@ import static java.util.Objects.requireNonNull;
 
 import org.apache.camel.component.iec60870.AbstractConnectionMultiplexor.Handle;
 import org.apache.camel.component.iec60870.client.ClientOptions;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;

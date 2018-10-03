@@ -23,7 +23,7 @@ import org.apache.camel.component.weather.http.AuthenticationHttpClientConfigure
 import org.apache.camel.component.weather.http.AuthenticationMethod;
 import org.apache.camel.component.weather.http.CompositeHttpConfigurer;
 import org.apache.camel.component.weather.http.HttpClientConfigurer;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;

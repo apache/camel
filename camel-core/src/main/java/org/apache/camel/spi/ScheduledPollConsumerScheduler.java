@@ -19,11 +19,13 @@ package org.apache.camel.spi;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consumer;
 import org.apache.camel.ShutdownableService;
+import org.apache.camel.support.DefaultScheduledPollConsumerScheduler;
+import org.apache.camel.support.ScheduledPollConsumer;
 
 /**
- * A pluggable scheduler for {@link org.apache.camel.impl.ScheduledPollConsumer} consumers.
+ * A pluggable scheduler for {@link ScheduledPollConsumer} consumers.
  * <p/>
- * The default implementation {@link org.apache.camel.impl.DefaultScheduledPollConsumerScheduler} is
+ * The default implementation {@link DefaultScheduledPollConsumerScheduler} is
  * using the {@link java.util.concurrent.ScheduledExecutorService} from the JDK to schedule and run the poll task.
  * <p/>
  * An alternative implementation is in <tt>camel-quartz2</tt> component that allows to use CRON expression

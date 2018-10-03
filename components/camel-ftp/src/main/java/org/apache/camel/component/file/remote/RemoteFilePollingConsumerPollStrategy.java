@@ -18,7 +18,7 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultPollingConsumerPollStrategy;
+import org.apache.camel.support.DefaultPollingConsumerPollStrategy;
 
 /**
  * Remote file consumer polling strategy that attempts to help recovering from lost connections.

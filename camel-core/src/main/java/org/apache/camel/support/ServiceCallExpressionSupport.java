@@ -17,9 +17,8 @@
 package org.apache.camel.support;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.cloud.ServiceCallConstants;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ObjectHelper;
 
 public abstract class ServiceCallExpressionSupport extends ExpressionAdapter {
     private String hostHeader;
@@ -61,7 +60,7 @@ public abstract class ServiceCallExpressionSupport extends ExpressionAdapter {
                 exchange.getIn().getHeader(ServiceCallConstants.SERVICE_CALL_CONTEXT_PATH, String.class),
                 exchange.getIn().getHeader(ServiceCallConstants.SERVICE_CALL_SCHEME, String.class));
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

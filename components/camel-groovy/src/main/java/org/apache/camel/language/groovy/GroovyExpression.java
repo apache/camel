@@ -26,7 +26,7 @@ import groovy.lang.Script;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ExpressionSupport;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 
 public class GroovyExpression extends ExpressionSupport {
     private final String text;

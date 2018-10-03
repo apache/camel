@@ -27,7 +27,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.support.ExpressionAdapter;
-import org.apache.camel.util.ExpressionToPredicateAdapter;
+import org.apache.camel.support.ExpressionToPredicateAdapter;
 
 /**
  * A builder of expressions or predicates based on values.

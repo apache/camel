@@ -100,7 +100,7 @@ with the following path and query parameters:
 | *onTopic* (filter) | Handle topic change events. | true | boolean
 | *nickPassword* (security) | Your IRC server nickname password. |  | String
 | *password* (security) | The IRC server password. |  | String
-| *sslContextParameters* (security) | Used for configuring security using SSL. Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry. This reference overrides any configured SSLContextParameters at the component level. Note that this setting overrides the trustManager option. |  | SSLContextParameters
+| *sslContextParameters* (security) | Used for configuring security using SSL. Reference to a org.apache.camel.support.jsse.SSLContextParameters in the Registry. This reference overrides any configured SSLContextParameters at the component level. Note that this setting overrides the trustManager option. |  | SSLContextParameters
 | *trustManager* (security) | The trust manager used to verify the SSL server's certificate. |  | SSLTrustManager
 | *username* (security) | The IRC server user name. |  | String
 |===

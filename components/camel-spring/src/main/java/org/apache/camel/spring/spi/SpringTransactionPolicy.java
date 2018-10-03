@@ -18,6 +18,7 @@ package org.apache.camel.spring.spi;
 
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.model.RouteDefinition;
@@ -123,7 +124,7 @@ public class SpringTransactionPolicy implements TransactedPolicy {
         try {
             answer = (TransactionErrorHandler) builder.createErrorHandler(routeContext, processor);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
         return answer;
     }

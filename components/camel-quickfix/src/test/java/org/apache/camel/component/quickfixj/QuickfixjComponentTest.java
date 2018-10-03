@@ -39,7 +39,7 @@ import org.apache.camel.component.quickfixj.converter.QuickfixjConverters;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.converter.StaticMethodTypeConverter;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

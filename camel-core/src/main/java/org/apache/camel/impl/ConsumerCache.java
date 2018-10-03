@@ -22,11 +22,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Cache containing created {@link org.apache.camel.Consumer}.

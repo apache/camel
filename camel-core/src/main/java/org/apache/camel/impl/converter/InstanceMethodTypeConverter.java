@@ -23,8 +23,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.TypeConverterSupport;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * A {@link TypeConverter} implementation which instantiates an object
@@ -69,7 +69,7 @@ public class InstanceMethodTypeConverter extends TypeConverterSupport {
             }
         }
         return useExchange
-            ? (T)ObjectHelper.invokeMethod(method, instance, value, exchange) : (T)ObjectHelper
+            ? (T)ObjectHelper.invokeMethod(method, instance, value, exchange) : (T) ObjectHelper
                 .invokeMethod(method, instance, value);
     }
 

@@ -24,7 +24,7 @@ import io.atomix.catalyst.transport.Address;
 import io.atomix.copycat.server.storage.Storage;
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.support.ResourceHelper;
 
 public final class AtomixClusterHelper {
     private AtomixClusterHelper() {

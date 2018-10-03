@@ -42,6 +42,7 @@ import javax.xml.transform.Source;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +98,7 @@ public class StaxConverter {
     public XMLEventWriter createXMLEventWriter(OutputStream out, Exchange exchange) throws XMLStreamException {
         XMLOutputFactory factory = getOutputFactory();
         try {
-            return factory.createXMLEventWriter(IOHelper.buffered(out), IOHelper.getCharsetName(exchange));
+            return factory.createXMLEventWriter(IOHelper.buffered(out), ExchangeHelper.getCharsetName(exchange));
         } finally {
             returnXMLOutputFactory(factory);
         }
@@ -127,7 +128,7 @@ public class StaxConverter {
     public XMLStreamWriter createXMLStreamWriter(OutputStream outputStream, Exchange exchange) throws XMLStreamException {
         XMLOutputFactory factory = getOutputFactory();
         try {
-            return factory.createXMLStreamWriter(IOHelper.buffered(outputStream), IOHelper.getCharsetName(exchange));
+            return factory.createXMLStreamWriter(IOHelper.buffered(outputStream), ExchangeHelper.getCharsetName(exchange));
         } finally {
             returnXMLOutputFactory(factory);
         }
@@ -157,7 +158,7 @@ public class StaxConverter {
     public XMLStreamReader createXMLStreamReader(InputStream in, Exchange exchange) throws XMLStreamException {
         XMLInputFactory factory = getInputFactory();
         try {
-            String charsetName = IOHelper.getCharsetName(exchange, false);
+            String charsetName = ExchangeHelper.getCharsetName(exchange, false);
             if (charsetName == null) {
                 return factory.createXMLStreamReader(IOHelper.buffered(in));
             } else {
@@ -172,7 +173,7 @@ public class StaxConverter {
     public XMLStreamReader createXMLStreamReader(File file, Exchange exchange) throws XMLStreamException, FileNotFoundException {
         XMLInputFactory factory = getInputFactory();
         try {
-            return factory.createXMLStreamReader(IOHelper.buffered(new FileInputStream(file)), IOHelper.getCharsetName(exchange));
+            return factory.createXMLStreamReader(IOHelper.buffered(new FileInputStream(file)), ExchangeHelper.getCharsetName(exchange));
         } finally {
             returnXMLInputFactory(factory);
         }
@@ -212,7 +213,7 @@ public class StaxConverter {
     public XMLEventReader createXMLEventReader(InputStream in, Exchange exchange) throws XMLStreamException {
         XMLInputFactory factory = getInputFactory();
         try {
-            String charsetName = IOHelper.getCharsetName(exchange, false);
+            String charsetName = ExchangeHelper.getCharsetName(exchange, false);
             if (charsetName == null) {
                 return factory.createXMLEventReader(IOHelper.buffered(in));
             } else {
@@ -227,7 +228,7 @@ public class StaxConverter {
     public XMLEventReader createXMLEventReader(File file, Exchange exchange) throws XMLStreamException, FileNotFoundException {
         XMLInputFactory factory = getInputFactory();
         try {
-            return factory.createXMLEventReader(IOHelper.buffered(new FileInputStream(file)), IOHelper.getCharsetName(exchange));
+            return factory.createXMLEventReader(IOHelper.buffered(new FileInputStream(file)), ExchangeHelper.getCharsetName(exchange));
         } finally {
             returnXMLInputFactory(factory);
         }
@@ -267,7 +268,7 @@ public class StaxConverter {
     public InputStream createInputStream(XMLStreamReader reader, Exchange exchange) {
         XMLOutputFactory factory = getOutputFactory();
         try {
-            String charsetName = IOHelper.getCharsetName(exchange, false);
+            String charsetName = ExchangeHelper.getCharsetName(exchange, false);
             return new XMLStreamReaderInputStream(reader, charsetName, factory);
         } finally {
             returnXMLOutputFactory(factory);

@@ -27,6 +27,7 @@ import com.orbitz.consul.model.catalog.CatalogService;
 import com.orbitz.consul.model.health.ServiceHealth;
 import com.orbitz.consul.option.ImmutableQueryOptions;
 import com.orbitz.consul.option.QueryOptions;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.impl.cloud.DefaultServiceDefinition;
@@ -42,7 +43,7 @@ public final class ConsulServiceDiscovery extends DefaultServiceDiscovery {
     public ConsulServiceDiscovery(ConsulConfiguration configuration) throws Exception {
         this.client = Suppliers.memorize(
             () -> configuration.createConsulClient(getCamelContext()),
-            e -> ObjectHelper.wrapRuntimeCamelException(e)
+            e -> RuntimeCamelException.wrapRuntimeCamelException(e)
         );
 
         ImmutableQueryOptions.Builder builder = ImmutableQueryOptions.builder();

@@ -41,8 +41,10 @@ import org.apache.camel.spi.SubUnitOfWorkCallback;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationVetoable;
 import org.apache.camel.spi.UnitOfWork;
-import org.apache.camel.util.EventHelper;
-import org.apache.camel.util.UnitOfWorkHelper;
+import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.support.EventHelper;
+import org.apache.camel.support.MessageSupport;
+import org.apache.camel.support.UnitOfWorkHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

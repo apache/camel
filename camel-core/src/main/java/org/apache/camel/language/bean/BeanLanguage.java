@@ -20,8 +20,8 @@ import org.apache.camel.Expression;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
-import org.apache.camel.util.ExpressionToPredicateAdapter;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ExpressionToPredicateAdapter;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -79,7 +79,7 @@ public class BeanLanguage implements Language, IsSingleton {
     }
 
     public Expression createExpression(String expression) {
-        ObjectHelper.notNull(expression, "expression");
+        org.apache.camel.util.ObjectHelper.notNull(expression, "expression");
 
         String beanName = expression;
         String method = null;
@@ -110,7 +110,7 @@ public class BeanLanguage implements Language, IsSingleton {
     }
 
     public Expression createExpression(Object bean, String method) {
-        ObjectHelper.notNull(bean, "bean");
+        org.apache.camel.util.ObjectHelper.notNull(bean, "bean");
         return new BeanExpression(bean, method);
     }
 

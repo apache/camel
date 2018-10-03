@@ -18,8 +18,8 @@ package org.apache.camel.component.mybatis;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.bean.BeanProcessor;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 

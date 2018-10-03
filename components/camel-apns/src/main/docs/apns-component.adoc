@@ -147,7 +147,7 @@ https://github.com/apache/camel/tree/master/components/camel-apns[test
 source code].
 
 ##### SSL Setting
-In order to use secure connection, an instance of `org.apache.camel.util.jsse.SSLContextParameters`
+In order to use secure connection, an instance of `org.apache.camel.support.jsse.SSLContextParameters`
  should be injected to `org.apache.camel.component.apns.factory.ApnsServiceFactory` which is
  used to configure the component. See the test resources for an example.
  https://github.com/apache/camel/blob/master/components/camel-apns/src/test/resources/org/apache/camel/component/apns/spring/SpringApnsConsumerTest-context.xml[ssl example]

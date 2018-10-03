@@ -18,7 +18,7 @@ package org.apache.camel.component.spring.integration;
 
 import java.util.Map;
 
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * Represents the component that manages {@link SpringIntegrationEndpoint}.

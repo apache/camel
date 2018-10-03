@@ -17,12 +17,11 @@
 package org.apache.camel.converter;
 
 import java.math.BigInteger;
-import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 
 /**
  * Some core java.lang based <a
@@ -55,7 +54,7 @@ public final class ObjectConverter {
      */
     @Converter
     public static Boolean toBoolean(Object value) {
-        return ObjectHelper.toBoolean(value);
+        return org.apache.camel.util.ObjectHelper.toBoolean(value);
     }
 
     /**
@@ -127,7 +126,7 @@ public final class ObjectConverter {
             if (exchange != null) {
                 return exchange.getContext().getClassResolver().resolveClass((String) value);
             } else {
-                return ObjectHelper.loadClass((String) value);
+                return org.apache.camel.util.ObjectHelper.loadClass((String) value);
             }
         } else {
             return null;
@@ -216,7 +215,7 @@ public final class ObjectConverter {
         if (value instanceof Float) {
             return (Float) value;
         } else if (value instanceof Number) {
-            if (ObjectHelper.isNaN(value)) {
+            if (org.apache.camel.util.ObjectHelper.isNaN(value)) {
                 return Float.NaN;
             }
             Number number = (Number) value;
@@ -236,7 +235,7 @@ public final class ObjectConverter {
         if (value instanceof Double) {
             return (Double) value;
         } else if (value instanceof Number) {
-            if (ObjectHelper.isNaN(value)) {
+            if (org.apache.camel.util.ObjectHelper.isNaN(value)) {
                 return Double.NaN;
             }
             Number number = (Number) value;

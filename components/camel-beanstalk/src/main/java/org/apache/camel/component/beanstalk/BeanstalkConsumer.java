@@ -31,7 +31,7 @@ import org.apache.camel.component.beanstalk.processors.BuryCommand;
 import org.apache.camel.component.beanstalk.processors.Command;
 import org.apache.camel.component.beanstalk.processors.DeleteCommand;
 import org.apache.camel.component.beanstalk.processors.ReleaseCommand;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.spi.Synchronization;
 
 /**

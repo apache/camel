@@ -56,7 +56,7 @@ import org.apache.camel.spi.UnitOfWork;
  * an out, depending on the nature of the {@link Processor}. The in {@link Message} can be accessed 
  * using the {@link #getIn()} method. Since the out message is null when entering the {@link Processor}, 
  * the {@link #getOut()} method is actually a convenient factory method that will lazily instantiate a 
- * {@link org.apache.camel.impl.DefaultMessage} which you could populate. As an alternative you could 
+ * {@link org.apache.camel.support.DefaultMessage} which you could populate. As an alternative you could
  * also instantiate your specialized  {@link Message} and set it on the exchange using the 
  * {@link #setOut(org.apache.camel.Message)} method. Please note that a {@link Message} contains not only 
  * the body but also headers and attachments. If you are creating a new {@link Message} the headers and 

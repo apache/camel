@@ -23,8 +23,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.rest.RestConstants;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spring.boot.util.CamelPropertiesHelper;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.CollectionHelper;
-import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -73,26 +73,26 @@ public class RestConfigurationDefinitionAutoConfiguration {
         definition.setEnableCORS(config.getEnableCors());
         if (config.getApiProperty() != null) {
             definition.setApiProperties(new HashMap<>(CollectionHelper
-                    .flatternKeysInMap(config.getApiProperty(), ".")));
+                    .flattenKeysInMap(config.getApiProperty(), ".")));
         }
         if (config.getComponentProperty() != null) {
             definition.setComponentProperties(new HashMap<>(CollectionHelper
-                    .flatternKeysInMap(config.getComponentProperty(), ".")));
+                    .flattenKeysInMap(config.getComponentProperty(), ".")));
         }
         if (config.getConsumerProperty() != null) {
             definition.setConsumerProperties(new HashMap<>(CollectionHelper
-                    .flatternKeysInMap(config.getConsumerProperty(), ".")));
+                    .flattenKeysInMap(config.getConsumerProperty(), ".")));
         }
         if (config.getDataFormatProperty() != null) {
             definition.setDataFormatProperties(new HashMap<>(CollectionHelper
-                    .flatternKeysInMap(config.getDataFormatProperty(), ".")));
+                    .flattenKeysInMap(config.getDataFormatProperty(), ".")));
         }
         if (config.getEndpointProperty() != null) {
             definition.setEndpointProperties(new HashMap<>(CollectionHelper
-                    .flatternKeysInMap(config.getEndpointProperty(), ".")));
+                    .flattenKeysInMap(config.getEndpointProperty(), ".")));
         }
         if (config.getCorsHeaders() != null) {
-            Map<String, Object> map = CollectionHelper.flatternKeysInMap(
+            Map<String, Object> map = CollectionHelper.flattenKeysInMap(
                     config.getCorsHeaders(), ".");
             Map<String, String> target = new HashMap<>();
             map.forEach((k, v) -> target.put(k, v.toString()));

@@ -255,7 +255,7 @@ The component supports 33 options, which are listed below.
 | *camel.component.netty4-http.security-configuration.role-class-name* |  |  | String
 | *camel.component.netty4-http.security-configuration.security-authenticator* | Sets the {@link SecurityAuthenticator} to use for authenticating the {@link HttpPrincipal} . |  | SecurityAuthenticator
 | *camel.component.netty4-http.security-configuration.security-constraint* | Sets a {@link SecurityConstraint} to use for checking if a web resource is restricted or not <p/> By default this is <tt>null</tt>, which means all resources is restricted. |  | SecurityConstraint
-| *camel.component.netty4-http.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.util.jsse.SSLContextParameters type. |  | String
+| *camel.component.netty4-http.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
 | *camel.component.netty4-http.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 |===
 // spring-boot-auto-configure options: END

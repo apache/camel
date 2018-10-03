@@ -21,7 +21,7 @@ import java.net.URISyntaxException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.support.DefaultMessage;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

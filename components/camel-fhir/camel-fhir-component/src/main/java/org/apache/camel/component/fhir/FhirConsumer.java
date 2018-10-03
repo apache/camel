@@ -18,7 +18,7 @@ package org.apache.camel.component.fhir;
 
 import org.apache.camel.Processor;
 import org.apache.camel.component.fhir.internal.FhirApiName;
-import org.apache.camel.util.component.AbstractApiConsumer;
+import org.apache.camel.support.component.AbstractApiConsumer;
 
 /**
  * The FHIR consumer.

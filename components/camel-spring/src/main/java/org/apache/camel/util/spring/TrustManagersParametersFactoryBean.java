@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.core.xml.util.jsse.AbstractTrustManagersParametersFactoryBean;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
-import org.apache.camel.util.jsse.TrustManagersParameters;
+import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

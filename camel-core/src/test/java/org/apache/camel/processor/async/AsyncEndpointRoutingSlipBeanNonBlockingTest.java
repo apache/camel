@@ -31,8 +31,8 @@ import org.apache.camel.RoutingSlip;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.SendProcessor;
-import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.junit.Assert;
 import org.junit.Test;
 

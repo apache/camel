@@ -33,7 +33,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.component.cxf.DataFormat;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.cxf.message.MessageContentsList;
 
 /**
@@ -81,7 +81,7 @@ public final class CxfConverter {
     public static String soapMessageToString(final SOAPMessage soapMessage, Exchange exchange) throws SOAPException, IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         soapMessage.writeTo(baos);
-        return baos.toString(IOHelper.getCharsetName(exchange));
+        return baos.toString(ExchangeHelper.getCharsetName(exchange));
     }
     
     @Converter
