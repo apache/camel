@@ -55,12 +55,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             log.trace("prePollCheck on " + getEndpoint().getConfiguration().remoteServerInformation());
         }
         try {
-            if (getEndpoint().getMaximumReconnectAttempts() > 0) {
-                // only use recoverable if we are allowed any re-connect attempts
-                recoverableConnectIfNecessary();
-            } else {
-                connectIfNecessary();
-            }
+            connectIfNecessary();
         } catch (Exception e) {
             loggedIn = false;
 
@@ -180,37 +175,6 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         } catch (GenericFileOperationFailedException e) {
             // ignore just log a warning
             log.warn("Error occurred while disconnecting from " + remoteServer() + " due: " + e.getMessage() + ". This exception will be ignored.");
-        }
-    }
-
-    protected void recoverableConnectIfNecessary() throws Exception {
-        try {
-            connectIfNecessary();
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Could not connect to: " + getEndpoint() + ". Will try to recover.", e);
-            }
-            loggedIn = false;
-        }
-
-        // recover by re-creating operations which should most likely be able to recover
-        if (!loggedIn) {
-            log.debug("Trying to recover connection to: {} with a fresh client.", getEndpoint());
-            // we want to preserve last FTP activity listener when we set a new operations
-            if (operations instanceof FtpOperations) {
-                FtpOperations ftpOperations = (FtpOperations) operations;
-                FtpClientActivityListener listener = ftpOperations.getClientActivityListener();
-                setOperations(getEndpoint().createRemoteFileOperations());
-                getOperations().setEndpoint(getEndpoint());
-                if (listener != null) {
-                    ftpOperations = (FtpOperations) getOperations();
-                    ftpOperations.setClientActivityListener(listener);
-                }
-            } else {
-                setOperations(getEndpoint().createRemoteFileOperations());
-                getOperations().setEndpoint(getEndpoint());
-            }
-            connectIfNecessary();
         }
     }
 
