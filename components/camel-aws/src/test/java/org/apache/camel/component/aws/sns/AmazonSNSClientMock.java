@@ -23,8 +23,7 @@ import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.AmazonWebServiceRequest;
 import com.amazonaws.ResponseMetadata;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.sns.AmazonSNSClient;
+import com.amazonaws.services.sns.AbstractAmazonSNS;
 import com.amazonaws.services.sns.model.AddPermissionRequest;
 import com.amazonaws.services.sns.model.AddPermissionResult;
 import com.amazonaws.services.sns.model.ConfirmSubscriptionRequest;
@@ -55,13 +54,13 @@ import com.amazonaws.services.sns.model.UnsubscribeResult;
 
 import org.junit.Assert;
 
-public class AmazonSNSClientMock extends AmazonSNSClient {
+public class AmazonSNSClientMock extends AbstractAmazonSNS {
     
     private static final String DEFAULT_TOPIC_ARN = "arn:aws:sns:us-east-1:541925086079:MyTopic";
     private String endpoint;
     
     public AmazonSNSClientMock() {
-        super(new BasicAWSCredentials("myAccessKey", "mySecretKey"));
+        super();
     }
     
     @Override
