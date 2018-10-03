@@ -22,7 +22,7 @@ import java.util.List;
 import com.amazonaws.AmazonWebServiceRequest;
 import com.amazonaws.ResponseMetadata;
 import com.amazonaws.regions.Region;
-import com.amazonaws.services.kms.AWSKMS;
+import com.amazonaws.services.kms.AbstractAWSKMS;
 import com.amazonaws.services.kms.model.CancelKeyDeletionRequest;
 import com.amazonaws.services.kms.model.CancelKeyDeletionResult;
 import com.amazonaws.services.kms.model.CreateAliasRequest;
@@ -97,7 +97,7 @@ import com.amazonaws.services.kms.model.UpdateKeyDescriptionRequest;
 import com.amazonaws.services.kms.model.UpdateKeyDescriptionResult;
 
 
-public class AmazonKMSClientMock implements AWSKMS {
+public class AmazonKMSClientMock extends AbstractAWSKMS {
 
     public AmazonKMSClientMock() {
         super();
