@@ -23,6 +23,7 @@ import com.amazonaws.services.mq.model.CreateBrokerRequest;
 import com.amazonaws.services.mq.model.CreateBrokerResult;
 import com.amazonaws.services.mq.model.DeleteBrokerRequest;
 import com.amazonaws.services.mq.model.DeleteBrokerResult;
+import com.amazonaws.services.mq.model.DeploymentMode;
 import com.amazonaws.services.mq.model.DescribeBrokerRequest;
 import com.amazonaws.services.mq.model.DescribeBrokerResult;
 import com.amazonaws.services.mq.model.ListBrokersRequest;
@@ -136,7 +137,9 @@ public class MQProducer extends DefaultProducer {
         }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQConstants.BROKER_DEPLOYMENT_MODE))) {
             deploymentMode = exchange.getIn().getHeader(MQConstants.BROKER_DEPLOYMENT_MODE, String.class);
-            request.withDeploymentMode(deploymentMode);
+            request.withDeploymentMode(DeploymentMode.fromValue(deploymentMode));
+        } else {
+            throw new IllegalArgumentException("Deployment Mode must be specified");
         }
         CreateBrokerResult result;
         try {
