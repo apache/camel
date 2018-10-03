@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.reactive.streams;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
@@ -153,8 +152,8 @@ public class DirectClientAPITest extends ReactiveStreamsTestSupport {
         res.add(queue.poll(1, TimeUnit.SECONDS));
         res.add(queue.poll(1, TimeUnit.SECONDS));
         res.add(queue.poll(1, TimeUnit.SECONDS));
-        
-        Assertions.assertThat(res).containsExactlyInAnyOrderElementsOf(Arrays.asList("Hello 1", "Hello 2", "Hello 3"));
+
+        Assertions.assertThat(res).containsExactlyInAnyOrder("Hello 1", "Hello 2", "Hello 3");
     }
 
     @Test
