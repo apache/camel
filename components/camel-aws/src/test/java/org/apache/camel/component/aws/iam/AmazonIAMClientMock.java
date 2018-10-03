@@ -24,7 +24,7 @@ import java.util.List;
 import com.amazonaws.AmazonWebServiceRequest;
 import com.amazonaws.ResponseMetadata;
 import com.amazonaws.regions.Region;
-import com.amazonaws.services.identitymanagement.AbstractAmazonIdentityManagement;
+import com.amazonaws.services.identitymanagement.AmazonIdentityManagementClient;
 import com.amazonaws.services.identitymanagement.model.AccessKey;
 import com.amazonaws.services.identitymanagement.model.AccessKeyMetadata;
 import com.amazonaws.services.identitymanagement.model.AddClientIDToOpenIDConnectProviderRequest;
@@ -275,7 +275,7 @@ import com.amazonaws.services.identitymanagement.model.UploadSigningCertificateR
 import com.amazonaws.services.identitymanagement.model.User;
 import com.amazonaws.services.identitymanagement.waiters.AmazonIdentityManagementWaiters;
 
-public class AmazonIAMClientMock extends AbstractAmazonIdentityManagement {
+public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
 
     @Override
     public void setEndpoint(String endpoint) {
