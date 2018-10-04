@@ -21,6 +21,7 @@ import java.util.Map;
 import com.jcraft.jsch.ChannelSftp;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.component.file.strategy.GenericFileDeleteProcessStrategy;
@@ -111,6 +112,10 @@ public final class SftpProcessStrategyFactory {
                 if (checkInterval != null) {
                     readLockStrategy.setCheckInterval(checkInterval);
                 }
+                LoggingLevel readLockLoggingLevel = (LoggingLevel) params.get("readLockLoggingLevel");
+                if (readLockLoggingLevel != null) {
+                    readLockStrategy.setReadLockLoggingLevel(readLockLoggingLevel);
+                }
                 return readLockStrategy;
             } else if ("changed".equals(readLock)) {
                 SftpChangedExclusiveReadLockStrategy readLockStrategy = new SftpChangedExclusiveReadLockStrategy();
@@ -133,6 +138,10 @@ public final class SftpProcessStrategyFactory {
                 Boolean fastExistsCheck = (Boolean) params.get("fastExistsCheck");
                 if (fastExistsCheck != null) {
                     readLockStrategy.setFastExistsCheck(fastExistsCheck);
+                }
+                LoggingLevel readLockLoggingLevel = (LoggingLevel) params.get("readLockLoggingLevel");
+                if (readLockLoggingLevel != null) {
+                    readLockStrategy.setReadLockLoggingLevel(readLockLoggingLevel);
                 }
                 return readLockStrategy;
             }
