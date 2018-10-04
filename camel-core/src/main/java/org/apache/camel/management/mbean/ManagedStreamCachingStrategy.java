@@ -69,12 +69,39 @@ public class ManagedStreamCachingStrategy extends ManagedService implements Mana
         return streamCachingStrategy.getSpoolUsedHeapMemoryThreshold();
     }
 
-    public void setSpoolUsedHeapMemoryLimit(StreamCachingStrategy.SpoolUsedHeapMemoryLimit limit) {
-        streamCachingStrategy.setSpoolUsedHeapMemoryLimit(limit);
+    public void setSpoolUsedHeapMemoryLimit(SpoolUsedHeapMemoryLimit limit) {
+        StreamCachingStrategy.SpoolUsedHeapMemoryLimit l;
+        if (limit == null) {
+            l = null;
+        } else {
+            switch (limit) {
+                case Committed:
+                    l = StreamCachingStrategy.SpoolUsedHeapMemoryLimit.Committed;
+                    break;
+                case Max:
+                    l = StreamCachingStrategy.SpoolUsedHeapMemoryLimit.Max;
+                    break;
+                default:
+                    throw new IllegalStateException();
+            }
+        }
+        streamCachingStrategy.setSpoolUsedHeapMemoryLimit(l);
     }
 
-    public StreamCachingStrategy.SpoolUsedHeapMemoryLimit getSpoolUsedHeapMemoryLimit() {
-        return streamCachingStrategy.getSpoolUsedHeapMemoryLimit();
+    public SpoolUsedHeapMemoryLimit getSpoolUsedHeapMemoryLimit() {
+        StreamCachingStrategy.SpoolUsedHeapMemoryLimit l = streamCachingStrategy.getSpoolUsedHeapMemoryLimit();
+        if (l == null) {
+            return null;
+        } else {
+            switch (l) {
+                case Committed:
+                    return SpoolUsedHeapMemoryLimit.Committed;
+                case Max:
+                    return SpoolUsedHeapMemoryLimit.Max;
+                default:
+                    throw new IllegalStateException();
+            }
+        }
     }
 
     public void setBufferSize(int bufferSize) {

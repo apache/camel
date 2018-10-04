@@ -22,7 +22,6 @@ import javax.management.openmbean.TabularData;
 
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
-import org.apache.camel.component.extension.ComponentVerifierExtension;
 
 public interface ManagedComponentMBean {
 

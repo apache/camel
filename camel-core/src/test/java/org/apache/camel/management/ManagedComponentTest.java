@@ -20,14 +20,18 @@ import java.util.Collections;
 import java.util.Map;
 
 import javax.management.MBeanServer;
+import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
+import javax.management.remote.JMXConnector;
+import javax.management.remote.JMXConnectorFactory;
+import javax.management.remote.JMXServiceURL;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.direct.DirectComponent;
-import org.apache.camel.component.extension.ComponentVerifierExtension;
-import org.apache.camel.component.extension.ComponentVerifierExtension.Result;
-import org.apache.camel.component.extension.ComponentVerifierExtension.Scope;
+import org.apache.camel.api.management.mbean.ComponentVerifierExtension;
+import org.apache.camel.api.management.mbean.ComponentVerifierExtension.Result;
+import org.apache.camel.api.management.mbean.ComponentVerifierExtension.Scope;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.support.DefaultComponent;
@@ -41,6 +45,7 @@ public class ManagedComponentTest extends ManagementTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
+        context.getManagementStrategy().getManagementAgent().setCreateConnector(true);
         context.addComponent("my-verifiable-component", new MyVerifiableComponent());
         context.addComponent("direct", new DirectComponent());
 
@@ -74,7 +79,8 @@ public class ManagedComponentTest extends ManagementTestSupport {
             return;
         }
 
-        MBeanServer mbeanServer = getMBeanServer();
+        JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi/camel"));
+        MBeanServerConnection mbeanServer = connector.getMBeanServerConnection();
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=components,name=\"my-verifiable-component\"");
         assertTrue(mbeanServer.isRegistered(on));

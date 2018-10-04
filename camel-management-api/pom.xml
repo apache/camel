@@ -29,10 +29,10 @@
     <relativePath>../parent</relativePath>
   </parent>
 
-  <artifactId>camel-api</artifactId>
+  <artifactId>camel-management-api</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: API</name>
-  <description>The Camel API</description>
+  <name>Camel :: Management API</name>
+  <description>The Camel Management API</description>
 
   <dependencies>
 

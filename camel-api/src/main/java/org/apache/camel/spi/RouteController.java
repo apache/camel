@@ -19,11 +19,8 @@ package org.apache.camel.spi;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.Experimental;
 import org.apache.camel.Route;
-import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StaticService;
 

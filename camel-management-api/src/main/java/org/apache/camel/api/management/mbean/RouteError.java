@@ -14,19 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.api.management.mbean;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public interface RouteError {
+    enum Phase {
+        START,
+        STOP,
+        SUSPEND,
+        RESUME,
+        SHUTDOWN,
+        REMOVE
+    }
 
-/**
- * An experimental user-facing API. Experimental API's might change or be removed
- * in minor versions.
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD})
-public @interface Experimental {
-    int revision() default 1;
+    /**
+     * Gets the phase associated with the error.
+     *
+     * @return the phase.
+     */
+    Phase getPhase();
+
+    /**
+     * Gets the error.
+     *
+     * @return the error.
+     */
+    Throwable getException();
 }

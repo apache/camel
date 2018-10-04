@@ -18,9 +18,15 @@ package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
-import org.apache.camel.spi.StreamCachingStrategy;
 
 public interface ManagedStreamCachingStrategyMBean extends ManagedServiceMBean {
+
+    /**
+     * Used for selecting if the memory limit is <tt>committed</tt> or <tt>maximum</tt> heap memory setting.
+     */
+    enum SpoolUsedHeapMemoryLimit {
+        Committed, Max
+    }
 
     @ManagedAttribute(description = "Whether stream caching is enabled")
     boolean isEnabled();
@@ -44,10 +50,10 @@ public interface ManagedStreamCachingStrategyMBean extends ManagedServiceMBean {
     int getSpoolUsedHeapMemoryThreshold();
 
     @ManagedAttribute(description = "Whether used heap memory limit is committed or maximum")
-    void setSpoolUsedHeapMemoryLimit(StreamCachingStrategy.SpoolUsedHeapMemoryLimit limit);
+    void setSpoolUsedHeapMemoryLimit(SpoolUsedHeapMemoryLimit limit);
 
     @ManagedAttribute(description = "Whether used heap memory limit is committed or maximum")
-    StreamCachingStrategy.SpoolUsedHeapMemoryLimit getSpoolUsedHeapMemoryLimit();
+    SpoolUsedHeapMemoryLimit getSpoolUsedHeapMemoryLimit();
 
     @ManagedAttribute(description = "Buffer size in bytes to use when coping between buffers")
     void setBufferSize(int bufferSize);

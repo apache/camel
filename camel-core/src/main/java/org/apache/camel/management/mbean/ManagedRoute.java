@@ -52,12 +52,12 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.api.management.mbean.RouteError;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.spi.RouteError;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.XmlLineNumberParser;
@@ -546,7 +546,33 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
     @Override
     public RouteError getLastError() {
-        return route.getRouteContext().getLastError();
+        org.apache.camel.spi.RouteError error = route.getRouteContext().getLastError();
+        if (error == null) {
+            return null;
+        } else {
+            return new RouteError() {
+                @Override
+                public Phase getPhase() {
+                    if (error.getPhase() != null) {
+                        switch (error.getPhase()) {
+                            case START: return Phase.START;
+                            case STOP: return Phase.STOP;
+                            case SUSPEND: return Phase.SUSPEND;
+                            case RESUME: return Phase.RESUME;
+                            case SHUTDOWN: return Phase.SHUTDOWN;
+                            case REMOVE: return Phase.REMOVE;
+                            default: throw new IllegalStateException();
+                        }
+                    }
+                    return null;
+                }
+
+                @Override
+                public Throwable getException() {
+                    return error.getException();
+                }
+            };
+        }
     }
 
     /**
