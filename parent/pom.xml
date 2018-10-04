@@ -520,7 +520,7 @@
     <netty3-version>3.10.6.Final</netty3-version>
     <netty-version>4.1.30.Final</netty-version>
     <netty40-version>4.0.56.Final</netty40-version>
-    <networknt-json-schema-validator-version>0.1.22</networknt-json-schema-validator-version>
+    <networknt-json-schema-validator-version>0.1.23</networknt-json-schema-validator-version>
     <noggit-bundle-version>0.5_1</noggit-bundle-version>
     <objenesis-version>2.6</objenesis-version>
     <!-- should be in-sync with deltaspike -->
