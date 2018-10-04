@@ -31,12 +31,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Experimental;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.impl.DefaultRouteController;
+import org.apache.camel.meta.Experimental;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;

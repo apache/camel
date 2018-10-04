@@ -38,13 +38,13 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Experimental;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StartupListener;
 import org.apache.camel.management.event.CamelContextStartedEvent;
+import org.apache.camel.meta.Experimental;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.HasId;
 import org.apache.camel.spi.RouteContext;
