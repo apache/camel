@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.component.file.strategy.GenericFileDeleteProcessStrategy;
@@ -115,6 +116,10 @@ public final class FtpProcessStrategyFactory {
                 if (readLockMarkerFile != null) {
                     readLockStrategy.setMarkerFiler(readLockMarkerFile);
                 }
+                LoggingLevel readLockLoggingLevel = (LoggingLevel) params.get("readLockLoggingLevel");
+                if (readLockLoggingLevel != null) {
+                    readLockStrategy.setReadLockLoggingLevel(readLockLoggingLevel);
+                }
                 return readLockStrategy;
             } else if ("changed".equals(readLock)) {
                 FtpChangedExclusiveReadLockStrategy readLockStrategy = new FtpChangedExclusiveReadLockStrategy();
@@ -141,6 +146,10 @@ public final class FtpProcessStrategyFactory {
                 Boolean readLockMarkerFile = (Boolean) params.get("readLockMarkerFile");
                 if (readLockMarkerFile != null) {
                     readLockStrategy.setMarkerFiler(readLockMarkerFile);
+                }
+                LoggingLevel readLockLoggingLevel = (LoggingLevel) params.get("readLockLoggingLevel");
+                if (readLockLoggingLevel != null) {
+                    readLockStrategy.setReadLockLoggingLevel(readLockLoggingLevel);
                 }
                 return readLockStrategy;
             }
