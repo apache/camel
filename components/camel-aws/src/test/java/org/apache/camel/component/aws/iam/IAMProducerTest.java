@@ -158,6 +158,7 @@ public class IAMProducerTest extends CamelTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.deleteAccessKey);
                 exchange.getIn().setHeader(IAMConstants.USERNAME, "test");
+                exchange.getIn().setHeader(IAMConstants.ACCESS_KEY_ID, "1");
             }
         });
 
