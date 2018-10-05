@@ -957,7 +957,8 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
 
     @Override
     public UpdateAccessKeyResult updateAccessKey(UpdateAccessKeyRequest updateAccessKeyRequest) {
-        throw new UnsupportedOperationException();
+        UpdateAccessKeyResult result = new UpdateAccessKeyResult();
+        return result;
     }
 
     @Override
