@@ -209,6 +209,12 @@ public class IAMProducer extends DefaultProducer {
     
     private void deleteAccessKey(AmazonIdentityManagement iamClient, Exchange exchange) {
         DeleteAccessKeyRequest request = new DeleteAccessKeyRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.ACCESS_KEY_ID))) {
+            String accessKeyId = exchange.getIn().getHeader(IAMConstants.ACCESS_KEY_ID, String.class);
+            request.withAccessKeyId(accessKeyId);
+        } else {
+            throw new IllegalArgumentException("Key Id must be specified");
+        }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.USERNAME))) {
             String userName = exchange.getIn().getHeader(IAMConstants.USERNAME, String.class);
             request.withUserName(userName);
