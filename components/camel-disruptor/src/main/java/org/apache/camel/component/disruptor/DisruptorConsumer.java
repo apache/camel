@@ -59,6 +59,11 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
         this.processor = AsyncProcessorConverterHelper.convert(processor);
     }
 
+    @Override
+    public AsyncProcessor getProcessor() {
+        return processor;
+    }
+
     public ExceptionHandler getExceptionHandler() {
         if (exceptionHandler == null) {
             exceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), getClass());

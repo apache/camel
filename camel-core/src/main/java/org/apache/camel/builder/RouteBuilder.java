@@ -27,7 +27,6 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -366,17 +365,6 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         return getRouteCollection().onCompletion();
     }
     
-    // Properties
-    // -----------------------------------------------------------------------
-    public ModelCamelContext getContext() {
-        ModelCamelContext context = super.getContext();
-        if (context == null) {
-            context = createContainer();
-            setContext(context);
-        }
-        return context;
-    }
-
     public void addRoutesToCamelContext(CamelContext context) throws Exception {
         // must configure routes before rests
         configureRoutes((ModelCamelContext) context);
@@ -566,15 +554,6 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     public RoutesDefinition getRouteCollection() {
         return this.routeCollection;
-    }
-
-    /**
-     * Factory method
-     *
-     * @return the CamelContext
-     */
-    protected ModelCamelContext createContainer() {
-        return new DefaultCamelContext();
     }
 
     protected void configureRest(RestDefinition rest) {

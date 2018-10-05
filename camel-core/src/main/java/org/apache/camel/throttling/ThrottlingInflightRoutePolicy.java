@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.throttling;
 
 import java.util.EventObject;
 import java.util.LinkedHashSet;
@@ -34,7 +34,6 @@ import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.LoggerFactory;
 
 /**
  * A throttle based {@link org.apache.camel.spi.RoutePolicy} which is capable of dynamic
@@ -224,7 +223,7 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
     }
 
     protected CamelLogger createLogger() {
-        return new CamelLogger(LoggerFactory.getLogger(ThrottlingInflightRoutePolicy.class), getLoggingLevel());
+        return new CamelLogger(log, getLoggingLevel());
     }
 
     private int getSize(Route route, Exchange exchange) {

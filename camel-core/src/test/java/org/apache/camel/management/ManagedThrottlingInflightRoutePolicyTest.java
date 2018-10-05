@@ -23,7 +23,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
+import org.apache.camel.throttling.ThrottlingInflightRoutePolicy;
 import org.junit.Test;
 
 public class ManagedThrottlingInflightRoutePolicyTest extends ManagementTestSupport {

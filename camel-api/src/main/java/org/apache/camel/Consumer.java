@@ -20,4 +20,7 @@ package org.apache.camel;
  * A consumer of message exchanges from an {@link Endpoint}
  */
 public interface Consumer extends Service, EndpointAware {
+
+    Processor getProcessor();
+
 }

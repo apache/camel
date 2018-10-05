@@ -29,7 +29,7 @@ import org.apache.camel.support.ServiceHelper;
 
 /**
  * Connector {@link Producer} which is capable of performing before and after custom processing
- * via the {@link Pipeline }while processing (ie sending the message).
+ * via the {@link Pipeline} while processing (ie sending the message).
  */
 public class ConnectorProducer extends DefaultAsyncProducer {
 

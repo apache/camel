@@ -74,6 +74,13 @@ public interface Route extends EndpointAware {
     Consumer getConsumer();
 
     /**
+     * Gets the {@link Processor}
+     *
+     * @return the processor
+     */
+    Processor getProcessor();
+
+    /**
      * Whether or not the route supports suspension (suspend and resume)
      *
      * @return <tt>true</tt> if this route supports suspension

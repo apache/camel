@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.cluster;
+package org.apache.camel.cluster;
 
 import java.util.Optional;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.util.ObjectHelper;
 
 public final class ClusterServiceHelper {

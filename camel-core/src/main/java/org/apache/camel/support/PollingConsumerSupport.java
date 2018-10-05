@@ -18,6 +18,7 @@ package org.apache.camel.support;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.Processor;
 import org.apache.camel.spi.ExceptionHandler;
 
 /**
@@ -40,6 +41,11 @@ public abstract class PollingConsumerSupport extends ServiceSupport implements P
 
     public Endpoint getEndpoint() {
         return endpoint;
+    }
+
+    @Override
+    public Processor getProcessor() {
+        return null;
     }
 
     public ExceptionHandler getExceptionHandler() {

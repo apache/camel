@@ -37,6 +37,11 @@ public class ProcessorPollingConsumer extends PollingConsumerSupport implements 
         this.processor = processor;
     }
 
+    @Override
+    public Processor getProcessor() {
+        return processor;
+    }
+
     protected void doStart() throws Exception {
         ServiceHelper.startService(processor);
     }

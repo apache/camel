@@ -26,7 +26,7 @@
 
     <!-- START SNIPPET: e1 -->
     <!-- configure our route policy to throttling based -->
-    <bean id="myRoutePolicy" class="org.apache.camel.impl.ThrottlingInflightRoutePolicy">
+    <bean id="myRoutePolicy" class="org.apache.camel.throttling.ThrottlingInflightRoutePolicy">
         <!-- we want at most 10 concurrent inflight exchanges -->
         <property name="maxInflightExchanges" value="10"/>
         <!-- and we want a low water mark value of 20% of the max which means that

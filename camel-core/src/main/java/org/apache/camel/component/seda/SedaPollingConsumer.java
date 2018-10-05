@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.IsSingleton;
+import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.PollingConsumerSupport;
 
@@ -33,6 +34,11 @@ public class SedaPollingConsumer extends PollingConsumerSupport implements IsSin
     @Override
     public SedaEndpoint getEndpoint() {
         return (SedaEndpoint) super.getEndpoint();
+    }
+
+    @Override
+    public Processor getProcessor() {
+        return null;
     }
 
     @Override

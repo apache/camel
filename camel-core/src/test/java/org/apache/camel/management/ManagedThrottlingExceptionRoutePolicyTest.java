@@ -27,8 +27,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.mbean.ManagedThrottlingExceptionRoutePolicyMBean;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.ThrottlingExceptionHalfOpenHandler;
-import org.apache.camel.impl.ThrottlingExceptionRoutePolicy;
+import org.apache.camel.throttling.ThrottlingExceptionHalfOpenHandler;
+import org.apache.camel.throttling.ThrottlingExceptionRoutePolicy;
 import org.junit.Test;
 
 public class ManagedThrottlingExceptionRoutePolicyTest  extends ManagementTestSupport {

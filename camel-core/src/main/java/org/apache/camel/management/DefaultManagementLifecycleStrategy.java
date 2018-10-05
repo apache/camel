@@ -38,6 +38,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ManagementStatisticsLevel;
+import org.apache.camel.NamedNode;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -48,11 +49,8 @@ import org.apache.camel.StartupListener;
 import org.apache.camel.TimerListener;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.cluster.CamelClusterService;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultEndpointRegistry;
-import org.apache.camel.impl.EventDrivenConsumerRoute;
-import org.apache.camel.impl.ThrottlingExceptionRoutePolicy;
-import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
+import org.apache.camel.throttling.ThrottlingExceptionRoutePolicy;
+import org.apache.camel.throttling.ThrottlingInflightRoutePolicy;
 import org.apache.camel.management.mbean.ManagedAsyncProcessorAwaitManager;
 import org.apache.camel.management.mbean.ManagedBacklogDebugger;
 import org.apache.camel.management.mbean.ManagedBacklogTracer;
@@ -87,6 +85,7 @@ import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -118,7 +117,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
 
     // the wrapped processors is for performance counters, which are in use for the created routes
     // when a route is removed, we should remove the associated processors from this map
-    private final Map<Processor, KeyValueHolder<ProcessorDefinition<?>, InstrumentationProcessor>> wrappedProcessors = new HashMap<>();
+    private final Map<Processor, KeyValueHolder<NamedNode, InstrumentationProcessor>> wrappedProcessors = new HashMap<>();
     private final List<PreRegisterService> preServices = new ArrayList<>();
     private final TimerListenerManager loadTimer = new ManagedLoadTimer();
     private final TimerListenerManagerStartupListener loadTimerStartupListener = new TimerListenerManagerStartupListener();
@@ -149,7 +148,11 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         Object mc = getManagementObjectStrategy().getManagedObjectForCamelContext(context);
 
         String name = context.getName();
-        String managementName = context.getManagementNameStrategy().getName();
+        String managementName = context.getManagementName();
+
+        if (managementName == null) {
+            managementName = context.getManagementNameStrategy().getName();
+        }
 
         try {
             boolean done = false;
@@ -189,9 +192,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         }
 
         // set the name we are going to use
-        if (context instanceof DefaultCamelContext) {
-            ((DefaultCamelContext) context).setManagementName(managementName);
-        }
+        context.setManagementName(managementName);
 
         try {
             manageObject(mc);
@@ -503,8 +504,8 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             answer = new ManagedConsumerCache(context, (ConsumerCache) service);
         } else if (service instanceof ProducerCache) {
             answer = new ManagedProducerCache(context, (ProducerCache) service);
-        } else if (service instanceof DefaultEndpointRegistry) {
-            answer = new ManagedEndpointRegistry(context, (DefaultEndpointRegistry) service);
+        } else if (service instanceof EndpointRegistry) {
+            answer = new ManagedEndpointRegistry(context, (EndpointRegistry) service);
         } else if (service instanceof TypeConverterRegistry) {
             answer = new ManagedTypeConverterRegistry(context, (TypeConverterRegistry) service);
         } else if (service instanceof RestRegistry) {
@@ -545,7 +546,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         // a bit of magic here as the processors we want to manage have already been registered
         // in the wrapped processors map when Camel have instrumented the route on route initialization
         // so the idea is now to only manage the processors from the map
-        KeyValueHolder<ProcessorDefinition<?>, InstrumentationProcessor> holder = wrappedProcessors.get(processor);
+        KeyValueHolder<NamedNode, InstrumentationProcessor> holder = wrappedProcessors.get(processor);
         if (holder == null) {
             // skip as its not an well known processor we want to manage anyway, such as Channel/UnitOfWork/Pipeline etc.
             return null;
@@ -595,22 +596,19 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
 
             // get the wrapped instrumentation processor from this route
             // and set me as the counter
-            if (route instanceof EventDrivenConsumerRoute) {
-                EventDrivenConsumerRoute edcr = (EventDrivenConsumerRoute) route;
-                Processor processor = edcr.getProcessor();
-                if (processor instanceof CamelInternalProcessor && mr instanceof ManagedRoute) {
-                    CamelInternalProcessor internal = (CamelInternalProcessor) processor;
-                    ManagedRoute routeMBean = (ManagedRoute) mr;
+            Processor processor = route.getProcessor();
+            if (processor instanceof CamelInternalProcessor && mr instanceof ManagedRoute) {
+                CamelInternalProcessor internal = (CamelInternalProcessor) processor;
+                ManagedRoute routeMBean = (ManagedRoute) mr;
 
-                    CamelInternalProcessor.InstrumentationAdvice task = internal.getAdvice(CamelInternalProcessor.InstrumentationAdvice.class);
-                    if (task != null) {
-                        // we need to wrap the counter with the camel context so we get stats updated on the context as well
-                        if (camelContextMBean != null) {
-                            CompositePerformanceCounter wrapper = new CompositePerformanceCounter(routeMBean, camelContextMBean);
-                            task.setCounter(wrapper);
-                        } else {
-                            task.setCounter(routeMBean);
-                        }
+                CamelInternalProcessor.InstrumentationAdvice task = internal.getAdvice(CamelInternalProcessor.InstrumentationAdvice.class);
+                if (task != null) {
+                    // we need to wrap the counter with the camel context so we get stats updated on the context as well
+                    if (camelContextMBean != null) {
+                        CompositePerformanceCounter wrapper = new CompositePerformanceCounter(routeMBean, camelContextMBean);
+                        task.setCounter(wrapper);
+                    } else {
+                        task.setCounter(routeMBean);
                     }
                 }
             }
@@ -746,7 +744,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
 
         // Create a map (ProcessorType -> PerformanceCounter)
         // to be passed to InstrumentationInterceptStrategy.
-        Map<ProcessorDefinition<?>, PerformanceCounter> registeredCounters = new HashMap<>();
+        Map<NamedNode, PerformanceCounter> registeredCounters = new HashMap<>();
 
         // Each processor in a route will have its own performance counter.
         // These performance counter will be embedded to InstrumentationProcessor
@@ -775,9 +773,9 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         for (Route route : routes) {
             String id = route.getId();
 
-            Iterator<KeyValueHolder<ProcessorDefinition<?>, InstrumentationProcessor>> it = wrappedProcessors.values().iterator();
+            Iterator<KeyValueHolder<NamedNode, InstrumentationProcessor>> it = wrappedProcessors.values().iterator();
             while (it.hasNext()) {
-                KeyValueHolder<ProcessorDefinition<?>, InstrumentationProcessor> holder = it.next();
+                KeyValueHolder<NamedNode, InstrumentationProcessor> holder = it.next();
                 RouteDefinition def = ProcessorDefinitionHelper.getRoute(holder.getKey());
                 if (def != null && id.equals(def.getId())) {
                     it.remove();
@@ -788,7 +786,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
     }
 
     private void registerPerformanceCounters(RouteContext routeContext, ProcessorDefinition<?> processor,
-                                             Map<ProcessorDefinition<?>, PerformanceCounter> registeredCounters) {
+                                             Map<NamedNode, PerformanceCounter> registeredCounters) {
 
         // traverse children if any exists
         List<ProcessorDefinition<?>> children = processor.getOutputs();
