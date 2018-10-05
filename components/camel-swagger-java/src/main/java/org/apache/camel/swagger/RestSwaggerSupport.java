@@ -35,6 +35,7 @@ import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Contact;
 import io.swagger.models.Info;
 import io.swagger.models.License;
+import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
 import io.swagger.util.Yaml;
 import org.apache.camel.Exchange;
@@ -45,6 +46,8 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.util.CamelVersionHelper;
 import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +59,11 @@ import static org.apache.camel.swagger.SwaggerHelper.clearVendorExtensions;
  * such as servlet/jetty/netty4-http to offer Swagger API listings with minimal effort.
  */
 public class RestSwaggerSupport {
+	
+    private static final String HEADER_X_FORWARDED_PREFIX = "X-Forwarded-Prefix";
+    private static final String HEADER_X_FORWARDED_HOST = "X-Forwarded-Host";
+    private static final String HEADER_X_FORWARDED_PROTO = "X-Forwarded-Proto";
+    private static final String HEADER_HOST = "Host";
 
     private static final Logger LOG = LoggerFactory.getLogger(RestSwaggerSupport.class);
     private RestSwaggerReader reader = new RestSwaggerReader();
@@ -194,7 +202,7 @@ public class RestSwaggerSupport {
     }
 
     public void renderResourceListing(RestApiResponseAdapter response, BeanConfig swaggerConfig, String contextId, String route, boolean json, boolean yaml,
-                                      ClassResolver classResolver, RestConfiguration configuration) throws Exception {
+            Map<String, Object> headers, ClassResolver classResolver, RestConfiguration configuration) throws Exception {
         LOG.trace("renderResourceListing");
 
         if (cors) {
@@ -209,6 +217,7 @@ public class RestSwaggerSupport {
 
                 // read the rest-dsl into swagger model
                 Swagger swagger = reader.read(rests, route, swaggerConfig, contextId, classResolver);
+                setupXForwardedHeaders(swagger, headers);
 
                 if (!configuration.isApiVendorExtension()) {
                     clearVendorExtensions(swagger);
@@ -228,6 +237,7 @@ public class RestSwaggerSupport {
 
                 // read the rest-dsl into swagger model
                 Swagger swagger = reader.read(rests, route, swaggerConfig, contextId, classResolver);
+                setupXForwardedHeaders(swagger, headers);
 
                 if (!configuration.isApiVendorExtension()) {
                     clearVendorExtensions(swagger);
@@ -343,6 +353,40 @@ public class RestSwaggerSupport {
         response.setHeader("Access-Control-Allow-Methods", allowMethods);
         response.setHeader("Access-Control-Allow-Headers", allowHeaders);
         response.setHeader("Access-Control-Max-Age", maxAge);
+    }
+
+    private void setupXForwardedHeaders(Swagger swagger, Map<String, Object> headers) {
+
+        String host = (String) headers.get(HEADER_HOST);
+        if(ObjectHelper.isNotEmpty(host)) {
+            swagger.setHost(host);
+        }
+
+        String forwardedPrefix = (String) headers.get(HEADER_X_FORWARDED_PREFIX);
+        if (ObjectHelper.isNotEmpty(forwardedPrefix)) {
+            String prefixedBasePath = "/" + URISupport.stripPrefix(forwardedPrefix, "/") +
+                    (!forwardedPrefix.endsWith("/") ? "/" : "") + URISupport.stripPrefix(swagger.getBasePath(), "/");
+            swagger.setBasePath(prefixedBasePath);
+        }
+
+        String forwardedHost = (String) headers.get(HEADER_X_FORWARDED_HOST);
+        if(ObjectHelper.isNotEmpty(forwardedHost)) {
+            swagger.setHost(forwardedHost);
+        }
+
+        String proto = (String) headers.get(HEADER_X_FORWARDED_PROTO);
+        if(ObjectHelper.isNotEmpty(proto)) {
+            String[] schemes = proto.split(",");
+            List<Scheme> schs = new ArrayList<>();
+            for(String scheme : schemes) {
+                String trimmedScheme = scheme.trim();
+                schs.add(Scheme.forValue(trimmedScheme));
+            }
+            swagger.setSchemes(schs);
+        }
+        else {
+            swagger.setSchemes(null);
+        }
     }
 
 }
