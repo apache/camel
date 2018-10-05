@@ -159,7 +159,6 @@ public class SimpleBeanFixture {
      * Initializes the camel context by creating a simple route from our mbean
      * to the mock endpoint.
      */
-    @SuppressWarnings("deprecation")
     protected void initContext() throws Exception {
         final MockEndpoint mock = mContext.getEndpoint("mock:sink", MockEndpoint.class);
         mock.setExpectedMessageCount(1);

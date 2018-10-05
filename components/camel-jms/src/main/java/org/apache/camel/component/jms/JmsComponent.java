@@ -121,7 +121,6 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
         return jmsComponentTransacted(connectionFactory, transactionManager);
     }
 
-    @SuppressWarnings("deprecation")
     public static JmsComponent jmsComponentTransacted(ConnectionFactory connectionFactory,
                                                       PlatformTransactionManager transactionManager) {
         JmsConfiguration template = new JmsConfiguration(connectionFactory);

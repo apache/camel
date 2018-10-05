@@ -85,7 +85,6 @@ public final class HttpHelper {
         return new int[]{major, minor};
     }
 
-    @SuppressWarnings("deprecation")
     public static void setCharsetFromContentType(String contentType, Exchange exchange) {
         if (contentType != null) {
             String charset = getCharsetFromContentType(contentType);

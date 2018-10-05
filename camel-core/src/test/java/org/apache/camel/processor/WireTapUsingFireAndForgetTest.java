@@ -33,7 +33,6 @@ public class WireTapUsingFireAndForgetTest extends ContextTestSupport {
     @Test
     public void testFireAndForgetUsingProcessor() throws Exception {
         context.addRoutes(new RouteBuilder() {
-            @SuppressWarnings("deprecation")
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
@@ -74,7 +73,6 @@ public class WireTapUsingFireAndForgetTest extends ContextTestSupport {
     @Test
     public void testFireAndForgetUsingExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
-            @SuppressWarnings("deprecation")
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e2

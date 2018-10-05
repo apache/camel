@@ -641,7 +641,6 @@ public class RunMojo extends AbstractExecMojo {
         }
     }
 
-    @SuppressWarnings("deprecation")
     private void terminateThreads(ThreadGroup threadGroup) {
         long startTime = System.currentTimeMillis();
         Set<Thread> uncooperativeThreads = new HashSet<>(); // these were not responsive

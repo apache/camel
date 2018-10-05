@@ -25,7 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
  * CustomEndpoint is used to test {@link org.apache.camel.management.JmxInstrumentationCustomMBeanTest}
  * and must be declared a public class otherwise the mbean server connection cannot access its methods.
  */
-@SuppressWarnings("deprecation")
 // START SNIPPET: e1
 @ManagedResource(description = "Our custom managed endpoint")
 public class CustomEndpoint extends MockEndpoint {

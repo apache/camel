@@ -39,7 +39,6 @@ public class SpringCustomExpressionTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringCustomExpressionTest.xml");
     }
 
-    @SuppressWarnings("deprecation")
     public static class MyExpression extends org.apache.camel.support.ExpressionAdapter {
 
         @Override

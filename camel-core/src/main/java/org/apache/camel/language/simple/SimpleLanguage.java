@@ -149,7 +149,6 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
         }
     }
 
-    @SuppressWarnings("deprecation")
     public Predicate createPredicate(String expression) {
         ObjectHelper.notNull(expression, "expression");
 
@@ -169,7 +168,6 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
         return answer;
     }
 
-    @SuppressWarnings("deprecation")
     public Expression createExpression(String expression) {
         ObjectHelper.notNull(expression, "expression");
 

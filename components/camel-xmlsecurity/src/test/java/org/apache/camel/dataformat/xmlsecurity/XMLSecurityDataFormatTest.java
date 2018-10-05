@@ -191,7 +191,6 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
         xmlsecTestHelper.testEncryption(context);
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testPartialPayloadAsymmetricKeyEncryptionWithContextTruststoreProperties() throws Exception {
         final KeyStoreParameters tsParameters = new KeyStoreParameters();

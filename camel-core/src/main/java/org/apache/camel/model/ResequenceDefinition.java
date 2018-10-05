@@ -368,7 +368,6 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
      * @return the configured batch resequencer.
      * @throws Exception can be thrown
      */
-    @SuppressWarnings("deprecation")
     protected Resequencer createBatchResequencer(RouteContext routeContext,
                                                  BatchResequencerConfig config) throws Exception {
         Processor processor = this.createChildProcessor(routeContext, true);

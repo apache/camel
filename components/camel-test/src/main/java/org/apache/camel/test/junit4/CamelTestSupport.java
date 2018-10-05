@@ -769,7 +769,6 @@ public abstract class CamelTestSupport extends TestSupport {
         }
     }
 
-    @SuppressWarnings("deprecation")
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext(createRegistry());
         return context;

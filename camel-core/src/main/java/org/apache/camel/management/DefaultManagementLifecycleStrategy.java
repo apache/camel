@@ -114,7 +114,6 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @see org.apache.camel.spi.ManagementStrategy
  */
-@SuppressWarnings("deprecation")
 public class DefaultManagementLifecycleStrategy extends ServiceSupport implements LifecycleStrategy, CamelContextAware {
 
     // the wrapped processors is for performance counters, which are in use for the created routes
