@@ -40,7 +40,6 @@ public abstract class SpringTestSupport extends ContextTestSupport {
     protected abstract AbstractXmlApplicationContext createApplicationContext();
 
     @Before
-    @SuppressWarnings("deprecation")
     @Override
     public void setUp() throws Exception {
         // we want SpringTestSupport to startup faster and not use JMX by default and should stop seda quicker

@@ -43,7 +43,6 @@ public final class NettyHttpHelper {
     private NettyHttpHelper() {
     }
 
-    @SuppressWarnings("deprecation")
     public static void setCharsetFromContentType(String contentType, Exchange exchange) {
         String charset = getCharsetFromContentType(contentType);
         if (charset != null) {

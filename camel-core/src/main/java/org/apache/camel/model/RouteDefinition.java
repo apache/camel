@@ -1146,7 +1146,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         this.restBindingDefinition = restBindingDefinition;
     }
 
-    @SuppressWarnings("deprecation")
     public boolean isContextScopedErrorHandler(CamelContext context) {
         if (!contextScopedErrorHandler) {
             return false;

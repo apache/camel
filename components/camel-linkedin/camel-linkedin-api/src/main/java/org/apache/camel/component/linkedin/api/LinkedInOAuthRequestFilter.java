@@ -85,7 +85,6 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
 
     private OAuthToken oAuthToken;
 
-    @SuppressWarnings("deprecation")
     public LinkedInOAuthRequestFilter(OAuthParams oAuthParams, Map<String, Object> httpParams,
                                       boolean lazyAuth, String[] enabledProtocols) {
 

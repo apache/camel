@@ -30,7 +30,6 @@ import org.junit.Test;
 
 public class RemoveRouteDefinitionTest extends ManagementTestSupport {
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testShutdownRoute() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)

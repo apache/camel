@@ -181,7 +181,6 @@ public abstract class ContextTestSupport extends TestSupport {
         }
     }
 
-    @SuppressWarnings("deprecation")
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext(createRegistry());
         context.setLoadTypeConverters(isLoadTypeConverters());

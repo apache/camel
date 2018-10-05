@@ -108,7 +108,6 @@ public class MethodInfo {
         }
     }
 
-    @SuppressWarnings("deprecation")
     public MethodInfo(CamelContext camelContext, Class<?> type, Method method, List<ParameterInfo> parameters, List<ParameterInfo> bodyParameters,
                       boolean hasCustomAnnotation, boolean hasHandlerAnnotation) {
         this.camelContext = camelContext;

@@ -41,7 +41,6 @@ public class JMXEndpointTest {
     DefaultCamelContext context;
     
     @Before
-    @SuppressWarnings("deprecation")
     public void setUp() throws Exception {
         context = new DefaultCamelContext();
     }

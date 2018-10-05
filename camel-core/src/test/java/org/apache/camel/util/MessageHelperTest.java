@@ -63,7 +63,6 @@ public class MessageHelperTest extends Assert {
         // handle StreamCache
         final AtomicBoolean reset = new AtomicBoolean();
         message.setBody(new StreamCache() {
-            @SuppressWarnings("deprecation")
             public void reset() {
                 reset.set(true);
             }
