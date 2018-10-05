@@ -42,7 +42,7 @@
   </bean>
 
   <!-- START SNIPPET: e1 -->
-  <bean id="myPolicy" class="org.apache.camel.impl.ThrottlingInflightRoutePolicy">
+  <bean id="myPolicy" class="org.apache.camel.throttling.ThrottlingInflightRoutePolicy">
     <!-- define the scope to be context scoped so we measure against total inflight exchanges
          that means for both route1, route2 and route3 all together -->
     <property name="scope" value="Context"/>

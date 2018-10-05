@@ -19,8 +19,8 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedThrottlingExceptionRoutePolicyMBean;
-import org.apache.camel.impl.ThrottlingExceptionHalfOpenHandler;
-import org.apache.camel.impl.ThrottlingExceptionRoutePolicy;
+import org.apache.camel.throttling.ThrottlingExceptionHalfOpenHandler;
+import org.apache.camel.throttling.ThrottlingExceptionRoutePolicy;
 
 @ManagedResource(description = "Managed ThrottlingExceptionRoutePolicy")
 public class ManagedThrottlingExceptionRoutePolicy extends ManagedService implements ManagedThrottlingExceptionRoutePolicyMBean {

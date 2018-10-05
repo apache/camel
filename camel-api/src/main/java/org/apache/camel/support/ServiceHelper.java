@@ -268,10 +268,10 @@ public final class ServiceHelper {
      * 
      * @param service the service
      * @return <tt>true</tt> if either <tt>resume</tt> method or
-     *         {@link #startService(Service)} was called, <tt>false</tt>
+     *         {@link #startService(Object)} was called, <tt>false</tt>
      *         otherwise.
      * @throws Exception is thrown if error occurred
-     * @see #startService(Service)
+     * @see #startService(Object)
      */
     public static boolean resumeService(Object service) throws Exception {
         if (service instanceof Suspendable && service instanceof SuspendableService) {

@@ -179,6 +179,11 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     String getManagementName();
 
     /**
+     * Sets the name this {@link CamelContext} will be registered in JMX.
+     */
+    void setManagementName(String name);
+
+    /**
      * Gets the version of the this CamelContext.
      *
      * @return the version

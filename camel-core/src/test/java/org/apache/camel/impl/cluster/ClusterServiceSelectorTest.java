@@ -24,13 +24,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.cluster.CamelClusterView;
+import org.apache.camel.cluster.ClusterServiceSelectors;
 import org.apache.camel.component.file.cluster.FileLockClusterService;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.apache.camel.impl.cluster.ClusterServiceHelper.lookupService;
-import static org.apache.camel.impl.cluster.ClusterServiceHelper.mandatoryLookupService;
+import static org.apache.camel.cluster.ClusterServiceHelper.lookupService;
+import static org.apache.camel.cluster.ClusterServiceHelper.mandatoryLookupService;
 
 
 public class ClusterServiceSelectorTest {

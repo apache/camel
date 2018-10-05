@@ -67,6 +67,11 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         this.interruptedExceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), EventDrivenPollingConsumer.class);
     }
 
+    @Override
+    public Processor getProcessor() {
+        return this;
+    }
+
     public boolean isBlockWhenFull() {
         return blockWhenFull;
     }

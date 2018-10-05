@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.throttling;
 
 import java.util.List;
 import java.util.Timer;
@@ -30,8 +30,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.RoutePolicySupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Modeled after the circuit breaker {@link ThrottlingInflightRoutePolicy}

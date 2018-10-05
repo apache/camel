@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
-import org.apache.camel.Suspendable;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.RoutePolicy;
 
@@ -107,21 +106,13 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
      * @return <tt>true</tt> if the consumer was suspended or stopped, <tt>false</tt> if the consumer was already suspend or stopped
      */
     public boolean suspendOrStopConsumer(Consumer consumer) throws Exception {
-        if (consumer instanceof Suspendable) {
-            boolean suspended = ServiceHelper.suspendService(consumer);
-            if (suspended) {
-                log.debug("Suspended consumer {}", consumer);
-            } else {
-                log.trace("Consumer already suspended {}", consumer);
-            }
-            return suspended;
+        boolean suspended = ServiceHelper.suspendService(consumer);
+        if (suspended) {
+            log.debug("Suspended consumer {}", consumer);
+        } else {
+            log.trace("Consumer already suspended {}", consumer);
         }
-        if (!ServiceHelper.isStopped(consumer)) {
-            ServiceHelper.stopService(consumer);
-            log.debug("Stopped consumer {}", consumer);
-            return true;
-        }
-        return false;
+        return suspended;
     }
 
     /**
@@ -134,21 +125,13 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
      * @return <tt>true</tt> if the consumer was resumed or started, <tt>false</tt> if the consumer was already resumed or started
      */
     public boolean resumeOrStartConsumer(Consumer consumer) throws Exception {
-        if (consumer instanceof Suspendable) {
-            boolean resumed = ServiceHelper.resumeService(consumer);
-            if (resumed) {
-                log.debug("Resumed consumer {}", consumer);
-            } else {
-                log.trace("Consumer already resumed {}", consumer);
-            }
-            return resumed;
+        boolean resumed = ServiceHelper.resumeService(consumer);
+        if (resumed) {
+            log.debug("Resumed consumer {}", consumer);
+        } else {
+            log.trace("Consumer already resumed {}", consumer);
         }
-        if (!ServiceHelper.isStarted(consumer)) {
-            ServiceHelper.startService(consumer);
-            log.debug("Started consumer {}", consumer);
-            return true;
-        }
-        return false;
+        return resumed;
     }
 
     public void startRoute(Route route) throws Exception {

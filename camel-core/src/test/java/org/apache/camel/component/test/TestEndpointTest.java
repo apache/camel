@@ -79,6 +79,11 @@ public class TestEndpointTest extends ContextTestSupport {
                 }
 
                 @Override
+                public Processor getProcessor() {
+                    return null;
+                }
+
+                @Override
                 public void start() throws Exception {
                     // when starting then send a message to the processor
                     Exchange exchange = new DefaultExchange(getEndpoint());

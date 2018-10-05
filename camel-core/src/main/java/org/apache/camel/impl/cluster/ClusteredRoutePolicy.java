@@ -37,14 +37,14 @@ import org.apache.camel.cluster.CamelClusterEventListener;
 import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.cluster.CamelClusterView;
+import org.apache.camel.cluster.ClusterServiceSelectors;
 import org.apache.camel.management.event.CamelContextStartedEvent;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.cluster.ClusterServiceHelper;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReferenceCount;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @ManagedResource(description = "Clustered Route policy using")
 public final class ClusteredRoutePolicy extends RoutePolicySupport implements CamelContextAware {
