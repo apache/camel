@@ -31,8 +31,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.ProducerCache;
+import org.apache.camel.impl.DefaultProducerCache;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.EndpointHelper;
@@ -265,7 +266,7 @@ public class RecipientListProcessor extends MulticastProcessor {
     protected void doStart() throws Exception {
         super.doStart();
         if (producerCache == null) {
-            producerCache = new ProducerCache(this, getCamelContext(), 0);
+            producerCache = new DefaultProducerCache(this, getCamelContext(), 0);
         }
         ServiceHelper.startService(producerCache);
     }

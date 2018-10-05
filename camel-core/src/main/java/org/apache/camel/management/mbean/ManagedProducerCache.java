@@ -19,7 +19,7 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedProducerCacheMBean;
-import org.apache.camel.impl.ProducerCache;
+import org.apache.camel.spi.ProducerCache;
 
 @ManagedResource(description = "Managed ProducerCache")
 public class ManagedProducerCache extends ManagedService implements ManagedProducerCacheMBean {

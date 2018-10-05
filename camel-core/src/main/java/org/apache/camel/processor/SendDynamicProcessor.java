@@ -27,9 +27,10 @@ import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.impl.ProducerCache;
+import org.apache.camel.impl.DefaultProducerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.SendDynamicAware;
 import org.apache.camel.support.AsyncProcessorHelper;
 import org.apache.camel.support.EndpointHelper;
@@ -246,7 +247,7 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
 
     protected void doStart() throws Exception {
         if (producerCache == null) {
-            producerCache = new ProducerCache(this, camelContext, cacheSize);
+            producerCache = new DefaultProducerCache(this, camelContext, cacheSize);
             log.debug("DynamicSendTo {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
         }
 

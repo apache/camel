@@ -34,6 +34,7 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.processor.ConvertBodyProcessor;
+import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ExchangeHelper;
@@ -679,7 +680,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                 });
     }
 
-    private ProducerCache getProducerCache() {
+    private org.apache.camel.spi.ProducerCache getProducerCache() {
         if (!isStarted()) {
             throw new IllegalStateException("ProducerTemplate has not been started");
         }
@@ -713,7 +714,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
 
     protected void doStart() throws Exception {
         if (producerCache == null) {
-            producerCache = new ProducerCache(this, camelContext, maximumCacheSize);
+            producerCache = new DefaultProducerCache(this, camelContext, maximumCacheSize);
             producerCache.setEventNotifierEnabled(isEventNotifierEnabled());
         }
 

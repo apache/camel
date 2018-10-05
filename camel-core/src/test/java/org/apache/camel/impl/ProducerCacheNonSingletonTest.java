@@ -41,7 +41,7 @@ public class ProducerCacheNonSingletonTest extends ContextTestSupport {
     public void testNonSingleton() throws Exception {
         context.addComponent("dummy", new MyDummyComponent());
 
-        ProducerCache cache = new ProducerCache(this, context, -1);
+        DefaultProducerCache cache = new DefaultProducerCache(this, context, -1);
         cache.start();
 
         Endpoint endpoint = context.getEndpoint("dummy:foo");

@@ -42,7 +42,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
 
     @Test
     public void testCacheProducerAcquireAndRelease() throws Exception {
-        ProducerCache cache = new ProducerCache(this, context, 0);
+        DefaultProducerCache cache = new DefaultProducerCache(this, context, 0);
         cache.start();
 
         assertEquals("Size should be 0", 0, cache.size());
@@ -64,7 +64,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
 
     @Test
     public void testCacheStopExpired() throws Exception {
-        ProducerCache cache = new ProducerCache(this, context, 5);
+        DefaultProducerCache cache = new DefaultProducerCache(this, context, 5);
         cache.start();
 
         assertEquals("Size should be 0", 0, cache.size());
@@ -96,7 +96,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
 
     @Test
     public void testExtendedStatistics() throws Exception {
-        ProducerCache cache = new ProducerCache(this, context, 5);
+        DefaultProducerCache cache = new DefaultProducerCache(this, context, 5);
         cache.setExtendedStatistics(true);
         cache.start();
 

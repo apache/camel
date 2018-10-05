@@ -25,7 +25,7 @@ public class EmptyProducerCacheTest extends ContextTestSupport {
 
     @Test
     public void testEmptyCache() throws Exception {
-        ProducerCache cache = new ProducerCache(this, context, -1);
+        DefaultProducerCache cache = new DefaultProducerCache(this, context, -1);
         cache.start();
 
         assertEquals("Size should be 0", 0, cache.size());
@@ -45,7 +45,7 @@ public class EmptyProducerCacheTest extends ContextTestSupport {
 
     @Test
     public void testCacheProducerAcquireAndRelease() throws Exception {
-        ProducerCache cache = new ProducerCache(this, context, -1);
+        DefaultProducerCache cache = new DefaultProducerCache(this, context, -1);
         cache.start();
 
         assertEquals("Size should be 0", 0, cache.size());

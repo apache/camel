@@ -26,10 +26,11 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
-import org.apache.camel.impl.ProducerCache;
+import org.apache.camel.impl.DefaultProducerCache;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorHelper;
 import org.apache.camel.support.DefaultExchange;
@@ -342,7 +343,7 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, IdAware,
         }
 
         if (producerCache == null) {
-            producerCache = new ProducerCache(this, camelContext, cacheSize);
+            producerCache = new DefaultProducerCache(this, camelContext, cacheSize);
             log.debug("Enricher {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
         }
 

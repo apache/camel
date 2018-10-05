@@ -60,7 +60,7 @@ public @interface RoutingSlip {
     boolean ignoreInvalidEndpoints() default false;
 
     /**
-     * Sets the maximum size used by the {@link org.apache.camel.impl.ProducerCache} which is used
+     * Sets the maximum size used by the {@link org.apache.camel.spi.ProducerCache} which is used
      * to cache and reuse producers when using this routing slip, when uris are reused.
      */
     int cacheSize() default 0;

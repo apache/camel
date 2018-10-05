@@ -26,8 +26,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.PollingConsumer;
-import org.apache.camel.impl.ConsumerCache;
+import org.apache.camel.impl.DefaultConsumerCache;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
@@ -369,7 +370,7 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAw
     protected void doStart() throws Exception {
         if (consumerCache == null) {
             // create consumer cache if we use dynamic expressions for computing the endpoints to poll
-            consumerCache = new ConsumerCache(this, camelContext, cacheSize);
+            consumerCache = new DefaultConsumerCache(this, camelContext, cacheSize);
             log.debug("PollEnrich {} using ConsumerCache with cacheSize={}", this, cacheSize);
         }
         if (aggregationStrategy instanceof CamelContextAware) {

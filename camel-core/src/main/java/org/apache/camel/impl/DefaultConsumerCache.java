@@ -21,6 +21,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ServiceHelper;
@@ -29,7 +30,7 @@ import org.apache.camel.support.ServiceSupport;
 /**
  * Cache containing created {@link org.apache.camel.Consumer}.
  */
-public class ConsumerCache extends ServiceSupport {
+public class DefaultConsumerCache extends ServiceSupport implements ConsumerCache {
 
     private final CamelContext camelContext;
     private final ServicePool<PollingConsumer> consumers;
@@ -39,7 +40,7 @@ public class ConsumerCache extends ServiceSupport {
     private boolean extendedStatistics;
     private int maxCacheSize;
 
-    public ConsumerCache(Object source, CamelContext camelContext, int cacheSize) {
+    public DefaultConsumerCache(Object source, CamelContext camelContext, int cacheSize) {
         this.source = source;
         this.camelContext = camelContext;
         this.maxCacheSize = cacheSize == 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : cacheSize;

@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ServiceHelper;
@@ -246,7 +247,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         return answer;
     }
 
-    private ConsumerCache getConsumerCache() {
+    private org.apache.camel.spi.ConsumerCache getConsumerCache() {
         if (!isStarted()) {
             throw new IllegalStateException("ConsumerTemplate has not been started");
         }
@@ -255,7 +256,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
 
     protected void doStart() throws Exception {
         if (consumerCache == null) {
-            consumerCache = new ConsumerCache(this, camelContext, maximumCacheSize);
+            consumerCache = new DefaultConsumerCache(this, camelContext, maximumCacheSize);
         }
         ServiceHelper.startService(consumerCache);
     }

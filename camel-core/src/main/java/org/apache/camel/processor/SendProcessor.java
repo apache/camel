@@ -29,8 +29,9 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Traceable;
 import org.apache.camel.impl.InterceptSendToEndpoint;
-import org.apache.camel.impl.ProducerCache;
+import org.apache.camel.impl.DefaultProducerCache;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.support.AsyncProcessorHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventHelper;
@@ -203,7 +204,7 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
             // and use a regular HashMap as we do not want a soft reference store that may get re-claimed when low on memory
             // as we want to ensure the producer is kept around, to ensure its lifecycle is fully managed,
             // eg stopping the producer when we stop etc.
-            producerCache = new ProducerCache(this, camelContext, 1);
+            producerCache = new DefaultProducerCache(this, camelContext, 1);
             // do not add as service as we do not want to manage the producer cache
         }
         ServiceHelper.startService(producerCache);

@@ -15,7 +15,7 @@ The Routing Slip EIP supports 3 options which are listed below:
 | Name | Description | Default | Type
 | *uriDelimiter* | Sets the uri delimiter to use | , | String
 | *ignoreInvalidEndpoints* | Ignore the invalidate endpoint exception when try to create a producer with that endpoint | false | Boolean
-| *cacheSize* | Sets the maximum size used by the org.apache.camel.impl.ProducerCache which is used to cache and reuse producers when using this routing slip, when uris are reused. |  | Integer
+| *cacheSize* | Sets the maximum size used by the org.apache.camel.spi.ProducerCache which is used to cache and reuse producers when using this routing slip, when uris are reused. |  | Integer
 |===
 // eip options: END
 

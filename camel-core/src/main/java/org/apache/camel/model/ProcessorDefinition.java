@@ -57,7 +57,6 @@ import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.LanguageExpression;
-import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
@@ -635,7 +634,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Sends the exchange to the given dynamic endpoint
      *
      * @param uri  the dynamic endpoint to send to (resolved using simple language by default)
-     * @param cacheSize sets the maximum size used by the {@link org.apache.camel.impl.ConsumerCache} which is used to cache and reuse producers.
+     * @param cacheSize sets the maximum size used by the {@link org.apache.camel.spi.ConsumerCache} which is used to cache and reuse producers.
      *
      * @return the builder
      */
