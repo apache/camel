@@ -20,6 +20,7 @@ import com.amazonaws.services.identitymanagement.model.CreateAccessKeyResult;
 import com.amazonaws.services.identitymanagement.model.CreateUserResult;
 import com.amazonaws.services.identitymanagement.model.DeleteAccessKeyResult;
 import com.amazonaws.services.identitymanagement.model.DeleteUserResult;
+import com.amazonaws.services.identitymanagement.model.GetUserResult;
 import com.amazonaws.services.identitymanagement.model.ListAccessKeysResult;
 import com.amazonaws.services.identitymanagement.model.ListUsersResult;
 
@@ -143,6 +144,24 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
 
         DeleteAccessKeyResult resultGet = (DeleteAccessKeyResult)exchange.getIn().getBody();
         assertNotNull(resultGet);
+    }
+    
+    @Test
+    public void iamGetUserTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:getUser", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.getUser);
+                exchange.getIn().setHeader(IAMConstants.USERNAME, "test");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        GetUserResult resultGet = (GetUserResult)exchange.getIn().getBody();
+        assertEquals("test", resultGet.getUser().getUserName());
     }
 
     @Override
