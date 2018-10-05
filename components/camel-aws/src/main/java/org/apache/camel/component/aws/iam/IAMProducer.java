@@ -26,6 +26,8 @@ import com.amazonaws.services.identitymanagement.model.DeleteAccessKeyRequest;
 import com.amazonaws.services.identitymanagement.model.DeleteAccessKeyResult;
 import com.amazonaws.services.identitymanagement.model.DeleteUserRequest;
 import com.amazonaws.services.identitymanagement.model.DeleteUserResult;
+import com.amazonaws.services.identitymanagement.model.GetUserRequest;
+import com.amazonaws.services.identitymanagement.model.GetUserResult;
 import com.amazonaws.services.identitymanagement.model.ListAccessKeysResult;
 import com.amazonaws.services.identitymanagement.model.ListUsersResult;
 
@@ -70,6 +72,9 @@ public class IAMProducer extends DefaultProducer {
             break;
         case deleteUser:
             deleteUser(getEndpoint().getIamClient(), exchange);
+            break;
+        case getUser:
+            getUser(getEndpoint().getIamClient(), exchange);
             break;
         case listUsers:
             listUsers(getEndpoint().getIamClient(), exchange);
@@ -144,6 +149,23 @@ public class IAMProducer extends DefaultProducer {
             result = iamClient.deleteUser(request);
         } catch (AmazonServiceException ase) {
             LOG.trace("Delete user command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void getUser(AmazonIdentityManagement iamClient, Exchange exchange) {
+        GetUserRequest request = new GetUserRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.USERNAME))) {
+            String userName = exchange.getIn().getHeader(IAMConstants.USERNAME, String.class);
+            request.withUserName(userName);
+        }
+        GetUserResult result;
+        try {
+            result = iamClient.getUser(request);
+        } catch (AmazonServiceException ase) {
+            LOG.trace("get user command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
