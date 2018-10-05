@@ -156,7 +156,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             String separator = factory.getSeparator();
             String quote = factory.getQuote();
             ObjectHelper.notNull(separator, "The separator has not been defined in the annotation @CsvRecord or not instantiated during initModel.");
-
+            Boolean removeQuotes = factory.getRemoveQuotes();
             AtomicInteger count = new AtomicInteger(0);
 
             // Use a Stream to stream a file across.
@@ -173,7 +173,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                 // If the internals of the consumer fail, we unrap the checked exception upstream.
                 try {
                     lines.skip(linesToSkip)
-                            .forEachOrdered(consumeFile(factory, models, separator, quote, count));
+                            .forEachOrdered(consumeFile(factory, models, separator, removeQuotes, quote, count));
                 } catch (WrappedException e) {
                     throw e.getWrappedException();
                 }
@@ -195,7 +195,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     }
 
     private Consumer<String> consumeFile(BindyCsvFactory factory, List<Map<String, Object>> models,
-                                         String separator, String quote, AtomicInteger count) {
+                                         String separator, Boolean removeQuotes, String quote, AtomicInteger count) {
         return line -> {
             try {
                 // Trim the line coming in to remove any trailing whitespace
@@ -227,8 +227,9 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                 List<String> result = Arrays.asList(tokens);
 
                 // must unquote tokens before use
-
-                result = unquoteTokens(result, separators, quote);
+                if (removeQuotes) {
+                    result = unquoteTokens(result, separators, quote);
+                }
 
                 if (result.isEmpty()) {
                     throw new IllegalArgumentException("No records have been defined in the CSV");
