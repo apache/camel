@@ -31,6 +31,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.SharedCamelInternalProcessor;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
+import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ServiceHelper;
@@ -40,7 +41,7 @@ import org.apache.camel.util.StopWatch;
 /**
  * Cache containing created {@link Producer}.
  */
-public class ProducerCache extends ServiceSupport {
+public class DefaultProducerCache extends ServiceSupport implements ProducerCache {
 
     private final CamelContext camelContext;
     private final ServicePool<AsyncProducer> producers;
@@ -52,7 +53,7 @@ public class ProducerCache extends ServiceSupport {
     private boolean extendedStatistics;
     private int maxCacheSize;
 
-    public ProducerCache(Object source, CamelContext camelContext, int cacheSize) {
+    public DefaultProducerCache(Object source, CamelContext camelContext, int cacheSize) {
         this.source = source;
         this.camelContext = camelContext;
         this.maxCacheSize = cacheSize == 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : cacheSize;
@@ -473,23 +474,4 @@ public class ProducerCache extends ServiceSupport {
         return "ProducerCache for source: " + source + ", capacity: " + getCapacity();
     }
 
-    /**
-     * Callback for sending a exchange message to a endpoint using an {@link AsyncProcessor} capable producer.
-     * <p/>
-     * Using this callback as a template pattern ensures that Camel handles the resource handling and will
-     * start and stop the given producer, to avoid resource leaks.
-     *
-         */
-    public interface AsyncProducerCallback {
-
-        /**
-         * Performs operation on the given producer to send the given exchange.
-         *
-         * @param asyncProducer   the async producer, is never <tt>null</tt>
-         * @param exchange        the exchange to process
-         * @param callback        the async callback
-         * @return (doneSync) <tt>true</tt> to continue execute synchronously, <tt>false</tt> to continue being executed asynchronously
-         */
-        boolean doInAsyncProducer(AsyncProducer asyncProducer, Exchange exchange, AsyncCallback callback);
-    }
 }

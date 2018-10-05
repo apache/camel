@@ -25,7 +25,7 @@ public class DefaultConsumerCacheTest extends ContextTestSupport {
 
     @Test
     public void testCacheConsumers() throws Exception {
-        ConsumerCache cache = new ConsumerCache(this, context, 0);
+        DefaultConsumerCache cache = new DefaultConsumerCache(this, context, 0);
         cache.start();
 
         assertEquals("Size should be 0", 0, cache.size());

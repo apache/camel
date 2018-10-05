@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.DefaultConsumerCache;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.PollEnricher;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -200,7 +201,7 @@ public class PollEnrichDefinition extends NoOutputExpressionNode {
     }
 
     /**
-     * Sets the maximum size used by the {@link org.apache.camel.impl.ConsumerCache} which is used
+     * Sets the maximum size used by the {@link DefaultConsumerCache} which is used
      * to cache and reuse consumers when uris are reused.
      *
      * @param cacheSize  the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.

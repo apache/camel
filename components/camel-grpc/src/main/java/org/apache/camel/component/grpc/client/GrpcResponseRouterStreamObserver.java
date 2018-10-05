@@ -22,7 +22,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.grpc.GrpcConfiguration;
 import org.apache.camel.component.grpc.GrpcConstants;
-import org.apache.camel.impl.ProducerCache;
+import org.apache.camel.impl.DefaultProducerCache;
+import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.support.CamelContextHelper;
 
 /**
@@ -40,7 +41,7 @@ public class GrpcResponseRouterStreamObserver implements StreamObserver<Object> 
         this.sourceEndpoint = sourceEndpoint;
         this.endpoint = CamelContextHelper.getMandatoryEndpoint(sourceEndpoint.getCamelContext(), configuration.getStreamRepliesTo());
         sourceEndpoint.getCamelContext().createProducerTemplate(-1);
-        this.producerCache = new ProducerCache(this, sourceEndpoint.getCamelContext(), -1);
+        this.producerCache = new DefaultProducerCache(this, sourceEndpoint.getCamelContext(), -1);
     }
 
     @Override

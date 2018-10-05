@@ -25,7 +25,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.ConsumerCache;
+import org.apache.camel.impl.DefaultConsumerCache;
 import org.junit.Test;
 
 public class ManagedConsumerCacheHitsTest extends ManagementTestSupport {
@@ -40,7 +40,7 @@ public class ManagedConsumerCacheHitsTest extends ManagementTestSupport {
         // always register services in JMX so we can enlist our consumer template/cache
         context.getManagementStrategy().getManagementAgent().setRegisterAlways(true);
 
-        ConsumerCache cache = new ConsumerCache(this, context, 0);
+        DefaultConsumerCache cache = new DefaultConsumerCache(this, context, 0);
         context.addService(cache);
 
         template.sendBody("seda:a", "Hello World");

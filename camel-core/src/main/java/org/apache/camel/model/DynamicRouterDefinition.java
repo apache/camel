@@ -28,6 +28,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.DefaultProducerCache;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.spi.Metadata;
@@ -169,7 +170,7 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
     }
     
     /**
-     * Sets the maximum size used by the {@link org.apache.camel.impl.ProducerCache} which is used
+     * Sets the maximum size used by the {@link DefaultProducerCache} which is used
      * to cache and reuse producers when using this dynamic router, when uris are reused.
      *
      * @param cacheSize  the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.

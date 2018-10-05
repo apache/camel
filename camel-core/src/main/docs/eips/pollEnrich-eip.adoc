@@ -49,7 +49,7 @@ The Poll Enrich EIP supports 7 options which are listed below:
 | *strategyMethodName* | This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy. |  | String
 | *strategyMethodAllowNull* | If this option is false then the aggregate method is not used if there was no data to enrich. If this option is true then null values is used as the oldExchange (when no data to enrich), when using POJOs as the AggregationStrategy. | false | Boolean
 | *aggregateOnException* | If this option is false then the aggregate method is not used if there was an exception thrown while trying to retrieve the data to enrich from the resource. Setting this option to true allows end users to control what to do if there was an exception in the aggregate method. For example to suppress the exception or set a custom message body etc. | false | Boolean
-| *cacheSize* | Sets the maximum size used by the org.apache.camel.impl.ConsumerCache which is used to cache and reuse consumers when uris are reused. |  | Integer
+| *cacheSize* | Sets the maximum size used by the org.apache.camel.spi.ConsumerCache which is used to cache and reuse consumers when uris are reused. |  | Integer
 | *ignoreInvalidEndpoint* | Ignore the invalidate endpoint exception when try to create a producer with that endpoint | false | Boolean
 |===
 // eip options: END

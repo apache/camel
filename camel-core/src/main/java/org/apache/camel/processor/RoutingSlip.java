@@ -29,10 +29,10 @@ import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Message;
 import org.apache.camel.Traceable;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.impl.ProducerCache;
-import org.apache.camel.impl.ProducerCache.AsyncProducerCallback;
+import org.apache.camel.impl.DefaultProducerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.AsyncProcessorHelper;
 import org.apache.camel.support.DefaultExchange;
@@ -345,98 +345,96 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
                 originalCallback.done(false);
             }
         };
-        return producerCache.doInAsyncProducer(endpoint, exchange, callback, new AsyncProducerCallback() {
-            public boolean doInAsyncProducer(AsyncProducer asyncProducer, Exchange exchange, final AsyncCallback callback) {
+        return producerCache.doInAsyncProducer(endpoint, exchange, callback, (p, ex, cb) -> {
 
-                // rework error handling to support fine grained error handling
-                RouteContext routeContext = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getRouteContext() : null;
-                AsyncProcessor target = createErrorHandler(routeContext, exchange, asyncProducer, endpoint);
+            // rework error handling to support fine grained error handling
+            RouteContext routeContext = ex.getUnitOfWork() != null ? ex.getUnitOfWork().getRouteContext() : null;
+            AsyncProcessor target = createErrorHandler(routeContext, ex, p, endpoint);
 
-                // set property which endpoint we send to and the producer that can do it
-                exchange.setProperty(Exchange.TO_ENDPOINT, endpoint.getEndpointUri());
-                exchange.setProperty(Exchange.SLIP_ENDPOINT, endpoint.getEndpointUri());
-                exchange.setProperty(Exchange.SLIP_PRODUCER, asyncProducer);
+            // set property which endpoint we send to and the producer that can do it
+            ex.setProperty(Exchange.TO_ENDPOINT, endpoint.getEndpointUri());
+            ex.setProperty(Exchange.SLIP_ENDPOINT, endpoint.getEndpointUri());
+            ex.setProperty(Exchange.SLIP_PRODUCER, p);
 
-                return target.process(exchange, new AsyncCallback() {
-                    public void done(boolean doneSync) {
-                        // cleanup producer after usage
-                        exchange.removeProperty(Exchange.SLIP_PRODUCER);
+            return target.process(ex, new AsyncCallback() {
+                public void done(boolean doneSync) {
+                    // cleanup producer after usage
+                    ex.removeProperty(Exchange.SLIP_PRODUCER);
 
-                        // we only have to handle async completion of the routing slip
-                        if (doneSync) {
-                            callback.done(true);
-                            return;
-                        }
+                    // we only have to handle async completion of the routing slip
+                    if (doneSync) {
+                        cb.done(true);
+                        return;
+                    }
 
-                        try {
-                            // continue processing the routing slip asynchronously
-                            Exchange current = prepareExchangeForRoutingSlip(exchange, endpoint);
+                    try {
+                        // continue processing the routing slip asynchronously
+                        Exchange current = prepareExchangeForRoutingSlip(ex, endpoint);
 
-                            while (iter.hasNext(current)) {
+                        while (iter.hasNext(current)) {
 
-                                // we ignore some kind of exceptions and allow us to continue
-                                if (isIgnoreInvalidEndpoints()) {
-                                    FailedToCreateProducerException e = current.getException(FailedToCreateProducerException.class);
-                                    if (e != null) {
-                                        if (log.isDebugEnabled()) {
-                                            log.debug("Endpoint uri is invalid: " + endpoint + ". This exception will be ignored.", e);
-                                        }
-                                        current.setException(null);
+                            // we ignore some kind of exceptions and allow us to continue
+                            if (isIgnoreInvalidEndpoints()) {
+                                FailedToCreateProducerException e = current.getException(FailedToCreateProducerException.class);
+                                if (e != null) {
+                                    if (log.isDebugEnabled()) {
+                                        log.debug("Endpoint uri is invalid: " + endpoint + ". This exception will be ignored.", e);
                                     }
-                                }
-
-                                // Decide whether to continue with the recipients or not; similar logic to the Pipeline
-                                // check for error if so we should break out
-                                if (!continueProcessing(current, "so breaking out of the routing slip", log)) {
-                                    break;
-                                }
-
-                                Endpoint endpoint;
-                                try {
-                                    endpoint = resolveEndpoint(iter, exchange);
-                                    // if no endpoint was resolved then try the next
-                                    if (endpoint == null) {
-                                        continue;
-                                    }
-                                } catch (Exception e) {
-                                    // error resolving endpoint so we should break out
-                                    current.setException(e);
-                                    break;
-                                }
-
-                                // prepare and process the routing slip
-                                boolean sync = processExchange(endpoint, current, original, callback, iter);
-                                current = prepareExchangeForRoutingSlip(current, endpoint);
-
-                                if (!sync) {
-                                    log.trace("Processing exchangeId: {} is continued being processed asynchronously", original.getExchangeId());
-                                    return;
+                                    current.setException(null);
                                 }
                             }
 
-                            // logging nextExchange as it contains the exchange that might have altered the payload and since
-                            // we are logging the completion if will be confusing if we log the original instead
-                            // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
-                            log.trace("Processing complete for exchangeId: {} >>> {}", original.getExchangeId(), current);
+                            // Decide whether to continue with the recipients or not; similar logic to the Pipeline
+                            // check for error if so we should break out
+                            if (!continueProcessing(current, "so breaking out of the routing slip", log)) {
+                                break;
+                            }
 
-                            // copy results back to the original exchange
-                            ExchangeHelper.copyResults(original, current);
-                        } catch (Throwable e) {
-                            exchange.setException(e);
+                            Endpoint endpoint1;
+                            try {
+                                endpoint1 = resolveEndpoint(iter, ex);
+                                // if no endpoint was resolved then try the next
+                                if (endpoint1 == null) {
+                                    continue;
+                                }
+                            } catch (Exception e) {
+                                // error resolving endpoint so we should break out
+                                ex.setException(e);
+                                break;
+                            }
+
+                            // prepare and process the routing slip
+                            boolean sync = processExchange(endpoint1, current, original, cb, iter);
+                            current = prepareExchangeForRoutingSlip(current, endpoint1);
+
+                            if (!sync) {
+                                log.trace("Processing exchangeId: {} is continued being processed asynchronously", original.getExchangeId());
+                                return;
+                            }
                         }
 
-                        // okay we are completely done with the routing slip
-                        // so we need to signal done on the original callback so it can continue
-                        originalCallback.done(false);
+                        // logging nextExchange as it contains the exchange that might have altered the payload and since
+                        // we are logging the completion if will be confusing if we log the original instead
+                        // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
+                        log.trace("Processing complete for exchangeId: {} >>> {}", original.getExchangeId(), current);
+
+                        // copy results back to the original exchange
+                        ExchangeHelper.copyResults(original, current);
+                    } catch (Throwable e) {
+                        ex.setException(e);
                     }
-                });
-            }
+
+                    // okay we are completely done with the routing slip
+                    // so we need to signal done on the original callback so it can continue
+                    originalCallback.done(false);
+                }
+            });
         });
     }
 
     protected void doStart() throws Exception {
         if (producerCache == null) {
-            producerCache = new ProducerCache(this, camelContext, cacheSize);
+            producerCache = new DefaultProducerCache(this, camelContext, cacheSize);
             log.debug("RoutingSlip {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
         }
 
