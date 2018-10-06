@@ -59,11 +59,11 @@ import static org.apache.camel.swagger.SwaggerHelper.clearVendorExtensions;
  * such as servlet/jetty/netty4-http to offer Swagger API listings with minimal effort.
  */
 public class RestSwaggerSupport {
-	
-    private static final String HEADER_X_FORWARDED_PREFIX = "X-Forwarded-Prefix";
-    private static final String HEADER_X_FORWARDED_HOST = "X-Forwarded-Host";
-    private static final String HEADER_X_FORWARDED_PROTO = "X-Forwarded-Proto";
-    private static final String HEADER_HOST = "Host";
+
+    static final String HEADER_X_FORWARDED_PREFIX = "X-Forwarded-Prefix";
+    static final String HEADER_X_FORWARDED_HOST = "X-Forwarded-Host";
+    static final String HEADER_X_FORWARDED_PROTO = "X-Forwarded-Proto";
+    static final String HEADER_HOST = "Host";
 
     private static final Logger LOG = LoggerFactory.getLogger(RestSwaggerSupport.class);
     private RestSwaggerReader reader = new RestSwaggerReader();
@@ -355,37 +355,32 @@ public class RestSwaggerSupport {
         response.setHeader("Access-Control-Max-Age", maxAge);
     }
 
-    private void setupXForwardedHeaders(Swagger swagger, Map<String, Object> headers) {
+    static void setupXForwardedHeaders(Swagger swagger, Map<String, Object> headers) {
 
         String host = (String) headers.get(HEADER_HOST);
-        if(ObjectHelper.isNotEmpty(host)) {
+        if (ObjectHelper.isNotEmpty(host)) {
             swagger.setHost(host);
         }
 
         String forwardedPrefix = (String) headers.get(HEADER_X_FORWARDED_PREFIX);
         if (ObjectHelper.isNotEmpty(forwardedPrefix)) {
-            String prefixedBasePath = "/" + URISupport.stripPrefix(forwardedPrefix, "/") +
-                    (!forwardedPrefix.endsWith("/") ? "/" : "") + URISupport.stripPrefix(swagger.getBasePath(), "/");
-            swagger.setBasePath(prefixedBasePath);
+            swagger.setBasePath(URISupport.joinPaths(forwardedPrefix, swagger.getBasePath()));
         }
 
         String forwardedHost = (String) headers.get(HEADER_X_FORWARDED_HOST);
-        if(ObjectHelper.isNotEmpty(forwardedHost)) {
+        if (ObjectHelper.isNotEmpty(forwardedHost)) {
             swagger.setHost(forwardedHost);
         }
 
         String proto = (String) headers.get(HEADER_X_FORWARDED_PROTO);
         if(ObjectHelper.isNotEmpty(proto)) {
             String[] schemes = proto.split(",");
-            List<Scheme> schs = new ArrayList<>();
             for(String scheme : schemes) {
                 String trimmedScheme = scheme.trim();
-                schs.add(Scheme.forValue(trimmedScheme));
+                if (ObjectHelper.isNotEmpty(trimmedScheme)) {
+                    swagger.addScheme(Scheme.forValue(trimmedScheme));
+                }
             }
-            swagger.setSchemes(schs);
-        }
-        else {
-            swagger.setSchemes(null);
         }
     }
 
