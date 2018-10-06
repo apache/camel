@@ -657,7 +657,7 @@
     <spring-security-bundle-version>5.0.4.RELEASE_1</spring-security-bundle-version>
     <spring-ws-bundle-version>2.4.2.RELEASE_1</spring-ws-bundle-version>
     <spring-xml-bundle-version>2.4.2.RELEASE_1</spring-xml-bundle-version>
-    <spring-ws-version>3.0.3.RELEASE</spring-ws-version>
+    <spring-ws-version>3.0.4.RELEASE</spring-ws-version>
     <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <spymemcached-version>2.12.0</spymemcached-version>
     <squareup-okhttp-version>2.7.5</squareup-okhttp-version>
