@@ -407,51 +407,6 @@ from("direct:fetchRecentItems")
             .log("${body.name} at ${body.attributes.url}");
 ----
 
-=== Working with approvals
-
-All the properties are named exactly the same as in the Salesforce REST API prefixed with `approval.`. You can set
-approval properties by setting `approval.PropertyName` of the Endpoint these will be used as template -- meaning
-that any property not present in either body or header will be taken from the Endpoint configuration. Or you can set
-the approval template on the Endpoint by assigning `approval` property to a reference onto a bean in the Registry.
-
-You can also provide header values using the same `approval.PropertyName` in the incoming message headers.
-
-And finally body can contain one `AprovalRequest` or an `Iterable` of `ApprovalRequest` objects to process as
-a batch.
-
-The important thing to remember is the priority of the values specified in these three mechanisms:
-
-. value in body takes precedence before any other
-. value in message header takes precedence before template value
-. value in template is set if no other value in header or body was given
-
-For example to send one record for approval using values in headers use:
-
-Given a route:
-
-[source,java]
-----
-from("direct:example1")//
-        .setHeader("approval.ContextId", simple("${body['contextId']}"))
-        .setHeader("approval.NextApproverIds", simple("${body['nextApproverIds']}"))
-        .to("salesforce:approval?"//
-            + "approvalActionType=Submit"//
-            + "&approvalComments=this is a test"//
-            + "&approvalProcessDefinitionNameOrId=Test_Account_Process"//
-            + "&approvalSkipEntryCriteria=true");
-----
-
-You could send a record for approval using:
-
-[source,java]
-----
-final Map<String, String> body = new HashMap<>();
-body.put("contextId", accountIds.iterator().next());
-body.put("nextApproverIds", userId);
-
-final ApprovalResult result = template.requestBody("direct:example1", body, ApprovalResult.class);
-----
-
 === Using Salesforce Composite API to submit SObject tree
 
 To create up to 200 records including parent-child relationships use `salesforce:composite-tree` operation. This
