@@ -373,7 +373,7 @@ public class RestSwaggerSupport {
         }
 
         String proto = (String) headers.get(HEADER_X_FORWARDED_PROTO);
-        if(ObjectHelper.isNotEmpty(proto)) {
+        if (ObjectHelper.isNotEmpty(proto)) {
             String[] schemes = proto.split(",");
             for(String scheme : schemes) {
                 String trimmedScheme = scheme.trim();
