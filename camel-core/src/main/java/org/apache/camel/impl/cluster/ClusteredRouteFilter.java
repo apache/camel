@@ -19,6 +19,7 @@ package org.apache.camel.impl.cluster;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.RouteDefinition;
 
+@FunctionalInterface
 public interface ClusteredRouteFilter {
     /**
      * Test if the route should be clustered or not.
