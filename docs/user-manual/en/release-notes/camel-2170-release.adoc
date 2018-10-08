@@ -98,7 +98,7 @@ using link:stream-caching.html[Stream caching]
 * The link:cdi.html[Camel CDI] component has been improved to better fit
 into the CDI programming model, cover a larger set of containers, and
 provide these new features:
-** The Camel events from the `org.apache.camel.management.event` package
+** The Camel events from the `org.apache.camel.spi.CamelEvent` class
 (like `CamelContextStartedEvent`) can be observed as CDI events
 ** The new CDI event Camel endpoint enable CDI events to be seamlessly
 consumed from (respectively produced by) Camel consumers (respectively

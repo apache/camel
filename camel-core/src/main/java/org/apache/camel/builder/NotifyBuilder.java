@@ -18,7 +18,6 @@ package org.apache.camel.builder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EventObject;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -36,10 +35,11 @@ import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.management.event.ExchangeCompletedEvent;
-import org.apache.camel.management.event.ExchangeCreatedEvent;
-import org.apache.camel.management.event.ExchangeFailedEvent;
-import org.apache.camel.management.event.ExchangeSentEvent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeFailedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.ServiceHelper;
@@ -1322,7 +1322,7 @@ public class NotifyBuilder {
      */
     private final class ExchangeNotifier extends EventNotifierSupport {
 
-        public void notify(EventObject event) throws Exception {
+        public void notify(CamelEvent event) throws Exception {
             if (event instanceof ExchangeCreatedEvent) {
                 onExchangeCreated((ExchangeCreatedEvent) event);
             } else if (event instanceof ExchangeCompletedEvent) {
@@ -1337,7 +1337,7 @@ public class NotifyBuilder {
             computeMatches();
         }
 
-        public boolean isEnabled(EventObject event) {
+        public boolean isEnabled(CamelEvent event) {
             return true;
         }
 

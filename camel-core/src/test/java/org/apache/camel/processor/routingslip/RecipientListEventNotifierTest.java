@@ -16,13 +16,12 @@
  */
 package org.apache.camel.processor.routingslip;
 
-import java.util.EventObject;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.management.event.ExchangeSendingEvent;
-import org.apache.camel.management.event.ExchangeSentEvent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.Test;
 
@@ -66,7 +65,7 @@ public class RecipientListEventNotifierTest extends ContextTestSupport {
         private int sent;
 
         @Override
-        public void notify(EventObject event) throws Exception {
+        public void notify(CamelEvent event) throws Exception {
             if (event instanceof ExchangeSendingEvent) {
                 sending++;
             } else {
@@ -75,7 +74,7 @@ public class RecipientListEventNotifierTest extends ContextTestSupport {
         }
 
         @Override
-        public boolean isEnabled(EventObject event) {
+        public boolean isEnabled(CamelEvent event) {
             return event instanceof ExchangeSendingEvent || event instanceof ExchangeSentEvent;
         }
 

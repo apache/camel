@@ -16,10 +16,9 @@
  */
 package org.apache.camel.management;
 
-import java.util.EventObject;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.management.event.ExchangeSendingEvent;
+import org.apache.camel.spi.CamelEvent;
 import org.junit.Test;
 
 public class EventNotifierExchangeSentParallelTest extends EventNotifierExchangeSentTest {
@@ -42,7 +41,7 @@ public class EventNotifierExchangeSentParallelTest extends EventNotifierExchange
         // we run parallel so just assert we got 6 sending and 6 sent events
         int sent = 0;
         int sending = 0;
-        for (EventObject event : events) {
+        for (CamelEvent event : events) {
             if (event instanceof ExchangeSendingEvent) {
                 sending++;
             } else {

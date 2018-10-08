@@ -185,6 +185,11 @@ public class PipelineStepWithEventTest extends ContextTestSupport {
             this.id = id;
         }
 
+        @Override
+        public Type getType() {
+            return Type.Custom;
+        }
+
         public String getId() {
             return id;
         }
@@ -199,6 +204,11 @@ public class PipelineStepWithEventTest extends ContextTestSupport {
             super(source);
             this.id = id;
             this.timeTaken = timeTaken;
+        }
+
+        @Override
+        public Type getType() {
+            return Type.Custom;
         }
 
         public String getId() {

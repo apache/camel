@@ -20,7 +20,6 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,9 +42,10 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StartupListener;
-import org.apache.camel.management.event.CamelContextStartedEvent;
 import org.apache.camel.meta.Experimental;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
 import org.apache.camel.spi.HasId;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteController;
@@ -693,12 +693,12 @@ public class SupervisingRouteController extends DefaultRouteController {
 
     private class CamelContextStartupListener extends EventNotifierSupport implements StartupListener {
         @Override
-        public void notify(EventObject event) throws Exception {
+        public void notify(CamelEvent event) throws Exception {
             onCamelContextStarted();
         }
 
         @Override
-        public boolean isEnabled(EventObject event) {
+        public boolean isEnabled(CamelEvent event) {
             return event instanceof CamelContextStartedEvent;
         }
 

@@ -17,27 +17,27 @@
 package org.apache.camel.processor;
 
 import java.util.ArrayList;
-import java.util.EventObject;
 import java.util.List;
 
-import org.apache.camel.management.event.ExchangeSentEvent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
 
 public class MySentEventNotifier extends EventNotifierSupport {
 
-    private final List<EventObject> events = new ArrayList<>();
+    private final List<CamelEvent> events = new ArrayList<>();
 
-    public List<EventObject> getEvents() {
+    public List<CamelEvent> getEvents() {
         return events;
     }
 
-    public void notify(EventObject event) throws Exception {
+    public void notify(CamelEvent event) throws Exception {
         if (event instanceof ExchangeSentEvent) {
             events.add(event);
         }
     }
 
-    public boolean isEnabled(EventObject event) {
+    public boolean isEnabled(CamelEvent event) {
         return true;
     }
 

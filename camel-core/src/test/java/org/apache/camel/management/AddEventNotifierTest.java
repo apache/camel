@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.Before;
@@ -28,7 +29,7 @@ import org.junit.Test;
 
 public class AddEventNotifierTest extends ContextTestSupport {
 
-    private static List<EventObject> events = new ArrayList<>();
+    private static List<CamelEvent> events = new ArrayList<>();
     private EventNotifier notifier;
 
     @Override
@@ -48,11 +49,11 @@ public class AddEventNotifierTest extends ContextTestSupport {
 
         // we should be able to add after CamelContext has been started
         notifier = new EventNotifierSupport() {
-            public void notify(EventObject event) throws Exception {
+            public void notify(CamelEvent event) throws Exception {
                 events.add(event);
             }
 
-            public boolean isEnabled(EventObject event) {
+            public boolean isEnabled(CamelEvent event) {
                 return true;
             }
 

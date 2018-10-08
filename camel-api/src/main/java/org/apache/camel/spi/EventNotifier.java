@@ -16,8 +16,6 @@
  */
 package org.apache.camel.spi;
 
-import java.util.EventObject;
-
 /**
  * Notifier to send {@link java.util.EventObject events}.
  *
@@ -31,7 +29,7 @@ public interface EventNotifier {
      * @param event the event
      * @throws Exception can be thrown if notification failed
      */
-    void notify(EventObject event) throws Exception;
+    void notify(CamelEvent event) throws Exception;
 
     /**
      * Checks whether notification for the given event is enabled.
@@ -41,7 +39,7 @@ public interface EventNotifier {
      * @param event the event
      * @return <tt>true</tt> if the event should be sent, <tt>false</tt> to silently ignore it
      */
-    boolean isEnabled(EventObject event);
+    boolean isEnabled(CamelEvent event);
 
     /**
      * Checks whether notification is disabled for all events

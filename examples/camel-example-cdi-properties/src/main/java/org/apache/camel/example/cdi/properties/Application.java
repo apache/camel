@@ -29,7 +29,7 @@ import org.apache.camel.cdi.Uri;
 import org.apache.camel.component.properties.DefaultPropertiesParser;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesParser;
-import org.apache.camel.management.event.CamelContextStartedEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
 import org.apache.deltaspike.core.api.config.ConfigProperty;
 import org.apache.deltaspike.core.api.config.ConfigResolver;
 

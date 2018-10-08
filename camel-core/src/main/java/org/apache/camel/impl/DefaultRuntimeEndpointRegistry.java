@@ -18,7 +18,6 @@ package org.apache.camel.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EventObject;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -29,10 +28,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.management.event.ExchangeCreatedEvent;
-import org.apache.camel.management.event.ExchangeSendingEvent;
-import org.apache.camel.management.event.RouteAddedEvent;
-import org.apache.camel.management.event.RouteRemovedEvent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
+import org.apache.camel.spi.CamelEvent.RouteAddedEvent;
+import org.apache.camel.spi.CamelEvent.RouteRemovedEvent;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
@@ -212,7 +212,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
 
     @Override
     @SuppressWarnings("unchecked")
-    public void notify(EventObject event) throws Exception {
+    public void notify(CamelEvent event) throws Exception {
         if (event instanceof RouteAddedEvent) {
             RouteAddedEvent rse = (RouteAddedEvent) event;
             Endpoint endpoint = rse.getRoute().getEndpoint();
@@ -288,7 +288,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
     }
 
     @Override
-    public boolean isEnabled(EventObject event) {
+    public boolean isEnabled(CamelEvent event) {
         return enabled && event instanceof ExchangeCreatedEvent
                 || event instanceof ExchangeSendingEvent
                 || event instanceof RouteAddedEvent

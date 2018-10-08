@@ -41,8 +41,9 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
-import org.apache.camel.management.event.ExchangeSendingEvent;
-import org.apache.camel.management.event.ExchangeSentEvent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
@@ -246,8 +247,8 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
      * information collected by AWS XRay will not be available within that new thread!
      * <p/>
      * As  {@link ExchangeSendingEvent} and {@link ExchangeSentEvent} both are executed within the
-     * invoking thread (in contrast to {@link org.apache.camel.management.event.ExchangeCreatedEvent
-     * ExchangeCreatedEvent} and {@link org.apache.camel.management.event.ExchangeCompletedEvent
+     * invoking thread (in contrast to {@link org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent
+     * ExchangeCreatedEvent} and {@link org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent
      * ExchangeCompletedEvent} which both run in the context of the spawned thread), adding further
      * subsegments by this {@link org.apache.camel.spi.EventNotifier EventNotifier} implementation
      * should be safe.
@@ -255,7 +256,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
     private final class XRayEventNotifier extends EventNotifierSupport {
 
         @Override
-        public void notify(EventObject event) throws Exception {
+        public void notify(CamelEvent event) throws Exception {
 
             if (event instanceof ExchangeSendingEvent) {
                 ExchangeSendingEvent ese = (ExchangeSendingEvent) event;
@@ -323,7 +324,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
         }
 
         @Override
-        public boolean isEnabled(EventObject event) {
+        public boolean isEnabled(CamelEvent event) {
             // listen for either when an exchange invoked an other endpoint
             return event instanceof ExchangeSendingEvent
                     || event instanceof ExchangeSentEvent;

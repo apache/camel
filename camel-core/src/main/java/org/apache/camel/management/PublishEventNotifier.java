@@ -23,6 +23,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -43,7 +44,7 @@ public class PublishEventNotifier extends EventNotifierSupport implements CamelC
     private String endpointUri;
     private Producer producer;
 
-    public void notify(EventObject event) throws Exception {
+    public void notify(CamelEvent event) throws Exception {
         // only notify when we are started
         if (!isStarted()) {
             log.debug("Cannot publish event as notifier is not started: {}", event);
@@ -71,7 +72,7 @@ public class PublishEventNotifier extends EventNotifierSupport implements CamelC
         }
     }
 
-    public boolean isEnabled(EventObject event) {
+    public boolean isEnabled(CamelEvent event) {
         return true;
     }
 

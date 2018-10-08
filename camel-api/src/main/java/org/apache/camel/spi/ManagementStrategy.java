@@ -16,7 +16,6 @@
  */
 package org.apache.camel.spi;
 
-import java.util.EventObject;
 import java.util.List;
 
 import org.apache.camel.NamedNode;
@@ -99,7 +98,7 @@ public interface ManagementStrategy extends Service {
      * @param event the event
      * @throws Exception can be thrown if the notification failed
      */
-    void notify(EventObject event) throws Exception;
+    void notify(CamelEvent event) throws Exception;
 
     /**
      * Gets the event notifiers.

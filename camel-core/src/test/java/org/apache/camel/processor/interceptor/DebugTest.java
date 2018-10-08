@@ -28,9 +28,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.BreakpointSupport;
 import org.apache.camel.impl.ConditionSupport;
 import org.apache.camel.impl.DefaultDebugger;
-import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.Breakpoint;
+import org.apache.camel.spi.CamelEvent.ExchangeEvent;
+import org.apache.camel.spi.CamelEvent.Type;
 import org.apache.camel.spi.Condition;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,7 +56,7 @@ public class DebugTest extends ContextTestSupport {
                 logs.add("Breakpoint at " + definition + " with body: " + body);
             }
 
-            public void onEvent(Exchange exchange, EventObject event, NamedNode definition) {
+            public void onEvent(Exchange exchange, ExchangeEvent event, NamedNode definition) {
                 String body = exchange.getIn().getBody(String.class);
                 logs.add("Breakpoint event " + event.getClass().getSimpleName() + " with body: " + body);
             }
@@ -80,8 +81,8 @@ public class DebugTest extends ContextTestSupport {
 
         doneCondition = new ConditionSupport() {
             @Override
-            public boolean matchEvent(Exchange exchange, EventObject event) {
-                return event instanceof ExchangeCompletedEvent;
+            public boolean matchEvent(Exchange exchange, ExchangeEvent event) {
+                return event.getType() == Type.ExchangeCompleted;
             }
         };
     }

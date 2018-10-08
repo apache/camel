@@ -76,9 +76,9 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.management.event.AbstractExchangeEvent;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteContainer;
+import org.apache.camel.spi.CamelEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -204,11 +204,11 @@ public class CdiCamelExtension implements Extension {
                 .collect(toSet())));
     }
 
-    private <T extends EventObject> void camelEventNotifiers(@Observes ProcessObserverMethod<T, ?> pom) {
+    private <T extends CamelEvent> void camelEventNotifiers(@Observes ProcessObserverMethod<T, ?> pom) {
         // Only activate Camel event notifiers for explicit Camel event observers, that is, an observer method for a super type won't activate notifiers.
         Type type = pom.getObserverMethod().getObservedType();
         // Camel events are raw types
-        if (type instanceof Class && Class.class.cast(type).getPackage().equals(AbstractExchangeEvent.class.getPackage())) {
+        if (type instanceof Class && CamelEvent.class.isAssignableFrom(Class.class.cast(type))) {
             Set<Annotation> qualifiers = pom.getObserverMethod().getObservedQualifiers();
             if (qualifiers.isEmpty()) {
                 eventQualifiers.add(ANY);

@@ -17,7 +17,6 @@
 package org.apache.camel.impl.cluster;
 
 import java.time.Duration;
-import java.util.EventObject;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -38,9 +37,10 @@ import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.cluster.CamelClusterView;
 import org.apache.camel.cluster.ClusterServiceSelectors;
-import org.apache.camel.management.event.CamelContextStartedEvent;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.cluster.ClusterServiceHelper;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
@@ -301,12 +301,12 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
 
     private class CamelContextStartupListener extends EventNotifierSupport implements StartupListener {
         @Override
-        public void notify(EventObject event) throws Exception {
+        public void notify(CamelEvent event) throws Exception {
             onCamelContextStarted();
         }
 
         @Override
-        public boolean isEnabled(EventObject event) {
+        public boolean isEnabled(CamelEvent event) {
             return event instanceof CamelContextStartedEvent;
         }
 

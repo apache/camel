@@ -16,7 +16,6 @@
  */
 package org.apache.camel.spi;
 
-import java.util.EventObject;
 import java.util.List;
 
 import org.apache.camel.CamelContextAware;
@@ -24,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
+import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 
 /**
  * A debugger which allows tooling to attach breakpoints which is is being invoked
@@ -136,9 +136,9 @@ public interface Debugger extends Service, CamelContextAware {
      * to notify breakpoints.
      *
      * @param exchange the exchange
-     * @param event    the event (instance of {@link org.apache.camel.management.event.AbstractExchangeEvent}
+     * @param event    the event (instance of {@link ExchangeEvent}
      * @return <tt>true</tt> if any breakpoint was hit, <tt>false</tt> if not breakpoint was hit
      */
-    boolean onEvent(Exchange exchange, EventObject event);
+    boolean onEvent(Exchange exchange, ExchangeEvent event);
 
 }

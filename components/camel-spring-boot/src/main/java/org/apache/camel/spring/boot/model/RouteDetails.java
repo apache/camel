@@ -20,7 +20,7 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
-import org.apache.camel.spi.RouteError;
+import org.apache.camel.api.management.mbean.RouteError;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class RouteDetails {

@@ -36,14 +36,15 @@ import org.apache.camel.management.event.RouteAddedEvent;
 import org.apache.camel.management.event.RouteRemovedEvent;
 import org.apache.camel.management.event.RouteStartedEvent;
 import org.apache.camel.management.event.RouteStoppedEvent;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.Before;
 import org.junit.Test;
 
 public class MultipleEventNotifierEventsTest extends ContextTestSupport {
 
-    private static List<EventObject> events = new ArrayList<>();
-    private static List<EventObject> events2 = new ArrayList<>();
+    private static List<CamelEvent> events = new ArrayList<>();
+    private static List<CamelEvent> events2 = new ArrayList<>();
 
     @Override
     protected boolean useJmx() {
@@ -62,11 +63,11 @@ public class MultipleEventNotifierEventsTest extends ContextTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext(createRegistry());
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
-            public void notify(EventObject event) throws Exception {
+            public void notify(CamelEvent event) throws Exception {
                 events.add(event);
             }
 
-            public boolean isEnabled(EventObject event) {
+            public boolean isEnabled(CamelEvent event) {
                 return true;
             }
 
@@ -79,11 +80,11 @@ public class MultipleEventNotifierEventsTest extends ContextTestSupport {
             }
         });
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
-            public void notify(EventObject event) throws Exception {
+            public void notify(CamelEvent event) throws Exception {
                 events2.add(event);
             }
 
-            public boolean isEnabled(EventObject event) {
+            public boolean isEnabled(CamelEvent event) {
                 return true;
             }
 

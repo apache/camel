@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+
 import java.util.ArrayList;
-import java.util.EventObject;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -26,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +35,7 @@ import static org.awaitility.Awaitility.await;
 
 public class EventNotifierExchangeSentTest extends ContextTestSupport {
 
-    protected static List<EventObject> events = new ArrayList<>();
+    protected static List<CamelEvent> events = new ArrayList<>();
 
     @Override
     @Before
@@ -47,11 +48,11 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext(createRegistry());
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
-            public void notify(EventObject event) throws Exception {
+            public void notify(CamelEvent event) throws Exception {
                 events.add(event);
             }
 
-            public boolean isEnabled(EventObject event) {
+            public boolean isEnabled(CamelEvent event) {
                 return true;
             }
 
@@ -163,7 +164,7 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
         // which runs async so they can be in random order
         boolean found = false;
         boolean found2 = false;
-        for (EventObject event : events) {
+        for (CamelEvent event : events) {
             if (event instanceof ExchangeSendingEvent) {
                 ExchangeSendingEvent sending = (ExchangeSendingEvent) event;
                 String uri = sending.getEndpoint().getEndpointUri();

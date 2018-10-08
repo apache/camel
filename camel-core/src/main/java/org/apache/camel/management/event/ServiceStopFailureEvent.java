@@ -19,8 +19,9 @@ package org.apache.camel.management.event;
 import java.util.EventObject;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.CamelEvent;
 
-public class ServiceStopFailureEvent extends EventObject implements FailureEvent {
+public class ServiceStopFailureEvent extends EventObject implements CamelEvent.ServiceStopFailureEvent {
     private static final long serialVersionUID = 4139591666998762617L;
 
     private CamelContext context;

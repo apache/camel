@@ -17,7 +17,6 @@
 package org.apache.camel.processor.interceptor;
 
 import java.util.Date;
-import java.util.EventObject;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,9 +38,10 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 import org.apache.camel.impl.BreakpointSupport;
 import org.apache.camel.impl.DefaultDebugger;
-import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 import org.apache.camel.spi.Condition;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.InterceptStrategy;
@@ -590,7 +590,7 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         }
 
         @Override
-        public boolean matchEvent(Exchange exchange, EventObject event) {
+        public boolean matchEvent(Exchange exchange, ExchangeEvent event) {
             return false;
         }
     }
@@ -637,15 +637,15 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         }
 
         @Override
-        public boolean matchEvent(Exchange exchange, EventObject event) {
+        public boolean matchEvent(Exchange exchange, ExchangeEvent event) {
             return event instanceof ExchangeCompletedEvent;
         }
 
         @Override
-        public void onEvent(Exchange exchange, EventObject event, NamedNode definition) {
+        public void onEvent(Exchange exchange, ExchangeEvent event, NamedNode definition) {
             // when the exchange is complete, we need to turn off single step mode if we were debug stepping the exchange
             if (event instanceof ExchangeCompletedEvent) {
-                String completedId = ((ExchangeCompletedEvent) event).getExchange().getExchangeId();
+                String completedId = event.getExchange().getExchangeId();
 
                 if (singleStepExchangeId != null && singleStepExchangeId.equals(completedId)) {
                     logger.log("ExchangeId: " + completedId + " is completed, so exiting single step mode.");

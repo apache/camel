@@ -23,8 +23,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.management.event.CamelContextStartedEvent;
-import org.apache.camel.management.event.CamelContextStoppingEvent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextEvent;
+import org.apache.camel.spi.CamelEvent.Type;
 import org.apache.camel.support.EventNotifierSupport;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -53,12 +54,12 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
         this.bundleContext = bundleContext;
     }
 
-    public void notify(EventObject event) throws Exception {
-        if (event instanceof CamelContextStartedEvent) {
-            CamelContext context = ((CamelContextStartedEvent) event).getContext();
+    public void notify(CamelEvent event) throws Exception {
+        if (event.getType() == Type.CamelContextStarted) {
+            CamelContext context = ((CamelContextEvent) event).getContext();
             registerCamelContext(context);
-        } else if (event instanceof CamelContextStoppingEvent) {
-            CamelContext context = ((CamelContextStoppingEvent) event).getContext();
+        } else if (event.getType() == Type.CamelContextStopping) {
+            CamelContext context = ((CamelContextEvent) event).getContext();
             ServiceRegistration<?> reg = registrations.remove(context);
             if (reg != null) {
                 if (log.isDebugEnabled()) {
@@ -73,11 +74,8 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
         }
     }
 
-    public boolean isEnabled(EventObject event) {
-        if (event instanceof CamelContextStartedEvent || event instanceof CamelContextStoppingEvent) {
-            return true;
-        }
-        return false;
+    public boolean isEnabled(CamelEvent event) {
+        return event.getType() == Type.CamelContextStarted || event.getType() == Type.CamelContextStopping;
     }
 
     @Override

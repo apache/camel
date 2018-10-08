@@ -17,6 +17,7 @@
 package org.apache.camel.management.event;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.CamelEvent;
 
 /**
  * Event after an {@link Exchange} has been created.
@@ -25,7 +26,7 @@ import org.apache.camel.Exchange;
  * therefore its not guaranteed this event is the first event being send for a given {@link Exchange}
  * lifecycle.
  */
-public class ExchangeCreatedEvent extends AbstractExchangeEvent {
+public class ExchangeCreatedEvent extends AbstractExchangeEvent implements CamelEvent.ExchangeCreatedEvent {
     private static final long serialVersionUID = -19248832613958243L;
 
     public ExchangeCreatedEvent(Exchange source) {

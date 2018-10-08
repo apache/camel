@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Breakpoint;
+import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 
 /**
  * A support class for {@link Breakpoint} implementations to use as base class.
@@ -52,7 +53,7 @@ public abstract class BreakpointSupport implements Breakpoint {
         // noop
     }
 
-    public void onEvent(Exchange exchange, EventObject event, NamedNode definition) {
+    public void onEvent(Exchange exchange, ExchangeEvent event, NamedNode definition) {
         // noop
     }
 }

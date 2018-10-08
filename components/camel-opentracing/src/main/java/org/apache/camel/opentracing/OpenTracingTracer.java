@@ -39,8 +39,9 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.management.event.ExchangeSendingEvent;
-import org.apache.camel.management.event.ExchangeSentEvent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.RoutePolicy;
@@ -227,7 +228,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
     private final class OpenTracingEventNotifier extends EventNotifierSupport {
 
         @Override
-        public void notify(EventObject event) throws Exception {
+        public void notify(CamelEvent event) throws Exception {
             try {
                 if (event instanceof ExchangeSendingEvent) {
                     ExchangeSendingEvent ese = (ExchangeSendingEvent)event;
@@ -276,7 +277,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
         }
 
         @Override
-        public boolean isEnabled(EventObject event) {
+        public boolean isEnabled(CamelEvent event) {
             return event instanceof ExchangeSendingEvent || event instanceof ExchangeSentEvent;
         }
 

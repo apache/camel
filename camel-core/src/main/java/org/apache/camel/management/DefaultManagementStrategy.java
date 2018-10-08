@@ -16,7 +16,6 @@
  */
 package org.apache.camel.management;
 
-import java.util.EventObject;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -24,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.NamedNode;
 import org.apache.camel.management.event.DefaultEventFactory;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementAgent;
@@ -157,7 +157,7 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
         this.camelContext = camelContext;
     }
 
-    public void notify(EventObject event) throws Exception {
+    public void notify(CamelEvent event) throws Exception {
         if (eventNotifiers != null && !eventNotifiers.isEmpty()) {
             for (EventNotifier notifier : eventNotifiers) {
                 if (notifier.isEnabled(event)) {

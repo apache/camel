@@ -21,6 +21,7 @@ import java.util.EventObject;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 
 /**
  * {@link org.apache.camel.spi.Breakpoint} are used by the {@link org.apache.camel.spi.Debugger} API.
@@ -81,11 +82,11 @@ public interface Breakpoint {
      * Callback invoked when the breakpoint was hit and any of the {@link Exchange} {@link EventObject event}s occurred.
      *
      * @param exchange   the {@link Exchange}
-     * @param event      the event (instance of {@link org.apache.camel.management.event.AbstractExchangeEvent}
+     * @param event      the event (instance of {@link ExchangeEvent}
      * @param definition the {@link NamedNode} definition of the last processor executed,
      *                   may be <tt>null</tt> if not possible to resolve from tracing
-     * @see org.apache.camel.management.event.AbstractExchangeEvent
+     * @see ExchangeEvent
      */
-    void onEvent(Exchange exchange, EventObject event, NamedNode definition);
+    void onEvent(Exchange exchange, ExchangeEvent event, NamedNode definition);
 
 }

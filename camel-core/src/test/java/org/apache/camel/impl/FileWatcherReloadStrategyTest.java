@@ -17,14 +17,14 @@
 package org.apache.camel.impl;
 
 import java.io.File;
-import java.util.EventObject;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.management.event.RouteAddedEvent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.RouteAddedEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.util.FileUtil;
 import org.junit.Test;
@@ -85,12 +85,12 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
         final CountDownLatch latch = new CountDownLatch(2);
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
             @Override
-            public void notify(EventObject event) throws Exception {
+            public void notify(CamelEvent event) throws Exception {
                 latch.countDown();
             }
 
             @Override
-            public boolean isEnabled(EventObject event) {
+            public boolean isEnabled(CamelEvent event) {
                 return event instanceof RouteAddedEvent;
             }
         });
@@ -141,12 +141,12 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
         final CountDownLatch latch = new CountDownLatch(2);
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
             @Override
-            public void notify(EventObject event) throws Exception {
+            public void notify(CamelEvent event) throws Exception {
                 latch.countDown();
             }
 
             @Override
-            public boolean isEnabled(EventObject event) {
+            public boolean isEnabled(CamelEvent event) {
                 return event instanceof RouteAddedEvent;
             }
         });
