@@ -561,7 +561,7 @@
     <pax-exam-version>4.12.0</pax-exam-version>
     <pax-tiny-bundle-version>1.3.2</pax-tiny-bundle-version>
     <pax-logging-version>1.8.6</pax-logging-version>
-    <pdfbox18-version>1.8.15</pdfbox18-version>
+    <pdfbox18-version>1.8.16</pdfbox18-version>
     <pdfbox-version>2.0.12</pdfbox-version>
     <pgjdbc-ng-driver-version>0.7.1</pgjdbc-ng-driver-version>
     <protobuf-version>3.5.1</protobuf-version>
