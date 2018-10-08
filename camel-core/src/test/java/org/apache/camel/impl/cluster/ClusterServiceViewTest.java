@@ -31,6 +31,7 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.cluster.CamelClusterEventListener;
 import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.cluster.CamelClusterService;
+import org.apache.camel.support.cluster.AbstractCamelClusterView;
 import org.junit.Assert;
 import org.junit.Test;
 

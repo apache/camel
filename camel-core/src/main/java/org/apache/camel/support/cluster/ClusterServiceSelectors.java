@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.cluster;
+package org.apache.camel.support.cluster;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -23,18 +23,20 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.camel.cluster.CamelClusterService;
+import org.apache.camel.cluster.CamelClusterService.Selector;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class ClusterServiceSelectors {
-    public static final CamelClusterService.Selector DEFAULT_SELECTOR = new SelectSingle();
+    public static final Selector DEFAULT_SELECTOR = new SelectSingle();
     private static final Logger LOGGER = LoggerFactory.getLogger(ClusterServiceSelectors.class);
 
     private ClusterServiceSelectors() {
     }
 
-    public static final class SelectSingle implements CamelClusterService.Selector {
+    public static final class SelectSingle implements Selector {
         @Override
         public Optional<CamelClusterService> select(Collection<CamelClusterService> services) {
             if (services != null && services.size() == 1) {
