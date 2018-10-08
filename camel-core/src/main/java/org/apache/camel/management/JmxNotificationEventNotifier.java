@@ -16,13 +16,13 @@
  */
 package org.apache.camel.management;
 
-import java.util.EventObject;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.management.Notification;
 import javax.management.NotificationBroadcasterSupport;
 
 import org.apache.camel.api.management.JmxNotificationBroadcasterAware;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.support.EventNotifierSupport;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ public class JmxNotificationEventNotifier extends EventNotifierSupport implement
         notificationBroadcaster = broadcaster;
     }
 
-    public void notify(EventObject event) throws Exception {
+    public void notify(CamelEvent event) throws Exception {
         if (notificationBroadcaster != null) {
             // its recommended to send light weight events and we don't want to have the entire Exchange/CamelContext etc
             // serialized as these are the typical source of the EventObject. So we use our own source which is just
@@ -55,7 +55,7 @@ public class JmxNotificationEventNotifier extends EventNotifierSupport implement
         }
     }
 
-    public boolean isEnabled(EventObject event) {
+    public boolean isEnabled(CamelEvent event) {
         return true;
     }
 

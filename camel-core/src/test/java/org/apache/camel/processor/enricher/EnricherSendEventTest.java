@@ -24,9 +24,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.management.DefaultManagementStrategy;
-import org.apache.camel.management.event.ExchangeSendingEvent;
-import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.processor.async.MyAsyncComponent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.support.EventNotifierSupport;
@@ -94,7 +95,7 @@ public class EnricherSendEventTest extends ContextTestSupport {
       
         
         @Override
-        public void notify(EventObject event) throws Exception {
+        public void notify(CamelEvent event) throws Exception {
             
             if (event instanceof ExchangeSendingEvent) {
                 exchangeSendingEvent.incrementAndGet();
@@ -104,7 +105,7 @@ public class EnricherSendEventTest extends ContextTestSupport {
         }
 
         @Override
-        public boolean isEnabled(EventObject event) {
+        public boolean isEnabled(CamelEvent event) {
             return true;
         }
 

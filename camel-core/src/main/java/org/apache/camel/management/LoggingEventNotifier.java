@@ -16,8 +16,7 @@
  */
 package org.apache.camel.management;
 
-import java.util.EventObject;
-
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +30,7 @@ public class LoggingEventNotifier extends EventNotifierSupport {
     private Logger log = LoggerFactory.getLogger(LoggingEventNotifier.class);
     private String logName;
 
-    public void notify(EventObject event) throws Exception {
+    public void notify(CamelEvent event) throws Exception {
         log.info("Event: {}", event);
     }
 
@@ -40,7 +39,7 @@ public class LoggingEventNotifier extends EventNotifierSupport {
         return !log.isInfoEnabled();
     }
 
-    public boolean isEnabled(EventObject event) {
+    public boolean isEnabled(CamelEvent event) {
         return log.isInfoEnabled();
     }
 

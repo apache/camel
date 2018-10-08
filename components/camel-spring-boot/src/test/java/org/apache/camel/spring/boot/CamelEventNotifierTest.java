@@ -16,13 +16,13 @@
  */
 package org.apache.camel.spring.boot;
 
-import java.util.EventObject;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.Assert;
@@ -87,12 +87,12 @@ public class CamelEventNotifierTest extends Assert {
         private final AtomicInteger counter = new AtomicInteger();
 
         @Override
-        public void notify(EventObject event) throws Exception {
+        public void notify(CamelEvent event) throws Exception {
             counter.incrementAndGet();
         }
 
         @Override
-        public boolean isEnabled(EventObject event) {
+        public boolean isEnabled(CamelEvent event) {
             return true;
         }
 

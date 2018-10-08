@@ -16,14 +16,13 @@
  */
 package org.apache.camel.management.event;
 
-import java.util.EventObject;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.DelegateProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.EventFactory;
 
 /**
@@ -31,67 +30,67 @@ import org.apache.camel.spi.EventFactory;
  */
 public class DefaultEventFactory implements EventFactory {
 
-    public EventObject createCamelContextStartingEvent(CamelContext context) {
+    public CamelEvent createCamelContextStartingEvent(CamelContext context) {
         return new CamelContextStartingEvent(context);
     }
 
-    public EventObject createCamelContextStartedEvent(CamelContext context) {
+    public CamelEvent createCamelContextStartedEvent(CamelContext context) {
         return new CamelContextStartedEvent(context);
     }
 
-    public EventObject createCamelContextStoppingEvent(CamelContext context) {
+    public CamelEvent createCamelContextStoppingEvent(CamelContext context) {
         return new CamelContextStoppingEvent(context);
     }
 
-    public EventObject createCamelContextStoppedEvent(CamelContext context) {
+    public CamelEvent createCamelContextStoppedEvent(CamelContext context) {
         return new CamelContextStoppedEvent(context);
     }
 
-    public EventObject createCamelContextStartupFailureEvent(CamelContext context, Throwable cause) {
+    public CamelEvent createCamelContextStartupFailureEvent(CamelContext context, Throwable cause) {
         return new CamelContextStartupFailureEvent(context, cause);
     }
 
-    public EventObject createCamelContextStopFailureEvent(CamelContext context, Throwable cause) {
+    public CamelEvent createCamelContextStopFailureEvent(CamelContext context, Throwable cause) {
         return new CamelContextStopFailureEvent(context, cause);
     }
 
-    public EventObject createServiceStartupFailureEvent(CamelContext context, Object service, Throwable cause) {
+    public CamelEvent createServiceStartupFailureEvent(CamelContext context, Object service, Throwable cause) {
         return new ServiceStartupFailureEvent(context, service, cause);
     }
 
-    public EventObject createServiceStopFailureEvent(CamelContext context, Object service, Throwable cause) {
+    public CamelEvent createServiceStopFailureEvent(CamelContext context, Object service, Throwable cause) {
         return new ServiceStopFailureEvent(context, service, cause);
     }
 
-    public EventObject createRouteStartedEvent(Route route) {
+    public CamelEvent createRouteStartedEvent(Route route) {
         return new RouteStartedEvent(route);
     }
 
-    public EventObject createRouteStoppedEvent(Route route) {
+    public CamelEvent createRouteStoppedEvent(Route route) {
         return new RouteStoppedEvent(route);
     }
 
-    public EventObject createRouteAddedEvent(Route route) {
+    public CamelEvent createRouteAddedEvent(Route route) {
         return new RouteAddedEvent(route);
     }
 
-    public EventObject createRouteRemovedEvent(Route route) {
+    public CamelEvent createRouteRemovedEvent(Route route) {
         return new RouteRemovedEvent(route);
     }
 
-    public EventObject createExchangeCreatedEvent(Exchange exchange) {
+    public CamelEvent createExchangeCreatedEvent(Exchange exchange) {
         return new ExchangeCreatedEvent(exchange);
     }
 
-    public EventObject createExchangeCompletedEvent(Exchange exchange) {
+    public CamelEvent createExchangeCompletedEvent(Exchange exchange) {
         return new ExchangeCompletedEvent(exchange);
     }
 
-    public EventObject createExchangeFailedEvent(Exchange exchange) {
+    public CamelEvent createExchangeFailedEvent(Exchange exchange) {
         return new ExchangeFailedEvent(exchange);
     }
 
-    public EventObject createExchangeFailureHandlingEvent(Exchange exchange, Processor failureHandler, boolean deadLetterChannel, String deadLetterUri) {
+    public CamelEvent createExchangeFailureHandlingEvent(Exchange exchange, Processor failureHandler, boolean deadLetterChannel, String deadLetterUri) {
         // unwrap delegate processor
         Processor handler = failureHandler;
         if (handler instanceof DelegateProcessor) {
@@ -100,7 +99,7 @@ public class DefaultEventFactory implements EventFactory {
         return new ExchangeFailureHandlingEvent(exchange, handler, deadLetterChannel, deadLetterUri);
     }
 
-    public EventObject createExchangeFailureHandledEvent(Exchange exchange, Processor failureHandler,
+    public CamelEvent createExchangeFailureHandledEvent(Exchange exchange, Processor failureHandler,
                                                          boolean deadLetterChannel, String deadLetterUri) {
         // unwrap delegate processor
         Processor handler = failureHandler;
@@ -110,35 +109,35 @@ public class DefaultEventFactory implements EventFactory {
         return new ExchangeFailureHandledEvent(exchange, handler, deadLetterChannel, deadLetterUri);
     }
 
-    public EventObject createExchangeRedeliveryEvent(Exchange exchange, int attempt) {
+    public CamelEvent createExchangeRedeliveryEvent(Exchange exchange, int attempt) {
         return new ExchangeRedeliveryEvent(exchange, attempt);
     }
 
-    public EventObject createExchangeSendingEvent(Exchange exchange, Endpoint endpoint) {
+    public CamelEvent createExchangeSendingEvent(Exchange exchange, Endpoint endpoint) {
         return new ExchangeSendingEvent(exchange, endpoint);
     }
 
-    public EventObject createExchangeSentEvent(Exchange exchange, Endpoint endpoint, long timeTaken) {
+    public CamelEvent createExchangeSentEvent(Exchange exchange, Endpoint endpoint, long timeTaken) {
         return new ExchangeSentEvent(exchange, endpoint, timeTaken);
     }
 
-    public EventObject createCamelContextSuspendingEvent(CamelContext context) {
+    public CamelEvent createCamelContextSuspendingEvent(CamelContext context) {
         return new CamelContextSuspendingEvent(context);
     }
 
-    public EventObject createCamelContextSuspendedEvent(CamelContext context) {
+    public CamelEvent createCamelContextSuspendedEvent(CamelContext context) {
         return new CamelContextSuspendedEvent(context);
     }
 
-    public EventObject createCamelContextResumingEvent(CamelContext context) {
+    public CamelEvent createCamelContextResumingEvent(CamelContext context) {
         return new CamelContextResumingEvent(context);
     }
 
-    public EventObject createCamelContextResumedEvent(CamelContext context) {
+    public CamelEvent createCamelContextResumedEvent(CamelContext context) {
         return new CamelContextResumedEvent(context);
     }
 
-    public EventObject createCamelContextResumeFailureEvent(CamelContext context, Throwable cause) {
+    public CamelEvent createCamelContextResumeFailureEvent(CamelContext context, Throwable cause) {
         return new CamelContextResumeFailureEvent(context, cause);
     }
 }

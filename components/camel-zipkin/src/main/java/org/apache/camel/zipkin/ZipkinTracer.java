@@ -48,11 +48,9 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.properties.ServiceHostPropertiesFunction;
 import org.apache.camel.component.properties.ServicePortPropertiesFunction;
-import org.apache.camel.management.event.ExchangeCompletedEvent;
-import org.apache.camel.management.event.ExchangeCreatedEvent;
-import org.apache.camel.management.event.ExchangeFailedEvent;
-import org.apache.camel.management.event.ExchangeSendingEvent;
-import org.apache.camel.management.event.ExchangeSentEvent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.support.EventNotifierSupport;
@@ -719,7 +717,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     private final class ZipkinEventNotifier extends EventNotifierSupport {
 
         @Override
-        public void notify(EventObject event) throws Exception {
+        public void notify(CamelEvent event) throws Exception {
             // use event notifier to track events when Camel messages to endpoints
             // these events corresponds to Zipkin client events
 
@@ -742,12 +740,17 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         }
 
         @Override
-        public boolean isEnabled(EventObject event) {
-            return event instanceof ExchangeSendingEvent
-                    || event instanceof ExchangeSentEvent
-                    || event instanceof ExchangeCreatedEvent
-                    || event instanceof ExchangeCompletedEvent
-                    || event instanceof ExchangeFailedEvent;
+        public boolean isEnabled(CamelEvent event) {
+            switch (event.getType()) {
+                case ExchangeSending:
+                case ExchangeSent:
+                case ExchangeCreated:
+                case ExchangeCompleted:
+                case ExchangeFailed:
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         @Override

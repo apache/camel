@@ -16,7 +16,6 @@
  */
 package org.apache.camel.support;
 
-import java.util.EventObject;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
@@ -25,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementStrategy;
@@ -58,7 +58,7 @@ public final class EventHelper {
         }
 
         boolean answer = false;
-        EventObject event = null;
+        CamelEvent event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isDisabled()) {
                 continue;
@@ -97,7 +97,7 @@ public final class EventHelper {
         }
 
         boolean answer = false;
-        EventObject event = null;
+        CamelEvent event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isDisabled()) {
                 continue;
@@ -136,7 +136,7 @@ public final class EventHelper {
         }
 
         boolean answer = false;
-        EventObject event = null;
+        CamelEvent event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isDisabled()) {
                 continue;
@@ -175,7 +175,7 @@ public final class EventHelper {
         }
 
         boolean answer = false;
-        EventObject event = null;
+        CamelEvent event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isDisabled()) {
                 continue;
@@ -214,7 +214,7 @@ public final class EventHelper {
         }
 
         boolean answer = false;
-        EventObject event = null;
+        CamelEvent event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isDisabled()) {
                 continue;
@@ -253,7 +253,7 @@ public final class EventHelper {
         }
 
         boolean answer = false;
-        EventObject event = null;
+        CamelEvent event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isDisabled()) {
                 continue;
@@ -292,7 +292,7 @@ public final class EventHelper {
         }
 
         boolean answer = false;
-        EventObject event = null;
+        CamelEvent event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isDisabled()) {
                 continue;
@@ -331,7 +331,7 @@ public final class EventHelper {
         }
 
         boolean answer = false;
-        EventObject event = null;
+        CamelEvent event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isDisabled()) {
                 continue;
@@ -370,7 +370,7 @@ public final class EventHelper {
         }
 
         boolean answer = false;
-        EventObject event = null;
+        CamelEvent event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isDisabled()) {
                 continue;
@@ -409,7 +409,7 @@ public final class EventHelper {
         }
 
         boolean answer = false;
-        EventObject event = null;
+        CamelEvent event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isDisabled()) {
                 continue;
@@ -448,7 +448,7 @@ public final class EventHelper {
         }
 
         boolean answer = false;
-        EventObject event = null;
+        CamelEvent event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isDisabled()) {
                 continue;
@@ -487,7 +487,7 @@ public final class EventHelper {
         }
 
         boolean answer = false;
-        EventObject event = null;
+        CamelEvent event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isDisabled()) {
                 continue;
@@ -531,7 +531,7 @@ public final class EventHelper {
         }
 
         boolean answer = false;
-        EventObject event = null;
+        CamelEvent event = null;
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
@@ -577,7 +577,7 @@ public final class EventHelper {
         }
 
         boolean answer = false;
-        EventObject event = null;
+        CamelEvent event = null;
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
@@ -623,7 +623,7 @@ public final class EventHelper {
         }
 
         boolean answer = false;
-        EventObject event = null;
+        CamelEvent event = null;
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
@@ -670,7 +670,7 @@ public final class EventHelper {
         }
 
         boolean answer = false;
-        EventObject event = null;
+        CamelEvent event = null;
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
@@ -717,7 +717,7 @@ public final class EventHelper {
         }
 
         boolean answer = false;
-        EventObject event = null;
+        CamelEvent event = null;
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
@@ -763,7 +763,7 @@ public final class EventHelper {
         }
 
         boolean answer = false;
-        EventObject event = null;
+        CamelEvent event = null;
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
@@ -809,7 +809,7 @@ public final class EventHelper {
         }
 
         boolean answer = false;
-        EventObject event = null;
+        CamelEvent event = null;
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
@@ -855,7 +855,7 @@ public final class EventHelper {
         }
 
         boolean answer = false;
-        EventObject event = null;
+        CamelEvent event = null;
         // optimise for loop using index access to avoid creating iterator object
         for (int i = 0; i < notifiers.size(); i++) {
             EventNotifier notifier = notifiers.get(i);
@@ -896,7 +896,7 @@ public final class EventHelper {
         }
 
         boolean answer = false;
-        EventObject event = null;
+        CamelEvent event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isDisabled()) {
                 continue;
@@ -935,7 +935,7 @@ public final class EventHelper {
         }
 
         boolean answer = false;
-        EventObject event = null;
+        CamelEvent event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isDisabled()) {
                 continue;
@@ -974,7 +974,7 @@ public final class EventHelper {
         }
 
         boolean answer = false;
-        EventObject event = null;
+        CamelEvent event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isDisabled()) {
                 continue;
@@ -1013,7 +1013,7 @@ public final class EventHelper {
         }
 
         boolean answer = false;
-        EventObject event = null;
+        CamelEvent event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isDisabled()) {
                 continue;
@@ -1052,7 +1052,7 @@ public final class EventHelper {
         }
 
         boolean answer = false;
-        EventObject event = null;
+        CamelEvent event = null;
         for (EventNotifier notifier : notifiers) {
             if (notifier.isDisabled()) {
                 continue;
@@ -1074,7 +1074,7 @@ public final class EventHelper {
         return answer;
     }
 
-    private static boolean doNotifyEvent(EventNotifier notifier, EventObject event) {
+    private static boolean doNotifyEvent(EventNotifier notifier, CamelEvent event) {
         // only notify if notifier is started
         boolean started = true;
         if (notifier instanceof StatefulService) {

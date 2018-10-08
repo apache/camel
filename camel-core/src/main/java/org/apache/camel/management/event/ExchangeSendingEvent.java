@@ -20,6 +20,7 @@ import java.util.EventObject;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.CamelEvent;
 
 /**
  * Event for <b>before</b> sending an {@link Exchange} to an {@link Endpoint}.
@@ -32,12 +33,12 @@ import org.apache.camel.Exchange;
  * The {@link ExchangeSentEvent} is an event which is emitted <b>after</b> the sending is done.
  * <p/>
  * These two events (sending and sent) come in a pair, and therefore you need to make sure to return
- * <tt>true</tt> for both events in the {@link org.apache.camel.spi.EventNotifier#isEnabled(EventObject)}
+ * <tt>true</tt> for both events in the {@link org.apache.camel.spi.EventNotifier#isEnabled(CamelEvent)}
  * method to receive events for either of them.
  *
  * @see ExchangeSentEvent
  */
-public class ExchangeSendingEvent extends AbstractExchangeEvent {
+public class ExchangeSendingEvent extends AbstractExchangeEvent implements CamelEvent.ExchangeSendingEvent {
     private static final long serialVersionUID = -19248832613958122L;
 
     private final Endpoint endpoint;

@@ -20,11 +20,12 @@ import java.util.EventObject;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
+import org.apache.camel.spi.CamelEvent.RouteEvent;
 
 /**
  * Base class for {@link CamelContext} events.
  */
-public abstract class AbstractRouteEvent extends EventObject {
+public abstract class AbstractRouteEvent extends EventObject implements RouteEvent {
     private static final long serialVersionUID = 1L;
     private Route route;
 

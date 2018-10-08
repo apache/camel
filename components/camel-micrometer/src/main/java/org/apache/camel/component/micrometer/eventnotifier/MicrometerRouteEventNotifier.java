@@ -16,24 +16,25 @@
  */
 package org.apache.camel.component.micrometer.eventnotifier;
 
-import java.util.EventObject;
 import java.util.concurrent.atomic.AtomicLong;
+
 import io.micrometer.core.instrument.Gauge;
-import org.apache.camel.management.event.AbstractRouteEvent;
-import org.apache.camel.management.event.RouteAddedEvent;
-import org.apache.camel.management.event.RouteRemovedEvent;
-import org.apache.camel.management.event.RouteStartedEvent;
-import org.apache.camel.management.event.RouteStoppedEvent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.RouteAddedEvent;
+import org.apache.camel.spi.CamelEvent.RouteEvent;
+import org.apache.camel.spi.CamelEvent.RouteRemovedEvent;
+import org.apache.camel.spi.CamelEvent.RouteStartedEvent;
+import org.apache.camel.spi.CamelEvent.RouteStoppedEvent;
 
 
-public class MicrometerRouteEventNotifier extends AbstractMicrometerEventNotifier<AbstractRouteEvent> {
+public class MicrometerRouteEventNotifier extends AbstractMicrometerEventNotifier<RouteEvent> {
 
     private final AtomicLong routesAdded = new AtomicLong();
     private final AtomicLong routesRunning = new AtomicLong();
     private MicrometerRouteEventNotifierNamingStrategy namingStrategy = MicrometerRouteEventNotifierNamingStrategy.DEFAULT;
 
     public MicrometerRouteEventNotifier() {
-        super(AbstractRouteEvent.class);
+        super(RouteEvent.class);
     }
 
     public MicrometerRouteEventNotifierNamingStrategy getNamingStrategy() {
@@ -58,7 +59,7 @@ public class MicrometerRouteEventNotifier extends AbstractMicrometerEventNotifie
     }
 
     @Override
-    public void notify(EventObject eventObject) {
+    public void notify(CamelEvent eventObject) {
         if (eventObject instanceof RouteAddedEvent) {
             routesAdded.incrementAndGet();
         } else if (eventObject instanceof RouteRemovedEvent) {

@@ -19,7 +19,6 @@ package org.apache.camel.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EventObject;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,11 +31,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
-import org.apache.camel.management.event.AbstractExchangeEvent;
-import org.apache.camel.management.event.ExchangeCompletedEvent;
-import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Breakpoint;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 import org.apache.camel.spi.Condition;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EventNotifier;
@@ -144,7 +144,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
             }
 
             @Override
-            public void onEvent(Exchange exchange, EventObject event, NamedNode definition) {
+            public void onEvent(Exchange exchange, ExchangeEvent event, NamedNode definition) {
                 if (event instanceof ExchangeCreatedEvent) {
                     exchange.getContext().getDebugger().startSingleStepExchange(exchange.getExchangeId(), this);
                 } else if (event instanceof ExchangeCompletedEvent) {
@@ -259,7 +259,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
     }
 
     @Override
-    public boolean onEvent(Exchange exchange, EventObject event) {
+    public boolean onEvent(Exchange exchange, ExchangeEvent event) {
         // is the exchange in single step mode?
         Breakpoint singleStep = singleSteps.get(exchange.getExchangeId());
         if (singleStep != null) {
@@ -299,7 +299,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
     }
 
     @SuppressWarnings("unchecked")
-    protected void onEvent(Exchange exchange, EventObject event, Breakpoint breakpoint) {
+    protected void onEvent(Exchange exchange, ExchangeEvent event, Breakpoint breakpoint) {
         ProcessorDefinition<?> definition = null;
 
         // try to get the last known definition
@@ -328,7 +328,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         return true;
     }
 
-    private boolean matchConditions(Exchange exchange, EventObject event, BreakpointConditions breakpoint) {
+    private boolean matchConditions(Exchange exchange, ExchangeEvent event, BreakpointConditions breakpoint) {
         for (Condition condition : breakpoint.getConditions()) {
             if (!condition.matchEvent(exchange, event)) {
                 return false;
@@ -367,10 +367,10 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         }
 
         @Override
-        public void notify(EventObject event) throws Exception {
-            AbstractExchangeEvent aee = (AbstractExchangeEvent) event;
+        public void notify(CamelEvent event) throws Exception {
+            ExchangeEvent aee = (ExchangeEvent) event;
             Exchange exchange = aee.getExchange();
-            onEvent(exchange, event);
+            onEvent(exchange, aee);
 
             if (event instanceof ExchangeCompletedEvent) {
                 // fail safe to ensure we remove single steps when the Exchange is complete
@@ -379,8 +379,8 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         }
 
         @Override
-        public boolean isEnabled(EventObject event) {
-            return event instanceof AbstractExchangeEvent;
+        public boolean isEnabled(CamelEvent event) {
+            return event instanceof ExchangeEvent;
         }
 
         @Override

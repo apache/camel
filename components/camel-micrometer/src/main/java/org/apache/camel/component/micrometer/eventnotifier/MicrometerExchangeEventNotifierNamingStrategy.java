@@ -17,11 +17,13 @@
 package org.apache.camel.component.micrometer.eventnotifier;
 
 import java.util.function.Predicate;
+
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Tags;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.management.event.AbstractExchangeEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeEvent;
+
 import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_EXCHANGE_EVENT_METER_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.ENDPOINT_NAME;
@@ -36,7 +38,7 @@ public interface MicrometerExchangeEventNotifierNamingStrategy {
 
     String getName(Exchange exchange, Endpoint endpoint);
 
-    default Tags getTags(AbstractExchangeEvent event, Endpoint endpoint) {
+    default Tags getTags(ExchangeEvent event, Endpoint endpoint) {
         return Tags.of(
                 CAMEL_CONTEXT_TAG, event.getExchange().getContext().getName(),
                 SERVICE_NAME, MicrometerEventNotifierService.class.getSimpleName(),

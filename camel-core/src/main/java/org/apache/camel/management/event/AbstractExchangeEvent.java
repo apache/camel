@@ -19,11 +19,12 @@ package org.apache.camel.management.event;
 import java.util.EventObject;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 
 /**
  * Base class for {@link Exchange} events.
  */
-public abstract class AbstractExchangeEvent extends EventObject {
+public abstract class AbstractExchangeEvent extends EventObject implements ExchangeEvent {
     private static final long serialVersionUID = 1L;
     private final Exchange exchange;
 

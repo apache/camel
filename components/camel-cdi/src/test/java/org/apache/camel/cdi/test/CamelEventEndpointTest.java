@@ -17,6 +17,7 @@
 package org.apache.camel.cdi.test;
 
 import java.util.EventObject;
+
 import javax.inject.Inject;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -24,12 +25,12 @@ import org.apache.camel.cdi.CdiCamelExtension;
 import org.apache.camel.cdi.CdiEventEndpoint;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.management.event.CamelContextStartedEvent;
-import org.apache.camel.management.event.ExchangeCompletedEvent;
-import org.apache.camel.management.event.ExchangeCreatedEvent;
-import org.apache.camel.management.event.ExchangeSendingEvent;
-import org.apache.camel.management.event.ExchangeSentEvent;
-import org.apache.camel.management.event.RouteStartedEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
+import org.apache.camel.spi.CamelEvent.RouteStartedEvent;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;

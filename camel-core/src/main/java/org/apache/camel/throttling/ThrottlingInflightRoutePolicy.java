@@ -16,7 +16,6 @@
  */
 package org.apache.camel.throttling;
 
-import java.util.EventObject;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
@@ -28,7 +27,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Route;
-import org.apache.camel.management.event.ExchangeCompletedEvent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RoutePolicySupport;
@@ -277,7 +277,7 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
     private class ContextScopedEventNotifier extends EventNotifierSupport {
 
         @Override
-        public void notify(EventObject event) throws Exception {
+        public void notify(CamelEvent event) throws Exception {
             ExchangeCompletedEvent completedEvent = (ExchangeCompletedEvent) event;
             for (Route route : routes) {
                 throttle(route, completedEvent.getExchange());
@@ -285,7 +285,7 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
         }
 
         @Override
-        public boolean isEnabled(EventObject event) {
+        public boolean isEnabled(CamelEvent event) {
             return event instanceof ExchangeCompletedEvent;
         }
 

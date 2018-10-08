@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor.async;
 
-import java.util.EventObject;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -25,7 +24,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.management.event.ExchangeSentEvent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.Test;
 
@@ -55,7 +55,7 @@ public class AsyncEndpointEventNotifierTest extends ContextTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext(createRegistry());
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
-            public void notify(EventObject event) throws Exception {
+            public void notify(CamelEvent event) throws Exception {
                 try {
                     ExchangeSentEvent sent = (ExchangeSentEvent) event;
                     time.set(sent.getTimeTaken());
@@ -64,7 +64,7 @@ public class AsyncEndpointEventNotifierTest extends ContextTestSupport {
                 }
             }
 
-            public boolean isEnabled(EventObject event) {
+            public boolean isEnabled(CamelEvent event) {
                 // we only want the async endpoint
                 if (event instanceof ExchangeSentEvent) {
                     ExchangeSentEvent sent = (ExchangeSentEvent) event;

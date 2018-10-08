@@ -16,13 +16,12 @@
  */
 package org.apache.camel.processor;
 
-import java.util.EventObject;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.management.event.ExchangeFailedEvent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeFailedEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.Test;
 
@@ -78,12 +77,12 @@ public class SplitterUseOriginalNotPropagateExceptionTest extends ContextTestSup
         private int errors;
 
         @Override
-        public void notify(EventObject event) throws Exception {
+        public void notify(CamelEvent event) throws Exception {
             errors++;
         }
 
         @Override
-        public boolean isEnabled(EventObject event) {
+        public boolean isEnabled(CamelEvent event) {
             return event instanceof ExchangeFailedEvent;
         }
 

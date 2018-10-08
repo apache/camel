@@ -17,8 +17,9 @@
 package org.apache.camel.management.event;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.CamelEvent;
 
-public class CamelContextResumingEvent extends AbstractContextEvent {
+public class CamelContextResumingEvent extends AbstractContextEvent implements CamelEvent.CamelContextResumingEvent {
     private static final long serialVersionUID = 6761726800283234511L;
 
     public CamelContextResumingEvent(CamelContext source) {

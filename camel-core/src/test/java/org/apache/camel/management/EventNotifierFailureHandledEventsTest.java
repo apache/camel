@@ -34,13 +34,14 @@ import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.management.event.RouteAddedEvent;
 import org.apache.camel.management.event.RouteStartedEvent;
 import org.apache.camel.processor.SendProcessor;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.Before;
 import org.junit.Test;
 
 public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
 
-    private static List<EventObject> events = new ArrayList<>();
+    private static List<CamelEvent> events = new ArrayList<>();
 
     @Override
     @Before
@@ -58,11 +59,11 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext(createRegistry());
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
-            public void notify(EventObject event) throws Exception {
+            public void notify(CamelEvent event) throws Exception {
                 events.add(event);
             }
 
-            public boolean isEnabled(EventObject event) {
+            public boolean isEnabled(CamelEvent event) {
                 return true;
             }
 

@@ -31,7 +31,7 @@ package org.apache.camel;
  * <p/>
  * <b>Important:</b> You cannot use this listener to add and start new routes to the {@link CamelContext} as this is not
  * supported by design, as this listener plays a role during starting up routes. Instead you can use an {@link org.apache.camel.spi.EventNotifier}
- * and listen on the {@link org.apache.camel.management.event.CamelContextStartedEvent} event and then add and start new routes from there.
+ * and listen on the {@link org.apache.camel.spi.CamelEvent.CamelContextStartedEvent} event and then add and start new routes from there.
  * Instead use the {@link ExtendedStartupListener} if you wish to add new routes.
  *
  * @see ExtendedStartupListener

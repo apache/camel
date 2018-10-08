@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
-import java.util.EventObject;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,11 +39,11 @@ public class ManagedCamelContextRestartTest extends ManagementTestSupport {
 
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
             @Override
-            public void notify(EventObject event) throws Exception {
+            public void notify(CamelEvent event) throws Exception {
                 // Empty.
             }
             @Override
-            public boolean isEnabled(EventObject event) {
+            public boolean isEnabled(CamelEvent event) {
                 return true;
             }
             @Override

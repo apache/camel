@@ -16,20 +16,22 @@
  */
 package org.apache.camel.component.micrometer.eventnotifier;
 
-import java.util.EventObject;
 import java.util.concurrent.TimeUnit;
+
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.micrometer.MicrometerUtils;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.ServiceHelper;
+
 import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.SERVICE_NAME;
 
-public abstract class AbstractMicrometerEventNotifier<T extends EventObject> extends EventNotifierSupport implements CamelContextAware {
+public abstract class AbstractMicrometerEventNotifier<T extends CamelEvent> extends EventNotifierSupport implements CamelContextAware {
 
     private final Class<T> eventType;
 
@@ -78,7 +80,7 @@ public abstract class AbstractMicrometerEventNotifier<T extends EventObject> ext
     }
 
     @Override
-    public boolean isEnabled(EventObject eventObject) {
+    public boolean isEnabled(CamelEvent eventObject) {
         return eventType.isAssignableFrom(eventObject.getClass());
     }
 

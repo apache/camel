@@ -19,7 +19,6 @@ package org.apache.camel.spring.boot;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.EventObject;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -31,16 +30,17 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.StartupListener;
 import org.apache.camel.main.MainDurationEventNotifier;
-import org.apache.camel.management.event.CamelContextStartedEvent;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.Type;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.support.EventNotifierSupport;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -230,7 +230,7 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                     // so use an event notifier to trigger when this happens
                     camelContext.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
                         @Override
-                        public void notify(EventObject eventObject) throws Exception {
+                        public void notify(CamelEvent eventObject) throws Exception {
                             for (CamelContextConfiguration camelContextConfiguration : camelContextConfigurations) {
                                 log.debug("CamelContextConfiguration found. Invoking afterApplicationStart: {}", camelContextConfiguration);
                                 try {
@@ -242,8 +242,8 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                         }
 
                         @Override
-                        public boolean isEnabled(EventObject eventObject) {
-                            return eventObject instanceof CamelContextStartedEvent;
+                        public boolean isEnabled(CamelEvent eventObject) {
+                            return eventObject.getType() == Type.CamelContextStarted;
                         }
                     });
                 }

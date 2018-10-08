@@ -16,11 +16,10 @@
  */
 package org.apache.camel.impl;
 
-import java.util.EventObject;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 import org.apache.camel.spi.Condition;
 
 /**
@@ -32,7 +31,7 @@ public class ConditionSupport implements Condition {
         return false;
     }
 
-    public boolean matchEvent(Exchange exchange, EventObject event) {
+    public boolean matchEvent(Exchange exchange, ExchangeEvent event) {
         return false;
     }
 }

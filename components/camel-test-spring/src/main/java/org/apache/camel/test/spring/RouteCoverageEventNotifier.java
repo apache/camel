@@ -16,11 +16,12 @@
  */
 package org.apache.camel.test.spring;
 
-import java.util.EventObject;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.management.event.CamelContextStoppingEvent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextStoppingEvent;
 import org.apache.camel.support.EventNotifierSupport;
 
 public class RouteCoverageEventNotifier extends EventNotifierSupport {
@@ -36,12 +37,12 @@ public class RouteCoverageEventNotifier extends EventNotifierSupport {
     }
 
     @Override
-    public boolean isEnabled(EventObject event) {
+    public boolean isEnabled(CamelEvent event) {
         return event instanceof CamelContextStoppingEvent;
     }
 
     @Override
-    public void notify(EventObject event) throws Exception {
+    public void notify(CamelEvent event) throws Exception {
         CamelContext context = ((CamelContextStoppingEvent) event).getContext();
         String testName = (String) testMethodName.apply(this);
         RouteCoverageDumper.dumpRouteCoverage(context, testClassName, testName);

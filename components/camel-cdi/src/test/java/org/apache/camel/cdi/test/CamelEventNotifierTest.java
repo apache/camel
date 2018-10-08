@@ -30,15 +30,15 @@ import org.apache.camel.cdi.CdiCamelExtension;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.cdi.bean.SimpleCamelRoute;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.management.event.AbstractExchangeEvent;
-import org.apache.camel.management.event.CamelContextStartedEvent;
-import org.apache.camel.management.event.CamelContextStartingEvent;
-import org.apache.camel.management.event.CamelContextStoppedEvent;
-import org.apache.camel.management.event.CamelContextStoppingEvent;
-import org.apache.camel.management.event.ExchangeCompletedEvent;
-import org.apache.camel.management.event.ExchangeCreatedEvent;
-import org.apache.camel.management.event.ExchangeSendingEvent;
-import org.apache.camel.management.event.ExchangeSentEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextStartingEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextStoppedEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextStoppingEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -76,8 +76,8 @@ public class CamelEventNotifierTest {
         events.add(CamelContextStartedEvent.class);
     }
 
-    private void onExchangeEvent(@Observes AbstractExchangeEvent event, List<Class> events) {
-        events.add(event.getClass());
+    private void onExchangeEvent(@Observes ExchangeEvent event, List<Class> events) {
+        events.add(event.getClass().getInterfaces()[0]);
     }
 
     private void onCamelContextStoppingEvent(@Observes CamelContextStoppingEvent event, List<Class> events) {

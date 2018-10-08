@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.management;
+
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.EventObject;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
@@ -25,13 +25,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.Before;
 import org.junit.Test;
 
 public class EventNotifierExchangeCompletedTest extends ContextTestSupport {
 
-    private static List<EventObject> events = new ArrayList<>();
+    private static List<CamelEvent> events = new ArrayList<>();
 
     @Override
     @Before
@@ -44,11 +45,11 @@ public class EventNotifierExchangeCompletedTest extends ContextTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext(createRegistry());
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
-            public void notify(EventObject event) throws Exception {
+            public void notify(CamelEvent event) throws Exception {
                 events.add(event);
             }
 
-            public boolean isEnabled(EventObject event) {
+            public boolean isEnabled(CamelEvent event) {
                 // we only want the completed event
                 return event instanceof ExchangeCompletedEvent;
                 // you can add additional filtering such as the exchange

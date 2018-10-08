@@ -17,6 +17,7 @@
 package org.apache.camel.example.cdi.xml;
 
 import java.util.concurrent.TimeUnit;
+
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -29,8 +30,8 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.management.event.CamelContextStartingEvent;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.spi.CamelEvent.CamelContextStartingEvent;
 import org.apache.camel.test.cdi.CamelCdiRunner;
 import org.apache.camel.test.cdi.Order;
 import org.awaitility.Awaitility;

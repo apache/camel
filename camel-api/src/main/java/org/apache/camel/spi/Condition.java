@@ -16,11 +16,10 @@
  */
 package org.apache.camel.spi;
 
-import java.util.EventObject;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 
 /**
  * A condition to define when a given {@link Exchange} matches when is being routed.
@@ -44,10 +43,10 @@ public interface Condition {
      * Does the condition match
      *
      * @param exchange the exchange
-     * @param event    the event (instance of {@link org.apache.camel.management.event.AbstractExchangeEvent}
+     * @param event    the event (instance of {@link ExchangeEvent}
      * @return <tt>true</tt> to match, <tt>false</tt> otherwise
-     * @see org.apache.camel.management.event.AbstractExchangeEvent
+     * @see ExchangeEvent
      */
-    boolean matchEvent(Exchange exchange, EventObject event);
+    boolean matchEvent(Exchange exchange, ExchangeEvent event);
 
 }

@@ -16,25 +16,26 @@
  */
 package org.apache.camel.component.micrometer.eventnotifier;
 
-import java.util.EventObject;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
+
 import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.Timer;
 import org.apache.camel.Exchange;
-import org.apache.camel.management.event.AbstractExchangeEvent;
-import org.apache.camel.management.event.ExchangeCompletedEvent;
-import org.apache.camel.management.event.ExchangeCreatedEvent;
-import org.apache.camel.management.event.ExchangeFailedEvent;
-import org.apache.camel.management.event.ExchangeSentEvent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeFailedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 
-public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNotifier<AbstractExchangeEvent> {
+public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNotifier<ExchangeEvent> {
 
     private Predicate<Exchange> ignoreExchanges = exchange -> false;
     private MicrometerExchangeEventNotifierNamingStrategy namingStrategy = MicrometerExchangeEventNotifierNamingStrategy.DEFAULT;
 
     public MicrometerExchangeEventNotifier() {
-        super(AbstractExchangeEvent.class);
+        super(ExchangeEvent.class);
     }
 
     public void setIgnoreExchanges(Predicate<Exchange> ignoreExchanges) {
@@ -54,14 +55,14 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
     }
 
     @Override
-    public void notify(EventObject eventObject) {
-        if (!(getIgnoreExchanges().test(((AbstractExchangeEvent) eventObject).getExchange()))) {
+    public void notify(CamelEvent eventObject) {
+        if (!(getIgnoreExchanges().test(((ExchangeEvent) eventObject).getExchange()))) {
             if (eventObject instanceof ExchangeSentEvent) {
                 handleSentEvent((ExchangeSentEvent) eventObject);
             } else if (eventObject instanceof ExchangeCreatedEvent) {
                 handleCreatedEvent((ExchangeCreatedEvent) eventObject);
             } else if (eventObject instanceof ExchangeCompletedEvent || eventObject instanceof ExchangeFailedEvent) {
-                handleDoneEvent((AbstractExchangeEvent) eventObject);
+                handleDoneEvent((ExchangeEvent) eventObject);
             }
         }
     }
@@ -77,7 +78,7 @@ public class MicrometerExchangeEventNotifier extends AbstractMicrometerEventNoti
         createdEvent.getExchange().setProperty("eventTimer:" + name, Timer.start(getMeterRegistry()));
     }
 
-    protected void handleDoneEvent(AbstractExchangeEvent doneEvent) {
+    protected void handleDoneEvent(ExchangeEvent doneEvent) {
         String name = namingStrategy.getName(doneEvent.getExchange(), doneEvent.getExchange().getFromEndpoint());
         Tags tags = namingStrategy.getTags(doneEvent, doneEvent.getExchange().getFromEndpoint());
         // Would have preferred LongTaskTimer, but you cannot set the FAILED_TAG once it is registered

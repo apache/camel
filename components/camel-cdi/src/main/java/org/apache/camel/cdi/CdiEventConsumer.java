@@ -19,8 +19,8 @@ package org.apache.camel.cdi;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 import org.apache.camel.support.DefaultConsumer;
-import org.apache.camel.management.event.AbstractExchangeEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +55,7 @@ final class CdiEventConsumer<T> extends DefaultConsumer {
         exchange.getIn().setBody(event);
 
         // Avoid infinite loop of exchange events
-        if (event instanceof AbstractExchangeEvent) {
+        if (event instanceof ExchangeEvent) {
             exchange.setProperty(Exchange.NOTIFY_EVENT, Boolean.TRUE);
         }
         try {
@@ -63,7 +63,7 @@ final class CdiEventConsumer<T> extends DefaultConsumer {
         } catch (Exception cause) {
             throw new RuntimeExchangeException("Error while processing CDI event", exchange, cause);
         } finally {
-            if (event instanceof AbstractExchangeEvent) {
+            if (event instanceof ExchangeEvent) {
                 exchange.setProperty(Exchange.NOTIFY_EVENT, Boolean.FALSE);
             }
         }

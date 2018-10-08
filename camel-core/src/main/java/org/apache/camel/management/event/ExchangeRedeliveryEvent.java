@@ -17,8 +17,9 @@
 package org.apache.camel.management.event;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.CamelEvent;
 
-public class ExchangeRedeliveryEvent extends AbstractExchangeEvent {
+public class ExchangeRedeliveryEvent extends AbstractExchangeEvent implements CamelEvent.ExchangeRedeliveryEvent {
     private static final long serialVersionUID = -19248832613958122L;
 
     private final int attempt;
