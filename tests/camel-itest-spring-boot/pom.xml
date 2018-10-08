@@ -208,7 +208,7 @@
             </property>
             <property>
               <name>itest.springboot.mavenOfflineResolution</name>
-              <value>true</value>
+              <value>false</value>
             </property>
             <property>
               <name>itest.springboot.springBootVersion</name>
