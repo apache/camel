@@ -34,7 +34,7 @@ import com.orbitz.consul.model.session.ImmutableSession;
 import com.orbitz.consul.model.session.SessionInfo;
 import com.orbitz.consul.option.QueryOptions;
 import org.apache.camel.cluster.CamelClusterMember;
-import org.apache.camel.impl.cluster.AbstractCamelClusterView;
+import org.apache.camel.support.cluster.AbstractCamelClusterView;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -25,7 +25,7 @@ import java.util.concurrent.locks.Lock;
 import org.apache.camel.CamelContext;
 import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.cluster.CamelClusterService;
-import org.apache.camel.impl.cluster.AbstractCamelClusterView;
+import org.apache.camel.support.cluster.AbstractCamelClusterView;
 import org.apache.camel.util.ObjectHelper;
 import org.jgroups.JChannel;
 import org.jgroups.blocks.locking.LockService;

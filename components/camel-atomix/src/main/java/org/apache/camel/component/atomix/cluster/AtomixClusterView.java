@@ -29,7 +29,7 @@ import io.atomix.group.LocalMember;
 import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.component.atomix.AtomixConfiguration;
-import org.apache.camel.impl.cluster.AbstractCamelClusterView;
+import org.apache.camel.support.cluster.AbstractCamelClusterView;
 import org.apache.camel.util.ObjectHelper;
 
 final class AtomixClusterView extends AbstractCamelClusterView {
