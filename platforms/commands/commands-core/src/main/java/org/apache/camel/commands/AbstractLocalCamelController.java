@@ -230,7 +230,11 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
     public void startContext(String camelContextName) throws Exception {
         CamelContext context = getLocalCamelContext(camelContextName);
         if (context != null) {
-            context.start();
+            if (context.getStatus().equals(ServiceStatus.Suspended)) {
+                context.resume();
+            } else {
+                context.start();
+            }
         }
     }
 
