@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import org.apache.camel.BeanInject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.DeferredContextBinding;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.PropertyInject;
@@ -64,7 +65,7 @@ public class DefaultCamelBeanPostProcessor {
      * initialization callbacks (like <code>afterPropertiesSet</code>
      * or a custom init-method). The bean will already be populated with property values.
      * The returned bean instance may be a wrapper around the original.
-     * 
+     *
      * @param bean the new bean instance
      * @param beanName the name of the bean
      * @return the bean instance to use, either the original or a wrapped one; if
@@ -84,10 +85,12 @@ public class DefaultCamelBeanPostProcessor {
 
         if (bean instanceof CamelContextAware && canSetCamelContext(bean, beanName)) {
             CamelContextAware contextAware = (CamelContextAware)bean;
+            DeferredContextBinding deferredBinding = bean.getClass().getAnnotation(DeferredContextBinding.class);
             CamelContext context = getOrLookupCamelContext();
-            if (context == null) {
+
+            if (context == null && deferredBinding == null) {
                 LOG.warn("No CamelContext defined yet so cannot inject into bean: {}", beanName);
-            } else {
+            } else if (context != null) {
                 contextAware.setCamelContext(context);
             }
         }
@@ -100,7 +103,7 @@ public class DefaultCamelBeanPostProcessor {
      * initialization callbacks (like <code>afterPropertiesSet</code>
      * or a custom init-method). The bean will already be populated with property values.
      * The returned bean instance may be a wrapper around the original.
-     * 
+     *
      * @param bean the new bean instance
      * @param beanName the name of the bean
      * @return the bean instance to use, either the original or a wrapped one; if
@@ -193,7 +196,7 @@ public class DefaultCamelBeanPostProcessor {
                                Object bean, String beanName) {
         injectField(field, endpointUri, endpointRef, endpointProperty, bean, beanName, true);
     }
-    
+
     public void injectField(Field field, String endpointUri, String endpointRef, String endpointProperty,
                                Object bean, String beanName, boolean binding) {
         ReflectionHelper.setField(field, bean,
