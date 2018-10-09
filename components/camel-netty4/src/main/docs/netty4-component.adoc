@@ -109,7 +109,7 @@ with the following path and query parameters:
 | *bossCount* (consumer) | When netty works on nio mode, it uses default bossCount parameter from Netty, which is 1. User can use this operation to override the default bossCount from Netty | 1 | int
 | *bossGroup* (consumer) | Set the BossGroup which could be used for handling the new connection of the server side across the NettyEndpoint |  | EventLoopGroup
 | *disconnectOnNoReply* (consumer) | If sync is enabled then this option dictates NettyConsumer if it should disconnect where there is no reply to send back. | true | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *nettyServerBootstrapFactory* (consumer) | To use a custom NettyServerBootstrapFactory |  | NettyServerBootstrap Factory
 | *networkInterface* (consumer) | When using UDP then this option can be used to specify a network interface by its name, such as eth0 to join a multicast group. |  | String
