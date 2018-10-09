@@ -90,7 +90,7 @@ with the following path and query parameters:
 | *eventFiring* (consumer) | Set the delivery mode (synchronous, asynchronous) | ASYNCHRONOUS | EventFiring
 | *eventOrdering* (consumer) | Set the delivery mode (ordered, unordered) | ORDERED | EventOrdering
 | *eventTypes* (consumer) | Set the type of events to listen for | EVICTED,EXPIRED,REMOVED,CREATED,UPDATED | Set
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *action* (producer) | To configure the default cache action. If an action is set in the message header, then the operation from the header takes precedence. |  | String
 | *key* (producer) | To configure the default action key. If a key is set in the message header, then the key from the header takes precedence. |  | Object

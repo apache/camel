@@ -157,7 +157,7 @@ with the following path and query parameters:
 | *operation* (consumer) | The HBase operation to perform |  | String
 | *remove* (consumer) | If the option is true, Camel HBase Consumer will remove the rows which it processes. | true | boolean
 | *removeHandler* (consumer) | To use a custom HBaseRemoveHandler that is executed when a row is to be removed. |  | HBaseRemoveHandler
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *maxResults* (producer) | The maximum number of rows to scan. | 100 | int
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean

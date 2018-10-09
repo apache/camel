@@ -118,7 +118,7 @@ with the following path and query parameters:
 | *bossPool* (consumer) | To use a explicit org.jboss.netty.channel.socket.nio.BossPool as the boss thread pool. For example to share a thread pool with multiple consumers. By default each consumer has their own boss pool with 1 core thread. |  | BossPool
 | *channelGroup* (consumer) | To use a explicit ChannelGroup. |  | ChannelGroup
 | *disconnectOnNoReply* (consumer) | If sync is enabled then this option dictates NettyConsumer if it should disconnect where there is no reply to send back. | true | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *maxChannelMemorySize* (consumer) | The maximum total size of the queued events per channel when using orderedThreadPoolExecutor. Specify 0 to disable. | 10485760 | long
 | *maxTotalMemorySize* (consumer) | The maximum total size of the queued events for this pool when using orderedThreadPoolExecutor. Specify 0 to disable. | 209715200 | long

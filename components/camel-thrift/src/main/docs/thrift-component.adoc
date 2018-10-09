@@ -74,7 +74,7 @@ with the following path and query parameters:
 | *clientTimeout* (consumer) | Client timeout for consumers |  | int
 | *maxPoolSize* (consumer) | The Thrift server consumer max thread pool size | 10 | int
 | *poolSize* (consumer) | The Thrift server consumer initial thread pool size | 1 | int
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *method* (producer) | The Thrift invoked method name |  | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean

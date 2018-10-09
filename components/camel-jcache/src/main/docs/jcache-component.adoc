@@ -53,7 +53,7 @@ with the following path and query parameters:
 | *oldValueRequired* (consumer) | if the old value is required for events | false | boolean
 | *synchronous* (consumer) | if the event listener should block the thread causing the event | false | boolean
 | *eventFilters* (consumer) | The CacheEntryEventFilter. If using eventFilters option, then filteredEvents one will be ignored |  | List
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *action* (producer) | To configure using a cache operation by default. If an operation in the message header, then the operation from the header takes precedence. |  | String
 | *cacheLoaderFactory* (advanced) | The CacheLoader factory |  | CacheLoader>

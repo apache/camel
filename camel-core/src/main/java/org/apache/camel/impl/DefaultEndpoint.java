@@ -68,7 +68,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
                     + " By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored.")
     private boolean bridgeErrorHandler;
     @UriParam(label = "consumer,advanced", optionalPrefix = "consumer.", description = "To let the consumer use a custom ExceptionHandler."
-            + " Notice if the option bridgeErrorHandler is enabled then this options is not in use."
+            + " Notice if the option bridgeErrorHandler is enabled then this option is not in use."
             + " By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored.")
     private ExceptionHandler exceptionHandler;
     @UriParam(label = "consumer,advanced",
