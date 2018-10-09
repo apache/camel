@@ -27,6 +27,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Processor;
+import org.apache.camel.Suspendable;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.interceptors.UnitOfWorkCloserInterceptor;
 import org.apache.camel.component.cxf.util.CxfUtils;
@@ -58,7 +59,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class CxfConsumer extends DefaultConsumer {
+public class CxfConsumer extends DefaultConsumer implements Suspendable {
     private static final Logger LOG = LoggerFactory.getLogger(CxfConsumer.class);
     private Server server;
     private CxfEndpoint cxfEndpoint;
