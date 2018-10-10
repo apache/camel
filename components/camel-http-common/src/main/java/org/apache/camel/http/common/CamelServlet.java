@@ -71,7 +71,7 @@ public class CamelServlet extends HttpServlet {
     }
 
     @Override
-    protected final void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (isAsync()) {
             final AsyncContext context = req.startAsync();
             //run async
