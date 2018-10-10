@@ -670,8 +670,7 @@ Example with option outputType=MongoIterable and batch size:
 
 [source,java]
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-// route: from("direct:aggregate").to("mongodb3:myDb?database=science&collection=notableScientists&operation=aggregate&outputType=MongoIterable");
-List<Bson> aggregate = Arrays.asList(match(or(eq("scientist", "Darwin"), eq("scientist", 
+List<Bson> aggregate = Arrays.asList(match(or(eq("scientist", "Darwin"), eq("scientist",
         group("$scientist", sum("count", 1)));
 from("direct:aggregate")
     .setHeader(MongoDbConstants.BATCH_SIZE).constant(10)
@@ -680,6 +679,20 @@ from("direct:aggregate")
     .to("mock:resultAggregate");
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+Example with outputType=DBCursor and batch size showing how to iterate over the cursor's data:
+
+[source,java]
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+List<Bson> aggregate = Arrays.asList(match(or(eq("scientist", "Darwin"), eq("scientist",
+        group("$scientist", sum("count", 1)));
+from("direct:aggregate")
+    .setHeader(MongoDbConstants.BATCH_SIZE).constant(10)
+    .setBody().constant(aggregate)
+    .to("mongodb3:myDb?database=science&collection=notableScientists&operation=aggregate&outputType=MongoIterable")
+    .split(body())
+    .streaming()
+    .to("mock:resultAggregate");
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ===== getDbStats
 
