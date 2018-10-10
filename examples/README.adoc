@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 109 (8 deprecated)
+Number of Examples: 110 (8 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |===
@@ -180,6 +180,8 @@ Number of Examples: 109 (8 deprecated)
 | link:camel-example-netty-http/README.md[Netty HTTP] (camel-example-netty-http) | OSGi | An example showing how to use a shared Netty HTTP server with multiple Camel applications in OSGi container
 
 | link:camel-example-olingo4-blueprint/README.md[Olingo4 Blueprint] (camel-example-olingo4-blueprint) | OSGi | An example which use the Olingo4 component in Blueprint
+
+| link:camel-example-servlet-httpregistry-blueprint/README.md[Servlet HttpRegistry Blueprint] (camel-example-servlet-httpregistry-blueprint) | OSGi | An example using Servlet and HttpRegistry with OSGi Blueprint
 
 | link:camel-example-servlet-rest-blueprint/README.md[Servlet REST Blueprint] (camel-example-servlet-rest-blueprint) | OSGi | An example using Servlet REST with OSGi Blueprint
 
