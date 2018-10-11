@@ -74,11 +74,11 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
         if (getConfiguration().isConsumeFromNow()) {
             Date date = new Date();
             request.setTimeMin(new DateTime(date));
-        } 
+        }
         if (getConfiguration().isConsiderLastUpdate()) {
             if (ObjectHelper.isNotEmpty(lastUpdate)) {
                 request.setUpdatedMin(lastUpdate);
-            } 
+            }
         }
 
         Queue<Exchange> answer = new LinkedList<>();
@@ -88,18 +88,14 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
 
         if (c != null) {
             List<Event> list = c.getItems();
-            
+
             for (Event event : list) {
                 Exchange exchange = getEndpoint().createExchange(getEndpoint().getExchangePattern(), event);
                 answer.add(exchange);
                 dateList.add(new Date(event.getUpdated().getValue()));
-                System.err.println("Title! " + event.getSummary());
-                System.err.println("Date created! " + new Date(event.getCreated().getValue()));
-                System.err.println("Date updated! " + new Date(event.getUpdated().getValue()));
             }
         }
 
-        System.err.println(dateList.toString());
         lastUpdate = retrieveLastUpdateDate(dateList);
         return processBatch(CastUtils.cast(answer));
     }
@@ -107,14 +103,14 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
     private DateTime retrieveLastUpdateDate(List<Date> dateList) {
         Date finalLastUpdate;
         if (!dateList.isEmpty()) {
-        dateList.sort((o1,o2) -> o1.compareTo(o2));
-        Date lastUpdateDate = dateList.get(dateList.size() - 1);
-        java.util.Calendar calendar = java.util.Calendar.getInstance();
-        calendar.setTime(lastUpdateDate);
-        calendar.add(java.util.Calendar.SECOND, 1);
-        finalLastUpdate = calendar.getTime();
+            dateList.sort((o1, o2) -> o1.compareTo(o2));
+            Date lastUpdateDate = dateList.get(dateList.size() - 1);
+            java.util.Calendar calendar = java.util.Calendar.getInstance();
+            calendar.setTime(lastUpdateDate);
+            calendar.add(java.util.Calendar.SECOND, 1);
+            finalLastUpdate = calendar.getTime();
         } else {
-           finalLastUpdate = new Date();
+            finalLastUpdate = new Date();
         }
         return new DateTime(finalLastUpdate);
     }
