@@ -33,6 +33,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -92,7 +93,6 @@ import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
-import org.apache.camel.management.ManagementStrategyFactory;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
@@ -138,6 +138,7 @@ import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.ManagementStrategyFactory;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
@@ -4560,7 +4561,18 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     protected ManagementStrategy createManagementStrategy() {
-        return new ManagementStrategyFactory().create(this, disableJMX);
+        if (!disableJMX) {
+            try {
+                ServiceLoader<ManagementStrategyFactory> loader = ServiceLoader.load(ManagementStrategyFactory.class);
+                Iterator<ManagementStrategyFactory> iterator = loader.iterator();
+                if (iterator.hasNext()) {
+                    return iterator.next().create(this);
+                }
+            } catch (Exception e) {
+                log.warn("Cannot create JMX lifecycle strategy. Will fallback and disable JMX.", e);
+            }
+        }
+        return new DefaultManagementStrategy(this);
     }
 
     /**

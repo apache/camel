@@ -28,8 +28,8 @@ import org.slf4j.LoggerFactory;
 public class ManagementStrategyFactory {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    public ManagementStrategy create(CamelContext context, boolean disableJMX) {
-        if (!disableJMX && !Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
+    public ManagementStrategy create(CamelContext context) {
+        if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
             try {
                 return new ManagedManagementStrategy(context, new DefaultManagementAgent(context));
             } catch (Exception e) {
