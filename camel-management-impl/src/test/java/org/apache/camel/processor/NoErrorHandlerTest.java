@@ -32,15 +32,12 @@ public class NoErrorHandlerTest extends ContextTestSupport {
     @Before
     public void setUp() throws Exception {
         counter = 0;
-
-        // we must enable/disable JMX in this setUp
-        if (jmx) {
-            enableJMX();
-            jmx = false;
-        } else {
-            disableJMX();
-        }
         super.setUp();
+    }
+
+    @Override
+    protected boolean useJmx() {
+        return jmx;
     }
 
     @Test

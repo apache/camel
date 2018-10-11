@@ -36,7 +36,6 @@ public class TransactionClientDataSourceSupport extends SpringTestSupport {
     @Before
     @Override
     public void setUp() throws Exception {
-        disableJMX();
         super.setUp();
 
         // START SNIPPET: e5

@@ -24,18 +24,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
-public class RecipeientListWithSimpleExpressionTest extends ContextTestSupport {
+public class RecipientListWithSimpleExpressionTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
         return false;
-    }
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        disableJMX();
-        super.setUp();
     }
 
     @Test

@@ -22,11 +22,13 @@ import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.management.DefaultManagementAgent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class TestSupportJmxCleanup {
+
+    public static final String DEFAULT_DOMAIN = "org.apache.camel";
+
     private static final Logger LOG = LoggerFactory.getLogger(TestSupportJmxCleanup.class);
 
     private TestSupportJmxCleanup() {
@@ -55,7 +57,7 @@ public final class TestSupportJmxCleanup {
     }
 
     private static String getDomainName(String domain) {
-        return domain == null ? DefaultManagementAgent.DEFAULT_DOMAIN : domain;
+        return domain == null ? DEFAULT_DOMAIN : domain;
     }
 
 }

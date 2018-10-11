@@ -27,13 +27,6 @@ public class ChannelTest extends ContextTestSupport {
 
     private static int counter;
 
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        disableJMX();
-        super.setUp();
-    }
-
     @Test
     public void testChannel() throws Exception {
         counter = 0;

@@ -159,11 +159,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             boolean done = false;
             while (!done) {
                 ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForCamelContext(managementName, name);
-<<<<<<< HEAD
-                boolean exists = getManagementStrategy().isManaged(mc, on);
-=======
                 boolean exists = getManagementStrategy().isManagedName(on);
->>>>>>> db1604e8d06... wip
                 if (!exists) {
                     done = true;
                 } else {
@@ -253,11 +249,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             // compute the next name
             newName = strategy.getNextName();
             ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForCamelContext(newName, name);
-<<<<<<< HEAD
-            done = !getManagementStrategy().isManaged(mc, on);
-=======
             done = !getManagementStrategy().isManagedName(on);
->>>>>>> db1604e8d06... wip
             if (log.isTraceEnabled()) {
                 log.trace("Using name: {} in ObjectName[{}] exists? {}", name, on, done);
             }

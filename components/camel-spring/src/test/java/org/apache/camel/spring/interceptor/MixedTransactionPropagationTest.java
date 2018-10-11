@@ -42,7 +42,6 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        this.disableJMX();
         super.setUp();
 
         final DataSource ds = getMandatoryBean(DataSource.class, "dataSource");

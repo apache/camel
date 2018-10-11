@@ -25,7 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.jndi.JndiTest;
@@ -86,11 +85,6 @@ public abstract class ContextTestSupport extends TestSupport {
         // make SEDA testing faster
         System.setProperty("CamelSedaPollTimeout", "10");
 
-        if (!useJmx()) {
-            disableJMX();
-        } else {
-            enableJMX();
-        }
         CamelContext c2 = createCamelContext();
         if (c2 instanceof ModelCamelContext) {
             context = (ModelCamelContext)c2;
@@ -134,7 +128,6 @@ public abstract class ContextTestSupport extends TestSupport {
             template.stop();
         }
         stopCamelContext();
-        System.clearProperty(JmxSystemPropertyKeys.DISABLED);
         System.clearProperty("CamelSedaPollTimeout");
 
         super.tearDown();
@@ -379,17 +372,4 @@ public abstract class ContextTestSupport extends TestSupport {
         return endpoint;
     }
 
-    /**
-     * Disables the JMX agent. Must be called before the {@link #setUp()} method.
-     */
-    protected void disableJMX() {
-        System.setProperty(JmxSystemPropertyKeys.DISABLED, "true");
-    }
-
-    /**
-     * Enables the JMX agent. Must be called before the {@link #setUp()} method.
-     */
-    protected void enableJMX() {
-        System.setProperty(JmxSystemPropertyKeys.DISABLED, "false");
-    }
 }
