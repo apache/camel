@@ -658,28 +658,11 @@ Supports the following IN message headers:
 |`CamelMongoDbAllowDiskUse` |`MongoDbConstants.ALLOW_DISK_USE` | Enable aggregation pipeline stages to write data to temporary files. |boolean/Boolean
 |=======================================================================
 
-Efficient retrieval is supported via outputType=MongoIterable.
+By default a List of all results is returned. This can be heavy on memory depending on the size of the results. A safer alternative is to set your
+outputType=MongoIterable. The next Processor will see an iterable in the message body allowing it to step through the results one by one. Thus setting
+a batch size and returning an iterable allows for efficient retrieval and processing of the result.
 
-You can also "stream" the documents returned from the server into your route by including outputType=DBCursor (Camel 2.21+) as an endpoint option
-which may prove simpler than setting the above headers. This hands your Exchange the DBCursor from the Mongo driver, just as if you were executing
-the aggregate() within the Mongo shell, allowing your route to iterate over the results. By default and without this option, this component will load
-the documents from the driver's cursor into a List and return this to your route - which may result in a large number of in-memory objects. Remember,
-with a DBCursor do not ask for the number of documents matched - see the MongoDB documentation site for details.
-
-Example with option outputType=MongoIterable and batch size:
-
-[source,java]
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-List<Bson> aggregate = Arrays.asList(match(or(eq("scientist", "Darwin"), eq("scientist",
-        group("$scientist", sum("count", 1)));
-from("direct:aggregate")
-    .setHeader(MongoDbConstants.BATCH_SIZE).constant(10)
-    .setBody().constant(aggregate)
-    .to("mongodb3:myDb?database=science&collection=notableScientists&operation=aggregate&outputType=MongoIterable")
-    .to("mock:resultAggregate");
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-Example with outputType=DBCursor and batch size showing how to iterate over the cursor's data:
+An example would look like:
 
 [source,java]
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -693,6 +676,10 @@ from("direct:aggregate")
     .streaming()
     .to("mock:resultAggregate");
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Note that calling `.split(body())` is enough to send the entries down the route one-by-one, however it would still load all the entries into memory first.
+Calling `.streaming()` is thus required to load data into memory by batches.
+
 
 ===== getDbStats
 
