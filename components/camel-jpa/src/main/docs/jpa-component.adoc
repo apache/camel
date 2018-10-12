@@ -229,6 +229,8 @@ reason why the support for this header has been dropped.
 |`CamelEntityManager` |`EntityManager` |*Camel 2.12: JPA consumer / Camel 2.12.2: JPA producer:* The JPA
 `EntityManager` object being used by `JpaConsumer` or `JpaProducer`.
 
+|`CamelJpaParameters` |`Map<String, Object>` |*Camel 2.23: JPA producer:* Alternative way for passing query parameters as an Exchange header.
+
 |=======================================================================
 
 ### Configuring EntityManagerFactory
