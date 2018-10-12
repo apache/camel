@@ -21,7 +21,7 @@ import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.hazelcast.HazelcastComponent;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.IntrospectionSupport;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionMessage;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;

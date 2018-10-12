@@ -634,7 +634,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             Object mr = getManagementObjectStrategy().getManagedObjectForRoute(camelContext, route);
 
             // skip unmanaged routes
-            if (!getManagementStrategy().isManaged(mr, null)) {
+            if (!getManagementStrategy().isManaged(mr)) {
                 log.trace("The route is not managed: {}", route);
                 continue;
             }

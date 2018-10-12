@@ -45,7 +45,7 @@ public class DefaultServerInitializerFactory extends ServerInitializerFactory {
         try {
             this.sslContext = createSSLContext(null, configuration);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
         if (sslContext != null) {
