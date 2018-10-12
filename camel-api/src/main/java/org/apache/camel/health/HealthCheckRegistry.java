@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.util.ObjectHelper;
 
@@ -76,5 +77,22 @@ public interface HealthCheckRegistry extends HealthCheckRepository, CamelContext
         return stream()
             .filter(check -> ObjectHelper.equal(check.getId(), id))
             .findFirst();
+    }
+
+    /**
+     * Returns an optional {@link HealthCheckRegistry}, by default no registry is
+     * present and it must be explicit activated. Components can register/unregister
+     * health checks in response to life-cycle events (i.e. start/stop).
+     *
+     * This registry is not used by the camel context but it is up to the impl to
+     * properly use it, i.e.
+     *
+     * - a RouteController could use the registry to decide to restart a route
+     *   with failing health checks
+     * - spring boot could integrate such checks within its health endpoint or
+     *   make it available only as separate endpoint.
+     */
+    static HealthCheckRegistry get(CamelContext context) {
+        return context.getExtension(HealthCheckRegistry.class);
     }
 }

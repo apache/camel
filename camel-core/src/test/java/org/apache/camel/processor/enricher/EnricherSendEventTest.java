@@ -16,14 +16,13 @@
  */
 package org.apache.camel.processor.enricher;
 
-import java.util.EventObject;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.management.DefaultManagementStrategy;
+import org.apache.camel.impl.DefaultManagementStrategy;
 import org.apache.camel.processor.async.MyAsyncComponent;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
@@ -55,6 +54,7 @@ public class EnricherSendEventTest extends ContextTestSupport {
     
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
+        camelContext.init();
         ShutdownStrategy shutdownStrategy = camelContext.getShutdownStrategy();
         camelContext.addComponent("async", new MyAsyncComponent());
         
@@ -102,19 +102,6 @@ public class EnricherSendEventTest extends ContextTestSupport {
             } else if (event instanceof ExchangeSentEvent) {
                 exchangeSentEvent.incrementAndGet();
             }
-        }
-
-        @Override
-        public boolean isEnabled(CamelEvent event) {
-            return true;
-        }
-
-        @Override
-        protected void doStart() throws Exception {
-        }
-
-        @Override
-        protected void doStop() throws Exception {
         }
     }
 

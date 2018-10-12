@@ -32,6 +32,7 @@ public class ManagedStatisticsLevelOffTest extends ManagementTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
+        context.init();
         // disable it by default
         context.getManagementStrategy().getManagementAgent().setStatisticsLevel(ManagementStatisticsLevel.Off);
         return context;

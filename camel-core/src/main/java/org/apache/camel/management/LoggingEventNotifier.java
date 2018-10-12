@@ -62,6 +62,4 @@ public class LoggingEventNotifier extends EventNotifierSupport {
         }
     }
 
-    protected void doStop() throws Exception {
-    }
 }

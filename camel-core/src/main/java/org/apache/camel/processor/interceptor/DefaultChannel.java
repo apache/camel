@@ -27,8 +27,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Channel;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.management.InstrumentationInterceptStrategy;
-import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.model.ModelChannel;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
@@ -37,10 +35,12 @@ import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.processor.CamelInternalProcessor;
+import org.apache.camel.processor.CamelInternalProcessorAdvice;
 import org.apache.camel.processor.InterceptorToAsyncProcessorBridge;
 import org.apache.camel.processor.RedeliveryErrorHandler;
 import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.ManagementInterceptStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.OrderedComparator;
@@ -66,7 +66,7 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
     private Processor output;
     private ProcessorDefinition<?> definition;
     private ProcessorDefinition<?> childDefinition;
-    private InstrumentationProcessor instrumentationProcessor;
+    private ManagementInterceptStrategy.InstrumentationProcessor<?> instrumentationProcessor;
     private CamelContext camelContext;
     private RouteContext routeContext;
 
@@ -210,35 +210,25 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
 
         // setup instrumentation processor for management (jmx)
         // this is later used in postInitChannel as we need to setup the error handler later as well
-        InterceptStrategy managed = routeContext.getManagedInterceptStrategy();
-        if (managed instanceof InstrumentationInterceptStrategy) {
-            InstrumentationInterceptStrategy iis = (InstrumentationInterceptStrategy) managed;
-            instrumentationProcessor = new InstrumentationProcessor(targetOutputDef.getShortName(), target);
-            iis.prepareProcessor(targetOutputDef, target, instrumentationProcessor);
+        ManagementInterceptStrategy managed = routeContext.getManagementInterceptStrategy();
+        if (managed != null) {
+            instrumentationProcessor = managed.createProcessor(targetOutputDef, target);
         }
 
         // then wrap the output with the backlog and tracer (backlog first, as we do not want regular tracer to trace the backlog)
-        InterceptStrategy tracer = getOrCreateBacklogTracer();
-        camelContext.addService(tracer);
-        if (tracer instanceof BacklogTracer) {
-            BacklogTracer backlogTracer = (BacklogTracer) tracer;
-
-            RouteDefinition route = ProcessorDefinitionHelper.getRoute(definition);
-            boolean first = false;
-            if (route != null && !route.getOutputs().isEmpty()) {
-                first = route.getOutputs().get(0) == definition;
-            }
-
-            addAdvice(new BacklogTracerAdvice(backlogTracer, targetOutputDef, route, first));
-
-            // add debugger as well so we have both tracing and debugging out of the box
-            InterceptStrategy debugger = getOrCreateBacklogDebugger();
-            camelContext.addService(debugger);
-            if (debugger instanceof BacklogDebugger) {
-                BacklogDebugger backlogDebugger = (BacklogDebugger) debugger;
-                addAdvice(new BacklogDebuggerAdvice(backlogDebugger, target, targetOutputDef));
-            }
+        BacklogTracer tracer = getOrCreateBacklogTracer();
+        camelContext.setExtension(BacklogTracer.class, tracer);
+        RouteDefinition route = ProcessorDefinitionHelper.getRoute(definition);
+        boolean first = false;
+        if (route != null && !route.getOutputs().isEmpty()) {
+            first = route.getOutputs().get(0) == definition;
         }
+        addAdvice(new BacklogTracerAdvice(tracer, targetOutputDef, route, first));
+
+        // add debugger as well so we have both tracing and debugging out of the box
+        BacklogDebugger debugger = getOrCreateBacklogDebugger();
+        camelContext.addService(debugger);
+        addAdvice(new BacklogDebuggerAdvice(debugger, target, targetOutputDef));
 
         if (routeContext.isMessageHistory()) {
             // add message history advice
@@ -248,7 +238,7 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
 
         // sort interceptors according to ordered
         interceptors.sort(OrderedComparator.get());
-        // then reverse list so the first will be wrapped last, as it would then be first being invoked
+        // reverse list so the first will be wrapped last, as it would then be first being invoked
         Collections.reverse(interceptors);
         // wrap the output with the configured interceptors
         for (InterceptStrategy strategy : interceptors) {
@@ -312,46 +302,45 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
             }
             if (!redeliveryPossible) {
                 // optimise to use advice as we cannot redeliver
-                addAdvice(instrumentationProcessor);
+                addAdvice(CamelInternalProcessorAdvice.wrap(instrumentationProcessor));
             }
         }
     }
 
-    private InterceptStrategy getOrCreateBacklogTracer() {
-        InterceptStrategy tracer = BacklogTracer.getBacklogTracer(camelContext);
-        if (tracer == null) {
-            if (camelContext.getRegistry() != null) {
-                // lookup in registry
-                Map<String, BacklogTracer> map = camelContext.getRegistry().findByTypeWithName(BacklogTracer.class);
-                if (map.size() == 1) {
-                    tracer = map.values().iterator().next();
-                }
-            }
-            if (tracer == null) {
-                // fallback to use the default tracer
-                tracer = camelContext.getDefaultBacklogTracer();
+    private BacklogTracer getOrCreateBacklogTracer() {
+        BacklogTracer tracer = null;
+        if (camelContext.getRegistry() != null) {
+            // lookup in registry
+            Map<String, BacklogTracer> map = camelContext.getRegistry().findByTypeWithName(BacklogTracer.class);
+            if (map.size() == 1) {
+                tracer = map.values().iterator().next();
             }
         }
-
+        if (tracer == null) {
+            tracer = camelContext.getExtension(BacklogTracer.class);
+        }
+        if (tracer == null) {
+            tracer = BacklogTracer.createTracer(camelContext);
+        }
         return tracer;
     }
 
-    private InterceptStrategy getOrCreateBacklogDebugger() {
-        InterceptStrategy debugger = BacklogDebugger.getBacklogDebugger(camelContext);
-        if (debugger == null) {
-            if (camelContext.getRegistry() != null) {
-                // lookup in registry
-                Map<String, BacklogDebugger> map = camelContext.getRegistry().findByTypeWithName(BacklogDebugger.class);
-                if (map.size() == 1) {
-                    debugger = map.values().iterator().next();
-                }
-            }
-            if (debugger == null) {
-                // fallback to use the default debugger
-                debugger = camelContext.getDefaultBacklogDebugger();
+    private BacklogDebugger getOrCreateBacklogDebugger() {
+        BacklogDebugger debugger = null;
+        if (camelContext.getRegistry() != null) {
+            // lookup in registry
+            Map<String, BacklogDebugger> map = camelContext.getRegistry().findByTypeWithName(BacklogDebugger.class);
+            if (map.size() == 1) {
+                debugger = map.values().iterator().next();
             }
         }
-
+        if (debugger == null) {
+            debugger = camelContext.hasService(BacklogDebugger.class);
+        }
+        if (debugger == null) {
+            // fallback to use the default debugger
+            debugger = BacklogDebugger.createDebugger(camelContext);
+        }
         return debugger;
     }
 

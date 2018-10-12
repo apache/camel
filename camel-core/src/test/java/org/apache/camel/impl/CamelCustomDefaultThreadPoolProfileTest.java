@@ -37,7 +37,10 @@ public class CamelCustomDefaultThreadPoolProfileTest extends ContextTestSupport 
         profile.setAllowCoreThreadTimeOut(true);
         profile.setRejectedPolicy(ThreadPoolRejectedPolicy.Abort);
 
-        camel.getExecutorServiceManager().setDefaultThreadPoolProfile(profile);
+        DefaultExecutorServiceManager executorServiceManager = new DefaultExecutorServiceManager(camel);
+        executorServiceManager.setDefaultThreadPoolProfile(profile);
+        camel.setExecutorServiceManager(executorServiceManager);
+
         return camel;
     }
 

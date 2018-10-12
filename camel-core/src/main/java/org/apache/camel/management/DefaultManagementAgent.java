@@ -392,6 +392,9 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
         // ensure assembler is started
         assembler = camelContext.getManagementMBeanAssembler();
+        if (assembler == null) {
+            assembler = new DefaultManagementMBeanAssembler(camelContext);
+        }
         ServiceHelper.startService(assembler);
 
         LOG.debug("Starting JMX agent on server: {}", getMBeanServer());

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.runtimecatalog.impl.JSonSchemaHelper;
 import org.junit.Test;
 
@@ -27,7 +28,7 @@ public class JSonSchemaHelperTest extends ContextTestSupport {
 
     @Test
     public void testParseJsonSchemaMustBeOrdered() throws Exception {
-        String json = context.getRuntimeCamelCatalog().componentJSonSchema("bean");
+        String json = context.getExtension(RuntimeCamelCatalog.class).componentJSonSchema("bean");
         assertNotNull(json);
 
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);

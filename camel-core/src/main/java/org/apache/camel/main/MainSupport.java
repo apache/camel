@@ -580,7 +580,7 @@ public abstract class MainSupport extends ServiceSupport {
             }
 
             // skip already managed services, for example if a route has been restarted
-            if (camelContext.getManagementStrategy().isManaged(managedObject, null)) {
+            if (camelContext.getManagementStrategy().isManaged(managedObject)) {
                 LOG.trace("The service is already managed: {}", reload);
                 return;
             }

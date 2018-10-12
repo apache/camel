@@ -52,10 +52,6 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
                 events.add(event);
             }
 
-            public boolean isEnabled(CamelEvent event) {
-                return true;
-            }
-
             @Override
             protected void doStart() throws Exception {
                 // filter out unwanted events
@@ -66,10 +62,6 @@ public class EventNotifierExchangeSentTest extends ContextTestSupport {
                 setIgnoreExchangeCompletedEvent(true);
                 setIgnoreExchangeFailedEvents(true);
                 setIgnoreExchangeRedeliveryEvents(true);
-            }
-
-            @Override
-            protected void doStop() throws Exception {
             }
         });
         return context;

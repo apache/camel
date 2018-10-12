@@ -37,16 +37,4 @@ public class MySentEventNotifier extends EventNotifierSupport {
         }
     }
 
-    public boolean isEnabled(CamelEvent event) {
-        return true;
-    }
-
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    protected void doStop() throws Exception {
-        // noop
-    }
-
 }

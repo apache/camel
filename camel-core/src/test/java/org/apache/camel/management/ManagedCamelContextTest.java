@@ -25,6 +25,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -36,6 +37,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
+        context.init();
         // to force a different management name than the camel id
         context.getManagementNameStrategy().setNamePattern("19-#name#");
         return context;
@@ -48,7 +50,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
             return;
         }
 
-        ManagedCamelContextMBean client = context.adapt(ManagedCamelContext.class).getManagedCamelContext();
+        ManagedCamelContextMBean client = context.getExtension(ManagedCamelContext.class).getManagedCamelContext();
         assertNotNull(client);
 
         assertEquals("camel-1", client.getCamelId());

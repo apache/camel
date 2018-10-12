@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -72,6 +73,7 @@ public class JmxInstrumentationOnlyRegisterProcessorWithCustomIdTest extends Con
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
+        context.init();
         context.getManagementStrategy().getManagementAgent().setOnlyRegisterProcessorWithCustomId(true);
         return context;
     }

@@ -23,6 +23,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedSuspendableRouteMBean;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -88,7 +89,7 @@ public class ManagedRouteSuspendAndResumeTest extends ManagementTestSupport {
         // this time the file is consumed
         mock.assertIsSatisfied();
 
-        ManagedSuspendableRouteMBean route = context.adapt(ManagedCamelContext.class).getManagedRoute("foo", ManagedSuspendableRouteMBean.class);
+        ManagedSuspendableRouteMBean route = context.getExtension(ManagedCamelContext.class).getManagedRoute("foo", ManagedSuspendableRouteMBean.class);
         assertNotNull(route);
 
         assertEquals(2, route.getExchangesCompleted());

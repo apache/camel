@@ -42,7 +42,7 @@ import org.apache.camel.util.StringHelper;
  * This tracer allows to store message tracers per node in the Camel routes. The tracers
  * is stored in a backlog queue (FIFO based) which allows to pull the traced messages on demand.
  */
-public final class BacklogTracer extends ServiceSupport implements InterceptStrategy {
+public final class BacklogTracer extends ServiceSupport {
 
     // lets limit the tracer to 10 thousand messages in total
     public static final int MAX_BACKLOG_SIZE = 10 * 1000;
@@ -67,12 +67,6 @@ public final class BacklogTracer extends ServiceSupport implements InterceptStra
         this.camelContext = camelContext;
     }
 
-    @Override
-    @Deprecated
-    public Processor wrapProcessorInInterceptors(CamelContext context, NamedNode definition, Processor target, Processor nextTarget) throws Exception {
-        throw new UnsupportedOperationException("Deprecated");
-    }
-
     /**
      * Creates a new backlog tracer.
      *
@@ -89,13 +83,7 @@ public final class BacklogTracer extends ServiceSupport implements InterceptStra
      * @return the backlog tracer or null if none can be found
      */
     public static BacklogTracer getBacklogTracer(CamelContext context) {
-        List<InterceptStrategy> list = context.getInterceptStrategies();
-        for (InterceptStrategy interceptStrategy : list) {
-            if (interceptStrategy instanceof BacklogTracer) {
-                return (BacklogTracer) interceptStrategy;
-            }
-        }
-        return null;
+        return context.getExtension(BacklogTracer.class);
     }
 
     /**

@@ -46,6 +46,7 @@ public class EventNotifierServiceStoppingFailedEventTest extends ContextTestSupp
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
+        context.init();
         context.addService(new MyService("A", false));
         context.addService(new MyService("B", true));
         context.addService(new MyService("C", false));
@@ -53,18 +54,6 @@ public class EventNotifierServiceStoppingFailedEventTest extends ContextTestSupp
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
             public void notify(CamelEvent event) throws Exception {
                 events.add(event);
-            }
-
-            public boolean isEnabled(CamelEvent event) {
-                return true;
-            }
-
-            @Override
-            protected void doStart() throws Exception {
-            }
-
-            @Override
-            protected void doStop() throws Exception {
             }
         });
         return context;

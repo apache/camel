@@ -43,6 +43,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.spi.BrowsableEndpoint;
@@ -133,6 +134,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private boolean copyOnExchange = true;
 
     public MockEndpoint() {
+        init();
     }
 
     public MockEndpoint(String endpointUri, Component component) {
@@ -294,7 +296,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     }
 
     public void reset() {
-        init();
+        doInit();
     }
 
 
@@ -1274,7 +1276,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
     // Implementation methods
     // -------------------------------------------------------------------------
-    private void init() {
+    protected void doInit() {
         expectedCount = -1;
         counter = 0;
         defaultProcessor = null;

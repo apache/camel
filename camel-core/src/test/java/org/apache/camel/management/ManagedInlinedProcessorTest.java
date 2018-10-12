@@ -21,6 +21,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
@@ -44,7 +45,7 @@ public class ManagedInlinedProcessorTest extends ManagementTestSupport {
         Long counter = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(1L, counter.longValue());
 
-        ManagedProcessorMBean mb = context.adapt(ManagedCamelContext.class).getManagedProcessor("custom", ManagedProcessorMBean.class);
+        ManagedProcessorMBean mb = context.getExtension(ManagedCamelContext.class).getManagedProcessor("custom");
         assertNotNull(mb);
         assertEquals(1L, mb.getExchangesCompleted());
     }

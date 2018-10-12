@@ -19,7 +19,6 @@ package org.apache.camel.impl.health;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +27,7 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.health.HealthCheckResultBuilder;
-import org.apache.camel.management.ManagedCamelContext;
+import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,14 +87,10 @@ public class RouteHealthCheck extends AbstractHealthCheck {
             if (builder.state() != State.DOWN) {
                 // If JMX is enabled, use the Managed MBeans to determine route
                 // health based on performance counters.
-                ManagedRouteMBean managedRoute = context.adapt(ManagedCamelContext.class).getManagedRoute(route.getId(), ManagedRouteMBean.class);
+                ManagedRouteMBean managedRoute = context.getExtension(ManagedCamelContext.class).getManagedRoute(route.getId());
 
                 if (managedRoute != null && !evaluators.isEmpty()) {
-                    Map<String, Object> details = new HashMap<>();
-
-                    for (PerformanceCounterEvaluator evaluator : evaluators) {
-                        details.clear();
-
+                    for (PerformanceCounterEvaluator<ManagedRouteMBean> evaluator : evaluators) {
                         evaluator.test(managedRoute, builder, options);
 
                         if (builder.state() == State.DOWN) {

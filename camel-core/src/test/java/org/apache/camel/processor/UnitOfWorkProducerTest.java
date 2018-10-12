@@ -44,14 +44,6 @@ public class UnitOfWorkProducerTest extends ContextTestSupport {
             public boolean isEnabled(CamelEvent event) {
                 return event instanceof ExchangeCompletedEvent;
             }
-
-            @Override
-            protected void doStart() throws Exception {
-            }
-
-            @Override
-            protected void doStop() throws Exception {
-            }
         });
         return context;
     }

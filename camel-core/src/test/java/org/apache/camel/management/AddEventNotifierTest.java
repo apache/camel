@@ -52,18 +52,6 @@ public class AddEventNotifierTest extends ContextTestSupport {
             public void notify(CamelEvent event) throws Exception {
                 events.add(event);
             }
-
-            public boolean isEnabled(CamelEvent event) {
-                return true;
-            }
-
-            @Override
-            protected void doStart() throws Exception {
-            }
-
-            @Override
-            protected void doStop() throws Exception {
-            }
         };
         // must add notifier as a service so its started
         context.addService(notifier);

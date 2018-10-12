@@ -49,6 +49,7 @@ import org.apache.camel.StartupListener;
 import org.apache.camel.TimerListener;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.cluster.CamelClusterService;
+import org.apache.camel.spi.ManagementInterceptStrategy.InstrumentationProcessor;
 import org.apache.camel.throttling.ThrottlingExceptionRoutePolicy;
 import org.apache.camel.throttling.ThrottlingInflightRoutePolicy;
 import org.apache.camel.management.mbean.ManagedAsyncProcessorAwaitManager;
@@ -158,7 +159,11 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             boolean done = false;
             while (!done) {
                 ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForCamelContext(managementName, name);
+<<<<<<< HEAD
                 boolean exists = getManagementStrategy().isManaged(mc, on);
+=======
+                boolean exists = getManagementStrategy().isManagedName(on);
+>>>>>>> db1604e8d06... wip
                 if (!exists) {
                     done = true;
                 } else {
@@ -248,7 +253,11 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             // compute the next name
             newName = strategy.getNextName();
             ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForCamelContext(newName, name);
+<<<<<<< HEAD
             done = !getManagementStrategy().isManaged(mc, on);
+=======
+            done = !getManagementStrategy().isManagedName(on);
+>>>>>>> db1604e8d06... wip
             if (log.isTraceEnabled()) {
                 log.trace("Using name: {} in ObjectName[{}] exists? {}", name, on, done);
             }
@@ -294,7 +303,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         try {
             Object mc = getManagementObjectStrategy().getManagedObjectForRouteController(context);
             // the context could have been removed already
-            if (getManagementStrategy().isManaged(mc, null)) {
+            if (getManagementStrategy().isManaged(mc)) {
                 unmanageObject(mc);
             }
         } catch (Exception e) {
@@ -304,7 +313,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         try {
             Object mc = getManagementObjectStrategy().getManagedObjectForCamelHealth(context);
             // the context could have been removed already
-            if (getManagementStrategy().isManaged(mc, null)) {
+            if (getManagementStrategy().isManaged(mc)) {
                 unmanageObject(mc);
             }
         } catch (Exception e) {
@@ -314,7 +323,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         try {
             Object mc = getManagementObjectStrategy().getManagedObjectForCamelContext(context);
             // the context could have been removed already
-            if (getManagementStrategy().isManaged(mc, null)) {
+            if (getManagementStrategy().isManaged(mc)) {
                 unmanageObject(mc);
             }
         } catch (Exception e) {
@@ -425,7 +434,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         }
 
         // skip already managed services, for example if a route has been restarted
-        if (getManagementStrategy().isManaged(managedObject, null)) {
+        if (getManagementStrategy().isManaged(managedObject)) {
             log.trace("The service is already managed: {}", service);
             return;
         }
@@ -589,7 +598,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             Object mr = getManagementObjectStrategy().getManagedObjectForRoute(camelContext, route);
 
             // skip already managed routes, for example if the route has been restarted
-            if (getManagementStrategy().isManaged(mr, null)) {
+            if (getManagementStrategy().isManaged(mr)) {
                 log.trace("The route is already managed: {}", route);
                 continue;
             }
@@ -601,7 +610,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
                 CamelInternalProcessor internal = (CamelInternalProcessor) processor;
                 ManagedRoute routeMBean = (ManagedRoute) mr;
 
-                CamelInternalProcessor.InstrumentationAdvice task = internal.getAdvice(CamelInternalProcessor.InstrumentationAdvice.class);
+                DefaultInstrumentationProcessor task = internal.getAdvice(DefaultInstrumentationProcessor.class);
                 if (task != null) {
                     // we need to wrap the counter with the camel context so we get stats updated on the context as well
                     if (camelContextMBean != null) {
@@ -662,7 +671,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         Object me = getManagementObjectStrategy().getManagedObjectForErrorHandler(camelContext, routeContext, errorHandler, errorHandlerBuilder);
 
         // skip already managed services, for example if a route has been restarted
-        if (getManagementStrategy().isManaged(me, null)) {
+        if (getManagementStrategy().isManaged(me)) {
             log.trace("The error handler builder is already managed: {}", errorHandlerBuilder);
             return;
         }
@@ -700,7 +709,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         Object mtp = getManagementObjectStrategy().getManagedObjectForThreadPool(camelContext, threadPool, id, sourceId, routeId, threadPoolProfileId);
 
         // skip already managed services, for example if a route has been restarted
-        if (getManagementStrategy().isManaged(mtp, null)) {
+        if (getManagementStrategy().isManaged(mtp)) {
             log.trace("The thread pool is already managed: {}", threadPool);
             return;
         }
@@ -724,7 +733,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         Object mtp = managedThreadPools.remove(threadPool);
         if (mtp != null) {
             // skip unmanaged routes
-            if (!getManagementStrategy().isManaged(mtp, null)) {
+            if (!getManagementStrategy().isManaged(mtp)) {
                 log.trace("The thread pool is not managed: {}", threadPool);
                 return;
             }
@@ -758,7 +767,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
 
         // set this managed intercept strategy that executes the JMX instrumentation for performance metrics
         // so our registered counters can be used for fine grained performance instrumentation
-        routeContext.setManagedInterceptStrategy(new InstrumentationInterceptStrategy(registeredCounters, wrappedProcessors));
+        routeContext.setManagementInterceptStrategy(new InstrumentationInterceptStrategy(registeredCounters, wrappedProcessors));
     }
 
     /**

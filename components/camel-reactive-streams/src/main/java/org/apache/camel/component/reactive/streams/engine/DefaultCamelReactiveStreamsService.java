@@ -86,7 +86,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
         return ReactiveStreamsConstants.DEFAULT_SERVICE_NAME;
     }
 
-    private void init() {
+    protected void doInit() {
         if (this.workerPool == null) {
             this.workerPool = context.getExecutorServiceManager().newThreadPool(
                 this,

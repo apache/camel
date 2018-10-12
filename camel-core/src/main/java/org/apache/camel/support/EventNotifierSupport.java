@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support;
 
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.EventNotifier;
 
 /**
@@ -36,6 +37,11 @@ public abstract class EventNotifierSupport extends ServiceSupport implements Eve
 
     public boolean isIgnoreCamelContextEvents() {
         return ignoreCamelContextEvents;
+    }
+
+    @Override
+    public boolean isEnabled(CamelEvent event) {
+        return true;
     }
 
     @Override

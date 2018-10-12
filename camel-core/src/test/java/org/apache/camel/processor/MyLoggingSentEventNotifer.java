@@ -32,17 +32,5 @@ public class MyLoggingSentEventNotifer extends EventNotifierSupport {
 
     }
 
-    public boolean isEnabled(CamelEvent event) {
-        return true;
-    }
-
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    protected void doStop() throws Exception {
-        // noop
-    }
-
 }
 // END SNIPPET: e1

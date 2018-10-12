@@ -18,7 +18,6 @@ package org.apache.camel.processor.interceptor;
 
 import java.util.Date;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -42,10 +41,9 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Condition;
 import org.apache.camel.spi.Debugger;
-import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.support.ServiceSupport;
@@ -63,7 +61,7 @@ import org.apache.camel.support.ServiceSupport;
  * concurrency then sub-sequent {@link Exchange} will continue to be routed, if there breakpoint already holds a
  * suspended {@link Exchange}.
  */
-public class BacklogDebugger extends ServiceSupport implements InterceptStrategy {
+public class BacklogDebugger extends ServiceSupport {
 
     private long fallbackTimeout = 300;
     private final CamelContext camelContext;
@@ -105,16 +103,19 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         }
     }
 
-    public BacklogDebugger(CamelContext camelContext) {
+    private BacklogDebugger(CamelContext camelContext) {
         this.camelContext = camelContext;
-        DefaultDebugger debugger = new DefaultDebugger(camelContext);
-        this.debugger = debugger;
+        this.debugger = new DefaultDebugger(camelContext);
     }
 
-    @Override
-    @Deprecated
-    public Processor wrapProcessorInInterceptors(CamelContext context, NamedNode definition, Processor target, Processor nextTarget) throws Exception {
-        throw new UnsupportedOperationException("Deprecated");
+    /**
+     * Creates a new backlog debugger.
+     *
+     * @param context Camel context
+     * @return a new backlog debugger
+     */
+    public static BacklogDebugger createDebugger(CamelContext context) {
+        return new BacklogDebugger(context);
     }
 
     /**
@@ -123,13 +124,7 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
      * @return the backlog debugger or null if none can be found
      */
     public static BacklogDebugger getBacklogDebugger(CamelContext context) {
-        List<InterceptStrategy> list = context.getInterceptStrategies();
-        for (InterceptStrategy interceptStrategy : list) {
-            if (interceptStrategy instanceof BacklogDebugger) {
-                return (BacklogDebugger) interceptStrategy;
-            }
-        }
-        return null;
+        return context.hasService(BacklogDebugger.class);
     }
 
     public Debugger getDebugger() {

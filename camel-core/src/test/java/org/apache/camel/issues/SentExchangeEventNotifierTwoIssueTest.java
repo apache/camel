@@ -59,6 +59,7 @@ public class SentExchangeEventNotifierTwoIssueTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
+        context.init();
         context.getManagementStrategy().addEventNotifier(notifier);
         return context;
     }

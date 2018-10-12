@@ -14,14 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management;
+package org.apache.camel.api.management;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 
-public interface ManagedCamelContext extends CamelContext {
+public interface ManagedCamelContext {
+
+    /**
+     * Gets the managed Camel CamelContext client api
+     */
+    ManagedCamelContextMBean getManagedCamelContext();
+
+    /**
+     * Gets the managed processor client api from any of the routes which with the given id
+     *
+     * @param id id of the processor
+     * @return the processor or <tt>null</tt> if not found
+     */
+    default ManagedProcessorMBean getManagedProcessor(String id) {
+        return getManagedProcessor(id, ManagedProcessorMBean.class);
+    }
+
     /**
      * Gets the managed processor client api from any of the routes which with the given id
      *
@@ -36,15 +51,20 @@ public interface ManagedCamelContext extends CamelContext {
      * Gets the managed route client api with the given route id
      *
      * @param routeId id of the route
+     * @return the route or <tt>null</tt> if not found
+     */
+    default ManagedRouteMBean getManagedRoute(String routeId) {
+        return getManagedRoute(routeId, ManagedRouteMBean.class);
+    }
+
+    /**
+     * Gets the managed route client api with the given route id
+     *
+     * @param routeId id of the route
      * @param type the managed route type from the {@link org.apache.camel.api.management.mbean} package.
      * @return the route or <tt>null</tt> if not found
      * @throws IllegalArgumentException if the type is not compliant
      */
     <T extends ManagedRouteMBean> T getManagedRoute(String routeId, Class<T> type);
-
-    /**
-     * Gets the managed Camel CamelContext client api
-     */
-    ManagedCamelContextMBean getManagedCamelContext();
 
 }

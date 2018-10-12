@@ -63,9 +63,11 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
     private boolean shutdownEager = true;
 
     public SpringCamelContext() {
+        setManagementMBeanAssembler(new SpringManagementMBeanAssembler(this));
     }
 
     public SpringCamelContext(ApplicationContext applicationContext) {
+        this();
         setApplicationContext(applicationContext);
     }
 
@@ -233,12 +235,6 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
                       + applicationContext);
             return super.createInjector();
         }
-    }
-
-    @Override
-    protected ManagementMBeanAssembler createManagementMBeanAssembler() {
-        // use a spring mbean assembler
-        return new SpringManagementMBeanAssembler(this);
     }
 
     protected EventEndpoint createEventEndpoint() {

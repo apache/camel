@@ -84,7 +84,7 @@ public final class HealthCheckHelper {
             Function<HealthCheck, Map<String, Object>> optionsSupplier,
             HealthCheckFilter filter) {
 
-        final HealthCheckRegistry registry = camelContext.getHealthCheckRegistry();
+        final HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
         final HealthCheckService service = camelContext.hasService(HealthCheckService.class);
 
         if (service != null) {
@@ -123,7 +123,7 @@ public final class HealthCheckHelper {
      * @return an optional {@link HealthCheck.Result}.
      */
     public static Optional<HealthCheck.Result> query(CamelContext camelContext, String id, Map<String, Object> options) {
-        final HealthCheckRegistry registry = camelContext.getHealthCheckRegistry();
+        final HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
         final HealthCheckService service = camelContext.hasService(HealthCheckService.class);
 
         if (service != null) {
@@ -148,7 +148,7 @@ public final class HealthCheckHelper {
      * @return an optional {@link HealthCheck.Result}.
      */
     public static Optional<HealthCheck.Result> invoke(CamelContext camelContext, String id, Map<String, Object> options) {
-        final HealthCheckRegistry registry = camelContext.getHealthCheckRegistry();
+        final HealthCheckRegistry registry = HealthCheckRegistry.get(camelContext);
         final HealthCheckService service = camelContext.hasService(HealthCheckService.class);
 
         if (service != null) {

@@ -35,7 +35,9 @@ public class CustomThreadPoolFactoryTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getExecutorServiceManager().setThreadPoolFactory(factory);
+        DefaultExecutorServiceManager executorServiceManager = new DefaultExecutorServiceManager(context);
+        executorServiceManager.setThreadPoolFactory(factory);
+        context.setExecutorServiceManager(executorServiceManager);
         return context;
     }
 

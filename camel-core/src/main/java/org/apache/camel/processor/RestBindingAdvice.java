@@ -36,7 +36,7 @@ import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A {@link org.apache.camel.processor.CamelInternalProcessorAdvice} that binds the REST DSL incoming
+ * A {@link CamelInternalProcessorAdvice} that binds the REST DSL incoming
  * and outgoing messages from sources of json or xml to Java Objects.
  * <p/>
  * The binding uses {@link org.apache.camel.spi.DataFormat} for the actual work to transform

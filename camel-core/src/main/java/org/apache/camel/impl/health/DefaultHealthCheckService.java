@@ -176,7 +176,7 @@ public final class DefaultHealthCheckService extends ServiceSupport implements H
             future.cancel(true);
         }
         if (registry == null) {
-            registry = camelContext.getHealthCheckRegistry();
+            registry = HealthCheckRegistry.get(camelContext);
         }
 
         if (ObjectHelper.isNotEmpty(registry) && ObjectHelper.isEmpty(future)) {

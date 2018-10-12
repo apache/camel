@@ -98,6 +98,7 @@ public abstract class ContextTestSupport extends TestSupport {
             throw new Exception("Context must be a ModelCamelContext");
         }
         assertValidContext(context);
+        context.init();
 
         // reduce default shutdown timeout to avoid waiting for 300 seconds
         context.getShutdownStrategy().setTimeout(10);
@@ -182,7 +183,11 @@ public abstract class ContextTestSupport extends TestSupport {
     }
 
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = new DefaultCamelContext(createRegistry());
+        DefaultCamelContext context = new DefaultCamelContext(false);
+        if (!useJmx()) {
+            context.disableJMX();
+        }
+        context.setRegistry(createRegistry());
         context.setLoadTypeConverters(isLoadTypeConverters());
         return context;
     }

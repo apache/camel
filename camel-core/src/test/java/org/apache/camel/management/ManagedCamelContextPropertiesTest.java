@@ -30,6 +30,7 @@ public class ManagedCamelContextPropertiesTest extends ManagementTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
+        context.init();
         // to force a different management name than the camel id
         context.getManagementNameStrategy().setNamePattern("19-#name#");
         return context;

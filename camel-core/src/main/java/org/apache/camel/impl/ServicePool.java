@@ -84,7 +84,9 @@ public class ServicePool<S extends Service> extends ServiceSupport implements No
     protected void onEvict(S s) {
         Endpoint e = getEndpoint.apply(s);
         Pool<S> p = pool.get(e);
-        p.evict(s);
+        if (p != null) {
+            p.evict(s);
+        }
     }
 
     /**

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management;
+package org.apache.camel.impl;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -33,8 +33,6 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A default management strategy that does <b>not</b> manage.
@@ -46,12 +44,11 @@ import org.slf4j.LoggerFactory;
  * This class can also be used to extend your custom management implement. In fact the JMX capable
  * provided by Camel extends this class as well.
  *
- * @see ManagedManagementStrategy
+ * @see org.apache.camel.management.ManagedManagementStrategy
  */
 public class DefaultManagementStrategy extends ServiceSupport implements ManagementStrategy, CamelContextAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultManagementStrategy.class);
-    private List<EventNotifier> eventNotifiers = new CopyOnWriteArrayList<>();
+    private final List<EventNotifier> eventNotifiers = new CopyOnWriteArrayList<>();
     private EventFactory eventFactory = new DefaultEventFactory();
     private ManagementObjectNameStrategy managementObjectNameStrategy;
     private ManagementObjectStrategy managementObjectStrategy;
@@ -63,6 +60,11 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
 
     public DefaultManagementStrategy(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    public DefaultManagementStrategy(CamelContext camelContext, ManagementAgent managementAgent) {
+        this.camelContext = camelContext;
+        this.managementAgent = managementAgent;
     }
 
     public List<EventNotifier> getEventNotifiers() {
@@ -77,10 +79,6 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
         return eventNotifiers.remove(eventNotifier);
     }
 
-    public void setEventNotifiers(List<EventNotifier> eventNotifiers) {
-        this.eventNotifiers = eventNotifiers;
-    }
-
     public EventFactory getEventFactory() {
         return eventFactory;
     }
@@ -91,7 +89,7 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
 
     public ManagementObjectNameStrategy getManagementObjectNameStrategy() {
         if (managementObjectNameStrategy == null) {
-            managementObjectNameStrategy = new DefaultManagementObjectNameStrategy();
+            managementObjectNameStrategy = createManagementObjectNameStrategy(null);
         }
         return managementObjectNameStrategy;
     }
@@ -102,7 +100,7 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
 
     public ManagementObjectStrategy getManagementObjectStrategy() {
         if (managementObjectStrategy == null) {
-            managementObjectStrategy = new DefaultManagementObjectStrategy();
+            managementObjectStrategy = createManagementObjectStrategy();
         }
         return managementObjectStrategy;
     }
@@ -127,24 +125,16 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
         // noop
     }
 
-    public void manageNamedObject(Object managedObject, Object preferredName) throws Exception {
-        // noop
-    }
-
-    public <T> T getManagedObjectName(Object managedObject, String customName, Class<T> nameType) throws Exception {
-        // noop
-        return null;
-    }
-
     public void unmanageObject(Object managedObject) throws Exception {
         // noop
     }
 
-    public void unmanageNamedObject(Object name) throws Exception {
+    public boolean isManaged(Object managedObject) {
         // noop
+        return false;
     }
 
-    public boolean isManaged(Object managedObject, Object name) {
+    public boolean isManagedName(Object name) {
         // noop
         return false;
     }
@@ -168,7 +158,7 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     }
 
     protected void doStart() throws Exception {
-        LOG.info("JMX is disabled");
+        log.info("JMX is disabled");
         doStartManagementStrategy();
     }
 
@@ -192,7 +182,8 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
             ServiceHelper.startService(managementAgent);
             // set the naming strategy using the domain name from the agent
             if (managementObjectNameStrategy == null) {
-                setManagementObjectNameStrategy(new DefaultManagementObjectNameStrategy(managementAgent.getMBeanObjectDomainName()));
+                String domain = managementAgent.getMBeanObjectDomainName();
+                managementObjectNameStrategy = createManagementObjectNameStrategy(domain);
             }
         }
         if (managementObjectNameStrategy instanceof CamelContextAware) {
@@ -202,6 +193,14 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
 
     protected void doStop() throws Exception {
         ServiceHelper.stopService(managementAgent, eventNotifiers);
+    }
+
+    protected ManagementObjectNameStrategy createManagementObjectNameStrategy(String domain) {
+        return null;
+    }
+
+    protected ManagementObjectStrategy createManagementObjectStrategy() {
+        return null;
     }
 
 }

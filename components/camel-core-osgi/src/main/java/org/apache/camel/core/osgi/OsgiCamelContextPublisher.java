@@ -79,14 +79,6 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
     }
 
     @Override
-    protected void doStart() throws Exception {
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-    }
-
-    @Override
     protected void doShutdown() throws Exception {
         // clear and unregister any left-over registration (which should not happen)
         if (!registrations.isEmpty()) {

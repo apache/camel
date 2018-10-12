@@ -88,8 +88,9 @@ public class BuilderWithScopesTest extends TestSupport {
     protected void runTest(RouteBuilder builder, List<String> expected, String header) throws Exception {
 
         order.clear();
-        CamelContext container = new DefaultCamelContext();
+        DefaultCamelContext container = new DefaultCamelContext(false);
         container.disableJMX();
+        container.init();
 
         container.addRoutes(builder);
         container.start();

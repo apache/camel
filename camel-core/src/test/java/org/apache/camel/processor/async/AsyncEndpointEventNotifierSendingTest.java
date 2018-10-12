@@ -70,10 +70,6 @@ public class AsyncEndpointEventNotifierSendingTest extends ContextTestSupport {
             @Override
             protected void doStart() throws Exception {
             }
-
-            @Override
-            protected void doStop() throws Exception {
-            }
         });
         return context;
     }

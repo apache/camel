@@ -46,7 +46,7 @@ public class RuntimeCamelCatalogTest {
 
     @Test
     public void testFromCamelContext() throws Exception {
-        String schema = new DefaultCamelContext().getRuntimeCamelCatalog().modelJSonSchema("choice");
+        String schema = new DefaultCamelContext().getExtension(RuntimeCamelCatalog.class).modelJSonSchema("choice");
         assertNotNull(schema);
     }
 

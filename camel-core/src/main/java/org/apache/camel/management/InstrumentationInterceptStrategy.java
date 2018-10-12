@@ -18,11 +18,10 @@ package org.apache.camel.management;
 
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.management.mbean.ManagedPerformanceCounter;
-import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.ManagementInterceptStrategy;
 import org.apache.camel.util.KeyValueHolder;
 
 /**
@@ -33,7 +32,7 @@ import org.apache.camel.util.KeyValueHolder;
  * This class looks up a map to determine which PerformanceCounter should go into the
  * InstrumentationProcessor for any particular target processor.
  */
-public class InstrumentationInterceptStrategy implements InterceptStrategy {
+public class InstrumentationInterceptStrategy implements ManagementInterceptStrategy {
 
     private Map<NamedNode, PerformanceCounter> registeredCounters;
     private final Map<Processor, KeyValueHolder<NamedNode, InstrumentationProcessor>> wrappedProcessors;
@@ -44,21 +43,22 @@ public class InstrumentationInterceptStrategy implements InterceptStrategy {
         this.wrappedProcessors = wrappedProcessors;
     }
 
-    public PerformanceCounter prepareProcessor(NamedNode definition, Processor target, InstrumentationProcessor advice) {
+    @Override
+    public InstrumentationProcessor<?> createProcessor(String type) {
+        return new DefaultInstrumentationProcessor(type);
+    }
+
+    @Override
+    public InstrumentationProcessor<?> createProcessor(NamedNode definition, Processor target) {
+        InstrumentationProcessor instrumentationProcessor = new DefaultInstrumentationProcessor(definition.getShortName(), target);
         PerformanceCounter counter = registeredCounters.get(definition);
         if (counter != null) {
             // add it to the mapping of wrappers so we can later change it to a
             // decorated counter when we register the processor
-            KeyValueHolder<NamedNode, InstrumentationProcessor> holder = new KeyValueHolder<>(definition, advice);
+            KeyValueHolder<NamedNode, InstrumentationProcessor> holder = new KeyValueHolder<>(definition, instrumentationProcessor);
             wrappedProcessors.put(target, holder);
         }
-        return counter;
-    }
-
-    public Processor wrapProcessorInInterceptors(CamelContext context, NamedNode definition,
-                                                 Processor target, Processor nextTarget) throws Exception {
-        // no longer in use as we have optimised to avoid wrapping unless needed
-        return target;
+        return instrumentationProcessor;
     }
 
 }

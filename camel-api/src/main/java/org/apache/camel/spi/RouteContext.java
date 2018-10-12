@@ -138,14 +138,14 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
      *
      * @param interceptStrategy the managed intercept strategy
      */
-    void setManagedInterceptStrategy(InterceptStrategy interceptStrategy);
+    void setManagementInterceptStrategy(ManagementInterceptStrategy interceptStrategy);
 
     /**
      * Gets the special managed intercept strategy if any
      *
      * @return the managed intercept strategy, or <tt>null</tt> if not managed
      */
-    InterceptStrategy getManagedInterceptStrategy();
+    ManagementInterceptStrategy getManagementInterceptStrategy();
 
     /**
      * If this flag is true, {@link org.apache.camel.model.ProcessorDefinition#addRoutes(RouteContext, java.util.Collection)}
