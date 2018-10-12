@@ -106,7 +106,7 @@ Data Formats
 
 
 // dataformats: START
-Number of Data Formats: 4 in 38 JAR artifacts (3 deprecated)
+Number of Data Formats: 4 in 34 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
