@@ -138,7 +138,7 @@ public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
         Exchange request = template.request("direct:start", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(OPERATION, QUERY);
+                exchange.getIn().setHeader(OPERATION, InfinispanOperation.QUERY);
             }
         });
         assertNull(request.getException());

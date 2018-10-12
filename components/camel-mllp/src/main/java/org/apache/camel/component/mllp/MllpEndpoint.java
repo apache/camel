@@ -20,6 +20,7 @@ package org.apache.camel.component.mllp;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.nio.charset.Charset;
 import java.util.Date;
 
 import org.apache.camel.Consumer;

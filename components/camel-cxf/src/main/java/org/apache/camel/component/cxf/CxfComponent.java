@@ -82,7 +82,7 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
 
         Object value = parameters.remove("setDefaultBus");
         if (value != null) {
-            LOG.warn("The option setDefaultBus is @deprecated, use name defaultBus instead");
+            log.warn("The option setDefaultBus is @deprecated, use name defaultBus instead");
             if (!parameters.containsKey("defaultBus")) {
                 parameters.put("defaultBus", value);
             }

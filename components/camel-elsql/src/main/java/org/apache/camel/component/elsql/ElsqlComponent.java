@@ -21,6 +21,7 @@ import javax.sql.DataSource;
 
 import com.opengamma.elsql.ElSqlConfig;
 import org.apache.camel.Endpoint;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.IntrospectionSupport;

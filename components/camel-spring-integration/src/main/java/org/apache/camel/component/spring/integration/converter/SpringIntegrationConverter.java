@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.spring.integration.converter;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Converter;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.spring.integration.SpringIntegrationEndpoint;
@@ -36,9 +37,8 @@ public final class SpringIntegrationConverter {
     }
 
     @Converter
-    @SuppressWarnings("deprecation")
     public static Endpoint toEndpoint(final MessageChannel channel) throws Exception {
-        Endpoint answer = new SpringIntegrationEndpoint("spring-integration://" + channel.toString(), channel, null);
+        Endpoint answer = new SpringIntegrationEndpoint("spring-integration://" + channel.toString(), channel.toString(), null);
         return answer;
     }
 
@@ -59,7 +59,7 @@ public final class SpringIntegrationConverter {
 
     @Converter
     public static org.apache.camel.Message toCamelMessage(final org.springframework.messaging.Message<?> springMessage) throws Exception {
-        return new SpringIntegrationMessage(null, springMessage);
+        return new SpringIntegrationMessage((CamelContext) null, springMessage);
     }
 
 }
