@@ -161,7 +161,7 @@ with the following path and query parameters:
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *skipLockedEntity* (consumer) | To configure whether to use NOWAIT on lock and silently skip the entity. | false | boolean
 | *transacted* (consumer) | Whether to run the consumer in transacted mode, by which all messages will either commit or rollback, when the entire batch has been processed. The default behavior (false) is to commit all the previously successfully processed messages, and only rollback the last failed message. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
 | *flushOnSend* (producer) | Flushes the EntityManager after the entity bean has been persisted. | true | boolean
@@ -228,6 +228,8 @@ reason why the support for this header has been dropped.
 
 |`CamelEntityManager` |`EntityManager` |*Camel 2.12: JPA consumer / Camel 2.12.2: JPA producer:* The JPA
 `EntityManager` object being used by `JpaConsumer` or `JpaProducer`.
+
+|`CamelJpaParameters` |`Map<String, Object>` |*Camel 2.23: JPA producer:* Alternative way for passing query parameters as an Exchange header.
 
 |=======================================================================
 
