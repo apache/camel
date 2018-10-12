@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 281 in 185 JAR artifacts (1 deprecated)
+Number of Components: 280 in 185 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -124,9 +124,6 @@ Number of Components: 281 in 185 JAR artifacts (1 deprecated)
 
 | link:camel-beanstalk/src/main/docs/beanstalk-component.adoc[Beanstalk] (camel-beanstalk) +
 `beanstalk:connectionSettings` | 2.15 | The beanstalk component is used for job retrieval and post-processing of Beanstalk jobs.
-
-| link:../camel-core/src/main/docs/binding-component.adoc[Binding] (camel-core) +
-`binding:bindingName:delegateUri` | 2.11 | *deprecated* The binding component is used for as a of wrapping an Endpoint in a contract with a data format.
 
 | link:camel-bonita/src/main/docs/bonita-component.adoc[Bonita] (camel-bonita) +
 `bonita:operation` | 2.19 | Used for communicating with a remote Bonita BPM process engine.
@@ -1007,7 +1004,7 @@ Miscellaneous Components
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 // others: START
-Number of Miscellaneous Components: 31 in 31 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 30 in 30 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
