@@ -61,65 +61,6 @@ public final class TwitterHelper {
         message.setHeader(TwitterConstants.TWITTER_USER_ROLE + index, role);
     }
 
-    @Deprecated
-    public static AbstractTwitterConsumerHandler createConsumer(CommonPropertiesTwitterEndpoint te, String uri, String remaining) throws IllegalArgumentException {
-        String[] tokens = remaining.split("/");
-        
-        if (tokens.length > 0) {
-            switch (ConsumerType.fromString(tokens[0])) {
-            case DIRECTMESSAGE:
-                return new DirectMessageConsumerHandler(te);
-            case SEARCH:
-                boolean hasNoKeywords = te.getKeywords() == null
-                    || te.getKeywords().trim().isEmpty();
-                if (hasNoKeywords) {
-                    throw new IllegalArgumentException("Type set to SEARCH but no keywords were provided.");
-                } else {
-                    return new SearchConsumerHandler(te, te.getKeywords());
-                }
-            case STREAMING:
-                if (tokens.length > 1) {
-                    switch (StreamingType.fromString(tokens[1])) {
-                    case SAMPLE:
-                        return new SampleStreamingConsumerHandler(te);
-                    case FILTER:
-                        return new FilterStreamingConsumerHandler(te, te.getKeywords());
-                    case USER:
-                        return new UserStreamingConsumerHandler(te);
-                    default:
-                        break;
-                    }
-                }
-                break;
-            case TIMELINE:
-                if (tokens.length > 1) {
-                    switch (TimelineType.fromString(tokens[1])) {
-                    case HOME:
-                        return new HomeConsumerHandler(te);
-                    case MENTIONS:
-                        return new MentionsConsumerHandler(te);
-                    case RETWEETSOFME:
-                        return new RetweetsConsumerHandler(te);
-                    case USER:
-                        if (te.getUser() == null || te.getUser().trim().isEmpty()) {
-                            throw new IllegalArgumentException("Fetch type set to USER TIMELINE but no user was set.");
-                        } else {
-                            return new UserConsumerHandler(te, te.getUser());
-                        }
-                    default:
-                        break;
-                    }
-                }
-                break;
-            default:
-                break;
-            }
-        }
-
-        throw new IllegalArgumentException("Cannot create any consumer with uri " + uri
-            + ". A consumer type was not provided (or an incorrect pairing was used).");
-    }
-
     public static Consumer createConsumer(Processor processor, AbstractTwitterEndpoint endpoint, AbstractTwitterConsumerHandler handler) throws Exception {
         Consumer answer = new DefaultTwitterConsumer(endpoint, processor, handler);
         switch (endpoint.getEndpointType()) {
@@ -134,41 +75,6 @@ public final class TwitterHelper {
             break;
         }
         return answer;
-    }
-
-    @Deprecated
-    public static Producer createProducer(CommonPropertiesTwitterEndpoint te, String uri, String remaining) throws IllegalArgumentException {
-        String[] tokens = remaining.split("/");
-
-        if (tokens.length > 0) {
-            switch (ConsumerType.fromString(tokens[0])) {
-            case DIRECTMESSAGE:
-                if (te.getUser() == null || te.getUser().trim().isEmpty()) {
-                    throw new IllegalArgumentException(
-                        "Producer type set to DIRECT MESSAGE but no recipient user was set.");
-                } else {
-                    return new DirectMessageProducer(te, te.getUser());
-                }
-            case TIMELINE:
-                if (tokens.length > 1) {
-                    switch (TimelineType.fromString(tokens[1])) {
-                    case USER:
-                        return new UserProducer(te);
-                    default:
-                        break;
-                    }
-                }
-                break;
-            case SEARCH:
-                return new SearchProducer(te, te.getKeywords());
-            default:
-                break;
-            }
-
-        }
-
-        throw new IllegalArgumentException("Cannot create any producer with uri " + uri
-            + ". A producer type was not provided (or an incorrect pairing was used).");
     }
 
     public static <T extends Enum<T>> T enumFromString(T[] values, String uri, T defaultValue) {
