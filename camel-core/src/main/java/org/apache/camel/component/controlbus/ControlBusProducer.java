@@ -198,11 +198,11 @@ public class ControlBusProducer extends DefaultAsyncProducer {
                         String operation;
                         if (id == null) {
                             CamelContext camelContext = getEndpoint().getCamelContext();
-                            on = getEndpoint().getCamelContext().getManagementStrategy().getManagementNamingStrategy().getObjectNameForCamelContext(camelContext);
+                            on = getEndpoint().getCamelContext().getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForCamelContext(camelContext);
                             operation = "dumpRoutesStatsAsXml";
                         } else {
                             Route route = getEndpoint().getCamelContext().getRoute(id);
-                            on = getEndpoint().getCamelContext().getManagementStrategy().getManagementNamingStrategy().getObjectNameForRoute(route);
+                            on = getEndpoint().getCamelContext().getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForRoute(route);
                             operation = "dumpRouteStatsAsXml";
                         }
                         if (on != null) {

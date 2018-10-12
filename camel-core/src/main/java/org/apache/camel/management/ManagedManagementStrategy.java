@@ -38,7 +38,6 @@ import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedRouteController;
 import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedThreadPool;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.ManagementAgent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,54 +86,54 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
 
         if (managedObject instanceof ManagedCamelContext) {
             ManagedCamelContext mcc = (ManagedCamelContext) managedObject;
-            objectName = getManagementNamingStrategy().getObjectNameForCamelContext(mcc.getContext());
+            objectName = getManagementObjectNameStrategy().getObjectNameForCamelContext(mcc.getContext());
         } else if (managedObject instanceof ManagedCamelHealth) {
             ManagedCamelHealth mch = (ManagedCamelHealth) managedObject;
-            objectName = getManagementNamingStrategy().getObjectNameForCamelHealth(mch.getContext());
+            objectName = getManagementObjectNameStrategy().getObjectNameForCamelHealth(mch.getContext());
         } else if (managedObject instanceof ManagedRouteController) {
             ManagedRouteController mrc = (ManagedRouteController) managedObject;
-            objectName = getManagementNamingStrategy().getObjectNameForRouteController(mrc.getContext());
+            objectName = getManagementObjectNameStrategy().getObjectNameForRouteController(mrc.getContext());
         } else if (managedObject instanceof ManagedComponent) {
             ManagedComponent mc = (ManagedComponent) managedObject;
-            objectName = getManagementNamingStrategy().getObjectNameForComponent(mc.getComponent(), mc.getComponentName());
+            objectName = getManagementObjectNameStrategy().getObjectNameForComponent(mc.getComponent(), mc.getComponentName());
         } else if (managedObject instanceof ManagedDataFormat) {
             ManagedDataFormat md = (ManagedDataFormat) managedObject;
-            objectName = getManagementNamingStrategy().getObjectNameForDataFormat(md.getContext(), md.getDataFormat());
+            objectName = getManagementObjectNameStrategy().getObjectNameForDataFormat(md.getContext(), md.getDataFormat());
         } else if (managedObject instanceof ManagedEndpoint) {
             ManagedEndpoint me = (ManagedEndpoint) managedObject;
-            objectName = getManagementNamingStrategy().getObjectNameForEndpoint(me.getEndpoint());
+            objectName = getManagementObjectNameStrategy().getObjectNameForEndpoint(me.getEndpoint());
         } else if (managedObject instanceof Endpoint) {
-            objectName = getManagementNamingStrategy().getObjectNameForEndpoint((Endpoint) managedObject);
+            objectName = getManagementObjectNameStrategy().getObjectNameForEndpoint((Endpoint) managedObject);
         } else if (managedObject instanceof ManagedRoute) {
             ManagedRoute mr = (ManagedRoute) managedObject;
-            objectName = getManagementNamingStrategy().getObjectNameForRoute(mr.getRoute());
+            objectName = getManagementObjectNameStrategy().getObjectNameForRoute(mr.getRoute());
         } else if (managedObject instanceof ManagedErrorHandler) {
             ManagedErrorHandler meh = (ManagedErrorHandler) managedObject;
-            objectName = getManagementNamingStrategy().getObjectNameForErrorHandler(meh.getRouteContext(), meh.getErrorHandler(), meh.getErrorHandlerBuilder());
+            objectName = getManagementObjectNameStrategy().getObjectNameForErrorHandler(meh.getRouteContext(), meh.getErrorHandler(), meh.getErrorHandlerBuilder());
         } else if (managedObject instanceof ManagedProcessor) {
             ManagedProcessor mp = (ManagedProcessor) managedObject;
-            objectName = getManagementNamingStrategy().getObjectNameForProcessor(mp.getContext(), mp.getProcessor(), mp.getDefinition());
+            objectName = getManagementObjectNameStrategy().getObjectNameForProcessor(mp.getContext(), mp.getProcessor(), mp.getDefinition());
         } else if (managedObject instanceof ManagedConsumer) {
             ManagedConsumer ms = (ManagedConsumer) managedObject;
-            objectName = getManagementNamingStrategy().getObjectNameForConsumer(ms.getContext(), ms.getConsumer());
+            objectName = getManagementObjectNameStrategy().getObjectNameForConsumer(ms.getContext(), ms.getConsumer());
         } else if (managedObject instanceof ManagedProducer) {
             ManagedProducer ms = (ManagedProducer) managedObject;
-            objectName = getManagementNamingStrategy().getObjectNameForProducer(ms.getContext(), ms.getProducer());
+            objectName = getManagementObjectNameStrategy().getObjectNameForProducer(ms.getContext(), ms.getProducer());
         } else if (managedObject instanceof ManagedBacklogTracer) {
             ManagedBacklogTracer mt = (ManagedBacklogTracer) managedObject;
-            objectName = getManagementNamingStrategy().getObjectNameForTracer(mt.getContext(), mt.getBacklogTracer());
+            objectName = getManagementObjectNameStrategy().getObjectNameForTracer(mt.getContext(), mt.getBacklogTracer());
         } else if (managedObject instanceof ManagedBacklogDebugger) {
             ManagedBacklogDebugger md = (ManagedBacklogDebugger) managedObject;
-            objectName = getManagementNamingStrategy().getObjectNameForTracer(md.getContext(), md.getBacklogDebugger());
+            objectName = getManagementObjectNameStrategy().getObjectNameForTracer(md.getContext(), md.getBacklogDebugger());
         } else if (managedObject instanceof ManagedEventNotifier) {
             ManagedEventNotifier men = (ManagedEventNotifier) managedObject;
-            objectName = getManagementNamingStrategy().getObjectNameForEventNotifier(men.getContext(), men.getEventNotifier());
+            objectName = getManagementObjectNameStrategy().getObjectNameForEventNotifier(men.getContext(), men.getEventNotifier());
         } else if (managedObject instanceof ManagedThreadPool) {
             ManagedThreadPool mes = (ManagedThreadPool) managedObject;
-            objectName = getManagementNamingStrategy().getObjectNameForThreadPool(mes.getContext(), mes.getThreadPool(), mes.getId(), mes.getSourceId());
+            objectName = getManagementObjectNameStrategy().getObjectNameForThreadPool(mes.getContext(), mes.getThreadPool(), mes.getId(), mes.getSourceId());
         } else if (managedObject instanceof ManagedClusterService) {
             ManagedClusterService mcs = (ManagedClusterService) managedObject;
-            objectName = getManagementNamingStrategy().getObjectNameForClusterService(mcs.getContext(), mcs.getService());
+            objectName = getManagementObjectNameStrategy().getObjectNameForClusterService(mcs.getContext(), mcs.getService());
         } else if (managedObject instanceof ManagedService) {
             // check for managed service should be last
             ManagedService ms = (ManagedService) managedObject;
@@ -142,7 +141,7 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
             if (ms.getService() instanceof Endpoint) {
                 return null;
             }
-            objectName = getManagementNamingStrategy().getObjectNameForService(ms.getContext(), ms.getService());
+            objectName = getManagementObjectNameStrategy().getObjectNameForService(ms.getContext(), ms.getService());
         }
 
         return nameType.cast(objectName);

@@ -278,7 +278,7 @@ public interface ManagementAgent extends Service {
     Boolean getIncludeHostName();
 
     /**
-     * Sets whether to include host name in the {@link ManagementNamingStrategy}.
+     * Sets whether to include host name in the {@link ManagementObjectNameStrategy}.
      * <p/>
      * By default this is turned off from Camel 2.13 onwards, but this option
      * can be set to <tt>true</tt> to include the hostname as Camel 2.12 or

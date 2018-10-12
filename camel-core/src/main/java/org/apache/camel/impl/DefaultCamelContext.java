@@ -120,8 +120,8 @@ import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.Debug;
 import org.apache.camel.processor.interceptor.HandleFault;
-import org.apache.camel.runtimecatalog.impl.DefaultRuntimeCamelCatalog;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
+import org.apache.camel.runtimecatalog.impl.DefaultRuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.CamelContextTracker;
@@ -926,7 +926,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // processor may be null if its anonymous inner class or as lambda
         if (def != null) {
             try {
-                ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForProcessor(this, processor, def);
+                ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForProcessor(this, processor, def);
                 return getManagementStrategy().getManagementAgent().newProxyClient(on, type);
             } catch (MalformedObjectNameException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -946,7 +946,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         if (route != null) {
             try {
-                ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForRoute(route);
+                ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForRoute(route);
                 return getManagementStrategy().getManagementAgent().newProxyClient(on, type);
             } catch (MalformedObjectNameException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -963,7 +963,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
 
         try {
-            ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForCamelContext(this);
+            ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForCamelContext(this);
             return getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedCamelContextMBean.class);
         } catch (MalformedObjectNameException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);

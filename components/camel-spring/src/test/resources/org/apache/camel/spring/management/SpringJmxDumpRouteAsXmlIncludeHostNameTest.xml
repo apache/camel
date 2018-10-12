@@ -24,7 +24,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <bean id="naming" class="org.apache.camel.management.DefaultManagementNamingStrategy">
+    <bean id="naming" class="org.apache.camel.management.DefaultManagementObjectNameStrategy">
         <property name="hostName" value="localhost"/>
         <property name="domainName" value="org.apache.camel"/>
     </bean>

@@ -36,9 +36,7 @@ import org.apache.camel.cluster.CamelClusterService;
 /**
  * Strategy for computing {@link ObjectName} names for the various beans that Camel register for management.
  */
-public interface ManagementNamingStrategy {
-
-    // TODO: Should be renamed to ManagementObjectNameStrategy
+public interface ManagementObjectNameStrategy {
 
     ObjectName getObjectNameForCamelContext(String managementName, String name) throws MalformedObjectNameException;
 
