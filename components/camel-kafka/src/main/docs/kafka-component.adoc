@@ -411,7 +411,8 @@ from("kafka:" + TOPIC + "?brokers=localhost:{{kafkaPort}}" +
              "&groupId=A" +
              "&sslKeystoreLocation=/path/to/keystore.jks" +
              "&sslKeystorePassword=changeit" +
-             "&sslKeyPassword=changeit")
+             "&sslKeyPassword=changeit" +
+             "&securityProtocol=SSL")
         .to("mock:result");
 ----
 
@@ -442,7 +443,9 @@ camelContext.addRoutes(new RouteBuilder() {
                      // Setup the topic and broker address
                      "&groupId=A" +
                      // The consumer processor group ID
-                     "&sslContextParameters=#ssl")
+                     "&sslContextParameters=#ssl" +
+                     // The security protocol
+                     "&securityProtocol=SSL)
                      // Reference the SSL configuration
                 .to("mock:result");
     }
