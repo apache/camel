@@ -146,7 +146,6 @@
 <!-- core components: START -->
 * Core Components
 	* [Bean](bean-component.adoc)
-	* [Binding](binding-component.adoc)
 	* [Browse](browse-component.adoc)
 	* [Class](class-component.adoc)
 	* [Control Bus](controlbus-component.adoc)

@@ -179,7 +179,7 @@ The component supports 78 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.netty4.configuration.allow-default-codec* | The netty component installs a default codec if both, encoder/deocder is null and textline is false. Setting allowDefaultCodec to false prevents the netty component from installing a default codec as the first element in the filter chain. | true | Boolean
+| *camel.component.netty4.configuration.allow-default-codec* | The netty component installs a default codec if both, encoder/decoder is null and textline is false. Setting allowDefaultCodec to false prevents the netty component from installing a default codec as the first element in the filter chain. | true | Boolean
 | *camel.component.netty4.configuration.allow-serialized-headers* | Only used for TCP when transferExchange is true. When set to true, serializable objects in headers and properties will be added to the exchange. Otherwise Camel will exclude any non-serializable objects and log it at WARN level. | false | Boolean
 | *camel.component.netty4.configuration.auto-append-delimiter* | Whether or not to auto append missing end delimiter when sending using the textline codec. | true | Boolean
 | *camel.component.netty4.configuration.backlog* | Allows to configure a backlog for netty consumer (server). Note the backlog is just a best effort depending on the OS. Setting this option to a value such as 200, 500 or 1000, tells the TCP stack how long the accept queue can be If this option is not configured, then the backlog depends on OS setting. |  | Integer
