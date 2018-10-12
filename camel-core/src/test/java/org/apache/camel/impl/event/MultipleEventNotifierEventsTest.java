@@ -65,26 +65,10 @@ public class MultipleEventNotifierEventsTest extends ContextTestSupport {
             public void notify(CamelEvent event) throws Exception {
                 events.add(event);
             }
-
-            public boolean isEnabled(CamelEvent event) {
-                return true;
-            }
-
-            @Override
-            protected void doStart() throws Exception {
-            }
-
-            @Override
-            protected void doStop() throws Exception {
-            }
         });
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
             public void notify(CamelEvent event) throws Exception {
                 events2.add(event);
-            }
-
-            public boolean isEnabled(CamelEvent event) {
-                return true;
             }
 
             @Override
@@ -92,10 +76,6 @@ public class MultipleEventNotifierEventsTest extends ContextTestSupport {
                 setIgnoreCamelContextEvents(true);
                 setIgnoreServiceEvents(true);
                 setIgnoreRouteEvents(true);
-            }
-
-            @Override
-            protected void doStop() throws Exception {
             }
         });
         return context;

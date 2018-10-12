@@ -30,19 +30,8 @@ public class MyEventNotifier extends EventNotifierSupport {
         events.add(event);
     }
 
-    public boolean isEnabled(CamelEvent event) {
-        return true;
-    }
-
     public List<CamelEvent> getEvents() {
         return events;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-    }
 }

@@ -59,19 +59,11 @@ public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
                 events.add(event);
             }
 
-            public boolean isEnabled(CamelEvent event) {
-                return true;
-            }
-
             @Override
             protected void doStart() throws Exception {
                 setIgnoreCamelContextEvents(true);
                 setIgnoreRouteEvents(true);
                 setIgnoreServiceEvents(true);
-            }
-
-            @Override
-            protected void doStop() throws Exception {
             }
         });
         return context;

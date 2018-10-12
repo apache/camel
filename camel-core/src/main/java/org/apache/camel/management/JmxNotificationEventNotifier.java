@@ -63,10 +63,6 @@ public class JmxNotificationEventNotifier extends EventNotifierSupport implement
         counter.set(0);
     }
 
-    protected void doStop() throws Exception {
-        // noop
-    }
-
     public String getSource() {
         return source;
     }

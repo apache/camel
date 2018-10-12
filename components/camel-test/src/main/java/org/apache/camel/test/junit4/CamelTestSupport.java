@@ -75,7 +75,7 @@ import org.apache.camel.impl.DefaultDebugger;
 import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.management.JmxSystemPropertyKeys;
-import org.apache.camel.management.ManagedCamelContext;
+import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -433,7 +433,7 @@ public abstract class CamelTestSupport extends TestSupport {
             String dir = "target/camel-route-coverage";
             String name = className + "-" + getTestMethodName() + ".xml";
 
-            ManagedCamelContextMBean managedCamelContext = context != null ? context.adapt(ManagedCamelContext.class).getManagedCamelContext() : null;
+            ManagedCamelContextMBean managedCamelContext = context != null ? context.getExtension(ManagedCamelContext.class).getManagedCamelContext() : null;
             if (managedCamelContext == null) {
                 log.warn("Cannot dump route coverage to file as JMX is not enabled. Override useJmx() method to enable JMX in the unit test classes.");
             } else {
@@ -529,7 +529,7 @@ public abstract class CamelTestSupport extends TestSupport {
 
         // log processor coverage for each route
         for (Route route : context.getRoutes()) {
-            ManagedRouteMBean managedRoute = context.adapt(ManagedCamelContext.class).getManagedRoute(route.getId(), ManagedRouteMBean.class);
+            ManagedRouteMBean managedRoute = context.getExtension(ManagedCamelContext.class).getManagedRoute(route.getId());
             if (managedRoute.getExchangesTotal() == 0) {
                 uncoveredRoutes.add(route.getId());
             }
@@ -581,7 +581,7 @@ public abstract class CamelTestSupport extends TestSupport {
             String name = objectName.getKeyProperty("name");
             name = ObjectName.unquote(name);
 
-            ManagedProcessorMBean managedProcessor = context.adapt(ManagedCamelContext.class).getManagedProcessor(name, ManagedProcessorMBean.class);
+            ManagedProcessorMBean managedProcessor = context.getExtension(ManagedCamelContext.class).getManagedProcessor(name);
 
             if (managedProcessor != null) {
                 if (processorsForRoute.get(routeId) == null) {

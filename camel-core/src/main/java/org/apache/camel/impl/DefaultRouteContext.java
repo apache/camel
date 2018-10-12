@@ -36,10 +36,12 @@ import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
+import org.apache.camel.processor.CamelInternalProcessorAdvice;
 import org.apache.camel.processor.ContractAdvice;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.ManagementInterceptStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteError;
@@ -58,7 +60,7 @@ public class DefaultRouteContext implements RouteContext {
     private final List<Processor> eventDrivenProcessors = new ArrayList<>();
     private CamelContext camelContext;
     private List<InterceptStrategy> interceptStrategies = new ArrayList<>();
-    private InterceptStrategy managedInterceptStrategy;
+    private ManagementInterceptStrategy managementInterceptStrategy;
     private boolean routeAdded;
     private Boolean trace;
     private Boolean messageHistory;
@@ -191,7 +193,9 @@ public class DefaultRouteContext implements RouteContext {
             internal.addAdvice(new CamelInternalProcessor.RouteInflightRepositoryAdvice(camelContext.getInflightRepository(), routeId));
 
             // wrap in JMX instrumentation processor that is used for performance stats
-            internal.addAdvice(new CamelInternalProcessor.InstrumentationAdvice("route"));
+            if (managementInterceptStrategy != null) {
+                internal.addAdvice(CamelInternalProcessorAdvice.wrap(managementInterceptStrategy.createProcessor("route")));
+            }
 
             // wrap in route lifecycle
             internal.addAdvice(new CamelInternalProcessor.RouteLifecycleAdvice());
@@ -300,12 +304,12 @@ public class DefaultRouteContext implements RouteContext {
         getInterceptStrategies().add(interceptStrategy);
     }
 
-    public void setManagedInterceptStrategy(InterceptStrategy interceptStrategy) {
-        this.managedInterceptStrategy = interceptStrategy;
+    public void setManagementInterceptStrategy(ManagementInterceptStrategy interceptStrategy) {
+        this.managementInterceptStrategy = interceptStrategy;
     }
 
-    public InterceptStrategy getManagedInterceptStrategy() {
-        return managedInterceptStrategy;
+    public ManagementInterceptStrategy getManagementInterceptStrategy() {
+        return managementInterceptStrategy;
     }
 
     public boolean isRouteAdded() {

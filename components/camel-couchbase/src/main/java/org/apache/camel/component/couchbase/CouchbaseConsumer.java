@@ -46,10 +46,9 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
         this.view = client.getView(endpoint.getDesignDocumentName(), endpoint.getViewName());
         this.query = new Query();
         init();
-
     }
 
-    private void init() {
+    protected void doInit() {
 
         query.setIncludeDocs(true);
 

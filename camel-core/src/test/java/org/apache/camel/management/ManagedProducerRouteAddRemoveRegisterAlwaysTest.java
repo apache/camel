@@ -33,6 +33,7 @@ public class ManagedProducerRouteAddRemoveRegisterAlwaysTest extends ManagementT
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
+        context.init();
         context.getManagementStrategy().getManagementAgent().setRegisterAlways(true);
         return context;
     }

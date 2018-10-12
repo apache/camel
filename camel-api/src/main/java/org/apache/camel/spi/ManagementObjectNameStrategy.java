@@ -38,6 +38,8 @@ import org.apache.camel.cluster.CamelClusterService;
  */
 public interface ManagementObjectNameStrategy {
 
+    ObjectName getObjectName(Object managedObject) throws MalformedObjectNameException;
+
     ObjectName getObjectNameForCamelContext(String managementName, String name) throws MalformedObjectNameException;
 
     ObjectName getObjectNameForCamelHealth(CamelContext context) throws MalformedObjectNameException;
@@ -62,7 +64,7 @@ public interface ManagementObjectNameStrategy {
 
     ObjectName getObjectNameForProducer(CamelContext context, Producer producer) throws MalformedObjectNameException;
 
-    ObjectName getObjectNameForTracer(CamelContext context, InterceptStrategy tracer) throws MalformedObjectNameException;
+    ObjectName getObjectNameForTracer(CamelContext context, Service tracer) throws MalformedObjectNameException;
 
     ObjectName getObjectNameForService(CamelContext context, Service service) throws MalformedObjectNameException;
 

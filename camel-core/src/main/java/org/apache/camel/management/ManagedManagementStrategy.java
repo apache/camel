@@ -19,154 +19,66 @@ package org.apache.camel.management;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.NamedNode;
-import org.apache.camel.management.mbean.ManagedBacklogDebugger;
-import org.apache.camel.management.mbean.ManagedBacklogTracer;
-import org.apache.camel.management.mbean.ManagedCamelContext;
-import org.apache.camel.management.mbean.ManagedCamelHealth;
-import org.apache.camel.management.mbean.ManagedClusterService;
-import org.apache.camel.management.mbean.ManagedComponent;
-import org.apache.camel.management.mbean.ManagedConsumer;
-import org.apache.camel.management.mbean.ManagedDataFormat;
-import org.apache.camel.management.mbean.ManagedEndpoint;
-import org.apache.camel.management.mbean.ManagedErrorHandler;
-import org.apache.camel.management.mbean.ManagedEventNotifier;
-import org.apache.camel.management.mbean.ManagedProcessor;
-import org.apache.camel.management.mbean.ManagedProducer;
-import org.apache.camel.management.mbean.ManagedRoute;
-import org.apache.camel.management.mbean.ManagedRouteController;
-import org.apache.camel.management.mbean.ManagedService;
-import org.apache.camel.management.mbean.ManagedThreadPool;
+import org.apache.camel.api.management.ManagedCamelContext;
+import org.apache.camel.impl.DefaultManagementStrategy;
 import org.apache.camel.spi.ManagementAgent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.spi.ManagementObjectNameStrategy;
+import org.apache.camel.spi.ManagementObjectStrategy;
 
 /**
  * A JMX capable {@link org.apache.camel.spi.ManagementStrategy} that Camel by default uses if possible.
  * <p/>
  * Camel detects whether its possible to use this JMX capable strategy and if <b>not</b> then Camel
- * will fallback to the {@link org.apache.camel.management.DefaultManagementStrategy} instead.
+ * will fallback to the {@link DefaultManagementStrategy} instead.
  *
  * @see org.apache.camel.spi.ManagementStrategy
- * @see org.apache.camel.management.DefaultManagementStrategy
+ * @see DefaultManagementStrategy
  */
 public class ManagedManagementStrategy extends DefaultManagementStrategy {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ManagedManagementStrategy.class);
-
-    public ManagedManagementStrategy() {
-    }
-
-    public ManagedManagementStrategy(CamelContext camelContext, ManagementAgent managementAgent) {
-        setCamelContext(camelContext);
-        setManagementAgent(managementAgent);
+    public ManagedManagementStrategy(CamelContext context, ManagementAgent managementAgent) {
+        super(context, managementAgent);
+        context.setExtension(
+                ManagedCamelContext.class,
+                new ManagedCamelContextImpl(context));
+        // must add management lifecycle strategy
+        context.getLifecycleStrategies().add(0, new DefaultManagementLifecycleStrategy(context));
     }
 
     public void manageObject(Object managedObject) throws Exception {
-        manageNamedObject(managedObject, null);
-    }
-
-    public void manageNamedObject(Object managedObject, Object preferredName) throws Exception {
-        ObjectName objectName = getObjectName(managedObject, preferredName);
-
+        ObjectName objectName = getManagementObjectNameStrategy().getObjectName(managedObject);
         if (objectName != null) {
             getManagementAgent().register(managedObject, objectName);
         }
     }
 
-    public <T> T getManagedObjectName(Object managedObject, String customName, Class<T> nameType) throws Exception {
-        if (managedObject == null) {
-            return null;
-        }
-
-        ObjectName objectName = null;
-
-
-
-        if (managedObject instanceof ManagedCamelContext) {
-            ManagedCamelContext mcc = (ManagedCamelContext) managedObject;
-            objectName = getManagementObjectNameStrategy().getObjectNameForCamelContext(mcc.getContext());
-        } else if (managedObject instanceof ManagedCamelHealth) {
-            ManagedCamelHealth mch = (ManagedCamelHealth) managedObject;
-            objectName = getManagementObjectNameStrategy().getObjectNameForCamelHealth(mch.getContext());
-        } else if (managedObject instanceof ManagedRouteController) {
-            ManagedRouteController mrc = (ManagedRouteController) managedObject;
-            objectName = getManagementObjectNameStrategy().getObjectNameForRouteController(mrc.getContext());
-        } else if (managedObject instanceof ManagedComponent) {
-            ManagedComponent mc = (ManagedComponent) managedObject;
-            objectName = getManagementObjectNameStrategy().getObjectNameForComponent(mc.getComponent(), mc.getComponentName());
-        } else if (managedObject instanceof ManagedDataFormat) {
-            ManagedDataFormat md = (ManagedDataFormat) managedObject;
-            objectName = getManagementObjectNameStrategy().getObjectNameForDataFormat(md.getContext(), md.getDataFormat());
-        } else if (managedObject instanceof ManagedEndpoint) {
-            ManagedEndpoint me = (ManagedEndpoint) managedObject;
-            objectName = getManagementObjectNameStrategy().getObjectNameForEndpoint(me.getEndpoint());
-        } else if (managedObject instanceof Endpoint) {
-            objectName = getManagementObjectNameStrategy().getObjectNameForEndpoint((Endpoint) managedObject);
-        } else if (managedObject instanceof ManagedRoute) {
-            ManagedRoute mr = (ManagedRoute) managedObject;
-            objectName = getManagementObjectNameStrategy().getObjectNameForRoute(mr.getRoute());
-        } else if (managedObject instanceof ManagedErrorHandler) {
-            ManagedErrorHandler meh = (ManagedErrorHandler) managedObject;
-            objectName = getManagementObjectNameStrategy().getObjectNameForErrorHandler(meh.getRouteContext(), meh.getErrorHandler(), meh.getErrorHandlerBuilder());
-        } else if (managedObject instanceof ManagedProcessor) {
-            ManagedProcessor mp = (ManagedProcessor) managedObject;
-            objectName = getManagementObjectNameStrategy().getObjectNameForProcessor(mp.getContext(), mp.getProcessor(), mp.getDefinition());
-        } else if (managedObject instanceof ManagedConsumer) {
-            ManagedConsumer ms = (ManagedConsumer) managedObject;
-            objectName = getManagementObjectNameStrategy().getObjectNameForConsumer(ms.getContext(), ms.getConsumer());
-        } else if (managedObject instanceof ManagedProducer) {
-            ManagedProducer ms = (ManagedProducer) managedObject;
-            objectName = getManagementObjectNameStrategy().getObjectNameForProducer(ms.getContext(), ms.getProducer());
-        } else if (managedObject instanceof ManagedBacklogTracer) {
-            ManagedBacklogTracer mt = (ManagedBacklogTracer) managedObject;
-            objectName = getManagementObjectNameStrategy().getObjectNameForTracer(mt.getContext(), mt.getBacklogTracer());
-        } else if (managedObject instanceof ManagedBacklogDebugger) {
-            ManagedBacklogDebugger md = (ManagedBacklogDebugger) managedObject;
-            objectName = getManagementObjectNameStrategy().getObjectNameForTracer(md.getContext(), md.getBacklogDebugger());
-        } else if (managedObject instanceof ManagedEventNotifier) {
-            ManagedEventNotifier men = (ManagedEventNotifier) managedObject;
-            objectName = getManagementObjectNameStrategy().getObjectNameForEventNotifier(men.getContext(), men.getEventNotifier());
-        } else if (managedObject instanceof ManagedThreadPool) {
-            ManagedThreadPool mes = (ManagedThreadPool) managedObject;
-            objectName = getManagementObjectNameStrategy().getObjectNameForThreadPool(mes.getContext(), mes.getThreadPool(), mes.getId(), mes.getSourceId());
-        } else if (managedObject instanceof ManagedClusterService) {
-            ManagedClusterService mcs = (ManagedClusterService) managedObject;
-            objectName = getManagementObjectNameStrategy().getObjectNameForClusterService(mcs.getContext(), mcs.getService());
-        } else if (managedObject instanceof ManagedService) {
-            // check for managed service should be last
-            ManagedService ms = (ManagedService) managedObject;
-            // skip endpoints as they are already managed
-            if (ms.getService() instanceof Endpoint) {
-                return null;
-            }
-            objectName = getManagementObjectNameStrategy().getObjectNameForService(ms.getContext(), ms.getService());
-        }
-
-        return nameType.cast(objectName);
-    }
-
     public void unmanageObject(Object managedObject) throws Exception {
-        ObjectName objectName = getManagedObjectName(managedObject, null, ObjectName.class);
-        unmanageNamedObject(objectName);
-    }
-
-    public void unmanageNamedObject(Object name) throws Exception {
-        ObjectName objectName = getObjectName(null, name);
+        ObjectName objectName = getManagementObjectNameStrategy().getObjectName(managedObject);
         if (objectName != null) {
             getManagementAgent().unregister(objectName);
         }
     }
 
-    public boolean isManaged(Object managedObject, Object name) {
+    public boolean isManaged(Object managedObject) {
         try {
-            ObjectName objectName = getObjectName(managedObject, name);
-            if (objectName != null) {
-                return getManagementAgent().isRegistered(objectName);
+            ObjectName name = getManagementObjectNameStrategy().getObjectName(managedObject);
+            if (name != null) {
+                return getManagementAgent().isRegistered(name);
             }
         } catch (Exception e) {
-            LOG.warn("Cannot check whether the managed object is registered. This exception will be ignored.", e);
+            log.warn("Cannot check whether the managed object is registered. This exception will be ignored.", e);
+        }
+        return false;
+    }
+
+    public boolean isManagedName(Object name) {
+        try {
+            if (name instanceof ObjectName) {
+                return getManagementAgent().isRegistered((ObjectName) name);
+            }
+        } catch (Exception e) {
+            log.warn("Cannot check whether the managed object is registered. This exception will be ignored.", e);
         }
         return false;
     }
@@ -176,24 +88,18 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
         return true;
     }
 
-    private ObjectName getObjectName(Object managedObject, Object preferedName) throws Exception {
-        ObjectName objectName;
-
-        if (preferedName instanceof String) {
-            String customName = (String) preferedName;
-            objectName = getManagedObjectName(managedObject, customName, ObjectName.class);
-        } else if (preferedName instanceof ObjectName) {
-            objectName = (ObjectName) preferedName;
-        } else {
-            objectName = getManagedObjectName(managedObject, null, ObjectName.class);
-        }
-        return objectName;
-    }
-
     @Override
     protected void doStart() throws Exception {
-        LOG.info("JMX is enabled");
+        log.info("JMX is enabled");
         doStartManagementStrategy();
+    }
+
+    protected ManagementObjectNameStrategy createManagementObjectNameStrategy(String domain) {
+        return new DefaultManagementObjectNameStrategy(domain);
+    }
+
+    protected ManagementObjectStrategy createManagementObjectStrategy() {
+        return new DefaultManagementObjectStrategy();
     }
 
 }

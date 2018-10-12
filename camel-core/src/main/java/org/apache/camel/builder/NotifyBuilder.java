@@ -1411,10 +1411,6 @@ public class NotifyBuilder {
             setIgnoreRouteEvents(true);
             setIgnoreServiceEvents(true);
         }
-
-        @Override
-        protected void doStop() throws Exception {
-        }
     }
 
     private enum EventOperation {

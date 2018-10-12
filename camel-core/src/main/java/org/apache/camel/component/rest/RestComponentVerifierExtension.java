@@ -85,7 +85,7 @@ public class RestComponentVerifierExtension extends DefaultComponentVerifierExte
 
                 if (extension.isPresent()) {
                     final ComponentVerifierExtension verifier = extension.get();
-                    final RuntimeCamelCatalog catalog = getCamelContext().getRuntimeCamelCatalog();
+                    final RuntimeCamelCatalog catalog = getCamelContext().getExtension(RuntimeCamelCatalog.class);
                     final String json = catalog.componentJSonSchema("rest");
                     final Map<String, Object> restParameters = new HashMap<>(parameters);
 

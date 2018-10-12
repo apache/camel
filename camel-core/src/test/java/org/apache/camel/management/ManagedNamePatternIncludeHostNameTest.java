@@ -28,6 +28,7 @@ public class ManagedNamePatternIncludeHostNameTest extends ManagementTestSupport
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
+        context.init();
         DefaultManagementObjectNameStrategy naming = (DefaultManagementObjectNameStrategy)context.getManagementStrategy().getManagementObjectNameStrategy();
         naming.setHostName("localhost");
         context.getManagementStrategy().getManagementAgent().setIncludeHostName(true);

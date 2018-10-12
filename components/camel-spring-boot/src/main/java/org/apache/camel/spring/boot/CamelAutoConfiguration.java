@@ -343,7 +343,7 @@ public class CamelAutoConfiguration {
     static void afterPropertiesSet(ApplicationContext applicationContext, CamelContext camelContext) throws Exception {
         final ManagementStrategy managementStrategy = camelContext.getManagementStrategy();
 
-        registerPropertyForBeanType(applicationContext, BacklogTracer.class, camelContext::addInterceptStrategy);
+        registerPropertyForBeanType(applicationContext, BacklogTracer.class, bt -> camelContext.setExtension(BacklogTracer.class, bt));
         registerPropertyForBeanType(applicationContext, HandleFault.class, camelContext::addInterceptStrategy);
         registerPropertyForBeanType(applicationContext, InflightRepository.class, camelContext::setInflightRepository);
         registerPropertyForBeanType(applicationContext, AsyncProcessorAwaitManager.class, camelContext::setAsyncProcessorAwaitManager);
@@ -397,9 +397,9 @@ public class CamelAutoConfiguration {
         if (healthCheckRegistry != null) {
             healthCheckRegistry.setCamelContext(camelContext);
             LOG.info("Using HealthCheckRegistry: {}", healthCheckRegistry);
-            camelContext.setHealthCheckRegistry(healthCheckRegistry);
+            camelContext.setExtension(HealthCheckRegistry.class, healthCheckRegistry);
         } else {
-            healthCheckRegistry = camelContext.getHealthCheckRegistry();
+            healthCheckRegistry = HealthCheckRegistry.get(camelContext);
             healthCheckRegistry.setCamelContext(camelContext);
         }
 

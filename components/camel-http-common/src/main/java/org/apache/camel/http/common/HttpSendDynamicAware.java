@@ -53,7 +53,7 @@ public class HttpSendDynamicAware implements SendDynamicAware {
 
     @Override
     public DynamicAwareEntry prepare(Exchange exchange, String uri) throws Exception {
-        RuntimeCamelCatalog catalog = exchange.getContext().getRuntimeCamelCatalog();
+        RuntimeCamelCatalog catalog = exchange.getContext().getExtension(RuntimeCamelCatalog.class);
         Map<String, String> properties = catalog.endpointProperties(uri);
         Map<String, String> lenient = catalog.endpointLenientProperties(uri);
         return new DynamicAwareEntry(uri, properties, lenient);
@@ -82,7 +82,7 @@ public class HttpSendDynamicAware implements SendDynamicAware {
                     params.remove("path");
                 }
             }
-            RuntimeCamelCatalog catalog = exchange.getContext().getRuntimeCamelCatalog();
+            RuntimeCamelCatalog catalog = exchange.getContext().getExtension(RuntimeCamelCatalog.class);
             return catalog.asEndpointUri(scheme, params, false);
         } else {
             // no need for optimisation

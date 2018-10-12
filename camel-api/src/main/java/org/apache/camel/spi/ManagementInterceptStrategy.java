@@ -14,25 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management;
+package org.apache.camel.spi;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.camel.AsyncProcessor;
+import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
+import org.apache.camel.Ordered;
+import org.apache.camel.Processor;
 
+public interface ManagementInterceptStrategy {
 
-public class CamelContextDisableJmxTest extends Assert {
+    InstrumentationProcessor<?> createProcessor(NamedNode definition, Processor target);
 
-    @Test
-    public void testDisableJmx() throws Exception {
-        CamelContext context = new DefaultCamelContext(false);
-        context.disableJMX();
-        context.start();
+    InstrumentationProcessor<?> createProcessor(String type);
 
-        // JMX should be disabled and therefore not a ManagedManagementStrategy instance
-        assertFalse(context.getManagementStrategy() instanceof ManagedManagementStrategy);
+    interface InstrumentationProcessor<T> extends AsyncProcessor, Ordered {
 
-        context.stop();
+        T before(Exchange exchange) throws Exception;
+
+        void after(Exchange exchange, T data) throws Exception;
+
+        void setProcessor(Processor processor);
+
+        void setCounter(Object object);
     }
 }

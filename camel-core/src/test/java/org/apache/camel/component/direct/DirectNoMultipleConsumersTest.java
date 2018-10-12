@@ -30,7 +30,7 @@ public class DirectNoMultipleConsumersTest extends TestSupport {
 
     @Test
     public void testNoMultipleConsumersTest() throws Exception {
-        CamelContext container = new DefaultCamelContext();
+        CamelContext container = new DefaultCamelContext(false);
         container.disableJMX();
 
         container.addRoutes(new RouteBuilder() {

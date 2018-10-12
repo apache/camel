@@ -19,7 +19,7 @@ package org.apache.camel.component.jmx;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.management.ManagedCamelContext;
+import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -37,19 +37,19 @@ public class CamelJmxConsumerObserveAttributeMatchStringTest extends CamelTestSu
         getMockEndpoint("mock:result").message(0).body().contains("<attributeName>Tracing</attributeName>");
 
         // change the attribute so JMX triggers but should be filtered
-        ManagedRouteMBean mr = context.adapt(ManagedCamelContext.class).getManagedRoute("foo", ManagedRouteMBean.class);
+        ManagedRouteMBean mr = context.getExtension(ManagedCamelContext.class).getManagedRoute("foo");
         mr.setStatisticsEnabled(true);
 
         // change the attribute so JMX triggers
-        mr = context.adapt(ManagedCamelContext.class).getManagedRoute("foo", ManagedRouteMBean.class);
+        mr = context.getExtension(ManagedCamelContext.class).getManagedRoute("foo");
         mr.setTracing(true);
 
         // change the attribute so JMX triggers
-        mr = context.adapt(ManagedCamelContext.class).getManagedRoute("foo", ManagedRouteMBean.class);
+        mr = context.getExtension(ManagedCamelContext.class).getManagedRoute("foo");
         mr.setTracing(false);
 
         // change the attribute so JMX triggers
-        mr = context.adapt(ManagedCamelContext.class).getManagedRoute("foo", ManagedRouteMBean.class);
+        mr = context.getExtension(ManagedCamelContext.class).getManagedRoute("foo");
         mr.setTracing(true);
 
         assertMockEndpointsSatisfied();

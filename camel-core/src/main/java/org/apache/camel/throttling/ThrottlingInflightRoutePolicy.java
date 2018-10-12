@@ -290,16 +290,6 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
         }
 
         @Override
-        protected void doStart() throws Exception {
-            // noop
-        }
-
-        @Override
-        protected void doStop() throws Exception {
-            // noop
-        }
-
-        @Override
         public String toString() {
             return "ContextScopedEventNotifier";
         }

@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.impl.health.RegistryRepository;
 import org.apache.camel.impl.health.RoutePerformanceCounterEvaluators;
@@ -57,7 +58,7 @@ public class HealthCheckRegistryTest extends Assert {
 
     @Test
     public void testRepositories() {
-        Collection<HealthCheckRepository> repos = context.getHealthCheckRegistry().getRepositories();
+        Collection<HealthCheckRepository> repos = HealthCheckRegistry.get(context).getRepositories();
 
         Assert.assertNotNull(repos);
         Assert.assertEquals(2, repos.size());

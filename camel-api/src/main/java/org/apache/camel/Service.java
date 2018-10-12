@@ -22,6 +22,12 @@ package org.apache.camel;
 public interface Service {
 
     /**
+     * Initialize the service
+     */
+    default void init() {
+    }
+
+    /**
      * Starts the service
      * 
      * @throws Exception is thrown if starting failed

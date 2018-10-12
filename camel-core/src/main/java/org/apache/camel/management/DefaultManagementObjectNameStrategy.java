@@ -36,9 +36,25 @@ import org.apache.camel.Service;
 import org.apache.camel.StaticService;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.cluster.CamelClusterService;
+import org.apache.camel.management.mbean.ManagedBacklogDebugger;
+import org.apache.camel.management.mbean.ManagedBacklogTracer;
+import org.apache.camel.management.mbean.ManagedCamelContext;
+import org.apache.camel.management.mbean.ManagedCamelHealth;
+import org.apache.camel.management.mbean.ManagedClusterService;
+import org.apache.camel.management.mbean.ManagedComponent;
+import org.apache.camel.management.mbean.ManagedConsumer;
+import org.apache.camel.management.mbean.ManagedDataFormat;
+import org.apache.camel.management.mbean.ManagedEndpoint;
+import org.apache.camel.management.mbean.ManagedErrorHandler;
+import org.apache.camel.management.mbean.ManagedEventNotifier;
+import org.apache.camel.management.mbean.ManagedProcessor;
+import org.apache.camel.management.mbean.ManagedProducer;
+import org.apache.camel.management.mbean.ManagedRoute;
+import org.apache.camel.management.mbean.ManagedRouteController;
+import org.apache.camel.management.mbean.ManagedService;
+import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
-import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ManagementObjectNameStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.InetAddressUtil;
@@ -75,14 +91,12 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
     protected CamelContext camelContext;
 
     public DefaultManagementObjectNameStrategy() {
-        this("org.apache.camel");
+        this(null);
         // default constructor needed for <bean> style configuration
     }
 
     public DefaultManagementObjectNameStrategy(String domainName) {
-        if (domainName != null) {
-            this.domainName = domainName;
-        }
+        this.domainName = domainName != null ? domainName : "org.apache.camel";
         try {
             hostName = InetAddressUtil.getLocalHostName();
         } catch (UnknownHostException ex) {
@@ -96,6 +110,74 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
 
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    public ObjectName getObjectName(Object managedObject) throws MalformedObjectNameException {
+        if (managedObject == null) {
+            return null;
+        }
+        ObjectName objectName = null;
+        if (managedObject instanceof ManagedCamelContext) {
+            ManagedCamelContext mcc = (ManagedCamelContext) managedObject;
+            objectName = getObjectNameForCamelContext(mcc.getContext());
+        } else if (managedObject instanceof ManagedCamelHealth) {
+            ManagedCamelHealth mch = (ManagedCamelHealth) managedObject;
+            objectName = getObjectNameForCamelHealth(mch.getContext());
+        } else if (managedObject instanceof ManagedRouteController) {
+            ManagedRouteController mrc = (ManagedRouteController) managedObject;
+            objectName = getObjectNameForRouteController(mrc.getContext());
+        } else if (managedObject instanceof ManagedComponent) {
+            ManagedComponent mc = (ManagedComponent) managedObject;
+            objectName = getObjectNameForComponent(mc.getComponent(), mc.getComponentName());
+        } else if (managedObject instanceof ManagedDataFormat) {
+            ManagedDataFormat md = (ManagedDataFormat) managedObject;
+            objectName = getObjectNameForDataFormat(md.getContext(), md.getDataFormat());
+        } else if (managedObject instanceof ManagedEndpoint) {
+            ManagedEndpoint me = (ManagedEndpoint) managedObject;
+            objectName = getObjectNameForEndpoint(me.getEndpoint());
+        } else if (managedObject instanceof Endpoint) {
+            objectName = getObjectNameForEndpoint((Endpoint) managedObject);
+        } else if (managedObject instanceof ManagedRoute) {
+            ManagedRoute mr = (ManagedRoute) managedObject;
+            objectName = getObjectNameForRoute(mr.getRoute());
+        } else if (managedObject instanceof ManagedErrorHandler) {
+            ManagedErrorHandler meh = (ManagedErrorHandler) managedObject;
+            objectName = getObjectNameForErrorHandler(meh.getRouteContext(), meh.getErrorHandler(), meh.getErrorHandlerBuilder());
+        } else if (managedObject instanceof ManagedProcessor) {
+            ManagedProcessor mp = (ManagedProcessor) managedObject;
+            objectName = getObjectNameForProcessor(mp.getContext(), mp.getProcessor(), mp.getDefinition());
+        } else if (managedObject instanceof ManagedConsumer) {
+            ManagedConsumer ms = (ManagedConsumer) managedObject;
+            objectName = getObjectNameForConsumer(ms.getContext(), ms.getConsumer());
+        } else if (managedObject instanceof ManagedProducer) {
+            ManagedProducer ms = (ManagedProducer) managedObject;
+            objectName = getObjectNameForProducer(ms.getContext(), ms.getProducer());
+        } else if (managedObject instanceof ManagedBacklogTracer) {
+            ManagedBacklogTracer mt = (ManagedBacklogTracer) managedObject;
+            objectName = getObjectNameForTracer(mt.getContext(), mt.getBacklogTracer());
+        } else if (managedObject instanceof ManagedBacklogDebugger) {
+            ManagedBacklogDebugger md = (ManagedBacklogDebugger) managedObject;
+            objectName = getObjectNameForTracer(md.getContext(), md.getBacklogDebugger());
+        } else if (managedObject instanceof ManagedEventNotifier) {
+            ManagedEventNotifier men = (ManagedEventNotifier) managedObject;
+            objectName = getObjectNameForEventNotifier(men.getContext(), men.getEventNotifier());
+        } else if (managedObject instanceof ManagedThreadPool) {
+            ManagedThreadPool mes = (ManagedThreadPool) managedObject;
+            objectName = getObjectNameForThreadPool(mes.getContext(), mes.getThreadPool(), mes.getId(), mes.getSourceId());
+        } else if (managedObject instanceof ManagedClusterService) {
+            ManagedClusterService mcs = (ManagedClusterService) managedObject;
+            objectName = getObjectNameForClusterService(mcs.getContext(), mcs.getService());
+        } else if (managedObject instanceof ManagedService) {
+            // check for managed service should be last
+            ManagedService ms = (ManagedService) managedObject;
+            // skip endpoints as they are already managed
+            if (ms.getService() instanceof Endpoint) {
+                return null;
+            }
+            objectName = getObjectNameForService(ms.getContext(), ms.getService());
+        }
+
+        return objectName;
     }
 
     public ObjectName getObjectNameForCamelContext(String managementName, String name) throws MalformedObjectNameException {
@@ -270,7 +352,7 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
         return createObjectName(buffer);
     }
 
-    public ObjectName getObjectNameForTracer(CamelContext context, InterceptStrategy tracer) throws MalformedObjectNameException {
+    public ObjectName getObjectNameForTracer(CamelContext context, Service tracer) throws MalformedObjectNameException {
         // use the simple name of the class as the mbean name (eg Tracer, BacklogTracer, BacklogDebugger)
         String name = tracer.getClass().getSimpleName();
 

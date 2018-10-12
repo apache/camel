@@ -42,9 +42,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
 import javax.naming.Context;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -83,9 +82,6 @@ import org.apache.camel.Suspendable;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
-import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
-import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
-import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.DefaultFluentProducerTemplate;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderSupport;
@@ -96,10 +92,6 @@ import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
-import org.apache.camel.management.DefaultManagementMBeanAssembler;
-import org.apache.camel.management.DefaultManagementStrategy;
-import org.apache.camel.management.JmxSystemPropertyKeys;
-import org.apache.camel.management.ManagedCamelContext;
 import org.apache.camel.management.ManagementStrategyFactory;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.FromDefinition;
@@ -116,8 +108,6 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
-import org.apache.camel.processor.interceptor.BacklogDebugger;
-import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.Debug;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
@@ -199,13 +189,13 @@ import static org.apache.camel.impl.MDCUnitOfWork.MDC_CAMEL_CONTEXT_ID;
 /**
  * Represents the context used to configure routes and the policies to use.
  */
-public class DefaultCamelContext extends ServiceSupport implements ModelCamelContext, ManagedCamelContext, Suspendable {
+public class DefaultCamelContext extends ServiceSupport implements ModelCamelContext, Suspendable {
 
     private String version;
     private final AtomicBoolean vetoStated = new AtomicBoolean();
     private JAXBContext jaxbContext;
-    private CamelContextNameStrategy nameStrategy = createCamelContextNameStrategy();
-    private ManagementNameStrategy managementNameStrategy = createManagementNameStrategy();
+    private CamelContextNameStrategy nameStrategy;
+    private ManagementNameStrategy managementNameStrategy;
     private String managementName;
     private ClassLoader applicationContextClassLoader;
     private EndpointRegistry<EndpointKey> endpoints;
@@ -236,7 +226,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private List<InterceptStrategy> interceptStrategies = new ArrayList<>();
     private List<RoutePolicyFactory> routePolicyFactories = new ArrayList<>();
     private Set<LogListener> logListeners = new LinkedHashSet<>();
-    private HeadersMapFactory headersMapFactory = createHeadersMapFactory();
+    private HeadersMapFactory headersMapFactory;
     // special flags to control the first startup which can are special
     private volatile boolean firstStartDone;
     private volatile boolean doNotStartRoutesOnFirstStart;
@@ -274,26 +264,24 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private PackageScanClassResolver packageScanClassResolver;
     // we use a capacity of 100 per endpoint, so for the same endpoint we have at most 100 producers in the pool
     // so if we have 6 endpoints in the pool, we can have 6 x 100 producers in total
-    private ServicePool<Producer> producerServicePool = createProducerServicePool();
-    private ServicePool<PollingConsumer> pollingConsumerServicePool = createPollingConsumerServicePool();
-    private NodeIdFactory nodeIdFactory = createNodeIdFactory();
-    private ProcessorFactory processorFactory = createProcessorFactory();
-    private MessageHistoryFactory messageHistoryFactory = createMessageHistoryFactory();
-    private InterceptStrategy defaultBacklogTracer;
-    private InterceptStrategy defaultBacklogDebugger;
-    private InflightRepository inflightRepository = createInflightRepository();
-    private AsyncProcessorAwaitManager asyncProcessorAwaitManager = createAsyncProcessorAwaitManager();
+    private ServicePool<Producer> producerServicePool;
+    private ServicePool<PollingConsumer> pollingConsumerServicePool;
+    private NodeIdFactory nodeIdFactory;
+    private ProcessorFactory processorFactory;
+    private MessageHistoryFactory messageHistoryFactory;
+    private InflightRepository inflightRepository;
+    private AsyncProcessorAwaitManager asyncProcessorAwaitManager;
     private RuntimeEndpointRegistry runtimeEndpointRegistry;
     private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<>();
     // start auto assigning route ids using numbering 1000 and upwards
     private int defaultRouteStartupOrder = 1000;
-    private ShutdownStrategy shutdownStrategy = createShutdownStrategy();
+    private ShutdownStrategy shutdownStrategy;
     private ShutdownRoute shutdownRoute = ShutdownRoute.Default;
     private ShutdownRunningTask shutdownRunningTask = ShutdownRunningTask.CompleteCurrentTaskOnly;
     private ExecutorServiceManager executorServiceManager;
     private Debugger debugger;
-    private UuidGenerator uuidGenerator = createDefaultUuidGenerator();
-    private UnitOfWorkFactory unitOfWorkFactory = createUnitOfWorkFactory();
+    private UuidGenerator uuidGenerator;
+    private UnitOfWorkFactory unitOfWorkFactory;
     private final StopWatch stopWatch = new StopWatch(false);
     private Date startDate;
     private ModelJAXBContextFactory modelJAXBContextFactory;
@@ -302,7 +290,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private List<ValidatorDefinition> validators = new ArrayList<>();
     private ValidatorRegistry<ValidatorKey> validatorRegistry;
     private ReloadStrategy reloadStrategy;
-    private final RuntimeCamelCatalog runtimeCamelCatalog = createRuntimeCamelCatalog();
     private SSLContextParameters sslContextParameters;
     private final ThreadLocal<Set<String>> componentsInCreation = new ThreadLocal<Set<String>>() {
         @Override
@@ -311,8 +298,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
     };
     private RouteController routeController = createRouteController();
-    private HealthCheckRegistry healthCheckRegistry = createHealthCheckRegistry();
-
+    private Map<Class<?>, Object> extensions = new ConcurrentHashMap<>();
 
     /**
      * Creates the {@link CamelContext} using {@link JndiRegistry} as registry,
@@ -321,25 +307,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
      * Use one of the other constructors to force use an explicit registry / JNDI.
      */
     public DefaultCamelContext() {
-        this.executorServiceManager = createExecutorServiceManager();
-
-        // create a provisional (temporary) endpoint registry at first since end users may access endpoints before CamelContext is started
-        // we will later transfer the endpoints to the actual DefaultEndpointRegistry later, but we do this to starup Camel faster.
-        this.endpoints = new ProvisionalEndpointRegistry();
-
-        // add the defer service startup listener
-        this.startupListeners.add(deferStartupListener);
-
-        packageScanClassResolver = createPackageScanClassResolver();
-
-        // setup management strategy first since end users may use it to add event notifiers
-        // using the management strategy before the CamelContext has been started
-        this.managementStrategy = createManagementStrategy();
-        this.managementMBeanAssembler = createManagementMBeanAssembler();
-
-        // Call all registered trackers with this context
-        // Note, this may use a partially constructed object
-        CamelContextTracker.notifyContextCreated(this);
+        this(true);
     }
 
     /**
@@ -362,8 +330,108 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         setRegistry(registry);
     }
 
+    public DefaultCamelContext(boolean init) {
+        // create a provisional (temporary) endpoint registry at first since end users may access endpoints before CamelContext is started
+        // we will later transfer the endpoints to the actual DefaultEndpointRegistry later, but we do this to starup Camel faster.
+        this.endpoints = new ProvisionalEndpointRegistry();
+
+        // add the defer service startup listener
+        this.startupListeners.add(deferStartupListener);
+
+        if (init) {
+            init();
+        }
+    }
+
+    public void doInit() {
+        if (nameStrategy == null) {
+            nameStrategy = createCamelContextNameStrategy();
+        }
+        if (managementNameStrategy == null) {
+            managementNameStrategy = createManagementNameStrategy();
+        }
+        if (headersMapFactory == null) {
+            headersMapFactory = createHeadersMapFactory();
+        }
+        if (classResolver == null) {
+            classResolver = createClassResolver();
+        }
+        if (producerServicePool == null) {
+            producerServicePool = createProducerServicePool();
+        }
+        if (pollingConsumerServicePool == null) {
+            pollingConsumerServicePool = createPollingConsumerServicePool();
+        }
+        if (nodeIdFactory == null){
+            nodeIdFactory = createNodeIdFactory();
+        }
+        if (processorFactory == null) {
+            processorFactory = createProcessorFactory();
+        }
+        if (messageHistoryFactory == null) {
+            messageHistoryFactory = createMessageHistoryFactory();
+        }
+        if (inflightRepository == null) {
+            inflightRepository = createInflightRepository();
+        }
+        if (asyncProcessorAwaitManager == null) {
+            asyncProcessorAwaitManager = createAsyncProcessorAwaitManager();
+        }
+        if (shutdownStrategy == null) {
+            shutdownStrategy = createShutdownStrategy();
+        }
+        if (uuidGenerator == null) {
+            uuidGenerator = createDefaultUuidGenerator();
+        }
+        if (unitOfWorkFactory == null) {
+            unitOfWorkFactory = createUnitOfWorkFactory();
+        }
+        if (executorServiceManager == null) {
+            executorServiceManager = createExecutorServiceManager();
+        }
+        if (packageScanClassResolver == null) {
+            packageScanClassResolver = createPackageScanClassResolver();
+        }
+        if (managementStrategy == null) {
+            // setup management strategy first since end users may use it to add event notifiers
+            // using the management strategy before the CamelContext has been started
+            managementStrategy = createManagementStrategy();
+        }
+
+        setDefaultExtension(HealthCheckRegistry.class, this::createHealthCheckRegistry);
+        setDefaultExtension(RuntimeCamelCatalog.class, this::createRuntimeCamelCatalog);
+
+        // Call all registered trackers with this context
+        // Note, this may use a partially constructed object
+        CamelContextTracker.notifyContextCreated(this);
+
+    }
+
     public <T extends CamelContext> T adapt(Class<T> type) {
         return type.cast(this);
+    }
+
+    @Override
+    public <T> T getExtension(Class<T> type) {
+        Object extension = extensions.get(type);
+        if (extension instanceof Supplier) {
+            setExtension(type, ((Supplier<T>) extension).get());
+        }
+        return type.cast(extensions.get(type));
+    }
+
+    @Override
+    public <T> void setExtension(Class<T> type, T module) {
+        try {
+            addService(module, true, true);
+            extensions.put(type, module);
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
+    }
+
+    public <T> void setDefaultExtension(Class<T> type, Supplier<T> module) {
+        extensions.putIfAbsent(type, module);
     }
 
     public boolean isVetoStarted() {
@@ -442,6 +510,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public Component getComponent(String name, boolean autoCreateComponents, boolean autoStart) {
+        init();
+
         // Check if the named component is already being created, that would mean
         // that the initComponent has triggered a new getComponent
         if (componentsInCreation.get().contains(name)) {
@@ -655,6 +725,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public Endpoint getEndpoint(String uri) {
+        init();
+
         StringHelper.notEmpty(uri, "uri");
 
         log.trace("Getting endpoint with uri: {}", uri);
@@ -914,62 +986,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return null;
     }
 
-    public <T extends ManagedProcessorMBean> T getManagedProcessor(String id, Class<T> type) {
-        // jmx must be enabled
-        if (getManagementStrategy().getManagementAgent() == null) {
-            return null;
-        }
-
-        Processor processor = getProcessor(id);
-        ProcessorDefinition def = getProcessorDefinition(id);
-
-        // processor may be null if its anonymous inner class or as lambda
-        if (def != null) {
-            try {
-                ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForProcessor(this, processor, def);
-                return getManagementStrategy().getManagementAgent().newProxyClient(on, type);
-            } catch (MalformedObjectNameException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-
-        return null;
-    }
-
-    public <T extends ManagedRouteMBean> T getManagedRoute(String routeId, Class<T> type) {
-        // jmx must be enabled
-        if (getManagementStrategy().getManagementAgent() == null) {
-            return null;
-        }
-
-        Route route = getRoute(routeId);
-
-        if (route != null) {
-            try {
-                ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForRoute(route);
-                return getManagementStrategy().getManagementAgent().newProxyClient(on, type);
-            } catch (MalformedObjectNameException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-
-        return null;
-    }
-
-    public ManagedCamelContextMBean getManagedCamelContext() {
-        // jmx must be enabled
-        if (getManagementStrategy().getManagementAgent() == null) {
-            return null;
-        }
-
-        try {
-            ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForCamelContext(this);
-            return getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedCamelContextMBean.class);
-        } catch (MalformedObjectNameException e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-        }
-    }
-
     public ProcessorDefinition getProcessorDefinition(String id) {
         for (RouteDefinition route : getRouteDefinitions()) {
             Iterator<ProcessorDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
@@ -1004,6 +1020,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public void addRoutes(final RoutesBuilder builder) throws Exception {
+        init();
         log.debug("Adding routes from builder: {}", builder);
         doWithDefinedClassLoader(() -> builder.addRoutesToCamelContext(DefaultCamelContext.this));
     }
@@ -2139,7 +2156,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             Map<String, String[]> uriOptions = new LinkedHashMap<>();
 
             // insert values from uri
-            Map<String, Object> options = new HashMap<>(getRuntimeCamelCatalog().endpointProperties(uri));
+            Map<String, Object> options = new HashMap<>(getExtension(RuntimeCamelCatalog.class).endpointProperties(uri));
 
             // extract consumer. prefix options
             Map<String, Object> consumerOptions = IntrospectionSupport.extractProperties(options, "consumer.");
@@ -3061,6 +3078,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     @Override
     public void start() throws Exception {
         try (MDCHelper mdcHelper = new MDCHelper()) {
+            init();
             vetoStated.set(false);
             startDate = new Date();
             stopWatch.restart();
@@ -3281,8 +3299,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 for (LifecycleStrategy strategy : lifecycleStrategies) {
                     strategy.onServiceAdd(this, service, null);
                 }
-            }
-            if (notifier instanceof Service) {
                 startService((Service) notifier);
             }
         }
@@ -3307,11 +3323,13 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         addService(packageScanClassResolver, true, true);
         addService(restRegistry, true, true);
         addService(messageHistoryFactory, true, true);
-        addService(runtimeCamelCatalog, true, true);
         if (reloadStrategy != null) {
             log.info("Using ReloadStrategy: {}", reloadStrategy);
             addService(reloadStrategy, true, true);
         }
+
+        // Start runtime catalog
+        getExtension(RuntimeCamelCatalog.class);
 
         // Initialize declarative transformer/validator registry
         transformerRegistry = createTransformerRegistry(transformers);
@@ -4048,13 +4066,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     /**
      * Lazily create a default implementation
      */
-    protected ManagementMBeanAssembler createManagementMBeanAssembler() {
-        return new DefaultManagementMBeanAssembler(this);
-    }
-
-    /**
-     * Lazily create a default implementation
-     */
     protected ComponentResolver createComponentResolver() {
         return new DefaultComponentResolver();
     }
@@ -4229,35 +4240,16 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         this.managementStrategy = managementStrategy;
     }
 
-    public InterceptStrategy getDefaultBacklogTracer() {
-        if (defaultBacklogTracer == null) {
-            defaultBacklogTracer = BacklogTracer.createTracer(this);
-        }
-        return defaultBacklogTracer;
-    }
-
-    public void setDefaultBacklogTracer(InterceptStrategy backlogTracer) {
-        this.defaultBacklogTracer = backlogTracer;
-    }
-
-    public InterceptStrategy getDefaultBacklogDebugger() {
-        if (defaultBacklogDebugger == null) {
-            defaultBacklogDebugger = new BacklogDebugger(this);
-        }
-        return defaultBacklogDebugger;
-    }
-
-    public void setDefaultBacklogDebugger(InterceptStrategy defaultBacklogDebugger) {
-        this.defaultBacklogDebugger = defaultBacklogDebugger;
-    }
-
     public void disableJMX() {
-        if (isStarting() || isStarted()) {
+        if (isNew()) {
+            disableJMX = true;
+        } else if (isInit()) {
+            disableJMX = true;
+            managementStrategy = createManagementStrategy();
+            lifecycleStrategies.clear();
+        } else {
             throw new IllegalStateException("Disabling JMX can only be done when CamelContext has not been started");
         }
-        managementStrategy = new DefaultManagementStrategy(this);
-        // must clear lifecycle strategies as we add DefaultManagementLifecycleStrategy by default for JMX support
-        lifecycleStrategies.clear();
     }
 
     public InflightRepository getInflightRepository() {
@@ -4544,11 +4536,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     @Override
-    public RuntimeCamelCatalog getRuntimeCamelCatalog() {
-        return runtimeCamelCatalog;
-    }
-
-    @Override
     public void setSSLContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
@@ -4573,7 +4560,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     protected ManagementStrategy createManagementStrategy() {
-        return new ManagementStrategyFactory().create(this, disableJMX || Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED));
+        return new ManagementStrategyFactory().create(this, disableJMX);
     }
 
     /**
@@ -4626,18 +4613,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
             }
         }
-    }
-
-    @Override
-    public HealthCheckRegistry getHealthCheckRegistry() {
-        return healthCheckRegistry;
-    }
-
-    /**
-     * Sets a {@link HealthCheckRegistry}.
-     */
-    public void setHealthCheckRegistry(HealthCheckRegistry healthCheckRegistry) {
-        this.healthCheckRegistry = ObjectHelper.notNull(healthCheckRegistry, "HealthCheckRegistry");
     }
 
     protected NodeIdFactory createNodeIdFactory() {

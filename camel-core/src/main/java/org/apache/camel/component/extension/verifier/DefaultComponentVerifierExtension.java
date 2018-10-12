@@ -125,7 +125,7 @@ public class DefaultComponentVerifierExtension implements ComponentVerifierExten
         }
 
         // Grab the runtime catalog to check parameters
-        RuntimeCamelCatalog catalog = camelContext.getRuntimeCamelCatalog();
+        RuntimeCamelCatalog catalog = camelContext.getExtension(RuntimeCamelCatalog.class);
 
         // Convert from Map<String, Object> to  Map<String, String> as required
         // by the Camel Catalog

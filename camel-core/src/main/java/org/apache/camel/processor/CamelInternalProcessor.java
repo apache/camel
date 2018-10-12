@@ -31,9 +31,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
 import org.apache.camel.StreamCache;
-import org.apache.camel.management.DelegatePerformanceCounter;
-import org.apache.camel.management.PerformanceCounter;
-import org.apache.camel.management.mbean.ManagedPerformanceCounter;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
@@ -83,7 +80,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
-    private final List<CamelInternalProcessorAdvice> advices = new ArrayList<>();
+    private final List<CamelInternalProcessorAdvice<?>> advices = new ArrayList<>();
 
     public CamelInternalProcessor() {
     }
@@ -97,7 +94,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
      *
      * @param advice  the advice to add
      */
-    public void addAdvice(CamelInternalProcessorAdvice advice) {
+    public void addAdvice(CamelInternalProcessorAdvice<?> advice) {
         advices.add(advice);
         // ensure advices are sorted so they are in the order we want
         advices.sort(OrderedComparator.get());
@@ -111,8 +108,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
      */
     public <T> T getAdvice(Class<T> type) {
         for (CamelInternalProcessorAdvice task : advices) {
-            if (type.isInstance(task)) {
-                return type.cast(task);
+            Object advice = CamelInternalProcessorAdvice.unwrap(task);
+            if (type.isInstance(advice)) {
+                return type.cast(advice);
             }
         }
         return null;
@@ -320,82 +318,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             UnitOfWork uow = exchange.getUnitOfWork();
             if (uow != null) {
                 uow.afterRoute(exchange, route);
-            }
-        }
-    }
-
-    /**
-     * Advice for JMX instrumentation of the process being invoked.
-     * <p/>
-     * This advice keeps track of JMX metrics for performance statistics.
-     * <p/>
-     * The current implementation of this advice is only used for route level statistics. For processor levels
-     * they are still wrapped in the route processor chains.
-     */
-    public static class InstrumentationAdvice implements CamelInternalProcessorAdvice<StopWatch> {
-
-        private final Logger log = LoggerFactory.getLogger(getClass());
-        private PerformanceCounter counter;
-        private String type;
-
-        public InstrumentationAdvice(String type) {
-            this.type = type;
-        }
-
-        public void setCounter(Object counter) {
-            ManagedPerformanceCounter mpc = null;
-            if (counter instanceof ManagedPerformanceCounter) {
-                mpc = (ManagedPerformanceCounter) counter;
-            }
-
-            if (this.counter instanceof DelegatePerformanceCounter) {
-                ((DelegatePerformanceCounter) this.counter).setCounter(mpc);
-            } else if (mpc != null) {
-                this.counter = mpc;
-            } else if (counter instanceof PerformanceCounter) {
-                this.counter = (PerformanceCounter) counter;
-            }
-        }
-
-        protected void beginTime(Exchange exchange) {
-            counter.processExchange(exchange);
-        }
-
-        protected void recordTime(Exchange exchange, long duration) {
-            if (log.isTraceEnabled()) {
-                log.trace("{}Recording duration: {} millis for exchange: {}", type != null ? type + ": " : "", duration, exchange);
-            }
-
-            if (!exchange.isFailed() && exchange.getException() == null) {
-                counter.completedExchange(exchange, duration);
-            } else {
-                counter.failedExchange(exchange);
-            }
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        @Override
-        public StopWatch before(Exchange exchange) throws Exception {
-            // only record time if stats is enabled
-            StopWatch answer = counter != null && counter.isStatisticsEnabled() ? new StopWatch() : null;
-            if (answer != null) {
-                beginTime(exchange);
-            }
-            return answer;
-        }
-
-        @Override
-        public void after(Exchange exchange, StopWatch watch) throws Exception {
-            // record end time
-            if (watch != null) {
-                recordTime(exchange, watch.taken());
             }
         }
     }

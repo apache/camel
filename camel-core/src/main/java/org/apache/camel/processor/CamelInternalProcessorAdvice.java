@@ -17,6 +17,8 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Ordered;
+import org.apache.camel.spi.ManagementInterceptStrategy.InstrumentationProcessor;
 
 /**
  * An advice (before and after) to execute cross cutting functionality in the Camel routing engine.
@@ -25,7 +27,7 @@ import org.apache.camel.Exchange;
  * {@link #after(org.apache.camel.Exchange, Object)} methods during routing in correct order.
  *
  * @param <T>
- * @see CamelInternalProcessor
+ * @see org.apache.camel.processor.CamelInternalProcessor
  */
 public interface CamelInternalProcessorAdvice<T> {
 
@@ -46,4 +48,53 @@ public interface CamelInternalProcessorAdvice<T> {
      * @throws Exception is thrown if error during the call.
      */
     void after(Exchange exchange, T data) throws Exception;
+
+    /**
+     * Wrap an InstrumentationProcessor into a CamelInternalProcessorAdvice
+     */
+    static <T> CamelInternalProcessorAdvice<T> wrap(InstrumentationProcessor<T> instrumentationProcessor) {
+
+        if (instrumentationProcessor instanceof CamelInternalProcessor) {
+            return (CamelInternalProcessorAdvice<T>) instrumentationProcessor;
+        } else {
+            return new CamelInternalProcessorAdviceWrapper<T>(instrumentationProcessor);
+        }
+    }
+
+    static Object unwrap(CamelInternalProcessorAdvice<?> advice) {
+        if (advice instanceof CamelInternalProcessorAdviceWrapper) {
+            return ((CamelInternalProcessorAdviceWrapper) advice).unwrap();
+        } else {
+            return advice;
+        }
+    }
+
+    class CamelInternalProcessorAdviceWrapper<T> implements CamelInternalProcessorAdvice<T>, Ordered {
+
+        final InstrumentationProcessor<T> instrumentationProcessor;
+
+        public CamelInternalProcessorAdviceWrapper(InstrumentationProcessor<T> instrumentationProcessor) {
+            this.instrumentationProcessor = instrumentationProcessor;
+        }
+
+        InstrumentationProcessor<T> unwrap() {
+            return instrumentationProcessor;
+        }
+
+        @Override
+        public int getOrder() {
+            return instrumentationProcessor.getOrder();
+        }
+
+        @Override
+        public T before(Exchange exchange) throws Exception {
+            return instrumentationProcessor.before(exchange);
+        }
+
+        @Override
+        public void after(Exchange exchange, T data) throws Exception {
+            instrumentationProcessor.after(exchange, data);
+        }
+    }
+
 }

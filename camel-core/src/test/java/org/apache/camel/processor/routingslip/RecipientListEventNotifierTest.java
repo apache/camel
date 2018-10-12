@@ -32,6 +32,7 @@ public class RecipientListEventNotifierTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
+        context.init();
         context.getManagementStrategy().addEventNotifier(notifier);
         return context;
     }
@@ -76,16 +77,6 @@ public class RecipientListEventNotifierTest extends ContextTestSupport {
         @Override
         public boolean isEnabled(CamelEvent event) {
             return event instanceof ExchangeSendingEvent || event instanceof ExchangeSentEvent;
-        }
-
-        @Override
-        protected void doStart() throws Exception {
-            // noop
-        }
-
-        @Override
-        protected void doStop() throws Exception {
-            // noop
         }
 
         public int getSending() {

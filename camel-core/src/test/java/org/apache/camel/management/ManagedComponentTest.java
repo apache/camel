@@ -45,6 +45,7 @@ public class ManagedComponentTest extends ManagementTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
+        context.init();
         context.getManagementStrategy().getManagementAgent().setCreateConnector(true);
         context.addComponent("my-verifiable-component", new MyVerifiableComponent());
         context.addComponent("direct", new DirectComponent());

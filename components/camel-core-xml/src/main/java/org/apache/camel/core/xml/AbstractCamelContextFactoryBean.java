@@ -52,7 +52,7 @@ import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.health.HealthCheckService;
 import org.apache.camel.management.DefaultManagementAgent;
 import org.apache.camel.management.DefaultManagementLifecycleStrategy;
-import org.apache.camel.management.DefaultManagementStrategy;
+import org.apache.camel.impl.DefaultManagementStrategy;
 import org.apache.camel.management.ManagedManagementStrategy;
 import org.apache.camel.model.ContextScanDefinition;
 import org.apache.camel.model.FromDefinition;
@@ -83,6 +83,7 @@ import org.apache.camel.model.validator.ValidatorsDefinition;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.runtimecatalog.JSonSchemaResolver;
+import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Debugger;
@@ -192,7 +193,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         BacklogTracer backlogTracer = getBeanForType(BacklogTracer.class);
         if (backlogTracer != null) {
             LOG.info("Using custom BacklogTracer: {}", backlogTracer);
-            getContext().addInterceptStrategy(backlogTracer);
+            getContext().addService(backlogTracer);
         }
         HandleFault handleFault = getBeanForType(HandleFault.class);
         if (handleFault != null) {
@@ -242,7 +243,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         JSonSchemaResolver jsonSchemaResolver = getBeanForType(JSonSchemaResolver.class);
         if (jsonSchemaResolver != null) {
             LOG.info("Using custom JSonSchemaResolver: {}", jsonSchemaResolver);
-            getContext().getRuntimeCamelCatalog().setJSonSchemaResolver(jsonSchemaResolver);
+            getContext().getExtension(RuntimeCamelCatalog.class).setJSonSchemaResolver(jsonSchemaResolver);
         }
         // custom type converters defined as <bean>s
         Map<String, TypeConverters> typeConverters = getContext().getRegistry().findByTypeWithName(TypeConverters.class);
@@ -341,9 +342,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (healthCheckRegistry != null) {
             healthCheckRegistry.setCamelContext(getContext());
             LOG.info("Using HealthCheckRegistry: {}", healthCheckRegistry);
-            getContext().setHealthCheckRegistry(healthCheckRegistry);
+            getContext().setExtension(HealthCheckRegistry.class, healthCheckRegistry);
         } else {
-            healthCheckRegistry = getContext().getHealthCheckRegistry();
+            healthCheckRegistry = HealthCheckRegistry.get(getContext());
             healthCheckRegistry.setCamelContext(getContext());
         }
         // Health check repository

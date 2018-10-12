@@ -28,6 +28,7 @@ public class ManagedNamePatternFixedTest extends ManagementTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
+        context.init();
         context.getManagementNameStrategy().setNamePattern("cool");
         return context;
     }

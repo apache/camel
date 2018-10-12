@@ -222,7 +222,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     }
 
     public Object getManagedObjectForRouteController(CamelContext context) {
-        ManagedRouteController mrc = new ManagedRouteController((ModelCamelContext)context);
+        ManagedRouteController mrc = new ManagedRouteController((ModelCamelContext) context);
         mrc.init(context.getManagementStrategy());
         return mrc;
     }

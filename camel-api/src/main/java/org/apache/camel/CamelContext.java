@@ -24,8 +24,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.apache.camel.health.HealthCheckRegistry;
-import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
@@ -107,6 +105,9 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return this {@link org.apache.camel.CamelContext} adapted to the given type
      */
     <T extends CamelContext> T adapt(Class<T> type);
+
+    <T> T getExtension(Class<T> type);
+    <T> void setExtension(Class<T> type, T module);
 
     /**
      * If CamelContext during the start procedure was vetoed, and therefore causing Camel to not start.
@@ -1076,40 +1077,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void setManagementStrategy(ManagementStrategy strategy);
 
     /**
-     * Gets the default backlog tracer
-     *
-     * @return the default backlog tracer
-     */
-    InterceptStrategy getDefaultBacklogTracer();
-
-    /**
-     * Sets a custom backlog tracer to be used as the default backlog tracer.
-     * <p/>
-     * <b>Note:</b> This must be set before any routes are created,
-     * changing the default backlog tracer for existing routes is not supported.
-     *
-     * @param backlogTracer the custom tracer to use as default backlog tracer
-     */
-    void setDefaultBacklogTracer(InterceptStrategy backlogTracer);
-
-    /**
-     * Gets the default backlog debugger
-     *
-     * @return the default backlog debugger
-     */
-    InterceptStrategy getDefaultBacklogDebugger();
-
-    /**
-     * Sets a custom backlog debugger to be used as the default backlog debugger.
-     * <p/>
-     * <b>Note:</b> This must be set before any routes are created,
-     * changing the default backlog debugger for existing routes is not supported.
-     *
-     * @param backlogDebugger the custom debugger to use as default backlog debugger
-     */
-    void setDefaultBacklogDebugger(InterceptStrategy backlogDebugger);
-
-    /**
      * Disables using JMX as {@link org.apache.camel.spi.ManagementStrategy}.
      * <p/>
      * <b>Important:</b> This method must be called <b>before</b> the {@link CamelContext} is started.
@@ -1527,11 +1494,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void setReloadStrategy(ReloadStrategy reloadStrategy);
 
     /**
-     * Gets the associated {@link RuntimeCamelCatalog} for this CamelContext.
-     */
-    RuntimeCamelCatalog getRuntimeCamelCatalog();
-
-    /**
      * Gets a list of {@link LogListener}.
      */
     Set<LogListener> getLogListeners();
@@ -1560,25 +1522,5 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Sets a custom {@link HeadersMapFactory} to be used.
      */
     void setHeadersMapFactory(HeadersMapFactory factory);
-
-    /**
-     * Returns an optional {@link HealthCheckRegistry}, by default no registry is
-     * present and it must be explicit activated. Components can register/unregister
-     * health checks in response to life-cycle events (i.e. start/stop).
-     *
-     * This registry is not used by the camel context but it is up to the impl to
-     * properly use it, i.e.
-     *
-     * - a RouteController could use the registry to decide to restart a route
-     *   with failing health checks
-     * - spring boot could integrate such checks within its health endpoint or
-     *   make it available only as separate endpoint.
-     */
-    HealthCheckRegistry getHealthCheckRegistry();
-
-    /**
-     * Sets a {@link HealthCheckRegistry}.
-     */
-    void setHealthCheckRegistry(HealthCheckRegistry healthCheckRegistry);
 
 }

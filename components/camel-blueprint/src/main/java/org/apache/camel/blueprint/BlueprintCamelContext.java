@@ -93,7 +93,7 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
         this.blueprintContainer = blueprintContainer;
     }
    
-    public void init() throws Exception {
+    public void doInit() {
         log.trace("init {}", this);
 
         // add service listener so we can be notified when blueprint container is done

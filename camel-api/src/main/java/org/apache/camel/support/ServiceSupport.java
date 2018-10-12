@@ -36,19 +36,30 @@ import org.slf4j.LoggerFactory;
 public abstract class ServiceSupport implements StatefulService {
 
     protected static final int NEW = 0;
-    protected static final int STARTING = 1;
-    protected static final int STARTED = 2;
-    protected static final int SUSPENDING = 3;
-    protected static final int SUSPENDED = 4;
-    protected static final int STOPPING = 5;
-    protected static final int STOPPED = 6;
-    protected static final int SHUTTINGDOWN = 7;
-    protected static final int SHUTDOWN = 8;
-    protected static final int FAILED = 9;
+    protected static final int INITIALIZED = 1;
+    protected static final int STARTING = 2;
+    protected static final int STARTED = 3;
+    protected static final int SUSPENDING = 4;
+    protected static final int SUSPENDED = 5;
+    protected static final int STOPPING = 6;
+    protected static final int STOPPED = 7;
+    protected static final int SHUTTINGDOWN = 8;
+    protected static final int SHUTDOWN = 9;
+    protected static final int FAILED = 10;
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final Object lock = new Object();
     protected volatile int status = NEW;
+
+    public void init() {
+        synchronized (lock) {
+            if (status == NEW) {
+                log.trace("Initializing service");
+                doInit();
+                status = INITIALIZED;
+            }
+        }
+    }
 
     /**
      * <b>Important: </b> You should override the lifecycle methods that start with <tt>do</tt>, eg {@link #doStart()},
@@ -66,9 +77,10 @@ public abstract class ServiceSupport implements StatefulService {
                 log.trace("Service already starting");
                 return;
             }
-            status = STARTING;
-            log.trace("Starting service");
+            init();
             try {
+                status = STARTING;
+                log.trace("Starting service");
                 doStart();
                 status = STARTED;
                 log.trace("Service started");
@@ -217,7 +229,15 @@ public abstract class ServiceSupport implements StatefulService {
                 return ServiceStatus.Stopped;
         }
     }
-    
+
+    public boolean isNew() {
+        return status == NEW;
+    }
+
+    public boolean isInit() {
+        return status == INITIALIZED;
+    }
+
     @Override
     public boolean isStarted() {
         return status == STARTED;
@@ -276,6 +296,13 @@ public abstract class ServiceSupport implements StatefulService {
      */
     public boolean isStartingOrStarted() {
         return isStarting() || isStarted();
+    }
+
+    /**
+     * Initialize the service.
+     * This method will only be called once before starting.
+     */
+    protected void doInit() {
     }
 
     /**

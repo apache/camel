@@ -43,28 +43,6 @@ public interface ManagementStrategy extends Service {
     void manageObject(Object managedObject) throws Exception;
 
     /**
-     * Adds a managed object allowing the ManagementStrategy implementation
-     * to record or expose the object as it sees fit.
-     *
-     * @param managedObject the managed object
-     * @param preferredName representing the preferred name, maybe a String, or a JMX ObjectName
-     * @throws Exception can be thrown if the object could not be added
-     */
-    void manageNamedObject(Object managedObject, Object preferredName) throws Exception;
-
-    /**
-     * Construct an object name, where either the object to be managed and/or
-     * a custom name component are provided
-     *
-     * @param managedObject the object to be managed
-     * @param customName a custom name component
-     * @param nameType the name type required
-     * @return an object name of the required type if supported, otherwise <tt>null</tt>
-     * @throws Exception can be thrown if the object name could not be created
-     */
-    <T> T getManagedObjectName(Object managedObject, String customName, Class<T> nameType) throws Exception;
-
-    /**
      * Removes the managed object.
      *
      * @param managedObject the managed object
@@ -73,21 +51,20 @@ public interface ManagementStrategy extends Service {
     void unmanageObject(Object managedObject) throws Exception;
 
     /**
-     * Removes a managed object by name.
+     * Determines if an object or name is managed.
      *
-     * @param name an object name previously created by this strategy.
-     * @throws Exception can be thrown if the object could not be removed
+     * @param managedObject the object to consider
+     * @return <tt>true</tt> if the given object is managed
      */
-    void unmanageNamedObject(Object name) throws Exception;
+    boolean isManaged(Object managedObject);
 
     /**
      * Determines if an object or name is managed.
      *
-     * @param managedObject the object to consider
      * @param name the name to consider
-     * @return <tt>true</tt> if the given object or name is managed
+     * @return <tt>true</tt> if the given name is managed
      */
-    boolean isManaged(Object managedObject, Object name);
+    boolean isManagedName(Object name);
 
     /**
      * Management events provide a single model for capturing information about execution points in the
@@ -106,13 +83,6 @@ public interface ManagementStrategy extends Service {
      * @return event notifiers
      */
     List<EventNotifier> getEventNotifiers();
-
-    /**
-     * Sets the list of event notifier to use.
-     *
-     * @param eventNotifier list of event notifiers
-     */
-    void setEventNotifiers(List<EventNotifier> eventNotifier);
 
     /**
      * Adds the event notifier to use.

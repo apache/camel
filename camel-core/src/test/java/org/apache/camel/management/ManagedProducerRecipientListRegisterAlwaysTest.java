@@ -32,6 +32,7 @@ public class ManagedProducerRecipientListRegisterAlwaysTest extends ManagementTe
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
+        context.init();
         context.getManagementStrategy().getManagementAgent().setRegisterAlways(true);
         return context;
     }

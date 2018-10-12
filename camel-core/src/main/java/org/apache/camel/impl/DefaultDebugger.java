@@ -382,16 +382,6 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         public boolean isEnabled(CamelEvent event) {
             return event instanceof ExchangeEvent;
         }
-
-        @Override
-        protected void doStart() throws Exception {
-            // noop
-        }
-
-        @Override
-        protected void doStop() throws Exception {
-            // noop
-        }
     }
 
 }

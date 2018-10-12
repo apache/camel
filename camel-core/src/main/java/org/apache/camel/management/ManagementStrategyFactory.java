@@ -17,6 +17,7 @@
 package org.apache.camel.management;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultManagementStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,23 +29,14 @@ public class ManagementStrategyFactory {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     public ManagementStrategy create(CamelContext context, boolean disableJMX) {
-        ManagementStrategy answer;
-
-        if (disableJMX || Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-            answer = new DefaultManagementStrategy(context);
-        } else {
+        if (!disableJMX && !Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
             try {
-                answer = new ManagedManagementStrategy(context, new DefaultManagementAgent(context));
-
-                // must add management lifecycle strategy
-                context.getLifecycleStrategies().add(0, new DefaultManagementLifecycleStrategy(context));
-
+                return new ManagedManagementStrategy(context, new DefaultManagementAgent(context));
             } catch (Exception e) {
                 log.warn("Cannot create JMX lifecycle strategy. Will fallback and disable JMX.", e);
-                answer = new DefaultManagementStrategy(context);
             }
         }
-        return answer;
+        return new DefaultManagementStrategy(context);
     }
 
 }

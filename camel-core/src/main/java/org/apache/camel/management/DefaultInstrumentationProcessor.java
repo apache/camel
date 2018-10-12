@@ -17,15 +17,14 @@
 package org.apache.camel.management;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
 import org.apache.camel.management.mbean.ManagedPerformanceCounter;
-import org.apache.camel.processor.CamelInternalProcessorAdvice;
 import org.apache.camel.processor.DelegateAsyncProcessor;
+import org.apache.camel.spi.ManagementInterceptStrategy.InstrumentationProcessor;
 import org.apache.camel.util.StopWatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * JMX enabled processor or advice that uses the {@link org.apache.camel.management.mbean.ManagedCounter} for instrumenting
@@ -34,14 +33,19 @@ import org.slf4j.LoggerFactory;
  * This implementation has been optimised to work in dual mode, either as an advice or as a processor.
  * The former is faster and the latter is required when the error handler has been configured with redelivery enabled.
  */
-public class InstrumentationProcessor extends DelegateAsyncProcessor implements CamelInternalProcessorAdvice<StopWatch>, Ordered {
+public class DefaultInstrumentationProcessor extends DelegateAsyncProcessor
+        implements InstrumentationProcessor<StopWatch>, Ordered {
 
-    private static final Logger LOG = LoggerFactory.getLogger(InstrumentationProcessor.class);
     private PerformanceCounter counter;
     private String type;
 
-    public InstrumentationProcessor(String type, Processor processor) {
+    public DefaultInstrumentationProcessor(String type, Processor processor) {
         super(processor);
+        this.type = type;
+    }
+
+    public DefaultInstrumentationProcessor(String type) {
+        super((AsyncProcessor) null);
         this.type = type;
     }
 
@@ -85,7 +89,7 @@ public class InstrumentationProcessor extends DelegateAsyncProcessor implements 
 
             @Override
             public String toString() {
-                return InstrumentationProcessor.this.toString();
+                return DefaultInstrumentationProcessor.this.toString();
             }
         });
     }
@@ -95,8 +99,8 @@ public class InstrumentationProcessor extends DelegateAsyncProcessor implements 
     }
 
     protected void recordTime(Exchange exchange, long duration) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("{}Recording duration: {} millis for exchange: {}", type != null ? type + ": " : "", duration, exchange);
+        if (log.isTraceEnabled()) {
+            log.trace("{}Recording duration: {} millis for exchange: {}", type != null ? type + ": " : "", duration, exchange);
         }
 
         if (!exchange.isFailed() && exchange.getException() == null) {

@@ -63,7 +63,7 @@ public class ManagedCamelHealth implements ManagedCamelHealthMBean {
 
     @Override
     public Collection<String> getHealthChecksIDs() {
-        HealthCheckRegistry registry = context.getHealthCheckRegistry();
+        HealthCheckRegistry registry = HealthCheckRegistry.get(context);
         if (registry != null) {
             return registry.getCheckIDs();
         }

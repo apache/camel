@@ -43,10 +43,6 @@ public class ManagedCamelContextRestartTest extends ManagementTestSupport {
                 // Empty.
             }
             @Override
-            public boolean isEnabled(CamelEvent event) {
-                return true;
-            }
-            @Override
             protected void doStart() throws Exception {
                 starts++;
             }

@@ -56,14 +56,6 @@ public class EventNotifierExchangeCompletedTest extends ContextTestSupport {
                 // should be from a specific endpoint or route
                 // just return true for the events you like
             }
-
-            protected void doStart() throws Exception {
-                // noop
-            }
-
-            protected void doStop() throws Exception {
-                // noop
-            }
         });
         return context;
     }

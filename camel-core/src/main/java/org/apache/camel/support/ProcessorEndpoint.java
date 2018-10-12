@@ -29,10 +29,10 @@ import org.apache.camel.Producer;
  * consumers.
  * <p/>
  * <br/>Implementors beware that this endpoint creates producers and consumers which
- * doesn't allow you full control of its lifecycle as a {@link org.apache.camel.Service}
+ * do not allow full control of their lifecycle as {@link org.apache.camel.Service}
  * or {@link org.apache.camel.SuspendableService} would do.
- * If your producers/consumers need more control of its lifecycle it is advised instead to extend
- * {@link DefaultEndpoint}, {@link DefaultProducer}
+ * If your producers/consumers need more control oover their lifecycle it is advised
+ * instead to extend {@link DefaultEndpoint}, {@link DefaultProducer}
  * and {@link DefaultConsumer}.
  */
 public class ProcessorEndpoint extends DefaultPollingEndpoint {
