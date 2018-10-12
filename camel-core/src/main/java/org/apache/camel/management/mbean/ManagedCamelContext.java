@@ -574,7 +574,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         if (endpoint != null) {
             // ensure endpoint is registered, as the management strategy could have been configured to not always
             // register new endpoints in JMX, so we need to check if its registered, and if not register it manually
-            ObjectName on = context.getManagementStrategy().getManagementNamingStrategy().getObjectNameForEndpoint(endpoint);
+            ObjectName on = context.getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForEndpoint(endpoint);
             if (on != null && !context.getManagementStrategy().getManagementAgent().isRegistered(on)) {
                 // register endpoint as mbean
                 Object me = context.getManagementStrategy().getManagementObjectStrategy().getManagedObjectForEndpoint(context, endpoint);

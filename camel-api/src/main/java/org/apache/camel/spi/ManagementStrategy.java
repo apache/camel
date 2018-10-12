@@ -28,7 +28,7 @@ import org.apache.camel.Service;
  *
  * @see org.apache.camel.spi.EventNotifier
  * @see org.apache.camel.spi.EventFactory
- * @see org.apache.camel.spi.ManagementNamingStrategy
+ * @see ManagementObjectNameStrategy
  * @see org.apache.camel.spi.ManagementAgent
  */
 public interface ManagementStrategy extends Service {
@@ -151,14 +151,14 @@ public interface ManagementStrategy extends Service {
      *
      * @return naming strategy
      */
-    ManagementNamingStrategy getManagementNamingStrategy();
+    ManagementObjectNameStrategy getManagementObjectNameStrategy();
 
     /**
      * Sets the naming strategy to use
      *
      * @param strategy naming strategy
      */
-    void setManagementNamingStrategy(ManagementNamingStrategy strategy);
+    void setManagementObjectNameStrategy(ManagementObjectNameStrategy strategy);
 
     /**
      * Gets the object strategy to use

@@ -39,7 +39,7 @@ import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.spi.ManagementNamingStrategy;
+import org.apache.camel.spi.ManagementObjectNameStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
@@ -48,7 +48,7 @@ import org.apache.camel.util.URISupport;
 /**
  * Naming strategy used when registering MBeans.
  */
-public class DefaultManagementNamingStrategy implements ManagementNamingStrategy, CamelContextAware {
+public class DefaultManagementObjectNameStrategy implements ManagementObjectNameStrategy, CamelContextAware {
     public static final String VALUE_UNKNOWN = "unknown";
     public static final String KEY_NAME = "name";
     public static final String KEY_TYPE = "type";
@@ -74,12 +74,12 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     protected String hostName = "localhost";
     protected CamelContext camelContext;
 
-    public DefaultManagementNamingStrategy() {
+    public DefaultManagementObjectNameStrategy() {
         this("org.apache.camel");
         // default constructor needed for <bean> style configuration
     }
 
-    public DefaultManagementNamingStrategy(String domainName) {
+    public DefaultManagementObjectNameStrategy(String domainName) {
         if (domainName != null) {
             this.domainName = domainName;
         }

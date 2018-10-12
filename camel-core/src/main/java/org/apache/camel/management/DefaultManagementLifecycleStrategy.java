@@ -157,7 +157,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         try {
             boolean done = false;
             while (!done) {
-                ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForCamelContext(managementName, name);
+                ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForCamelContext(managementName, name);
                 boolean exists = getManagementStrategy().isManaged(mc, on);
                 if (!exists) {
                     done = true;
@@ -247,7 +247,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         while (!done) {
             // compute the next name
             newName = strategy.getNextName();
-            ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForCamelContext(newName, name);
+            ObjectName on = getManagementStrategy().getManagementObjectNameStrategy().getObjectNameForCamelContext(newName, name);
             done = !getManagementStrategy().isManaged(mc, on);
             if (log.isTraceEnabled()) {
                 log.trace("Using name: {} in ObjectName[{}] exists? {}", name, on, done);
@@ -633,7 +633,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             Object mr = getManagementObjectStrategy().getManagedObjectForRoute(camelContext, route);
 
             // skip unmanaged routes
-            if (!getManagementStrategy().isManaged(mr)) {
+            if (!getManagementStrategy().isManaged(mr, null)) {
                 log.trace("The route is not managed: {}", route);
                 continue;
             }

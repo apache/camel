@@ -96,7 +96,7 @@ import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
-import org.apache.camel.spi.ManagementNamingStrategy;
+import org.apache.camel.spi.ManagementObjectNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
@@ -214,10 +214,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             LOG.info("Using custom ManagementStrategy: {}", managementStrategy);
             getContext().setManagementStrategy(managementStrategy);
         }
-        ManagementNamingStrategy managementNamingStrategy = getBeanForType(ManagementNamingStrategy.class);
-        if (managementNamingStrategy != null) {
-            LOG.info("Using custom ManagementNamingStrategy: {}", managementNamingStrategy);
-            getContext().getManagementStrategy().setManagementNamingStrategy(managementNamingStrategy);
+        ManagementObjectNameStrategy managementObjectNameStrategy = getBeanForType(ManagementObjectNameStrategy.class);
+        if (managementObjectNameStrategy != null) {
+            LOG.info("Using custom ManagementObjectNameStrategy: {}", managementObjectNameStrategy);
+            getContext().getManagementStrategy().setManagementObjectNameStrategy(managementObjectNameStrategy);
         }
         EventFactory eventFactory = getBeanForType(EventFactory.class);
         if (eventFactory != null) {

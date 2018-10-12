@@ -134,7 +134,7 @@ Some of these management objects also expose lifecycle operations in
 addition to performance counter attributes.
 
 The
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/management/DefaultManagementNamingStrategy.html[`DefaultManagementNamingStrategy`]
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/management/DefaultManagementObjectNameStrategy.html[`DefaultManagementObjectNameStrategy`]
 is the default naming strategy which builds object names used for MBean
 registration. By default, `org.apache.camel` is the domain name for all
 object names created by `CamelNamingStrategy`. The domain name of the
@@ -800,12 +800,12 @@ types such as:
 
 And in the future we will add additional wrappers for more EIP patterns.
 
-==== ManagementNamingStrategy
+==== ManagementObjectNameStrategy
 
 *Available as of Camel 2.1*
 
 Camel provides a pluggable API for naming strategy by
-`org.apache.camel.spi.ManagementNamingStrategy`. A default
+`org.apache.camel.spi.ManagementObjectNameStrategy`. A default
 implementation is used to compute the MBean names that all MBeans are
 registered with.
 

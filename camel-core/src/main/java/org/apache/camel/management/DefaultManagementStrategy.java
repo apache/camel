@@ -27,7 +27,7 @@ import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementAgent;
-import org.apache.camel.spi.ManagementNamingStrategy;
+import org.apache.camel.spi.ManagementObjectNameStrategy;
 import org.apache.camel.spi.ManagementObjectStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.support.ServiceHelper;
@@ -53,7 +53,7 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
     private static final Logger LOG = LoggerFactory.getLogger(DefaultManagementStrategy.class);
     private List<EventNotifier> eventNotifiers = new CopyOnWriteArrayList<>();
     private EventFactory eventFactory = new DefaultEventFactory();
-    private ManagementNamingStrategy managementNamingStrategy;
+    private ManagementObjectNameStrategy managementObjectNameStrategy;
     private ManagementObjectStrategy managementObjectStrategy;
     private ManagementAgent managementAgent;
     private CamelContext camelContext;
@@ -89,15 +89,15 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
         this.eventFactory = eventFactory;
     }
 
-    public ManagementNamingStrategy getManagementNamingStrategy() {
-        if (managementNamingStrategy == null) {
-            managementNamingStrategy = new DefaultManagementNamingStrategy();
+    public ManagementObjectNameStrategy getManagementObjectNameStrategy() {
+        if (managementObjectNameStrategy == null) {
+            managementObjectNameStrategy = new DefaultManagementObjectNameStrategy();
         }
-        return managementNamingStrategy;
+        return managementObjectNameStrategy;
     }
 
-    public void setManagementNamingStrategy(ManagementNamingStrategy managementNamingStrategy) {
-        this.managementNamingStrategy = managementNamingStrategy;
+    public void setManagementObjectNameStrategy(ManagementObjectNameStrategy managementObjectNameStrategy) {
+        this.managementObjectNameStrategy = managementObjectNameStrategy;
     }
 
     public ManagementObjectStrategy getManagementObjectStrategy() {
@@ -191,12 +191,12 @@ public class DefaultManagementStrategy extends ServiceSupport implements Managem
         if (managementAgent != null) {
             ServiceHelper.startService(managementAgent);
             // set the naming strategy using the domain name from the agent
-            if (managementNamingStrategy == null) {
-                setManagementNamingStrategy(new DefaultManagementNamingStrategy(managementAgent.getMBeanObjectDomainName()));
+            if (managementObjectNameStrategy == null) {
+                setManagementObjectNameStrategy(new DefaultManagementObjectNameStrategy(managementAgent.getMBeanObjectDomainName()));
             }
         }
-        if (managementNamingStrategy instanceof CamelContextAware) {
-            ((CamelContextAware) managementNamingStrategy).setCamelContext(getCamelContext());
+        if (managementObjectNameStrategy instanceof CamelContextAware) {
+            ((CamelContextAware) managementObjectNameStrategy).setCamelContext(getCamelContext());
         }
     }
 
