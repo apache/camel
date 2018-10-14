@@ -60,6 +60,8 @@ public final class AtomUtils {
     public static Document<Feed> parseDocument(String uri, String username, String password) throws IOException {
         URL feedUrl = new URL(uri);
         HttpURLConnection httpcon = (HttpURLConnection) feedUrl.openConnection();
+        httpcon.setConnectTimeout(60000);
+        httpcon.setReadTimeout(60000);
         String encoding = Base64.encodeBase64String(username.concat(":").concat(password).getBytes());
         httpcon.setRequestProperty("Authorization", "Basic " + encoding);
         InputStream in = httpcon.getInputStream();
