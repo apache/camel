@@ -33,7 +33,7 @@ import org.apache.camel.support.ServiceSupport;
  * memory leak.
  */
 @ManagedResource(description = "Memory based idempotent repository")
-public class MemoryIdempotentRepository extends ServiceSupport implements IdempotentRepository<String> {
+public class MemoryIdempotentRepository extends ServiceSupport implements IdempotentRepository {
     private Map<String, Object> cache;
     private int cacheSize;
 
@@ -50,7 +50,7 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
      * Creates a new memory based repository using a {@link LRUCache}
      * with a default of 1000 entries in the cache.
      */
-    public static IdempotentRepository<String> memoryIdempotentRepository() {
+    public static IdempotentRepository memoryIdempotentRepository() {
         return new MemoryIdempotentRepository();
     }
 
@@ -60,7 +60,7 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
      * @param cacheSize  the cache size
      */
     @SuppressWarnings("unchecked")
-    public static IdempotentRepository<String> memoryIdempotentRepository(int cacheSize) {
+    public static IdempotentRepository memoryIdempotentRepository(int cacheSize) {
         return memoryIdempotentRepository(LRUCacheFactory.newLRUCache(cacheSize));
     }
 
@@ -73,7 +73,7 @@ public class MemoryIdempotentRepository extends ServiceSupport implements Idempo
      *
      * @param cache  the cache
      */
-    public static IdempotentRepository<String> memoryIdempotentRepository(Map<String, Object> cache) {
+    public static IdempotentRepository memoryIdempotentRepository(Map<String, Object> cache) {
         return new MemoryIdempotentRepository(cache);
     }
 

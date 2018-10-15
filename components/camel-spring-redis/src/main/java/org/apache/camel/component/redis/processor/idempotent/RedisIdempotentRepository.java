@@ -26,7 +26,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 
 @ManagedResource(description = "Spring Redis based message id repository")
-public class RedisIdempotentRepository extends ServiceSupport implements IdempotentRepository<String> {
+public class RedisIdempotentRepository extends ServiceSupport implements IdempotentRepository {
     private final SetOperations<String, String> setOperations;
     private final String processorName;
     private RedisConfiguration redisConfiguration;

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -26,7 +27,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
-import org.apache.camel.spi.ExchangeIdempotentRepository;
 import org.apache.camel.spi.IdempotentRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -96,9 +96,9 @@ public class ExchangeIdempotentConsumerTest extends ContextTestSupport {
         resultEndpoint = getMockEndpoint("mock:result");
     }
 
-    private final class MyIdempotentRepo implements ExchangeIdempotentRepository<String> {
+    private final class MyIdempotentRepo implements IdempotentRepository {
 
-        private IdempotentRepository<String> delegate;
+        private IdempotentRepository delegate;
         private Set<String> exchanges = new LinkedHashSet<>();
 
         private MyIdempotentRepo() {

@@ -34,7 +34,7 @@ import org.junit.Test;
 public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
-    private IdempotentRepository<String> repo;
+    private IdempotentRepository repo;
 
     @Test
     public void testDuplicateMessagesAreFilteredOut() throws Exception {

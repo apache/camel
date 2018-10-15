@@ -26,7 +26,7 @@ import org.junit.Test;
 
 public class MongoDbIdempotentRepositoryTest extends AbstractMongoDbTest {
 
-    MongoDbIdempotentRepository<String> repo;
+    MongoDbIdempotentRepository repo;
 
     @Before
     @After
@@ -37,7 +37,7 @@ public class MongoDbIdempotentRepositoryTest extends AbstractMongoDbTest {
     @Override
     public void doPostSetup() {
         super.doPostSetup();
-        repo = new MongoDbIdempotentRepository<>(mongo, testCollectionName, dbName);
+        repo = new MongoDbIdempotentRepository(mongo, testCollectionName, dbName);
     }
 
     @Test

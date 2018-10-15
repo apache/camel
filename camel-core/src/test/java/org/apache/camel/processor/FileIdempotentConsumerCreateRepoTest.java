@@ -49,7 +49,7 @@ public class FileIdempotentConsumerCreateRepoTest extends Assert {
 
     private void assertStoreExists(File store) throws Exception {
         // Given
-        IdempotentRepository<String> repo = fileIdempotentRepository(store);
+        IdempotentRepository repo = fileIdempotentRepository(store);
 
         // must start repo
         repo.start();

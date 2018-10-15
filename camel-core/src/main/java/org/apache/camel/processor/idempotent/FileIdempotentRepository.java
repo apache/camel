@@ -49,7 +49,7 @@ import org.apache.camel.util.Scanner;
  * number of entries from the file store is dropped to reduce the file store and make room for newer entries.
  */
 @ManagedResource(description = "File based idempotent repository")
-public class FileIdempotentRepository extends ServiceSupport implements IdempotentRepository<String> {
+public class FileIdempotentRepository extends ServiceSupport implements IdempotentRepository {
 
     private static final String STORE_DELIMITER = "\n";
 
@@ -74,7 +74,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      *
      * @param fileStore  the file store
      */
-    public static IdempotentRepository<String> fileIdempotentRepository(File fileStore) {
+    public static IdempotentRepository fileIdempotentRepository(File fileStore) {
         return fileIdempotentRepository(fileStore, 1000);
     }
 
@@ -86,7 +86,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * @param cacheSize  the cache size
      */
     @SuppressWarnings("unchecked")
-    public static IdempotentRepository<String> fileIdempotentRepository(File fileStore, int cacheSize) {
+    public static IdempotentRepository fileIdempotentRepository(File fileStore, int cacheSize) {
         return fileIdempotentRepository(fileStore, LRUCacheFactory.newLRUCache(cacheSize));
     }
 
@@ -99,7 +99,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * @param maxFileStoreSize  the max size in bytes for the filestore file 
      */
     @SuppressWarnings("unchecked")
-    public static IdempotentRepository<String> fileIdempotentRepository(File fileStore, int cacheSize, long maxFileStoreSize) {
+    public static IdempotentRepository fileIdempotentRepository(File fileStore, int cacheSize, long maxFileStoreSize) {
         FileIdempotentRepository repository = new FileIdempotentRepository(fileStore, LRUCacheFactory.newLRUCache(cacheSize));
         repository.setMaxFileStoreSize(maxFileStoreSize);
         return repository;
@@ -115,7 +115,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * @param store  the file store
      * @param cache  the cache to use as 1st level cache
      */
-    public static IdempotentRepository<String> fileIdempotentRepository(File store, Map<String, Object> cache) {
+    public static IdempotentRepository fileIdempotentRepository(File store, Map<String, Object> cache) {
         return new FileIdempotentRepository(store, cache);
     }
 

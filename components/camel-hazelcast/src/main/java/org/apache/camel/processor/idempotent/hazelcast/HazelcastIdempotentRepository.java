@@ -21,7 +21,7 @@ import com.hazelcast.core.IMap;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
 
-public class HazelcastIdempotentRepository extends ServiceSupport implements IdempotentRepository<String> {
+public class HazelcastIdempotentRepository extends ServiceSupport implements IdempotentRepository {
 
     private String repositoryName;
     private IMap<String, Boolean> repo;

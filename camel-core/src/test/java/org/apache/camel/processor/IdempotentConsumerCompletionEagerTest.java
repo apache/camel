@@ -33,7 +33,7 @@ public class IdempotentConsumerCompletionEagerTest extends ContextTestSupport {
     protected MockEndpoint a;
     protected MockEndpoint b;
     protected MockEndpoint dead;
-    protected IdempotentRepository<String> repo;
+    protected IdempotentRepository repo;
 
     @Override
     public boolean isUseRouteBuilder() {

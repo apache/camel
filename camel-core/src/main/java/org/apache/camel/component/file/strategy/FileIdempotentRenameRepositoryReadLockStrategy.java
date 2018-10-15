@@ -42,7 +42,7 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
     private GenericFileEndpoint<File> endpoint;
     private LoggingLevel readLockLoggingLevel = LoggingLevel.DEBUG;
     private CamelContext camelContext;
-    private IdempotentRepository<String> idempotentRepository;
+    private IdempotentRepository idempotentRepository;
     private boolean removeOnRollback = true;
     private boolean removeOnCommit;
 
@@ -151,14 +151,14 @@ public class FileIdempotentRenameRepositoryReadLockStrategy extends ServiceSuppo
     /**
      * The idempotent repository to use as the store for the read locks.
      */
-    public IdempotentRepository<String> getIdempotentRepository() {
+    public IdempotentRepository getIdempotentRepository() {
         return idempotentRepository;
     }
 
     /**
      * The idempotent repository to use as the store for the read locks.
      */
-    public void setIdempotentRepository(IdempotentRepository<String> idempotentRepository) {
+    public void setIdempotentRepository(IdempotentRepository idempotentRepository) {
         this.idempotentRepository = idempotentRepository;
     }
 

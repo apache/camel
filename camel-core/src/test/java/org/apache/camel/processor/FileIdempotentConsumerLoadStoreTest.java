@@ -34,7 +34,7 @@ public class FileIdempotentConsumerLoadStoreTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
     private File store = new File("target/idempotentfilestore.dat");
-    private IdempotentRepository<String> repo;
+    private IdempotentRepository repo;
 
     @Test
     public void testLoadStore() throws Exception {

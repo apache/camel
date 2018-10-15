@@ -31,7 +31,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 public class FileConsumerIdempotentLoadStoreTest extends ContextTestSupport {
 
-    private IdempotentRepository<String> repo;
+    private IdempotentRepository repo;
 
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/idempotent/fileConsumerIdempotentTest.xml");

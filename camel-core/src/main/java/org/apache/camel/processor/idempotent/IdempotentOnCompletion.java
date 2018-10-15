@@ -17,7 +17,6 @@
 package org.apache.camel.processor.idempotent;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.spi.ExchangeIdempotentRepository;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ExchangeHelper;
@@ -32,12 +31,12 @@ import org.slf4j.LoggerFactory;
  */
 public class IdempotentOnCompletion implements Synchronization {
     private static final Logger LOG = LoggerFactory.getLogger(IdempotentOnCompletion.class);
-    private final IdempotentRepository<String> idempotentRepository;
+    private final IdempotentRepository idempotentRepository;
     private final String messageId;
     private final boolean eager;
     private final boolean removeOnFailure;
 
-    public IdempotentOnCompletion(IdempotentRepository<String> idempotentRepository, String messageId, boolean eager, boolean removeOnFailure) {
+    public IdempotentOnCompletion(IdempotentRepository idempotentRepository, String messageId, boolean eager, boolean removeOnFailure) {
         this.idempotentRepository = idempotentRepository;
         this.messageId = messageId;
         this.eager = eager;
@@ -68,17 +67,9 @@ public class IdempotentOnCompletion implements Synchronization {
     protected void onCompletedMessage(Exchange exchange, String messageId) {
         if (!eager) {
             // if not eager we should add the key when its complete
-            if (idempotentRepository instanceof ExchangeIdempotentRepository) {
-                ((ExchangeIdempotentRepository<String>) idempotentRepository).add(exchange, messageId);
-            } else {
-                idempotentRepository.add(messageId);
-            }
+            idempotentRepository.add(exchange, messageId);
         }
-        if (idempotentRepository instanceof ExchangeIdempotentRepository) {
-            ((ExchangeIdempotentRepository<String>) idempotentRepository).confirm(exchange, messageId);
-        } else {
-            idempotentRepository.confirm(messageId);
-        }
+        idempotentRepository.confirm(exchange, messageId);
     }
 
     /**
@@ -90,11 +81,7 @@ public class IdempotentOnCompletion implements Synchronization {
      */
     protected void onFailedMessage(Exchange exchange, String messageId) {
         if (removeOnFailure) {
-            if (idempotentRepository instanceof ExchangeIdempotentRepository) {
-                ((ExchangeIdempotentRepository<String>) idempotentRepository).remove(exchange, messageId);
-            } else {
-                idempotentRepository.remove(messageId);
-            }
+            idempotentRepository.remove(exchange, messageId);
             LOG.debug("Removed from repository as exchange failed: {} with id: {}", exchange, messageId);
         }
     }

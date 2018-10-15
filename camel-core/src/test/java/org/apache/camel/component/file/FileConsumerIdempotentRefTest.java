@@ -85,7 +85,7 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
         assertTrue("MyIdempotentRepository should have been invoked", invoked);
     }
 
-    public class MyIdempotentRepository implements IdempotentRepository<String> {
+    public class MyIdempotentRepository implements IdempotentRepository {
 
         public boolean add(String messageId) {
             // will return true 1st time, and false 2nd time

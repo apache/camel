@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Service;
 
 /**
@@ -30,17 +31,8 @@ import org.apache.camel.Service;
  *     <li>non-eager: calls <tt>contains</tt> and <tt>add</tt> if complete, or <tt>remove</tt> if failed</li>
  * </ul>
  * Notice the remove callback, can be configured to be disabled.
- * <p/>
- * Implementations for the <a href="http://camel.apache.org/idempotent-consumer.html">idempotent consumer EIP</a>
- * should favor using {@link org.apache.camel.spi.ExchangeIdempotentRepository} instead.
- * <p/>
- * <b>Important:</b> Implementations of this should use <tt>String</tt> as the generic type as that is
- * what is required by Camel to allow using the idempotent repository with the Idempotent Consumer EIP
- * and also as file consumer read-lock. It was a mistake to make {@link IdempotentRepository} parameterized,
- * as it should have been a pre-configured to use a <tt>String</tt> type.
- * @see org.apache.camel.spi.ExchangeIdempotentRepository
  */
-public interface IdempotentRepository<E> extends Service {
+public interface IdempotentRepository extends Service {
 
     /**
      * Adds the key to the repository.
@@ -50,7 +42,7 @@ public interface IdempotentRepository<E> extends Service {
      * @param key the key of the message for duplicate test
      * @return <tt>true</tt> if this repository did <b>not</b> already contain the specified element
      */
-    boolean add(E key);
+    boolean add(String key);
 
     /**
      * Returns <tt>true</tt> if this repository contains the specified element.
@@ -60,7 +52,7 @@ public interface IdempotentRepository<E> extends Service {
      * @param key the key of the message
      * @return <tt>true</tt> if this repository contains the specified element
      */
-    boolean contains(E key);
+    boolean contains(String key);
 
     /**
      * Removes the key from the repository.
@@ -72,7 +64,7 @@ public interface IdempotentRepository<E> extends Service {
      * @param key the key of the message for duplicate test
      * @return <tt>true</tt> if the key was removed
      */
-    boolean remove(E key);
+    boolean remove(String key);
 
     /**
      * Confirms the key, after the exchange has been processed successfully.
@@ -82,7 +74,7 @@ public interface IdempotentRepository<E> extends Service {
      * @param key the key of the message for duplicate test
      * @return <tt>true</tt> if the key was confirmed
      */
-    boolean confirm(E key);
+    boolean confirm(String key);
     
     /**
      * Clear the repository.
@@ -90,5 +82,55 @@ public interface IdempotentRepository<E> extends Service {
      * <b>Important:</b> Read the class javadoc about eager vs non-eager mode.
      */
     void clear();
+
+    /**
+     * Adds the key to the repository.
+     * <p/>
+     * <b>Important:</b> Read the class javadoc about eager vs non-eager mode.
+     *
+     * @param key the key of the message for duplicate test
+     * @return <tt>true</tt> if this repository did <b>not</b> already contain the specified element
+     */
+    default boolean add(Exchange exchange, String key) {
+        return add(key);
+    }
+
+    /**
+     * Returns <tt>true</tt> if this repository contains the specified element.
+     * <p/>
+     * <b>Important:</b> Read the class javadoc about eager vs non-eager mode.
+     *
+     * @param key the key of the message
+     * @return <tt>true</tt> if this repository contains the specified element
+     */
+    default boolean contains(Exchange exchange, String key) {
+        return contains(key);
+    }
+
+    /**
+     * Removes the key from the repository.
+     * <p/>
+     * Is usually invoked if the exchange failed.
+     * <p/>
+     * <b>Important:</b> Read the class javadoc about eager vs non-eager mode.
+     *
+     * @param key the key of the message for duplicate test
+     * @return <tt>true</tt> if the key was removed
+     */
+    default boolean remove(Exchange exchange, String key) {
+        return remove(key);
+    }
+
+    /**
+     * Confirms the key, after the exchange has been processed successfully.
+     * <p/>
+     * <b>Important:</b> Read the class javadoc about eager vs non-eager mode.
+     *
+     * @param key the key of the message for duplicate test
+     * @return <tt>true</tt> if the key was confirmed
+     */
+    default boolean confirm(Exchange exchange, String key) {
+        return confirm(key);
+    }
 
 }

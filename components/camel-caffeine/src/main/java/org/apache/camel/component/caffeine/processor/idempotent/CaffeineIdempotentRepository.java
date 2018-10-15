@@ -25,7 +25,7 @@ import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
 
 @ManagedResource(description = "Caffeine based message id repository")
-public class CaffeineIdempotentRepository extends ServiceSupport implements IdempotentRepository<String> {
+public class CaffeineIdempotentRepository extends ServiceSupport implements IdempotentRepository {
 
     private String cacheName;
     private Cache<String, Boolean> cache;

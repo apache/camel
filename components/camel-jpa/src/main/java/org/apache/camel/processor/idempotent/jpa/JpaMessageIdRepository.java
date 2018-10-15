@@ -19,6 +19,7 @@ package org.apache.camel.processor.idempotent.jpa;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -29,7 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.spi.ExchangeIdempotentRepository;
+import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -40,7 +41,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
 
 @ManagedResource(description = "JPA based message id repository")
-public class JpaMessageIdRepository extends ServiceSupport implements ExchangeIdempotentRepository<String> {
+public class JpaMessageIdRepository extends ServiceSupport implements IdempotentRepository {
     protected static final String QUERY_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1 and x.messageId = ?2";
     protected static final String QUERY_CLEAR_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
 
