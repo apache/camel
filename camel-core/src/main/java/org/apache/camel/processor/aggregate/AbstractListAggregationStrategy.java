@@ -19,6 +19,7 @@ package org.apache.camel.processor.aggregate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 
 /**
@@ -35,7 +36,7 @@ import org.apache.camel.Exchange;
  *
  * @since 2.11
  */
-public abstract class AbstractListAggregationStrategy<V> implements CompletionAwareAggregationStrategy {
+public abstract class AbstractListAggregationStrategy<V> implements AggregationStrategy {
 
     /**
      * This method is implemented by the sub-class and is called to retrieve

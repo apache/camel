@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.aggregate;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 
 import static org.apache.camel.support.ExchangeHelper.hasExceptionBeenHandledByErrorHandler;

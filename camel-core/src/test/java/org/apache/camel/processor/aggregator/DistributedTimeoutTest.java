@@ -19,11 +19,11 @@ package org.apache.camel.processor.aggregator;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
-import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
 import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
@@ -96,7 +96,7 @@ public class DistributedTimeoutTest extends AbstractDistributedTest {
         };
     }
 
-    private class MyAggregationStrategy implements TimeoutAwareAggregationStrategy {
+    private class MyAggregationStrategy implements AggregationStrategy {
 
         public void timeout(Exchange oldExchange, int index, int total, long timeout) {
             invoked.incrementAndGet();

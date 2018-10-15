@@ -16,10 +16,10 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.aggregate.CompletionAwareAggregationStrategy;
 import org.junit.Test;
 
 /**
@@ -52,7 +52,7 @@ public class AggregateCompletionAwareAggregationStrategyTest extends ContextTest
         };
     }
 
-    private final class MyCompletionStrategy implements CompletionAwareAggregationStrategy {
+    private final class MyCompletionStrategy implements AggregationStrategy {
 
         @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {

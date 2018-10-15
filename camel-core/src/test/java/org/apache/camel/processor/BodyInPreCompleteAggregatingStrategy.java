@@ -16,10 +16,10 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
-import org.apache.camel.processor.aggregate.PreCompletionAwareAggregationStrategy;
 
-public class BodyInPreCompleteAggregatingStrategy implements PreCompletionAwareAggregationStrategy {
+public class BodyInPreCompleteAggregatingStrategy implements AggregationStrategy {
 
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         if (oldExchange == null) {
@@ -32,6 +32,12 @@ public class BodyInPreCompleteAggregatingStrategy implements PreCompletionAwareA
         return oldExchange;
     }
 
+    @Override
+    public boolean canPreComplete() {
+        return true;
+    }
+
+    @Override
     public boolean preComplete(Exchange oldExchange, Exchange newExchange) {
         // pre complete when new body has an X
         String newBody = newExchange.getIn().getBody(String.class);

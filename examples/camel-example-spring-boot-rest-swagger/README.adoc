@@ -24,10 +24,8 @@ You should see the following output when the application is launched:
 
 [source,text]
 ----
-<<<<<<< HEAD
 ...
 [INFO] --- spring-boot-maven-plugin:1.5.10.RELEASE:run (default-cli) @ camel-example-spring-boot-rest-swagger ---
-=======
 [...]
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \

@@ -17,7 +17,7 @@
 package org.apache.camel.processor.aggregate.hazelcast;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.AggregationStrategy;
 
 
 class SumOfIntsAggregationStrategy implements AggregationStrategy {

@@ -36,6 +36,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.namespace.QName;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Channel;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
@@ -60,7 +61,6 @@ import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.interceptor.DefaultChannel;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
@@ -3157,7 +3157,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param resourceUri           URI of resource endpoint for obtaining additional data.
      * @param aggregationStrategy   aggregation strategy to aggregate input data and additional data.
-     * @param aggregateOnException   whether to call {@link org.apache.camel.processor.aggregate.AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
+     * @param aggregateOnException   whether to call {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
      *                               an exception was thrown.
      * @return the builder
      * @see org.apache.camel.processor.Enricher
@@ -3172,7 +3172,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param resourceUri           URI of resource endpoint for obtaining additional data.
      * @param aggregationStrategy   aggregation strategy to aggregate input data and additional data.
-     * @param aggregateOnException  whether to call {@link org.apache.camel.processor.aggregate.AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
+     * @param aggregateOnException  whether to call {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
      *                              an exception was thrown.
      * @param shareUnitOfWork       whether to share unit of work
      * @return the builder
@@ -3340,7 +3340,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param resourceUri           URI of resource endpoint for obtaining additional data.
      * @param timeout               timeout in millis to wait at most for data to be available.
      * @param aggregationStrategy   aggregation strategy to aggregate input data and additional data.
-     * @param aggregateOnException  whether to call {@link org.apache.camel.processor.aggregate.AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
+     * @param aggregateOnException  whether to call {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
      *                              an exception was thrown.
      * @return the builder
      * @see org.apache.camel.processor.PollEnricher
@@ -3371,7 +3371,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param resourceUri            URI of resource endpoint for obtaining additional data.
      * @param timeout                timeout in millis to wait at most for data to be available.
      * @param aggregationStrategyRef Reference of aggregation strategy to aggregate input data and additional data.
-     * @param aggregateOnException   whether to call {@link org.apache.camel.processor.aggregate.AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
+     * @param aggregateOnException   whether to call {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
      *                               an exception was thrown.
      * @return the builder
      * @see org.apache.camel.processor.PollEnricher
@@ -3423,7 +3423,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param expression             to use an expression to dynamically compute the endpoint to poll from
      * @param timeout                timeout in millis to wait at most for data to be available.
      * @param aggregationStrategyRef Reference of aggregation strategy to aggregate input data and additional data.
-     * @param aggregateOnException   whether to call {@link org.apache.camel.processor.aggregate.AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
+     * @param aggregateOnException   whether to call {@link AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
      *                               an exception was thrown.
      * @return the builder
      * @see org.apache.camel.processor.PollEnricher

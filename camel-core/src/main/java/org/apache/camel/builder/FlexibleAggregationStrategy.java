@@ -18,14 +18,12 @@ package org.apache.camel.builder;
 
 import java.util.Collection;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.TypeConversionException;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
-import org.apache.camel.processor.aggregate.CompletionAwareAggregationStrategy;
-import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
 import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,8 +44,7 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * This Aggregation Strategy is suitable for usage in aggregate, split, multicast, enrich and recipient list EIPs.
  */
-public class FlexibleAggregationStrategy<E extends Object> implements AggregationStrategy, 
-        CompletionAwareAggregationStrategy, TimeoutAwareAggregationStrategy {
+public class FlexibleAggregationStrategy<E extends Object> implements AggregationStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(FlexibleAggregationStrategy.class);
 

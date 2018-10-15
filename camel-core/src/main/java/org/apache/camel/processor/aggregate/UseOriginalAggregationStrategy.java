@@ -16,10 +16,11 @@
  */
 package org.apache.camel.processor.aggregate;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 
 /**
- * An {@link org.apache.camel.processor.aggregate.AggregationStrategy} which just uses the original exchange
+ * An {@link AggregationStrategy} which just uses the original exchange
  * which can be needed when you want to preserve the original Exchange. For example when splitting an {@link Exchange}
  * and then you may want to keep routing using the original {@link Exchange}.
  *
