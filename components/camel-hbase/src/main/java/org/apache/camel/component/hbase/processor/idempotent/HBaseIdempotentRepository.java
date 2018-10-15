@@ -33,7 +33,7 @@ import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
 
-public class HBaseIdempotentRepository extends ServiceSupport implements IdempotentRepository<Object> {
+public class HBaseIdempotentRepository extends ServiceSupport implements IdempotentRepository {
 
     private final String tableName;
     private final String family;
@@ -52,7 +52,7 @@ public class HBaseIdempotentRepository extends ServiceSupport implements Idempot
     }
 
     @Override
-    public boolean add(Object o) {
+    public boolean add(String o) {
         try {
             synchronized (tableName.intern()) {
                 if (contains(o)) {
@@ -71,7 +71,7 @@ public class HBaseIdempotentRepository extends ServiceSupport implements Idempot
     }
 
     @Override
-    public boolean contains(Object o) {
+    public boolean contains(String o) {
         try {
             byte[] b = HBaseHelper.toBytes(o);
             Get get = new Get(b);
@@ -84,7 +84,7 @@ public class HBaseIdempotentRepository extends ServiceSupport implements Idempot
     }
 
     @Override
-    public boolean remove(Object o) {
+    public boolean remove(String o) {
         try {
             byte[] b = HBaseHelper.toBytes(o);
             if (table.exists(new Get(b))) {
@@ -101,7 +101,7 @@ public class HBaseIdempotentRepository extends ServiceSupport implements Idempot
     }
 
     @Override
-    public boolean confirm(Object o) {
+    public boolean confirm(String o) {
         return true;
     }
     

@@ -26,7 +26,7 @@ import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 
 @ManagedResource(description = "Ehcache based message id repository")
-public class EhcacheIdempotentRepository extends ServiceSupport implements IdempotentRepository<String> {
+public class EhcacheIdempotentRepository extends ServiceSupport implements IdempotentRepository {
 
     private String cacheName;
     private Cache<String, Boolean> cache;

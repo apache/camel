@@ -1437,7 +1437,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param idempotentRepository  the repository to use for duplicate check
      * @return the builder
      */
-    public IdempotentConsumerDefinition idempotentConsumer(Expression messageIdExpression, IdempotentRepository<?> idempotentRepository) {
+    public IdempotentConsumerDefinition idempotentConsumer(Expression messageIdExpression, IdempotentRepository idempotentRepository) {
         IdempotentConsumerDefinition answer = new IdempotentConsumerDefinition(messageIdExpression, idempotentRepository);
         addOutput(answer);
         return answer;

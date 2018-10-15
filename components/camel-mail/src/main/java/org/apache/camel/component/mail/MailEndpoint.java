@@ -59,7 +59,7 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     @UriParam(label = "consumer,advanced")
     private MailBoxPostProcessAction postProcessAction;
     @UriParam(label = "consumer,filter")
-    private IdempotentRepository<String> idempotentRepository;
+    private IdempotentRepository idempotentRepository;
     @UriParam(label = "consumer,filter", defaultValue = "true")
     private boolean idempotentRepositoryRemoveOnCommit = true;
     @UriParam(label = "consumer,advanced")
@@ -228,7 +228,7 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         this.postProcessAction = postProcessAction;
     }
 
-    public IdempotentRepository<String> getIdempotentRepository() {
+    public IdempotentRepository getIdempotentRepository() {
         return idempotentRepository;
     }
 
@@ -239,7 +239,7 @@ public class MailEndpoint extends ScheduledPollEndpoint {
      * <p/>
      * By default no repository is in use.
      */
-    public void setIdempotentRepository(IdempotentRepository<String> idempotentRepository) {
+    public void setIdempotentRepository(IdempotentRepository idempotentRepository) {
         this.idempotentRepository = idempotentRepository;
     }
 

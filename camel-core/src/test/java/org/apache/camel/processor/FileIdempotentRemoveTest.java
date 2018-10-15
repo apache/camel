@@ -28,7 +28,7 @@ import org.junit.Test;
 public class FileIdempotentRemoveTest extends ContextTestSupport {
 
     private File store = new File("target/idempotentfilestore.dat");
-    private IdempotentRepository<String> repo;
+    private IdempotentRepository repo;
 
     @Override
     @Before

@@ -32,7 +32,7 @@ import org.junit.Test;
 public class IdempotentConsumerUsingCustomRepositoryTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
-    protected IdempotentRepository<String> customRepo = new MyRepo();
+    protected IdempotentRepository customRepo = new MyRepo();
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -96,7 +96,7 @@ public class IdempotentConsumerUsingCustomRepositoryTest extends ContextTestSupp
         resultEndpoint = getMockEndpoint("mock:result");
     }
 
-    private static final class MyRepo implements IdempotentRepository<String> {
+    private static final class MyRepo implements IdempotentRepository {
         private final Map<String, String> cache = new HashMap<>();
 
         private MyRepo() {

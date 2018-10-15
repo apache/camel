@@ -36,9 +36,9 @@ import org.springframework.transaction.support.TransactionTemplate;
  * <p/>
  * Subclasses need only implement theses methods:
  * <ul>
- *   <li>{@link #queryForInt(Object key) queryForInt(T key)}</li>
- *   <li>{@link #insert(Object key) insert(T key)}</li>
- *   <li>{@link #delete(Object key) delete(T key)}</li>
+ *   <li>{@link #queryForInt(String key) queryForInt(String key)}</li>
+ *   <li>{@link #insert(String key) insert(String key)}</li>
+ *   <li>{@link #delete(String key) delete(String key)}</li>
  * </ul>
  * <p/>
  * These methods should perform the named database operation.
@@ -49,7 +49,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * as it should have been a pre-configured to use a <tt>String</tt> type.
  */
 @ManagedResource(description = "JDBC IdempotentRepository")
-public abstract class AbstractJdbcMessageIdRepository<T> extends ServiceSupport implements IdempotentRepository<T> {
+public abstract class AbstractJdbcMessageIdRepository extends ServiceSupport implements IdempotentRepository {
 
     protected JdbcTemplate jdbcTemplate;
     protected String processorName;
@@ -82,7 +82,7 @@ public abstract class AbstractJdbcMessageIdRepository<T> extends ServiceSupport 
      * @param key  the key
      * @return int number of rows
      */
-    protected abstract int queryForInt(T key);
+    protected abstract int queryForInt(String key);
 
     /**
      * Operation that inserts the key if it does not already exist
@@ -90,7 +90,7 @@ public abstract class AbstractJdbcMessageIdRepository<T> extends ServiceSupport 
      * @param key  the key
      * @return int number of rows inserted
      */
-    protected abstract int insert(T key);
+    protected abstract int insert(String key);
 
     /**
      * Operations that deletes the key if it exists
@@ -98,7 +98,7 @@ public abstract class AbstractJdbcMessageIdRepository<T> extends ServiceSupport 
      * @param key  the key
      * @return int number of rows deleted
      */
-    protected abstract int delete(T key);
+    protected abstract int delete(String key);
     
     /**
      * Operations that deletes all the rows
@@ -127,7 +127,7 @@ public abstract class AbstractJdbcMessageIdRepository<T> extends ServiceSupport 
 
     @ManagedOperation(description = "Adds the key to the store")
     @Override
-    public boolean add(final T key) {
+    public boolean add(final String key) {
         // Run this in single transaction.
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus status) {
@@ -145,7 +145,7 @@ public abstract class AbstractJdbcMessageIdRepository<T> extends ServiceSupport 
 
     @ManagedOperation(description = "Does the store contain the given key")
     @Override
-    public boolean contains(final T key) {
+    public boolean contains(final String key) {
         // Run this in single transaction.
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus status) {
@@ -163,7 +163,7 @@ public abstract class AbstractJdbcMessageIdRepository<T> extends ServiceSupport 
 
     @ManagedOperation(description = "Remove the key from the store")
     @Override
-    public boolean remove(final T key) {
+    public boolean remove(final String key) {
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus status) {
                 int updateCount = delete(key);
@@ -189,7 +189,7 @@ public abstract class AbstractJdbcMessageIdRepository<T> extends ServiceSupport 
     }
 
     @Override
-    public boolean confirm(final T key) {
+    public boolean confirm(final String key) {
         return true;
     }
 

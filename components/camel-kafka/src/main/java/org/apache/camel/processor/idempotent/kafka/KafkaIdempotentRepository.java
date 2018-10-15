@@ -77,7 +77,7 @@ import org.slf4j.LoggerFactory;
  * Spring/Blueprint, as it is CamelContext aware.
  */
 @ManagedResource(description = "Kafka IdempotentRepository")
-public class KafkaIdempotentRepository extends ServiceSupport implements IdempotentRepository<String>, CamelContextAware {
+public class KafkaIdempotentRepository extends ServiceSupport implements IdempotentRepository, CamelContextAware {
 
     private static final int DEFAULT_MAXIMUM_CACHE_SIZE = 1000;
     private static final int DEFAULT_POLL_DURATION_MS = 100;

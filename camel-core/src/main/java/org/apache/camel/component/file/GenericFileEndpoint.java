@@ -102,7 +102,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     @UriParam(label = "consumer,advanced")
     protected GenericFileProcessStrategy<T> processStrategy;
     @UriParam(label = "consumer,advanced")
-    protected IdempotentRepository<String> inProgressRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IN_PROGRESS_CACHE_SIZE);
+    protected IdempotentRepository inProgressRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IN_PROGRESS_CACHE_SIZE);
     @UriParam(label = "consumer,advanced")
     protected String localWorkDirectory;
     @UriParam(label = "consumer,advanced")
@@ -144,7 +144,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     @UriParam(label = "consumer,filter", javaType = "java.lang.String")
     protected Expression idempotentKey;
     @UriParam(label = "consumer,filter")
-    protected IdempotentRepository<String> idempotentRepository;
+    protected IdempotentRepository idempotentRepository;
     @UriParam(label = "consumer,filter")
     protected GenericFileFilter<T> filter;
     @UriParam(label = "consumer,filter", javaType = "java.lang.String")
@@ -690,7 +690,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         this.idempotentKey = createFileLanguageExpression(expression);
     }
 
-    public IdempotentRepository<String> getIdempotentRepository() {
+    public IdempotentRepository getIdempotentRepository() {
         return idempotentRepository;
     }
 
@@ -698,7 +698,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      * A pluggable repository org.apache.camel.spi.IdempotentRepository which by default use MemoryMessageIdRepository
      * if none is specified and idempotent is true.
      */
-    public void setIdempotentRepository(IdempotentRepository<String> idempotentRepository) {
+    public void setIdempotentRepository(IdempotentRepository idempotentRepository) {
         this.idempotentRepository = idempotentRepository;
     }
 
@@ -1210,7 +1210,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         this.minDepth = minDepth;
     }
 
-    public IdempotentRepository<String> getInProgressRepository() {
+    public IdempotentRepository getInProgressRepository() {
         return inProgressRepository;
     }
 
@@ -1218,7 +1218,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      * A pluggable in-progress repository org.apache.camel.spi.IdempotentRepository.
      * The in-progress repository is used to account the current in progress files being consumed. By default a memory based repository is used.
      */
-    public void setInProgressRepository(IdempotentRepository<String> inProgressRepository) {
+    public void setInProgressRepository(IdempotentRepository inProgressRepository) {
         this.inProgressRepository = inProgressRepository;
     }
 
