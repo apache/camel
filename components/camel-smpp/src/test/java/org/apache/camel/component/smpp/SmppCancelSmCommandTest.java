@@ -52,7 +52,7 @@ public class SmppCancelSmCommandTest {
         
         command.execute(exchange);
         
-        verify(session).cancelShortMessage("CMT", "1", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1616", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1717");
+        verify(session).cancelShortMessage("", "1", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1616", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1717");
         
         assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
     }

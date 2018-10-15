@@ -76,6 +76,7 @@ public class SmppSubmitSmCommandTest {
     public void setUp() {
         session = mock(SMPPSession.class);
         config = new SmppConfiguration();
+        config.setServiceType("CMT");
 
         command = new SmppSubmitSmCommand(session, config);
     }

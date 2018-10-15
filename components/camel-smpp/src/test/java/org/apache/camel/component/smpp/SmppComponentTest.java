@@ -131,8 +131,8 @@ public class SmppComponentTest {
         Endpoint endpoint = component.createEndpoint("smpp://smppclient@localhost:2775", "?systemType=&serviceType=", parameters);
         SmppEndpoint smppEndpoint = (SmppEndpoint) endpoint;
 
-        assertEquals("", smppEndpoint.getConfiguration().getSystemType());
-        assertEquals("", smppEndpoint.getConfiguration().getServiceType());
+        assertEquals(null, smppEndpoint.getConfiguration().getSystemType());
+        assertEquals(null, smppEndpoint.getConfiguration().getServiceType());
     }
 
     @Test

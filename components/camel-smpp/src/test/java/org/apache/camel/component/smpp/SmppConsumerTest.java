@@ -48,6 +48,8 @@ public class SmppConsumerTest {
     @Before
     public void setUp() {
         configuration = new SmppConfiguration();
+        configuration.setServiceType("CMT");
+        configuration.setSystemType("cp");
         endpoint = mock(SmppEndpoint.class);
         processor = mock(Processor.class);
         session = mock(SMPPSession.class);

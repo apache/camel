@@ -52,17 +52,6 @@ public class SmppComponent extends DefaultComponent {
         SmppConfiguration config = this.configuration.copy();
 
         config.configureFromURI(new URI(uri));
-        // TODO Camel 3.0 cmueller: We should change the default in Camel 3.0 to '' so that we can remove this special handling
-        // special handling to set the system type to an empty string
-        if (parameters.containsKey("systemType") && parameters.get("systemType") == null) {
-            config.setSystemType("");
-            parameters.remove("systemType");
-        }
-        // special handling to set the service type to an empty string
-        if (parameters.containsKey("serviceType") && parameters.get("serviceType") == null) {
-            config.setServiceType("");
-            parameters.remove("serviceType");
-        }
         setProperties(config, parameters);
 
         return createEndpoint(uri, config);
