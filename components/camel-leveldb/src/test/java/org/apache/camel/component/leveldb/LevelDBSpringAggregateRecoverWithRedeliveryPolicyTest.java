@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Before;
 import org.junit.Test;

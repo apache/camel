@@ -18,7 +18,7 @@ package org.apache.camel.component.elasticsearch.aggregation;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadRuntimeException;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.AggregationStrategy;
 import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.bulk.BulkRequest;

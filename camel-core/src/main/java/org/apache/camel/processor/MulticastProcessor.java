@@ -36,6 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
@@ -51,10 +52,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
-import org.apache.camel.processor.aggregate.CompletionAwareAggregationStrategy;
-import org.apache.camel.processor.aggregate.DelegateAggregationStrategy;
-import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.UnitOfWork;
@@ -579,21 +576,13 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         @Override
         public void run() {
             AggregationStrategy strategy = getAggregationStrategy(null);
-            if (strategy instanceof DelegateAggregationStrategy) {
-                strategy = ((DelegateAggregationStrategy) strategy).getDelegate();
+            // notify the strategy we timed out
+            Exchange oldExchange = result.get();
+            if (oldExchange == null) {
+                // if they all timed out the result may not have been set yet, so use the original exchange
+                oldExchange = original;
             }
-            if (strategy instanceof TimeoutAwareAggregationStrategy) {
-                // notify the strategy we timed out
-                Exchange oldExchange = result.get();
-                if (oldExchange == null) {
-                    // if they all timed out the result may not have been set yet, so use the original exchange
-                    oldExchange = original;
-                }
-                ((TimeoutAwareAggregationStrategy) strategy).timeout(oldExchange, aggregated.intValue(), total.intValue(), timeout);
-            } else {
-                // log a WARN we timed out since it will not be aggregated and the Exchange will be lost
-                log.warn("Parallel processing timed out after {} millis for number {}. This task will be cancelled and will not be aggregated.", timeout, aggregated.intValue());
-            }
+            strategy.timeout(oldExchange, aggregated.intValue(), total.intValue(), timeout);
             log.debug("Timeout occurred after {} millis for number {} task.", timeout, aggregated.intValue());
             timedOut.set(true);
 
@@ -861,12 +850,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         }
 
         AggregationStrategy strategy = getAggregationStrategy(subExchange);
-        if (strategy instanceof DelegateAggregationStrategy) {
-            strategy = ((DelegateAggregationStrategy) strategy).getDelegate();
-        }
         // invoke the on completion callback
-        if (strategy instanceof CompletionAwareAggregationStrategy) {
-            ((CompletionAwareAggregationStrategy) strategy).onCompletion(subExchange);
+        if (strategy != null) {
+            strategy.onCompletion(subExchange);
         }
 
         // cleanup any per exchange aggregation strategy
@@ -914,7 +900,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      * @param strategy the aggregation strategy to use
      * @param result   the current result
      * @param exchange the exchange to be added to the result
-     * @see #doAggregateInternal(org.apache.camel.processor.aggregate.AggregationStrategy, AtomicReference, org.apache.camel.Exchange)
+     * @see #doAggregateInternal(AggregationStrategy, AtomicReference, org.apache.camel.Exchange)
      */
     protected synchronized void doAggregate(AggregationStrategy strategy, AtomicReference<Exchange> result, Exchange exchange) {
         doAggregateInternal(strategy, result, exchange);
@@ -1207,7 +1193,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     }
 
     /**
-     * Sets the given {@link org.apache.camel.processor.aggregate.AggregationStrategy} on the {@link Exchange}.
+     * Sets the given {@link AggregationStrategy} on the {@link Exchange}.
      *
      * @param exchange            the exchange
      * @param aggregationStrategy the strategy
@@ -1229,7 +1215,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     }
 
     /**
-     * Removes the associated {@link org.apache.camel.processor.aggregate.AggregationStrategy} from the {@link Exchange}
+     * Removes the associated {@link AggregationStrategy} from the {@link Exchange}
      * which must be done after use.
      *
      * @param exchange the current exchange
@@ -1251,7 +1237,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      * <ul>
      * <li>we use {@link Iterable} to ensure we can send messages as soon as the data becomes available</li>
      * <li>for parallel processing, we start aggregating responses as they get send back to the processor;
-     * this means the {@link org.apache.camel.processor.aggregate.AggregationStrategy} has to take care of handling out-of-order arrival of exchanges</li>
+     * this means the {@link AggregationStrategy} has to take care of handling out-of-order arrival of exchanges</li>
      * </ul>
      */
     public boolean isStreaming() {

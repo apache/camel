@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.example.cafe.Drink;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.AggregationStrategy;
 
 public class CafeAggregationStrategy implements AggregationStrategy {
 

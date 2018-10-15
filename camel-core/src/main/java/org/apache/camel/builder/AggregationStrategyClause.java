@@ -21,7 +21,7 @@ import java.util.function.BiFunction;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.util.ObjectHelper;
 
 public class AggregationStrategyClause<T> implements AggregationStrategy {

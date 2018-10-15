@@ -22,7 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultClaimCheckRepository;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.spi.ClaimCheckRepository;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.AsyncProcessorHelper;

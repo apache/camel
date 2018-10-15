@@ -27,7 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.impl.DefaultConsumerCache;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ExceptionHandler;
@@ -46,7 +46,7 @@ import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern
  * A content enricher that enriches input data by first obtaining additional
  * data from a <i>resource</i> represented by an endpoint <code>producer</code>
  * and second by aggregating input data and additional data. Aggregation of
- * input data and additional data is delegated to an {@link org.apache.camel.processor.aggregate.AggregationStrategy}
+ * input data and additional data is delegated to an {@link AggregationStrategy}
  * object.
  * <p/>
  * Uses a {@link org.apache.camel.PollingConsumer} to obtain the additional data as opposed to {@link Enricher}
@@ -170,7 +170,7 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAw
      * additional data from an endpoint represented by an endpoint
      * <code>producer</code> and second by aggregating input data and additional
      * data. Aggregation of input data and additional data is delegated to an
-     * {@link org.apache.camel.processor.aggregate.AggregationStrategy} object set at construction time. If the
+     * {@link AggregationStrategy} object set at construction time. If the
      * message exchange with the resource endpoint fails then no aggregation
      * will be done and the failed exchange content is copied over to the
      * original message exchange.

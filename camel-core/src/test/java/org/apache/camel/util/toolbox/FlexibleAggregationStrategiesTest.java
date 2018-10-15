@@ -36,7 +36,7 @@ import org.apache.camel.builder.FlexibleAggregationStrategy.CompletionAwareMixin
 import org.apache.camel.builder.FlexibleAggregationStrategy.TimeoutAwareMixin;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.AggregationStrategy;
 import org.junit.Test;
 
 /**

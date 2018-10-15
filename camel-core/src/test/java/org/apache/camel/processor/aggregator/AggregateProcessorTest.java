@@ -29,7 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Before;

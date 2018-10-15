@@ -206,7 +206,7 @@ the predicate. Example:
 Aggregation Strategy Closures
 
 Java DSL parameters of type
-`org.apache.camel.processor.aggregate.AggregationStrategy` can be
+`org.apache.camel.AggregationStrategy` can be
 replaced by a closure that accepts two objects of type
 `org.apache.camel.Exchange` representing the two Exchanges to be
 aggregated. The return value of the closure must be the aggregated

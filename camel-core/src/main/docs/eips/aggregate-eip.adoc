@@ -419,7 +419,7 @@ List<Exchange> grouped = exchange.getIn().getBody(List.class);
 *Available as of Camel 2.12*
 
 To use the `AggregationStrategy` you had to implement the
-`org.apache.camel.processor.aggregate.AggregationStrategy` interface,
+`org.apache.camel.AggregationStrategy` interface,
 which means your logic would be tied to the Camel API. From *Camel 2.12*
 onwards you can use a POJO for the logic and let Camel adapt to your
 POJO. To use a POJO a convention must be followed:
