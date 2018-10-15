@@ -16,7 +16,7 @@
  */
 package org.apache.camel.processor;
 
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Exchanger;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
@@ -35,7 +35,7 @@ public class WireTapShutdownRouteTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(WireTapShutdownRouteTest.class);
 
-    private static final CountDownLatch LATCH = new CountDownLatch(1);
+    private static final Exchanger<Void> EXCHANGER = new Exchanger<>();
 
     @Test
     public void testWireTapShutdown() throws Exception {
@@ -47,7 +47,7 @@ public class WireTapShutdownRouteTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        LATCH.countDown();
+        EXCHANGER.exchange(null);
 
         // shutdown Camel which should let the inlfight wire-tap message route to completion
         context.stop();
@@ -84,7 +84,7 @@ public class WireTapShutdownRouteTest extends ContextTestSupport {
 
         public void tapSomething(String body) throws Exception {
             try {
-                LATCH.await(5, TimeUnit.SECONDS);
+                EXCHANGER.exchange(null);
                 Thread.sleep(100);
             } catch (Exception e) {
                 fail("Should not be interrupted");
