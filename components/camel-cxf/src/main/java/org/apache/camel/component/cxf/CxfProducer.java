@@ -46,7 +46,6 @@ import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.service.model.BindingMessageInfo;
 import org.apache.cxf.service.model.BindingOperationInfo;
-import org.apache.cxf.transport.Conduit;
 
 /**
  * CxfProducer binds a Camel exchange to a CXF exchange, acts as a CXF 
@@ -78,17 +77,6 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
 
         if (client == null) {
             client = endpoint.createClient();
-        }
-        Conduit conduit = client.getConduit();
-        if (conduit.getClass().getName().endsWith("JMSConduit")) {
-            java.lang.reflect.Method getJmsConfig = conduit.getClass().getMethod("getJmsConfig");
-            Object jmsConfig = getJmsConfig.invoke(conduit);
-            java.lang.reflect.Method getMessageType = jmsConfig.getClass().getMethod("getMessageType");
-            boolean isTextPayload = "text".equals(getMessageType.invoke(jmsConfig));
-            if (isTextPayload && endpoint.getDataFormat().equals(DataFormat.MESSAGE)) {
-                //throw Exception as the Text JMS mesasge won't send as stream
-                throw new RuntimeException("Text JMS message coundn't be a stream");
-            }
         }
 
 

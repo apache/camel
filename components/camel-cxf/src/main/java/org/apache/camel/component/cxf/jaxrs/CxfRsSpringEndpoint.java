@@ -32,18 +32,6 @@ public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
     private ConfigurerImpl configurer;
     private String beanId;
 
-    @Deprecated
-    /**
-     * It will be removed in Camel 3.0
-     * 
-     * @param comp
-     * @param bean
-     */
-    public CxfRsSpringEndpoint(Component component, AbstractJAXRSFactoryBean bean) throws Exception {
-        super(bean.getAddress(), component);
-        init(bean);
-    }
-
     public CxfRsSpringEndpoint(Component component, String uri, AbstractJAXRSFactoryBean bean) throws Exception {
         super(uri, component);
         setAddress(bean.getAddress());

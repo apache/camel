@@ -247,7 +247,7 @@ transport layer into a raw SOAP message
 You can determine the data format mode of an exchange by retrieving the
 exchange property, `CamelCXFDataFormat`. The exchange key constant is
 defined in
-`org.apache.camel.component.cxf.CxfConstants.DATA_FORMAT_PROPERTY`.
+`org.apache.camel.component.cxf.common.message.CxfConstants.DATA_FORMAT_PROPERTY`.
 
 [[CXF-HowtoenableCXFLoggingOutInterceptorinMESSAGEmode]]
 How to enable CXF's LoggingOutInterceptor in MESSAGE mode

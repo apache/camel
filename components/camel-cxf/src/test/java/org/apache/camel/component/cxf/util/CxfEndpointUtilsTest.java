@@ -72,13 +72,7 @@ public class CxfEndpointUtilsTest extends Assert {
     public char sepChar() {
         return '&';
     }
-    
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testGetDataFormatMessage() throws Exception {
-        CxfEndpoint endpoint = createEndpoint(getEndpointURI() + sepChar() + "dataFormat=MESSAGE");
-        assertEquals("We should get the Message DataFormat", DataFormat.MESSAGE, endpoint.getDataFormat());
-    }
+
     @Test
     public void testGetDataFormatCXF() throws Exception {
         CxfEndpoint endpoint = createEndpoint(getEndpointURI() + sepChar() + "dataFormat=CXF_MESSAGE");
