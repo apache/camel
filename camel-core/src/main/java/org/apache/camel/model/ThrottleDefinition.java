@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -42,8 +44,7 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "throttle")
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {"expression", "correlationExpression", "outputs"})
-public class ThrottleDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<ThrottleDefinition> {
-    // TODO: Camel 3.0 Should not support outputs
+public class ThrottleDefinition extends NoOutputExpressionNode implements ExecutorServiceAwareDefinition<ThrottleDefinition> {
 
     @XmlElement(name = "correlationExpression")
     private ExpressionSubElementDefinition correlationExpression;
@@ -81,7 +82,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
     @Override
     public String toString() {
-        return "Throttle[" + description() + " -> " + getOutputs() + "]";
+        return "Throttle[" + description() + "]";
     }
     
     protected String description() {
@@ -100,8 +101,6 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = this.createChildProcessor(routeContext, true);
-
         boolean async = getAsyncDelayed() != null && getAsyncDelayed();
         boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, true);
         ScheduledExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Throttle", this, true);
@@ -121,7 +120,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
         }
 
         boolean reject = getRejectExecution() != null && getRejectExecution();
-        Throttler answer = new Throttler(routeContext.getCamelContext(), childProcessor, maxRequestsExpression, period, threadPool, shutdownThreadPool, reject, correlation);
+        Throttler answer = new Throttler(routeContext.getCamelContext(), maxRequestsExpression, period, threadPool, shutdownThreadPool, reject, correlation);
 
         answer.setAsyncDelayed(async);
         if (getCallerRunsWhenRejected() == null) {

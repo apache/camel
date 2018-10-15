@@ -45,9 +45,7 @@ import org.apache.camel.spi.ThreadPoolProfile;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "threads")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> implements ExecutorServiceAwareDefinition<ThreadsDefinition> {
-
-    // TODO: Camel 3.0 Should extend NoOutputDefinition
+public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> implements ExecutorServiceAwareDefinition<ThreadsDefinition> {
 
     @XmlTransient
     private ExecutorService executorService;
@@ -138,19 +136,7 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
             }
         }
 
-        ThreadsProcessor thread = new ThreadsProcessor(routeContext.getCamelContext(), threadPool, shutdownThreadPool, policy);
-
-        List<Processor> pipe = new ArrayList<>(2);
-        pipe.add(thread);
-        pipe.add(createChildProcessor(routeContext, true));
-        // wrap in nested pipeline so this appears as one processor
-        // (recipient list definition does this as well)
-        return new Pipeline(routeContext.getCamelContext(), pipe) {
-            @Override
-            public String toString() {
-                return "Threads[" + getOutputs() + "]";
-            }
-        };
+        return new ThreadsProcessor(routeContext.getCamelContext(), threadPool, shutdownThreadPool, policy);
     }
 
     protected ThreadPoolRejectedPolicy resolveRejectedPolicy(RouteContext routeContext) {

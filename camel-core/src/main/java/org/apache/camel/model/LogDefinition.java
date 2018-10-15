@@ -144,12 +144,6 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         return null;
     }
 
-    @Override
-    public void addOutput(ProcessorDefinition<?> output) {
-        // add outputs on parent as this log does not support outputs
-        getParent().addOutput(output);
-    }
-
     public LoggingLevel getLoggingLevel() {
         return loggingLevel;
     }
