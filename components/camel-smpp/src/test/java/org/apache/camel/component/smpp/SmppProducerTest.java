@@ -45,6 +45,8 @@ public class SmppProducerTest {
     @Before
     public void setUp() {
         configuration = new SmppConfiguration();
+        configuration.setServiceType("CMT");
+        configuration.setSystemType("cp");
         endpoint = mock(SmppEndpoint.class);
         session = mock(SMPPSession.class);
         

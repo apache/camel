@@ -47,6 +47,8 @@ public class SmppProducerLazySessionCreationTest {
     public void setUp() {
         configuration = new SmppConfiguration();
         configuration.setLazySessionCreation(true);
+        configuration.setServiceType("CMT");
+        configuration.setSystemType("cp");
         endpoint = mock(SmppEndpoint.class);
         session = mock(SMPPSession.class);
         
