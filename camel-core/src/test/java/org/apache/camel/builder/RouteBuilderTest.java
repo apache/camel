@@ -493,17 +493,13 @@ public class RouteBuilderTest extends TestSupport {
             assertEquals("From endpoint", "direct://a", key.getEndpointUri());
 
             EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
-            Channel channel = unwrapChannel(consumer.getProcessor());
 
-            Pipeline line = assertIsInstanceOf(Pipeline.class, channel.getNextProcessor());
-            Iterator<?> it = line.getProcessors().iterator();
+            Pipeline line = assertIsInstanceOf(Pipeline.class, unwrap(consumer.getProcessor()));
+            Iterator<Processor> it = line.getProcessors().iterator();
 
-            assertIsInstanceOf(ThreadsProcessor.class, it.next());
-            // output should be wrapped in a pipeline
-            Pipeline threadsLine = assertIsInstanceOf(Pipeline.class, it.next());
-            Iterator<Processor> it2 = threadsLine.getProcessors().iterator();
-            assertIsInstanceOf(SendProcessor.class, unwrapChannel(it2.next()).getNextProcessor());
-            assertIsInstanceOf(SendProcessor.class, unwrapChannel(it2.next()).getNextProcessor());
+            assertIsInstanceOf(ThreadsProcessor.class, unwrapChannel(it.next()).getNextProcessor());
+            assertIsInstanceOf(SendProcessor.class, unwrapChannel(it.next()).getNextProcessor());
+            assertIsInstanceOf(SendProcessor.class, unwrapChannel(it.next()).getNextProcessor());
         }
     }
 

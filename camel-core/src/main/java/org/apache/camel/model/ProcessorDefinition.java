@@ -207,6 +207,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     @Override
     public void addOutput(ProcessorDefinition<?> output) {
+        if (!isOutputSupported()) {
+            getParent().addOutput(output);
+            return;
+        }
+
         if (!blocks.isEmpty()) {
             // let the Block deal with the output
             Block block = blocks.getLast();

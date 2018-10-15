@@ -27,14 +27,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.Processor;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -57,7 +58,7 @@ import org.apache.camel.util.ObjectHelper;
  * callers point of view in the last timePeriodMillis no more than
  * maxRequestsPerPeriod have been allowed to be acquired.
  */
-public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAware {
+public class Throttler extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
 
     private static final String DEFAULT_KEY = "CamelThrottlerDefaultKey";
 
@@ -80,9 +81,8 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
     private Expression correlationExpression;
     private Map<String, ThrottlingState> states = new ConcurrentHashMap<>();
 
-    public Throttler(final CamelContext camelContext, final Processor processor, final Expression maxRequestsPerPeriodExpression, final long timePeriodMillis,
+    public Throttler(final CamelContext camelContext, final Expression maxRequestsPerPeriodExpression, final long timePeriodMillis,
                      final ScheduledExecutorService asyncExecutor, final boolean shutdownAsyncExecutor, final boolean rejectExecution, Expression correlation) {
-        super(processor);
         this.camelContext = camelContext;
         this.rejectExecution = rejectExecution;
         this.shutdownAsyncExecutor = shutdownAsyncExecutor;
@@ -97,6 +97,11 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
         this.cleanPeriodMillis = timePeriodMillis * 10;
         this.asyncExecutor = asyncExecutor;
         this.correlationExpression = correlation;
+    }
+
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
     }
 
     @Override
@@ -169,17 +174,6 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
                 }
             }
 
-            if (processor != null) {
-                if (doneSync) {
-                    return processor.process(exchange, callback);
-                } else {
-                    // if we are executing async, then we have to call the nested processor synchronously, and we
-                    // must not share our AsyncCallback, because the nested processing has no way of knowing that
-                    // we are already executing asynchronously.
-                    AsyncProcessorHelper.process(processor, exchange);
-                }
-            }
-
             callback.done(doneSync);
             return doneSync;
 
@@ -226,16 +220,17 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected void doStart() throws Exception {
         if (isAsyncDelayed()) {
             ObjectHelper.notNull(asyncExecutor, "executorService", this);
         }
-        super.doStart();
     }
 
-    @SuppressWarnings("rawtypes")
+    @Override
+    protected void doStop() throws Exception {
+    }
+
     @Override
     protected void doShutdown() throws Exception {
         if (shutdownAsyncExecutor && asyncExecutor != null) {
@@ -440,7 +435,6 @@ public class Throttler extends DelegateAsyncProcessor implements Traceable, IdAw
 
     @Override
     public String toString() {
-        return "Throttler[requests: " + maxRequestsPerPeriodExpression + " per: " + timePeriodMillis + " (ms) to: "
-                + getProcessor() + "]";
+        return "Throttler[requests: " + maxRequestsPerPeriodExpression + " per: " + timePeriodMillis + " (ms)]";
     }
 }

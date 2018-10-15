@@ -39,9 +39,7 @@ import org.apache.camel.spi.RouteContext;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "delay")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DelayDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<DelayDefinition> {
-
-    // TODO: Camel 3.0 Should extend NoOutputExpressionNode
+public class DelayDefinition extends NoOutputExpressionNode implements ExecutorServiceAwareDefinition<DelayDefinition> {
 
     @XmlTransient
     private ExecutorService executorService;
@@ -132,7 +130,7 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     }
 
     /**
-     * Enables asynchronous delay which means the thread will <b>noy</b> block while delaying.
+     * Enables asynchronous delay which means the thread will <b>not</b> block while delaying.
      */
     public DelayDefinition asyncDelayed() {
         setAsyncDelayed(true);

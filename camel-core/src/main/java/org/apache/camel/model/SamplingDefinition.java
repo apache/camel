@@ -37,11 +37,9 @@ import org.apache.camel.spi.RouteContext;
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "sample")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
+public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
 
     // use Long to let it be optional in JAXB so when using XML the default is 1 second
-
-    // TODO: Camel 3.0 Should extend NoOutputDefinition
 
     @XmlAttribute @Metadata(defaultValue = "1")
     private Long samplePeriod;
@@ -62,7 +60,12 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
     public SamplingDefinition(long messageFrequency) {
         this.messageFrequency = messageFrequency;
     }
-    
+
+    @Override
+    public String getShortName() {
+        return "sample";
+    }
+
     @Override
     public String toString() {
         return "Sample[" + description() + " -> " + getOutputs() + "]";
@@ -84,16 +87,14 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = this.createChildProcessor(routeContext, true);
-        
         if (messageFrequency != null) {
-            return new SamplingThrottler(childProcessor, messageFrequency);
+            return new SamplingThrottler(messageFrequency);
         } else {
             // should default be 1 sample period
             long time = getSamplePeriod() != null ? getSamplePeriod() : 1L;
             // should default be in seconds
             TimeUnit tu = getUnits() != null ? getUnits() : TimeUnit.SECONDS;
-            return new SamplingThrottler(childProcessor, time, tu);
+            return new SamplingThrottler(time, tu);
         }
     }
 
