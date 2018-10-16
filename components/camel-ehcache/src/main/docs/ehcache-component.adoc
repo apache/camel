@@ -48,7 +48,7 @@ The Ehcache component supports 7 options, which are listed below.
 | *configuration* (advanced) | Sets the global component configuration |  | EhcacheConfiguration
 | *cacheManager* (common) | The cache manager |  | CacheManager
 | *cacheManager Configuration* (common) | The cache manager configuration |  | Configuration
-| *cacheConfiguration* (common) | The default cache configuration to be used to create caches. |  | CacheConfiguration<?,?>
+| *cacheConfiguration* (common) | The default cache configuration to be used to create caches. |  | CacheConfiguration
 | *cachesConfigurations* (common) | A map of caches configurations to be used to create caches. |  | Map
 | *cacheConfigurationUri* (common) | URI pointing to the Ehcache XML configuration file's location |  | String
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
