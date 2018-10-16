@@ -25,6 +25,7 @@ import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Constants;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2ServerManager;
+import org.apache.camel.component.as2.api.AS2SignatureAlgorithm;
 import org.apache.camel.component.as2.api.AS2SignedDataGenerator;
 import org.apache.camel.component.as2.api.AS2TransferEncoding;
 import org.apache.camel.component.as2.api.InvalidAS2NameException;
@@ -55,12 +56,14 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
     private final String as2Version;
     private final String serverFQDN;
+    private AS2SignatureAlgorithm signingAlgorithm;
     private Certificate[] signingCertificateChain;
     private PrivateKey signingPrivateKey;
 
-    public ResponseMDN(String as2Version, String serverFQDN, Certificate[] signingCertificateChain, PrivateKey signingPrivateKey) {
+    public ResponseMDN(String as2Version, String serverFQDN, AS2SignatureAlgorithm signingAlgorithm, Certificate[] signingCertificateChain, PrivateKey signingPrivateKey) {
         this.as2Version = as2Version;
         this.serverFQDN = serverFQDN;
+        this.signingAlgorithm = signingAlgorithm;
         this.signingCertificateChain = signingCertificateChain;
         this.signingPrivateKey = signingPrivateKey;
     }
@@ -161,7 +164,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
             AS2SignedDataGenerator gen = null;
             if (dispositionNotificationOptions.getSignedReceiptProtocol() != null && signingCertificateChain != null
                     && signingPrivateKey != null) {
-                gen = SigningUtils.createSigningGenerator(signingCertificateChain, signingPrivateKey);
+                gen = SigningUtils.createSigningGenerator(signingAlgorithm, signingCertificateChain, signingPrivateKey);
             }
 
             if (gen != null) {

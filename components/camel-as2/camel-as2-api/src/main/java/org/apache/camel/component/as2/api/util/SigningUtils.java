@@ -22,6 +22,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 
+import org.apache.camel.component.as2.api.AS2SignatureAlgorithm;
 import org.apache.camel.component.as2.api.AS2SignedDataGenerator;
 import org.apache.http.HttpException;
 import org.apache.http.util.Args;
@@ -43,7 +44,7 @@ public final class SigningUtils {
     private SigningUtils() {
     }
 
-    public static AS2SignedDataGenerator createSigningGenerator(Certificate[] certificateChain, PrivateKey privateKey) throws HttpException {
+    public static AS2SignedDataGenerator createSigningGenerator(AS2SignatureAlgorithm signingAlgorithm, Certificate[] certificateChain, PrivateKey privateKey) throws HttpException {
         Args.notNull(certificateChain, "certificateChain");
         if (certificateChain.length == 0 || !(certificateChain[0] instanceof X509Certificate)) {
             throw new IllegalArgumentException("Invalid certificate chain");
@@ -68,20 +69,28 @@ public final class SigningUtils {
         attributes.add(new SMIMECapabilitiesAttribute(capabilities));
 
         SignerInfoGenerator signerInfoGenerator = null;
-        for (String signingAlgorithmName : AS2SignedDataGenerator.getSupportedSignatureAlgorithmNamesForKey(privateKey)) {
-            try {
-                signerInfoGenerator = new JcaSimpleSignerInfoGeneratorBuilder().setProvider("BC")
-                .setSignedAttributeGenerator(new AttributeTable(attributes))
-                .build(signingAlgorithmName, privateKey, signingCert);
-                break;
-            } catch (Exception e) {
-                signerInfoGenerator = null;
-                continue;
-            }
+        try {
+            signerInfoGenerator = new JcaSimpleSignerInfoGeneratorBuilder().setProvider("BC")
+                    .setSignedAttributeGenerator(new AttributeTable(attributes))
+                    .build(signingAlgorithm.getSignatureAlgorithmName(), privateKey, signingCert);
+           
+        } catch (Exception e) {
+            throw new HttpException("Failed to create signer info", e);
         }
-        if (signerInfoGenerator == null) {
-            throw new HttpException("Failed to create signer info");
-        }
+//        for (String signingAlgorithmName : AS2SignedDataGenerator.getSupportedSignatureAlgorithmNamesForKey(privateKey)) {
+//            try {
+//                signerInfoGenerator = new JcaSimpleSignerInfoGeneratorBuilder().setProvider("BC")
+//                .setSignedAttributeGenerator(new AttributeTable(attributes))
+//                .build(signingAlgorithmName, privateKey, signingCert);
+//                break;
+//            } catch (Exception e) {
+//                signerInfoGenerator = null;
+//                continue;
+//            }
+//        }
+//        if (signerInfoGenerator == null) {
+//            throw new HttpException("Failed to create signer info");
+//        }
         gen.addSignerInfoGenerator(signerInfoGenerator);
 
         // Create and populate certificate store.

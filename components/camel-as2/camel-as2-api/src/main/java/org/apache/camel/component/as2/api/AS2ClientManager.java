@@ -29,10 +29,8 @@ import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.SigningUtils;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicHttpEntityEnclosingRequest;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HttpCoreContext;
 import org.apache.http.util.Args;
 import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
@@ -123,10 +121,10 @@ public class AS2ClientManager {
     public static final String AS2_TO = CAMEL_AS2_CLIENT_PREFIX + "as2-to";
 
     /**
-     * The HTTP Context Attribute containing the algorithm name used to sign EDI
+     * The HTTP Context Attribute containing the algorithm used to sign EDI
      * message
      */
-    public static final String SIGNING_ALGORITHM_NAME = CAMEL_AS2_CLIENT_PREFIX + "signing-algorithm-name";
+    public static final String SIGNING_ALGORITHM = CAMEL_AS2_CLIENT_PREFIX + "signing-algorithm";
 
     /**
      * The HTTP Context Attribute containing the certificate chain used to sign
@@ -192,6 +190,7 @@ public class AS2ClientManager {
      * @param as2MessageStructure - the structure of AS2 to send; see {@link AS2MessageStructure}
      * @param ediMessageContentType - the content typw of EDI message
      * @param ediMessageTransferEncoding - the transfer encoding used to transport EDI message
+     * @param signingAlgorithm - the algorithm used to sign the message or <code>null</code> if sending EDI message unsigned
      * @param signingCertificateChain - the chain of certificates used to sign the message or <code>null</code> if sending EDI message unsigned
      * @param signingPrivateKey - the private key used to sign EDI message
      * @param dispositionNotificationTo - an RFC2822 address to request a receipt or <code>null</code> if no receipt requested
@@ -211,6 +210,7 @@ public class AS2ClientManager {
                                 AS2MessageStructure as2MessageStructure,
                                 ContentType ediMessageContentType,
                                 String ediMessageTransferEncoding,
+                                AS2SignatureAlgorithm signingAlgorithm,
                                 Certificate[] signingCertificateChain,
                                 PrivateKey signingPrivateKey,
                                 String dispositionNotificationTo,
@@ -235,6 +235,7 @@ public class AS2ClientManager {
         httpContext.setAttribute(AS2ClientManager.AS2_MESSAGE_STRUCTURE, as2MessageStructure);
         httpContext.setAttribute(AS2ClientManager.EDI_MESSAGE_CONTENT_TYPE, ediMessageContentType);
         httpContext.setAttribute(AS2ClientManager.EDI_MESSAGE_TRANSFER_ENCODING, ediMessageTransferEncoding);
+        httpContext.setAttribute(AS2ClientManager.SIGNING_ALGORITHM, signingAlgorithm);
         httpContext.setAttribute(AS2ClientManager.SIGNING_CERTIFICATE_CHAIN, signingCertificateChain);
         httpContext.setAttribute(AS2ClientManager.SIGNING_PRIVATE_KEY, signingPrivateKey);
         httpContext.setAttribute(AS2ClientManager.DISPOSITION_NOTIFICATION_TO, dispositionNotificationTo);
@@ -303,6 +304,11 @@ public class AS2ClientManager {
     }
     
     public AS2SignedDataGenerator createSigningGenerator(HttpCoreContext httpContext) throws HttpException {
+        
+        AS2SignatureAlgorithm signatureAlgorithm = httpContext.getAttribute(SIGNING_ALGORITHM, AS2SignatureAlgorithm.class);
+        if (signatureAlgorithm == null) {
+            throw new HttpException("Signing algorithm missing");
+        }
 
         Certificate[] certificateChain = httpContext.getAttribute(SIGNING_CERTIFICATE_CHAIN, Certificate[].class);
         if (certificateChain == null) {
@@ -314,7 +320,7 @@ public class AS2ClientManager {
             throw new HttpException("Signing private key missing");
         }
 
-        return SigningUtils.createSigningGenerator(certificateChain, privateKey);
+        return SigningUtils.createSigningGenerator(signatureAlgorithm, certificateChain, privateKey);
 
     }
 
