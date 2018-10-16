@@ -54,7 +54,7 @@ The Guava EventBus component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *eventBus* (common) | To use the given Guava EventBus instance |  | EventBus
-| *listenerInterface* (common) | The interface with method(s) marked with the Subscribe annotation. Dynamic proxy will be created over the interface so it could be registered as the EventBus listener. Particularly useful when creating multi-event listeners and for handling DeadEvent properly. This option cannot be used together with eventClass option. |  | Class<?>
+| *listenerInterface* (common) | The interface with method(s) marked with the Subscribe annotation. Dynamic proxy will be created over the interface so it could be registered as the EventBus listener. Particularly useful when creating multi-event listeners and for handling DeadEvent properly. This option cannot be used together with eventClass option. |  | Class
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
