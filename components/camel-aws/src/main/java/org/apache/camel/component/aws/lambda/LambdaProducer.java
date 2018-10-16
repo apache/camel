@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws.lambda;
 
+import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageForResponse;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.nio.ByteBuffer;
@@ -23,8 +25,19 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.lambda.AWSLambda;
+import com.amazonaws.services.lambda.model.CreateEventSourceMappingRequest;
+import com.amazonaws.services.lambda.model.CreateEventSourceMappingResult;
 import com.amazonaws.services.lambda.model.CreateFunctionRequest;
 import com.amazonaws.services.lambda.model.CreateFunctionResult;
 import com.amazonaws.services.lambda.model.DeadLetterConfig;
@@ -42,16 +55,6 @@ import com.amazonaws.services.lambda.model.UpdateFunctionCodeRequest;
 import com.amazonaws.services.lambda.model.UpdateFunctionCodeResult;
 import com.amazonaws.services.lambda.model.VpcConfig;
 import com.amazonaws.util.IOUtils;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.CastUtils;
-import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageForResponse;
 
 /**
  * A Producer which sends messages to the Amazon Web Service Lambda <a
@@ -85,6 +88,9 @@ public class LambdaProducer extends DefaultProducer {
             break;
         case updateFunction:
             updateFunction(getEndpoint().getAwsLambdaClient(), exchange);
+            break;
+        case createEventSourceMapping:
+            createEventSourceMapping(getEndpoint().getAwsLambdaClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -337,6 +343,37 @@ public class LambdaProducer extends DefaultProducer {
             throw ase;
         }
 
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void createEventSourceMapping(AWSLambda lambdaClient, Exchange exchange) {
+        CreateEventSourceMappingResult result;
+        try {
+            CreateEventSourceMappingRequest request = new CreateEventSourceMappingRequest().withFunctionName(getConfiguration().getFunction());
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.EVENT_SOURCE_ARN))) {
+                request.withEventSourceArn(exchange.getIn().getHeader(LambdaConstants.EVENT_SOURCE_ARN, String.class));
+            } else {
+                throw new IllegalArgumentException("Event Source Arn must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.EVENT_SOURCE_BATCH_SIZE))) {
+                Integer batchSize = exchange.getIn().getHeader(LambdaConstants.EVENT_SOURCE_BATCH_SIZE, Integer.class);
+                request.withBatchSize(batchSize);
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.SDK_CLIENT_EXECUTION_TIMEOUT))) {
+                Integer timeout = exchange.getIn().getHeader(LambdaConstants.SDK_CLIENT_EXECUTION_TIMEOUT, Integer.class);
+                request.withSdkClientExecutionTimeout(timeout);
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.SDK_REQUEST_TIMEOUT))) {
+                Integer timeout = exchange.getIn().getHeader(LambdaConstants.SDK_REQUEST_TIMEOUT, Integer.class);
+                request.withSdkRequestTimeout(timeout);
+            }
+            result = lambdaClient.createEventSourceMapping(request);
+        } catch (AmazonServiceException ase) {
+            LOG.trace("createEventSourceMapping command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
