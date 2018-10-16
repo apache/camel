@@ -216,7 +216,7 @@ see by others.
 
 |`CamelAwsSqsReceiptHandle` |`String` |The Amazon SQS message receipt handle.
 
-|`CamelAwsSqsAttributes` |`Map<String, String>` |The Amazon SQS message attributes.
+|`CamelAwsSqsMessageAttributes` |`Map<String, String>` |The Amazon SQS message attributes.
 |=======================================================================
 
 #### Advanced AmazonSQS configuration
