@@ -111,7 +111,12 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
 
     @Override
     public CreateEventSourceMappingResult createEventSourceMapping(CreateEventSourceMappingRequest createEventSourceMappingRequest) {
-        throw new UnsupportedOperationException();
+        CreateEventSourceMappingResult result = new CreateEventSourceMappingResult();
+        result.setBatchSize(100);
+        result.setFunctionArn("arn:aws:lambda:eu-central-1:643534317684:function:" + createEventSourceMappingRequest.getFunctionName());
+        result.setState("Enabled");
+        result.setEventSourceArn("arn:aws:sqs:eu-central-1:643534317684:testqueue");
+        return result;
     }
 
     @Override

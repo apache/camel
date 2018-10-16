@@ -17,6 +17,8 @@
 package org.apache.camel.component.aws.lambda;
 
 import java.io.*;
+
+import com.amazonaws.services.lambda.model.CreateEventSourceMappingResult;
 import com.amazonaws.services.lambda.model.CreateFunctionResult;
 import com.amazonaws.services.lambda.model.DeleteFunctionResult;
 import com.amazonaws.services.lambda.model.GetFunctionResult;
@@ -152,6 +154,21 @@ public class LambdaProducerTest extends CamelTestSupport {
         assertNotNull(exchange.getOut().getBody(String.class));
         assertEquals(exchange.getOut().getBody(String.class), "{\"Hello\":\"Camel\"}");
     }
+    
+    @Test
+    public void lambdaCreateEventSourceMappingTest() throws Exception {
+        Exchange exchange = template.send("direct:createEventSourceMapping", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(LambdaConstants.EVENT_SOURCE_ARN, "arn:aws:sqs:eu-central-1:643534317684:testqueue");
+                exchange.getIn().setHeader(LambdaConstants.EVENT_SOURCE_BATCH_SIZE, 100);
+            }
+        });
+        assertMockEndpointsSatisfied();
+
+        CreateEventSourceMappingResult result = exchange.getOut().getBody(CreateEventSourceMappingResult.class);
+        assertEquals(result.getFunctionArn(), "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
+    }
 
 
     @Override
@@ -194,6 +211,9 @@ public class LambdaProducerTest extends CamelTestSupport {
                     .to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=updateFunction")
                     .to("mock:result");
 
+                from("direct:createEventSourceMapping")
+                .to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=createEventSourceMapping")
+                .to("mock:result");
             }
         };
     }
