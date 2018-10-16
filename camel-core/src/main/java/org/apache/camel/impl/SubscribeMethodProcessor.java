@@ -88,9 +88,8 @@ public final class SubscribeMethodProcessor extends ServiceSupport implements As
             }
         } catch (Throwable e) {
             exchange.setException(e);
-            return true;
         }
-
+        callback.done(true);
         return true;
     }
 

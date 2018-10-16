@@ -315,6 +315,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                     }
                     // we cannot process so invoke callback
                     callback.done(false);
+                    return;
                 }
 
                 attempts.incrementAndGet();
