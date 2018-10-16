@@ -182,6 +182,12 @@ The default is 3 seconds.|No
 
 |=======================================================================
 
+# Example
+
+To have a full understanding of how the component works, you may have a look at this https://github.com/apache/camel/blob/master/components/camel-aws/src/test/java/org/apache/camel/component/aws/lambda/integration/LambdaComponentIntegrationTest.java[integration test]
+
+
+
 Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
