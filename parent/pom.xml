@@ -744,7 +744,7 @@
     <xom-version>1.2.5</xom-version>
     <zendesk-client-version>0.6.2</zendesk-client-version>
     <zipkin-reporter-version>2.7.9</zipkin-reporter-version>
-    <zipkin-version>2.11.6</zipkin-version>
+    <zipkin-version>2.11.7</zipkin-version>
     <zjsonpatch-version>0.3.0</zjsonpatch-version>
     <zookeeper-version>3.4.13</zookeeper-version>
     <zookeeper-guava-version>16.0</zookeeper-guava-version>
