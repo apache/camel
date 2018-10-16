@@ -22,6 +22,7 @@ import java.security.cert.Certificate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.as2.api.AS2EncryptionAlgorithm;
 import org.apache.camel.component.as2.api.AS2MessageStructure;
+import org.apache.camel.component.as2.api.AS2SignatureAlgorithm;
 import org.apache.camel.component.as2.internal.AS2ApiName;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -92,7 +93,7 @@ public class AS2Configuration {
     private String as2To;
 
     @UriParam
-    private String signingAlgorithmName;
+    private AS2SignatureAlgorithm signingAlgorithm;
 
     @UriParam
     private Certificate[] signingCertificateChain;
@@ -354,15 +355,15 @@ public class AS2Configuration {
         this.as2To = as2To;
     }
 
-    public String getSigningAlgorithmName() {
-        return signingAlgorithmName;
+    public AS2SignatureAlgorithm getSigningAlgorithm() {
+        return signingAlgorithm;
     }
 
     /**
-     * The name of algorithm used to sign EDI message.
+     * The algorithm used to sign EDI message.
      */
-    public void setSigningAlgorithmName(String signingAlgorithmName) {
-        this.signingAlgorithmName = signingAlgorithmName;
+    public void setSigningAlgorithm(AS2SignatureAlgorithm signingAlgorithm) {
+        this.signingAlgorithm = signingAlgorithm;
     }
 
     public Certificate[] getSigningCertificateChain() {
