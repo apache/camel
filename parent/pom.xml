@@ -500,7 +500,7 @@
     <mina-bundle-version>1.1.7_6</mina-bundle-version>
     <mina-version>1.1.7</mina-version>
     <mina2-version>2.0.17</mina2-version>
-    <minidns-version>0.3.2</minidns-version>
+    <minidns-version>0.3.3</minidns-version>
     <minimal-json-version>0.9.4</minimal-json-version>
     <mock-javamail-version>1.9</mock-javamail-version>
     <mockwebserver-version>0.0.17</mockwebserver-version>
