@@ -40,6 +40,7 @@ import com.amazonaws.services.lambda.model.DeleteFunctionConcurrencyRequest;
 import com.amazonaws.services.lambda.model.DeleteFunctionConcurrencyResult;
 import com.amazonaws.services.lambda.model.DeleteFunctionRequest;
 import com.amazonaws.services.lambda.model.DeleteFunctionResult;
+import com.amazonaws.services.lambda.model.EventSourceMappingConfiguration;
 import com.amazonaws.services.lambda.model.FunctionConfiguration;
 import com.amazonaws.services.lambda.model.GetAccountSettingsRequest;
 import com.amazonaws.services.lambda.model.GetAccountSettingsResult;
@@ -238,7 +239,16 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
 
     @Override
     public ListEventSourceMappingsResult listEventSourceMappings(ListEventSourceMappingsRequest listEventSourceMappingsRequest) {
-        throw new UnsupportedOperationException();
+        ListEventSourceMappingsResult result = new ListEventSourceMappingsResult();
+        List<EventSourceMappingConfiguration> confList = new ArrayList<EventSourceMappingConfiguration>();
+        EventSourceMappingConfiguration conf = new EventSourceMappingConfiguration();
+        conf.setBatchSize(100);
+        conf.setFunctionArn("arn:aws:lambda:eu-central-1:643534317684:function:" + listEventSourceMappingsRequest.getFunctionName());
+        conf.setState("Enabled");
+        conf.setEventSourceArn("arn:aws:sqs:eu-central-1:643534317684:testqueue");
+        confList.add(conf);
+        result.setEventSourceMappings(confList);
+        return result;
     }
 
     @Override

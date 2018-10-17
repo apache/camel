@@ -26,7 +26,7 @@ public class LambdaOperationsTest {
 
     @Test
     public void supportedOperationCount() {
-        assertEquals(8, LambdaOperations.values().length);
+        assertEquals(9, LambdaOperations.values().length);
     }
 
     @Test
@@ -39,6 +39,7 @@ public class LambdaOperationsTest {
         assertEquals(LambdaOperations.updateFunction, LambdaOperations.valueOf("updateFunction"));
         assertEquals(LambdaOperations.createEventSourceMapping, LambdaOperations.valueOf("createEventSourceMapping"));
         assertEquals(LambdaOperations.deleteEventSourceMapping, LambdaOperations.valueOf("deleteEventSourceMapping"));
+        assertEquals(LambdaOperations.listEventSourceMapping, LambdaOperations.valueOf("listEventSourceMapping"));
     }
 
     @Test
@@ -51,5 +52,6 @@ public class LambdaOperationsTest {
         assertEquals(LambdaOperations.updateFunction.toString(), "updateFunction");
         assertEquals(LambdaOperations.createEventSourceMapping.toString(), "createEventSourceMapping");
         assertEquals(LambdaOperations.deleteEventSourceMapping.toString(), "deleteEventSourceMapping");
+        assertEquals(LambdaOperations.listEventSourceMapping.toString(), "listEventSourceMapping");
     }
 }
