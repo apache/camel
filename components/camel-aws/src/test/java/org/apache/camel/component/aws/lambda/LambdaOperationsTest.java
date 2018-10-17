@@ -26,7 +26,7 @@ public class LambdaOperationsTest {
 
     @Test
     public void supportedOperationCount() {
-        assertEquals(7, LambdaOperations.values().length);
+        assertEquals(8, LambdaOperations.values().length);
     }
 
     @Test
