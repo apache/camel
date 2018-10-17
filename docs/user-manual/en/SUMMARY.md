@@ -1,87 +1,147 @@
 # Summary
 
+* [Overview](#overview)
+* [Documentation](#documentation)
+* [Community](#community)
+* [Developers](#developers)
+
+## Overview
+
 * [Introduction](README.md)
-* [Legal Notice](notice.md)
+* Download
 * [Getting Started](getting-started.adoc)
 * [Longer Getting Started Guide](book-getting-started.adoc)
+* FAQ
+* [Legal Notice](notice.md)
 
-* [Architecture](architecture.adoc)
-    * [Async](async.adoc)
-    * [Asynchronous Routing Engine](asynchronous-routing-engine.adoc)
-    * [BacklogDebugger](backlogdebugger.adoc)
-    * [BAM](bam.adoc)
-    * [Batch Consumer](batch-consumer.adoc)
-    * [BrowsableEndpoint](browsable-endpoint.adoc)
-    * [Camel Core](camel-core.adoc)
-    * [CamelContext](camelcontext.adoc)
-    * [CEP](cep.adoc)
-    * [Component](component.adoc)
-    * [Debugger](debugger.adoc)
-    * [Delay Interceptor](delay-interceptor.adoc)
-    * [Dependency Injection](dependency-injection.adoc)
-    * [Dozer Type Conversion](dozer-type-conversion.adoc)
-    * [DSL](dsl.adoc)
-        * [Java DSL](java-dsl.adoc)
-        * [Spring DSL](spring.adoc)
-        * [Blueprint DSL](using-osgi-blueprint-with-camel.adoc)
-        * [Groovy DSL](groovy-dsl.adoc)
-        * [Scala DSL](scala-dsl.adoc)
-            * [Scala DSL Getting Started](scala-dsl-getting-started.adoc)
-            * [Scala DSL EIP](scala-dsl-eip.adoc)
-            * [Scala DSL Supported Languages](scala-dsl-supported-languages.adoc)
-        * [Annotation DSL](bean-integration.adoc)
-    * [Endpoint](endpoint.adoc)
-    * [Error Handler](error-handler.adoc)
-    * [Exchange](exchange.adoc)
-    * [Exchange Pattern](exchange-pattern.adoc)
-    * [Expression](expression.adoc)
-    * [Injector](injector.adoc)
-    * [Intercept](intercept.adoc)
-    * [Inversion Of Control With Smart Defaults](inversion-of-control-with-smart-defaults.adoc)
-    * [Lifecycle](lifecycle.adoc)
-    * [OnCompletion](oncompletion.adoc)
-    * [Predicate](predicate.adoc)
-    * [Registry](registry.adoc)
-    * [RouteBuilder](route-builder.adoc)
-    * [Routes](routes.adoc)
+## Documentation
 
-<!--
-    * [Pluggable Class Resolvers](.adoc)
-    * [Processor](.adoc)
-    * [RoutePolicy](.adoc)
-    * [ServicePool](.adoc)
-    * [Stream caching](.adoc)
-    * [ToAsync](.adoc)
-    * [Tracer](.adoc)
-    * [Transport](.adoc)
-    * [Type Converter](.adoc)
-    * [URIs](.adoc)
-    * [Xml Configuration](.adoc)
-    * [ProcessorFactory](.adoc)
-    * [Security](.adoc)
-    * [UuidGenerator](.adoc)
-    * [Binding](.adoc)
-    * [BacklogTracer](.adoc)
-    * [Endpoint Annotations](.adoc)
-    * [ComponentConfiguration](.adoc)
-    * [BacklogDebugger](.adoc)
-    * [EndpointCompleter](.adoc)
-    * [Clustering and loadbalancing](.adoc)
-    * [Threading Model](.adoc)
--->
+* [User Guide](#user-guide)
+* Manual
+* Books
+* Tutorials
+* [Examples](#examples)
+* Cookbook
+* [Architecture](#architecture)
+* [Enterprise Integration Patterns](#enterprise-integration-patterns)
+* [DSL](#dsl)
+* [Components](#components)
+* [Data Formats](#data-formats)
+* [Languages](#languages)
+* Security
+* Security Advisories
 
-* [Enterprise Integration Patterns](enterprise-integration-patterns.adoc)
-    * [Event Message](event-message.adoc)
-    * [Message](message.adoc)
-    * [Request Reply](request-reply.adoc)
+### User Guide
 
-* Community
-    * FAQ
-        * Using Camel questions
-            * [How do I configure endpoints](how-do-i-configure-endpoints.adoc)
+* [Getting Started](getting-started.adoc)
+* [Longer Getting Started Guide](book-getting-started.adoc)
+* [Camel JAR Dependencies](camel-jar-dependencies.adoc)
+* [Camel Boot](camel-boot.adoc)
+* [Working with Camel and CDI](../../../components/camel-cdi/src/main/docs/cdi.adoc)
+* [Working with Camel and Spring](spring.adoc)
+* [Working with Camel and Guice](guice.adoc)
+* [Working with Camel and Karaf](karaf.adoc)
+* [How do I configure endpoints?](how-do-i-configure-endpoints.adoc)
+* [Bean Integration](bean-integration.adoc)
+* [Configuring Camel](how-do-i-add-a-component.adoc)
+* [Configuring route startup ordering and autostartup]
+* [Graceful Shutdown]
+* [AsyncProcessorAwaitManager] for insight into the routing engine when it has been forced to block threads while exchanges are being processed asynchronous
+* [Error handling in Camel](error-handling-in-camel.adoc)
+* [How to use Camel property placeholders](using-propertyplaceholder.adoc)
+* [Tutorials]
+* [Examples](examples.adoc)
+* [Testing](testing.adoc)
+* [Xml Configuration]
+* [Using CamelProxy] for how to use proxies for clients to easily invoke camel routes without them knowing
+* [Camel Maven Plugin] for running Camel from a Maven goal
+* [Guice Maven Plugin] for working with [Guice](guice.adoc)
+* [Camel Maven Archetypes]
+* [Creating a new Spring based Camel Route]
+* [Camel JMX]
+* [How to run Camel in an OSGi container]
+* [Using OSGi blueprint with Camel]
+* [Working with Camel and SCR]
+* Working with REST and [Rest DSL]
 
+### [Examples](examples.adoc)
 
+* [BAM Example](bam-example.adoc)
+* [Guice JMS Example](guice-jms-example.adoc)
 
+### [Architecture](architecture.adoc)
+
+* AOP
+* [Async](async.adoc)
+* [Asynchronous Routing Engine](asynchronous-routing-engine.adoc)
+* [BacklogDebugger](backlogdebugger.adoc)
+* BacklogTracer
+* [BAM](bam.adoc)
+* [Batch Consumer](batch-consumer.adoc)
+* Binding
+* [BrowsableEndpoint](browsable-endpoint.adoc)
+* [CamelContext](camelcontext.adoc)
+* [Camel Core](camel-core.adoc)
+* [CEP](cep.adoc)
+* Clustering and loadbalancing
+* [Component](component.adoc)
+* ComponentConfiguration
+* Data Format
+* [Debugger](debugger.adoc)
+* [Delay Interceptor](delay-interceptor.adoc)
+* [Dependency Injection](dependency-injection.adoc)
+* [Dozer Type Conversion](dozer-type-conversion.adoc)
+* [DSL](dsl.adoc)
+* [Endpoint](endpoint.adoc)
+* Endpoint Annotations
+* EndpointCompleter
+* [Error Handler](error-handler.adoc)
+* [Exchange](exchange.adoc)
+* [Exchange Pattern](exchange-pattern.adoc)
+* [Expression](expression.adoc)
+* HTTP-Session Handling
+* [Injector](injector.adoc)
+* [Intercept](intercept.adoc)
+* [Inversion of Control with Smart Defaults](inversion-of-control-with-smart-defaults.adoc)
+* Languages
+* [Lifecycle](lifecycle.adoc)
+* [OnCompletion](oncompletion.adoc)
+* Pluggable Class Resolvers
+* [Predicate](predicate.adoc)
+* Processor
+* [Registry](registry.adoc)
+* [RouteBuilder](route-builder.adoc)
+* RoutePolicy
+* [Routes](routes.adoc)
+* ServicePool
+* Stream caching
+* Threading Model
+* ToAsync
+* Tracer
+* Transport
+* Type Converter
+* URIs
+* UuidGenerator
+* Xml Configuration
+
+### [Enterprise Integration Patterns](enterprise-integration-patterns.adoc)
+
+* [Event Message](event-message.adoc)
+* [Message](message.adoc)
+* [Request Reply](request-reply.adoc)
+
+### [DSL](dsl.adoc)
+
+* [Java DSL](java-dsl.adoc)
+* [Spring DSL](spring.adoc)
+* [Blueprint DSL](using-osgi-blueprint-with-camel.adoc)
+* Rest DSL
+* [Groovy DSL](groovy-dsl.adoc)
+* [Scala DSL](scala-dsl.adoc)
+* [Annotation DSL](bean-integration.adoc)
+* Kotlin DSL
+
+### Components
 
 <!-- core components: START -->
 * Core Components
@@ -112,14 +172,6 @@
 	* [VM](vm-component.adoc)
 	* [XSLT](xslt-component.adoc)
 <!-- core components: END -->
-
-
-
-
-
-
-
-
 
 <!-- components: START -->
 * Components
@@ -401,9 +453,6 @@
 	* [ZooKeeper Master](zookeeper-master-component.adoc)
 <!-- components: END -->
 
-
-
-
 <!-- others: START -->
 * Miscellaneous Components
 	* [BAM](bam.adoc)
@@ -452,6 +501,7 @@
 	* [Zipkin](zipkin.adoc)
 <!-- others: END -->
 
+### Data Formats
 
 <!-- dataformats: START -->
 * Data Formats
@@ -505,13 +555,7 @@
 	* [Zip File](zipfile-dataformat.adoc)
 <!-- dataformats: END -->
 
-
-
-
-
-
-
-
+### Languages
 
 <!-- languages: START -->
 * Expression Languages
@@ -541,45 +585,23 @@
 	* [XQuery](xquery-language.adoc)
 <!-- languages: END -->
 
+## Community
 
+* Support
+* Contributing
+* Mailing Lists
+* Gitter / IRC Chat
+* User Stories
+* News
+* Articles
+* Site
+* Team
+* Camel Extra
 
+## Developers
 
-* [Examples](examples.adoc)
-    * [BAM Example](bam-example.adoc)
-    * [Guice JMS Example](guice-jms-example.adoc)
-
-* User Guide
-
-    * [Camel JAR Dependencies](camel-jar-dependencies.adoc)
-    * [Camel Boot](camel-boot.adoc)
-    * [Working with Camel and CDI](../../../components/camel-cdi/src/main/docs/cdi.adoc)
-    * [Working with Camel and Spring](spring.adoc)
-    * [Working with Camel and Guice](guice.adoc)
-    * [Working with Camel and Karaf](karaf.adoc)
-    * [How Do I Configure Endpoints?]
-    * [Bean Integration](bean-integration.adoc)
-    * [Configuring Camel]
-    * [Configuring route startup ordering and autostartup]
-    * [Graceful Shutdown]
-    * [AsyncProcessorAwaitManager] for insight into the routing engine when it has been forced to block threads while exchanges are being processed asynchronous.
-    * [Error handling in Camel](error-handling-in-camel.adoc)
-    * [How to use Camel property placeholders](using-propertyplaceholder.adoc)
-    * [Tutorials]
-    * [Examples](examples.adoc)
-    * [Testing](testing.adoc)
-        * [Test](test.adoc)
-        * [Blueprint Testing](test-blueprint.adoc)
-        * [CDI Testing](test-cdi.adoc)
-        * [Spring Testing](test-spring.adoc)
-    * [Xml Configuration]
-    * [Using CamelProxy] for how to use proxies for clients to easily invoke camel routes without them knowing
-    * [Camel Maven Plugin] for running Camel from a Maven goal
-    * [Guice Maven Plugin] for working with [Guice](guice.adoc)
-    * [Camel Maven Archetypes]
-    * [Creating a new Spring based Camel Route]
-    * [Camel JMX]
-    * [How to run Camel in a osgi container]
-    * [Using OSGi blueprint with Camel]
-    * [Working with Camel and SCR]
-    * Working with REST andÂ [Rest DSL]
-    * [JSSE Utility](camel-configuration-utilities.adoc)
+* Developer Guide
+* Source
+* [GitHub](https://github.com/apache/camel/)
+* [Building](building.adoc)
+* Javadoc
