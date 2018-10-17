@@ -68,7 +68,7 @@ The VM component supports 6 options, which are listed below.
 | Name | Description | Default | Type
 | *queueSize* (advanced) | Sets the default maximum capacity of the SEDA queue (i.e., the number of messages it can hold). | 1000 | int
 | *concurrentConsumers* (consumer) | Sets the default number of concurrent threads processing exchanges. | 1 | int
-| *defaultQueueFactory* (advanced) | Sets the default queue factory. |  | Exchange>
+| *defaultQueueFactory* (advanced) | Sets the default queue factory. |  | BlockingQueueFactory
 | *defaultBlockWhenFull* (producer) | Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, the calling thread will instead block and wait until the message can be accepted. | false | boolean
 | *defaultOfferTimeout* (producer) | Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, where a configured timeout can be added to the block case. Utilizing the .offer(timeout) method of the underlining java queue |  | long
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean

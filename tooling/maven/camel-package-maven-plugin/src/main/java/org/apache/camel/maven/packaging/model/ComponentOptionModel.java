@@ -155,20 +155,8 @@ public class ComponentOptionModel {
     }
 
     public String getShortJavaType(int watermark) {
-        if (javaType.startsWith("java.util.Map")) {
-            return "Map";
-        } else if (javaType.startsWith("java.util.Set")) {
-            return "Set";
-        } else if (javaType.startsWith("java.util.List")) {
-            return "List";
-        }
 
-        String text = javaType;
-
-        int pos = text.lastIndexOf(".");
-        if (pos != -1) {
-            text = text.substring(pos + 1);
-        }
+        String text = javaType.replaceAll("<.*>", "").replaceAll(".*[.]([^.]+)", "$1");
 
         // if its some kind of java object then lets wrap it as its long
         if ("object".equals(type)) {

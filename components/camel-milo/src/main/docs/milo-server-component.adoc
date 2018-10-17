@@ -42,7 +42,7 @@ The OPC UA Server component supports 20 options, which are listed below.
 | *serverName* (common) | Server name |  | String
 | *hostname* (common) | Server hostname |  | String
 | *securityPolicies* (common) | Security policies |  | Set
-| *securityPoliciesById* (common) | Security policies by URI or name |  | String>
+| *securityPoliciesById* (common) | Security policies by URI or name |  | Collection
 | *userAuthentication Credentials* (common) | Set user password combinations in the form of user1:pwd1,user2:pwd2 Usernames and passwords will be URL decoded |  | String
 | *enableAnonymous Authentication* (common) | Enable anonymous authentication, disabled by default | false | boolean
 | *usernameSecurityPolicy Uri* (common) | Set the UserTokenPolicy used when |  | SecurityPolicy
@@ -50,7 +50,7 @@ The OPC UA Server component supports 20 options, which are listed below.
 | *buildInfo* (common) | Server build info |  | BuildInfo
 | *serverCertificate* (common) | Server certificate |  | Result
 | *certificateManager* (common) | Server certificate manager |  | CertificateManager
-| *certificateValidator* (common) | Validator for client certificates |  | CertificateValidator>
+| *certificateValidator* (common) | Validator for client certificates |  | Supplier
 | *defaultCertificate Validator* (common) | Validator for client certificates using default file based approach |  | File
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
