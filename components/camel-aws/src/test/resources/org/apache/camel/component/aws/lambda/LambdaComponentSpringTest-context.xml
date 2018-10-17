@@ -54,6 +54,11 @@
             <from uri="direct:createEventSourceMapping"/>
             <to uri="aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&amp;operation=createEventSourceMapping"/>
         </route>
+        
+        <route>
+            <from uri="direct:deleteEventSourceMapping"/>
+            <to uri="aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&amp;operation=deleteEventSourceMapping"/>
+        </route>
     </camelContext>
 
     <bean id="awsLambdaClient" class="org.apache.camel.component.aws.lambda.AmazonLambdaClientMock"/>
