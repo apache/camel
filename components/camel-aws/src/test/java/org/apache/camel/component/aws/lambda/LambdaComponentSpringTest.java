@@ -20,6 +20,7 @@ import java.io.*;
 
 import com.amazonaws.services.lambda.model.CreateEventSourceMappingResult;
 import com.amazonaws.services.lambda.model.CreateFunctionResult;
+import com.amazonaws.services.lambda.model.DeleteEventSourceMappingResult;
 import com.amazonaws.services.lambda.model.DeleteFunctionResult;
 import com.amazonaws.services.lambda.model.GetFunctionResult;
 import com.amazonaws.services.lambda.model.ListFunctionsResult;
@@ -127,6 +128,20 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
 
         CreateEventSourceMappingResult result = exchange.getOut().getBody(CreateEventSourceMappingResult.class);
         assertEquals(result.getFunctionArn(), "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
+    }
+    
+    @Test
+    public void lambdaDeleteEventSourceMappingTest() throws Exception {
+        Exchange exchange = template.send("direct:deleteEventSourceMapping", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(LambdaConstants.EVENT_SOURCE_UUID, "a1239494949382882383");
+            }
+        });
+        assertMockEndpointsSatisfied();
+
+        DeleteEventSourceMappingResult result = exchange.getOut().getBody(DeleteEventSourceMappingResult.class);
+        assertTrue(result.getState().equalsIgnoreCase("Deleting"));
     }
 
 

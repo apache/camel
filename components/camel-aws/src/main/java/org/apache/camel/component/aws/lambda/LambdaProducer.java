@@ -30,6 +30,8 @@ import com.amazonaws.services.lambda.model.CreateEventSourceMappingResult;
 import com.amazonaws.services.lambda.model.CreateFunctionRequest;
 import com.amazonaws.services.lambda.model.CreateFunctionResult;
 import com.amazonaws.services.lambda.model.DeadLetterConfig;
+import com.amazonaws.services.lambda.model.DeleteEventSourceMappingRequest;
+import com.amazonaws.services.lambda.model.DeleteEventSourceMappingResult;
 import com.amazonaws.services.lambda.model.DeleteFunctionRequest;
 import com.amazonaws.services.lambda.model.DeleteFunctionResult;
 import com.amazonaws.services.lambda.model.Environment;
@@ -91,6 +93,9 @@ public class LambdaProducer extends DefaultProducer {
             break;
         case createEventSourceMapping:
             createEventSourceMapping(getEndpoint().getAwsLambdaClient(), exchange);
+            break;
+        case deleteEventSourceMapping:
+            deleteEventSourceMapping(getEndpoint().getAwsLambdaClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -372,6 +377,33 @@ public class LambdaProducer extends DefaultProducer {
             result = lambdaClient.createEventSourceMapping(request);
         } catch (AmazonServiceException ase) {
             LOG.trace("createEventSourceMapping command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void deleteEventSourceMapping(AWSLambda lambdaClient, Exchange exchange) {
+        DeleteEventSourceMappingResult result;
+        try {
+            DeleteEventSourceMappingRequest request = new DeleteEventSourceMappingRequest();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.EVENT_SOURCE_UUID))) {
+                request.withUUID(exchange.getIn().getHeader(LambdaConstants.EVENT_SOURCE_UUID, String.class));
+            } else {
+                throw new IllegalArgumentException("Event Source Arn must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.SDK_CLIENT_EXECUTION_TIMEOUT))) {
+                Integer timeout = exchange.getIn().getHeader(LambdaConstants.SDK_CLIENT_EXECUTION_TIMEOUT, Integer.class);
+                request.withSdkClientExecutionTimeout(timeout);
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.SDK_REQUEST_TIMEOUT))) {
+                Integer timeout = exchange.getIn().getHeader(LambdaConstants.SDK_REQUEST_TIMEOUT, Integer.class);
+                request.withSdkRequestTimeout(timeout);
+            }
+            result = lambdaClient.deleteEventSourceMapping(request);
+        } catch (AmazonServiceException ase) {
+            LOG.trace("deleteEventSourceMapping command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);

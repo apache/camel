@@ -157,7 +157,10 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
 
     @Override
     public DeleteEventSourceMappingResult deleteEventSourceMapping(DeleteEventSourceMappingRequest deleteEventSourceMappingRequest) {
-        throw new UnsupportedOperationException();
+        DeleteEventSourceMappingResult result = new DeleteEventSourceMappingResult();
+        result.setUUID("a1239494949382882383");
+        result.setState("Deleting");
+        return result;
     }
 
     @Override
