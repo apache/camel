@@ -38,6 +38,7 @@ public class LambdaOperationsTest {
         assertEquals(LambdaOperations.deleteFunction, LambdaOperations.valueOf("deleteFunction"));
         assertEquals(LambdaOperations.updateFunction, LambdaOperations.valueOf("updateFunction"));
         assertEquals(LambdaOperations.createEventSourceMapping, LambdaOperations.valueOf("createEventSourceMapping"));
+        assertEquals(LambdaOperations.deleteEventSourceMapping, LambdaOperations.valueOf("deleteEventSourceMapping"));
     }
 
     @Test
@@ -49,5 +50,6 @@ public class LambdaOperationsTest {
         assertEquals(LambdaOperations.deleteFunction.toString(), "deleteFunction");
         assertEquals(LambdaOperations.updateFunction.toString(), "updateFunction");
         assertEquals(LambdaOperations.createEventSourceMapping.toString(), "createEventSourceMapping");
+        assertEquals(LambdaOperations.deleteEventSourceMapping.toString(), "deleteEventSourceMapping");
     }
 }
