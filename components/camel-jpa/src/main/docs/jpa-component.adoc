@@ -132,7 +132,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *entityType* | *Required* The JPA annotated class to use as entity. |  | Class<?>
+| *entityType* | *Required* The JPA annotated class to use as entity. |  | Class
 |===
 
 
@@ -149,15 +149,15 @@ with the following path and query parameters:
 | *parameters* (common) | This key/value mapping is used for building the query parameters. It is expected to be of the generic type java.util.Map where the keys are the named parameters of a given JPA query and the values are their corresponding effective values you want to select for. When it's used for producer, Simple expression can be used as a parameter value. It allows you to retrieve parameter values from the message body, header and etc. |  | Map
 | *persistenceUnit* (common) | *Required* The JPA persistence unit used by default. | camel | String
 | *query* (common) | To use a custom query. |  | String
-| *resultClass* (common) | Defines the type of the returned payload (we will call entityManager.createNativeQuery(nativeQuery, resultClass) instead of entityManager.createNativeQuery(nativeQuery)). Without this option, we will return an object array. Only has an affect when using in conjunction with native query when consuming data. |  | Class<?>
+| *resultClass* (common) | Defines the type of the returned payload (we will call entityManager.createNativeQuery(nativeQuery, resultClass) instead of entityManager.createNativeQuery(nativeQuery)). Without this option, we will return an object array. Only has an affect when using in conjunction with native query when consuming data. |  | Class
 | *sharedEntityManager* (common) | Whether to use Spring's SharedEntityManager for the consumer/producer. Note in most cases joinTransaction should be set to false as this is not an EXTENDED EntityManager. | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *consumeDelete* (consumer) | If true, the entity is deleted after it is consumed; if false, the entity is not deleted. | true | boolean
 | *consumeLockEntity* (consumer) | Specifies whether or not to set an exclusive lock on each entity bean while processing the results from polling. | true | boolean
-| *deleteHandler* (consumer) | To use a custom DeleteHandler to delete the row after the consumer is done processing the exchange |  | Object>
+| *deleteHandler* (consumer) | To use a custom DeleteHandler to delete the row after the consumer is done processing the exchange |  | DeleteHandler
 | *lockModeType* (consumer) | To configure the lock mode on the consumer. | PESSIMISTIC_WRITE | LockModeType
 | *maxMessagesPerPoll* (consumer) | An integer value to define the maximum number of messages to gather per poll. By default, no maximum is set. Can be used to avoid polling many thousands of messages when starting up the server. Set a value of 0 or negative to disable. |  | int
-| *preDeleteHandler* (consumer) | To use a custom Pre-DeleteHandler to delete the row after the consumer has read the entity. |  | Object>
+| *preDeleteHandler* (consumer) | To use a custom Pre-DeleteHandler to delete the row after the consumer has read the entity. |  | DeleteHandler
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *skipLockedEntity* (consumer) | To configure whether to use NOWAIT on lock and silently skip the entity. | false | boolean
 | *transacted* (consumer) | Whether to run the consumer in transacted mode, by which all messages will either commit or rollback, when the entire batch has been processed. The default behavior (false) is to commit all the previously successfully processed messages, and only rollback the last failed message. | false | boolean

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.maven.packaging.model;
 
+import org.apache.camel.maven.packaging.StringHelper;
+
 import static org.apache.camel.maven.packaging.StringHelper.wrapCamelCaseWords;
 
 public class ComponentOptionModel {
@@ -156,7 +158,7 @@ public class ComponentOptionModel {
 
     public String getShortJavaType(int watermark) {
 
-        String text = javaType.replaceAll("<.*>", "").replaceAll(".*[.]([^.]+)", "$1");
+        String text = StringHelper.getClassShortName(javaType);
 
         // if its some kind of java object then lets wrap it as its long
         if ("object".equals(type)) {
