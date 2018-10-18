@@ -184,7 +184,7 @@ with the following path and query parameters:
 | *bindingId* (service) | The bindingId for the service model to use. |  | String
 | *portName* (service) | The endpoint name this service is implementing, it maps to the wsdl:portname. In the format of ns:PORT_NAME where ns is a namespace prefix valid at this scope. |  | String
 | *publishedEndpointUrl* (service) | This option can override the endpointUrl that published from the WSDL which can be accessed with service address url plus wsd |  | String
-| *serviceClass* (service) | The class name of the SEI (Service Endpoint Interface) class which could have JSR181 annotation or not. |  | Class<?>
+| *serviceClass* (service) | The class name of the SEI (Service Endpoint Interface) class which could have JSR181 annotation or not. |  | Class
 | *serviceName* (service) | The service name this service is implementing, it maps to the wsdl:servicename. |  | String
 | *wsdlURL* (service) | The location of the WSDL. Can be on the classpath, file system, or be hosted remotely. |  | String
 |===

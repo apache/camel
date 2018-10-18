@@ -94,7 +94,7 @@ with the following path and query parameters:
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *action* (producer) | To configure the default cache action. If an action is set in the message header, then the operation from the header takes precedence. |  | String
 | *key* (producer) | To configure the default action key. If a key is set in the message header, then the key from the header takes precedence. |  | Object
-| *configuration* (advanced) | The default cache configuration to be used to create caches. |  | CacheConfiguration<?,?>
+| *configuration* (advanced) | The default cache configuration to be used to create caches. |  | CacheConfiguration
 | *configurations* (advanced) | A map of cache configuration to be used to create caches. |  | Map
 | *keyType* (advanced) | The cache key type, default java.lang.Object | java.lang.Object | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean

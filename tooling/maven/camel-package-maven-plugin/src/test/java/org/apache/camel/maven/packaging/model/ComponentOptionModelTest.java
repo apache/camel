@@ -16,15 +16,9 @@
  */
 package org.apache.camel.maven.packaging.model;
 
-import java.util.stream.Stream;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import static org.junit.jupiter.params.provider.Arguments.arguments;
+import org.junit.jupiter.api.Test;
 
 public class ComponentOptionModelTest {
 
@@ -35,25 +29,9 @@ public class ComponentOptionModelTest {
         componentOptionModelUnderTest = new ComponentOptionModel();
     }
 
-    static Stream<Arguments> getShortJavaTypeVarations() {
-        return Stream.of(
-                         arguments("String", "String"),
-                         arguments("String", "java.lang.String"),
-                         arguments("List", "List<String>"),
-                         arguments("List", "java.util.List<String>"),
-                         arguments("List", "List<java.lang.String>"),
-                         arguments("BlockingQueue", "java.util.concurrent.BlockingQueue<org.apache.camel.Exchange>"),
-                         arguments("List", "java.util.List<Map<String,Integer>>"),
-                         arguments("List", "java.util.List<Map<java.lang.String,Integer>>"),
-                         arguments("List", "java.util.List<Map<String,java.lang.Integer>>"),
-                         arguments("List", "java.util.List<Map<java.lang.String,java.lang.Integer>>"),
-                         arguments("List", "java.util.List<java.util.Map<java.lang.String,java.lang.Integer>>"));
-    };
-
-    @ParameterizedTest
-    @MethodSource("getShortJavaTypeVarations")
-    public void getShortTypeShouldSucceed(String expectedShortJavaType, String javaType) {
-        componentOptionModelUnderTest.setJavaType(javaType);
-        Assertions.assertEquals(expectedShortJavaType, componentOptionModelUnderTest.getShortJavaType());
+    @Test
+    public void getShortTypeShouldSucceed() {
+        componentOptionModelUnderTest.setJavaType("java.util.concurrent.BlockingQueue<org.apache.camel.Exchange>");
+        Assertions.assertEquals("BlockingQueue", componentOptionModelUnderTest.getShortJavaType());
     }
 }
