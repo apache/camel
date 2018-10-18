@@ -138,7 +138,7 @@ The component supports 28 options, which are listed below.
 | *camel.component.as2.configuration.server-fqdn* | The Server Fully Qualified Domain Name (FQDN). Used in message ids sent by endpoint. | camel.apache.org | String
 | *camel.component.as2.configuration.server-port-number* | The port number of server. |  | Integer
 | *camel.component.as2.configuration.signed-receipt-mic-algorithms* | The list of algorithms, in order of preference, requested to generate a message integrity check (MIC) returned in message dispostion notification (MDN) |  | String[]
-| *camel.component.as2.configuration.signing-algorithm-name* | The name of algorithm used to sign EDI message. |  | String
+| *camel.component.as2.configuration.signing-algorithm* | The algorithm used to sign EDI message. |  | AS2SignatureAlgorithm
 | *camel.component.as2.configuration.signing-certificate-chain* | The chain of certificates used to sign EDI message. |  | Certificate[]
 | *camel.component.as2.configuration.signing-private-key* | The key used to sign the EDI message. |  | PrivateKey
 | *camel.component.as2.configuration.subject* | The value of Subject header of AS2 message. |  | String
