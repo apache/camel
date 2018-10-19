@@ -83,7 +83,7 @@ Using Guice
 ^^^^^^^^^^^
 
 You can also use Guice as the dependency injection
-framework. For example see the link:guice-jms-example.html[Guice JMS
+framework. For example see the link:../guice-jms-example.adoc[Guice JMS
 Example].
 
 [[HowdoIconfigureendpoints-UsingSpringXML]]

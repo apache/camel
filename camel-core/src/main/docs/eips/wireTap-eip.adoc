@@ -68,8 +68,7 @@ values.
 
 === Sending a Copy (traditional wiretap)
 
-* Using the link:fluent-builders.html[Fluent
-Builders]
+* Using the <<FluentBuilders-FluentBuilders,Fluent Builders>>
 
 [source,java]
 ----
@@ -96,8 +95,9 @@ Builders]
 
 === Sending a New link:exchange.html[Exchange]
 
-*Using the link:fluent-builders.html[Fluent Builders]* 
- Camel supports either a processor or an
+*Using the <<FluentBuilders-FluentBuilders,Fluent Builders>>*
+
+Camel supports either a processor or an
 link:expression.html[Expression] to populate the new
 link:exchange.html[Exchange]. Using a processor gives you full power
 over how the link:exchange.html[Exchange] is populated as you can set

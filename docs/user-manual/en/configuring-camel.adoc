@@ -1,5 +1,8 @@
-[[HowdoIaddacomponent-HowdoIaddacomponent]]
-=== How do I add a component
+[[ConfiguringCamel-ConfiguringCamel]]
+=== Configuring Camel
+
+[[ConfiguringCamel-HowdoIaddacomponent]]
+==== How do I add a component?
 
 You might first want to read link:writing-components.adoc[Writing
 Components] for a background in how to implement a new component.
@@ -43,7 +46,7 @@ support `@Resource` (EJB3 style) injection or Guice style `@Inject`
 injection.
 
 
-[[HowdoIaddacomponent-WorkingwithSpringXML]]
+[[ConfiguringCamel-WorkingwithSpringXML]]
 ==== Working with Spring XML
 
 You can configure a component via Spring using the following mechanism:
@@ -65,7 +68,7 @@ link:contributing.adoc[contribute a patch] to the camel XSD. Otherwise
 you could write your own namespace & schema if you prefer.
 
 
-[[HowdoIaddacomponent-SeeAlso]]
+[[ConfiguringCamel-SeeAlso]]
 ==== See Also
 
 * link:writing-components.adoc[Writing Components]

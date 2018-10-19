@@ -3,7 +3,7 @@ DSL
 ~~~
 
 Camel uses a Java _Domain Specific Language_ or DSL for creating
-link:enterprise-integration-patterns.html[Enterprise Integration
+link:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] or Routes in a variety of domain-specific
 languages (DSL) as listed below.
 

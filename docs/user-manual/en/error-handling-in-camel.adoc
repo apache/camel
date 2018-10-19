@@ -141,7 +141,7 @@ kicks in and decides what to do.
 
 An example illustrating this:
 
-[source,brush:,java;,gutter:,false;,theme:,Default]
+[source,java]
 ----
 errorHandler(deadLetterChannel("jms:queue:dead"));
 
@@ -174,7 +174,7 @@ just a ERROR logger.
 
 [NOTE]
 ====
-This applies to all kind of link:components.html[Components] in Camel.
+This applies to all kind of link:component.adoc[Components] in Camel.
 The sample above only uses <<bean-component,Bean>> but it's the same for
 <<file-component,File>>, <<mail-component,Mail>>,
 <<velocity-component,Velocity>> or whatever component you use.
@@ -219,7 +219,7 @@ link:transactionerrorhandler.adoc[TransactionErrorHandler] does *not*
 attempt any local redeliveries. You have to configure it to do so, for
 instance to set a maximum redelivers to a number > 0.
 
-See <<TransactionalClient-TransactionalClient,Transactional Client>>
+See <<transactionalClient-eip,Transactional Client>>
 for more.
 
 [[ErrorhandlinginCamel-Seealso]]
@@ -228,7 +228,7 @@ for more.
 * link:error-handler.adoc[Error Handler]
 * <<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>>
 * link:exception-clause.adoc[Exception Clause]
-* <<TransactionalClient-TransactionalClient,Transactional Client>>
+* <<transactionalClient-eip,Transactional Client>>
 * link:transactionerrorhandler.adoc[TransactionErrorHandler]
 * link:defaulterrorhandler.adoc[DefaultErrorHandler]
 * link:try-catch-finally.adoc[Try Catch Finally]

@@ -1,4 +1,4 @@
-[[EventMessage-EventMessage]]
+[[eventMessage-eip]]
 == Event Message
 
 Camel supports the
@@ -17,7 +17,7 @@ such as for <<jms-component,JMS>>, <<jms-component,File>> or
 
 TIP: See the related link:request-reply.html[Request Reply] message.
 
-[[EventMessage-ExplicitlyspecifyingInOnly]]
+[[eventMessage-ExplicitlyspecifyingInOnly]]
 === Explicitly specifying InOnly
 
 If you are using a component which defaults to InOut you can override
