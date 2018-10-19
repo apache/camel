@@ -212,7 +212,7 @@
     <etcd4j-version>2.16.0</etcd4j-version>
     <exec-maven-plugin-version>1.6.0</exec-maven-plugin-version>
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
-    <fabric8-maven-plugin-version>3.5.41</fabric8-maven-plugin-version>
+    <fabric8-maven-plugin-version>3.5.42</fabric8-maven-plugin-version>
     <facebook4j-core-version>2.4.12</facebook4j-core-version>
     <facebook4j-core-bundle-version>2.4.12_1</facebook4j-core-bundle-version>
     <fastinfoset-version>1.2.13_1</fastinfoset-version>
