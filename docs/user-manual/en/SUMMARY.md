@@ -29,7 +29,7 @@
 * [Data Formats](#data-formats)
 * [Languages](#languages)
 * Security
-* Security Advisories
+* [Security Advisories](security-advisories.adoc)
 
 ### User Guide
 
