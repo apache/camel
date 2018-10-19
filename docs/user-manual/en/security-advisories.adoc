@@ -1,0 +1,55 @@
+[[SecurityAdvisories]]
+### 2017
+
+[CVE-2017-5643](security-advisories/CVE-2017-5643.txt.asc) - Apache
+Camel's Validation Component is vulnerable against SSRF via remote DTDs
+and XXE
+
+[CVE-2017-3159](security-advisories/CVE-2017-3159.txt.asc) - Apache
+Camel's Snakeyaml unmarshalling operation is vulnerable to Remote Code
+Execution attacks
+
+### 2016
+
+[CVE-2016-8749](security-advisories/CVE-2016-8749.txt.asc) - Apache
+Camel's Jackson and JacksonXML unmarshalling operation are vulnerable to
+Remote Code Execution attacks
+
+### 2015
+
+[CVE-2015-5344](security-advisories/CVE-2015-5344.txt.asc) - Apache
+Camel's XStream usage is vulnerable to Remote Code Execution attacks.
+
+[CVE-2015-5348](security-advisories/CVE-2015-5348.txt.asc)
+- Apache Camel's Jetty/Servlet usage is vulnerable to Java object
+de-serialisation vulnerability.
+
+[CVE-2015-0264](security-advisories/CVE-2015-0264.txt.asc)
+- The XPath handling in Apache Camel for invalid XML Strings or invalid
+XML GenericFile objects allows remote attackers to read arbitrary files
+via an XML External Entity (XXE) declaration. The XML External Entity
+(XXE) will be resolved before the Exception is thrown.
+
+[CVE-2015-0263](security-advisories/CVE-2015-0263.txt.asc)
+- The XML converter setup in Apache Camel allows remote attackers to
+read arbitrary files via an SAXSource containing an XML External Entity
+(XXE) declaration.
+
+### 2014
+
+
+[CVE-2014-0003](security-advisories/CVE-2014-0003.txt.asc)
+- The Apache Camel XSLT component allows XSL stylesheets to perform
+calls to external Java methods.
+
+[CVE-2014-0002](security-advisories/CVE-2014-0002.txt.asc)
+- The Apache Camel XSLT component will resolve entities in XML messages
+when transforming them using an xslt route.
+
+### 2013
+
+[CVE-2013-4330](security-advisories/CVE-2013-4330.txt.asc)
+- Writing files using FILE or FTP components, can potentially be
+exploited by a malicious user.
+
+ 
