@@ -14,22 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-public class LoopAsyncNoCopyTest extends ContextTestSupport {
+public class PendingExchangesAsyncDelayShutdownGracefulTest extends ContextTestSupport {
 
     @Test
-    public void testLoopNoCopy() throws Exception {
-        getMockEndpoint("mock:loop").expectedBodiesReceived("AB", "ABB", "ABBB");
-        getMockEndpoint("mock:result").expectedBodiesReceived("ABBB");
+    public void testShutdownGraceful() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        MockEndpoint foo = getMockEndpoint("mock:foo");
 
-        template.sendBody("direct:start", "A");
+        foo.expectedMinimumMessageCount(1);
+
+        template.sendBody("seda:foo", "A");
+        template.sendBody("seda:foo", "B");
+        template.sendBody("seda:foo", "C");
+        template.sendBody("seda:foo", "D");
+        template.sendBody("seda:foo", "E");
 
         assertMockEndpointsSatisfied();
+
+        context.stop();
+
+        assertEquals("Expecting all messages", 5, result.getReceivedCounter());
     }
 
     @Override
@@ -37,18 +48,10 @@ public class LoopAsyncNoCopyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // START SNIPPET: e1
-                from("direct:start")
-                    // by default loop will keep using the same exchange so on the 2nd and 3rd iteration its
-                    // the same exchange that was previous used that are being looped all over
-                    .loop(3)
-                        .threads(1)
-                            .transform(body().append("B"))
-                        .end()
-                        .to("mock:loop")
-                    .end()
-                    .to("mock:result");
-                // END SNIPPET: e1
+                from("seda:foo")
+                        .to("mock:foo")
+                        .delay(1000)
+                        .to("mock:result");
             }
         };
     }

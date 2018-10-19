@@ -25,6 +25,8 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,12 +37,12 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * This implementation will block while waiting.
  */
-public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
+public abstract class DelayProcessorSupport extends DelegateAsyncProcessor implements ShutdownAware {
 
     private final CamelContext camelContext;
     private final ScheduledExecutorService executorService;
     private final boolean shutdownExecutorService;
-    private boolean asyncDelayed;
+    private boolean asyncDelayed = true;
     private boolean callerRunsWhenRejected = true;
     private final AtomicInteger delayedCount = new AtomicInteger(0);
 
@@ -247,6 +249,8 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
     protected void doStart() throws Exception {
         if (isAsyncDelayed()) {
             ObjectHelper.notNull(executorService, "executorService", this);
+        } else if (executorService != null) {
+            asyncDelayed = true;
         }
         super.doStart();
     }
@@ -257,5 +261,20 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
             camelContext.getExecutorServiceManager().shutdownNow(executorService);
         }
         super.doShutdown();
+    }
+
+    @Override
+    public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
+        return true;
+    }
+
+    @Override
+    public int getPendingExchangesSize() {
+        return getDelayedCount();
+    }
+
+    @Override
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
+
     }
 }

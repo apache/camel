@@ -19,6 +19,7 @@ package org.apache.camel.spi;
 import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
 
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.StaticService;
 
@@ -122,22 +123,12 @@ public interface AsyncProcessorAwaitManager extends StaticService {
     }
 
     /**
-     * Registers the exchange to await for the callback to be triggered by another thread which has taken over processing
-     * this exchange. The current thread will await until that callback happens in the future (blocking until this happens).
+     * Process the given exchange sychronously.
      *
-     * @param exchange   the exchange
-     * @param latch      the latch used to wait for other thread to signal when its done
+     * @param processor the async processor to call
+     * @param exchange the exchange to process
      */
-    void await(Exchange exchange, CountDownLatch latch);
-
-    /**
-     * Triggered when the other thread is done processing the exchange, to signal to the waiting thread is done, and can take
-     * over control to further process the exchange.
-     *
-     * @param exchange   the exchange
-     * @param latch      the latch used to wait for other thread to signal when its done
-     */
-    void countDown(Exchange exchange, CountDownLatch latch);
+    void process(final AsyncProcessor processor, final Exchange exchange);
 
     /**
      * Number of threads that are blocked waiting for other threads to trigger the callback when they are done processing

@@ -33,6 +33,7 @@ import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.OrderedComparator;
+import org.apache.camel.support.ReactiveHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,30 +82,23 @@ public class SharedCamelInternalProcessor {
      */
     public void process(Exchange exchange, AsyncProcessor processor, Processor resultProcessor) {
         final AsyncProcessorAwaitManager awaitManager = exchange.getContext().getAsyncProcessorAwaitManager();
-        final CountDownLatch latch = new CountDownLatch(1);
-
-        boolean sync = process(exchange, new AsyncCallback() {
-            public void done(boolean doneSync) {
-                if (!doneSync) {
-                    awaitManager.countDown(exchange, latch);
-                }
+        awaitManager.process(new AsyncProcessor() {
+            @Override
+            public boolean process(Exchange exchange, AsyncCallback callback) {
+                return SharedCamelInternalProcessor.this.process(exchange, callback, processor, resultProcessor);
             }
 
             @Override
-            public String toString() {
-                return "Done " + processor;
+            public void process(Exchange exchange) throws Exception {
+                throw new IllegalStateException();
             }
-        }, processor, resultProcessor);
-
-        if (!sync) {
-            awaitManager.await(exchange, latch);
-        }
+        }, exchange);
     }
 
     /**
      * Asynchronous API
      */
-    public boolean process(Exchange exchange, AsyncCallback callback, AsyncProcessor processor, Processor resultProcessor) {
+    public boolean process(Exchange exchange, AsyncCallback ocallback, AsyncProcessor processor, Processor resultProcessor) {
         // ----------------------------------------------------------
         // CAMEL END USER - READ ME FOR DEBUGGING TIPS
         // ----------------------------------------------------------
@@ -121,7 +115,7 @@ public class SharedCamelInternalProcessor {
 
         if (processor == null || !continueProcessing(exchange, processor)) {
             // no processor or we should not continue then we are done
-            callback.done(true);
+            ocallback.done(true);
             return true;
         }
 
@@ -135,13 +129,13 @@ public class SharedCamelInternalProcessor {
                 states[i] = state;
             } catch (Throwable e) {
                 exchange.setException(e);
-                callback.done(true);
+                ocallback.done(true);
                 return true;
             }
         }
 
         // create internal callback which will execute the advices in reverse order when done
-        callback = new InternalCallback(states, exchange, callback, resultProcessor);
+        AsyncCallback callback = new InternalCallback(states, exchange, ocallback, resultProcessor);
 
         // UNIT_OF_WORK_PROCESS_SYNC is @deprecated and we should remove it from Camel 3.0
         Object synchronous = exchange.removeProperty(Exchange.UNIT_OF_WORK_PROCESS_SYNC);
@@ -188,15 +182,17 @@ public class SharedCamelInternalProcessor {
             // CAMEL END USER - DEBUG ME HERE +++ END +++
             // ----------------------------------------------------------
 
-            // execute any after processor work (in current thread, not in the callback)
-            if (uow != null) {
-                uow.afterProcess(processor, exchange, callback, sync);
-            }
+            ReactiveHelper.scheduleLast(() -> {
+                // execute any after processor work (in current thread, not in the callback)
+                if (uow != null) {
+                    uow.afterProcess(processor, exchange, callback, sync);
+                }
 
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Exchange processed and is continued routed {} for exchangeId: {} -> {}",
-                        new Object[]{sync ? "synchronously" : "asynchronously", exchange.getExchangeId(), exchange});
-            }
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Exchange processed and is continued routed asynchronously for exchangeId: {} -> {}",
+                            exchange.getExchangeId(), exchange);
+                }
+            }, "SharedCamelInternalProcessor - UnitOfWork - afterProcess - " + processor + " - " + exchange.getExchangeId());
             return sync;
         }
     }
@@ -249,7 +245,7 @@ public class SharedCamelInternalProcessor {
                 // CAMEL END USER - DEBUG ME HERE +++ START +++
                 // ----------------------------------------------------------
                 // callback must be called
-                callback.done(doneSync);
+                ReactiveHelper.callback(callback);
                 // ----------------------------------------------------------
                 // CAMEL END USER - DEBUG ME HERE +++ END +++
                 // ----------------------------------------------------------

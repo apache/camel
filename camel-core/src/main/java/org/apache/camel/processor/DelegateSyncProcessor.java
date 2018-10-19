@@ -64,9 +64,9 @@ public class DelegateSyncProcessor extends ServiceSupport implements org.apache.
             exchange.setException(e);
         } finally {
             // we are bridging a sync processor as async so callback with true
-            callback.done(true);
+            callback.done(false);
         }
-        return true;
+        return false;
     }
 
     @Override

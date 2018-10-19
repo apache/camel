@@ -82,10 +82,6 @@ public class ThroughputLogger extends ServiceSupport implements AsyncProcessor, 
     }
 
     public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
-    public boolean process(Exchange exchange, AsyncCallback callback) {
         if (startTime == 0) {
             startTime = System.currentTimeMillis();
         }
@@ -98,7 +94,14 @@ public class ThroughputLogger extends ServiceSupport implements AsyncProcessor, 
                 logger.log(lastLogMessage);
             }
         }
+    }
 
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        try {
+            process(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
         callback.done(true);
         return true;
     }

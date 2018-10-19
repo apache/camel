@@ -399,7 +399,7 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
                                 }
                             } catch (Exception e) {
                                 // error resolving endpoint so we should break out
-                                ex.setException(e);
+                                current.setException(e);
                                 break;
                             }
 
@@ -426,7 +426,7 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
 
                     // okay we are completely done with the routing slip
                     // so we need to signal done on the original callback so it can continue
-                    originalCallback.done(false);
+                    cb.done(false);
                 }
             });
         });

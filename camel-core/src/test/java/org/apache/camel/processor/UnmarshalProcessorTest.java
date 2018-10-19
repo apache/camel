@@ -49,6 +49,8 @@ public class UnmarshalProcessorTest extends TestSupport {
         Exchange exchange2 = createExchangeWithBody(context, "body2");
         Processor processor = new UnmarshalProcessor(new MyDataFormat(exchange2));
 
+        exchange.getExchangeId();
+        exchange2.getExchangeId();
         processor.process(exchange);
 
         Exception e = exchange.getException();

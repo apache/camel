@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -48,11 +49,8 @@ public class FileConsumer extends GenericFileConsumer<File> {
         this.endpointPath = endpoint.getConfiguration().getDirectory();
 
         if (endpoint.getExtendedAttributes() != null) {
-            this.extendedAttributes = new HashSet<>();
-
-            for (String attribute : endpoint.getExtendedAttributes().split(",")) {
-                extendedAttributes.add(attribute);
-            }
+            List<String> attributes = Arrays.asList(endpoint.getExtendedAttributes().split(","));
+            this.extendedAttributes = new HashSet<>(attributes);
         }
     }
 
@@ -87,7 +85,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
         }
         List<File> files = Arrays.asList(dirFiles);
         if (getEndpoint().isPreSort()) {
-            Collections.sort(files, (a, b) -> a.getAbsoluteFile().compareTo(a.getAbsoluteFile()));
+            files.sort(Comparator.comparing(File::getAbsoluteFile));
         }
 
         for (File file : dirFiles) {
@@ -99,7 +97,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
             // trace log as Windows/Unix can have different views what the file is?
             if (log.isTraceEnabled()) {
                 log.trace("Found file: {} [isAbsolute: {}, isDirectory: {}, isFile: {}, isHidden: {}]",
-                        new Object[]{file, file.isAbsolute(), file.isDirectory(), file.isFile(), file.isHidden()});
+                        file, file.isAbsolute(), file.isDirectory(), file.isFile(), file.isHidden());
             }
 
             // creates a generic file
@@ -205,13 +203,12 @@ public class FileConsumer extends GenericFileConsumer<File> {
 
         // compute the file path as relative to the starting directory
         File path;
-        String endpointNormalized = FileUtil.normalizePath(endpointPath);
-        if (file.getPath().startsWith(endpointNormalized + File.separator)) {
-            // skip duplicate endpoint path
-            path = new File(StringHelper.after(file.getPath(), endpointNormalized + File.separator));
-        } else {
-            path = new File(file.getPath());
+        String endpointNormalizedSep = FileUtil.normalizePath(endpointPath) + File.separator;
+        String p = file.getPath();
+        if (p.startsWith(endpointNormalizedSep)) {
+            p = p.substring(endpointNormalizedSep.length());
         }
+        path = new File(p);
 
         if (path.getParent() != null) {
             answer.setRelativeFilePath(path.getParent() + File.separator + file.getName());

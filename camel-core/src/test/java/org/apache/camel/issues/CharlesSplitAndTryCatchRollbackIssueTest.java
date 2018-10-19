@@ -73,7 +73,7 @@ public class CharlesSplitAndTryCatchRollbackIssueTest extends ContextTestSupport
             fail("Should thrown an exception");
         } catch (CamelExecutionException e) {
             CamelExchangeException ee = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertTrue(ee.getMessage().startsWith("Sequential processing failed for number 2."));
+            assertTrue(ee.getMessage().startsWith("Multicast processing failed for number 2."));
             RollbackExchangeException re = assertIsInstanceOf(RollbackExchangeException.class, ee.getCause());
             assertTrue(re.getMessage().startsWith("Intended rollback"));
         }
@@ -96,7 +96,7 @@ public class CharlesSplitAndTryCatchRollbackIssueTest extends ContextTestSupport
             fail("Should thrown an exception");
         } catch (CamelExecutionException e) {
             CamelExchangeException ee = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertTrue(ee.getMessage().startsWith("Sequential processing failed for number 3."));
+            assertTrue(ee.getMessage().startsWith("Multicast processing failed for number 3."));
             RollbackExchangeException re = assertIsInstanceOf(RollbackExchangeException.class, ee.getCause());
             assertTrue(re.getMessage().startsWith("Intended rollback"));
         }

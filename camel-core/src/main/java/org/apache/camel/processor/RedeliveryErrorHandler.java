@@ -18,8 +18,6 @@ package org.apache.camel.processor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -39,16 +37,17 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.reifier.ErrorHandlerReifier;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.SubUnitOfWorkCallback;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.ReactiveHelper;
 import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
@@ -83,171 +82,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     protected final boolean customExchangeFormatter;
     protected final Processor onPrepareProcessor;
     protected final Processor onExceptionProcessor;
-
-    /**
-     * Contains the current redelivery data
-     */
-    protected class RedeliveryData {
-        // redelivery state
-        Exchange original;
-        boolean sync = true;
-        int redeliveryCounter;
-        long redeliveryDelay;
-        Predicate retryWhilePredicate;
-        boolean redeliverFromSync;
-
-        // default behavior which can be overloaded on a per exception basis
-        RedeliveryPolicy currentRedeliveryPolicy;
-        Processor failureProcessor;
-        Processor onRedeliveryProcessor;
-        Processor onExceptionProcessor;
-        Predicate handledPredicate;
-        Predicate continuedPredicate;
-        boolean useOriginalInMessage;
-
-        public RedeliveryData() {
-            // init with values from the error handler
-            this.retryWhilePredicate = retryWhilePolicy;
-            this.currentRedeliveryPolicy = redeliveryPolicy;
-            this.onRedeliveryProcessor = redeliveryProcessor;
-            this.onExceptionProcessor = RedeliveryErrorHandler.this.onExceptionProcessor;
-            this.handledPredicate = getDefaultHandledPredicate();
-            this.useOriginalInMessage = useOriginalMessagePolicy;
-        }
-    }
-
-    /**
-     * Task for sleeping during redelivery attempts.
-     * <p/>
-     * This task is for the synchronous blocking. If using async delayed then a scheduled thread pool
-     * is used for sleeping and trigger redeliveries.
-     */
-    private final class RedeliverSleepTask {
-
-        private final RedeliveryPolicy policy;
-        private final long delay;
-
-        RedeliverSleepTask(RedeliveryPolicy policy, long delay) {
-            this.policy = policy;
-            this.delay = delay;
-        }
-
-        public boolean sleep() throws InterruptedException {
-            // for small delays then just sleep
-            if (delay < 1000) {
-                policy.sleep(delay);
-                return true;
-            }
-
-            StopWatch watch = new StopWatch();
-
-            log.debug("Sleeping for: {} millis until attempting redelivery", delay);
-            while (watch.taken() < delay) {
-                // sleep using 1 sec interval
-
-                long delta = delay - watch.taken();
-                long max = Math.min(1000, delta);
-                if (max > 0) {
-                    log.trace("Sleeping for: {} millis until waking up for re-check", max);
-                    Thread.sleep(max);
-                }
-
-                // are we preparing for shutdown then only do redelivery if allowed
-                if (preparingShutdown && !policy.isAllowRedeliveryWhileStopping()) {
-                    log.debug("Rejected redelivery while stopping");
-                    return false;
-                }
-            }
-
-            return true;
-        }
-    }
-
-    /**
-     * Tasks which performs asynchronous redelivery attempts, and being triggered by a
-     * {@link java.util.concurrent.ScheduledExecutorService} to avoid having any threads blocking if a task
-     * has to be delayed before a redelivery attempt is performed.
-     */
-    private final class AsyncRedeliveryTask implements Callable<Boolean> {
-
-        private final Exchange exchange;
-        private final AsyncCallback callback;
-        private final RedeliveryData data;
-
-        AsyncRedeliveryTask(Exchange exchange, AsyncCallback callback, RedeliveryData data) {
-            this.exchange = exchange;
-            this.callback = callback;
-            this.data = data;
-        }
-
-        public Boolean call() throws Exception {
-            // prepare for redelivery
-            prepareExchangeForRedelivery(exchange, data);
-
-            // letting onRedeliver be executed at first
-            deliverToOnRedeliveryProcessor(exchange, data);
-
-            if (log.isTraceEnabled()) {
-                log.trace("Redelivering exchangeId: {} -> {} for Exchange: {}", exchange.getExchangeId(), outputAsync, exchange);
-            }
-
-            // emmit event we are doing redelivery
-            EventHelper.notifyExchangeRedelivery(exchange.getContext(), exchange, data.redeliveryCounter);
-
-            // process the exchange (also redelivery)
-            boolean sync;
-            if (data.redeliverFromSync) {
-                // this redelivery task was scheduled from synchronous, which we forced to be asynchronous from
-                // this error handler, which means we have to invoke the callback with false, to have the callback
-                // be notified when we are done
-                sync = outputAsync.process(exchange, new AsyncCallback() {
-                    public void done(boolean doneSync) {
-                        log.trace("Redelivering exchangeId: {} done sync: {}", exchange.getExchangeId(), doneSync);
-
-                        // mark we are in sync mode now
-                        data.sync = false;
-
-                        // only process if the exchange hasn't failed
-                        // and it has not been handled by the error processor
-                        if (isDone(exchange)) {
-                            callback.done(false);
-                            return;
-                        }
-
-                        // error occurred so loop back around which we do by invoking the processAsyncErrorHandler
-                        processAsyncErrorHandler(exchange, callback, data);
-                    }
-                });
-            } else {
-                // this redelivery task was scheduled from asynchronous, which means we should only
-                // handle when the asynchronous task was done
-                sync = outputAsync.process(exchange, new AsyncCallback() {
-                    public void done(boolean doneSync) {
-                        log.trace("Redelivering exchangeId: {} done sync: {}", exchange.getExchangeId(), doneSync);
-
-                        // this callback should only handle the async case
-                        if (doneSync) {
-                            return;
-                        }
-
-                        // mark we are in async mode now
-                        data.sync = false;
-
-                        // only process if the exchange hasn't failed
-                        // and it has not been handled by the error processor
-                        if (isDone(exchange)) {
-                            callback.done(doneSync);
-                            return;
-                        }
-                        // error occurred so loop back around which we do by invoking the processAsyncErrorHandler
-                        processAsyncErrorHandler(exchange, callback, data);
-                    }
-                });
-            }
-
-            return sync;
-        }
-    }
 
     public RedeliveryErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger,
                                   Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy, Processor deadLetter,
@@ -301,6 +135,25 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         }
     }
 
+    public void process(Exchange exchange) throws Exception {
+        if (output == null) {
+            // no output then just return
+            return;
+        }
+        awaitManager.process(this, exchange);
+    }
+
+    /**
+     * Process the exchange using redelivery error handling.
+     */
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        // Create the redelivery state object for this exchange
+        RedeliveryState state = new RedeliveryState(exchange, callback);
+        // Run it
+        ReactiveHelper.scheduleMain(state);
+        return false;
+    }
+
     /**
      * Allows to change the output of the error handler which are used when optimising the
      * JMX instrumentation to use either an advice or wrapped processor when calling a processor.
@@ -332,59 +185,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         return answer;
     }
 
-    protected boolean isRunAllowed(RedeliveryData data) {
-        // if camel context is forcing a shutdown then do not allow running
-        boolean forceShutdown = camelContext.getShutdownStrategy().forceShutdown(this);
-        if (forceShutdown) {
-            log.trace("isRunAllowed() -> false (Run not allowed as ShutdownStrategy is forcing shutting down)");
-            return false;
-        }
-
-        // redelivery policy can control if redelivery is allowed during stopping/shutdown
-        // but this only applies during a redelivery (counter must > 0)
-        if (data.redeliveryCounter > 0) {
-            if (data.currentRedeliveryPolicy.allowRedeliveryWhileStopping) {
-                log.trace("isRunAllowed() -> true (Run allowed as RedeliverWhileStopping is enabled)");
-                return true;
-            } else if (preparingShutdown) {
-                // we are preparing for shutdown, now determine if we can still run
-                boolean answer = isRunAllowedOnPreparingShutdown();
-                log.trace("isRunAllowed() -> {} (Run not allowed as we are preparing for shutdown)", answer);
-                return answer;
-            }
-        }
-
-        // we cannot run if we are stopping/stopped
-        boolean answer = !isStoppingOrStopped();
-        log.trace("isRunAllowed() -> {} (Run allowed if we are not stopped/stopping)", answer);
-        return answer;
-    }
-
     protected boolean isRunAllowedOnPreparingShutdown() {
         return false;
-    }
-
-    protected boolean isRedeliveryAllowed(RedeliveryData data) {
-        // redelivery policy can control if redelivery is allowed during stopping/shutdown
-        // but this only applies during a redelivery (counter must > 0)
-        if (data.redeliveryCounter > 0) {
-            boolean stopping = isStoppingOrStopped();
-            if (!preparingShutdown && !stopping) {
-                log.trace("isRedeliveryAllowed() -> true (we are not stopping/stopped)");
-                return true;
-            } else {
-                // we are stopping or preparing to shutdown
-                if (data.currentRedeliveryPolicy.allowRedeliveryWhileStopping) {
-                    log.trace("isRedeliveryAllowed() -> true (Redelivery allowed as RedeliverWhileStopping is enabled)");
-                    return true;
-                } else {
-                    log.trace("isRedeliveryAllowed() -> false (Redelivery not allowed as RedeliverWhileStopping is disabled)");
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 
     @Override
@@ -394,202 +196,12 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         preparingShutdown = true;
     }
 
-    public void process(Exchange exchange) throws Exception {
-        if (output == null) {
-            // no output then just return
-            return;
-        }
-
-        // inline org.apache.camel.support.AsyncProcessorHelper.process(org.apache.camel.AsyncProcessor, org.apache.camel.Exchange)
-        // to optimize and reduce stacktrace lengths
-        final CountDownLatch latch = new CountDownLatch(1);
-        boolean sync = process(exchange, new AsyncCallback() {
-            public void done(boolean doneSync) {
-                if (!doneSync) {
-                    awaitManager.countDown(exchange, latch);
-                }
-            }
-        });
-        if (!sync) {
-            awaitManager.await(exchange, latch);
-        }
-    }
-
-    /**
-     * Process the exchange using redelivery error handling.
-     */
-    public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        final RedeliveryData data = new RedeliveryData();
-
-        // do a defensive copy of the original Exchange, which is needed for redelivery so we can ensure the
-        // original Exchange is being redelivered, and not a mutated Exchange
-        data.original = defensiveCopyExchangeIfNeeded(exchange);
-
-        // use looping to have redelivery attempts
-        while (true) {
-
-            // can we still run
-            if (!isRunAllowed(data)) {
-                log.trace("Run not allowed, will reject executing exchange: {}", exchange);
-                if (exchange.getException() == null) {
-                    exchange.setException(new RejectedExecutionException());
-                }
-                // we cannot process so invoke callback
-                callback.done(data.sync);
-                return data.sync;
-            }
-
-            // did previous processing cause an exception?
-            boolean handle = shouldHandleException(exchange);
-            if (handle) {
-                handleException(exchange, data, isDeadLetterChannel());
-                onExceptionOccurred(exchange, data);
-            }
-
-            // compute if we are exhausted, and whether redelivery is allowed
-            boolean exhausted = isExhausted(exchange, data);
-            boolean redeliverAllowed = isRedeliveryAllowed(data);
-
-            // if we are exhausted or redelivery is not allowed, then deliver to failure processor (eg such as DLC)
-            if (!redeliverAllowed || exhausted) {
-                Processor target = null;
-                boolean deliver = true;
-
-                // the unit of work may have an optional callback associated we need to leverage
-                SubUnitOfWorkCallback uowCallback = exchange.getUnitOfWork().getSubUnitOfWorkCallback();
-                if (uowCallback != null) {
-                    // signal to the callback we are exhausted
-                    uowCallback.onExhausted(exchange);
-                    // do not deliver to the failure processor as its been handled by the callback instead
-                    deliver = false;
-                }
-
-                if (deliver) {
-                    // should deliver to failure processor (either from onException or the dead letter channel)
-                    target = data.failureProcessor != null ? data.failureProcessor : deadLetter;
-                }
-                // we should always invoke the deliverToFailureProcessor as it prepares, logs and does a fair
-                // bit of work for exhausted exchanges (its only the target processor which may be null if handled by a savepoint)
-                boolean isDeadLetterChannel = isDeadLetterChannel() && (target == null || target == deadLetter);
-                boolean sync = deliverToFailureProcessor(target, isDeadLetterChannel, exchange, data, callback);
-                // we are breaking out
-                return sync;
-            }
-
-            if (data.redeliveryCounter > 0) {
-                // calculate delay
-                data.redeliveryDelay = determineRedeliveryDelay(exchange, data.currentRedeliveryPolicy, data.redeliveryDelay, data.redeliveryCounter);
-
-                if (data.redeliveryDelay > 0) {
-                    // okay there is a delay so create a scheduled task to have it executed in the future
-
-                    if (data.currentRedeliveryPolicy.isAsyncDelayedRedelivery() && !exchange.isTransacted()) {
-
-                        // we are doing a redelivery then a thread pool must be configured (see the doStart method)
-                        ObjectHelper.notNull(executorService, "Redelivery is enabled but ExecutorService has not been configured.", this);
-
-                        // let the RedeliverTask be the logic which tries to redeliver the Exchange which we can used a scheduler to
-                        // have it being executed in the future, or immediately
-                        // we are continuing asynchronously
-
-                        // mark we are routing async from now and that this redelivery task came from a synchronous routing
-                        data.sync = false;
-                        data.redeliverFromSync = true;
-                        AsyncRedeliveryTask task = new AsyncRedeliveryTask(exchange, callback, data);
-
-                        // schedule the redelivery task
-                        if (log.isTraceEnabled()) {
-                            log.trace("Scheduling redelivery task to run in {} millis for exchangeId: {}", data.redeliveryDelay, exchange.getExchangeId());
-                        }
-                        executorService.schedule(task, data.redeliveryDelay, TimeUnit.MILLISECONDS);
-
-                        return false;
-                    } else {
-                        // async delayed redelivery was disabled or we are transacted so we must be synchronous
-                        // as the transaction manager requires to execute in the same thread context
-                        try {
-                            // we are doing synchronous redelivery and use thread sleep, so we keep track using a counter how many are sleeping
-                            redeliverySleepCounter.incrementAndGet();
-                            RedeliverSleepTask task = new RedeliverSleepTask(data.currentRedeliveryPolicy, data.redeliveryDelay);
-                            boolean complete = task.sleep();
-                            redeliverySleepCounter.decrementAndGet();
-                            if (!complete) {
-                                // the task was rejected
-                                exchange.setException(new RejectedExecutionException("Redelivery not allowed while stopping"));
-                                // mark the exchange as redelivery exhausted so the failure processor / dead letter channel can process the exchange
-                                exchange.setProperty(Exchange.REDELIVERY_EXHAUSTED, Boolean.TRUE);
-                                // jump to start of loop which then detects that we are failed and exhausted
-                                continue;
-                            }
-                        } catch (InterruptedException e) {
-                            redeliverySleepCounter.decrementAndGet();
-                            // we was interrupted so break out
-                            exchange.setException(e);
-                            // mark the exchange to stop continue routing when interrupted
-                            // as we do not want to continue routing (for example a task has been cancelled)
-                            exchange.setProperty(Exchange.ROUTE_STOP, Boolean.TRUE);
-                            callback.done(data.sync);
-                            return data.sync;
-                        }
-                    }
-                }
-
-                // prepare for redelivery
-                prepareExchangeForRedelivery(exchange, data);
-
-                // letting onRedeliver be executed
-                deliverToOnRedeliveryProcessor(exchange, data);
-
-                // emmit event we are doing redelivery
-                EventHelper.notifyExchangeRedelivery(exchange.getContext(), exchange, data.redeliveryCounter);
-            }
-
-            // process the exchange (also redelivery)
-            boolean sync = outputAsync.process(exchange, new AsyncCallback() {
-                public void done(boolean sync) {
-                    // this callback should only handle the async case
-                    if (sync) {
-                        return;
-                    }
-
-                    // mark we are in async mode now
-                    data.sync = false;
-
-                    // if we are done then notify callback and exit
-                    if (isDone(exchange)) {
-                        callback.done(sync);
-                        return;
-                    }
-
-                    // error occurred so loop back around which we do by invoking the processAsyncErrorHandler
-                    // method which takes care of this in a asynchronous manner
-                    processAsyncErrorHandler(exchange, callback, data);
-                }
-            });
-
-            if (!sync) {
-                // the remainder of the Exchange is being processed asynchronously so we should return
-                return false;
-            }
-            // we continue to route synchronously
-
-            // if we are done then notify callback and exit
-            boolean done = isDone(exchange);
-            if (done) {
-                callback.done(true);
-                return true;
-            }
-
-            // error occurred so loop back around.....
-        }
-    }
-
     /**
      * <p>Determines the redelivery delay time by first inspecting the Message header {@link Exchange#REDELIVERY_DELAY}
      * and if not present, defaulting to {@link RedeliveryPolicy#calculateRedeliveryDelay(long, int)}</p>
      *
-     * <p>In order to prevent manipulation of the RedeliveryData state, the values of {@link RedeliveryData#redeliveryDelay}
-     * and {@link RedeliveryData#redeliveryCounter} are copied in.</p>
+     * <p>In order to prevent manipulation of the RedeliveryData state, the values of {@link RedeliveryState#redeliveryDelay}
+     * and {@link RedeliveryState#redeliveryCounter} are copied in.</p>
      *
      * @param exchange The current exchange in question.
      * @param redeliveryPolicy The RedeliveryPolicy to use in the calculation.
@@ -607,87 +219,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             log.debug("Redelivery delay is {} from Message Header [{}]", delay, Exchange.REDELIVERY_DELAY);
         }
         return delay;
-    }
-
-    /**
-     * This logic is only executed if we have to retry redelivery asynchronously, which have to be done from the callback.
-     * <p/>
-     * And therefore the logic is a bit different than the synchronous <tt>processErrorHandler</tt> method which can use
-     * a loop based redelivery technique. However this means that these two methods in overall have to be in <b>sync</b>
-     * in terms of logic.
-     */
-    protected void processAsyncErrorHandler(final Exchange exchange, final AsyncCallback callback, final RedeliveryData data) {
-        // can we still run
-        if (!isRunAllowed(data)) {
-            log.trace("Run not allowed, will reject executing exchange: {}", exchange);
-            if (exchange.getException() == null) {
-                exchange.setException(new RejectedExecutionException());
-            }
-            callback.done(data.sync);
-            return;
-        }
-
-        // did previous processing cause an exception?
-        boolean handle = shouldHandleException(exchange);
-        if (handle) {
-            handleException(exchange, data, isDeadLetterChannel());
-            onExceptionOccurred(exchange, data);
-        }
-
-        // compute if we are exhausted or not
-        boolean exhausted = isExhausted(exchange, data);
-        if (exhausted) {
-            Processor target = null;
-            boolean deliver = true;
-
-            // the unit of work may have an optional callback associated we need to leverage
-            UnitOfWork uow = exchange.getUnitOfWork();
-            if (uow != null) {
-                SubUnitOfWorkCallback uowCallback = uow.getSubUnitOfWorkCallback();
-                if (uowCallback != null) {
-                    // signal to the callback we are exhausted
-                    uowCallback.onExhausted(exchange);
-                    // do not deliver to the failure processor as its been handled by the callback instead
-                    deliver = false;
-                }
-            }
-
-            if (deliver) {
-                // should deliver to failure processor (either from onException or the dead letter channel)
-                target = data.failureProcessor != null ? data.failureProcessor : deadLetter;
-            }
-            // we should always invoke the deliverToFailureProcessor as it prepares, logs and does a fair
-            // bit of work for exhausted exchanges (its only the target processor which may be null if handled by a savepoint)
-            boolean isDeadLetterChannel = isDeadLetterChannel() && target == deadLetter;
-            deliverToFailureProcessor(target, isDeadLetterChannel, exchange, data, callback);
-            // we are breaking out
-            return;
-        }
-
-        if (data.redeliveryCounter > 0) {
-            // we are doing a redelivery then a thread pool must be configured (see the doStart method)
-            ObjectHelper.notNull(executorService, "Redelivery is enabled but ExecutorService has not been configured.", this);
-
-            // let the RedeliverTask be the logic which tries to redeliver the Exchange which we can used a scheduler to
-            // have it being executed in the future, or immediately
-            // Note: the data.redeliverFromSync should be kept as is, in case it was enabled previously
-            // to ensure the callback will continue routing from where we left
-            AsyncRedeliveryTask task = new AsyncRedeliveryTask(exchange, callback, data);
-
-            // calculate the redelivery delay
-            data.redeliveryDelay = determineRedeliveryDelay(exchange, data.currentRedeliveryPolicy, data.redeliveryDelay, data.redeliveryCounter);
-
-            if (data.redeliveryDelay > 0) {
-                // schedule the redelivery task
-                if (log.isTraceEnabled()) {
-                    log.trace("Scheduling redelivery task to run in {} millis for exchangeId: {}", data.redeliveryDelay, exchange.getExchangeId());
-                }
-                executorService.schedule(task, data.redeliveryDelay, TimeUnit.MILLISECONDS);
-            } else {
-                // execute the task immediately
-                executorService.submit(task);
-            }
-        }
     }
 
     /**
@@ -790,292 +321,486 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         return null;
     }
 
-    protected void prepareExchangeForContinue(Exchange exchange, RedeliveryData data, boolean isDeadLetterChannel) {
-        Exception caught = exchange.getException();
-
-        // we continue so clear any exceptions
-        exchange.setException(null);
-        // clear rollback flags
-        exchange.setProperty(Exchange.ROLLBACK_ONLY, null);
-        // reset cached streams so they can be read again
-        MessageHelper.resetStreamCache(exchange.getIn());
-
-        // its continued then remove traces of redelivery attempted and caught exception
-        exchange.getIn().removeHeader(Exchange.REDELIVERED);
-        exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
-        exchange.getIn().removeHeader(Exchange.REDELIVERY_MAX_COUNTER);
-        exchange.removeProperty(Exchange.FAILURE_HANDLED);
-        // keep the Exchange.EXCEPTION_CAUGHT as property so end user knows the caused exception
-
-        // create log message
-        String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
-        msg = msg + ". Exhausted after delivery attempt: " + data.redeliveryCounter + " caught: " + caught;
-        msg = msg + ". Handled and continue routing.";
-
-        // log that we failed but want to continue
-        logFailedDelivery(false, false, false, true, isDeadLetterChannel, exchange, msg, data, null);
-    }
-
-    protected void prepareExchangeForRedelivery(Exchange exchange, RedeliveryData data) {
-        if (!redeliveryEnabled) {
-            throw new IllegalStateException("Redelivery is not enabled on " + this + ". Make sure you have configured the error handler properly.");
-        }
-        // there must be a defensive copy of the exchange
-        ObjectHelper.notNull(data.original, "Defensive copy of Exchange is null", this);
-
-        // okay we will give it another go so clear the exception so we can try again
-        exchange.setException(null);
-
-        // clear rollback flags
-        exchange.setProperty(Exchange.ROLLBACK_ONLY, null);
-
-        // TODO: We may want to store these as state on RedeliveryData so we keep them in case end user messes with Exchange
-        // and then put these on the exchange when doing a redelivery / fault processor
-
-        // preserve these headers
-        Integer redeliveryCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
-        Integer redeliveryMaxCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_MAX_COUNTER, Integer.class);
-        Boolean redelivered = exchange.getIn().getHeader(Exchange.REDELIVERED, Boolean.class);
-
-        // we are redelivering so copy from original back to exchange
-        exchange.getIn().copyFrom(data.original.getIn());
-        exchange.setOut(null);
-        // reset cached streams so they can be read again
-        MessageHelper.resetStreamCache(exchange.getIn());
-
-        // put back headers
-        if (redeliveryCounter != null) {
-            exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, redeliveryCounter);
-        }
-        if (redeliveryMaxCounter != null) {
-            exchange.getIn().setHeader(Exchange.REDELIVERY_MAX_COUNTER, redeliveryMaxCounter);
-        }
-        if (redelivered != null) {
-            exchange.getIn().setHeader(Exchange.REDELIVERED, redelivered);
-        }
-    }
-
-    protected void handleException(Exchange exchange, RedeliveryData data, boolean isDeadLetterChannel) {
-        Exception e = exchange.getException();
-        // e is never null
-
-        Throwable previous = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
-        if (previous != null && previous != e) {
-            // a 2nd exception was thrown while handling a previous exception
-            // so we need to add the previous as suppressed by the new exception
-            // see also FatalFallbackErrorHandler
-            Throwable[] suppressed = e.getSuppressed();
-            boolean found = false;
-            for (Throwable t : suppressed) {
-                if (t == previous) {
-                    found = true;
-                }
-            }
-            if (!found) {
-                e.addSuppressed(previous);
-            }
-        }
-
-        // store the original caused exception in a property, so we can restore it later
-        exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
-
-        // find the error handler to use (if any)
-        OnExceptionDefinition exceptionPolicy = getExceptionPolicy(exchange, e);
-        if (exceptionPolicy != null) {
-            data.currentRedeliveryPolicy = ErrorHandlerReifier.createRedeliveryPolicy(exceptionPolicy, exchange.getContext(), data.currentRedeliveryPolicy);
-            data.handledPredicate = exceptionPolicy.getHandledPolicy();
-            data.continuedPredicate = exceptionPolicy.getContinuedPolicy();
-            data.retryWhilePredicate = exceptionPolicy.getRetryWhilePolicy();
-            data.useOriginalInMessage = exceptionPolicy.getUseOriginalMessagePolicy() != null && exceptionPolicy.getUseOriginalMessagePolicy();
-
-            // route specific failure handler?
-            Processor processor = null;
-            UnitOfWork uow = exchange.getUnitOfWork();
-            if (uow != null && uow.getRouteContext() != null) {
-                String routeId = uow.getRouteContext().getRoute().getId();
-                processor = exceptionPolicy.getErrorHandler(routeId);
-            } else if (!exceptionPolicy.getErrorHandlers().isEmpty()) {
-                // note this should really not happen, but we have this code as a fail safe
-                // to be backwards compatible with the old behavior
-                log.warn("Cannot determine current route from Exchange with id: {}, will fallback and use first error handler.", exchange.getExchangeId());
-                processor = exceptionPolicy.getErrorHandlers().iterator().next();
-            }
-            if (processor != null) {
-                data.failureProcessor = processor;
-            }
-
-            // route specific on redelivery?
-            processor = exceptionPolicy.getOnRedelivery();
-            if (processor != null) {
-                data.onRedeliveryProcessor = processor;
-            }
-            // route specific on exception occurred?
-            processor = exceptionPolicy.getOnExceptionOccurred();
-            if (processor != null) {
-                data.onExceptionProcessor = processor;
-            }
-        }
-
-        // only log if not failure handled or not an exhausted unit of work
-        if (!ExchangeHelper.isFailureHandled(exchange) && !ExchangeHelper.isUnitOfWorkExhausted(exchange)) {
-            String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange)
-                    + ". On delivery attempt: " + data.redeliveryCounter + " caught: " + e;
-            logFailedDelivery(true, false, false, false, isDeadLetterChannel, exchange, msg, data, e);
-        }
-
-        data.redeliveryCounter = incrementRedeliveryCounter(exchange, e, data);
-    }
-
     /**
-     * Gives an optional configured OnExceptionOccurred processor a chance to process just after an exception
-     * was thrown while processing the Exchange. This allows to execute the processor at the same time the exception was thrown.
+     * Contains the current redelivery state
      */
-    protected void onExceptionOccurred(Exchange exchange, final RedeliveryData data) {
-        if (data.onExceptionProcessor == null) {
-            return;
-        }
-
-        // run this synchronously as its just a Processor
-        try {
-            if (log.isTraceEnabled()) {
-                log.trace("OnExceptionOccurred processor {} is processing Exchange: {} due exception occurred", data.onExceptionProcessor, exchange);
-            }
-            data.onExceptionProcessor.process(exchange);
-        } catch (Throwable e) {
-            // we dont not want new exception to override existing, so log it as a WARN
-            log.warn("Error during processing OnExceptionOccurred. This exception is ignored.", e);
-        }
-        log.trace("OnExceptionOccurred processor done");
-    }
-
-    /**
-     * Gives an optional configured redelivery processor a chance to process before the Exchange
-     * will be redelivered. This can be used to alter the Exchange.
-     */
-    protected void deliverToOnRedeliveryProcessor(final Exchange exchange, final RedeliveryData data) {
-        if (data.onRedeliveryProcessor == null) {
-            return;
-        }
-
-        if (log.isTraceEnabled()) {
-            log.trace("Redelivery processor {} is processing Exchange: {} before its redelivered",
-                    data.onRedeliveryProcessor, exchange);
-        }
-
-        // run this synchronously as its just a Processor
-        try {
-            data.onRedeliveryProcessor.process(exchange);
-        } catch (Throwable e) {
-            exchange.setException(e);
-        }
-        log.trace("Redelivery processor done");
-    }
-
-    /**
-     * All redelivery attempts failed so move the exchange to the dead letter queue
-     */
-    protected boolean deliverToFailureProcessor(final Processor processor, final boolean isDeadLetterChannel, final Exchange exchange,
-                                                final RedeliveryData data, final AsyncCallback callback) {
+    protected class RedeliveryState implements Runnable {
+        Exchange original;
+        Exchange exchange;
+        AsyncCallback callback;
         boolean sync = true;
+        int redeliveryCounter;
+        long redeliveryDelay;
+        Predicate retryWhilePredicate;
+        boolean redeliverFromSync;
 
-        Exception caught = exchange.getException();
+        // default behavior which can be overloaded on a per exception basis
+        RedeliveryPolicy currentRedeliveryPolicy;
+        Processor failureProcessor;
+        Processor onRedeliveryProcessor;
+        Processor onExceptionProcessor;
+        Predicate handledPredicate;
+        Predicate continuedPredicate;
+        boolean useOriginalInMessage;
 
-        // we did not success with the redelivery so now we let the failure processor handle it
-        // clear exception as we let the failure processor handle it
-        exchange.setException(null);
+        public RedeliveryState(Exchange exchange, AsyncCallback callback) {
+            // init with values from the error handler
+            this.retryWhilePredicate = retryWhilePolicy;
+            this.currentRedeliveryPolicy = redeliveryPolicy;
+            this.handledPredicate = getDefaultHandledPredicate();
+            this.useOriginalInMessage = useOriginalMessagePolicy;
+            this.onRedeliveryProcessor = redeliveryProcessor;
+            this.onExceptionProcessor = RedeliveryErrorHandler.this.onExceptionProcessor;
 
-        final boolean shouldHandle = shouldHandle(exchange, data);
-        final boolean shouldContinue = shouldContinue(exchange, data);
-
-        // regard both handled or continued as being handled
-        boolean handled = false;
-
-        // always handle if dead letter channel
-        boolean handleOrContinue = isDeadLetterChannel || shouldHandle || shouldContinue;
-        if (handleOrContinue) {
-            // its handled then remove traces of redelivery attempted
-            exchange.getIn().removeHeader(Exchange.REDELIVERED);
-            exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
-            exchange.getIn().removeHeader(Exchange.REDELIVERY_MAX_COUNTER);
-            exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
-
-            // and remove traces of rollback only and uow exhausted markers
-            exchange.removeProperty(Exchange.ROLLBACK_ONLY);
-            exchange.removeProperty(Exchange.UNIT_OF_WORK_EXHAUSTED);
-
-            handled = true;
-        } else {
-            // must decrement the redelivery counter as we didn't process the redelivery but is
-            // handling by the failure handler. So we must -1 to not let the counter be out-of-sync
-            decrementRedeliveryCounter(exchange);
+            // do a defensive copy of the original Exchange, which is needed for redelivery so we can ensure the
+            // original Exchange is being redelivered, and not a mutated Exchange
+            this.original = defensiveCopyExchangeIfNeeded(exchange);
+            this.exchange = exchange;
+            this.callback = callback;
         }
 
-        // we should allow using the failure processor if we should not continue
-        // or in case of continue then the failure processor is NOT a dead letter channel
-        // because you can continue and still let the failure processor do some routing
-        // before continue in the main route.
-        boolean allowFailureProcessor = !shouldContinue || !isDeadLetterChannel;
+        public String toString() {
+            return "Step[" + exchange.getExchangeId() + "," + RedeliveryErrorHandler.this + "]";
+        }
 
-        if (allowFailureProcessor && processor != null) {
+        /**
+         * Redelivery logic.
+         */
+        public void run() {
+            // can we still run
+            if (!isRunAllowed()) {
+                log.trace("Run not allowed, will reject executing exchange: {}", exchange);
+                if (exchange.getException() == null) {
+                    exchange.setException(new RejectedExecutionException());
+                }
+                callback.done(false);
+                return;
+            }
 
-            // prepare original IN body if it should be moved instead of current body
-            if (data.useOriginalInMessage) {
-                log.trace("Using the original IN message instead of current");
-                Message original = ExchangeHelper.getOriginalInMessage(exchange);
-                exchange.setIn(original);
-                if (exchange.hasOut()) {
-                    log.trace("Removing the out message to avoid some uncertain behavior");
-                    exchange.setOut(null);
+            // did previous processing cause an exception?
+            boolean handle = shouldHandleException(exchange);
+            if (handle) {
+                handleException();
+                onExceptionOccurred();
+            }
+
+            // compute if we are exhausted or not
+            boolean exhausted = isExhausted(exchange);
+            boolean redeliverAllowed = isRedeliveryAllowed();
+
+            // if we are exhausted or redelivery is not allowed, then deliver to failure processor (eg such as DLC)
+            if (!redeliverAllowed || exhausted) {
+                Processor target = null;
+                boolean deliver = true;
+
+                // the unit of work may have an optional callback associated we need to leverage
+                UnitOfWork uow = exchange.getUnitOfWork();
+                if (uow != null) {
+                    SubUnitOfWorkCallback uowCallback = uow.getSubUnitOfWorkCallback();
+                    if (uowCallback != null) {
+                        // signal to the callback we are exhausted
+                        uowCallback.onExhausted(exchange);
+                        // do not deliver to the failure processor as its been handled by the callback instead
+                        deliver = false;
+                    }
+                }
+
+                if (deliver) {
+                    // should deliver to failure processor (either from onException or the dead letter channel)
+                    target = failureProcessor != null ? failureProcessor : deadLetter;
+                }
+                // we should always invoke the deliverToFailureProcessor as it prepares, logs and does a fair
+                // bit of work for exhausted exchanges (its only the target processor which may be null if handled by a savepoint)
+                boolean isDeadLetterChannel = isDeadLetterChannel() && target == deadLetter;
+                deliverToFailureProcessor(target, isDeadLetterChannel, exchange);
+                // we are breaking out
+            }
+            else if (redeliveryCounter > 0) {
+                // calculate the redelivery delay
+                redeliveryDelay = determineRedeliveryDelay(exchange, currentRedeliveryPolicy, redeliveryDelay, redeliveryCounter);
+
+                if (redeliveryDelay > 0) {
+                    // okay there is a delay so create a scheduled task to have it executed in the future
+
+                    if (currentRedeliveryPolicy.isAsyncDelayedRedelivery() && !exchange.isTransacted()) {
+
+                        // we are doing a redelivery then a thread pool must be configured (see the doStart method)
+                        ObjectHelper.notNull(executorService, "Redelivery is enabled but ExecutorService has not been configured.", this);
+
+                        // schedule the redelivery task
+                        if (log.isTraceEnabled()) {
+                            log.trace("Scheduling redelivery task to run in {} millis for exchangeId: {}", redeliveryDelay, exchange.getExchangeId());
+                        }
+                        executorService.schedule(() -> ReactiveHelper.schedule(this::redeliver), redeliveryDelay, TimeUnit.MILLISECONDS);
+
+                    } else {
+                        // async delayed redelivery was disabled or we are transacted so we must be synchronous
+                        // as the transaction manager requires to execute in the same thread context
+                        try {
+                            // we are doing synchronous redelivery and use thread sleep, so we keep track using a counter how many are sleeping
+                            redeliverySleepCounter.incrementAndGet();
+                            boolean complete = sleep();
+                            redeliverySleepCounter.decrementAndGet();
+                            if (!complete) {
+                                // the task was rejected
+                                exchange.setException(new RejectedExecutionException("Redelivery not allowed while stopping"));
+                                // mark the exchange as redelivery exhausted so the failure processor / dead letter channel can process the exchange
+                                exchange.setProperty(Exchange.REDELIVERY_EXHAUSTED, Boolean.TRUE);
+                                // jump to start of loop which then detects that we are failed and exhausted
+                                ReactiveHelper.schedule(this);
+                            } else {
+                                ReactiveHelper.schedule(this::redeliver);
+                            }
+                        } catch (InterruptedException e) {
+                            redeliverySleepCounter.decrementAndGet();
+                            // we was interrupted so break out
+                            exchange.setException(e);
+                            // mark the exchange to stop continue routing when interrupted
+                            // as we do not want to continue routing (for example a task has been cancelled)
+                            exchange.setProperty(Exchange.ROUTE_STOP, Boolean.TRUE);
+                            ReactiveHelper.callback(callback);
+                        }
+                    }
+                } else {
+                    // execute the task immediately
+                    ReactiveHelper.schedule(this::redeliver);
+                }
+            }
+            else {
+                // Simple delivery
+                outputAsync.process(exchange, doneSync -> {
+                    // only process if the exchange hasn't failed
+                    // and it has not been handled by the error processor
+                    if (isDone(exchange)) {
+                        ReactiveHelper.callback(callback);
+                    } else {
+                        // error occurred so loop back around which we do by invoking the processAsyncErrorHandler
+                        ReactiveHelper.schedule(this);
+                    }
+                });
+            }
+        }
+
+        protected boolean isRunAllowed() {
+            // if camel context is forcing a shutdown then do not allow running
+            boolean forceShutdown = camelContext.getShutdownStrategy().forceShutdown(RedeliveryErrorHandler.this);
+            if (forceShutdown) {
+                log.trace("isRunAllowed() -> false (Run not allowed as ShutdownStrategy is forcing shutting down)");
+                return false;
+            }
+
+            // redelivery policy can control if redelivery is allowed during stopping/shutdown
+            // but this only applies during a redelivery (counter must > 0)
+            if (redeliveryCounter > 0) {
+                if (currentRedeliveryPolicy.allowRedeliveryWhileStopping) {
+                    log.trace("isRunAllowed() -> true (Run allowed as RedeliverWhileStopping is enabled)");
+                    return true;
+                } else if (preparingShutdown) {
+                    // we are preparing for shutdown, now determine if we can still run
+                    boolean answer = isRunAllowedOnPreparingShutdown();
+                    log.trace("isRunAllowed() -> {} (Run not allowed as we are preparing for shutdown)", answer);
+                    return answer;
                 }
             }
 
+            // we cannot run if we are stopping/stopped
+            boolean answer = !isStoppingOrStopped();
+            log.trace("isRunAllowed() -> {} (Run allowed if we are not stopped/stopping)", answer);
+            return answer;
+        }
+
+        protected boolean isRedeliveryAllowed() {
+            // redelivery policy can control if redelivery is allowed during stopping/shutdown
+            // but this only applies during a redelivery (counter must > 0)
+            if (redeliveryCounter > 0) {
+                boolean stopping = isStoppingOrStopped();
+                if (!preparingShutdown && !stopping) {
+                    log.trace("isRedeliveryAllowed() -> true (we are not stopping/stopped)");
+                    return true;
+                } else {
+                    // we are stopping or preparing to shutdown
+                    if (currentRedeliveryPolicy.allowRedeliveryWhileStopping) {
+                        log.trace("isRedeliveryAllowed() -> true (Redelivery allowed as RedeliverWhileStopping is enabled)");
+                        return true;
+                    } else {
+                        log.trace("isRedeliveryAllowed() -> false (Redelivery not allowed as RedeliverWhileStopping is disabled)");
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        protected void redeliver() {
+            // prepare for redelivery
+            prepareExchangeForRedelivery();
+
+            // letting onRedeliver be executed at first
+            deliverToOnRedeliveryProcessor();
+
+            if (log.isTraceEnabled()) {
+                log.trace("Redelivering exchangeId: {} -> {} for Exchange: {}", exchange.getExchangeId(), outputAsync, exchange);
+            }
+
+            // emmit event we are doing redelivery
+            EventHelper.notifyExchangeRedelivery(exchange.getContext(), exchange, redeliveryCounter);
+
+            // process the exchange (also redelivery)
+            outputAsync.process(exchange, doneSync -> {
+                log.trace("Redelivering exchangeId: {}", exchange.getExchangeId());
+
+                // only process if the exchange hasn't failed
+                // and it has not been handled by the error processor
+                if (isDone(exchange)) {
+                    ReactiveHelper.callback(callback);
+                    return;
+                } else {
+                    // error occurred so loop back around which we do by invoking the processAsyncErrorHandler
+                    ReactiveHelper.schedule(this);
+                }
+            });
+        }
+
+        protected void prepareExchangeForContinue(Exchange exchange, boolean isDeadLetterChannel) {
+            Exception caught = exchange.getException();
+
+            // we continue so clear any exceptions
+            exchange.setException(null);
+            // clear rollback flags
+            exchange.setProperty(Exchange.ROLLBACK_ONLY, null);
             // reset cached streams so they can be read again
             MessageHelper.resetStreamCache(exchange.getIn());
 
-            // invoke custom on prepare
-            if (onPrepareProcessor != null) {
-                try {
-                    log.trace("OnPrepare processor {} is processing Exchange: {}", onPrepareProcessor, exchange);
-                    onPrepareProcessor.process(exchange);
-                } catch (Exception e) {
-                    // a new exception was thrown during prepare
-                    exchange.setException(e);
-                }
+            // its continued then remove traces of redelivery attempted and caught exception
+            exchange.getIn().removeHeader(Exchange.REDELIVERED);
+            exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
+            exchange.getIn().removeHeader(Exchange.REDELIVERY_MAX_COUNTER);
+            exchange.removeProperty(Exchange.FAILURE_HANDLED);
+            // keep the Exchange.EXCEPTION_CAUGHT as property so end user knows the caused exception
+
+            // create log message
+            String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
+            msg = msg + ". Exhausted after delivery attempt: " + redeliveryCounter + " caught: " + caught;
+            msg = msg + ". Handled and continue routing.";
+
+            // log that we failed but want to continue
+            logFailedDelivery(false, false, false, true, isDeadLetterChannel, exchange, msg, null);
+        }
+
+        protected void prepareExchangeForRedelivery() {
+            if (!redeliveryEnabled) {
+                throw new IllegalStateException("Redelivery is not enabled on " + RedeliveryErrorHandler.this + ". Make sure you have configured the error handler properly.");
             }
+            // there must be a defensive copy of the exchange
+            ObjectHelper.notNull(this.original, "Defensive copy of Exchange is null", RedeliveryErrorHandler.this);
 
-            log.trace("Failure processor {} is processing Exchange: {}", processor, exchange);
+            // okay we will give it another go so clear the exception so we can try again
+            exchange.setException(null);
 
-            // store the last to endpoint as the failure endpoint
-            exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
-            // and store the route id so we know in which route we failed
-            UnitOfWork uow = exchange.getUnitOfWork();
-            if (uow != null && uow.getRouteContext() != null) {
-                exchange.setProperty(Exchange.FAILURE_ROUTE_ID, uow.getRouteContext().getRoute().getId());
+            // clear rollback flags
+            exchange.setProperty(Exchange.ROLLBACK_ONLY, null);
+
+            // TODO: We may want to store these as state on RedeliveryData so we keep them in case end user messes with Exchange
+            // and then put these on the exchange when doing a redelivery / fault processor
+
+            // preserve these headers
+            Integer redeliveryCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
+            Integer redeliveryMaxCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_MAX_COUNTER, Integer.class);
+            Boolean redelivered = exchange.getIn().getHeader(Exchange.REDELIVERED, Boolean.class);
+
+            // we are redelivering so copy from original back to exchange
+            exchange.getIn().copyFrom(this.original.getIn());
+            exchange.setOut(null);
+            // reset cached streams so they can be read again
+            MessageHelper.resetStreamCache(exchange.getIn());
+
+            // put back headers
+            if (redeliveryCounter != null) {
+                exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, redeliveryCounter);
             }
+            if (redeliveryMaxCounter != null) {
+                exchange.getIn().setHeader(Exchange.REDELIVERY_MAX_COUNTER, redeliveryMaxCounter);
+            }
+            if (redelivered != null) {
+                exchange.getIn().setHeader(Exchange.REDELIVERED, redelivered);
+            }
+        }
 
-            // fire event as we had a failure processor to handle it, which there is a event for
-            final boolean deadLetterChannel = processor == deadLetter;
+        protected void handleException() {
+            Exception e = exchange.getException();
+            // e is never null
 
-            EventHelper.notifyExchangeFailureHandling(exchange.getContext(), exchange, processor, deadLetterChannel, deadLetterUri);
-
-            // the failure processor could also be asynchronous
-            AsyncProcessor afp = AsyncProcessorConverterHelper.convert(processor);
-            sync = afp.process(exchange, new AsyncCallback() {
-                public void done(boolean sync) {
-                    log.trace("Failure processor done: {} processing Exchange: {}", processor, exchange);
-                    try {
-                        prepareExchangeAfterFailure(exchange, data, isDeadLetterChannel, shouldHandle, shouldContinue);
-                        // fire event as we had a failure processor to handle it, which there is a event for
-                        EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor, deadLetterChannel, deadLetterUri);
-                    } finally {
-                        // if the fault was handled asynchronously, this should be reflected in the callback as well
-                        data.sync &= sync;
-                        callback.done(data.sync);
+            Throwable previous = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
+            if (previous != null && previous != e) {
+                // a 2nd exception was thrown while handling a previous exception
+                // so we need to add the previous as suppressed by the new exception
+                // see also FatalFallbackErrorHandler
+                Throwable[] suppressed = e.getSuppressed();
+                boolean found = false;
+                for (Throwable t : suppressed) {
+                    if (t == previous) {
+                        found = true;
                     }
                 }
-            });
-        } else {
+                if (!found) {
+                    e.addSuppressed(previous);
+                }
+            }
+
+            // store the original caused exception in a property, so we can restore it later
+            exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
+
+            // find the error handler to use (if any)
+            OnExceptionDefinition exceptionPolicy = getExceptionPolicy(exchange, e);
+            if (exceptionPolicy != null) {
+                currentRedeliveryPolicy = ErrorHandlerReifier.createRedeliveryPolicy(exceptionPolicy, exchange.getContext(), currentRedeliveryPolicy);
+                handledPredicate = exceptionPolicy.getHandledPolicy();
+                continuedPredicate = exceptionPolicy.getContinuedPolicy();
+                retryWhilePredicate = exceptionPolicy.getRetryWhilePolicy();
+                useOriginalInMessage = exceptionPolicy.getUseOriginalMessagePolicy() != null && exceptionPolicy.getUseOriginalMessagePolicy();
+
+                // route specific failure handler?
+                Processor processor = null;
+                UnitOfWork uow = exchange.getUnitOfWork();
+                if (uow != null && uow.getRouteContext() != null) {
+                    String routeId = uow.getRouteContext().getRoute().getId();
+                    processor = exceptionPolicy.getErrorHandler(routeId);
+                } else if (!exceptionPolicy.getErrorHandlers().isEmpty()) {
+                    // note this should really not happen, but we have this code as a fail safe
+                    // to be backwards compatible with the old behavior
+                    log.warn("Cannot determine current route from Exchange with id: {}, will fallback and use first error handler.", exchange.getExchangeId());
+                    processor = exceptionPolicy.getErrorHandlers().iterator().next();
+                }
+                if (processor != null) {
+                    failureProcessor = processor;
+                }
+
+                // route specific on redelivery?
+                processor = exceptionPolicy.getOnRedelivery();
+                if (processor != null) {
+                    onRedeliveryProcessor = processor;
+                }
+                // route specific on exception occurred?
+                processor = exceptionPolicy.getOnExceptionOccurred();
+                if (processor != null) {
+                    onExceptionProcessor = processor;
+                }
+            }
+
+            // only log if not failure handled or not an exhausted unit of work
+            if (!ExchangeHelper.isFailureHandled(exchange) && !ExchangeHelper.isUnitOfWorkExhausted(exchange)) {
+                String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange)
+                        + ". On delivery attempt: " + redeliveryCounter + " caught: " + e;
+                logFailedDelivery(true, false, false, false, isDeadLetterChannel(), exchange, msg, e);
+            }
+
+            redeliveryCounter = incrementRedeliveryCounter(exchange, e);
+        }
+
+        /**
+         * Gives an optional configured OnExceptionOccurred processor a chance to process just after an exception
+         * was thrown while processing the Exchange. This allows to execute the processor at the same time the exception was thrown.
+         */
+        protected void onExceptionOccurred() {
+            if (onExceptionProcessor == null) {
+                return;
+            }
+
+            // run this synchronously as its just a Processor
             try {
+                if (log.isTraceEnabled()) {
+                    log.trace("OnExceptionOccurred processor {} is processing Exchange: {} due exception occurred", onExceptionProcessor, exchange);
+                }
+                onExceptionProcessor.process(exchange);
+            } catch (Throwable e) {
+                // we dont not want new exception to override existing, so log it as a WARN
+                log.warn("Error during processing OnExceptionOccurred. This exception is ignored.", e);
+            }
+            log.trace("OnExceptionOccurred processor done");
+        }
+
+        /**
+         * Gives an optional configured redelivery processor a chance to process before the Exchange
+         * will be redelivered. This can be used to alter the Exchange.
+         */
+        protected void deliverToOnRedeliveryProcessor() {
+            if (onRedeliveryProcessor == null) {
+                return;
+            }
+
+            if (log.isTraceEnabled()) {
+                log.trace("Redelivery processor {} is processing Exchange: {} before its redelivered",
+                        onRedeliveryProcessor, exchange);
+            }
+
+            // run this synchronously as its just a Processor
+            try {
+                onRedeliveryProcessor.process(exchange);
+            } catch (Throwable e) {
+                exchange.setException(e);
+            }
+            log.trace("Redelivery processor done");
+        }
+
+        /**
+         * All redelivery attempts failed so move the exchange to the dead letter queue
+         */
+        protected void deliverToFailureProcessor(final Processor processor, final boolean isDeadLetterChannel, final Exchange exchange) {
+            Exception caught = exchange.getException();
+
+            // we did not success with the redelivery so now we let the failure processor handle it
+            // clear exception as we let the failure processor handle it
+            exchange.setException(null);
+
+            final boolean shouldHandle = shouldHandle(exchange);
+            final boolean shouldContinue = shouldContinue(exchange);
+
+            // regard both handled or continued as being handled
+            boolean handled = false;
+
+            // always handle if dead letter channel
+            boolean handleOrContinue = isDeadLetterChannel || shouldHandle || shouldContinue;
+            if (handleOrContinue) {
+                // its handled then remove traces of redelivery attempted
+                exchange.getIn().removeHeader(Exchange.REDELIVERED);
+                exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
+                exchange.getIn().removeHeader(Exchange.REDELIVERY_MAX_COUNTER);
+                exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
+
+                // and remove traces of rollback only and uow exhausted markers
+                exchange.removeProperty(Exchange.ROLLBACK_ONLY);
+                exchange.removeProperty(Exchange.UNIT_OF_WORK_EXHAUSTED);
+
+                handled = true;
+            } else {
+                // must decrement the redelivery counter as we didn't process the redelivery but is
+                // handling by the failure handler. So we must -1 to not let the counter be out-of-sync
+                decrementRedeliveryCounter(exchange);
+            }
+
+            // we should allow using the failure processor if we should not continue
+            // or in case of continue then the failure processor is NOT a dead letter channel
+            // because you can continue and still let the failure processor do some routing
+            // before continue in the main route.
+            boolean allowFailureProcessor = !shouldContinue || !isDeadLetterChannel;
+
+            if (allowFailureProcessor && processor != null) {
+
+                // prepare original IN body if it should be moved instead of current body
+                if (useOriginalInMessage) {
+                    log.trace("Using the original IN message instead of current");
+                    Message original = ExchangeHelper.getOriginalInMessage(exchange);
+                    exchange.setIn(original);
+                    if (exchange.hasOut()) {
+                        log.trace("Removing the out message to avoid some uncertain behavior");
+                        exchange.setOut(null);
+                    }
+                }
+
+                // reset cached streams so they can be read again
+                MessageHelper.resetStreamCache(exchange.getIn());
+
                 // invoke custom on prepare
                 if (onPrepareProcessor != null) {
                     try {
@@ -1086,320 +811,390 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                         exchange.setException(e);
                     }
                 }
-                // no processor but we need to prepare after failure as well
-                prepareExchangeAfterFailure(exchange, data, isDeadLetterChannel, shouldHandle, shouldContinue);
-            } finally {
-                // callback we are done
-                callback.done(data.sync);
-            }
-        }
 
-        // create log message
-        String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
-        msg = msg + ". Exhausted after delivery attempt: " + data.redeliveryCounter + " caught: " + caught;
-        if (processor != null) {
-            if (isDeadLetterChannel && deadLetterUri != null) {
-                msg = msg + ". Handled by DeadLetterChannel: [" + URISupport.sanitizeUri(deadLetterUri) + "]";
-            } else {
-                msg = msg + ". Processed by failure processor: " + processor;
-            }
-        }
+                log.trace("Failure processor {} is processing Exchange: {}", processor, exchange);
 
-        // log that we failed delivery as we are exhausted
-        logFailedDelivery(false, false, handled, false, isDeadLetterChannel, exchange, msg, data, null);
-
-        return sync;
-    }
-
-    protected void prepareExchangeAfterFailure(final Exchange exchange, final RedeliveryData data, final boolean isDeadLetterChannel,
-                                               final boolean shouldHandle, final boolean shouldContinue) {
-
-        Exception newException = exchange.getException();
-
-        // we could not process the exchange so we let the failure processor handled it
-        ExchangeHelper.setFailureHandled(exchange);
-
-        // honor if already set a handling
-        boolean alreadySet = exchange.getProperty(Exchange.ERRORHANDLER_HANDLED) != null;
-        if (alreadySet) {
-            boolean handled = exchange.getProperty(Exchange.ERRORHANDLER_HANDLED, Boolean.class);
-            log.trace("This exchange has already been marked for handling: {}", handled);
-            if (!handled) {
-                // exception not handled, put exception back in the exchange
-                exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
-                // and put failure endpoint back as well
+                // store the last to endpoint as the failure endpoint
                 exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
-            }
-            return;
-        }
+                // and store the route id so we know in which route we failed
+                UnitOfWork uow = exchange.getUnitOfWork();
+                if (uow != null && uow.getRouteContext() != null) {
+                    exchange.setProperty(Exchange.FAILURE_ROUTE_ID, uow.getRouteContext().getRoute().getId());
+                }
 
-        // dead letter channel is special
-        if (shouldContinue) {
-            log.trace("This exchange is continued: {}", exchange);
-            // okay we want to continue then prepare the exchange for that as well
-            prepareExchangeForContinue(exchange, data, isDeadLetterChannel);
-        } else if (shouldHandle) {
-            log.trace("This exchange is handled so its marked as not failed: {}", exchange);
-            exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, Boolean.TRUE);
-        } else {
-            // okay the redelivery policy are not explicit set to true, so we should allow to check for some
-            // special situations when using dead letter channel
-            if (isDeadLetterChannel) {
+                // fire event as we had a failure processor to handle it, which there is a event for
+                final boolean deadLetterChannel = processor == deadLetter;
 
-                // DLC is always handling the first thrown exception,
-                // but if its a new exception then use the configured option
-                boolean handled = newException == null || deadLetterHandleNewException;
+                EventHelper.notifyExchangeFailureHandling(exchange.getContext(), exchange, processor, deadLetterChannel, deadLetterUri);
 
-                // when using DLC then log new exception whether its being handled or not, as otherwise it may appear as
-                // the DLC swallow new exceptions by default (which is by design to ensure the DLC always complete,
-                // to avoid causing endless poison messages that fails forever)
-                if (newException != null && data.currentRedeliveryPolicy.isLogNewException()) {
-                    String uri = URISupport.sanitizeUri(deadLetterUri);
-                    String msg = "New exception occurred during processing by the DeadLetterChannel[" + uri + "] due " + newException.getMessage();
-                    if (handled) {
-                        msg += ". The new exception is being handled as deadLetterHandleNewException=true.";
-                    } else {
-                        msg += ". The new exception is not handled as deadLetterHandleNewException=false.";
+                // the failure processor could also be asynchronous
+                AsyncProcessor afp = AsyncProcessorConverterHelper.convert(processor);
+                afp.process(exchange, sync -> {
+                    log.trace("Failure processor done: {} processing Exchange: {}", processor, exchange);
+                    try {
+                        prepareExchangeAfterFailure(exchange, isDeadLetterChannel, shouldHandle, shouldContinue);
+                        // fire event as we had a failure processor to handle it, which there is a event for
+                        EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor, deadLetterChannel, deadLetterUri);
+                    } finally {
+                        // if the fault was handled asynchronously, this should be reflected in the callback as well
+                        ReactiveHelper.callback(callback);
                     }
-                    logFailedDelivery(false, true, handled, false, true, exchange, msg, data, newException);
+                });
+            } else {
+                try {
+                    // invoke custom on prepare
+                    if (onPrepareProcessor != null) {
+                        try {
+                            log.trace("OnPrepare processor {} is processing Exchange: {}", onPrepareProcessor, exchange);
+                            onPrepareProcessor.process(exchange);
+                        } catch (Exception e) {
+                            // a new exception was thrown during prepare
+                            exchange.setException(e);
+                        }
+                    }
+                    // no processor but we need to prepare after failure as well
+                    prepareExchangeAfterFailure(exchange, isDeadLetterChannel, shouldHandle, shouldContinue);
+                } finally {
+                    // callback we are done
+                    ReactiveHelper.callback(callback);
                 }
+            }
 
-                if (handled) {
-                    log.trace("This exchange is handled so its marked as not failed: {}", exchange);
-                    exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, Boolean.TRUE);
-                    return;
+            // create log message
+            String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
+            msg = msg + ". Exhausted after delivery attempt: " + redeliveryCounter + " caught: " + caught;
+            if (processor != null) {
+                if (isDeadLetterChannel && deadLetterUri != null) {
+                    msg = msg + ". Handled by DeadLetterChannel: [" + URISupport.sanitizeUri(deadLetterUri) + "]";
+                } else {
+                    msg = msg + ". Processed by failure processor: " + processor;
                 }
             }
 
-            // not handled by default
-            prepareExchangeAfterFailureNotHandled(exchange);
-        }
-    }
-
-    private void prepareExchangeAfterFailureNotHandled(Exchange exchange) {
-        log.trace("This exchange is not handled or continued so its marked as failed: {}", exchange);
-        // exception not handled, put exception back in the exchange
-        exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, Boolean.FALSE);
-        exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
-        // and put failure endpoint back as well
-        exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
-        // and store the route id so we know in which route we failed
-        UnitOfWork uow = exchange.getUnitOfWork();
-        if (uow != null && uow.getRouteContext() != null) {
-            exchange.setProperty(Exchange.FAILURE_ROUTE_ID, uow.getRouteContext().getRoute().getId());
-        }
-    }
-
-    private void logFailedDelivery(boolean shouldRedeliver, boolean newException, boolean handled, boolean continued, boolean isDeadLetterChannel,
-                                   Exchange exchange, String message, RedeliveryData data, Throwable e) {
-        if (logger == null) {
-            return;
+            // log that we failed delivery as we are exhausted
+            logFailedDelivery(false, false, handled, false, isDeadLetterChannel, exchange, msg, null);
         }
 
-        if (!exchange.isRollbackOnly()) {
-            if (newException && !data.currentRedeliveryPolicy.isLogNewException()) {
-                // do not log new exception
+        protected void prepareExchangeAfterFailure(final Exchange exchange, final boolean isDeadLetterChannel,
+                                                   final boolean shouldHandle, final boolean shouldContinue) {
+
+            Exception newException = exchange.getException();
+
+            // we could not process the exchange so we let the failure processor handled it
+            ExchangeHelper.setFailureHandled(exchange);
+
+            // honor if already set a handling
+            boolean alreadySet = exchange.getProperty(Exchange.ERRORHANDLER_HANDLED) != null;
+            if (alreadySet) {
+                boolean handled = exchange.getProperty(Exchange.ERRORHANDLER_HANDLED, Boolean.class);
+                log.trace("This exchange has already been marked for handling: {}", handled);
+                if (!handled) {
+                    // exception not handled, put exception back in the exchange
+                    exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
+                    // and put failure endpoint back as well
+                    exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
+                }
                 return;
             }
 
-            // if we should not rollback, then check whether logging is enabled
+            // dead letter channel is special
+            if (shouldContinue) {
+                log.trace("This exchange is continued: {}", exchange);
+                // okay we want to continue then prepare the exchange for that as well
+                prepareExchangeForContinue(exchange, isDeadLetterChannel);
+            } else if (shouldHandle) {
+                log.trace("This exchange is handled so its marked as not failed: {}", exchange);
+                exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, Boolean.TRUE);
+            } else {
+                // okay the redelivery policy are not explicit set to true, so we should allow to check for some
+                // special situations when using dead letter channel
+                if (isDeadLetterChannel) {
 
-            if (!newException && handled && !data.currentRedeliveryPolicy.isLogHandled()) {
-                // do not log handled
-                return;
-            }
+                    // DLC is always handling the first thrown exception,
+                    // but if its a new exception then use the configured option
+                    boolean handled = newException == null || deadLetterHandleNewException;
 
-            if (!newException && continued && !data.currentRedeliveryPolicy.isLogContinued()) {
-                // do not log handled
-                return;
-            }
+                    // when using DLC then log new exception whether its being handled or not, as otherwise it may appear as
+                    // the DLC swallow new exceptions by default (which is by design to ensure the DLC always complete,
+                    // to avoid causing endless poison messages that fails forever)
+                    if (newException != null && currentRedeliveryPolicy.isLogNewException()) {
+                        String uri = URISupport.sanitizeUri(deadLetterUri);
+                        String msg = "New exception occurred during processing by the DeadLetterChannel[" + uri + "] due " + newException.getMessage();
+                        if (handled) {
+                            msg += ". The new exception is being handled as deadLetterHandleNewException=true.";
+                        } else {
+                            msg += ". The new exception is not handled as deadLetterHandleNewException=false.";
+                        }
+                        logFailedDelivery(false, true, handled, false, true, exchange, msg, newException);
+                    }
 
-            if (!newException && shouldRedeliver && !data.currentRedeliveryPolicy.isLogRetryAttempted()) {
-                // do not log retry attempts
-                return;
-            }
-
-            if (!newException && shouldRedeliver) {
-                if (data.currentRedeliveryPolicy.isLogRetryAttempted()) {
-                    if ((data.currentRedeliveryPolicy.getRetryAttemptedLogInterval() > 1) && (data.redeliveryCounter % data.currentRedeliveryPolicy.getRetryAttemptedLogInterval()) != 0) {
-                        // do not log retry attempt because it is excluded by the retryAttemptedLogInterval
+                    if (handled) {
+                        log.trace("This exchange is handled so its marked as not failed: {}", exchange);
+                        exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, Boolean.TRUE);
                         return;
                     }
-                } else {
+                }
+
+                // not handled by default
+                prepareExchangeAfterFailureNotHandled(exchange);
+            }
+        }
+
+        private void prepareExchangeAfterFailureNotHandled(Exchange exchange) {
+            log.trace("This exchange is not handled or continued so its marked as failed: {}", exchange);
+            // exception not handled, put exception back in the exchange
+            exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, Boolean.FALSE);
+            exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
+            // and put failure endpoint back as well
+            exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
+            // and store the route id so we know in which route we failed
+            UnitOfWork uow = exchange.getUnitOfWork();
+            if (uow != null && uow.getRouteContext() != null) {
+                exchange.setProperty(Exchange.FAILURE_ROUTE_ID, uow.getRouteContext().getRoute().getId());
+            }
+        }
+
+        private void logFailedDelivery(boolean shouldRedeliver, boolean newException, boolean handled, boolean continued, boolean isDeadLetterChannel,
+                                       Exchange exchange, String message, Throwable e) {
+            if (logger == null) {
+                return;
+            }
+
+            if (!exchange.isRollbackOnly()) {
+                if (newException && !currentRedeliveryPolicy.isLogNewException()) {
+                    // do not log new exception
+                    return;
+                }
+
+                // if we should not rollback, then check whether logging is enabled
+
+                if (!newException && handled && !currentRedeliveryPolicy.isLogHandled()) {
+                    // do not log handled
+                    return;
+                }
+
+                if (!newException && continued && !currentRedeliveryPolicy.isLogContinued()) {
+                    // do not log handled
+                    return;
+                }
+
+                if (!newException && shouldRedeliver && !currentRedeliveryPolicy.isLogRetryAttempted()) {
                     // do not log retry attempts
                     return;
                 }
+
+                if (!newException && shouldRedeliver) {
+                    if (currentRedeliveryPolicy.isLogRetryAttempted()) {
+                        if ((currentRedeliveryPolicy.getRetryAttemptedLogInterval() > 1) && (redeliveryCounter % currentRedeliveryPolicy.getRetryAttemptedLogInterval()) != 0) {
+                            // do not log retry attempt because it is excluded by the retryAttemptedLogInterval
+                            return;
+                        }
+                    } else {
+                        // do not log retry attempts
+                        return;
+                    }
+                }
+
+                if (!newException && !shouldRedeliver && !currentRedeliveryPolicy.isLogExhausted()) {
+                    // do not log exhausted
+                    return;
+                }
             }
 
-            if (!newException && !shouldRedeliver && !data.currentRedeliveryPolicy.isLogExhausted()) {
-                // do not log exhausted
-                return;
+            LoggingLevel newLogLevel;
+            boolean logStackTrace;
+            if (exchange.isRollbackOnly()) {
+                newLogLevel = currentRedeliveryPolicy.getRetriesExhaustedLogLevel();
+                logStackTrace = currentRedeliveryPolicy.isLogStackTrace();
+            } else if (shouldRedeliver) {
+                newLogLevel = currentRedeliveryPolicy.getRetryAttemptedLogLevel();
+                logStackTrace = currentRedeliveryPolicy.isLogRetryStackTrace();
+            } else {
+                newLogLevel = currentRedeliveryPolicy.getRetriesExhaustedLogLevel();
+                logStackTrace = currentRedeliveryPolicy.isLogStackTrace();
             }
-        }
-
-        LoggingLevel newLogLevel;
-        boolean logStackTrace;
-        if (exchange.isRollbackOnly()) {
-            newLogLevel = data.currentRedeliveryPolicy.getRetriesExhaustedLogLevel();
-            logStackTrace = data.currentRedeliveryPolicy.isLogStackTrace();
-        } else if (shouldRedeliver) {
-            newLogLevel = data.currentRedeliveryPolicy.getRetryAttemptedLogLevel();
-            logStackTrace = data.currentRedeliveryPolicy.isLogRetryStackTrace();
-        } else {
-            newLogLevel = data.currentRedeliveryPolicy.getRetriesExhaustedLogLevel();
-            logStackTrace = data.currentRedeliveryPolicy.isLogStackTrace();
-        }
-        if (e == null) {
-            e = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
-        }
-
-        if (newException) {
-            // log at most WARN level
-            if (newLogLevel == LoggingLevel.ERROR) {
-                newLogLevel = LoggingLevel.WARN;
+            if (e == null) {
+                e = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
             }
-            String msg = message;
-            if (msg == null) {
-                msg = "New exception " + ExchangeHelper.logIds(exchange);
-                // special for logging the new exception
-                Throwable cause = e;
+
+            if (newException) {
+                // log at most WARN level
+                if (newLogLevel == LoggingLevel.ERROR) {
+                    newLogLevel = LoggingLevel.WARN;
+                }
+                String msg = message;
+                if (msg == null) {
+                    msg = "New exception " + ExchangeHelper.logIds(exchange);
+                    // special for logging the new exception
+                    Throwable cause = e;
+                    if (cause != null) {
+                        msg = msg + " due: " + cause.getMessage();
+                    }
+                }
+
+                if (e != null && logStackTrace) {
+                    logger.log(msg, e, newLogLevel);
+                } else {
+                    logger.log(msg, newLogLevel);
+                }
+            } else if (exchange.isRollbackOnly()) {
+                String msg = "Rollback " + ExchangeHelper.logIds(exchange);
+                Throwable cause = exchange.getException() != null ? exchange.getException() : exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
                 if (cause != null) {
                     msg = msg + " due: " + cause.getMessage();
                 }
-            }
 
-            if (e != null && logStackTrace) {
-                logger.log(msg, e, newLogLevel);
+                // should we include message history
+                if (!shouldRedeliver && currentRedeliveryPolicy.isLogExhaustedMessageHistory()) {
+                    // only use the exchange formatter if we should log exhausted message body (and if using a custom formatter then always use it)
+                    ExchangeFormatter formatter = customExchangeFormatter
+                            ? exchangeFormatter : (currentRedeliveryPolicy.isLogExhaustedMessageBody() || camelContext.isLogExhaustedMessageBody() ? exchangeFormatter : null);
+                    String routeStackTrace = MessageHelper.dumpMessageHistoryStacktrace(exchange, formatter, false);
+                    if (routeStackTrace != null) {
+                        msg = msg + "\n" + routeStackTrace;
+                    }
+                }
+
+                if (newLogLevel == LoggingLevel.ERROR) {
+                    // log intended rollback on maximum WARN level (not ERROR)
+                    logger.log(msg, LoggingLevel.WARN);
+                } else {
+                    // otherwise use the desired logging level
+                    logger.log(msg, newLogLevel);
+                }
             } else {
-                logger.log(msg, newLogLevel);
-            }
-        } else if (exchange.isRollbackOnly()) {
-            String msg = "Rollback " + ExchangeHelper.logIds(exchange);
-            Throwable cause = exchange.getException() != null ? exchange.getException() : exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
-            if (cause != null) {
-                msg = msg + " due: " + cause.getMessage();
-            }
+                String msg = message;
+                // should we include message history
+                if (!shouldRedeliver && currentRedeliveryPolicy.isLogExhaustedMessageHistory()) {
+                    // only use the exchange formatter if we should log exhausted message body (and if using a custom formatter then always use it)
+                    ExchangeFormatter formatter = customExchangeFormatter
+                            ? exchangeFormatter : (currentRedeliveryPolicy.isLogExhaustedMessageBody() || camelContext.isLogExhaustedMessageBody() ? exchangeFormatter : null);
+                    String routeStackTrace = MessageHelper.dumpMessageHistoryStacktrace(exchange, formatter, e != null && logStackTrace);
+                    if (routeStackTrace != null) {
+                        msg = msg + "\n" + routeStackTrace;
+                    }
+                }
 
-            // should we include message history
-            if (!shouldRedeliver && data.currentRedeliveryPolicy.isLogExhaustedMessageHistory()) {
-                // only use the exchange formatter if we should log exhausted message body (and if using a custom formatter then always use it)
-                ExchangeFormatter formatter = customExchangeFormatter
-                    ? exchangeFormatter : (data.currentRedeliveryPolicy.isLogExhaustedMessageBody() || camelContext.isLogExhaustedMessageBody() ? exchangeFormatter : null);
-                String routeStackTrace = MessageHelper.dumpMessageHistoryStacktrace(exchange, formatter, false);
-                if (routeStackTrace != null) {
-                    msg = msg + "\n" + routeStackTrace;
+                if (e != null && logStackTrace) {
+                    logger.log(msg, e, newLogLevel);
+                } else {
+                    logger.log(msg, newLogLevel);
                 }
             }
-
-            if (newLogLevel == LoggingLevel.ERROR) {
-                // log intended rollback on maximum WARN level (no ERROR)
-                logger.log(msg, LoggingLevel.WARN);
-            } else {
-                // otherwise use the desired logging level
-                logger.log(msg, newLogLevel);
-            }
-        } else {
-            String msg = message;
-            // should we include message history
-            if (!shouldRedeliver && data.currentRedeliveryPolicy.isLogExhaustedMessageHistory()) {
-                // only use the exchange formatter if we should log exhausted message body (and if using a custom formatter then always use it)
-                ExchangeFormatter formatter = customExchangeFormatter
-                    ? exchangeFormatter : (data.currentRedeliveryPolicy.isLogExhaustedMessageBody() || camelContext.isLogExhaustedMessageBody() ? exchangeFormatter : null);
-                String routeStackTrace = MessageHelper.dumpMessageHistoryStacktrace(exchange, formatter, e != null && logStackTrace);
-                if (routeStackTrace != null) {
-                    msg = msg + "\n" + routeStackTrace;
-                }
-            }
-
-            if (e != null && logStackTrace) {
-                logger.log(msg, e, newLogLevel);
-            } else {
-                logger.log(msg, newLogLevel);
-            }
-        }
-    }
-
-    /**
-     * Determines whether the exchange is exhausted (or anyway marked to not continue such as rollback).
-     * <p/>
-     * If the exchange is exhausted, then we will not continue processing, but let the
-     * failure processor deal with the exchange.
-     *
-     * @param exchange the current exchange
-     * @param data     the redelivery data
-     * @return <tt>false</tt> to continue/redeliver, or <tt>true</tt> to exhaust.
-     */
-    private boolean isExhausted(Exchange exchange, RedeliveryData data) {
-        // if marked as rollback only then do not continue/redeliver
-        boolean exhausted = exchange.getProperty(Exchange.REDELIVERY_EXHAUSTED, false, Boolean.class);
-        if (exhausted) {
-            log.trace("This exchange is marked as redelivery exhausted: {}", exchange);
-            return true;
         }
 
-        // if marked as rollback only then do not continue/redeliver
-        boolean rollbackOnly = exchange.getProperty(Exchange.ROLLBACK_ONLY, false, Boolean.class);
-        if (rollbackOnly) {
-            log.trace("This exchange is marked as rollback only, so forcing it to be exhausted: {}", exchange);
-            return true;
+        /**
+         * Determines whether the exchange is exhausted (or anyway marked to not continue such as rollback).
+         * <p/>
+         * If the exchange is exhausted, then we will not continue processing, but let the
+         * failure processor deal with the exchange.
+         *
+         * @param exchange the current exchange
+         * @return <tt>false</tt> to continue/redeliver, or <tt>true</tt> to exhaust.
+         */
+        private boolean isExhausted(Exchange exchange) {
+            // if marked as rollback only then do not continue/redeliver
+            boolean exhausted = exchange.getProperty(Exchange.REDELIVERY_EXHAUSTED, false, Boolean.class);
+            if (exhausted) {
+                log.trace("This exchange is marked as redelivery exhausted: {}", exchange);
+                return true;
+            }
+
+            // if marked as rollback only then do not continue/redeliver
+            boolean rollbackOnly = exchange.getProperty(Exchange.ROLLBACK_ONLY, false, Boolean.class);
+            if (rollbackOnly) {
+                log.trace("This exchange is marked as rollback only, so forcing it to be exhausted: {}", exchange);
+                return true;
+            }
+            // its the first original call so continue
+            if (redeliveryCounter == 0) {
+                return false;
+            }
+            // its a potential redelivery so determine if we should redeliver or not
+            boolean redeliver = currentRedeliveryPolicy.shouldRedeliver(exchange, redeliveryCounter, retryWhilePredicate);
+            return !redeliver;
         }
-        // its the first original call so continue
-        if (data.redeliveryCounter == 0) {
+
+        /**
+         * Determines whether or not to continue if we are exhausted.
+         *
+         * @param exchange the current exchange
+         * @return <tt>true</tt> to continue, or <tt>false</tt> to exhaust.
+         */
+        private boolean shouldContinue(Exchange exchange) {
+            if (continuedPredicate != null) {
+                return continuedPredicate.matches(exchange);
+            }
+            // do not continue by default
             return false;
         }
-        // its a potential redelivery so determine if we should redeliver or not
-        boolean redeliver = data.currentRedeliveryPolicy.shouldRedeliver(exchange, data.redeliveryCounter, data.retryWhilePredicate);
-        return !redeliver;
-    }
 
-    /**
-     * Determines whether or not to continue if we are exhausted.
-     *
-     * @param exchange the current exchange
-     * @param data     the redelivery data
-     * @return <tt>true</tt> to continue, or <tt>false</tt> to exhaust.
-     */
-    private boolean shouldContinue(Exchange exchange, RedeliveryData data) {
-        if (data.continuedPredicate != null) {
-            return data.continuedPredicate.matches(exchange);
+        /**
+         * Determines whether or not to handle if we are exhausted.
+         *
+         * @param exchange the current exchange
+         * @return <tt>true</tt> to handle, or <tt>false</tt> to exhaust.
+         */
+        private boolean shouldHandle(Exchange exchange) {
+            if (handledPredicate != null) {
+                return handledPredicate.matches(exchange);
+            }
+            // do not handle by default
+            return false;
         }
-        // do not continue by default
-        return false;
-    }
 
-    /**
-     * Determines whether or not to handle if we are exhausted.
-     *
-     * @param exchange the current exchange
-     * @param data     the redelivery data
-     * @return <tt>true</tt> to handle, or <tt>false</tt> to exhaust.
-     */
-    private boolean shouldHandle(Exchange exchange, RedeliveryData data) {
-        if (data.handledPredicate != null) {
-            return data.handledPredicate.matches(exchange);
+        /**
+         * Increments the redelivery counter and adds the redelivered flag if the
+         * message has been redelivered
+         */
+        private int incrementRedeliveryCounter(Exchange exchange, Throwable e) {
+            Message in = exchange.getIn();
+            Integer counter = in.getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
+            int next = counter != null ? counter + 1 : 1;
+            in.setHeader(Exchange.REDELIVERY_COUNTER, next);
+            in.setHeader(Exchange.REDELIVERED, Boolean.TRUE);
+            // if maximum redeliveries is used, then provide that information as well
+            if (currentRedeliveryPolicy.getMaximumRedeliveries() > 0) {
+                in.setHeader(Exchange.REDELIVERY_MAX_COUNTER, currentRedeliveryPolicy.getMaximumRedeliveries());
+            }
+            return next;
         }
-        // do not handle by default
-        return false;
-    }
 
-    /**
-     * Increments the redelivery counter and adds the redelivered flag if the
-     * message has been redelivered
-     */
-    private int incrementRedeliveryCounter(Exchange exchange, Throwable e, RedeliveryData data) {
-        Message in = exchange.getIn();
-        Integer counter = in.getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
-        int next = 1;
-        if (counter != null) {
-            next = counter + 1;
+        /**
+         * Method for sleeping during redelivery attempts.
+         * <p/>
+         * This task is for the synchronous blocking. If using async delayed then a scheduled thread pool
+         * is used for sleeping and trigger redeliveries.
+         */
+        public boolean sleep() throws InterruptedException {
+            // for small delays then just sleep
+            if (redeliveryDelay < 1000) {
+                currentRedeliveryPolicy.sleep(redeliveryDelay);
+                return true;
+            }
+
+            StopWatch watch = new StopWatch();
+
+            log.debug("Sleeping for: {} millis until attempting redelivery", redeliveryDelay);
+            while (watch.taken() < redeliveryDelay) {
+                // sleep using 1 sec interval
+
+                long delta = redeliveryDelay - watch.taken();
+                long max = Math.min(1000, delta);
+                if (max > 0) {
+                    log.trace("Sleeping for: {} millis until waking up for re-check", max);
+                    Thread.sleep(max);
+                }
+
+                // are we preparing for shutdown then only do redelivery if allowed
+                if (preparingShutdown && !currentRedeliveryPolicy.isAllowRedeliveryWhileStopping()) {
+                    log.debug("Rejected redelivery while stopping");
+                    return false;
+                }
+            }
+
+            return true;
         }
-        in.setHeader(Exchange.REDELIVERY_COUNTER, next);
-        in.setHeader(Exchange.REDELIVERED, Boolean.TRUE);
-        // if maximum redeliveries is used, then provide that information as well
-        if (data.currentRedeliveryPolicy.getMaximumRedeliveries() > 0) {
-            in.setHeader(Exchange.REDELIVERY_MAX_COUNTER, data.currentRedeliveryPolicy.getMaximumRedeliveries());
-        }
-        return next;
     }
 
     /**
