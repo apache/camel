@@ -18,7 +18,7 @@
 
 * [User Guide](#user-guide)
 * Manual
-* Books
+* [Books](books.adoc)
 * Tutorials
 * [Examples](#examples)
 * Cookbook
