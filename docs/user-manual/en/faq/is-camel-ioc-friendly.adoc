@@ -1,0 +1,61 @@
+[[IsCamelIoCfriendly-IsCamelIoCfriendly]]
+=== Is Camel IoC friendly?
+
+The quick answer is, yes absolutely! :smile:
+Now for the longer answer...
+
+[[IsCamelIoCfriendly-Spring]]
+==== Spring
+
+In particular we've gone out of our way to make Camel work great with
+link:../spring.adoc[Spring] and to reuse all of Spring 2.x's power. For
+example:
+
+* the CamelContext, Components and Endpoints and their dependent beans
+can be configured in Spring using Spring custom XML namespaces or
+traditional bean/property elements
+* we implement a spring BeanPostProcessor to allow POJOs to be injected
+with Camel resources along with powerful
+link:../bean-integration.adoc[Bean Integration] which allows any
+spring-injected POJO to be used inside Camel along with full support
+for Spring Remoting.
+
+What we've tried to do is implement the
+link:../inversion-of-control-with-smart-defaults.adoc[Inversion Of Control With Smart Defaults]
+pattern; namely that you can configure Camel in a
+single XML element (or very small amont of XML) to get going, then you
+can overload default configurations to add more explicit configuration
+as and when you need it.
+
+[[IsCamelIoCfriendly-OtherIoCcontainers]]
+==== Other IoC containers
+
+Spring is clearly the leading IoC container; though there are some
+others such as Guice, OSGi, Pico, HiveMind & Plexus so we have made the
+IoC pluggable in Camel.
+For example camel-core has no dependencies on anything other than
+commons-logging; camel-spring contains all the link:../spring.adoc[Spring]
+integration, etc.
+
+We hope to have closer integration to other IoC containers, particularly
+with Guice. The current mechanism for hooking into other IoC containers
+are:
+
+* link:../injector.adoc[Injector] is used to perform dependency injection
+on a type when sing the
+link:../inversion-of-control-with-smart-defaults.adoc[Inversion Of Control
+With Smart Defaults] pattern
+* link:../registry.adoc[Registry] this strategy is used to abstract away
+the ApplicationContext such as to use JNDI or OSGi to lookup services on
+demand
+
+[[IsCamelIoCfriendly-UsingnoIoCcontainer]]
+==== Using no IoC container
+
+Some folks don't even use an IoC container and thats fine too :smile:
+For example you can just use camel-core with pure Java and then wire
+things together using just Java code (or some scripting language, etc.).
+
+By default when referring to components, endpoints or beans by name,
+it'll try look them up in the JNDI context and we've got a POJO based
+JNDI provier if you need one of those too.

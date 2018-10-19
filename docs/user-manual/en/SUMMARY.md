@@ -11,7 +11,7 @@
 * Download
 * [Getting Started](getting-started.adoc)
 * [Longer Getting Started Guide](book-getting-started.adoc)
-* FAQ
+* [FAQ](faq.adoc)
 * [Legal Notice](notice.md)
 
 ## Documentation
@@ -41,9 +41,9 @@
 * [Working with Camel and Spring](spring.adoc)
 * [Working with Camel and Guice](guice.adoc)
 * [Working with Camel and Karaf](karaf.adoc)
-* [How do I configure endpoints?](how-do-i-configure-endpoints.adoc)
+* [How do I configure endpoints?](faq/how-do-i-configure-endpoints.adoc)
 * [Bean Integration](bean-integration.adoc)
-* [Configuring Camel](how-do-i-add-a-component.adoc)
+* [Configuring Camel](configuring-camel.adoc)
 * [Configuring route startup ordering and autostartup]
 * [Graceful Shutdown]
 * [AsyncProcessorAwaitManager] for insight into the routing engine when it has been forced to block threads while exchanges are being processed asynchronous
@@ -52,7 +52,7 @@
 * [Tutorials]
 * [Examples](examples.adoc)
 * [Testing](testing.adoc)
-* [Xml Configuration]
+* [XML Configuration](xml-configuration.adoc)
 * [Using CamelProxy] for how to use proxies for clients to easily invoke camel routes without them knowing
 * [Camel Maven Plugin] for running Camel from a Maven goal
 * [Guice Maven Plugin] for working with [Guice](guice.adoc)
@@ -86,7 +86,7 @@
 * Clustering and loadbalancing
 * [Component](component.adoc)
 * ComponentConfiguration
-* Data Format
+* [Data Format](data-format.adoc)
 * [Debugger](debugger.adoc)
 * [Delay Interceptor](delay-interceptor.adoc)
 * [Dependency Injection](dependency-injection.adoc)
@@ -108,7 +108,7 @@
 * [OnCompletion](oncompletion.adoc)
 * Pluggable Class Resolvers
 * [Predicate](predicate.adoc)
-* Processor
+* [Processor](processor.adoc)
 * [Registry](registry.adoc)
 * [RouteBuilder](route-builder.adoc)
 * RoutePolicy
@@ -118,8 +118,8 @@
 * Threading Model
 * ToAsync
 * Tracer
-* Transport
-* Type Converter
+* [Transport](transport.adoc)
+* [Type Converter](type-converter.adoc)
 * URIs
 * UuidGenerator
 * Xml Configuration
@@ -555,7 +555,7 @@
 	* [Zip File](zipfile-dataformat.adoc)
 <!-- dataformats: END -->
 
-### Languages
+### [Languages](languages.adoc)
 
 <!-- languages: START -->
 * Expression Languages
@@ -587,9 +587,9 @@
 
 ## Community
 
-* Support
-* Contributing
-* Mailing Lists
+* [Support](support.adoc)
+* [Contributing](../../../CONTRIBUTING.md)
+* [Mailing Lists](mailing-lists.adoc)
 * Gitter / IRC Chat
 * User Stories
 * News

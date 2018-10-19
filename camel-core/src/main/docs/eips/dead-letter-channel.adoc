@@ -303,7 +303,7 @@ So if it exists its the *last* endpoint which Camel send the Exchange
 to.
 
 When for example processing the link:exchange.html[Exchange] at a given
-link:endpoint.html[Endpoint] and the message is to be moved into the
+<<Endpoint-Endpoints,Endpoint>> and the message is to be moved into the
 dead letter queue, then Camel also decorates the Exchange with another
 property that contains that *last* endpoint:
 
@@ -472,10 +472,10 @@ also http://stackoverflow.com/questions/13711462/logging-camel-exceptions-and-s
 ==== Using This Pattern
 
 If you would like to use this EIP Pattern then please read the
-link:getting-started.html[Getting Started], you may also find the
-link:architecture.html[Architecture] useful particularly the description
-of link:endpoint.html[Endpoint] and link:uris.html[URIs]. Then you could
-try out some of the link:examples.html[Examples] first before trying
+<<GettingStarted-GettingStarted,Getting Started>>, you may also find the
+<<Architecture-Architecture,Architecture>> useful particularly the description
+of <<Endpoint-Endpoints,Endpoint>> and link:uris.html[URIs]. Then you could
+try out some of the <<Examples-Examples,Examples>> first before trying
 this pattern out.
 
 * link:error-handler.html[Error Handler]

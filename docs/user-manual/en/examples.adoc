@@ -6,7 +6,7 @@ looked at the link:enterprise-integration-patterns.adoc[Enterprise
 Integration Patterns], you might want to try out some examples.
 
 Before starting to work on example you may want to
-link:what-are-the-dependencies.adoc[check the requirements for working
+link:faq/what-are-the-dependencies.adoc[check the requirements for working
 with Camel]. Then link:running-examples.adoc[Running Examples] describes
 how to get the examples to run
 

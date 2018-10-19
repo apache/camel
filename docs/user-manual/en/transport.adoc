@@ -1,0 +1,39 @@
+[[Transport-Transports]]
+=== Transports
+
+Apache Camel supports a number of different plugable componets for
+talking to different transports. The transports is implement as Camel
+components.
+
+[[Transport-ComponentsIncluded]]
+==== Components Included
+
+Camel includes the following Component implementations via link:uris.adoc[URIs].
+
+[IMPORTANT]
+====
+Make sure to read link:faq/how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
+to learn more about configuring endpoints. For
+example how to refer to beans in the link:registry.adoc[Registry] or how
+to use raw values for password options, and using
+link:using-propertyplaceholder.adoc[property placeholders] etc.
+====
+
+===== Core Components
+
+include::../../../camel-core/readme.adoc[]
+
+===== Components
+
+include::../../../components/readme.adoc[]
+
+
+[[Transport-SeeAlso]]
+==== See Also
+
+* link:endpoint.adoc[Endpoint]
+* link:uris.adoc[URIs]
+* link:writing-components.adoc[Writing Components]
+* link:configuring-camel.adoc[How do I add a component?]
+* link:faq/how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
+* link:using-propertyplaceholder.adoc[Using `PropertyPlaceholder`]

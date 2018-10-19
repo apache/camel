@@ -18,7 +18,7 @@ are now also documented (before it was only <routes> and <rests>). The
 XSD schema now also documents the default values of all the options.
 * Introduced `FluentProducerTemplate` using fluent builder style as a
 alternative to link:producertemplate.html[ProducerTemplate]
-* All Camel link:components.html[Components] that has options to be
+* All Camel link:component.adoc[Components] that has options to be
 configured now supports and include link:spring-boot.html[Spring
 Boot] auto configuration for those options, so they can easily be
 configured in your application.yaml file when using Spring Boot with
@@ -53,12 +53,12 @@ camel-spring-dm module. +
 parameter types when using link:simple.html[Simple] language as
 parameter values.
 * Added `BindyConverter` that allows to implement custom data converters
-for link:bindy.html[Bindy]
+for <<bindy-dataformat,Bindy>>
 * The access in the link:rest-dsl.html[Rest DSL] has been deprecated and
 no longer in use - its not part of swagger specification anymore.
 * link:nats.html[Camel-NATS] now uses JNATS client instead of the
 deprecated Java_nats one.
-* During startup of link:camelcontext.html[CamelContext] the services
+* During startup of link:camelcontext.adoc[CamelContext] the services
 that are used as part of routes are now deferred being started to the
 end of the startup process. Some IoC frameworks like Spring can
 otherwise causes a circular dependency issue if services are started too
@@ -73,7 +73,7 @@ issues.
 * Added PATCH to link:rest-dsl.html[Rest DSL]
 * Added "starts with" and "ends with" operator to the
 link:simple.html[Simple] language.
-* Added `BeanIOSplitter` to link:beanio.html[BeanIO] that can be used
+* Added `BeanIOSplitter` to <<beanio-dataformat,BeanIO>> that can be used
 with the link:splitter.html[Splitter] EIP to split big payloads in
 streaming mode without reading the entire content into memory.
 * Some of the link:aws.html[AWS] components allows to specify ARN in the
@@ -102,7 +102,7 @@ iterator for the output of the SQL query that allows to process the data
 in a streaming fashion such as with the link:splitter.html[Splitter] EIP
 to process the data row by row, and load data from the database as
 needed.
-* link:jpa.html[JPA] now includes a `JpaPollingConsumer` implementation
+* <<jpa-component,JPA>> now includes a `JpaPollingConsumer` implementation
 that better supports link:content-enricher.html[Content Enricher]
 using `pollEnrich` to do a on-demand poll that returns either none, one
 or a list of entities as the result. 
@@ -137,7 +137,7 @@ configure AllowUseOriginalMessage=true.
 link:http.html[Camel-HTTP] link:http4.html[Camel-HTTP4] link:jetty.html[Camel-Jetty] now
 support a connectionClose parameter to allow explicitly adding a
 Connection Close header to HTTP request
-* link:bindy.html[Bindy] allows to plugin custom formatters for mapping
+* <<bindy-dataformat,Bindy>> allows to plugin custom formatters for mapping
 to custom types.
 * link:content-enricher.html[Content Enricher] using `pollEnrich` now
 supports consumers configured with `consumer.bridgeErrorHandler=true` to
@@ -161,7 +161,7 @@ used when querying the catalog. There is a `camel-catalog-maven` module
 that is able to download catalog JARs from Maven central.
 * A new Camel Attachment interface was added that allows propagating
 headers for attachments. link:cxf.html[Camel CXF], link:mail.html[Camel
-Mail] (including the link:mime-multipart.html[MIME-Multipart]data
+Mail] (including the <<mime-multipart-dataformat,MIME-Multipart>>data
 format), and link:jetty.html[Camel-Jetty] set and consume attachment
 headers.
 * Improved link:bean.html[bean method call] to validate if method name
@@ -223,8 +223,8 @@ be gargage collected. 
 * Fixed link:dozer.html[Dozer] not able to use variables in mapping
 files when using OSGi.
 * Fixed a potential dead-lock when doing request/reply
-over link:jms.html[JMS] and requests are timing out concurrently and
-continued routing the exchanges are calling another link:jms.html[JMS]
+over <<jms-component,JMS>> and requests are timing out concurrently and
+continued routing the exchanges are calling another <<jms-component,JMS>>
 endpoint that is also doing request/reply which also timeout. 
 * Fixed link:load-balancer.html[Load Balancer] EIPs to support
 using _any_ link:using-propertyplaceholder.html[property placeholder]

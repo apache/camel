@@ -3,7 +3,7 @@ Expressions
 ~~~~~~~~~~~
 
 Expressions and Predicates can then be used to
-create the various link:enterprise-integration-patterns.html[Enterprise
+create the various link:enterprise-integration-patterns.adoc[Enterprise
 Integration Patterns] in the DSL or
 Xml Configuration like the
 Recipient List. +

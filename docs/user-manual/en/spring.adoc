@@ -1,5 +1,6 @@
-Spring Support
-~~~~~~~~~~~~~~
+[[SpringSupport-SpringSupport]]
+=== Spring Support
+
 Apache Camel is designed to work nicely with the Spring Framework in a number of ways.
 
 * Camel uses Spring Transactions as the default transaction handling in components like JMS and JPA

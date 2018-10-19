@@ -5,7 +5,7 @@ Exchange Pattern
 There are many different _Message Exchange Patterns_ you can use in
 messaging. This concept is also demonstrated in WSDL and JBI's MEPs.
 
-From there link:enterprise-integration-patterns.html[Enterprise
+From there link:enterprise-integration-patterns.adoc[Enterprise
 Integration Patterns] the common examples are
 
 * Request Reply

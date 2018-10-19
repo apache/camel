@@ -15,8 +15,8 @@ This release supports only Spring Boot 1.5.x. Support for Spring Boot
 
 * Upgraded to JAXB 2.3.0 which is more JDK9 compliant.
 * Added better support for `javax.jms.StreamMessage` types
-in link:jms.html[JMS] component.
-* Optimised link:jms.html[JMS] to support ActiveMQ Artemis
+in <<jms-component,JMS>> component.
+* Optimised <<jms-component,JMS>> to support ActiveMQ Artemis
 http://activemq.apache.org/artemis/docs/latest/large-messages.html[large
 messages] so you can send and receive big messages such as GB's in size.
 There is an example demonstrating this in
@@ -36,9 +36,9 @@ back-on via the apiVendorExtension option.
 used to download a single known file without use LIST operation on the
 FTP server (which can be slow if the FTP server has many files in the
 LIST results)
-* Camel link:json.html[JSON] with camel-jackson will now automatic use
+* Camel link:../json.adoc[JSON] with camel-jackson will now automatic use
 shared ObjectMapper instance if there is only one instance in
-the link:registry.html[Registry]. For example users with Spring Boot
+the link:registry.adoc[Registry]. For example users with Spring Boot
 then allows Camel to easily use the default mapper from Spring Boot.
 * Added `ExtendedStartupListener` that allows a callback just after the
 CamelContext has been fully started.

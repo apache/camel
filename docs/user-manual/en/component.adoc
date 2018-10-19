@@ -15,7 +15,7 @@ Camel includes the following Component implementations via link:uris.adoc[URIs].
 
 [IMPORTANT]
 ====
-Make sure to read link:how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
+Make sure to read link:faq/how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
 to learn more about configuring endpoints. For
 example how to refer to beans in the link:registry.adoc[Registry] or how
 to use raw values for password options, and using
@@ -37,6 +37,6 @@ include::../../../components/readme.adoc[]
 * link:endpoint.adoc[Endpoint]
 * link:uris.adoc[URIs]
 * link:writing-components.adoc[Writing Components]
-* link:how-do-i-add-a-component.adoc[How do I add a component]
-* link:how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
+* link:configuring-camel.adoc[How do I add a component?]
+* link:faq/how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
 * link:using-propertyplaceholder.adoc[Using `PropertyPlaceholder`]

@@ -16,7 +16,7 @@ image:http://www.enterpriseintegrationpatterns.com/img/MessageTranslator.gif[ima
 
 You can transform a message using Camel's
 link:bean-integration.html[Bean Integration] to call any method on a
-bean in your link:registry.html[Registry] such as your
+bean in your <<Registry-Registry,Registry>> such as your
 link:spring.html[Spring] XML configuration file as follows
 
 [source,java]
@@ -36,7 +36,7 @@ the transformation
 
 or you can use the DSL to explicitly configure the transformation
 
-You can also use link:spring-xml-extensions.html[Spring XML Extensions]
+You can also use <<SpringXMLExtensions-SpringXMLExtensions,Spring XML Extensions>>
 to do a transformation. Basically any link:expression.html[Expression]
 language can be substituted inside the transform element as shown below
 

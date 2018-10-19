@@ -23,7 +23,7 @@ XML files with <camelContext>. 
 * Worked to make Apache Camel more ready and compatible with the
 upcoming Spring Boot 2 and Spring Framework 5. Officially support for
 these is expected in Camel 2.21 release.
-* The link:jms.html[JMS] component now includes JMS 2.0 functionality to
+* The <<jms-component,JMS>> component now includes JMS 2.0 functionality to
 use shared (durable and non-durable) topic.
 * The
 https://github.com/apache/camel/blob/master/tooling/maven/camel-maven-plugin/src/main/docs/camel-maven-plugin.adoc[Camel
@@ -50,7 +50,7 @@ started last - when all resources should be available, and stopped first
 - while all resources are still available
 * The link:sql-stored-procedure.html[SQL Stored Procedure] now supports
 specifying custom types as FQN classnames and scale in numeric values.
-* Using Camel with link:spring.html[Spring] now supports calling
+* Using Camel with link:spring.adoc[Spring] now supports calling
 link:bean.html[Bean] by their FQN name and let Spring instantiate the
 bean using auto-wired constructor's as opposed to only supporting a
 no-arg constructor. 
@@ -140,7 +140,7 @@ to complete or timeout.
 * Fixed an issue with copying streams could block forever due IBM
 application server would mistakenly return 0 instead of -1 to indicate
 EOL for an empty stream. 
-* Fixed an issue with making link:jms.html[JMS] and link:sjms.html[SJMS]
+* Fixed an issue with making <<jms-component,JMS>> and link:sjms.html[SJMS]
 components work with ActiveMQ Artemis that would otherwise causes a
 ClassCastException
 * Fixed link:rabbitmq.html[RabbitMQ] to better recover connection if

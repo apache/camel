@@ -1,0 +1,154 @@
+[[AnnotationBasedExpressionLanguage-AnnotationBasedExpressionLanguage]]
+=== Annotation Based Expression Language
+
+You can also use any of the link:languages.adoc[Languages] supported in
+Camel to bind expressions to method parameters when using
+link:bean-integration.adoc[Bean Integration]. For example you can use
+any of these annotations:
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|Annotation |Description
+|http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/language/Bean.html[@Bean]
+|Inject a <<bean-language,Bean>> expression
+
+|http://camel.apache.org/maven/current/camel-script/apidocs/org/apache/camel/builder/script/BeanShell.html[@BeanShell]
+|Inject a <<beanshell-language,BeanShell>> expression
+
+|http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/language/Constant.html[@Constant]
+|Inject a <<constant-language,Constant>> expression
+
+|http://camel.apache.org/maven/current/camel-juel/apidocs/org/apache/camel/language/juel/EL.html[@EL]
+|Inject an <<el-language,EL>> expression
+
+|http://camel.apache.org/maven/current/camel-script/apidocs/org/apache/camel/builder/script/Groovy.html[@Groovy]
+|Inject a <<groovy-language,Groovy>> expression
+
+|http://camel.apache.org/maven/current/maven/camel-core/apidocs/org/apache/camel/Header.html[@Header]
+|Inject a <<header-language,Header>> expression
+
+|http://camel.apache.org/maven/current/camel-script/apidocs/org/apache/camel/builder/script/JavaScript.html[@JavaScript]
+|Inject a <<javascript-language,JavaScript>> expression
+
+|http://camel.apache.org/maven/current/camel-mvel/apidocs/org/apache/camel/language/mvel/MVEL.html[@MVEL]
+|Inject a <<mvel-language,MVEL>> expression
+
+|http://camel.apache.org/maven/current/camel-ognl/apidocs/org/apache/camel/language/ognl/OGNL.html[@OGNL]
+|Inject an <<ognl-language,OGNL>> expression
+
+|http://camel.apache.org/maven/current/camel-script/apidocs/org/apache/camel/builder/script/PHP.html[@PHP]
+|Inject a <<php-language,PHP>> expression
+
+|http://camel.apache.org/maven/current/camel-script/apidocs/org/apache/camel/builder/script/Python.html[@Python]
+|Inject a <<python-language,Python>> expression
+
+|http://camel.apache.org/maven/current/camel-script/apidocs/org/apache/camel/builder/script/Ruby.html[@Ruby]
+|Inject a <<ruby-language,Ruby>> expression
+
+|http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/language/Simple.html[@Simple]
+|Inject an <<simple-language,Simple>> expression
+
+|http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/language/XPath.html[@XPath]
+|Inject an <<xpath-language,XPath>> expression
+
+|http://camel.apache.org/maven/current/camel-saxon/apidocs/org/apache/camel/component/xquery/XQuery.html[@XQuery]
+|Inject an <<xquery-language,XQuery>> expression
+|=======================================================================
+
+[[AnnotationBasedExpressionLanguage-Example]]
+===== Example
+
+[source,java]
+----
+public class Foo {
+    
+    @MessageDriven(uri = "activemq:my.queue")
+    public void doSomething(@XPath("/foo/bar/text()") String correlationID, @Body String body) {
+        // process the inbound message here
+    }
+}
+----
+
+[[AnnotationBasedExpressionLanguage-AdvancedexampleusingBean]]
+===== Advanced example using @Bean
+
+And an example of using the the
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/language/Bean.html[@Bean]
+binding annotation, where you can use a <<bean-component,POJO>> where you
+can do whatever java code you like:
+
+[source,java]
+----
+public class Foo {
+    
+    @MessageDriven(uri = "activemq:my.queue")
+    public void doSomething(@Bean("myCorrelationIdGenerator") String correlationID, @Body String body) {
+        // process the inbound message here
+    }
+}
+----
+
+And then we can have a spring bean with the id
+`myCorrelationIdGenerator` where we can compute the id.
+
+[source,java]
+----
+public class MyIdGenerator {
+
+    private UserManager userManager;
+
+    public String generate(@Header(name = "user") String user, @Body String payload) throws Exception {
+       User user = userManager.lookupUser(user);
+       String userId = user.getPrimaryId();
+       String id = userId + generateHashCodeForPayload(payload);
+       return id;
+   }
+}
+----
+
+The <<bean-component,POJO>> `MyIdGenerator` has one public method that
+accepts two parameters. However we have also annotated this one with the
+`@Header` and `@Body` annotation to help Camel know what to bind here from
+the Message from the Exchange being processed.
+
+Of course this could be simplified a lot if you for instance just have a
+simple id generator. But we wanted to demonstrate that you can use the
+link:bean-binding.adoc[Bean Binding] annotations anywhere.
+
+[source,java]
+----
+public class MySimpleIdGenerator {
+
+    public static int generate()  {
+       // generate a unique id
+       return 123;
+   }
+}
+----
+
+And finally we just need to remember to have our bean registered in the
+Spring link:registry.adoc[Registry]:
+
+[source,xml]
+----
+   <bean id="myCorrelationIdGenerator" class="com.mycompany.MySimpleIdGenerator"/>
+----
+
+[[AnnotationBasedExpressionLanguage-ExampleusingGroovy]]
+===== Example using <<groovy-language,Groovy>>
+
+In this example we have an Exchange that has a User object stored in the
+in header. This User object has methods to get some user information. We
+want to use <<groovy.adoc[Groovy] to inject an expression that
+extracts and concats the fullname of the user into the fullName
+parameter.
+
+[source,java]
+----
+    public void doSomething(@Groovy("$request.header['user'].firstName $request.header['user'].familyName) String fullName, @Body String body) {
+        // process the inbound message here
+    }
+----
+
+Groovy supports GStrings that is like a template where we can insert $
+placeholders that will be evaluated by Groovy.

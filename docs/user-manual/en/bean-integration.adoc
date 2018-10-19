@@ -85,7 +85,7 @@ uses Camel as the underlying transport mechanism. The nice thing about
 this approach is we can use any of the Camel transport
 Components to communicate between beans. It also
 means we can use Content Based Router
-and the other link:enterprise-integration-patterns.html[Enterprise
+and the other link:enterprise-integration-patterns.adoc[Enterprise
 Integration Patterns] in between the beans; in particular we can use
 Message Translator to be able to convert
 what the on-the-wire messages look like in addition to adding various

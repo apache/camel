@@ -1,0 +1,25 @@
+[[HowdoesCamelworkwithServiceMix-HowdoesCamelworkwithServiceMix]]
+=== How does Camel work with ServiceMix?
+
+You can use Camel to do smart routing and implement the
+link:../enterprise-integration-patterns.adoc[Enterprise Integration
+Patterns] inside of the JBI container, routing between existing JBI
+components together with communicating with any of the other Camel
+link:../component.adoc[Components].
+
+To do this you take your Camel link:../spring.adoc[Spring] configuration
+and turn it into a JBI Service Unit using the maven plugin or archetype.
+
+For more details see
+http://incubator.apache.org/servicemix/servicemix-camel.html[ServiceMix
+Camel plugin].
+
+[[HowdoesCamelworkwithServiceMix-SeeAlso]]
+==== See Also
+
+* link:how-does-camel-work-with-servicemix.adoc[How does Camel work with
+ServiceMix]
+* link:how-does-camel-compare-to-servicemix.adoc[How does Camel compare
+to ServiceMix]
+* http://incubator.apache.org/servicemix/servicemix-camel.html[ServiceMix
+Camel plugin]

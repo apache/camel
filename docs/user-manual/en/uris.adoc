@@ -8,7 +8,7 @@ refer to them within link:routes.adoc[Routes].
 [IMPORTANT]
 ====
 Make sure to read
-link:how-do-i-configure-endpoints.adoc[How do I configure endpoints]
+link:faq/how-do-i-configure-endpoints.adoc[How do I configure endpoints]
 to learn more about configuring endpoints. For
 example how to refer to beans in the link:registry.adoc[Registry] or how
 to use raw values for password options, and using

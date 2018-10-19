@@ -19,7 +19,7 @@ file to bootstrap Guice and Camel.
 To run the example we currently use the maven exec plugin. For example
 from the source or binary distribution the following should work
 
-[source,brush:,java;,gutter:,false;,theme:,Default]
+[source,java]
 ----
 cd examples/camel-example-guice-jms
 mvn compile exec:java

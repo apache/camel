@@ -28,7 +28,7 @@ and link:ftp.html[FTP] endpoints is now case in-sensitive out of the
 box.
 * Resource based component such
 as link:xslt.html[XSLT], link:velocity.html[Velocity] etc can load the
-resource file from the link:registry.html[Registry] by using `ref:` as
+resource file from the link:registry.adoc[Registry] by using `ref:` as
 prefix.
 * Upgraded camel-amqp to the latest qpid-jms-client (also AMQP < 1.0 is
 not supported anymore).
@@ -78,20 +78,20 @@ custom `Processor` to be invoked right after an exception was thrown
 using the new *onExceptionOccurred* option.
 * link:rabbitmq.html[RabbitMQ] consumer more resilient to auto
 re-connect in case of connection failures
-* The link:json.html[JSON] `camel-jackson` can be used as a type
+* The link:../json.adoc[JSON] `camel-jackson` can be used as a type
 converter to convert json to/from POJO and String/byte[] types, if
 enabled.
 * The link:sql-component.html[SQL Component] now supports loading the
 SQL queries from external files on the classpath or file system, where
 you can format the queries using newlines and indenting.
-* The link:mail.html[Mail] consumer allows to use an idempotent
+* The <<mail-component,Mail>> consumer allows to use an idempotent
 repository which allows to cluster consuming from the same mailbox, and
 let the repository coordinate whether a mail message is valid for the
 consumer to process.
 * Added support for completion interval on the link:sjms-batch.html[SJMS
 Batch] component, which allows to trigger batch completion in a fixed
 scheduled interval.
-* The link:http.html[HTTP] and link:http4.html[HTTP4] producers now
+* The <<http-component,HTTP>> and link:http4.html[HTTP4] producers now
 support the `disableStreamCache` option to allow to use the raw response
 stream as the message body instead of wrapping
 using link:stream-caching.html[Stream caching]
@@ -137,7 +137,7 @@ from an OGNL method chain (eg invoke the following 3 methods
 "doFoo.doSomething.getBar") and a method returned null which prevent
 further method invocation as that would cause a NullPointerException.
 Now you have a more detailed exception message to better explain this.
-* link:jaxb.html[JAXB] data format and type converter now supports
+* <<jaxb-dataformat,JAXB>> data format and type converter now supports
 converting from XML to POJO for classes that are using ObjectFactory
 classes instead of XmlRootElement annotations.
 * The link:kafka.html[Kafka] component has been migrated to use the Java
@@ -183,7 +183,7 @@ api-docs could lead to api-doc route being added multiple times
 using link:swagger-java.html[Swagger Java]
 * Fixed using `statement.xxx` options on the link:jdbc.html[JDBC]
 consumer would only be used in first poll.
-* Fixed  link:http.html[HTTP] and link:http4.html[HTTP4] to keep
+* Fixed  <<http-component,HTTP>> and link:http4.html[HTTP4] to keep
 trailing slash if provided in uri when calling remote HTTP service.
 * Fixed link:oncompletion.html[OnCompletion] to keep any caught
 exception stored as property on the `Exchange` which allows to access
@@ -244,8 +244,8 @@ link:sql-stored-procedure.html[sql-stored component].
 
 ### New Data Formats
 
-* link:mime-multipart.html[MIME-Multipart] - mime based data format.
-* link:lzf-data-format.html[LZF Data Format] - LZF based data format. 
+* <<mime-multipart-dataformat,MIME-Multipart>> - mime based data format.
+* <<lzf-dataformat,LZF Data Format>> - LZF based data format. 
 * link:yaml-data-format.html[YAML Data Format] - YAML based data format.
 * Hessian - Caucho Hessian based data format.
 
@@ -372,10 +372,10 @@ from the Camel Parent BOM to the tooling BOM (to have them separated).
 * camel-amqp do not support 0.9 anymore. 
 * camel-spring-integration feature has been removed from the Camel
 karaf.
-* The link:mail.html[Mail] component now requires to configure to, cc,
+* The <<mail-component,Mail>> component now requires to configure to, cc,
 and bcc using lower case keys, eg to=foo@bar.com, instead
 of mailto:To=foo@bar.com[To=foo@bar.com] as previously.
-* The link:file2.html[File] consumer no longer probe the file content by
+* The <<file-component,File>> consumer no longer probe the file content by
 default. See the option `probeContentType` for more details.
 * If using link:bean.html[Bean] or link:class.html[Class] component and
 specifying additional parameters in the endpoint uri to configure on the
