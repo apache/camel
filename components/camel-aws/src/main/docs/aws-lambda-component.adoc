@@ -182,10 +182,21 @@ The default is 3 seconds.|No
 
 |=======================================================================
 
+### List of Avalaible Operations
+
+- listFunctions
+- getFunction,
+- createFunction
+- deleteFunction
+- invokeFunction
+- updateFunction
+- createEventSourceMapping
+- deleteEventSourceMapping
+- listEventSourceMapping
+
 ### Example
 
 To have a full understanding of how the component works, you may have a look at this https://github.com/apache/camel/blob/master/components/camel-aws/src/test/java/org/apache/camel/component/aws/lambda/integration/LambdaComponentIntegrationTest.java[integration test]
-
 
 
 ### Dependencies
