@@ -9,7 +9,7 @@ Spring or Guice to be able to create and
 dependency-inject objects of a certain type.
 
 For example if you are using the
-link:inversion-of-control-with-smart-defaults.html[Inversion Of Control
+link:inversion-of-control-with-smart-defaults.adoc[Inversion Of Control
 With Smart Defaults] pattern to minimize your XML dependency; Camel will
 automatically discover and use new endpoints when they are referenced
 via their URIs by using the META-INF/services settings.

@@ -763,4 +763,4 @@ Spring DSL as well. Here are a few examples:
 
 * The link:error-handler.adoc[Error Handler] for the general error handling documentation
 * The <<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>> for further details
-* The <<TransactionalClient-TransactionalClient,Transactional Client>> for transactional behavior
+* The <<transactionalClient-eip,Transactional Client>> for transactional behavior

@@ -1,0 +1,134 @@
+[[Support-GettingHelp]]
+=== Getting Help
+
+If you are experiencing problems using Camel then please report your
+problem to our mailing list. This allows the entire community to help
+with your problem. If indeed a bug has been identified in the Camel
+software, then document the problem in our
+http://issues.apache.org/jira/browse/CAMEL[Issue Tracker]. Please
+refrain from immediately opening a ticket in the issue tracker unless
+you are certain it's a problem in the Camel software. If you are in
+doubt, we appreciate asking the
+link:mailing-lists.adoc[mailing list],
+link:irc-room.adoc[IRC chat], or
+https://gitter.im/apache/apache-camel[Gitter chat] first.
+
+[TIP]
+====
+Please read the section below (_How to get help_), and follow the
+bullets advised there first.
+====
+
+[NOTE]
+====
+*Reporting bugs - Please read this first*
+
+We prefer people to get in touch first using the
+link:mailing-lists.adoc[mailing list],
+link:irc-room.adoc[IRC chat] or
+https://gitter.im/apache/apache-camel[Gitter chat]. Or take time to read
+link:faq.adoc[FAQs], or search in the mailing list archives to find answers.
+Unfortunately some people create a JIRA ticket as first thing. *Please
+don't do that!* Only if you are sure it really is a bug, etc. JIRA tickets
+create noise for the Camel team to react on issues that are not bugs
+but already covered in FAQs, in the mailing lists, etc., or in the existing
+documentation.
+Also on the mailing lists there are more people active to help you better.
+====
+
+* http://issues.apache.org/jira/browse/CAMEL[Issue Tracker]
+* link:faq.adoc[FAQ]
+
+[[Support-Alternativediscussionforums]]
+==== Alternative discussion forums
+
+There are a number of sites outside Apache that offer discussion forums on
+Camel. For example, http://stackoverflow.com/[Stack Overflow] is a
+popular Q & A site with a
+http://stackoverflow.com/questions/tagged/apache-camel[dedicated Apache
+Camel forum]. You are also likely to find helpful discussions on
+technical blogs, on
+https://www.google.com/search?q=apache+camel[Google], or even on
+https://twitter.com/search?q=apache%20camel[Twitter].
+
+[[Support-Usingdeprecatedcomponents]]
+==== Using deprecated components
+
+Deprecated components are *not* supported and issues such as bugs may
+not be fixed. We encourage users to migrate away from using any
+deprecated component. A list of deprecated components is on the
+github page at:
+https://github.com/apache/camel/tree/master/components#components
+
+[[Support-Howtogethelp]]
+==== How to get help
+
+Before you report a problem, you may wish to read the
+link:faq.adoc[FAQ].
+When you report an issue, please be sure to include as much information
+as possible. The more we know, the easier it is to reach an effective
+solution quickly.
+
+[IMPORTANT]
+====
+*What version do you use?*
+
+What version of Camel do you use!?  Remember to include this information.
+====
+
+* *what are the version numbers of involved software components?* (this
+is very important to detail)
+* what platform and JDK?
+* any particular container being used? and if so, what version?
+* stack traces generally really help! (*Remember to post which version
+of Camel you use, this is important to know when posting stacktraces*)
+If in doubt, include the whole thing; often exceptions get wrapped in
+other exceptions and the exception right near the bottom explains the
+actual error, not the first few lines at the top. It's very easy for us
+to skim-read past unnecessary parts of a stack trace.
+* log output can be useful too; sometimes
+link:faq/how-do-i-change-the-logging.adoc[enabling DEBUG logging] can help
+* your code & configuration files are often useful
+* did it work before? what have you changed to break it?
+* try upgrading to the latest release and see if it's fixed there
+* try the latest SNAPSHOT to see if it's fixed in the pre-release
+* search the user forum to see if has been discussed before
+* see the "known issues" section in the release notes
+* and check the http://issues.apache.org/jira/browse/CAMEL[issue
+tracker] to see if the issue has already been reported
+* do *not* send private emails to Camel link:team.adoc[Team] members to
+ask them to help you faster, or in the private only. Help on Apache
+Camel is volunteer based and *must* happen in the *open* on the public
+link:mailing-lists.adoc[Mailing Lists]. If you want to get help faster
+or in private, then see further below.
+
+[[Support-Howtogethelpfaster]]
+==== How to get help faster
+
+We can help you much quicker if you try the following:
+
+* provide us with a JUnit test case that demonstrates your issue. e.g.
+if you think you've found a bug, can you create a test case to
+demonstrate the bug?
+* link:../../../CONTRIBUTING.md[submit a patch] fixing the
+bug! (We also buy you beer when we meet you if you submit bug fixes
+:smile:)
+* for memory leak or performance related issues, if you can run a
+profiler on your test case and attach the output as a file (or zipped
+file if it's huge) to the JIRA we can normally fix things much faster.
+e.g. you could run
+http://java.sun.com/j2se/1.5.0/docs/tooldocs/share/jmap.html[jmap] /
+http://java.sun.com/javase/6/docs/technotes/tools/share/jhat.html[jhat],
+JProfiler or YourKit on your code and send us the output. To find memory
+leaks it's quicker to resolve if you can tell us what classes are taking
+up all of the RAM; we can normally figure out what's wrong from that.
+
+[[Support-CommercialSupport]]
+==== Commercial Support
+
+This is an open source project, so the amount of time we have available
+to help resolve your issue is often limited as all help is provided on a
+volunteer basis. If you want to get priority help, need to get up to
+speed quickly, require some training or mentoring, or need full 24 x 7
+production support you could contact one of the following companies with
+link:commercial-camel-offerings.adoc[Commercial Camel Offerings].

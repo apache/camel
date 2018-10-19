@@ -1,4 +1,4 @@
-[[TransactionalClient-TransactionalClient]]
+[[transactionalClient-eip]]
 == Transactional Client
 
 Camel recommends supporting the

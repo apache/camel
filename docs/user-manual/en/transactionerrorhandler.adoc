@@ -175,4 +175,4 @@ from("direct:fail")
 
 * link:error-handler.adoc[Error Handler]
 * link:error-handling-in-camel.adoc[Error handling in Camel]
-* <<TransactionalClient-TransactionalClient,Transactional Client>>
+* <<transactionalClient-eip,Transactional Client>>

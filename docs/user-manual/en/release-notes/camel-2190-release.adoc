@@ -11,12 +11,12 @@ https://github.com/apache/camel/blob/master/connectors/camel-connector/src/main/
 Connector]'s which is a simplified version of a Camel component that has
 been pre-configured for a specific use-case.
 * Upgraded to Spring Boot 1.5.x.
-* The link:camel-maven-plugin.html[Camel Maven Plugin] now provides the
+* The link:camel-maven-plugin.adoc[Camel Maven Plugin] now provides the
 `camel:validate` goal to parse your Java and XML source code for any
 Camel routes and report invalid Camel endpoint uri and simple expression
 errors. You can run this at code time (not runtime). 
 * Camel `Main` and link:spring-boot.html[Spring Boot]
-and link:camel-maven-plugin.html[Camel Maven Plugin] can now auto
+and link:camel-maven-plugin.adoc[Camel Maven Plugin] can now auto
 terminate the JVM after Camel has been running for maximum duration of
 seconds, processed messages or been idle for a period.
 * Camel source code can build with Java 9 in preparation for official
@@ -28,7 +28,7 @@ tooling to display such information
 Camel 3.0 or sometime in the future
 * Introduced `ReloadStrategy` as SPI which allows custom providers to
 implement logic for triggering live reloads of Camel routes.
-* The  link:camel-maven-plugin.html[Camel Maven Plugin] now allows to
+* The  link:camel-maven-plugin.adoc[Camel Maven Plugin] now allows to
 live reload route changes from XML files when running Camel. This can
 also be enabled from the `Main` class.
 * Introduced a new `camel-catalog-rest` artifact which is a tiny
@@ -88,7 +88,7 @@ been added
 * The link:jsonpath.html[JSonPath] language now supports Map and List
 types and POJOs as well. For POJOs you need to have Jackson on the
 classpath. 
-* link:data-format.html[Data Format] which marshal to JSon or XML now
+* link:../data-format.adoc[Data Format] which marshal to JSon or XML now
 set the content-type header to application/json or application/xml
 appropriately. +
 * The link:kafka.html[Kafka] component can now store offset state
@@ -128,7 +128,7 @@ https://github.com/apache/camel/blob/master/camel-core/src/main/java/org/apache/
 There're a few examples demonstrates this feature:
 https://github.com/apache/camel/tree/master/examples/camel-example-transformer-blueprint[camel-example-transformer-blueprint], https://github.com/apache/camel/tree/master/examples/camel-example-transformer-cdi[camel-example-transformer-cdi], https://github.com/apache/camel/tree/master/examples/camel-example-transformer-demo[camel-example-transformer-demo],
 and https://github.com/apache/camel/tree/master/examples/camel-example-validator-spring-boot[camel-example-validator-spring-boot]
-* Added query support for link:jpa.html[JPA] Producer
+* Added query support for <<jpa-component,JPA>> Producer
 
 Fixed these issues
 

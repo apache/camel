@@ -1,4 +1,4 @@
-[[Message-Message]]
+[[message-eip]]
 == Message
 
 Camel supports the

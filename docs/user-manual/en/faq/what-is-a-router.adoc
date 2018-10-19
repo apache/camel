@@ -1,0 +1,23 @@
+[[Whatisarouter-Whatisarouter]]
+=== What is a router?
+
+We often talk about that Camel is a mediation and routing framework; so
+what exactly is a router and what does it do?
+
+Basically a router just consumes <<message-eip,Message>> exchanges
+from some link:../endpoint.adoc[Endpoint], then sends them on to some other
+link:../endpoint.adoc[Endpoint] using some kind of
+link:../enterprise-integration-patterns.adoc[Enterprise Integration
+Patterns].
+
+For example a router could implement the
+<<contentBasedRouter-eip,Content Based Router>> pattern, to route
+from an endpoint to one or more destination endpoints using a
+link:../predicate.adoc[Predicate] based on the message content.
+
+Typically a route or router consists of one or more consumers; either an
+<<eventDrivenConsumer-eip,Event Driven Consumer>> or a
+<<pollingConsumer-eip,Polling Consumer>> or possibly a
+<<transactionalClient-eip,Transactional Client>>. Then there are one
+or more link:../processor.adoc[Processor] instances which could send the
+message to one or more endpoints.

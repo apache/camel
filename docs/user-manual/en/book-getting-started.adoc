@@ -63,7 +63,7 @@ you navigate between parent and child subsections. +
 For example, If you are on the "Languages" documentation page then the
 left-hand side of the reddish bar contains the following links.
 
-[source,brush:,java;,gutter:,false;,theme:,Default]
+[source,java]
 ----
 Apache Camel > Documentation > Architecture > Languages
 ----

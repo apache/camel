@@ -29,7 +29,7 @@ In this route below, any exception thrown in, eg the `validateOrder`
 bean, will be propagated back to the caller via the jetty endpoint. It
 will return an HTTP error message back to the client.
 
-[source,brush:,java;,gutter:,false;,theme:,Default]
+[source,java]
 ----
 from("jetty:http://localhost/myservice/order")
   .to("bean:validateOrder")
@@ -40,7 +40,7 @@ We can add an *onException* in case we want to catch certain exceptions
 and route them differently, for instance to catch a
 *ValidationException* and return a fixed response to the caller.
 
-[source,brush:,java;,gutter:,false;,theme:,Default]
+[source,java]
 ----
 onException(ValidationException.class)
   .handled(true)
