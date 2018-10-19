@@ -124,13 +124,13 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
             final Exchange target = configureExchange(exchange, pattern);
 
             final boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), target, destination);
-            StopWatch sw = null;
-            if (sending) {
-                sw = new StopWatch();
-            }
-
             // record timing for sending the exchange using the producer
-            final StopWatch watch = sw;
+            StopWatch watch;
+            if (sending) {
+                watch = new StopWatch();
+            } else {
+                watch = null;
+            }
 
             try {
                 log.debug(">>>> {} {}", destination, exchange);

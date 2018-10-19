@@ -64,25 +64,18 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
     }
 
     public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
-    @Override
-    public boolean process(Exchange exchange, AsyncCallback callback) {
         boolean out = exchange.hasOut();
         Message old = out ? exchange.getOut() : exchange.getIn();
 
         if (old.getBody() == null) {
             // only convert if there is a body
-            callback.done(true);
-            return true;
+            return;
         }
 
         if (exchange.getException() != null) {
             // do not convert if an exception has been thrown as if we attempt to convert and it also fails with a new
             // exception then it will override the existing exception
-            callback.done(true);
-            return true;
+            return;
         }
 
         String originalCharsetName = null;
@@ -93,14 +86,7 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
             exchange.setProperty(Exchange.CHARSET_NAME, charset);
         }
         // use mandatory conversion
-        Object value;
-        try {
-            value = old.getMandatoryBody(type);
-        } catch (Throwable e) {
-            exchange.setException(e);
-            callback.done(true);
-            return true;
-        }
+        Object value = old.getMandatoryBody(type);
 
         // create a new message container so we do not drag specialized message objects along
         // but that is only needed if the old message is a specialized message
@@ -126,7 +112,15 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
                 exchange.removeProperty(Exchange.CHARSET_NAME);
             }
         }
+    }
 
+    @Override
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        try {
+            process(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
         callback.done(true);
         return true;
     }

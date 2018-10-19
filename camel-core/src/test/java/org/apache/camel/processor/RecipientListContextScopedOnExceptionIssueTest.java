@@ -42,12 +42,19 @@ public class RecipientListContextScopedOnExceptionIssueTest extends ContextTestS
                                 String routeId = exchange.getUnitOfWork().getRouteContext().getRoute().getId();
                                 assertEquals("fail", routeId);
                             }
+                            @Override
+                            public String toString() {
+                                return "AssertRouteId";
+                            }
                         }).to("mock:error");
 
                 interceptSendToEndpoint("direct*").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String target = exchange.getIn().getHeader(Exchange.INTERCEPTED_ENDPOINT, String.class);
                         exchange.getIn().setHeader("target", target);
+                    }
+                    public String toString() {
+                        return "SetTargetHeader";
                     }
                 });
 

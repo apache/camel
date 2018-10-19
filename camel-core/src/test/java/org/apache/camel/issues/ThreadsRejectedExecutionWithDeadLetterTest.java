@@ -83,7 +83,7 @@ public class ThreadsRejectedExecutionWithDeadLetterTest extends ContextTestSuppo
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:start").errorHandler(deadLetterChannel("mock:failed").maximumRedeliveries(10).redeliveryDelay(10))
+                from("seda:start").errorHandler(deadLetterChannel("mock:failed").maximumRedeliveries(10).redeliveryDelay(100L))
                         .to("log:before")
                         // will use our custom pool
                         .threads()
@@ -94,7 +94,7 @@ public class ThreadsRejectedExecutionWithDeadLetterTest extends ContextTestSuppo
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                latch.await(5, TimeUnit.SECONDS);
+                                latch.await(500, TimeUnit.MILLISECONDS);
                             }
                         })
                         .to("log:after")

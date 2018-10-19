@@ -67,7 +67,7 @@ public class SplitterParallelStopOnExceptionTest extends ContextTestSupport {
             fail("Should thrown an exception");
         } catch (CamelExecutionException e) {
             CamelExchangeException cause = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertTrue(cause.getMessage().startsWith("Parallel processing failed for number "));
+            assertTrue(cause.getMessage().startsWith("Multicast processing failed for number "));
             assertEquals("Forced", cause.getCause().getMessage());
 
             String body = cause.getExchange().getIn().getBody(String.class);

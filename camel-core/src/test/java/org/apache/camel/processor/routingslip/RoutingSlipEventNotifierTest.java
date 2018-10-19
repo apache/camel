@@ -71,6 +71,7 @@ public class RoutingSlipEventNotifierTest extends ContextTestSupport {
                 log.info("Sending: {}", event);
                 sending++;
             } else {
+                log.info("Sent: {}", event);
                 sent++;
             }
         }

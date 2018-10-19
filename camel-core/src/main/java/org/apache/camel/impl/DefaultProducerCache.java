@@ -298,16 +298,18 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         }
 
         try {
-            StopWatch sw = null;
+            // record timing for sending the exchange using the producer
+            StopWatch watch;
             if (eventNotifierEnabled && exchange != null) {
                 boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
                 if (sending) {
-                    sw = new StopWatch();
+                    watch = new StopWatch();
+                } else {
+                    watch = null;
                 }
+            } else {
+                watch = null;
             }
-
-            // record timing for sending the exchange using the producer
-            final StopWatch watch = sw;
 
             // invoke the callback
             return producerCallback.doInAsyncProducer(producer, exchange, doneSync -> {

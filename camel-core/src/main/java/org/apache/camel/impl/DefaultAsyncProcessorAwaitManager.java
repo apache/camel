@@ -23,8 +23,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
@@ -33,6 +36,7 @@ import org.apache.camel.processor.DefaultExchangeFormatter;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.ReactiveHelper;
 import org.apache.camel.support.ServiceSupport;
 
 public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements AsyncProcessorAwaitManager {
@@ -59,8 +63,33 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
         this.exchangeFormatter = formatter;
     }
 
-    @Override
+    /**
+     * Calls the async version of the processor's process method and waits
+     * for it to complete before returning. This can be used by {@link AsyncProcessor}
+     * objects to implement their sync version of the process method.
+     * <p/>
+     * <b>Important:</b> This method is discouraged to be used, as its better to invoke the asynchronous
+     * {@link AsyncProcessor#process(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)} method, whenever possible.
+     *
+     * @param processor the processor
+     * @param exchange  the exchange
+     * @throws Exception can be thrown if waiting is interrupted
+     */
+    public void process(final AsyncProcessor processor, final Exchange exchange) {
+        CountDownLatch latch = new CountDownLatch(1);
+        processor.process(exchange, doneSync -> countDown(exchange, latch));
+        if (latch.getCount() > 0) {
+            await(exchange, latch);
+        }
+    }
+
     public void await(Exchange exchange, CountDownLatch latch) {
+        // Early exit for pending reactive queued work
+        do {
+            if (latch.getCount() <= 0) {
+                return;
+            }
+        } while (ReactiveHelper.executeFromQueue());
         log.trace("Waiting for asynchronous callback before continuing for exchangeId: {} -> {}",
                 exchange.getExchangeId(), exchange);
         try {
@@ -98,7 +127,6 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
         }
     }
 
-    @Override
     public void countDown(Exchange exchange, CountDownLatch latch) {
         log.trace("Asynchronous callback received for exchangeId: {}", exchange.getExchangeId());
         latch.countDown();

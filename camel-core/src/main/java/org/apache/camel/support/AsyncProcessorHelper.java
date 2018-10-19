@@ -46,23 +46,7 @@ public final class AsyncProcessorHelper {
      */
     public static void process(final AsyncProcessor processor, final Exchange exchange) throws Exception {
         final AsyncProcessorAwaitManager awaitManager = exchange.getContext().getAsyncProcessorAwaitManager();
-
-        final CountDownLatch latch = new CountDownLatch(1);
-        boolean sync = processor.process(exchange, new AsyncCallback() {
-            public void done(boolean doneSync) {
-                if (!doneSync) {
-                    awaitManager.countDown(exchange, latch);
-                }
-            }
-
-            @Override
-            public String toString() {
-                return "Done " + processor;
-            }
-        });
-        if (!sync) {
-            awaitManager.await(exchange, latch);
-        }
+        awaitManager.process(processor, exchange);
     }
 
 }

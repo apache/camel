@@ -39,10 +39,10 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(BLOCK_WHEN_FULL_URI).delay(DELAY_LONG).to(MOCK_URI);
+                from(BLOCK_WHEN_FULL_URI).delay(DELAY_LONG).syncDelayed().to(MOCK_URI);
 
                 // use same delay as above on purpose
-                from(DEFAULT_URI).delay(DELAY).to("mock:whatever");
+                from(DEFAULT_URI).delay(DELAY).syncDelayed().to("mock:whatever");
             }
         };
     }

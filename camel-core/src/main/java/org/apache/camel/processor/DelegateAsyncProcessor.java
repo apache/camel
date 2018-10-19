@@ -18,7 +18,6 @@ package org.apache.camel.processor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -86,22 +85,10 @@ public class DelegateAsyncProcessor extends ServiceSupport implements DelegatePr
         ServiceHelper.stopAndShutdownServices(processor);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
-        // inline org.apache.camel.support.AsyncProcessorHelper.process(org.apache.camel.AsyncProcessor, org.apache.camel.Exchange)
-        // to optimize and reduce stacktrace lengths
         final AsyncProcessorAwaitManager awaitManager = exchange.getContext().getAsyncProcessorAwaitManager();
-        final CountDownLatch latch = new CountDownLatch(1);
-        // call the asynchronous method and wait for it to be done
-        boolean sync = process(exchange, new AsyncCallback() {
-            public void done(boolean doneSync) {
-                if (!doneSync) {
-                    awaitManager.countDown(exchange, latch);
-                }
-            }
-        });
-        if (!sync) {
-            awaitManager.await(exchange, latch);
-        }
+        awaitManager.process(this, exchange);
     }
 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
