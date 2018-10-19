@@ -28,7 +28,7 @@
 * [Components](#components)
 * [Data Formats](#data-formats)
 * [Languages](#languages)
-* Security
+* [Security](security.adoc)
 * [Security Advisories](security-advisories.adoc)
 
 ### User Guide
