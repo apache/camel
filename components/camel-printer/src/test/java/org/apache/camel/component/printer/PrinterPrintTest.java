@@ -306,6 +306,36 @@ public class PrinterPrintTest extends CamelTestSupport {
         verify(job1, times(1)).print(any(Doc.class), any(PrintRequestAttributeSet.class));
     }
 
+    /*
+     * Test for CAMEL-12890
+     * Unable to send to remote printer
+     * */
+    @Test
+    public void testSendingFileToRemotePrinter() throws Exception {
+        // setup javax.print 
+        PrintService ps1 = mock(PrintService.class);
+        when(ps1.getName()).thenReturn("printer1");
+        when(ps1.isDocFlavorSupported(any(DocFlavor.class))).thenReturn(Boolean.TRUE);
+        boolean res1 = PrintServiceLookup.registerService(ps1);
+        assertTrue("The Remote PrintService #1 should be registered.", res1);
+        DocPrintJob job1 = mock(DocPrintJob.class);
+        when(ps1.createPrintJob()).thenReturn(job1);
+
+        context.addRoutes(new RouteBuilder() {
+
+            public void configure() {
+                from("direct:start1").to("lpr://remote/printer1?sendToPrinter=true");
+            }
+        });
+        context.start();
+
+        template.sendBody("direct:start1", "Hello Printer 1");
+
+        context.stop();
+
+        verify(job1, times(1)).print(any(Doc.class), any(PrintRequestAttributeSet.class));
+    }
+
     @Test
     public void setJobName() throws Exception {
         if (isAwtHeadless()) {
