@@ -84,7 +84,6 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
 
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "cm1");
             }
         });
