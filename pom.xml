@@ -62,7 +62,7 @@
     <jaxb-version>2.3.0</jaxb-version>
     <errorprone-version>2.5</errorprone-version>
     <mycila-license-version>3.0</mycila-license-version>
-    <gmavenplus-plugin-version>1.5</gmavenplus-plugin-version>
+    <gmavenplus-plugin-version>1.6.2</gmavenplus-plugin-version>
     <groovy-version>2.5.3</groovy-version>
   </properties>
 
