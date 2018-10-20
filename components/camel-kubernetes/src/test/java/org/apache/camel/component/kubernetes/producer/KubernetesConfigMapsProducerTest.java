@@ -73,9 +73,9 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
 
         assertEquals(3, result.size());
     }
-
+    
     @Test
-    public void getConfigMapTest() throws Exception {
+    public void getConfigMapTestDefaultNamespace() throws Exception {
         ObjectMeta meta = new ObjectMeta();
         meta.setName("cm1");
         server.expect().withPath("/api/v1/namespaces/test/configmaps/cm1").andReturn(200, new ConfigMapBuilder().withMetadata(meta).build()).once();
@@ -85,6 +85,26 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "cm1");
+            }
+        });
+
+        ConfigMap result = ex.getOut().getBody(ConfigMap.class);
+
+        assertEquals("cm1", result.getMetadata().getName());
+    }
+
+    @Test
+    public void getConfigMapTestCustomNamespace() throws Exception {
+        ObjectMeta meta = new ObjectMeta();
+        meta.setName("cm1");
+        server.expect().withPath("/api/v1/namespaces/custom/configmaps/cm1").andReturn(200, new ConfigMapBuilder().withMetadata(meta).build()).once();
+        server.expect().withPath("/api/v1/namespaces/custom/configmaps/cm2").andReturn(200, new ConfigMapBuilder().build()).once();
+        Exchange ex = template.request("direct:getConfigMap", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "custom");
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "cm1");
             }
         });
