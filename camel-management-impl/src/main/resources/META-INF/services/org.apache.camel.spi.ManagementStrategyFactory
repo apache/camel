@@ -1,1 +1,1 @@
-org.apache.camel.impl.DefaultManagementStrategyFactory
+org.apache.camel.management.DefaultManagementStrategyFactory
