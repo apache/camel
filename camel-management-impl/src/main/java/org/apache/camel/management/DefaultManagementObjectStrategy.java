@@ -294,11 +294,6 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             while (it.hasNext()) {
                 processor = it.next();
             }
-        } else if (definition instanceof ThreadsDefinition) {
-            // special for ThreadsDefinition, as the processor is wrapped in a pipeline as first
-            Pipeline pipeline = (Pipeline) processor;
-            Iterator<Processor> it = pipeline.getProcessors().iterator();
-            processor = it.next();
         }
 
         // unwrap delegates as we want the real target processor
