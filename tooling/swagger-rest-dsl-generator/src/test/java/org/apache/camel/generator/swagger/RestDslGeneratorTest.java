@@ -47,6 +47,8 @@ public class RestDslGeneratorTest {
         final RestsDefinition definition = RestDslGenerator.toDefinition(swagger).generate(context);
 
         assertThat(definition).isNotNull();
+        assertThat(definition.getRests()).hasSize(1);
+        assertThat(definition.getRests().get(0).getPath()).isEqualTo("/v2");
     }
 
     @Test
