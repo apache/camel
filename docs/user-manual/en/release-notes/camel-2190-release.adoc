@@ -37,7 +37,7 @@ Annotations.
 * Added `camel-catalog-rest-app` as a standalone application which used
 Apache CXF with Jetty to host the Catalog REST API with embedded Swagger
 UI
-* Returning `null` from link:bean.html[Bean] should work similar to
+* Returning `null` from <<bean-component,Bean>> should work similar to
 how `setBody` and `transform` works when they set a `null` body.
 * The Camel Spring Boot starter components now have their auto
 configuration depends
@@ -152,7 +152,7 @@ CamelContext from the consumer and not from cached endpoint which can be
 different
 * Fixed a bug when using link:rest-dsl.html[Rest DSL]
 with link:servlet.html[SERVLET] could cause a java.io.IOException:
-Stream closed exception when using link:bean.html[Bean] in the route. 
+Stream closed exception when using <<bean-component,Bean>> in the route. 
 * Fixed an issue when using `pipeline` in Java DSL not setting up the
 EIP correctly which could lead to runtime route not as intended.
 * Fixed link:dropbox.html[Dropbox] to

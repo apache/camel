@@ -49,7 +49,7 @@ on the classpath (by their default name) and if there only exists one,
 then that is used.
 * Spring-DM for OSGi moved out of camel-spring into a separate
 camel-spring-dm module. +
-* Improved the link:bean.html[Bean] component to better match method
+* Improved the <<bean-component,Bean>> component to better match method
 parameter types when using link:simple.html[Simple] language as
 parameter values.
 * Added `BindyConverter` that allows to implement custom data converters
@@ -82,7 +82,7 @@ endpoint configuration. 
 paths if missing.
 * Added support for async mode for link:servlet.html[SERVLET] component
 to leverage Asynchronous Servlet from the Servlet 3.0 spec.
-* link:bean.html[Bean] component and link:bean-language.html[Bean
+* <<bean-component,Bean>> component and link:bean-language.html[Bean
 Language] validates method name must be a valid according to java
 identifier rules, and also if parameter syntax has an ending
 parenthesis.
@@ -106,7 +106,7 @@ needed.
 that better supports link:content-enricher.html[Content Enricher]
 using `pollEnrich` to do a on-demand poll that returns either none, one
 or a list of entities as the result. 
-* Calling link:bean.html[Bean] with method parameters defined
+* Calling <<bean-component,Bean>> with method parameters defined
 using link:simple.html[Simple] parameters, now avoids an intermediate
 conversion of the parameters to a String value. This ensures the passed
 in values when calling the bean method is using the parameter type as-is
@@ -175,12 +175,12 @@ remote server.
 sending to websocket channels to avoid potentially blocking for a long
 time due networking issues with clients.
 * link:hazelcast-component.html[Hazelcast Component] now provide
-a link:routepolicy.html[RoutePolicy].
+a link:routepolicy.adoc[RoutePolicy].
 * Saxon has been upgraded to version 9.7
 
 ### Resolved Issues
 
-* Fixed link:bean.html[Bean] component to avoid ambiguous error for
+* Fixed <<bean-component,Bean>> component to avoid ambiguous error for
 classes that extends generic interface and calling which could lead to
 falsely duplicate methods (due Java type erasure inserts bridge
 methods) 
@@ -194,7 +194,7 @@ allowed.
 * Fixed link:swagger-java.html[Swagger Java] when using property
 placeholders in link:rest-dsl.html[Rest DSL] could cause invalid
 parameters to be included that was from the placeholder.
-* The `threads` EIP now lets link:error-handling-in-camel.html[Error
+* The `threads` EIP now lets link:error-handling-in-camel.adoc[Error
 handling in Camel] perform redeliveries if the thread pool would
 otherwise reject accepting the task. This allows the error handler to
 perform redeliveries to attempt to put the task on the thread pool
@@ -211,7 +211,7 @@ dead letter channel endpooint should not be invoked.
 when using `continued(true)` by default.
 * Fixed so using shareUnitOfWork would now also call
 specialized `AggregationStrategy` for onTimeout, onCompletion etc.
-* Fixed link:jetty.html[Jetty] consumer incorrectly handle
+* Fixed <<jetty-component,Jetty>> consumer incorrectly handle
 multipart/form data not being mapped as attachments on the Camel
 Message.
 * Fixed link:netty4-http.html[Netty4 HTTP] may fail reading the http

@@ -60,119 +60,64 @@ ServiceMix when should I use Camel?]
 
 Questions on using Apache Camel
 
-* link:faq/classloader-issue-of-servicemix-camel-component.adoc[Classloader
-issue of servicemix-camel component]
-* link:faq/ho-do-i-specify-which-method-to-use-when-using-beans-in-routes.adoc[Ho
-do I specify which method to use when using beans in routes?]
-* link:faq/how-can-i-create-a-custom-component-or-endpoint.adoc[How can I
-create a custom component or endpoint?]
-* link:faq/how-can-i-get-the-remote-connection-ip-address-from-the-camel-cxf-consumer-.adoc[How
-can I get the remote connection IP address from the camel-cxf consumer
-?]
-* link:faq/how-can-i-stop-a-route-from-a-route.adoc[How can I stop a route
-from a route?]
-* link:faq/how-can-webservice-clients-see-remote-faults-with-stacktraces-when-using-camel-cxf.adoc[How
-can webservice clients see remote faults with stacktraces when using
-camel-cxf?]
-* link:faq/how-does-camel-look-up-beans-and-endpoints.adoc[How does Camel
-look up beans and endpoints?]
+* link:faq/classloader-issue-of-servicemix-camel-component.adoc[Classloader issue of servicemix-camel component]
+* link:faq/how-do-i-specify-which-method-to-use-when-using-beans-in-routes.adoc[How do I specify which method to use when using beans in routes?]
+* link:faq/how-can-i-create-a-custom-component-or-endpoint.adoc[How can I create a custom component or endpoint?]
+* link:faq/how-can-i-get-the-remote-connection-ip-address-from-the-camel-cxf-consumer-.adoc[How can I get the remote connection IP address from the camel-cxf consumer ?]
+* link:faq/how-can-i-stop-a-route-from-a-route.adoc[How can I stop a route from a route?]
+* link:faq/how-can-webservice-clients-see-remote-faults-with-stacktraces-when-using-camel-cxf.adoc[How can webservice clients see remote faults with stacktraces when using camel-cxf?]
+* link:faq/how-does-camel-look-up-beans-and-endpoints.adoc[How does Camel look up beans and endpoints?]
 * link:configuring-camel.adoc[How do I add a component?]
 * link:faq/how-do-i-change-the-logging.adoc[How do I change the logging?]
-* link:faq/how-do-i-configure-endpoints.adoc[How Do I Configure Endpoints?]
-* link:faq/how-do-i-configure-password-options-on-camel-endpoints-without-the-value-being-encoded.adoc[How
-do I configure password options on Camel endpoints without the value
-being encoded?]
-* link:faq/how-do-i-configure-the-default-maximum-cache-size-for-producercache-or-producertemplate.adoc[How
-do I configure the default maximum cache size for ProducerCache or
-ProducerTemplate?]
-* link:faq/how-do-i-configure-the-maximum-endpoint-cache-size-for-camelcontext.adoc[How
-do I configure the maximum endpoint cache size for CamelContext?]
+* link:faq/how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
+* link:faq/how-do-i-configure-password-options-on-camel-endpoints-without-the-value-being-encoded.adoc[How do I configure password options on Camel endpoints without the value being encoded?]
+* link:faq/how-do-i-configure-the-default-maximum-cache-size-for-producercache-or-producertemplate.adoc[How do I configure the default maximum cache size for ProducerCache or ProducerTemplate?]
+* link:faq/how-do-i-configure-the-maximum-endpoint-cache-size-for-camelcontext.adoc[How do I configure the maximum endpoint cache size for CamelContext?]
 * link:faq/how-do-i-debug-my-route.adoc[How do I debug my route?]
 * link:faq/how-do-i-disable-jmx.adoc[How do I disable JMX?]
-* link:faq/how-do-i-enable-streams-when-debug-logging-messages-in-camel.adoc[How
-do I enable streams when debug logging messages in Camel?]
-* link:faq/how-do-i-handle-failures-when-consuming-for-example-from-a-ftp-server.adoc[How
-do I handle failures when consuming for example from a FTP server?]
-* link:faq/how-do-i-import-rests-from-other-xml-files.adoc[How do I import
-rests from other XML files?]
-* link:faq/how-do-i-import-routes-from-other-xml-files.adoc[How Do I Import
-Routes From Other XML Files?]
-* link:faq/how-do-i-let-jetty-match-wildcards.adoc[How do I let Jetty match
-wildcards?]
+* link:faq/how-do-i-enable-streams-when-debug-logging-messages-in-camel.adoc[How do I enable streams when debug logging messages in Camel?]
+* link:faq/how-do-i-handle-failures-when-consuming-for-example-from-a-ftp-server.adoc[How do I handle failures when consuming for example from a FTP server?]
+* link:faq/how-do-i-import-rests-from-other-xml-files.adoc[How do I import rests from other XML files?]
+* link:faq/how-do-i-import-routes-from-other-xml-files.adoc[How do I import routes from other XML files?]
+* link:faq/how-do-i-let-jetty-match-wildcards.adoc[How do I let Jetty match wildcards?]
 * link:faq/how-do-i-name-my-routes.adoc[How do I name my routes?]
 * link:faq/how-do-i-restart-camelcontext.adoc[How do I restart CamelContext?]
-* link:faq/how-do-i-retrieve-the-thrown-exception-during-processing-an-exchange.adoc[How
-do I retrieve the thrown Exception during processing an Exchange?]
-* link:faq/how-do-i-retry-failed-messages-forever.adoc[How do I retry failed
-messages forever?]
-* link:faq/how-do-i-retry-processing-a-message-from-a-certain-point-back-or-an-entire-route.adoc[How
-do I retry processing a message from a certain point back or an entire
-route?]
-* link:faq/how-do-i-reuse-the-contexttestsupport-class-in-my-unit-tests.adoc[How
-do I reuse the ContextTestSupport class in my unit tests?]
-* link:faq/how-do-i-run-activemq-and-camel-in-jboss.adoc[How do I run
-ActiveMQ and Camel in JBoss?]
-* link:faq/how-do-i-set-the-max-chars-when-debug-logging-messages-in-camel.adoc[How
-do I set the max chars when debug logging messages in Camel?]
-* link:faq/how-do-i-specify-time-period-in-a-human-friendly-syntax.adoc[How
-do I specify time period in a human friendly syntax?]
+* link:faq/how-do-i-retrieve-the-thrown-exception-during-processing-an-exchange.adoc[How do I retrieve the thrown Exception during processing an Exchange?]
+* link:faq/how-do-i-retry-failed-messages-forever.adoc[How do I retry failed messages forever?]
+* link:faq/how-do-i-retry-processing-a-message-from-a-certain-point-back-or-an-entire-route.adoc[How do I retry processing a message from a certain point back or an entire route?]
+* link:faq/how-do-i-reuse-the-contexttestsupport-class-in-my-unit-tests.adoc[How do I reuse the ContextTestSupport class in my unit tests?]
+* link:faq/how-do-i-run-activemq-and-camel-in-jboss.adoc[How do I run ActiveMQ and Camel in JBoss?]
+* link:faq/how-do-i-set-the-max-chars-when-debug-logging-messages-in-camel.adoc[How do I set the max chars when debug logging messages in Camel?]
+* link:faq/how-do-i-specify-time-period-in-a-human-friendly-syntax.adoc[How do I specify time period in a human friendly syntax?]
 * link:faq/how-do-i-use-a-big-uber-jar.adoc[How do I use a big (uber) JAR?]
-* link:faq/how-do-i-use-camel-inside-servicemix.adoc[How do I use Camel
-inside ServiceMix?]
-* link:faq/how-do-i-use-spring-property-placeholder-with-camel-xml.adoc[How
-do I use Spring Property Placeholder with Camel XML?]
-* link:faq/how-do-i-use-uris-with-parameters-in-xml.adoc[How do I use URIs
-with parameters in XML?]
-* link:faq/how-do-i-write-a-custom-processor-which-sends-multiple-messages.adoc[How
-do I write a custom Processor which sends multiple messages?]
-* link:faq/how-should-i-invoke-my-pojos-or-spring-services.adoc[How should I
-invoke my POJOs or Spring Services?]
-* link:faq/how-should-i-package-applications-using-camel-and-activemq.adoc[How
-should I package applications using Camel and ActiveMQ?]
-* link:faq/how-to-avoid-importing-bunch-of-cxf-packages-when-start-up-the-camel-cxf-endpoint-from-osgi-platform-.adoc[How
-to avoid importing bunch of cxf packages when start up the camel-cxf
-endpoint from OSGi platform ?]
-* link:faq/how-to-avoid-sending-some-or-all-message-headers.adoc[How to
-avoid sending some or all message headers?]
-* link:faq/how-to-define-a-static-camel-converter-method-in-scala.adoc[How
-to define a static camel converter method in Scala?]
-* link:faq/how-to-remove-the-http-protocol-headers-in-the-camel-message.adoc[How
-to remove the http protocol headers in the camel message?]
-* link:faq/how-to-send-the-same-message-to-multiple-endpoints.adoc[How to
-send the same message to multiple endpoints?]
-* link:faq/how-to-switch-the-cxf-consumer-between-http-and-https-without-touching-the-spring-configuration.adoc[How
-to switch the CXF consumer between HTTP and HTTPS without touching the
-Spring configuration?]
-* link:faq/how-to-use-a-dynamic-uri-in-to.adoc[How to use a dynamic URI in
-to()?]
-* link:faq/how-to-use-extra-camel-componets-in-servicemix-camel.adoc[How to
-use extra camel componets in servicemix-camel?]
-* link:faq/how-to-validate-the-camel-1x-context-xml-from-apache-camel-web-site.adoc[How
-to validate the camel-1.x context xml from Apache Camel web site?]
+* link:faq/how-do-i-use-camel-inside-servicemix.adoc[How do I use Camel inside ServiceMix?]
+* link:faq/how-do-i-use-spring-property-placeholder-with-camel-xml.adoc[How do I use Spring Property Placeholder with Camel XML?]
+* link:faq/how-do-i-use-uris-with-parameters-in-xml.adoc[How do I use URIs with parameters in XML?]
+* link:faq/how-do-i-write-a-custom-processor-which-sends-multiple-messages.adoc[How do I write a custom Processor which sends multiple messages?]
+* link:faq/how-should-i-invoke-my-pojos-or-spring-services.adoc[How should I invoke my POJOs or Spring Services?]
+* link:faq/how-should-i-package-applications-using-camel-and-activemq.adoc[How should I package applications using Camel and ActiveMQ?]
+* link:faq/how-to-avoid-importing-bunch-of-cxf-packages-when-start-up-the-camel-cxf-endpoint-from-osgi-platform-.adoc[How to avoid importing bunch of cxf packages when start up the camel-cxf endpoint from OSGi platform ?]
+* link:faq/how-to-avoid-sending-some-or-all-message-headers.adoc[How to avoid sending some or all message headers?]
+* link:faq/how-to-define-a-static-camel-converter-method-in-scala.adoc[How to define a static camel converter method in Scala?]
+* link:faq/how-to-remove-the-http-protocol-headers-in-the-camel-message.adoc[How to remove the http protocol headers in the camel message?]
+* link:faq/how-to-send-the-same-message-to-multiple-endpoints.adoc[How to send the same message to multiple endpoints?]
+* link:faq/how-to-switch-the-cxf-consumer-between-http-and-https-without-touching-the-spring-configuration.adoc[How to switch the CXF consumer between HTTP and HTTPS without touching the Spring configuration?]
+* link:faq/how-to-use-a-dynamic-uri-in-to.adoc[How to use a dynamic URI in to()?]
+* link:faq/how-to-use-extra-camel-componets-in-servicemix-camel.adoc[How to use extra camel componets in servicemix-camel?]
+* link:faq/how-to-validate-the-camel-1x-context-xml-from-apache-camel-web-site.adoc[How to validate the camel-1.x context xml from Apache Camel web site?]
 * link:faq/is-there-an-ide.adoc[Is there an IDE?]
-* link:faq/should-i-deploy-camel-inside-the-activemq-broker-or-in-another-application.adoc[Should
-I deploy Camel inside the ActiveMQ broker or in another application?]
+* link:faq/should-i-deploy-camel-inside-the-activemq-broker-or-in-another-application.adoc[Should I deploy Camel inside the ActiveMQ broker or in another application?]
 * link:faq/using-camel-core-testsjar.adoc[Using camel-core-tests.jar]
-* link:faq/using-getin-or-getout-methods-on-exchange.adoc[Using getIn or
-getOut methods on Exchange]
-* link:faq/why-cant-i-use-sign-in-my-password.adoc[Why can't I use + sign in
-my password?]
-* link:faq/why-can-i-not-use-when-or-otherwise-in-a-java-camel-route.adoc[Why
-can I not use when or otherwise in a Java Camel route?]
-* link:faq/why-does-ftp-component-not-download-any-files.adoc[Why does FTP
-component not download any files?]
-* link:faq/why-does-my-file-consumer-not-pick-up-the-file-and-how-do-i-let-the-file-consumer-use-the-camel-error-handler.adoc[Why
-does my file consumer not pick up the file, and how do I let the file
-consumer use the Camel error handler?]
-* link:faq/why-does-useoriginalmessage-with-error-handler-not-work-as-expected.adoc[Why
-does useOriginalMessage with error handler not work as expected?]
-* link:faq/why-do-my-message-lose-its-headers-during-routing.adoc[Why do my
-message lose its headers during routing?]
+* link:faq/using-getin-or-getout-methods-on-exchange.adoc[Using getIn or getOut methods on Exchange]
+* link:faq/why-cant-i-use-sign-in-my-password.adoc[Why can't I use + sign in my password?]
+* link:faq/why-can-i-not-use-when-or-otherwise-in-a-java-camel-route.adoc[Why can I not use when or otherwise in a Java Camel route?]
+* link:faq/why-does-ftp-component-not-download-any-files.adoc[Why does FTP component not download any files?]
+* link:faq/why-does-my-file-consumer-not-pick-up-the-file-and-how-do-i-let-the-file-consumer-use-the-camel-error-handler.adoc[Why does my file consumer not pick up the file, and how do I let the file consumer use the Camel error handler?]
+* link:faq/why-does-useoriginalmessage-with-error-handler-not-work-as-expected.adoc[Why does useOriginalMessage with error handler not work as expected?]
+* link:faq/why-do-my-message-lose-its-headers-during-routing.adoc[Why do my message lose its headers during routing?]
 * link:faq/why-is-my-message-body-empty.adoc[Why is my message body empty?]
-* link:faq/why-is-my-processor-not-showing-up-in-jconsole.adoc[Why is my
-processor not showing up in JConsole?]
-* link:faq/why-is-the-exception-null-when-i-use-onexception.adoc[Why is the
-exception null when I use onException?]
+* link:faq/why-is-my-processor-not-showing-up-in-jconsole.adoc[Why is my processor not showing up in JConsole?]
+* link:faq/why-is-the-exception-null-when-i-use-onexception.adoc[Why is the exception null when I use onException?]
 * link:faq/why-use-multiple-camelcontext.adoc[Why use multiple CamelContext?]
 
 [[FAQ-LoggingQuestions]]
@@ -237,8 +182,8 @@ does Camel use too many threads with ProducerTemplate?]
 * link:faq/why-does-maven-not-download-dependencies.adoc[Why does maven not
 download dependencies?]
 
-[[FAQ-Acknowledgment]]
-==== Acknowledgment
+[[FAQ-Acknowledgement]]
+==== Acknowledgement
 
 Many thanks to the following organizations for helping the Camel
 project.

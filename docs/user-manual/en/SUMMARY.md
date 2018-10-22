@@ -8,7 +8,7 @@
 ## Overview
 
 * [Introduction](README.md)
-* Download
+* [Download](download.adoc)
 * [Getting Started](getting-started.adoc)
 * [Longer Getting Started Guide](book-getting-started.adoc)
 * [FAQ](faq.adoc)

@@ -14,7 +14,7 @@ documentation before continuing:
 Integration Patterns] and how to implement them with Camel
 * Review the Architecture guide to see how to
 build Routes using the Java DSL or
-Spring based link:xml-configuration.html[Xml
+Spring based link:xml-configuration.adoc[Xml
 Configuration]
 
 [[GettingStarted-WorkingwithCamelContextsandRouteBuilders]]
