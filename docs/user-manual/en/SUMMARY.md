@@ -121,7 +121,7 @@
 * [Transport](transport.adoc)
 * [Type Converter](type-converter.adoc)
 * URIs
-* UuidGenerator
+* [UuidGenerator](uuidgenerator.adoc)
 * Xml Configuration
 
 ### [Enterprise Integration Patterns](enterprise-integration-patterns.adoc)
