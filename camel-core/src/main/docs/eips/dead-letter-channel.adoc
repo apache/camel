@@ -1,4 +1,4 @@
-[[DeadLetterChannel-DeadLetterChannel]]
+[[deadLetterChannel-eip]]
 == Dead Letter Channel
 
 Camel supports the
@@ -37,7 +37,7 @@ TIP: *Difference between Dead Letter Channel and Default Error
 Handler* The Default Error Handler does very little: it ends the Exchange
 immediately and propagates the thrown Exception back to the caller.
 
-[[DeadLetterChannel-Redelivery]]
+[[deadLetterChannel-Redelivery]]
 === Redelivery
 
 It is common for a temporary outage or database deadlock to cause a
@@ -64,16 +64,16 @@ timings
 Once all attempts at redelivering the message fails then the message is
 forwarded to the dead letter queue.
 
-[[DeadLetterChannel-AboutmovingExchangetodeadletterqueueandusinghandled]]
+[[deadLetterChannel-AboutmovingExchangetodeadletterqueueandusinghandled]]
 === About moving Exchange to dead letter queue and using handled
 
-*Handled* on <<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>>
+*Handled* on <<deadLetterChannel-eip,Dead Letter Channel>>
 
 When all attempts of redelivery have failed the
 link:exchange.html[Exchange] is moved to the dead letter queue (the dead
 letter endpoint). The exchange is then complete and from the client
 point of view it was processed. As such the
-<<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>> have handled the
+<<deadLetterChannel-eip,Dead Letter Channel>> have handled the
 link:exchange.html[Exchange].
 
 For instance configuring the dead letter channel as:
@@ -103,14 +103,14 @@ And in XML:
 </bean>
 ----
 
-The <<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>> above will clear
+The <<deadLetterChannel-eip,Dead Letter Channel>> above will clear
 the caused exception (`setException(null)`), by moving the caused
 exception to a property on the link:exchange.html[Exchange], with the
 key `Exchange.EXCEPTION_CAUGHT`. Then the link:exchange.html[Exchange]
 is moved to the `"jms:queue:dead"` destination and the client will not
 notice the failure.
 
-[[DeadLetterChannel-AboutmovingExchangetodeadletterqueueandusingtheoriginalmessage]]
+[[deadLetterChannel-AboutmovingExchangetodeadletterqueueandusingtheoriginalmessage]]
 === Moving Exchange to dead letter queue and using the original message
 
 The option *useOriginalMessage* is used for routing the original input
@@ -131,7 +131,7 @@ The route listen for JMS messages and validates, transforms and handle
 it. During this the link:exchange.html[Exchange] payload is
 transformed/modified. So in case something goes wrong and we want to
 move the message to another JMS destination, then we can configure our
-<<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>> with the
+<<deadLetterChannel-eip,Dead Letter Channel>> with the
 *useOriginalMessage* option. But when we move the
 link:exchange.html[Exchange] to this destination we do not know in which
 state the message is in. Did the error happen in before the
@@ -151,10 +151,10 @@ If we want to manually retry we can move the JMS message from the failed
 to the input queue, with no problem as the message is the same as the
 original we received.
 
-[[DeadLetterChannel-OnRedelivery]]
+[[deadLetterChannel-OnRedelivery]]
 === OnRedelivery
 
-When <<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>> is doing
+When <<deadLetterChannel-eip,Dead Letter Channel>> is doing
 redeliver its possible to configure a link:processor.html[Processor]
 that is executed just *before* every redelivery attempt. This can be
 used for the situations where you need to alter the message before its
@@ -164,11 +164,11 @@ TIP: *onException and onRedeliver*
 We also support for per link:exception-clause.html[*onException*] to set
 a *onRedeliver*. That means you can do special on redelivery for
 different exceptions, as opposed to onRedelivery set on
-<<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>> can be viewed as a
+<<deadLetterChannel-eip,Dead Letter Channel>> can be viewed as a
 global scope.
 
 
-[[DeadLetterChannel-Redeliverydefaultvalues]]
+[[deadLetterChannel-Redeliverydefaultvalues]]
 === Redelivery default values
 
 Redelivery is disabled by default.
@@ -207,7 +207,7 @@ retryAttemptedLogLevel.
 You can turn logging of stack traces on/off. If turned off Camel will
 still log the redelivery attempt. Its just much less verbose.
 
-[[DeadLetterChannel-RedeliverDelayPattern]]
+[[deadLetterChannel-RedeliverDelayPattern]]
 === Redeliver Delay Pattern
 
 Delay pattern is used as a single option to set a range pattern for
@@ -258,7 +258,7 @@ previous. You can use any delay value you like. For example with
 `delayPattern=1:5000;3:1000` we start with 5 sec delay and then later
 reduce that to 1 second.
 
-[[DeadLetterChannel-Redeliveryheader]]
+[[deadLetterChannel-Redeliveryheader]]
 === Redelivery header
 
 When a message is redelivered the
@@ -282,7 +282,7 @@ In Camel 2.9 and 2.8.2: The header is *CamelRedeliveryDelay*, which is
 also defined on the `Exchange.REDELIVERY_DELAY`. 
 Is this header is absent, normal redelivery rules apply.
 
-[[DeadLetterChannel-Whichendpointfailed]]
+[[deadLetterChannel-Whichendpointfailed]]
 === Which endpoint failed
 
 *Available as of Camel 2.1*
@@ -337,7 +337,7 @@ Now suppose the route above and a failure happens in the `foo` bean.
 Then the `Exchange.TO_ENDPOINT` and `Exchange.FAILURE_ENDPOINT` will
 still contain the value of `http://someserver/somepath`.
 
-[[DeadLetterChannel-OnPrepareFailure]]
+[[deadLetterChannel-OnPrepareFailure]]
 === OnPrepareFailure
 
 *Available as of Camel 2.16*
@@ -378,13 +378,13 @@ Configuring this from XML DSL is as shown:
 
 The onPrepare is also available using the default error handler.
 
-[[DeadLetterChannel-Whichroutefailed]]
+[[deadLetterChannel-Whichroutefailed]]
 === Which route failed
 
 *Available as of Camel 2.10.4/2.11*
 
 When Camel error handler handles an error such as
-<<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>> or using
+<<deadLetterChannel-eip,Dead Letter Channel>> or using
 link:exception-clause.html[Exception Clause] with handled=true, then
 Camel will decorate +
  the link:exchange.html[Exchange] with the route id where the error
@@ -401,7 +401,7 @@ The `Exchange.FAILURE_ROUTE_ID` have the constant value
 This allows for example you to fetch this information in your dead
 letter queue and use that for error reporting.
 
-[[DeadLetterChannel-Controlifredeliveryisallowedduringstoppingshutdown]]
+[[deadLetterChannel-Controlifredeliveryisallowedduringstoppingshutdown]]
 === Control if redelivery is allowed during stopping/shutdown
 
 *Available as of Camel 2.11*
@@ -427,7 +427,7 @@ DSL
 
 And the sample sample with XML DSL
 
-[[DeadLetterChannel-Samples]]
+[[deadLetterChannel-Samples]]
 === Samples
 
 The following example shows how to configure the Dead Letter Channel
@@ -437,27 +437,27 @@ You can also configure the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/processor/RedeliveryPolicy.html[RedeliveryPolicy]
 as this example shows
 
-[[DeadLetterChannel-HowcanImodifytheExchangebeforeredelivery]]
+[[deadLetterChannel-HowcanImodifytheExchangebeforeredelivery]]
 === How can I modify the Exchange before redelivery?
 
 We support directly in link:dead-letter-channel.html[Dead Letter
 Channel] to set a link:processor.html[Processor] that is executed
 *before* each redelivery attempt.
 
-When <<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>> is doing
+When <<deadLetterChannel-eip,Dead Letter Channel>> is doing
 redeliver its possible to configure a link:processor.html[Processor]
 that is executed just *before* every redelivery attempt. This can be
 used for the situations where you need to alter the message before its
 redelivered.
 
-Here we configure the <<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>>
+Here we configure the <<deadLetterChannel-eip,Dead Letter Channel>>
 to use our processor `MyRedeliveryProcessor` to be executed before each
 redelivery.
 
 And this is the processor `MyRedeliveryProcessor` where we alter the
 message.
 
-[[DeadLetterChannel-HowcanIlogwhatcausedtheDeadLetterChanneltobeinvoked]]
+[[deadLetterChannel-HowcanIlogwhatcausedtheDeadLetterChanneltobeinvoked]]
 === How can I log what caused the Dead Letter Channel to be invoked?
 
 You often need to know what went wrong that caused the Dead Letter
@@ -468,7 +468,7 @@ Exchange and log the Exception, then forward on to where we want the
 failed Exchange moved to (which might be a DLQ queue for instance). See
 also http://stackoverflow.com/questions/13711462/logging-camel-exceptions-and-sending-to-the-dead-letter-channel[http://stackoverflow.com/questions/13711462/logging-camel-exceptions-and-sending-to-the-dead-letter-channel]
 
-[[DeadLetterChannel-UsingThisPattern]]
+[[deadLetterChannel-UsingThisPattern]]
 ==== Using This Pattern
 
 If you would like to use this EIP Pattern then please read the

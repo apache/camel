@@ -51,7 +51,7 @@ started last - when all resources should be available, and stopped first
 * The link:sql-stored-procedure.html[SQL Stored Procedure] now supports
 specifying custom types as FQN classnames and scale in numeric values.
 * Using Camel with link:spring.adoc[Spring] now supports calling
-link:bean.html[Bean] by their FQN name and let Spring instantiate the
+<<bean-component,Bean>> by their FQN name and let Spring instantiate the
 bean using auto-wired constructor's as opposed to only supporting a
 no-arg constructor. 
 * Using Camel with link:spring-boot.html[Spring Boot] can now easily
@@ -112,7 +112,7 @@ fallback not signaling to Hystrix itself so it can keep state of the
 failure and react accordingly to run in half-open mode as well.
 * Fixed link:mdc-logging.html[MDC logging] loosing route id after
 calling a direct route from within a transacted route
-* Fixed a regression with link:bean.html[Bean]
+* Fixed a regression with <<bean-component,Bean>>
 and link:simple.html[Simple] OGNL expressions causing ambiguous method
 call exception when calling method implemented by super class when
 method is defined by interface and abstract class

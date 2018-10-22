@@ -3,12 +3,12 @@
 
 This is the new default error handler in Camel 2.0 onwards.
 
-It has the same power as the <<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>>,
+It has the same power as the <<deadLetterChannel-eip,Dead Letter Channel>>,
 however it does *not* support a _dead letter queue_, which is
 the only difference between the two of them.
 
 The DefaultErrorHandler is configured differently from
-<<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>> as
+<<deadLetterChannel-eip,Dead Letter Channel>> as
 it is configured to:
 
 * not redeliver
@@ -63,4 +63,4 @@ jetty endpoint that returns it to the original caller.
 ==== See Also
 
 * link:error-handler.adoc[Error Handler]
-* <<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>>
+* <<deadLetterChannel-eip,Dead Letter Channel>>

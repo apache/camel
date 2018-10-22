@@ -47,7 +47,7 @@ are included in the generated Swagger api-doc via camel-swagger-java.
 * Improved file/ftp consumer to use current thread to poll, instead of a
 scheduled background task, when using pollEnrich
 (link:content-enricher.html[Content Enricher]).
-* link:direct.html[Direct] component now blocks by default if sending to
+* <<direct-component,Direct>> component now blocks by default if sending to
 a consumer which is not yet ready, which may happen during startup
 (little window of opportunity). This
 avoids `DirectConsumerNotAvailableException` being thrown during startup
@@ -59,7 +59,7 @@ operations. You can also find this information for the consumer in JMX. 
 For example if you download big files and has connection problems with
 the FTP server. Then later when the connectivity works again, Camel can
 resume download the in-progress file.
-* The link:jetty.html[Jetty] and link:servlet.html[SERVLET] consumers
+* The <<jetty-component,Jetty>> and link:servlet.html[SERVLET] consumers
 will now return HTTP Status 405 (method not allowed) for requests that
 would have been processed by another HTTP request method, for example
 calling REST services with the wrong method. Beforehand a 404 error code
@@ -93,7 +93,7 @@ that occurred at INFO level.
 * You can now configure many of the link:rabbitmq.html[RabbitMQ] options
 on the component level instead of having to repeat them on each
 endpoint.
-* The link:bean.html[Bean] language can now refer to method name via the
+* The <<bean-component,Bean>> language can now refer to method name via the
 double colon syntax, eg `.to("bean:myBean::myMethod")`
 
 The following issues has been fixed
@@ -112,7 +112,7 @@ requests come in faster than it can process existing in-flight messages.
 * Fixed an issue with link:routing-slip.html[Routing Slip]
 and link:dynamic-router.html[Dynamic Router] when using context scoped
 error handler, could cause the error handler to become stopped.
-* Fixed link:rest-dsl.html[Rest DSL] with link:jetty.html[Jetty]
+* Fixed link:rest-dsl.html[Rest DSL] with <<jetty-component,Jetty>>
 security via custom define security handler and turned on api-doc as
 well would not startup Jetty server due missing NoLoginService error.
 * Fixed Blueprint error: "name is already instanciated as null and
@@ -153,7 +153,7 @@ to `org.apache.camel.http.common.ServletResolveConsumerStrategy`
 
 * Jetty has been upgraded to 9.4 by default, and camel-jetty is requring
 version 9.3 or 9.4 to run in OSGi.
-* link:direct.html[Direct] component now blocks by default if sending to
+* <<direct-component,Direct>> component now blocks by default if sending to
 a consumer which is not yet ready, which may happen during startup
 (little window of opportunity). This
 avoids `DirectConsumerNotAvailableException` being thrown during startup
