@@ -159,6 +159,7 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
     public CamelContext camelContext() throws Exception {
         CamelContext camelContext = createCamelContext();
         setupCamelContext(camelContext);
+        camelContext.init();
         return camelContext;
     }
 

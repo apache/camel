@@ -52,11 +52,13 @@ public abstract class ServiceSupport implements StatefulService {
     protected volatile int status = NEW;
 
     public void init() {
-        synchronized (lock) {
-            if (status == NEW) {
-                log.trace("Initializing service");
-                doInit();
-                status = INITIALIZED;
+        if (status == NEW) {
+            synchronized (lock) {
+                if (status == NEW) {
+                    log.trace("Initializing service");
+                    doInit();
+                    status = INITIALIZED;
+                }
             }
         }
     }

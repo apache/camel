@@ -36,6 +36,7 @@ import org.junit.Test;
 import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 
 @RunWith(Arquillian.class)
@@ -46,7 +47,10 @@ public class UriWithWrongContextTest {
         .expect(RuntimeException.class)
 //        .expectMessage(containsString("Error adding routes of type [" + UriWithWrongContextRoute.class.getName() + "] to Camel context [first]"))
 //        .expectMessage(containsString("Error injecting endpoint annotated with @org.apache.camel.cdi.Uri"))
-        .expectMessage(containsString("WELD-001408 Unsatisfied dependencies for type [Endpoint] with qualifiers [@Uri @ContextName] at injection point [[field] @Uri @ContextName @Inject org.apache.camel.cdi.test.UriWithWrongContextRoute.inbound]"));
+        .expectMessage(allOf(
+                containsString("WELD-001408 Unsatisfied dependencies for type [Endpoint] with qualifiers ["),
+                containsString("] at injection point [[field] @"),
+                containsString(" org.apache.camel.cdi.test.UriWithWrongContextRoute.inbound]")));
 
     @Deployment
     public static Archive<?> deployment() {

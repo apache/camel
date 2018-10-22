@@ -469,6 +469,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         if (context == null && create) {
             context = createContext();
             configure(context);
+            context.init();
         }
         return context;
     }

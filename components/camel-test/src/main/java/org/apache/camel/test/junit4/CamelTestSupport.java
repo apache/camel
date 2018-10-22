@@ -1026,12 +1026,12 @@ public abstract class CamelTestSupport extends TestSupport {
 
         @Override
         public void beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
-            CamelTestSupport.this.debugBefore(exchange, processor, (RouteDefinition) definition, definition.getId(), definition.getLabel());
+            CamelTestSupport.this.debugBefore(exchange, processor, (ProcessorDefinition) definition, definition.getId(), definition.getLabel());
         }
 
         @Override
         public void afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken) {
-            CamelTestSupport.this.debugAfter(exchange, processor, (RouteDefinition) definition, definition.getId(), definition.getLabel(), timeTaken);
+            CamelTestSupport.this.debugAfter(exchange, processor, (ProcessorDefinition) definition, definition.getId(), definition.getLabel(), timeTaken);
         }
     }
 

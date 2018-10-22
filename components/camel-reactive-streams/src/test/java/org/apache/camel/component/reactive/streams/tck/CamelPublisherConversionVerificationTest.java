@@ -43,7 +43,7 @@ public class CamelPublisherConversionVerificationTest extends PublisherVerificat
             @Override
             public void configure() throws Exception {
                 from("timer:tick?delay=500&period=50&repeatCount=" + l)
-                        .setBody().simple("random(1000)")
+                        .setBody().simple("${random(1000)}")
                         .to("reactive-streams:prod");
             }
         };

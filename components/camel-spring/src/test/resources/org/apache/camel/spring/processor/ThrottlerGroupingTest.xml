@@ -32,9 +32,9 @@
         <correlationExpression>
           <constant>1</constant>
         </correlationExpression>
-        <to uri="log:result"/>
-        <to uri="mock:result"/>
       </throttle>
+      <to uri="log:result"/>
+      <to uri="mock:result"/>
     </route>
     
     <route errorHandlerRef="dlc">
@@ -44,9 +44,9 @@
         <correlationExpression>
           <constant>2</constant>
         </correlationExpression>        
-        <to uri="log:result"/>
-        <to uri="mock:result2"/>
       </throttle>
+      <to uri="log:result"/>
+      <to uri="mock:result2"/>
     </route>
     
     <route errorHandlerRef="dlc">
@@ -56,9 +56,9 @@
         <correlationExpression>
           <header>key</header>
         </correlationExpression>
-        <to uri="log:result"/>
-        <to uri="mock:resultdynamic"/>
       </throttle>
+      <to uri="log:result"/>
+      <to uri="mock:resultdynamic"/>
     </route>
     
     <route errorHandlerRef="dlc">
@@ -69,9 +69,9 @@
         <correlationExpression>
           <header>key</header>
         </correlationExpression>
-        <to uri="log:gresult"/>
-        <to uri="mock:gresult"/>
       </throttle>
+      <to uri="log:gresult"/>
+      <to uri="mock:gresult"/>
     </route>
     
     <route errorHandlerRef="dlc">
@@ -82,9 +82,9 @@
         <correlationExpression>
           <header>key</header>
         </correlationExpression>
-        <to uri="log:gresult"/>
-        <to uri="mock:gresult"/>
       </throttle>
+      <to uri="log:gresult"/>
+      <to uri="mock:gresult"/>
     </route>
     
     <route errorHandlerRef="dlc">
@@ -95,9 +95,9 @@
         <correlationExpression>
           <header>key</header>
         </correlationExpression>
-        <to uri="log:gresult"/>
-        <to uri="mock:gresult"/>
       </throttle>
+      <to uri="log:gresult"/>
+      <to uri="mock:gresult"/>
     </route>
 
   </camelContext>

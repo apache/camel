@@ -57,7 +57,7 @@ public class EhcacheConsumer extends DefaultConsumer implements CacheEventListen
     }
 
     @Override
-    public void onEvent(CacheEvent<? extends Object, ? extends Object> event) {
+    public void onEvent(CacheEvent<?, ?> event) {
         if (isRunAllowed()) {
             final Exchange exchange = getEndpoint().createExchange();
             final Message message = exchange.getIn();

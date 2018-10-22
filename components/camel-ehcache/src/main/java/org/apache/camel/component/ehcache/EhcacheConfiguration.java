@@ -53,9 +53,9 @@ public class EhcacheConfiguration implements Cloneable {
     @UriParam(label = "advanced")
     private Map<String, CacheConfiguration<?, ?>> configurations;
     @UriParam(label = "advanced", javaType = "java.lang.String", defaultValue = "java.lang.Object")
-    private Class<?> keyType = Object.class;
+    private Class<?> keyType;
     @UriParam(label = "advanced", javaType = "java.lang.String", defaultValue = "java.lang.Object")
-    private Class<?> valueType = Object.class;
+    private Class<?> valueType;
     @UriParam(label = "consumer", defaultValue = "ORDERED")
     private EventOrdering eventOrdering = EventOrdering.ORDERED;
     @UriParam(label = "consumer", defaultValue = "ASYNCHRONOUS")

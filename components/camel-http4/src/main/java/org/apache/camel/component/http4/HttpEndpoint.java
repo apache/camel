@@ -51,7 +51,7 @@ import org.apache.http.protocol.HttpContext;
 /**
  * For calling out to external HTTP servers using Apache HTTP Client 4.x.
  */
-@UriEndpoint(firstVersion = "2.3.0", scheme = "http4,https4", title = "HTTP4,HTTPS4", syntax = "http4:httpUri",
+@UriEndpoint(firstVersion = "2.3.0", scheme = "http4,https4,http,https", title = "HTTP4,HTTPS4", syntax = "http4:httpUri",
     producerOnly = true, label = "http", lenientProperties = true)
 @ManagedResource(description = "Managed HttpEndpoint")
 public class HttpEndpoint extends HttpCommonEndpoint {

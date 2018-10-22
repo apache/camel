@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.AsyncProducer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.thrift.client.AsyncClientMethodCallback;
@@ -37,7 +38,7 @@ import org.apache.thrift.transport.TTransportException;
 /**
  * Represents asynchronous and synchronous Thrift producer implementations
  */
-public class ThriftProducer extends DefaultProducer implements AsyncProcessor {
+public class ThriftProducer extends DefaultProducer implements AsyncProducer {
 
     protected final ThriftConfiguration configuration;
     protected final ThriftEndpoint endpoint;

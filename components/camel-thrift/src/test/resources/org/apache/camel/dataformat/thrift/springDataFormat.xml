@@ -38,16 +38,22 @@
     </route>
     <route id="_route3">
       <from id="_from3" uri="direct:marshal"/>
-      <marshal id="_marshal3" ref="thrift1"/>
+      <marshal id="_marshal3">
+        <custom ref="thrift1"/>
+      </marshal>
     </route>
     <route id="_route4">
       <from id="_from4" uri="direct:unmarshalA"/>
-      <unmarshal id="_unmarshal4" ref="thrift1"/>
+      <unmarshal id="_unmarshal4">
+        <custom ref="thrift1"/>
+      </unmarshal>
       <to id="_to2" uri="mock:reverse"/>
     </route>
     <route id="_route5">
       <from id="_from5" uri="direct:unmarshalB"/>
-      <unmarshal id="_unmarshal5" ref="thrift1"/>
+      <unmarshal id="_unmarshal5">
+        <custom ref="thrift1"/>
+      </unmarshal>
       <to id="_to3" uri="mock:reverse"/>
     </route>
   </camelContext>

@@ -34,10 +34,9 @@
 
         <route errorHandlerRef="dlc">
             <from uri="direct:in"/>
-            <threads poolSize="2">
-                <to uri="mock:foo"/>
-                <throwException ref="damn"/>
-            </threads>
+            <threads poolSize="2"/>
+            <to uri="mock:foo"/>
+            <throwException ref="damn"/>
         </route>
 
     </camelContext>

@@ -63,6 +63,10 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
     private boolean shutdownEager = true;
 
     public SpringCamelContext() {
+        super(false);
+        if (Boolean.getBoolean("org.apache.camel.jmx.disabled")) {
+            disableJMX();
+        }
         setManagementMBeanAssembler(new SpringManagementMBeanAssembler(this));
     }
 
@@ -94,6 +98,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
         }
         SpringCamelContext answer = new SpringCamelContext();
         answer.setApplicationContext(applicationContext);
+        answer.init();
         if (maybeStart) {
             answer.start();
         }
@@ -124,15 +129,10 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
 
     @Override
     public void stop() {
-        if (!isStopping() && !isStopped()) {
-            try {
-                super.stop();
-            } catch (Exception e) {
-                throw wrapRuntimeCamelException(e);
-            }
-        } else {
-            // ignore as Camel is already stopped
-            LOG.trace("Ignoring stop() as Camel is already stopped");
+        try {
+            super.stop();
+        } catch (Exception e) {
+            throw wrapRuntimeCamelException(e);
         }
     }
 

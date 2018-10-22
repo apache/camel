@@ -39,7 +39,7 @@ public class ReactorStreamsServiceSubscriberTest extends ReactorStreamsServiceTe
                     .to("mock:sub2");
                 from("timer:tick?period=50")
                     .setBody()
-                        .simple("random(500)")
+                        .simple("${random(500)}")
                     .to("mock:sub3")
                     .to("reactive-streams:pub");
             }

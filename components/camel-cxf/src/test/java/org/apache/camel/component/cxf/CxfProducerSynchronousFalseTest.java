@@ -64,8 +64,6 @@ public class CxfProducerSynchronousFalseTest extends CamelTestSupport {
         assertTrue("It should has the echoResponse tag", response.indexOf("echoResponse") > 0);
 
         assertMockEndpointsSatisfied();
-
-        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
     }
 
     protected RouteBuilder createRouteBuilder() {

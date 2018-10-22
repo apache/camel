@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.util.EventObject;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;

@@ -332,9 +332,11 @@
                     <include name="org/apache/camel/ManagementStatisticsLevel.java" />
                     <include name="org/apache/camel/ShutdownRoute.java" />
                     <include name="org/apache/camel/ShutdownRunningTask.java" />
-                    <include name="org/apache/camel/concurrent/ThreadPoolRejectedPolicy.java" />
                     <include name="org/apache/camel/WaitForTaskToComplete.java" />
                     <include name="org/apache/camel/package-info.java" />
+                  </fileset>
+                  <fileset dir="${basedir}/../../camel-util/src/main/java">
+                    <include name="org/apache/camel/concurrent/ThreadPoolRejectedPolicy.java" />
                   </fileset>
                 </copy>
               </target>

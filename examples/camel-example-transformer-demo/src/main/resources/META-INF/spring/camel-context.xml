@@ -56,7 +56,7 @@
         <camel:validators>
             <camel:endpointValidator type="xml" uri="validator:xsd/schema.xsd"/>
             <camel:predicateValidator type="json">
-                <camel:simple>${body} contains 'orderId' and ${body} not contains 'accepted'</camel:simple>
+                <camel:simple>${body} contains 'orderId' &amp;&amp; ${body} not contains 'accepted'</camel:simple>
             </camel:predicateValidator>
             <camel:customValidator type="java:org.apache.camel.example.transformer.demo.OrderResponse"
             className="org.apache.camel.example.transformer.demo.OrderResponseValidator"/>
