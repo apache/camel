@@ -75,7 +75,7 @@
 * [Async](async.adoc)
 * [Asynchronous Routing Engine](asynchronous-routing-engine.adoc)
 * [BacklogDebugger](backlogdebugger.adoc)
-* BacklogTracer
+* [BacklogTracer](backlog-tracer.adoc)
 * [BAM](bam.adoc)
 * [Batch Consumer](batch-consumer.adoc)
 * [Binding](binding.adoc)
