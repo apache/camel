@@ -16,7 +16,7 @@ You can enable or disable the BacklogTracer's logging dynamically, by
 calling the backlogTracer's `setEnabled` method.
 
 [[BacklogTracer-BacklogTracerDifference]]
-==== What is the difference between BacklogTracer and Tracer*
+==== What is the difference between BacklogTracer and Tracer
 
 Camel also provides a link:tracer.html[Tracer] which has similar
 capabilities as this backlog tracer. The difference is that the backlog
