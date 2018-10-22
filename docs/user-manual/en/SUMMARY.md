@@ -111,7 +111,7 @@
 * [Processor](processor.adoc)
 * [Registry](registry.adoc)
 * [RouteBuilder](route-builder.adoc)
-* RoutePolicy
+* [RoutePolicy](route-policy.adoc)
 * [Routes](routes.adoc)
 * ServicePool
 * Stream caching
