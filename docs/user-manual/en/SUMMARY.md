@@ -45,7 +45,7 @@
 * [Bean Integration](bean-integration.adoc)
 * [Configuring Camel](configuring-camel.adoc)
 * [Configuring route startup ordering and autostartup]
-* [Graceful Shutdown]
+* [Graceful Shutdown](graceful-shutdown.adoc)
 * [AsyncProcessorAwaitManager] for insight into the routing engine when it has been forced to block threads while exchanges are being processed asynchronous
 * [Error handling in Camel](error-handling-in-camel.adoc)
 * [How to use Camel property placeholders](using-propertyplaceholder.adoc)
