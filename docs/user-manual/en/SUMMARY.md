@@ -78,7 +78,7 @@
 * BacklogTracer
 * [BAM](bam.adoc)
 * [Batch Consumer](batch-consumer.adoc)
-* Binding
+* [Binding](binding.adoc)
 * [BrowsableEndpoint](browsable-endpoint.adoc)
 * [CamelContext](camelcontext.adoc)
 * [Camel Core](camel-core.adoc)
