@@ -117,7 +117,7 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
             LOG.error("Get a specific ConfigMap require specify a ConfigMap name");
             throw new IllegalArgumentException("Get a specific ConfigMap require specify a ConfigMap name");
         }
-        if(namespaceName != null) {
+        if (namespaceName != null) {
             configMap = getEndpoint().getKubernetesClient().configMaps().inNamespace(namespaceName).withName(cfMapName).get();
         } else {
             configMap = getEndpoint().getKubernetesClient().configMaps().withName(cfMapName).get();
