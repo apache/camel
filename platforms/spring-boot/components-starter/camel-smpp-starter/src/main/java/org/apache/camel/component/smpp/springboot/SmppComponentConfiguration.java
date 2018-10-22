@@ -122,7 +122,7 @@ public class SmppComponentConfiguration
          * This parameter is used to categorize the type of ESME (External Short
          * Message Entity) that is binding to the SMSC (max. 13 characters).
          */
-        private String systemType = "cp";
+        private String systemType;
         /**
          * Is used to request an SMSC delivery receipt and/or SME originated
          * acknowledgements. The following values are defined: 0: No SMSC
@@ -140,7 +140,7 @@ public class SmppComponentConfiguration
          * WAP: Wireless Application Protocol USSD: Unstructured Supplementary
          * Services Data
          */
-        private String serviceType = "CMT";
+        private String serviceType;
         /**
          * Defines the type of number (TON) to be used in the SME originator
          * address parameters. The following TON values are defined: 0: Unknown

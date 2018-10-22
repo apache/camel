@@ -75,7 +75,7 @@ public class Mina2ComponentAutoConfiguration {
     }
 
     @Lazy
-    @Bean(name = "mina2-component")
+    @Bean(name = {"mina-component", "mina2-component"})
     @ConditionalOnMissingBean(Mina2Component.class)
     public Mina2Component configureMina2Component() throws Exception {
         Mina2Component component = new Mina2Component();

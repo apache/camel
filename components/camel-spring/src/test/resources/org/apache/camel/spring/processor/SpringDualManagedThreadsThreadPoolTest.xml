@@ -35,16 +35,14 @@
 
         <route>
             <from uri="direct:start"/>
-            <threads executorServiceRef="myPool">
-                <to uri="mock:result"/>
-            </threads>
+            <threads executorServiceRef="myPool"/>
+            <to uri="mock:result"/>
         </route>
 
         <route>
             <from uri="direct:foo"/>
-            <threads executorServiceRef="myOtherPool">
-                <to uri="mock:foo"/>
-            </threads>
+            <threads executorServiceRef="myOtherPool"/>
+            <to uri="mock:foo"/>
         </route>
 
     </camelContext>

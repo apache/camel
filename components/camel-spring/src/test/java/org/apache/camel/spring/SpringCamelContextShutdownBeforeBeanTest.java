@@ -49,7 +49,6 @@ public class SpringCamelContextShutdownBeforeBeanTest extends SpringTestSupport 
 
         // stop spring to cause shutdown of Camel
         applicationContext.close();
-        applicationContext.destroy();
 
         assertEquals(3, order.getStart().size());
         assertEquals(3, order.getShutdown().size());

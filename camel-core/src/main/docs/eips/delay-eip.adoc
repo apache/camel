@@ -11,7 +11,7 @@ The Delay EIP supports 3 options which are listed below:
 |===
 | Name | Description | Default | Type
 | *executorServiceRef* | Refers to a custom Thread Pool if asyncDelay has been enabled. |  | String
-| *asyncDelayed* | Enables asynchronous delay which means the thread will noy block while delaying. | false | Boolean
+| *asyncDelayed* | Enables asynchronous delay which means the thread will not block while delaying. | false | Boolean
 | *callerRunsWhenRejected* | Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true | true | Boolean
 |===
 // eip options: END

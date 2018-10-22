@@ -51,7 +51,6 @@ org.apache.camel.component.timer.springboot.TimerComponentAutoConfiguration,\
 org.apache.camel.component.test.springboot.TestComponentAutoConfiguration,\
 org.apache.camel.component.beanclass.springboot.ClassComponentAutoConfiguration,\
 org.apache.camel.component.dataset.springboot.DataSetComponentAutoConfiguration,\
-org.apache.camel.component.binding.springboot.BindingNameComponentAutoConfiguration,\
 org.apache.camel.component.bean.springboot.BeanComponentAutoConfiguration,\
 org.apache.camel.component.dataformat.springboot.DataFormatComponentAutoConfiguration,\
 org.apache.camel.component.rest.springboot.RestApiComponentAutoConfiguration,\

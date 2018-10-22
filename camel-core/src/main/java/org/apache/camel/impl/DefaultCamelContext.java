@@ -339,6 +339,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // add the defer service startup listener
         this.startupListeners.add(deferStartupListener);
 
+        setDefaultExtension(HealthCheckRegistry.class, this::createHealthCheckRegistry);
+        setDefaultExtension(RuntimeCamelCatalog.class, this::createRuntimeCamelCatalog);
+
         if (init) {
             init();
         }
@@ -399,9 +402,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             managementStrategy = createManagementStrategy();
         }
 
-        setDefaultExtension(HealthCheckRegistry.class, this::createHealthCheckRegistry);
-        setDefaultExtension(RuntimeCamelCatalog.class, this::createRuntimeCamelCatalog);
-
         // Call all registered trackers with this context
         // Note, this may use a partially constructed object
         CamelContextTracker.notifyContextCreated(this);
@@ -416,9 +416,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     public <T> T getExtension(Class<T> type) {
         Object extension = extensions.get(type);
         if (extension instanceof Supplier) {
-            setExtension(type, ((Supplier<T>) extension).get());
+            extension = ((Supplier<T>) extension).get();
+            setExtension(type, (T) extension);
         }
-        return type.cast(extensions.get(type));
+        return (T) extension;
     }
 
     @Override
@@ -440,7 +441,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public String getName() {
-        return getNameStrategy().getName();
+        return getNameStrategy() != null ? getNameStrategy().getName() : null;
     }
 
     /**

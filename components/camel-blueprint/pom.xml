@@ -358,6 +358,9 @@
                         <include name="org/apache/camel/ManagementStatisticsLevel.java"/>
                         <include name="**/package-info.java"/>
                       </fileset>
+                      <fileset dir="${basedir}/../../camel-util/src/main/java">
+                        <include name="org/apache/camel/util/concurrent/ThreadPoolRejectedPolicy.java" />
+                      </fileset>
                     </copy>
                   </target>
                   <exportAntProperties>true</exportAntProperties>

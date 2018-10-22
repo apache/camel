@@ -54,10 +54,8 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
     private BlueprintContainer blueprintContainer;
     private ServiceRegistration<?> registration;
 
-    public BlueprintCamelContext() {
-    }
-
     public BlueprintCamelContext(BundleContext bundleContext, BlueprintContainer blueprintContainer) {
+        super(false);
         this.bundleContext = bundleContext;
         this.blueprintContainer = blueprintContainer;
 
@@ -69,6 +67,7 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
         setLanguageResolver(new BlueprintLanguageResolver(bundleContext));
         setDataFormatResolver(new BlueprintDataFormatResolver(bundleContext));
         setApplicationContextClassLoader(new BundleDelegatingClassLoader(bundleContext.getBundle()));
+        init();
     }
 
     @Override
@@ -95,13 +94,14 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
    
     public void doInit() {
         log.trace("init {}", this);
-
         // add service listener so we can be notified when blueprint container is done
         // and we would be ready to start CamelContext
         bundleContext.addServiceListener(this);
         // add blueprint listener as service, as we need this for the blueprint container
         // to support change events when it changes states
         registration = bundleContext.registerService(BlueprintListener.class, this, null);
+        // call super
+        super.doInit();
     }
 
     public void destroy() throws Exception {

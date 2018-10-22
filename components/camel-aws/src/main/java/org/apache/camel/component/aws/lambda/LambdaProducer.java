@@ -377,7 +377,7 @@ public class LambdaProducer extends DefaultProducer {
             }
             result = lambdaClient.createEventSourceMapping(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("createEventSourceMapping command returned the error code {}", ase.getErrorCode());
+            log.trace("createEventSourceMapping command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -404,7 +404,7 @@ public class LambdaProducer extends DefaultProducer {
             }
             result = lambdaClient.deleteEventSourceMapping(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("deleteEventSourceMapping command returned the error code {}", ase.getErrorCode());
+            log.trace("deleteEventSourceMapping command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -426,7 +426,7 @@ public class LambdaProducer extends DefaultProducer {
             }
             result = lambdaClient.listEventSourceMappings(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("listEventSourceMapping command returned the error code {}", ase.getErrorCode());
+            log.trace("listEventSourceMapping command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);

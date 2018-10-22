@@ -120,6 +120,8 @@ public class CamelAutoConfiguration {
                                          CamelContext camelContext,
                                          CamelConfigurationProperties config) throws Exception {
 
+        camelContext.init();
+
         if (camelContext instanceof DefaultCamelContext) {
             final DefaultCamelContext defaultContext = (DefaultCamelContext) camelContext;
             final Map<String, Registry> registryBeans = applicationContext.getBeansOfType(Registry.class);

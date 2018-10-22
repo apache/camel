@@ -53,7 +53,7 @@ class GrapeComponentTest extends Assert {
 
         pathesRepository.clear()
         camelContext.start()
-        camelContext.createProducerTemplate().sendBody('grape:org.apache.camel/camel-stream/2.15.2', 'msg')
+        camelContext.createProducerTemplate().sendBody('grape:org.apache.camel/camel-stream/' + camelContext.getVersion(), 'msg')
         camelContext.createProducerTemplate().sendBody('stream:out', 'msg')
     }
 

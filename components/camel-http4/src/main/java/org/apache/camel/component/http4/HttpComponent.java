@@ -199,7 +199,6 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Map<String, Object> httpClientParameters = new HashMap<>(parameters);
         final Map<String, Object> httpClientOptions = new HashMap<>();
-        httpClientOptions.put("contentCompressionEnabled", "false");
 
         // timeout values can be configured on both component and endpoint level, where endpoint take priority
         int val = getAndRemoveParameter(parameters, "connectionRequestTimeout", int.class, connectionRequestTimeout);
@@ -374,8 +373,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             builder.register("https", new SSLConnectionSocketFactory(sslContextParams.createSSLContext(getCamelContext()), x509HostnameVerifier));
             builder.register("https4", new SSLConnectionSocketFactory(sslContextParams.createSSLContext(getCamelContext()), x509HostnameVerifier));
         } else {
-            builder.register("https4", new SSLConnectionSocketFactory(SSLContexts.createDefault(), x509HostnameVerifier));
             builder.register("https", new SSLConnectionSocketFactory(SSLContexts.createDefault(), x509HostnameVerifier));
+            builder.register("https4", new SSLConnectionSocketFactory(SSLContexts.createDefault(), x509HostnameVerifier));
         }
         return builder.build();
     }

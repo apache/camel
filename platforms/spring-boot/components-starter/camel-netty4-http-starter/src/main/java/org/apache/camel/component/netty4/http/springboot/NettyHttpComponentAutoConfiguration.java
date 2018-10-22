@@ -75,7 +75,7 @@ public class NettyHttpComponentAutoConfiguration {
     }
 
     @Lazy
-    @Bean(name = "netty4-http-component")
+    @Bean(name = {"netty-http-component", "netty4-http-component"})
     @ConditionalOnMissingBean(NettyHttpComponent.class)
     public NettyHttpComponent configureNettyHttpComponent() throws Exception {
         NettyHttpComponent component = new NettyHttpComponent();

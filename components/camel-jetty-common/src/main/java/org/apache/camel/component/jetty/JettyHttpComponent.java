@@ -358,12 +358,12 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                         connectorRef.server.start();
                     }
                 }
+                // check the session support
+                if (endpoint.isSessionSupport()) {
+                    enableSessionSupport(connectorRef.server, connectorKey);
+                }
                 // ref track the connector
                 connectorRef.increment();
-            }
-            // check the session support
-            if (endpoint.isSessionSupport()) {
-                enableSessionSupport(connectorRef.server, connectorKey);
             }
 
             if (endpoint.isEnableMultipartFilter()) {

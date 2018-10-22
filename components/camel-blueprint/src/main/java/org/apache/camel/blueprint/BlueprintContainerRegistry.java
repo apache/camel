@@ -102,7 +102,10 @@ public class BlueprintContainerRegistry implements Registry {
                             continue;
                         }
                     }
-                    cl = bundle.loadClass(beanMetadata.getClassName());
+                    String clazz = beanMetadata.getClassName();
+                    if (clazz != null) {
+                        cl = bundle.loadClass(clazz);
+                    }
                 } else if (metadata instanceof ReferenceMetadata) {
                     ReferenceMetadata referenceMetadata = (ReferenceMetadata)metadata;
                     cl = bundle.loadClass(referenceMetadata.getInterface());

@@ -29,9 +29,8 @@
         <route>
             <from uri="direct:sample"/>
             <!-- will by default use 1 second period -->
-            <sample>
-                <to uri="mock:result"/>
-            </sample>
+            <sample/>
+            <to uri="mock:result"/>
         </route>
         <!-- END SNIPPET: e1 -->
 

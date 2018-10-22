@@ -22,7 +22,6 @@ org.apache.camel.component.kubernetes.resources_quota.springboot.KubernetesResou
 org.apache.camel.component.kubernetes.nodes.springboot.KubernetesNodesComponentAutoConfiguration,\
 org.apache.camel.component.kubernetes.pods.springboot.KubernetesPodsComponentAutoConfiguration,\
 org.apache.camel.component.kubernetes.secrets.springboot.KubernetesSecretsComponentAutoConfiguration,\
-org.apache.camel.component.kubernetes.springboot.KubernetesComponentAutoConfiguration,\
 org.apache.camel.component.kubernetes.springboot.cloud.KubernetesServiceDiscoveryAutoConfiguration,\
 org.apache.camel.component.kubernetes.springboot.cluster.KubernetesClusterServiceAutoConfiguration,\
 org.apache.camel.component.kubernetes.replication_controllers.springboot.KubernetesReplicationControllersComponentAutoConfiguration,\

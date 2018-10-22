@@ -25,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jpa.JpaConstants;
 import org.apache.camel.examples.Customer;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ServiceHelper;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -82,11 +82,11 @@ public class JpaProducerWithQueryParametersHeaderTest extends Assert {
         });
 
         template = camelContext.createProducerTemplate();
-        ServiceHelper.startServices(template, camelContext);
+        ServiceHelper.startService(template, camelContext);
     }
 
     @After
     public void tearDown() throws Exception {
-        ServiceHelper.stopServices(template, camelContext);
+        ServiceHelper.stopService(template, camelContext);
     }
 }

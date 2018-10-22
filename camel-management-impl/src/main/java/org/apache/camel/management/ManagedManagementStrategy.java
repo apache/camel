@@ -37,6 +37,9 @@ import org.apache.camel.spi.ManagementObjectStrategy;
  */
 public class ManagedManagementStrategy extends DefaultManagementStrategy {
 
+    public ManagedManagementStrategy() {
+    }
+
     public ManagedManagementStrategy(CamelContext context, ManagementAgent managementAgent) {
         super(context, managementAgent);
         context.setExtension(

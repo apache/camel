@@ -345,7 +345,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             getContext().setExtension(HealthCheckRegistry.class, healthCheckRegistry);
         } else {
             healthCheckRegistry = HealthCheckRegistry.get(getContext());
-            healthCheckRegistry.setCamelContext(getContext());
         }
         // Health check repository
         Set<HealthCheckRepository> repositories = getContext().getRegistry().findByType(HealthCheckRepository.class);
@@ -395,6 +394,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
         // init stream caching strategy
         initStreamCachingStrategy();
+
+        getContext().init();
     }
     //CHECKSTYLE:ON
 
