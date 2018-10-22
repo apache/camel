@@ -130,9 +130,9 @@ local IP address (eg 0.0.0.0) by default.
 * link:quartz2.html[Camel-quartz2] now supports customCalendar to avoid
 specific range of dates (Holidays for example) in Scheduler and
 Triggers.
-* Improved link:bean-language.html[Bean Language] to be able to invoke
+* Improved <<bean-language,Bean Language>> to be able to invoke
 static methods on pure static classes.
-* When link:bean-language.html[Bean Language] failed to invoke a method
+* When <<bean-language,Bean Language>> failed to invoke a method
 from an OGNL method chain (eg invoke the following 3 methods
 "doFoo.doSomething.getBar") and a method returned null which prevent
 further method invocation as that would cause a NullPointerException.
@@ -188,7 +188,7 @@ trailing slash if provided in uri when calling remote HTTP service.
 * Fixed link:oncompletion.html[OnCompletion] to keep any caught
 exception stored as property on the `Exchange` which allows to access
 that information to know if there was an exception during routing.
-* Fixed an issue with link:bean.html[Bean] component
+* Fixed an issue with <<bean-component,Bean>> component
 or link:simple.html[Simple] language with OGNL method call, would pick
 method with java.lang.Object type over a better suited method, when the
 method is overloaded.
@@ -377,7 +377,7 @@ and bcc using lower case keys, eg to=foo@bar.com, instead
 of mailto:To=foo@bar.com[To=foo@bar.com] as previously.
 * The <<file-component,File>> consumer no longer probe the file content by
 default. See the option `probeContentType` for more details.
-* If using link:bean.html[Bean] or link:class.html[Class] component and
+* If using <<bean-component,Bean>> or link:class.html[Class] component and
 specifying additional parameters in the endpoint uri to configure on the
 bean, then these options should now be prefixed with bean., eg
 `foo=123` is now `bean.foo=123`.

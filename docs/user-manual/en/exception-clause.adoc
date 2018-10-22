@@ -160,11 +160,11 @@ select the *`onException(IOException.class)`* clause.
 ==== Configuring RedeliveryPolicy (redeliver options)
 
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/processor/RedeliveryPolicy.html[RedeliveryPolicy]
-requires to use the <<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>>
+requires to use the <<deadLetterChannel-eip,Dead Letter Channel>>
 as the link:error-handler.adoc[Error Handler]. Dead Letter Channel
 supports attempting to redeliver the message exchange a number of times
 before sending it to a dead letter endpoint. See
-<<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>> for further
+<<deadLetterChannel-eip,Dead Letter Channel>> for further
 information about redeliver and which redeliver options exists.
 
 ===== No redelivery is default for onException
@@ -177,7 +177,7 @@ type basis. By default in the top examples, if an
 *`org.apache.camel.ValidationException`* occurs then the message will
 not be redelivered; however if some other exception occurs, e.g.,
 *`IOException`* or whatever, the route will be retried according to the
-settings from the <<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>>.
+settings from the <<deadLetterChannel-eip,Dead Letter Channel>>.
 
 However if you want to customize any methods on the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/processor/RedeliveryPolicy.html[RedeliveryPolicy]
@@ -313,7 +313,7 @@ is being routed to our processor *`MyFunctionFailureHandler`*. So you
 can say that the exchange is diverted when a *`MyFunctionalException`*
 is thrown during processing. It's important to distinct this as perfect
 valid. The default redelivery policy from the
-<<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>> will not kick in, so
+<<deadLetterChannel-eip,Dead Letter Channel>> will not kick in, so
 our processor receives the Exchange directly, without any redeliver
 attempted. In our processor we need to determine what to do. Camel
 regards the Exchange as *failure handled*. So our processor is the end
@@ -613,15 +613,15 @@ default error handler will kick in.
 
 *Available as of Camel 2.0*
 
-<<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>> has support
+<<deadLetterChannel-eip,Dead Letter Channel>> has support
 for *`onRedelivery`* to allow custom processing of a Message before its
 being redelivered. It can be used to add some customer header or
 whatnot. In Camel 2.0 we have added this feature to
 link:exception-clause.adoc[Exception Clause] as well, so you can use per
 exception scoped on redelivery. Camel will fallback to use the one
-defined on <<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>> if any, if
+defined on <<deadLetterChannel-eip,Dead Letter Channel>> if any, if
 none exists on the link:exception-clause.adoc[Exception Clause]. See
-<<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>> for more details on
+<<deadLetterChannel-eip,Dead Letter Channel>> for more details on
 *`onRedelivery`*.
 
 In the code below we want to do some custom code before redelivering any
@@ -654,7 +654,7 @@ class as this code is based on unit testing):
 
 *Available as of Camel 2.17*
 
-<<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>> has support
+<<deadLetterChannel-eip,Dead Letter Channel>> has support
 for *`onExceptionOccurred`* to allow custom processing of a Message just
 after the exception was thrown. It can be used to do some custom logging
 or whatnot. The difference between *`onRedelivery`* processor
@@ -762,5 +762,5 @@ Spring DSL as well. Here are a few examples:
 ==== See also
 
 * The link:error-handler.adoc[Error Handler] for the general error handling documentation
-* The <<DeadLetterChannel-DeadLetterChannel,Dead Letter Channel>> for further details
+* The <<deadLetterChannel-eip,Dead Letter Channel>> for further details
 * The <<transactionalClient-eip,Transactional Client>> for transactional behavior
