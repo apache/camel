@@ -46,9 +46,8 @@ during the day using a
 link:scheduledroutepolicy.html[ScheduledRoutePolicy] (offered via the
 http://camel.apache.org/quartz.html[camel-quartz] component).
 
-TIP:
-
- *SuspendableService*
+[[RoutePolicy-SuspendableService]]
+==== SuspendableService
 
 If you want to dynamic suspend/resume routes as the
 *`org.apache.camel.impl.ThrottlingRoutePolicy`* does then its advised to
@@ -89,10 +88,8 @@ again in case it has been suspended.
 |`logger` |`ThrottlingInflightRoutePolicy` |The logger category.
 |===
 
-INFO:
-
- *ThrottlingInflightRoutePolicy compared to the [Throttler]
-EIP*
+[[RoutePolicy-ThrottlingInflightRoutePolicy]]
+====  ThrottlingInflightRoutePolicy compared to the Throttler EIP
 
 The *`ThrottlingInflightRoutePolicy`* compared to
 link:throttler.html[Throttler] is that it does *not* block during
