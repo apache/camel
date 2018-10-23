@@ -102,7 +102,7 @@ The following issues has been fixed
 later and after CamelContext has been fully started.
 * Fixed an issue testing with @UseAdviceWith and Camel on Spring Boot.
 * Fixed link:oncompletion.html[OnCompletion] would not be triggered from
-a route using link:splitter.html[Splitter] and an exception was thrown
+a route using <<split-eip,Splitter>> and an exception was thrown
 during splitting.
 * Fixed link:kafka.html[Kafka] consumer stops consuming messages when
 exception occurs during offset commit.

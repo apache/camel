@@ -1,4 +1,4 @@
-[[MessageTranslator-MessageTranslator]]
+[[messageTranslator-eip]]
 == Message Translator
 
 Camel supports the

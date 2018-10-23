@@ -28,7 +28,7 @@ To get started with Camel:
 endpoints].
 3.  Add whatever routing rules you wish using the DSL and
 RouteBuilder or using
-Xml Configuration.
+XML Configuration.
 4.  Start the context.
 
 When your application is closing you may wish to

@@ -407,7 +407,7 @@ In the route above we handled the exception but routed it to a different
 endpoint. What if you need to alter the response and send a fixed
 response back to the original caller (the client). No secret here just
 do as you do in normal Camel routing, use
-<<MessageTranslator-MessageTranslator,transform>> to set the response, as shown in
+<<messageTranslator-eip,transform>> to set the response, as shown in
 the sample below:
 
 /camel-core/src/test/java/org/apache/camel/processor/onexception/OnExceptionHandleAndTransformTest.java

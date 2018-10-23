@@ -45,7 +45,7 @@ The following is the list of currently supported languages:
 * <<tokenizer-language,Tokenizer>>
 * <<xpath-language,XPath>>
 * <<xquery-language,XQuery>>
-* link:vtd-xml.adoc[VTD-XML]
+* https://github.com/camel-extra/camel-extra/blob/master/components/camel-vtdxml/src/main/docs/vtdxml-component.adoc[VTD-XML]
 
 Most of these languages are also supported used as
 link:annotation-based-expression-language.html[Annotation Based

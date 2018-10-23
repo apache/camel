@@ -1,0 +1,22 @@
+[[HowshouldIpackageapplicationsusingCamelandActiveMQ-HowshouldIpackageapplicationsusingCamelandActiveMQ]]
+=== How should I package applications using Camel and ActiveMQ?
+
+So you may wish to use Camel's
+link:../enterprise-integration-patterns.adoc[Enterprise Integration Patterns]
+inside the ActiveMQ Broker. In which case the
+stand alone broker is already packaged to work with Camel out of the
+box; just add your EIP routing rules to ActiveMQ's
+link:../xml-configuration.adoc[XML Configuration] like the example
+routing rule which ships with ActiveMQ
+5.x or later. If you want to include some Java routing rules, then just
+add your jar to somewhere inside ActiveMQ's lib directory.
+
+If you wish to use ActiveMQ and/or Camel in a standalone application, we
+recommend you just create a normal Spring application; then add the
+necessary jars and customise the Spring XML and you're good to go.
+
+[[HowshouldIpackageapplicationsusingCamelandActiveMQ-WhatjarsdoIneed]]
+==== What jars do I need?
+
+* https://cwiki.apache.org/confluence/display/ACTIVEMQ/Initial+Configuration[What jars are required for ActiveMQ]
+* link:what-jars-do-i-need.adoc[What jars are required for Camel]

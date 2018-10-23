@@ -59,7 +59,7 @@ Multisearch and exists operation
 Main class/JVM also, as it does when hitting ctrl + c.
 * Added option to skipFirst to the link:tokenizer.html[Tokenizer]
 language to make it easy to skip the very first element, when for
-example splitting a CSV file using the link:splitter.html[Splitter] EIP.
+example splitting a CSV file using the <<split-eip,Splitter>> EIP.
 * The link:rest-dsl.html[Rest DSL] now supports default values for query
 parameters
 * The link:rest-dsl.html[Rest DSL] now only binds from POJO to JSon/XML
