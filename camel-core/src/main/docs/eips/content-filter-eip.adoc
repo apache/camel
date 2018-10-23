@@ -8,7 +8,7 @@ Filter] from the
 using one of the following mechanisms in the routing logic to transform
 content from the inbound message.
 
-* <<MessageTranslator-MessageTranslator,Message Translator>>
+* <<messageTranslator-eip,Message Translator>>
 * invoking a <<BeanIntegration-BeanIntegration,Java bean>>
 * <<Processor-Processor,Processor>> object
 

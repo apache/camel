@@ -1,0 +1,44 @@
+[[HowdoIreusetheContextTestSupportclassinmyunittests-HowdoIreusetheContextTestSupportclassinmyunittests]]
+=== How do I reuse the ContextTestSupport class in my unit tests?
+
+You might want to look at the various link:../testing.adoc[Testing]
+options, in particular <<test-component,Camel Test>> and
+link:../spring-testing.adoc[Spring Testing] to see if those are better,
+more powerful options. We see `ContextTestSupport` as an older, less
+powerful option.
+
+There are a number of useful unit test cases and support classes you can
+reuse in your own unit test cases.
+
+If you use maven2 then here you go:
+
+`ContextTestSupport`:
+
+[source,java]
+----
+       <dependency>
+           <groupId>org.apache.camel</groupId>
+           <artifactId>camel-core</artifactId>
+           <version>${camel-version}</version>
+           <type>test-jar</type>
+           <scope>test</scope>
+       </dependency>
+----
+
+`SpringTestSupport`:
+
+[source,java]
+----
+       <dependency>
+           <groupId>org.apache.camel</groupId>
+           <artifactId>camel-test-spring</artifactId>
+           <version>${camel-version}</version>
+           <type>test-jar</type>
+           <scope>test</scope>
+       </dependency>
+----
+
+If you don't use maven:
+
+http://repo1.maven.org/maven2/org/apache/camel/camel-core/2.22.1/camel-core-2.22.1-tests.jar
+http://repo1.maven.org/maven2/org/apache/camel/camel-test-spring/2.22.1/camel-test-spring-2.22.1.jar

@@ -147,7 +147,7 @@ only succesful started routes are added.
 * Adding or removing routes that starts
 from link:undertow.html[Undertow] no longer restart the entire HTTP
 server
-* link:vm.html[VM] endpoint should prepare exchange with the
+* <<vm-component,VM>> endpoint should prepare exchange with the
 CamelContext from the consumer and not from cached endpoint which can be
 different
 * Fixed a bug when using link:rest-dsl.html[Rest DSL]

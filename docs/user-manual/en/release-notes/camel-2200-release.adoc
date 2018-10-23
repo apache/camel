@@ -67,7 +67,7 @@ graceful.
 * The link:jsonpath.html[JSonPath] can now split and write each row as a
 string value (JSon format) instead of using a Map/POJO type with the new
 writeAsString option.
-* The link:pojo-consuming.html[POJO Consuming] Consume annotation on
+* The link:pojo-consuming.adoc[POJO Consuming] Consume annotation on
 POJO classes now support a predicate (using simple language) to filter
 the message. See the camel-example-spring-boot-pojo for more.
 * The internal JSon parser that is used by camel-catalog and runtime
@@ -121,7 +121,7 @@ response on all valid uri paths when clients call using a HTTP OPTIONS
 request
 * Fixed link:rest.html[Rest] producer not using HTTP method (verb such
 as PUT) from the endpoint uri when calling a remote REST service
-* Fixed link:timer.html[Timer] routes to shutdown more graceful and
+* Fixed <<timer-component,Timer>> routes to shutdown more graceful and
 allow pending tasks to complete while they are in-flight.
 * Fixed configuring link:rest-dsl.html[Rest DSL] via
 application.properties|yaml in link:spring-boot.html[Spring Boot] not
