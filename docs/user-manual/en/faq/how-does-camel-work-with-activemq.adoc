@@ -14,7 +14,7 @@ So Camel can route messages to and from <<mail-component,Mail>>,
 other Camel link:../component.adoc[Components] as well as implementating
 all of the link:../enterprise-integration-patterns.adoc[Enterprise
 Integration Patterns] such as link:content-based-router.html[Content
-Based Router] or <<MessageTranslator-MessageTranslator,Message Translator>>.
+Based Router] or <<messageTranslator-eip,Message Translator>>.
 
 For more details see
 http://activemq.apache.org/enterprise-integration-patterns.html[ActiveMQ

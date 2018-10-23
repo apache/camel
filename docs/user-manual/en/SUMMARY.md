@@ -122,7 +122,7 @@
 * [Type Converter](type-converter.adoc)
 * URIs
 * [UuidGenerator](uuidgenerator.adoc)
-* Xml Configuration
+* XML Configuration
 
 ### [Enterprise Integration Patterns](enterprise-integration-patterns.adoc)
 

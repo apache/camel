@@ -1,4 +1,4 @@
-[[PipesandFilters-PipesandFilters]]
+[[pipesandFilters-eip]]
 == Pipes and Filters
 
 Camel supports the link:http://www.enterpriseintegrationpatterns.com/PipesAndFilters.html[Pipes and Filters] from the link:https://github.com/apache/camel/blob/master/docs/user-manual/en/enterprise-integration-patterns.adoc[EIP patterns] in various ways.
@@ -9,7 +9,7 @@ With Camel you can split your processing across multiple independent
 link:https://github.com/apache/camel/blob/master/docs/user-manual/en/endpoint.adoc[Endpoint] instances which can then be chained
 together.
 
-[[PipesandFilters-Samples]]
+[[pipesandFilters-Samples]]
 === Samples
 
 You can create pipelines of logic using multiple

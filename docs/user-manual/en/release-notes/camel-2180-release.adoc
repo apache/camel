@@ -74,7 +74,7 @@ issues.
 * Added "starts with" and "ends with" operator to the
 link:simple.html[Simple] language.
 * Added `BeanIOSplitter` to <<beanio-dataformat,BeanIO>> that can be used
-with the link:splitter.html[Splitter] EIP to split big payloads in
+with the <<split-eip,Splitter>> EIP to split big payloads in
 streaming mode without reading the entire content into memory.
 * Some of the link:aws.html[AWS] components allows to specify ARN in the
 endpoint configuration. 
@@ -88,7 +88,7 @@ identifier rules, and also if parameter syntax has an ending
 parenthesis.
 * You can now use `@RunWith(CamelSpringBootJUnit4ClassRunner.class)` to
 test Camel link:spring-boot.html[Spring Boot] applications and use the
-Camel test annotations from link:spring-testing.html[Spring Testing]
+Camel test annotations from link:spring-testing.adoc[Spring Testing]
 such as `@MockEndpoints`.
 * To turn on logging exhausted message body with the message history you
 can configure this easily on the CamelContext level
@@ -99,7 +99,7 @@ InfinispanRemoteAggregationRepository
 * The link:sql-component.html[SQL Component] and
 link:elsql.html[ElSql] now supports `outputType=StreamList` to use an
 iterator for the output of the SQL query that allows to process the data
-in a streaming fashion such as with the link:splitter.html[Splitter] EIP
+in a streaming fashion such as with the <<split-eip,Splitter>> EIP
 to process the data row by row, and load data from the database as
 needed.
 * <<jpa-component,JPA>> now includes a `JpaPollingConsumer` implementation
@@ -309,7 +309,7 @@ recommend using blueprint)
 camel-spring-dm module. If using Spring XML with Spring-DM then you need
 to install camel-spring-dm feature in Karaf/ServiceMix.
 * The deprecated `@LazyLoadTypeConverter` has been removed from
-all link:camel-test.html[Camel Test] modules
+all <<test-component,Camel Test>> modules
 * camel-gae has been removed (was not working anyway)
 * The access in the link:rest-dsl.html[Rest DSL] has been deprecated and
 no longer in use - its not part of swagger specification anymore.
