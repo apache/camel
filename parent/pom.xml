@@ -621,7 +621,7 @@
     <sip-api-version>1.1</sip-api-version>
     <slf4j-api-version>1.7.25</slf4j-api-version>
     <slf4j-version>1.7.25</slf4j-version>
-    <smack-version>4.3.0</smack-version>
+    <smack-version>4.3.1</smack-version>
     <snakeyaml-version>1.23</snakeyaml-version>
     <snappy-version>1.1.4</snappy-version>
     <snmp4j-version>2.6.3_1</snmp4j-version>
