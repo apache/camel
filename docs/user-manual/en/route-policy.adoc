@@ -61,8 +61,8 @@ operations as it support fallback for regular
 ==== `ThrottlingInflightRoutePolicy`
 
 The *`ThrottlingInflightRoutePolicy`* is triggered when an
-link:exchange.html[Exchange] is complete, which means that it requires
-at least one link:exchange.html[Exchange] to be complete before it
+link:exchange.adoc[Exchange] is complete, which means that it requires
+at least one link:exchange.adoc[Exchange] to be complete before it
 _works_.
 
 The throttling inflight route policy has the following options:
