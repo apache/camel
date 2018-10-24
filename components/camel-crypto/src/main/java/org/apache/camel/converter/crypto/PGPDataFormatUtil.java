@@ -163,7 +163,7 @@ public final class PGPDataFormatUtil {
                         }
                     }
                     if (passphrase == null && passphraseAccessor == null) {
-                    	passphrase = "";
+                        passphrase = "";
                         PGPPrivateKey privateKey = secKey.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider(provider)
                                 .build(passphrase.toCharArray()));
                         if (privateKey != null) {
