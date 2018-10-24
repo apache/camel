@@ -69,8 +69,8 @@ processed before it can shutdown.
 If a graceful shutdown could not shutdown cleanly within the given
 timeout period, then Camel performs a more aggressive shutdown by
 forcing routes and thread pools etc to shutdown. And as well the routing
-engine will reject continue processing link:exchange.html[Exchange]s. If
-this happens you may see WARN logs about link:exchange.html[Exchange]s
+engine will reject continue processing link:exchange.adoc[Exchange]s. If
+this happens you may see WARN logs about link:exchange.adoc[Exchange]s
 being rejected and other failures due the forced shutdown.
 
 If you do not want to see these logs, you can suppress this by setting

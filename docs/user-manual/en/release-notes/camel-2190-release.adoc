@@ -62,7 +62,7 @@ The https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=13979[bean
 component will when calling a method that returned an instance of
 `Callable` now call that callable to obtain the chained result. This
 allows to call Groovy functions/closures etc.
-* Failover link:load-balancer.html[Load Balancer] with
+* Failover <<loadBalance-eip,Load Balancer>> with
 inheritErrorHandler=false, now allows
 Camel's link:error-handler.html[Error Handler] to react after the load
 balancer is exhausted.
@@ -74,7 +74,7 @@ now include namespaces which will be associated on xpath expressions.
 * Added `RouteIdFactory` which can auto assign route ids based on the
 consumer endpoints to use more sensitible names, instead of route1,
 route2, etc.
-* Add `skip` function to link:simple.html[Simple] language
+* Add `skip` function to <<simple-language,Simple>> language
 * Upgraded to Jetty 9.3 (Jetty 9.2 still supported for Karaf 4.0.x
 users)
 * `RouteBuilder` auto-configuration can now be disabled
@@ -156,7 +156,7 @@ Stream closed exception when using <<bean-component,Bean>> in the route. 
 * Fixed an issue when using `pipeline` in Java DSL not setting up the
 EIP correctly which could lead to runtime route not as intended.
 * Fixed link:dropbox.html[Dropbox] to
-use link:stream-caching.html[Stream caching] to avoid reading entire
+use link:stream-caching.adoc[Stream caching] to avoid reading entire
 file into memory so Camel can process big files
 * Fixed `toD` issue with splitting uris when RAW values had + sign
 * Fixed adviceWith may behave differently when using multiple advices in
@@ -166,7 +166,7 @@ work with Camel XML 
 * Fixed link:ftp2.html[FTP2] readLock=changed not working (when
 fastFileExists=false) if no sub folder was specified as starting
 directory.
-* Fixed link:simple.html[Simple] language when using indexing with a
+* Fixed <<simple-language,Simple>> language when using indexing with a
 nested function
 * Fixed issue with `@Consume` not having `CamelContext` injected and its
 lifecycle managed by `CamelContext`

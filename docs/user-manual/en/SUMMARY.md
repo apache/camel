@@ -23,7 +23,7 @@
 * [Examples](#examples)
 * Cookbook
 * [Architecture](#architecture)
-* [Enterprise Integration Patterns](#enterprise-integration-patterns)
+* [Enterprise Integration Patterns](enterprise-integration-patterns.adoc)
 * [DSL](#dsl)
 * [Components](#components)
 * [Data Formats](#data-formats)
@@ -123,12 +123,6 @@
 * URIs
 * [UuidGenerator](uuidgenerator.adoc)
 * XML Configuration
-
-### [Enterprise Integration Patterns](enterprise-integration-patterns.adoc)
-
-* [Event Message](event-message.adoc)
-* [Message](message.adoc)
-* [Request Reply](request-reply.adoc)
 
 ### [DSL](dsl.adoc)
 
