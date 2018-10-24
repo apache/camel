@@ -286,7 +286,7 @@ from("direct:start")
 
 Parameter of any type (List, Map, etc.) can be passed to mybatis and an
 end user is responsible for handling it as required +
- with the help of http://www.mybatis.org/core/dynamic-sql.html[mybatis
+ with the help of http://www.mybatis.org/mybatis-3/dynamic-sql.html[mybatis
 dynamic queries] capabilities.
 
 ==== Scheduled polling example
