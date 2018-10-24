@@ -162,6 +162,14 @@ public final class PGPDataFormatUtil {
                             return privateKey;
                         }
                     }
+                    if (passphrase == null && passphraseAccessor == null) {
+                    	passphrase = "";
+                        PGPPrivateKey privateKey = secKey.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider(provider)
+                                .build(passphrase.toCharArray()));
+                        if (privateKey != null) {
+                            return privateKey;
+                        }
+                    }
                 }
 
             }
