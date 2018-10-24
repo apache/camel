@@ -20,15 +20,20 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.junit.Test;
 
-public class SpringPGPDataFormatTest extends AbstractPGPDataFormatTest {
+public class SpringPGPDataFormatNoPassPhraseTest extends AbstractPGPDataFormatTest {
 
     protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext("/org/apache/camel/component/crypto/SpringPGPDataFormatNoPassPhraseTest.xml");
+        return SpringCamelContext.springCamelContext("/org/apache/camel/component/crypto/SpringPGPDataFormatTest.xml");
     }
 
     @Test
     public void testEncryption() throws Exception {
         doRoundTripEncryptionTests("direct:inline");
+    }
+    
+    @Test
+    public void testEncryptionWithKeyRingByteArray() throws Exception {
+        doRoundTripEncryptionTests("direct:pgp-key-ring-byte-array");
     }
 
 }
