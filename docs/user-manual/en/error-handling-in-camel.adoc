@@ -232,4 +232,4 @@ for more.
 * link:transactionerrorhandler.adoc[TransactionErrorHandler]
 * link:defaulterrorhandler.adoc[DefaultErrorHandler]
 * link:try-catch-finally.adoc[Try Catch Finally]
-* <<loadBalancer-eip,Failover Load Balancer>>
+* <<loadBalance-eip,Failover Load Balancer>>

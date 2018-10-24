@@ -38,7 +38,7 @@ FTP server (which can be slow if the FTP server has many files in the
 LIST results)
 * Camel link:../json.adoc[JSON] with camel-jackson will now automatic use
 shared ObjectMapper instance if there is only one instance in
-the link:registry.adoc[Registry]. For example users with Spring Boot
+the link:../registry.adoc[Registry]. For example users with Spring Boot
 then allows Camel to easily use the default mapper from Spring Boot.
 * Added `ExtendedStartupListener` that allows a callback just after the
 CamelContext has been fully started.

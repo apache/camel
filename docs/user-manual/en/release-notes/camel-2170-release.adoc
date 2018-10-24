@@ -28,7 +28,7 @@ and link:ftp.html[FTP] endpoints is now case in-sensitive out of the
 box.
 * Resource based component such
 as link:xslt.html[XSLT], link:velocity.html[Velocity] etc can load the
-resource file from the link:registry.adoc[Registry] by using `ref:` as
+resource file from the link:../registry.adoc[Registry] by using `ref:` as
 prefix.
 * Upgraded camel-amqp to the latest qpid-jms-client (also AMQP < 1.0 is
 not supported anymore).
@@ -44,9 +44,9 @@ MultiGet operation
 performant and use a rolling window for time periods which gives a
 better flow.
 * The `setHeader` and `setExchangeProperty` allows to use a dynamic
-header key using the link:simple.html[Simple] language if the name of
-the key is a link:simple.html[Simple] language expression.
-* Add collate function to link:simple.html[Simple] language to make it
+header key using the <<simple-language,Simple>> language if the name of
+the key is a <<simple-language,Simple>> language expression.
+* Add collate function to <<simple-language,Simple>> language to make it
 easier to split a message body into sub lists of a specified size. The
 function is similar to the collate function from Groovy.
 * The link:camel-run-maven-goal.html[Camel Run Maven Goal] is able to
@@ -72,7 +72,7 @@ bodies.
 * Camel link:error-handler.html[Error Handler] no longer log message
 body/header details when logging the link:message-history.html[Message
 History]. This avoids logging any sensitive details from message bodies.
-* Camel link:exception-clause.html[Exception Clause]
+* Camel link:../exception-clause.adoc[Exception Clause]
 and link:error-handler.html[Error Handler] now supports using a
 custom `Processor` to be invoked right after an exception was thrown
 using the new *onExceptionOccurred* option.
@@ -94,7 +94,7 @@ scheduled interval.
 * The <<http-component,HTTP>> and link:http4.html[HTTP4] producers now
 support the `disableStreamCache` option to allow to use the raw response
 stream as the message body instead of wrapping
-using link:stream-caching.html[Stream caching]
+using link:stream-caching.adoc[Stream caching]
 * The link:cdi.html[Camel CDI] component has been improved to better fit
 into the CDI programming model, cover a larger set of containers, and
 provide these new features:
@@ -189,7 +189,7 @@ trailing slash if provided in uri when calling remote HTTP service.
 exception stored as property on the `Exchange` which allows to access
 that information to know if there was an exception during routing.
 * Fixed an issue with <<bean-component,Bean>> component
-or link:simple.html[Simple] language with OGNL method call, would pick
+or <<simple-language,Simple>> language with OGNL method call, would pick
 method with java.lang.Object type over a better suited method, when the
 method is overloaded.
 * Fixed `camel-blueprint` to wait for the bundles with the component and
@@ -207,10 +207,10 @@ should let Camel handle the lifecycle of these resources.
 * Fixed link:cxfrs.html[CXFRS] using simple binding mode would use the
 content-length header from the incoming message in the response, instead
 of calculating the length based on the output message body.
-* Fixed an issue with link:simple.html[Simple] if starting the
+* Fixed an issue with <<simple-language,Simple>> if starting the
 expression with `file:` could fail with an error.
 * Fixed link:spring-boot.html[Spring Boot] may report spring type
-converter errors if link:stream-caching.html[Stream caching] is enabled.
+converter errors if link:stream-caching.adoc[Stream caching] is enabled.
 * Fixed link:idempotent-consumer.html[Idempotent Consumer] would not
 propagate exception thrown from `IdempotentRepository` to
 Camel's link:error-handler.html[Error Handler] such as `onException```

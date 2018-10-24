@@ -25,7 +25,7 @@ tracer is storing +
 link:tracer.html[Tracer] is event based and logs the messages as they
 happen (or route to another Camel destination). Also the
 link:tracer.html[Tracer] has more fine grained events where it dives
-into link:eip.html[EIP]s such as the
+into link:enterprise-integration-patterns.adoc[EIP]s such as the
 link:content-based-router.html[Content Based Router] and traces the
 when/otherwise(s). Though the link:tracer.html[Tracer] has much more
 complicated logic to handle this (there is some edge-cases where this
@@ -55,8 +55,8 @@ either the name "to1", or "to2". You can use * for wildcards. So you can
 do "to*" to match any to. Or use "route-foo*" to match any foo routes.
 
 |traceFilter |`null` |Allow to configure a filter as a link:predicate.html[Predicate] using
-any of the Camel link:languages.html[languages]. But default the
-link:simple.html[Simple] language is used. For example to filter on
+any of the Camel link:languages.adoc[languages]. But default the
+<<simple-language,Simple>> language is used. For example to filter on
 messages with a given header, use `${header.foo} != null`. To use
 link:groovy.html[Groovy] then prefix the value with "groovy:". And
 similar for the other languages.
@@ -69,7 +69,7 @@ or negative value to use unlimited size.
 
 |bodyIncludeStreams |`false` |Whether to include the message body of stream based messages. If enabled
 then beware the stream may not be re-readable later. See more about
-link:stream-caching.html[Stream Caching].
+link:stream-caching.adoc[Stream Caching].
 
 |bodyIncludeFiles |`true` |Whether to include the message body of file based messages. The overhead
 is that the file content has to be read from the file.

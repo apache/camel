@@ -50,7 +50,7 @@ started last - when all resources should be available, and stopped first
 - while all resources are still available
 * The link:sql-stored-procedure.html[SQL Stored Procedure] now supports
 specifying custom types as FQN classnames and scale in numeric values.
-* Using Camel with link:spring.adoc[Spring] now supports calling
+* Using Camel with link:../spring.adoc[Spring] now supports calling
 <<bean-component,Bean>> by their FQN name and let Spring instantiate the
 bean using auto-wired constructor's as opposed to only supporting a
 no-arg constructor. 
@@ -60,7 +60,7 @@ include or exclude class names, which can be configured using Spring
 configuration properties.
 * The link:wire-tap.html[Wire Tap] EIP can now be configured to use
 static endpoint uri instead of being dynamic evaluated via the
-link:simple.html[Simple] language. 
+<<simple-language,Simple>> language. 
 * The link:wire-tap.html[Wire Tap] EIP will now complete any inflight
 wire tapped exchanges while shutting down to give them time to complete
 graceful.
@@ -113,7 +113,7 @@ failure and react accordingly to run in half-open mode as well.
 * Fixed link:mdc-logging.html[MDC logging] loosing route id after
 calling a direct route from within a transacted route
 * Fixed a regression with <<bean-component,Bean>>
-and link:simple.html[Simple] OGNL expressions causing ambiguous method
+and <<simple-language,Simple>> OGNL expressions causing ambiguous method
 call exception when calling method implemented by super class when
 method is defined by interface and abstract class
 * Fixed link:rest-dsl.html[Rest DSL] (server side) not returning
