@@ -8,7 +8,7 @@
 ## Overview
 
 * [Introduction](README.md)
-* Download
+* [Download](download.adoc)
 * [Getting Started](getting-started.adoc)
 * [Longer Getting Started Guide](book-getting-started.adoc)
 * [FAQ](faq.adoc)
@@ -23,7 +23,7 @@
 * [Examples](#examples)
 * Cookbook
 * [Architecture](#architecture)
-* [Enterprise Integration Patterns](#enterprise-integration-patterns)
+* [Enterprise Integration Patterns](enterprise-integration-patterns.adoc)
 * [DSL](#dsl)
 * [Components](#components)
 * [Data Formats](#data-formats)
@@ -45,7 +45,7 @@
 * [Bean Integration](bean-integration.adoc)
 * [Configuring Camel](configuring-camel.adoc)
 * [Configuring route startup ordering and autostartup]
-* [Graceful Shutdown]
+* [Graceful Shutdown](graceful-shutdown.adoc)
 * [AsyncProcessorAwaitManager] for insight into the routing engine when it has been forced to block threads while exchanges are being processed asynchronous
 * [Error handling in Camel](error-handling-in-camel.adoc)
 * [How to use Camel property placeholders](using-propertyplaceholder.adoc)
@@ -75,10 +75,10 @@
 * [Async](async.adoc)
 * [Asynchronous Routing Engine](asynchronous-routing-engine.adoc)
 * [BacklogDebugger](backlogdebugger.adoc)
-* BacklogTracer
+* [BacklogTracer](backlog-tracer.adoc)
 * [BAM](bam.adoc)
 * [Batch Consumer](batch-consumer.adoc)
-* Binding
+* [Binding](binding.adoc)
 * [BrowsableEndpoint](browsable-endpoint.adoc)
 * [CamelContext](camelcontext.adoc)
 * [Camel Core](camel-core.adoc)
@@ -111,7 +111,7 @@
 * [Processor](processor.adoc)
 * [Registry](registry.adoc)
 * [RouteBuilder](route-builder.adoc)
-* RoutePolicy
+* [RoutePolicy](route-policy.adoc)
 * [Routes](routes.adoc)
 * ServicePool
 * Stream caching
@@ -121,14 +121,8 @@
 * [Transport](transport.adoc)
 * [Type Converter](type-converter.adoc)
 * URIs
-* UuidGenerator
-* Xml Configuration
-
-### [Enterprise Integration Patterns](enterprise-integration-patterns.adoc)
-
-* [Event Message](event-message.adoc)
-* [Message](message.adoc)
-* [Request Reply](request-reply.adoc)
+* [UuidGenerator](uuidgenerator.adoc)
+* XML Configuration
 
 ### [DSL](dsl.adoc)
 

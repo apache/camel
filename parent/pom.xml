@@ -99,7 +99,7 @@
     <boxjavalibv2.version>3.2.1</boxjavalibv2.version>
     <box-java-sdk-version>2.10.0</box-java-sdk-version>
     <braintree-gateway-version>2.84.0</braintree-gateway-version>
-    <brave-zipkin-version>5.4.3</brave-zipkin-version>
+    <brave-zipkin-version>5.4.4</brave-zipkin-version>
     <build-helper-maven-plugin-version>1.12</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.2</c3p0-version>
     <c3p0-bundle-version>0.9.5.2_2</c3p0-bundle-version>
@@ -290,7 +290,7 @@
     <hawtbuf-version>1.11</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
     <hawtdispatch-version>1.22</hawtdispatch-version>
-    <hazelcast-version>3.10.6</hazelcast-version>
+    <hazelcast-version>3.11</hazelcast-version>
     <hbase-version>1.2.6</hbase-version>
     <hessian-version>4.0.51</hessian-version>
     <hdrhistrogram-version>2.1.10</hdrhistrogram-version>
@@ -345,7 +345,7 @@
     <java-util-version>1.34.0</java-util-version>
     <java-util-bundle-version>1.34.0_1</java-util-bundle-version>
     <jna-version>4.2.2</jna-version>
-    <jnats-version>2.1.1</jnats-version>
+    <jnats-version>2.1.2</jnats-version>
     <javacc-maven-plugin-version>2.6</javacc-maven-plugin-version>
     <javacrumbs-version>0.22</javacrumbs-version>
     <javapoet-version>1.11.1</javapoet-version>
@@ -387,7 +387,7 @@
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
     <jettison-version>1.4.0</jettison-version>
-    <jgit-version>5.1.2.201810061102-r</jgit-version>
+    <jgit-version>5.1.3.201810200350-r</jgit-version>
     <jgroups-version>4.0.15.Final</jgroups-version>
     <libthrift-version>0.11.0</libthrift-version>
     <jibx-version>1.2.6</jibx-version>
@@ -496,7 +496,7 @@
     <maven-war-plugin-version>3.0.0</maven-war-plugin-version>
     <metrics-version>3.2.6</metrics-version>
     <micrometer-version>1.0.7</micrometer-version>
-    <milo-version>0.2.3</milo-version>
+    <milo-version>0.2.4</milo-version>
     <mina-bundle-version>1.1.7_6</mina-bundle-version>
     <mina-version>1.1.7</mina-version>
     <mina2-version>2.0.17</mina2-version>
@@ -578,9 +578,9 @@
     <quartz-version-range>[1.8,2)</quartz-version-range>
     <quartz2-version>2.3.0</quartz2-version>
     <quickfixj-version>2.1.0</quickfixj-version>
-    <rabbitmq-amqp-client-version>5.4.3</rabbitmq-amqp-client-version>
+    <rabbitmq-amqp-client-version>5.5.0</rabbitmq-amqp-client-version>
     <reactive-streams-version>1.0.2</reactive-streams-version>
-    <reactor-version>3.2.0.RELEASE</reactor-version>
+    <reactor-version>3.2.1.RELEASE</reactor-version>
     <reflections-version>0.9.11</reflections-version>
     <reflections-bundle-version>0.9.11_1</reflections-bundle-version>
     <regexp-bundle-version>1.4_1</regexp-bundle-version>
@@ -621,7 +621,7 @@
     <sip-api-version>1.1</sip-api-version>
     <slf4j-api-version>1.7.25</slf4j-api-version>
     <slf4j-version>1.7.25</slf4j-version>
-    <smack-version>4.3.0</smack-version>
+    <smack-version>4.3.1</smack-version>
     <snakeyaml-version>1.23</snakeyaml-version>
     <snappy-version>1.1.4</snappy-version>
     <snmp4j-version>2.6.3_1</snmp4j-version>

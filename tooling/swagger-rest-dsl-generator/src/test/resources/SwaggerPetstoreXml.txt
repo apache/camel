@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <rests xmlns="http://camel.apache.org/schema/spring">
-    <rest>
+    <rest path="/v2">
         <put consumes="application/json,application/xml" id="updatePet" produces="application/xml,application/json" uri="/pet">
             <param description="Pet object that needs to be added to the store" name="body" required="true" type="body"/>
             <to uri="direct:updatePet"/>

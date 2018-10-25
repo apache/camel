@@ -1,0 +1,21 @@
+[[HowdoIrunActiveMQandCamelinJBoss-HowdoIrunActiveMQandCamelinJBoss]]
+=== How do I run ActiveMQ and Camel in JBoss?
+
+A user had a problem with running ActiveMQ embedded inside JBoss. He
+reported his findings on the Camel mailing list which you can read about
+http://www.nabble.com/JBoss-%2B-ActiveMQ-%2B-Camel-%2B-Newbie-td24056976.html[his
+solution here].
+
+[[HowdoIrunActiveMQandCamelinJBoss-UsingCamelinJBoss]]
+==== Using Camel in JBoss
+
+*Available as of Camel 2.1*
+
+We have now created a https://github.com/camel-extra/camel-extra/blob/master/components/camel-jboss/src/main/docs/jboss-component.adoc[camel-jboss] component which
+allows you to run Camel inside JBoss. Unfortunately JBoss uses LGPL
+license which is Apache unfriendly so the project is hosted at
+https://camel-extra.github.io/[Camel Extra].
+
+Basically what you need is to use a specialized classloader due to JBoss
+classloading challenges. This classloder is provided in the
+https://github.com/camel-extra/camel-extra/blob/master/components/camel-jboss/src/main/docs/jboss-component.adoc[camel-jboss] component.

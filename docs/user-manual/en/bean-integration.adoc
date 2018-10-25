@@ -34,7 +34,7 @@ property placeholder.
 |`@Produce` |To inject a producer to send message to an endpoint. See
 POJO Producing.
 
-|`@Consume` |To inject a consumer on a method. See link:pojo-consuming.html[POJO
+|`@Consume` |To inject a consumer on a method. See link:pojo-consuming.adoc[POJO
 Consuming].
 |=======================================================================
 

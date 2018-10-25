@@ -176,7 +176,7 @@ out of the box
 * link:tokenizer.adoc[Tokenizer]
 * link:xpath.adoc[XPath]
 * link:xquery.adoc[XQuery]
-* link:vtd-xml.adoc[VTD-XML]
+* https://github.com/camel-extra/camel-extra/blob/master/components/camel-vtdxml/src/main/docs/vtdxml-component.adoc[VTD-XML]
 
 Most of these languages is also supported used as
 link:annotation-based-expression-language.adoc[Annotation Based

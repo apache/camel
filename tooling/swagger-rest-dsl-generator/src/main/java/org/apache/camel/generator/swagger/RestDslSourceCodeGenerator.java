@@ -111,7 +111,7 @@ public abstract class RestDslSourceCodeGenerator<T> extends RestDslGenerator<Res
             configure.addCode(";\n\n");
         }
 
-        final PathVisitor<MethodSpec> restDslStatement = new PathVisitor<>(emitter, filter, destinationGenerator());
+        final PathVisitor<MethodSpec> restDslStatement = new PathVisitor<>(swagger.getBasePath(), emitter, filter, destinationGenerator());
         swagger.getPaths().forEach(restDslStatement::visit);
 
         return emitter.result();

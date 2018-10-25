@@ -1,0 +1,127 @@
+[[Download-Download]]
+=== Download
+
+[[Download-LatestReleases]]
+==== Latest Releases
+
+image:http://camel.apache.org/images/camel-box-small.png[image]
+
+Grab these releases while they are hot!
+
+* The latest release for Camel 2.20.x is:
+link:release-notes/camel-2202-release.adoc[Camel 2.20.2 Release]
+* The latest release for Camel 2.19.x is:
+link:release-notes/camel-2194-release.adoc[Camel 2.19.4 Release]
+* Camel versions 2.18.x and older are no longer actively developed.
+
+[[Download-OlderReleases]]
+==== Older Releases
+
+See: link:download-archives.adoc[Download Archives]
+
+[[Download-Gettingthelatestdistributions]]
+==== Getting the latest distributions
+
+[[Download-BinaryDistribution]]
+===== Binary Distribution
+
+[width="100%",cols="20%,20%,20%,20%,20%",options="header",]
+|=======================================================================
+|Description |Download Link |PGP Signature file of download |MD5
+Checksum file of download |SHA1 Checksum file of download
+|Windows Distribution (2.20.x branch)
+|http://www.apache.org/dyn/closer.lua?filename=camel/apache-camel/2.20.2/apache-camel-2.20.2.zip&action=download[apache-camel-2.20.2.zip]
+|https://www.apache.org/dist/camel/apache-camel/2.20.2/apache-camel-2.20.2.zip.asc[apache-camel-2.20.2.zip.asc]
+|https://www.apache.org/dist/camel/apache-camel/2.20.2/apache-camel-2.20.2.zip.md5[apache-camel-2.20.2.zip.md5]
+|https://www.apache.org/dist/camel/apache-camel/2.20.2/apache-camel-2.20.2.zip.sha1[apache-camel-2.20.2.zip.sha1]
+
+|nix/Linux/Cygwin Distribution (2.20.x branch)
+|http://www.apache.org/dyn/closer.lua?filename=camel/apache-camel/2.20.2/apache-camel-2.20.2.tar.gz&action=download[apache-camel-2.20.2.tar.gz]
+|https://www.apache.org/dist/camel/apache-camel/2.20.2/apache-camel-2.20.2.tar.gz.asc[apache-camel-2.20.2.tar.gz.asc]
+|https://www.apache.org/dist/camel/apache-camel/2.20.2/apache-camel-2.20.2.tar.gz.md5[apache-camel-2.20.2.tar.gz.md5]
+|https://www.apache.org/dist/camel/apache-camel/2.20.2/apache-camel-2.20.2.tar.gz.sha1[apache-camel-2.20.2.tar.gz.sha1]
+
+|Windows Distribution (2.19.x branch)
+|http://www.apache.org/dyn/closer.lua?filename=camel/apache-camel/2.19.4/apache-camel-2.19.4.zip&action=download[apache-camel-2.19.4.zip]
+|https://www.apache.org/dist/camel/apache-camel/2.19.4/apache-camel-2.19.4.zip.asc[apache-camel-2.19.4.zip.asc]
+|https://www.apache.org/dist/camel/apache-camel/2.19.4/apache-camel-2.19.4.zip.md5[apache-camel-2.19.4.zip.md5]
+|https://www.apache.org/dist/camel/apache-camel/2.19.4/apache-camel-2.19.4.zip.sha1[apache-camel-2.19.4.zip.sha1]
+
+|Unix/Linux/Cygwin Distribution (2.19.x branch)
+|http://www.apache.org/dyn/closer.lua?filename=camel/apache-camel/2.19.4/apache-camel-2.19.4.tar.gz&action=download[apache-camel-2.19.4.tar.gz]
+|https://www.apache.org/dist/camel/apache-camel/2.19.4/apache-camel-2.19.4.tar.gz.asc[apache-camel-2.19.4.tar.gz.asc]
+|https://www.apache.org/dist/camel/apache-camel/2.19.4/apache-camel-2.19.4.tar.gz.md5[apache-camel-2.19.4.tar.gz.md5]
+|https://www.apache.org/dist/camel/apache-camel/2.19.4/apache-camel-2.19.4.tar.gz.sha1[apache-camel-2.19.4.tar.gz.sha1]
+|=======================================================================
+
+[[Download-SourceDistribution]]
+===== Source Distribution
+
+[width="100%",cols="20%,20%,20%,20%,20%",options="header",]
+|=======================================================================
+|Description |Download Link |PGP Signature file of download |MD5
+Checksum file of download |SHA1 Checksum file of download
+|Source (zip - 2.20.x branch)
+|http://www.apache.org/dyn/closer.lua?filename=camel/apache-camel/2.20.2/apache-camel-2.20.2-src.zip&action=download[apache-camel-2.20.2-src.zip]
+|https://www.apache.org/dist/camel/apache-camel/2.20.2/apache-camel-2.20.2-src.zip.asc[apache-camel-2.20.2-src.zip.asc]
+|https://www.apache.org/dist/camel/apache-camel/2.20.2/apache-camel-2.20.2-src.zip.md5[apache-camel-2.20.2-src.zip.md5]
+|https://www.apache.org/dist/camel/apache-camel/2.20.2/apache-camel-2.20.2-src.zip.sha1[apache-camel-2.20.2-src.zip.sha1]
+
+|Source (zip - 2.19.x branch)
+|http://www.apache.org/dyn/closer.lua?filename=camel/apache-camel/2.19.4/apache-camel-2.19.4-src.zip&action=download[apache-camel-2.19.4-src.zip]
+|https://www.apache.org/dist/camel/apache-camel/2.19.4/apache-camel-2.19.4-src.zip.asc[apache-camel-2.19.4-src.zip.asc]
+|https://www.apache.org/dist/camel/apache-camel/2.19.4/apache-camel-2.19.4-src.zip.md5[apache-camel-2.19.4-src.zip.md5]
+|https://www.apache.org/dist/camel/apache-camel/2.19.4/apache-camel-2.19.4-src.zip.sha1[apache-camel-2.19.4-src.zip.sha1]
+|=======================================================================
+
+[[Download-Keys]]
+==== Keys
+
+The `KEYS` used to sign the release can be found
+https://www.apache.org/dist/camel/apache-camel/KEYS[here].
+
+[[Download-GettingtheBinariesusingMaven2]]
+==== Getting the Binaries using Maven 2
+
+To use this release in your maven project, the proper dependency
+configuration that you should use in your
+http://maven.apache.org/guides/introduction/introduction-to-the-pom.html[Maven
+POM] is:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-core</artifactId>
+  <version>2.20.2</version>
+</dependency>
+----
+
+[[Download-Gettingpastreleases]]
+==== Getting past releases
+
+See the link:download-archives.adoc[Download Archives] for all time
+releases.
+
+[[Download-ReleasesInProgress]]
+==== Releases In Progress
+
+The following releases are currently in progress:
+
+* link:release-notes/camel-2203-release.adoc[Camel 2.20.3 Release]
+* link:copy-of-camel-2195-release-template.html[Copy of Camel 2.19.5 Release (template)]
+* link:release-notes/camel-2210-release.adoc[Camel 2.21.0 Release]
+* link:camel-xyz-release-template.html[Camel x.y.z Release (template)]
+
+[[Download-Maven2Repositories]]
+==== Maven 2 Repositories
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|Repository |URL
+|Apache Camel Releases
+|https://repository.apache.org/content/repositories/releases/org/apache/camel/apache-camel/
+
+|Apache Camel Releases (old) |For Camel 1.6.0 or older releases:
+http://people.apache.org/repo/m2-ibiblio-rsync-repository/
+|=======================================================================

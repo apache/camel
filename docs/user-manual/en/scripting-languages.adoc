@@ -171,5 +171,5 @@ See Also
 
 * Languages
 * link:dsl.adoc[DSL]
-* Xml Configuration
+* XML Configuration
 

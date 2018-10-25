@@ -17,7 +17,7 @@ public final class SwaggerPetstore extends RouteBuilder {
 
         restConfiguration().component("servlet").contextPath("/");
 
-        rest()
+        rest("/v2")
             .put("/pet")
                 .id("updatePet")
                 .consumes("application/json,application/xml")
