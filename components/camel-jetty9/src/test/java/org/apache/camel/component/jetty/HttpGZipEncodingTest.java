@@ -24,8 +24,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.http4.HttpClientConfigurer;
+import org.apache.camel.impl.JndiRegistry;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore("TODO: investigate for Camel 3.0.  The test actally works fine, but the " +
+        "test needs to be verified as http4 supports gzip by default, so some tests may " +
+        "have to be changed to stay meaningful.")
 public class HttpGZipEncodingTest extends BaseJettyTest {
     
     private int port1;
@@ -33,7 +40,7 @@ public class HttpGZipEncodingTest extends BaseJettyTest {
 
     @Test
     public void testHttpProducerWithGzip() throws Exception {
-        String response = template.requestBodyAndHeader("http://localhost:" + port1 + "/gzip",
+        String response = template.requestBodyAndHeader("http://localhost:" + port1 + "/gzip?httpClientConfigurer=#configurer",
                 new ByteArrayInputStream("<Hello>World</Hello>".getBytes()), Exchange.CONTENT_ENCODING, "gzip", String.class);
         assertEquals("The response is wrong", "<b>Hello World</b>", response);
     }
@@ -41,7 +48,7 @@ public class HttpGZipEncodingTest extends BaseJettyTest {
     @Test
     public void testGzipProxy() throws Exception {
         String response = 
-            template.requestBodyAndHeader("http://localhost:" + port2 + "/route",
+            template.requestBodyAndHeader("http://localhost:" + port2 + "/route?httpClientConfigurer=#configurer",
                     new ByteArrayInputStream("<Hello>World</Hello>".getBytes()), Exchange.CONTENT_ENCODING, "gzip", String.class);
         assertEquals("The response is wrong", "<b>Hello World</b>", response);
     }
@@ -67,11 +74,18 @@ public class HttpGZipEncodingTest extends BaseJettyTest {
                 port2 = getNextPort();
 
                 errorHandler(noErrorHandler());
+
+                context.getRegistry(JndiRegistry.class).bind("configurer", new HttpClientConfigurer() {
+                    @Override
+                    public void configureHttpClient(HttpClientBuilder clientBuilder) {
+                        clientBuilder.disableContentCompression();
+                    }
+                });
                 
                 from("direct:gzip")
                     .marshal().gzip()
                         .setProperty(Exchange.SKIP_GZIP_ENCODING, ExpressionBuilder.constantExpression(Boolean.TRUE))
-                        .to("http://localhost:" + port1 + "/gzip").unmarshal().gzip();
+                        .to("http://localhost:" + port1 + "/gzip?httpClientConfigurer=#configurer").unmarshal().gzip();
                 
                 from("jetty:http://localhost:" + port1 + "/gzip").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -92,8 +106,8 @@ public class HttpGZipEncodingTest extends BaseJettyTest {
                     }
                 });
                 
-                from("jetty:http://localhost:" + port2 + "/route?bridgeEndpoint=true")
-                    .to("http://localhost:" + port1 + "/gzip?bridgeEndpoint=true");
+                from("jetty:http://localhost:" + port2 + "/route?bridgeEndpoint=true&httpClientConfigurer=#configurer")
+                    .to("http://localhost:" + port1 + "/gzip?bridgeEndpoint=true&httpClientConfigurer=#configurer");
             }
         };
     }

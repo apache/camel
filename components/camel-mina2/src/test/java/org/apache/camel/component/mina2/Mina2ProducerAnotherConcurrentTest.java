@@ -26,8 +26,10 @@ import java.util.concurrent.Future;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore("TODO: investigate for Camel 3.0")
 public class Mina2ProducerAnotherConcurrentTest extends BaseMina2Test {
 
     @Test
