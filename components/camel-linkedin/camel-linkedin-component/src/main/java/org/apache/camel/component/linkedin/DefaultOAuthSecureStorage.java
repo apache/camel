@@ -16,20 +16,23 @@
  */
 package org.apache.camel.component.linkedin;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.component.linkedin.api.OAuthSecureStorage;
 import org.apache.camel.component.linkedin.api.OAuthToken;
 import org.apache.camel.component.linkedin.internal.CachingOAuthSecureStorage;
 
 /**
  * Default implementation of {@link OAuthSecureStorage}
- * with user provided token and expiry time in msecs.
+ * with user provided token and optional expiry time in msecs.
  */
 public class DefaultOAuthSecureStorage extends CachingOAuthSecureStorage {
 
-    private OAuthToken token;
-
-    public DefaultOAuthSecureStorage(String accessToken, long expiryTime) {
+    public DefaultOAuthSecureStorage(String accessToken, Long expiryTime) {
         super(null);
+        if (expiryTime == null) {
+            expiryTime = System.currentTimeMillis() + TimeUnit.MILLISECONDS.convert(60, TimeUnit.DAYS);
+        }
         this.token = new OAuthToken(null, accessToken, expiryTime);
     }
 }
