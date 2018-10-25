@@ -29,10 +29,12 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Ignore("TODO: investigate for Camel 3.0")
 public class GrpcProducerStreamingTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(GrpcProducerStreamingTest.class);
 
