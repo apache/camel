@@ -1,0 +1,8 @@
+[[HowdotheTimerandQuartzendpointscompare-HowdotheTimerandQuartzendpointscompare]]
+=== How do the Timer and Quartz endpoints compare?
+
+<<timer-component,Timer>> is a simple, non persistence timer using the
+JDK's in built timer mechanism.
+
+<<quartz-component,Quartz>> uses the Quartz library which uses a database
+to store timer events and supports distributed timers and cron notation.

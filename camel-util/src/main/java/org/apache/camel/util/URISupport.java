@@ -665,7 +665,7 @@ public final class URISupport {
         final StringBuilder joined = new StringBuilder();
 
         boolean addedLast = false;
-        for (int i = paths.length -1 ; i >= 0 ; i--) {
+        for (int i = paths.length - 1; i >= 0; i--) {
             String path = paths[i];
             if (ObjectHelper.isNotEmpty(path)) {
                 if (addedLast) {

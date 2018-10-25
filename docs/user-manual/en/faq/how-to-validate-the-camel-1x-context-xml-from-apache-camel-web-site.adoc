@@ -1,0 +1,42 @@
+[[Howtovalidatethecamel1xcontextxmlfromApacheCamelwebsite-Howtovalidatethecamel1xcontextxmlfromApacheCamelwebsite]]
+=== How to validate the camel 1.x context xml from Apache Camel web site?
+
+Since Camel became to be Apache Top Level Project for a while, and all
+the request to the camel old web site
+(http://activemq.apache.org/camel/) will be redirect to the new site
+(http://camel.apache.org). We updated the camel schemas' target
+namespace to refect the URL change in Camel 2.0. But we don't change the
+schemas namespace of Camel 1.x to keep the compatibility.
+
+We recently released Camel 2.0-ml, and the site schema maintenance
+script always copys the latest released Camel version's schema to the
+default schema without version number. You may meet the schema
+validation problem if your application spring configuration is still
+using the old Camel 1.x schema namespace and using the web site schema
+for validations.
+
+To walk around this issue, you just need to specify the schema version
+in your Spring configuration's schemaLocation attribute.
+
+[source,xml]
+----
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:camel="http://activemq.apache.org/camel/schema/spring"
+    xmlns:osgi="http://www.springframework.org/schema/osgi"
+    xmlns:cxf="http://activemq.apache.org/camel/schema/cxfEndpoint"
+    xsi:schemaLocation="
+            http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/osgi
+        http://www.springframework.org/schema/osgi/spring-osgi.xsd
+                http://activemq.apache.org/camel/schema/osgi
+        http://activemq.apache.org/camel/schema/osgi/camel-osgi-1.6.0.xsd       
+        http://activemq.apache.org/camel/schema/spring
+        http://activemq.apache.org/camel/schema/spring/camel-spring-1.6.0.xsd
+        http://activemq.apache.org/camel/schema/cxfEndpoint 
+                http://activemq.apache.org/camel/schema/cxf/camel-cxf-1.6.0.xsd">
+
+...
+</beans>
+----

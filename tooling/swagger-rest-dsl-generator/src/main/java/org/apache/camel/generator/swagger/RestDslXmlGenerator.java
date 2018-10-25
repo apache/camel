@@ -37,7 +37,7 @@ public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
     public String generate(final CamelContext context) throws Exception {
         final RestDefinitionEmitter emitter = new RestDefinitionEmitter(context);
 
-        final PathVisitor<RestsDefinition> restDslStatement = new PathVisitor<>(emitter, filter, destinationGenerator());
+        final PathVisitor<RestsDefinition> restDslStatement = new PathVisitor<>(swagger.getBasePath(), emitter, filter, destinationGenerator());
 
         swagger.getPaths().forEach(restDslStatement::visit);
 
@@ -56,6 +56,7 @@ public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
                 extra = "<restConfiguration component=\"" + restComponent + "\" contextPath=\"" + restContextPath + "\"/>";
             }
             xml = xml.replaceFirst("<rest>", extra + "\n    <rest>");
+            xml = xml.replaceFirst("<rest ", extra + "\n    <rest ");
         }
 
         return xml;

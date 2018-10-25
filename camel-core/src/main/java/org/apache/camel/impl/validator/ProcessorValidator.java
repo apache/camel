@@ -55,16 +55,23 @@ public class ProcessorValidator extends Validator {
         Exchange exchange = message.getExchange();
         
         LOG.debug("Sending to validate processor '{}'", processor);
+        // create a new exchange to use during validation to avoid side-effects on original exchange
         DefaultExchange validateExchange = new DefaultExchange(exchange);
         validateExchange.setIn(message);
         validateExchange.setProperties(exchange.getProperties());
         try {
             processor.process(validateExchange);
+
+            // if the validation failed then propagate the exception
+            if (validateExchange.getException() != null) {
+                exchange.setException(validateExchange.getException());
+            }
+
         } catch (Exception e) {
             if (e instanceof ValidationException) {
                 throw (ValidationException)e;
             } else {
-                throw new ValidationException(String.format("Validation failed for '%s'", type), validateExchange, e);
+                throw new ValidationException(String.format("Validation failed for '%s'", type), exchange, e);
             }
         }
     }

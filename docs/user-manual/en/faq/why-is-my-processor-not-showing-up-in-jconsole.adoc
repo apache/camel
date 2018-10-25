@@ -1,0 +1,35 @@
+[[WhyismyprocessornotshowingupinJConsole-WhyismyprocessornotshowingupinJConsole]]
+=== Why is my processor not showing up in JConsole?
+
+Not every processor is managed, and thus not all are visible in
+JConsole.
+
+A processor must implement the `org.apache.camel.Service` to be managed.
+Most EIP processors do this.
+For example, the minor ones such as `setHeader` do not and thus are not
+visible in JConsole.
+
+From *Camel 2.6* onwards your custom `Processor` should use the Spring
+JMX annotations (for *Camel 2.9* onwards see the tip box below). Just
+add `@ManagedResource` to the class, and the other annotations for the
+attributes and operations. Then Camel will automatically use those when
+the processor is being registered in JMX.
+
+\{snippet:id=e1|lang=java|title=Custom
+processor|url=camel/trunk/camel-core/src/test/java/org/apache/camel/management/ManagedCustomProcessorTest.java}
+
+The same applies when using beans in your routes.
+
+\{snippet:id=e1|lang=java|title=Custom
+bean|url=camel/trunk/camel-core/src/test/java/org/apache/camel/management/ManagedCustomBeanTest.java}
+Camel 2.9 onwards provides Camel's own JMX annotations
+
+Notice that from Camel 2.9 onwards its encouraged to use the
+`@ManagedResource`, `@ManagedAttribute` and `@ManagedOperation` from the
+`org.apache.camel.api.management` package. This allows your custom code
+to not depend on Spring JARs anymore.
+
+[[WhyismyprocessornotshowingupinJConsole-Seealso]]
+==== See also
+
+* link:camel-jmx.adoc[Camel JMX]

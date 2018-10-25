@@ -1,0 +1,31 @@
+[[HowdoIhandlefailureswhenconsumingforexamplefromaFTPserver-HowdoIhandlefailureswhenconsumingforexamplefromaFTPserver]]
+=== How do I handle failures when consuming for example from a FTP server?
+
+When you do a route such as:
+
+[source,java]
+----
+from("ftp://foo@somesever.com?password=secret").to("bean:logic?method=doSomething");
+----
+
+And there is a failure with connecting to the remote FTP server. The
+existing link:../error-handling-in-camel.adoc[Error handling in Camel] is
+based on when a message is *being* routed.
+In this case the error occurs *before* a message has been initiated and
+routed. So how can I control the error handling?
+
+The <<ftp-component,FTP>> component have a few options
+(`maximumReconnectAttempts, reconnectDelay` to control number of retries
+and delay in between.
+
+But you can also plugin your own implementation and determine what to do
+using the `pollStrategy` option which has more documentation
+<<pollingConsumer-eip,Polling Consumer>>.
+Notice that the option `pollStrategy` applies for all consumers which is
+a `ScheduledPollConsumer` consumer. The page lists those.
+
+[[HowdoIhandlefailureswhenconsumingforexamplefromaFTPserver-Seealso]]
+==== See also
+
+* <<ftp-component,FTP>>
+* <<pollingConsumer-eip,Polling Consumer>>

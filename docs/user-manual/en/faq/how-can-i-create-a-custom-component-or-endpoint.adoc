@@ -1,0 +1,13 @@
+[[HowcanIcreateacustomcomponentorendpoint-HowcanIcreateacustomcomponentorendpoint]]
+=== How can I create a custom component or endpoint?
+
+Please read link:../writing-components.adoc[Writing Components] for a
+background in how to implement a new component or endpoint. Its really
+easy to do! :smile:
+
+[[HowcanIcreateacustomcomponentorendpoint-SeeAlso]]
+==== See Also
+
+* link:../writing-components.adoc[Writing Components]
+* link:../configuring-camel.adoc[How do I add a component?]
+* link:how-do-i-configure-endpoints.adoc[How do I configure endpoints?]

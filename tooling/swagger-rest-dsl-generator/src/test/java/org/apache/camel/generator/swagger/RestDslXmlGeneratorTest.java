@@ -72,7 +72,7 @@ public class RestDslXmlGeneratorTest {
         final URI file = RestDslGeneratorTest.class.getResource("/SwaggerPetstoreWithRestComponentXml.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
 
-        assertThat(xml).isEqualToIgnoringWhitespace(expectedContent);
+        assertThat(xml).isEqualTo(expectedContent);
     }
 
 

@@ -1,0 +1,22 @@
+[[JNDI-JNDI]]
+=== JNDI
+
+Camel will use JNDI as the default link:registry.adoc[Registry]
+implementation if you do not use link:spring.adoc[Spring]. This means
+that using a DefaultCamelContext will try and create a
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/JndiRegistry.html[JndiRegistry]
+which uses the JNDI InitialContext as the registry.
+
+This means you need to configure some JNDI provider to be able to use
+this. This is described in this
+link:faq/exception-javaxnamingnoinitialcontextexception.adoc[FAQ entry],
+but essentially you just need to create a file called `jndi.properties` on
+the classpath and configure it with the JNDI provider you wish.
+
+You can use the Camel JNDI provider by using the following
+`jndi.properties` file:
+
+[source,java]
+----
+java.naming.factory.initial = org.apache.camel.util.jndi.CamelInitialContextFactory
+----
