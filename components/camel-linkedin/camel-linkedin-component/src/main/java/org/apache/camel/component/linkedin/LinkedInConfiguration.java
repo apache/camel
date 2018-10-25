@@ -18,6 +18,7 @@ package org.apache.camel.component.linkedin;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.component.linkedin.api.OAuthScope;
 import org.apache.camel.component.linkedin.api.OAuthSecureStorage;
@@ -55,6 +56,10 @@ public class LinkedInConfiguration {
     private String userPassword;
     @UriParam
     private OAuthSecureStorage secureStorage;
+    @UriParam
+    private String accessToken;
+    @UriParam(defaultValue = "5184000")
+    private long expiryTime = TimeUnit.SECONDS.convert(60, TimeUnit.DAYS);
     @UriParam
     private String clientId;
     @UriParam
@@ -114,6 +119,28 @@ public class LinkedInConfiguration {
 
     public OAuthSecureStorage getSecureStorage() {
         return secureStorage;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    /**
+     * LinkedIn access token to avoid username and password login.
+     */
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public long getExpiryTime() {
+        return expiryTime;
+    }
+
+    /**
+     * LinkedIn access token expiry time in milliseconds since Unix Epoch.
+     */
+    public void setExpiryTime(long expiryTime) {
+        this.expiryTime = expiryTime;
     }
 
     /**

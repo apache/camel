@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.linkedin.api.LinkedInOAuthRequestFilter;
 import org.apache.camel.component.linkedin.api.OAuthParams;
+import org.apache.camel.component.linkedin.api.OAuthSecureStorage;
 import org.apache.camel.component.linkedin.internal.CachingOAuthSecureStorage;
 import org.apache.camel.component.linkedin.internal.LinkedInApiCollection;
 import org.apache.camel.component.linkedin.internal.LinkedInApiName;
@@ -109,8 +110,12 @@ public class LinkedInComponent extends AbstractApiComponent<LinkedInApiName, Lin
     }
 
     private static OAuthParams getOAuthParams(LinkedInConfiguration configuration) {
+        OAuthSecureStorage secureStorage = configuration.getSecureStorage();
+        if (secureStorage == null && !ObjectHelper.isEmpty(configuration.getAccessToken())) {
+            secureStorage = new DefaultOAuthSecureStorage(configuration.getAccessToken(), configuration.getExpiryTime());
+        }
         return new OAuthParams(configuration.getUserName(), configuration.getUserPassword(),
-            new CachingOAuthSecureStorage(configuration.getSecureStorage()), configuration.getClientId(), configuration.getClientSecret(),
+            new CachingOAuthSecureStorage(secureStorage), configuration.getClientId(), configuration.getClientSecret(),
             configuration.getRedirectUri(), configuration.getScopes());
     }
 
