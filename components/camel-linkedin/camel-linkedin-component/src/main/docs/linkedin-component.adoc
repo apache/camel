@@ -89,14 +89,16 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (14 parameters):
+==== Query Parameters (16 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *accessToken* (common) | LinkedIn access token to avoid username and password login. |  | String
 | *clientId* (common) | LinkedIn application client ID |  | String
 | *clientSecret* (common) | LinkedIn application client secret |  | String
+| *expiryTime* (common) | LinkedIn access token expiry time in milliseconds since Unix Epoch. | 5184000 | long
 | *httpParams* (common) | Custom HTTP params, for example proxy host and port, use constants from AllClientPNames |  | Map
 | *inBody* (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
 | *lazyAuth* (common) | Flag to enable/disable lazy OAuth, default is true. when enabled, OAuth token retrieval or generation is not done until the first REST call | true | boolean
