@@ -101,9 +101,10 @@ public class LinkedInComponentConfiguration
          */
         private String accessToken;
         /**
-         * LinkedIn access token expiry time in milliseconds since Unix Epoch.
+         * LinkedIn access token expiry time in milliseconds since Unix Epoch,
+         * default is 60 days in the future.
          */
-        private Long expiryTime = 5184000L;
+        private Long expiryTime;
         /**
          * LinkedIn application client ID
          */
