@@ -20,10 +20,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-
 import javax.ws.rs.WebApplicationException;
 
 import org.apache.camel.component.linkedin.api.model.Error;
+import org.apache.cxf.Bus;
+import org.apache.cxf.BusFactory;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.junit.AfterClass;
@@ -32,6 +33,9 @@ import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.concurrent.TimeUnit.DAYS;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 /**
  * Base class for resource tests.
  */
@@ -39,10 +43,11 @@ public abstract class AbstractResourceIntegrationTest extends Assert {
 
     protected static final Logger LOG = LoggerFactory.getLogger(PeopleResourceIntegrationTest.class);
     protected static final String DEFAULT_FIELDS = "";
+    public static final long DEFAULT_EXPIRY = MILLISECONDS.convert(60, DAYS) + System.currentTimeMillis();
 
     protected static LinkedInOAuthRequestFilter requestFilter;
-    private static Properties properties;
-    private static OAuthToken token;
+    protected static Properties properties;
+    protected static OAuthToken token;
     private static List<Object> resourceList = new ArrayList<>();
 
     @BeforeClass
@@ -59,6 +64,8 @@ public abstract class AbstractResourceIntegrationTest extends Assert {
         final String clientId = properties.getProperty("clientId");
         final String clientSecret = properties.getProperty("clientSecret");
         final String redirectUri = properties.getProperty("redirectUri");
+        final String accessToken = properties.getProperty("accessToken");
+        final String expiryTime = properties.getProperty("expiryTime");
 
         final OAuthScope[] scopes;
         final String scope = properties.getProperty("scope");
@@ -66,6 +73,12 @@ public abstract class AbstractResourceIntegrationTest extends Assert {
             scopes = OAuthScope.fromValues(scope.split(","));
         } else {
             scopes = null;
+        }
+
+        // check if accessToken is set
+        if (accessToken != null) {
+            token = new OAuthToken(null, accessToken,
+                    (expiryTime != null) ? Long.parseLong(expiryTime) : DEFAULT_EXPIRY);
         }
 
         final OAuthSecureStorage secureStorage = new OAuthSecureStorage() {
@@ -105,6 +118,8 @@ public abstract class AbstractResourceIntegrationTest extends Assert {
             throw new IllegalStateException(AbstractResourceIntegrationTest.class.getName()
                                             + ".beforeClass must be invoked before getResource");
         }
+        Bus bus = BusFactory.getThreadDefaultBus();
+        bus.setProperty("allow.empty.path.template.value", true);
         final T resource = JAXRSClientFactory.create(LinkedInOAuthRequestFilter.BASE_ADDRESS, resourceClass,
 //            Arrays.asList(new Object[] { requestFilter, new LinkedInExceptionResponseFilter() } ));
             Arrays.asList(new Object[]{requestFilter, new EnumQueryParamConverterProvider()}));
