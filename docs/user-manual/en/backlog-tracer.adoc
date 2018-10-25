@@ -111,5 +111,5 @@ See Also
 * link:tracer-example.html[Tracer Example]
 * link:debugger.adoc[Debugger]
 * link:delay-interceptor.adoc[Delay Interceptor]
-* link:log.html[Log]
+* <<log-component,Log>>
 

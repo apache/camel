@@ -1,0 +1,31 @@
+[[HowDoIMakeMyJMSEndpointTransactional-HowDoIMakeMyJMSEndpointTransactional]]
+=== How Do I Make My JMS Endpoint Transactional?
+
+I have a JMS route like this:
+
+[source,java]
+----
+from("activemq:Some.Queue")
+  .bean(MyProcessor.class);
+----
+
+[[HowDoIMakeMyJMSEndpointTransactional-Question]]
+==== Question:
+
+How Do I Make It Transactional?
+
+[[HowDoIMakeMyJMSEndpointTransactional-Answer]]
+==== Answer:
+
+There are examples in the <<transactionalClient-eip,Transactional Client>>
+and it is described in the _Enabling Transacted Consumption_
+section of <<jms-component,JMS>>. To make a session transactional
+set `transacted=true` flag on the JMS endpoint and configure
+a `transactionManager` on the link:../component.adoc[Component] or
+link:../endpoint.adoc[Endpoint].
+
+[[HowDoIMakeMyJMSEndpointTransactional-SeeAlso]]
+==== See Also
+
+* <<transactionalClient-eip,Transactional Client>>
+* <<jms-component,JMS>>

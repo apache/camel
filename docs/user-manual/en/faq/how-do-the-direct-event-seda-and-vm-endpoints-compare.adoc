@@ -1,0 +1,14 @@
+[[Howdothedirecteventsedaandvmendpointscompare-Howdothedirecteventsedaandvmendpointscompare]]
+=== How do the `direct`, `event`, `seda`, and `vm` endpoints compare?
+
+* <<vm-component,VM>> and <<seda-component,SEDA>> endpoints are basically the
+same; they both offer asychronous in memory SEDA queues; they differ in
+visibility -- endpoints are visible inside the same JVM or within the same
+CamelContext respectively.
+* <<direct-component,Direct>> uses no threading; it directly invokes the
+consumer when sending.
+* <<spring-event-component,Spring Event>> adds a listener to Spring's
+application events; so the consumer is invoked the same thread as Spring
+notifies events. Event differs in that the payload should be a Spring
+`ApplicationEvent` object whereas <<direct-component,Direct>>,
+<<seda-component,SEDA>> and <<vm-component,VM>> can use any payload.
