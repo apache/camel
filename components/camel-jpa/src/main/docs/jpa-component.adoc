@@ -167,7 +167,7 @@ with the following path and query parameters:
 | *flushOnSend* (producer) | Flushes the EntityManager after the entity bean has been persisted. | true | boolean
 | *remove* (producer) | Indicates to use entityManager.remove(entity). | false | boolean
 | *useExecuteUpdate* (producer) | To configure whether to use executeUpdate() when producer executes a query. When you use INSERT, UPDATE or DELETE statement as a named query, you need to specify this option to 'true'. |  | Boolean
-| *usePassedInEntityManager* (producer) | If set to true, then Camel will use the EntityManager from the header JpaConstants.ENTITYMANAGER instead of the configured entity manager on the component/endpoint. This allows end users to control which entity manager will be in use. | false | boolean
+| *usePassedInEntityManager* (producer) | If set to true, then Camel will use the EntityManager from the header JpaConstants.ENTITY_MANAGER instead of the configured entity manager on the component/endpoint. This allows end users to control which entity manager will be in use. | false | boolean
 | *usePersist* (producer) | Indicates to use entityManager.persist(entity) instead of entityManager.merge(entity). Note: entityManager.persist(entity) doesn't work for detached entities (where the EntityManager has to execute an UPDATE instead of an INSERT query)! | false | boolean
 | *entityManagerProperties* (advanced) | Additional properties for the entity manager to use. |  | Map
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean

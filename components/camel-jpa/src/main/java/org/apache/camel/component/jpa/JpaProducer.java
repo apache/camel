@@ -192,11 +192,11 @@ public class JpaProducer extends DefaultProducer {
             query.setMaxResults(maxResults);
         }
         // setup the parameters
-        Map<String, Object> params = null;
+        Map<String, ?> params;
         if (parameters != null) {
             params = parameters;
         } else {
-            params = (Map<String, Object>)exchange.getIn().getHeader(JpaConstants.JPA_PARAMETERS_HEADER);
+            params = exchange.getIn().getHeader(JpaConstants.JPA_PARAMETERS_HEADER, Map.class);
         }
         if (params != null) {
             params.forEach((key, value) -> {
