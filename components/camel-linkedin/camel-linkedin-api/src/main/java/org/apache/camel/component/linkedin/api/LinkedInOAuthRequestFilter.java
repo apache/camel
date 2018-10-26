@@ -50,7 +50,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import com.gargoylesoftware.htmlunit.util.WebConnectionWrapper;
-
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
@@ -165,23 +164,23 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
                 // only handle errors returned with redirects
                 boolean done = false;
                 do {
-                        if (e.getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY || e.getStatusCode() == HttpStatus.SC_SEE_OTHER) {
-                            final URL location = new URL(e.getResponse().getResponseHeaderValue(HttpHeaders.LOCATION));
-                            final String locationQuery = location.getQuery();
-                            if (locationQuery != null && locationQuery.contains("error=")) {
-                                throw new IOException(URLDecoder.decode(locationQuery).replaceAll("&", ", "));
-                            } else {
-                                // follow the redirect to login form
-                                try {
-                                    authPage = webClient.getPage(location);
-                                    done = true;
-                                } catch (FailingHttpStatusCodeException e1) {
-                                    e = e1;
-                                }
-                            }
+                    if (e.getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY || e.getStatusCode() == HttpStatus.SC_SEE_OTHER) {
+                        final URL location = new URL(e.getResponse().getResponseHeaderValue(HttpHeaders.LOCATION));
+                        final String locationQuery = location.getQuery();
+                        if (locationQuery != null && locationQuery.contains("error=")) {
+                            throw new IOException(URLDecoder.decode(locationQuery).replaceAll("&", ", "));
                         } else {
-                            throw e;
+                            // follow the redirect to login form
+                            try {
+                                authPage = webClient.getPage(location);
+                                done = true;
+                            } catch (FailingHttpStatusCodeException e1) {
+                                e = e1;
+                            }
                         }
+                    } else {
+                        throw e;
+                    }
                 } while (!done);
             }
 

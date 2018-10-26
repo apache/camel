@@ -24,8 +24,8 @@ import org.apache.camel.component.linkedin.api.OAuthToken;
  */
 public class CachingOAuthSecureStorage implements OAuthSecureStorage {
 
-    private final OAuthSecureStorage secureStorage;
     protected OAuthToken token;
+    private final OAuthSecureStorage secureStorage;
 
     public CachingOAuthSecureStorage(OAuthSecureStorage secureStorage) {
         this.secureStorage = secureStorage;
