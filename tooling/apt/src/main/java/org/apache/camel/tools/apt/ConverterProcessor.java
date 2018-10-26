@@ -154,7 +154,7 @@ public class ConverterProcessor extends AbstractProcessor {
             }
 
         } catch (Throwable e) {
-            processingEnv.getMessager().printMessage(Kind.ERROR, "Unable to process elements annotated with @UriEndpoint: " + e.getMessage());
+            processingEnv.getMessager().printMessage(Kind.ERROR, "Unable to process elements annotated with @Converter: " + e.getMessage());
             dumpExceptionToErrorFile("camel-apt-error.log", "Error processing @Converter", e);
         }
         return false;
