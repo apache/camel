@@ -159,7 +159,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
     public void onApplicationEvent(ApplicationEvent event) {
         LOG.debug("onApplicationEvent: {}", event);
 
-        if (event instanceof ContextRefreshedEvent) {
+        if (event instanceof ContextRefreshedEvent && ((ContextRefreshedEvent) event).getApplicationContext().getId().equals(this.applicationContext.getId())) {
             // nominally we would prefer to use Lifecycle interface that
             // would invoke start() method, but in order to do that 
             // SpringCamelContext needs to implement SmartLifecycle
