@@ -105,10 +105,9 @@ public class SftpConsumerDisconnectTest extends SftpServerTestSupport {
                     .noAutoStartup().process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {
-                           disconnectAllSessions(); // disconnect all Sessions
-                                                    // from the SFTP server
-                       }
-                   }).to("mock:result");
+                            disconnectAllSessions(); // disconnect all Sessions from the SFTP server
+                        }
+                    }).to("mock:result");
             }
         };
     }
