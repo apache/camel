@@ -414,7 +414,7 @@ AMQPConnectionDetails amqpConnection() {
  
 @Bean
 AMQPConnectionDetails securedAmqpConnection() {
-  return new AMQPConnectionDetails("amqp://lcoalhost:5672", "username", "password"); 
+  return new AMQPConnectionDetails("amqp://localhost:5672", "username", "password"); 
 }
 ----
 
