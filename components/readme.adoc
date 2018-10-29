@@ -260,7 +260,7 @@ Number of Components: 302 in 204 JAR artifacts (22 deprecated)
 | link:camel-facebook/src/main/docs/facebook-component.adoc[Facebook] (camel-facebook) +
 `facebook:methodName` | 2.14 | The Facebook component provides access to all of the Facebook APIs accessible using Facebook4J.
 
-| link:camel-fhir/src/main/docs/fhir-component.adoc[FHIR] (camel-fhir) +
+| link:camel-fhir/camel-fhir-component/src/main/docs/fhir-component.adoc[FHIR] (camel-fhir) +
 `fhir:apiName/methodName` | 2.23 | The fhir component is used for working with the FHIR protocol (health care).
 
 | link:../camel-core/src/main/docs/file-component.adoc[File] (camel-core) +
