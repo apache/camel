@@ -167,6 +167,11 @@ public class DataFormatModel {
     }
 
     public String getDocLink() {
+        // special for these components
+        if ("camel-fhir".equals(artifactId)) {
+            return "camel-fhir/camel-fhir-component/src/main/docs";
+        }
+
         if ("camel-core".equals(artifactId)) {
             return coreOnly ? "src/main/docs" : "../camel-core/src/main/docs";
         } else {
