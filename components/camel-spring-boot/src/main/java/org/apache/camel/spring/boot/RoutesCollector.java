@@ -84,7 +84,7 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
         CamelContext camelContext = applicationContext.getBean(CamelContext.class);
 
         // only add and start Camel if its stopped (initial state)
-        if (((ContextRefreshedEvent) event).getApplicationContext().getId().equals(this.applicationContext.getId())
+        if (event.getApplicationContext() == this.applicationContext)
                 && camelContext.getStatus().isStopped()) {
             LOG.debug("Post-processing CamelContext bean: {}", camelContext.getName());
 
