@@ -43,11 +43,14 @@ import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.util.ReflectionInjector;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ConverterTest extends Assert {
+
     private static final Logger LOG = LoggerFactory.getLogger(ConverterTest.class);
 
     protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
@@ -262,4 +265,21 @@ public class ConverterTest extends Assert {
         }
     }
 
+    @Test
+    public void testNullToBoolean() throws Exception {
+        boolean b = converter.convertTo(boolean.class, null);
+        assertFalse(b);
+    }
+
+    @Test
+    public void testNullToInt() throws Exception {
+        int i = converter.convertTo(int.class, null);
+        assertEquals(0, i);
+    }
+
+    @Test
+    public void testToInt() throws Exception {
+        int i = converter.convertTo(int.class, "0");
+        assertEquals(0, i);
+    }
 }

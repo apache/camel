@@ -64,7 +64,7 @@ public final class FutureTypeConverter extends TypeConverterSupport {
 
             if (future.isCancelled()) {
                 // return void to indicate its not possible to convert at this time
-                return (T) Void.TYPE;
+                return (T) MISS_VALUE;
             }
 
             // do some trace logging as the get is blocking until the response is ready
@@ -75,7 +75,7 @@ public final class FutureTypeConverter extends TypeConverterSupport {
 
             if (body == null) {
                 // return void to indicate its not possible to convert at this time
-                return (T) Void.TYPE;
+                return (T) MISS_VALUE;
             }
 
             // maybe from is already the type we want

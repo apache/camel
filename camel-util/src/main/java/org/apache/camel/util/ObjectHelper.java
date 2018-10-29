@@ -1080,6 +1080,9 @@ public final class ObjectHelper {
         return null;
     }
 
+    private static final Float FLOAT_NAN = Float.NaN;
+    private static final Double DOUBLE_NAN = Double.NaN;
+
     /**
      * Is the given value a numeric NaN type
      * 
@@ -1087,11 +1090,8 @@ public final class ObjectHelper {
      * @return <tt>true</tt> if its a {@link Float#NaN} or {@link Double#NaN}.
      */
     public static boolean isNaN(Object value) {
-        if (value == null || !(value instanceof Number)) {
-            return false;
-        }
-        // value must be a number
-        return value.equals(Float.NaN) || value.equals(Double.NaN);
+        return (value instanceof Number)
+                && (FLOAT_NAN.equals(value) || DOUBLE_NAN.equals(value));
     }
 
 }

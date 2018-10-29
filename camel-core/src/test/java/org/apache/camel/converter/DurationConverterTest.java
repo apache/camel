@@ -42,7 +42,7 @@ public class DurationConverterTest extends ContextTestSupport {
             context.getTypeConverter().convertTo(long.class, duration);
             fail("Should throw exception");
         } catch (TypeConversionException e) {
-            assertIsInstanceOf(ArithmeticException.class, e.getCause().getCause());
+            assertIsInstanceOf(ArithmeticException.class, e.getCause());
         }
     }
 

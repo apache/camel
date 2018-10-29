@@ -46,6 +46,8 @@ import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.cxf.staxutils.StaxSource;
 import org.apache.cxf.staxutils.StaxUtils;
 
+import static org.apache.camel.TypeConverter.MISS_VALUE;
+
 @Converter
 public final class CxfPayloadConverter {
     private static XmlConverter xml = new XmlConverter();
@@ -179,10 +181,10 @@ public final class CxfPayloadConverter {
                 }
             } catch (RuntimeCamelException e) {
                 // the internal conversion to XML can throw an exception if the content is not XML
-                // ignore this and return Void.TYPE to indicate that we cannot convert this
+                // ignore this and return MISS_VALUE to indicate that we cannot convert this
             }
             // no we could not do it currently
-            return (T) Void.TYPE;
+            return (T) MISS_VALUE;
         }
         // Convert a CxfPayload into something else
         if (CxfPayload.class.isAssignableFrom(value.getClass())) {
@@ -234,7 +236,7 @@ public final class CxfPayloadConverter {
                 Object result = tc.convertTo(type, exchange, cxfPayloadToNodeList((CxfPayload<?>) value, exchange));
                 if (result == null) {
                     // no we could not do it currently, and we just abort the convert here
-                    return (T) Void.TYPE;
+                    return (T) MISS_VALUE;
                 } else {
                     return (T) result;
                 }
@@ -249,12 +251,12 @@ public final class CxfPayloadConverter {
                     return tc.convertTo(type, exchange, nodeList.item(0));
                 } else {
                     // no we could not do it currently
-                    return (T) Void.TYPE;
+                    return (T) MISS_VALUE;
                 }
             } else {
                 if (size == 0) {
                     // empty size so we cannot convert
-                    return (T) Void.TYPE;
+                    return (T) MISS_VALUE;
                 }
             }
         }

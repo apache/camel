@@ -25,6 +25,8 @@ package org.apache.camel;
  */
 public interface TypeConverter {
 
+    Object MISS_VALUE = Void.TYPE;
+
     /**
      * Whether the type converter allows returning null as a valid response.
      * <p/>

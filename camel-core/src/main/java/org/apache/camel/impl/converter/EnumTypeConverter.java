@@ -28,8 +28,12 @@ import org.apache.camel.support.TypeConverterSupport;
  */
 public class EnumTypeConverter extends TypeConverterSupport {
 
-    @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+        return EnumTypeConverter.doConvertTo(type, exchange, value);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T doConvertTo(Class<T> type, Exchange exchange, Object value) {
         if (type.isEnum()) {
             String text = value.toString();
             Class<Enum> enumClass = (Class<Enum>) type;

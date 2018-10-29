@@ -36,6 +36,8 @@ import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.cxf.message.MessageContentsList;
 
+import static org.apache.camel.TypeConverter.MISS_VALUE;
+
 /**
  * The <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
  * for CXF related types' converting .
@@ -160,7 +162,7 @@ public final class CxfConverter {
                 }
             }
             // return void to indicate its not possible to convert at this time
-            return (T) Void.TYPE;
+            return (T) MISS_VALUE;
         }
 
         // CXF-RS Response class
@@ -174,7 +176,7 @@ public final class CxfConverter {
             }
 
             // return void to indicate its not possible to convert at this time
-            return (T) Void.TYPE;
+            return (T) MISS_VALUE;
         }
         
         return null;

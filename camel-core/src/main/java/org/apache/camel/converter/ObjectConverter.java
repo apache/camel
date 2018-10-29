@@ -76,18 +76,17 @@ public final class ObjectConverter {
     /**
      * Returns the converted value, or null if the value is null
      */
-    @Converter
-    public static Byte toByte(Object value) {
-        if (value instanceof Byte) {
-            return (Byte) value;
-        } else if (value instanceof Number) {
-            Number number = (Number) value;
-            return number.byteValue();
-        } else if (value instanceof String) {
-            return Byte.valueOf((String) value);
-        } else {
+    @Converter(allowNull = true)
+    public static Byte toByte(Number value) {
+        if (org.apache.camel.util.ObjectHelper.isNaN(value)) {
             return null;
         }
+        return value.byteValue();
+    }
+
+    @Converter
+    public static Byte toByte(String value) {
+        return Byte.valueOf(value);
     }
 
     @Converter
@@ -118,85 +117,77 @@ public final class ObjectConverter {
      * Returns the converted value, or null if the value is null
      */
     @Converter
-    public static Class<?> toClass(Object value, Exchange exchange) {
-        if (value instanceof Class) {
-            return (Class<?>) value;
-        } else if (value instanceof String) {
-            // prefer to use class resolver API
-            if (exchange != null) {
-                return exchange.getContext().getClassResolver().resolveClass((String) value);
-            } else {
-                return org.apache.camel.util.ObjectHelper.loadClass((String) value);
-            }
+    public static Class<?> toClass(String value, Exchange exchange) {
+        // prefer to use class resolver API
+        if (exchange != null) {
+            return exchange.getContext().getClassResolver().resolveClass((String) value);
         } else {
-            return null;
+            return org.apache.camel.util.ObjectHelper.loadClass((String) value);
         }
     }
 
     /**
      * Returns the converted value, or null if the value is null
      */
-    @Converter
-    public static Short toShort(Object value) {
-        if (value instanceof Short) {
-            return (Short) value;
-        } else if (value instanceof Number) {
-            Number number = (Number) value;
-            return number.shortValue();
-        } else if (value instanceof String) {
-            return Short.valueOf((String) value);
-        } else {
+    @Converter(allowNull = true)
+    public static Short toShort(Number value) {
+        if (org.apache.camel.util.ObjectHelper.isNaN(value)) {
             return null;
         }
+        return value.shortValue();
+    }
+
+    @Converter
+    public static Short toShort(String value) {
+        return Short.valueOf(value);
     }
 
     /**
      * Returns the converted value, or null if the value is null
      */
-    @Converter
-    public static Integer toInteger(Object value) {
-        if (value instanceof Integer) {
-            return (Integer) value;
-        } else if (value instanceof Number) {
-            Number number = (Number) value;
-            return number.intValue();
-        } else if (value instanceof String) {
-            return Integer.valueOf((String) value);
-        } else {
+    @Converter(allowNull = true)
+    public static Integer toInteger(Number value) {
+        if (org.apache.camel.util.ObjectHelper.isNaN(value)) {
             return null;
         }
+        return value.intValue();
+    }
+
+    @Converter
+    public static Integer toInteger(String value) {
+        return Integer.valueOf(value);
     }
 
     /**
      * Returns the converted value, or null if the value is null
      */
-    @Converter
-    public static Long toLong(Object value) {
-        if (value instanceof Long) {
-            return (Long) value;
-        } else if (value instanceof Number) {
-            Number number = (Number) value;
-            return number.longValue();
-        } else if (value instanceof String) {
-            return Long.valueOf((String) value);
-        } else {
+    @Converter(allowNull = true)
+    public static Long toLong(Number value) {
+        if (org.apache.camel.util.ObjectHelper.isNaN(value)) {
             return null;
         }
+        return value.longValue();
+    }
+
+    @Converter
+    public static Long toLong(String value) {
+        return Long.valueOf(value);
     }
 
     /**
      * Returns the converted value, or null if the value is null
      */
-    @Converter
+    @Converter(allowNull = true)
     public static BigInteger toBigInteger(Object value) {
+        if (org.apache.camel.util.ObjectHelper.isNaN(value)) {
+            return null;
+        }
         if (value instanceof String) {
             return new BigInteger((String) value);
         }
 
         Long num = null;
-        if (value instanceof Long) {
-            num = (Long) value;
-        } else if (value instanceof Number) {
+        if (value instanceof Number) {
             Number number = (Number) value;
             num = number.longValue();
         }
@@ -211,40 +202,32 @@ public final class ObjectConverter {
      * Returns the converted value, or null if the value is null
      */
     @Converter
-    public static Float toFloat(Object value) {
-        if (value instanceof Float) {
-            return (Float) value;
-        } else if (value instanceof Number) {
-            if (org.apache.camel.util.ObjectHelper.isNaN(value)) {
-                return Float.NaN;
-            }
-            Number number = (Number) value;
-            return number.floatValue();
-        } else if (value instanceof String) {
-            return Float.valueOf((String) value);
-        } else {
-            return null;
+    public static Float toFloat(Number value) {
+        if (org.apache.camel.util.ObjectHelper.isNaN(value)) {
+            return Float.NaN;
         }
+        return value.floatValue();
+    }
+
+    @Converter
+    public static Float toFloat(String value) {
+        return Float.valueOf(value);
     }
 
     /**
      * Returns the converted value, or null if the value is null
      */
     @Converter
-    public static Double toDouble(Object value) {
-        if (value instanceof Double) {
-            return (Double) value;
-        } else if (value instanceof Number) {
-            if (org.apache.camel.util.ObjectHelper.isNaN(value)) {
-                return Double.NaN;
-            }
-            Number number = (Number) value;
-            return number.doubleValue();
-        } else if (value instanceof String) {
-            return Double.valueOf((String) value);
-        } else {
-            return null;
+    public static Double toDouble(Number value) {
+        if (org.apache.camel.util.ObjectHelper.isNaN(value)) {
+            return Double.NaN;
         }
+        return value.doubleValue();
+    }
+
+    @Converter
+    public static Double toDouble(String value) {
+        return Double.valueOf(value);
     }
 
     // add fast type converters from most common used
@@ -272,26 +255,6 @@ public final class ObjectConverter {
     @Converter
     public static String toString(StringBuilder value) {
         return value.toString();
-    }
-
-    @Converter
-    public static Integer toInteger(String value) {
-        return Integer.valueOf(value);
-    }
-
-    @Converter
-    public static Long toLong(String value) {
-        return Long.valueOf(value);
-    }
-
-    @Converter
-    public static Float toFloat(String value) {
-        return Float.valueOf(value);
-    }
-
-    @Converter
-    public static Double toDouble(String value) {
-        return Double.valueOf(value);
     }
 
     @Converter
