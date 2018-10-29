@@ -18,16 +18,13 @@ package org.apache.camel.impl.converter;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAdder;
+import java.util.concurrent.locks.StampedLock;
+import java.util.function.Predicate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -43,31 +40,33 @@ import org.apache.camel.TypeConverterExists;
 import org.apache.camel.TypeConverterExistsException;
 import org.apache.camel.TypeConverterLoaderException;
 import org.apache.camel.TypeConverters;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.spi.CamelLogger;
-import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.util.function.TriConsumer;
 
 /**
  * Base implementation of a type converter registry used for
  * <a href="http://camel.apache.org/type-converter.html">type converters</a> in Camel.
  */
 public abstract class BaseTypeConverterRegistry extends ServiceSupport implements TypeConverter, TypeConverterRegistry, CamelContextAware {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
-    protected final OptimisedTypeConverter optimisedTypeConverter = new OptimisedTypeConverter();
-    protected final ConcurrentMap<TypeMapping, TypeConverter> typeMappings = new ConcurrentHashMap<>();
-    // for misses use a soft reference cache map, as the classes may be un-deployed at runtime
-    @SuppressWarnings("unchecked")
-    protected final Map<TypeMapping, TypeMapping> misses = LRUCacheFactory.newLRUSoftCache(1000);
+
+    protected static final TypeConverter MISS_CONVERTER = new TypeConverterSupport() {
+        @Override
+        public <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {
+            return (T) MISS_VALUE;
+        }
+    };
+
+    protected final DoubleMap<Class<?>, Class<?>, TypeConverter> typeMappings = new DoubleMap<>(200);
     protected final List<TypeConverterLoader> typeConverterLoaders = new ArrayList<>();
     protected final List<FallbackTypeConverter> fallbackConverters = new CopyOnWriteArrayList<>();
     protected final PackageScanClassResolver resolver;
@@ -130,44 +129,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     @SuppressWarnings("unchecked")
     @Override
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-        if (!isRunAllowed()) {
-            throw new IllegalStateException(this + " is not started");
-        }
-
-        Object answer;
-        try {
-            answer = doConvertTo(type, exchange, value, false);
-        } catch (Exception e) {
-            if (statistics.isStatisticsEnabled()) {
-                failedCounter.increment();
-            }
-            // if its a ExecutionException then we have rethrow it as its not due to failed conversion
-            // this is special for FutureTypeConverter
-            boolean execution = ObjectHelper.getException(ExecutionException.class, e) != null
-                    || ObjectHelper.getException(CamelExecutionException.class, e) != null;
-            if (execution) {
-                throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
-            }
-
-            // error occurred during type conversion
-            if (e instanceof TypeConversionException) {
-                throw (TypeConversionException) e;
-            } else {
-                throw createTypeConversionException(exchange, type, value, e);
-            }
-        }
-        if (answer == Void.TYPE) {
-            if (statistics.isStatisticsEnabled()) {
-                missCounter.increment();
-            }
-            // Could not find suitable conversion
-            return null;
-        } else {
-            if (statistics.isStatisticsEnabled()) {
-                hitCounter.increment();
-            }
-            return (T) answer;
-        }
+        return (T) doConvertTo(type, exchange, value, false, false);
     }
 
     @Override
@@ -178,36 +140,12 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     @SuppressWarnings("unchecked")
     @Override
     public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws NoTypeConversionAvailableException {
-        if (!isRunAllowed()) {
-            throw new IllegalStateException(this + " is not started");
-        }
-
-        Object answer;
-        try {
-            answer = doConvertTo(type, exchange, value, false);
-        } catch (Exception e) {
-            if (statistics.isStatisticsEnabled()) {
-                failedCounter.increment();
-            }
-            // error occurred during type conversion
-            if (e instanceof TypeConversionException) {
-                throw (TypeConversionException) e;
-            } else {
-                throw createTypeConversionException(exchange, type, value, e);
-            }
-        }
-        if (answer == Void.TYPE || value == null) {
-            if (statistics.isStatisticsEnabled()) {
-                missCounter.increment();
-            }
+        Object answer = doConvertTo(type, exchange, value, true, false);
+        if (answer == null) {
             // Could not find suitable conversion
             throw new NoTypeConversionAvailableException(value, type);
-        } else {
-            if (statistics.isStatisticsEnabled()) {
-                hitCounter.increment();
-            }
-            return (T) answer;
         }
+        return (T) answer;
     }
 
     @Override
@@ -218,20 +156,32 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     @SuppressWarnings("unchecked")
     @Override
     public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
-        if (!isRunAllowed()) {
-            return null;
-        }
+        return (T) doConvertTo(type, exchange, value, false, true);
+    }
 
+    protected Object doConvertTo(final Class<?> type, final Exchange exchange, final Object value, final boolean mandatory, final boolean tryConvert) {
         Object answer;
         try {
-            answer = doConvertTo(type, exchange, value, true);
+            answer = doConvertTo(type, exchange, value, tryConvert);
         } catch (Exception e) {
             if (statistics.isStatisticsEnabled()) {
                 failedCounter.increment();
             }
-            return null;
+            if (tryConvert) {
+                return null;
+            }
+
+            // if its a ExecutionException then we have rethrow it as its not due to failed conversion
+            // this is special for FutureTypeConverter
+            boolean execution = ObjectHelper.getException(ExecutionException.class, e) != null
+                    || ObjectHelper.getException(CamelExecutionException.class, e) != null;
+            if (execution) {
+                throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
+            }
+            // error occurred during type conversion
+            throw createTypeConversionException(exchange, type, value, e);
         }
-        if (answer == Void.TYPE) {
+        if (answer == MISS_VALUE) {
             // Could not find suitable conversion
             if (statistics.isStatisticsEnabled()) {
                 missCounter.increment();
@@ -241,25 +191,52 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             if (statistics.isStatisticsEnabled()) {
                 hitCounter.increment();
             }
-            return (T) answer;
+            return answer;
         }
     }
 
     protected Object doConvertTo(final Class<?> type, final Exchange exchange, final Object value, final boolean tryConvert) throws Exception {
-        if (log.isTraceEnabled()) {
+        boolean trace = log.isTraceEnabled();
+        boolean statisticsEnabled = statistics.isStatisticsEnabled();
+
+        if (trace) {
             log.trace("Finding type converter to convert {} -> {} with value: {}",
-                    new Object[]{value == null ? "null" : value.getClass().getCanonicalName(), 
-                        type.getCanonicalName(), value});
+                    value == null ? "null" : value.getClass().getCanonicalName(),
+                    type.getCanonicalName(), value);
         }
+
 
         if (value == null) {
             // no type conversion was needed
-            if (statistics.isStatisticsEnabled()) {
+            if (statisticsEnabled) {
                 noopCounter.increment();
             }
-            // lets avoid NullPointerException when converting to boolean for null values
-            if (boolean.class == type) {
-                return Boolean.FALSE;
+            // lets avoid NullPointerException when converting to primitives for null values
+            if (type.isPrimitive()) {
+                if (boolean.class == type) {
+                    return Boolean.FALSE;
+                }
+                if (int.class == type) {
+                    return 0;
+                }
+                if (long.class == type) {
+                    return 0L;
+                }
+                if (byte.class == type) {
+                    return (byte) 0;
+                }
+                if (short.class == type) {
+                    return (short) 0;
+                }
+                if (double.class == type) {
+                    return 0.0;
+                }
+                if (float.class == type) {
+                    return 0.0f;
+                }
+                if (char.class == type) {
+                    return '\0';
+                }
             }
             return null;
         }
@@ -267,66 +244,33 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         // same instance type
         if (type.isInstance(value)) {
             // no type conversion was needed
-            if (statistics.isStatisticsEnabled()) {
+            if (statisticsEnabled) {
                 noopCounter.increment();
             }
             return value;
         }
 
-        // special for NaN numbers, which we can only convert for floating numbers
-        if ((value instanceof Float && value.equals(Float.NaN)) || (value instanceof Double && value.equals(Double.NaN))) {
-            // no type conversion was needed
-            if (statistics.isStatisticsEnabled()) {
-                noopCounter.increment();
-            }
-            if (Float.class.isAssignableFrom(type)) {
-                return Float.NaN;
-            } else if (Double.class.isAssignableFrom(type)) {
-                return Double.NaN;
-            } else {
-                // we cannot convert the NaN
-                return Void.TYPE;
-            }
-        }
-
         // okay we need to attempt to convert
-        if (statistics.isStatisticsEnabled()) {
+        if (statisticsEnabled) {
             attemptCounter.increment();
         }
 
-        // use the optimised core converter first
-        Object result = optimisedTypeConverter.convertTo(type, exchange, value);
-        if (result != null) {
-            if (statistics.isStatisticsEnabled()) {
-                baseHitCounter.increment();
-            }
-            if (log.isTraceEnabled()) {
-                log.trace("Using optimised core converter to convert: {} -> {}", type, value.getClass().getCanonicalName());
-            }
-            return result;
-        }
-
-        // check if we have tried it before and if its a miss
-        TypeMapping key = new TypeMapping(type, value.getClass());
-        if (misses.containsKey(key)) {
-            // we have tried before but we cannot convert this one
-            return Void.TYPE;
-        }
-        
         // try to find a suitable type converter
-        TypeConverter converter = getOrFindTypeConverter(key);
+        TypeConverter converter = getOrFindTypeConverter(type, value.getClass());
         if (converter != null) {
-            log.trace("Using converter: {} to convert {}", converter, key);
+            if (trace) {
+                log.trace("Using converter: {} to convert [{}=>{}]", converter, value.getClass(), type);
+            }
             Object rc;
             if (tryConvert) {
                 rc = converter.tryConvertTo(type, exchange, value);
             } else {
                 rc = converter.convertTo(type, exchange, value);
             }
-            if (rc == null && converter.allowNull()) {
-                return null;
-            } else if (rc != null) {
+            if (rc != null) {
                 return rc;
+            } else if (converter.allowNull()) {
+                return null;
             }
         }
 
@@ -335,7 +279,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             Class<?> primitiveType = ObjectHelper.convertPrimitiveTypeToWrapperType(type);
             if (primitiveType != type) {
                 Class<?> fromType = value.getClass();
-                TypeConverter tc = getOrFindTypeConverter(new TypeMapping(primitiveType, fromType));
+                TypeConverter tc = getOrFindTypeConverter(primitiveType, fromType);
                 if (tc != null) {
                     // add the type as a known type converter as we can convert from primitive to object converter
                     addTypeConverter(type, fromType, tc);
@@ -367,9 +311,9 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
                 return null;
             }
 
-            if (Void.TYPE.equals(rc)) {
+            if (rc == MISS_VALUE) {
                 // it cannot be converted so give up
-                return Void.TYPE;
+                return MISS_VALUE;
             }
 
             if (rc != null) {
@@ -378,15 +322,14 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
                     // add it as a known type converter since we found a fallback that could do it
                     if (log.isDebugEnabled()) {
                         log.debug("Promoting fallback type converter as a known type converter to convert from: {} to: {} for the fallback converter: {}",
-                                new Object[]{type.getCanonicalName(), value.getClass().getCanonicalName(), fallback.getFallbackTypeConverter()});
+                                type.getCanonicalName(), value.getClass().getCanonicalName(), fallback.getFallbackTypeConverter());
                     }
                     addTypeConverter(type, value.getClass(), fallback.getFallbackTypeConverter());
                 }
 
                 if (log.isTraceEnabled()) {
                     log.trace("Fallback type converter {} converted type from: {} to: {}",
-                            new Object[]{fallback.getFallbackTypeConverter(),
-                                type.getCanonicalName(), value.getClass().getCanonicalName()});
+                            fallback.getFallbackTypeConverter(), type.getCanonicalName(), value.getClass().getCanonicalName());
                 }
 
                 // return converted value
@@ -397,18 +340,17 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         if (!tryConvert) {
             // Could not find suitable conversion, so remember it
             // do not register misses for try conversions
-            misses.put(key, key);
+            typeMappings.put(type, value.getClass(), MISS_CONVERTER);
         }
 
         // Could not find suitable conversion, so return Void to indicate not found
-        return Void.TYPE;
+        return MISS_VALUE;
     }
 
     @Override
     public void addTypeConverter(Class<?> toType, Class<?> fromType, TypeConverter typeConverter) {
         log.trace("Adding type converter: {}", typeConverter);
-        TypeMapping key = new TypeMapping(toType, fromType);
-        TypeConverter converter = typeMappings.get(key);
+        TypeConverter converter = typeMappings.get(toType, fromType);
         // only override it if its different
         // as race conditions can lead to many threads trying to promote the same fallback converter
 
@@ -433,9 +375,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             }
 
             if (add) {
-                typeMappings.put(key, typeConverter);
-                // remove any previous misses, as we added the new type converter
-                misses.remove(key);
+                typeMappings.put(toType, fromType, typeConverter);
             }
         }
     }
@@ -455,13 +395,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     @Override
     public boolean removeTypeConverter(Class<?> toType, Class<?> fromType) {
         log.trace("Removing type converter from: {} to: {}", fromType, toType);
-        TypeMapping key = new TypeMapping(toType, fromType);
-        TypeConverter converter = typeMappings.remove(key);
-        if (converter != null) {
-            typeMappings.remove(key);
-            misses.remove(key);
-        }
-        return converter != null;
+        return typeMappings.remove(toType, fromType);
     }
 
     @Override
@@ -502,8 +436,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     }
 
     public TypeConverter getTypeConverter(Class<?> toType, Class<?> fromType) {
-        TypeMapping key = new TypeMapping(toType, fromType);
-        return typeMappings.get(key);
+        return typeMappings.get(toType, fromType);
     }
 
     @Override
@@ -516,36 +449,13 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         this.injector = injector;
     }
 
-    public Set<Class<?>> getFromClassMappings() {
-        Set<Class<?>> answer = new HashSet<>();
-        for (TypeMapping mapping : typeMappings.keySet()) {
-            answer.add(mapping.getFromType());
-        }
-        return answer;
-    }
-
-    public Map<Class<?>, TypeConverter> getToClassMappings(Class<?> fromClass) {
-        Map<Class<?>, TypeConverter> answer = new HashMap<>();
-        for (Map.Entry<TypeMapping, TypeConverter> entry : typeMappings.entrySet()) {
-            TypeMapping mapping = entry.getKey();
-            if (mapping.isApplicable(fromClass)) {
-                answer.put(mapping.getToType(), entry.getValue());
-            }
-        }
-        return answer;
-    }
-
-    public Map<TypeMapping, TypeConverter> getTypeMappings() {
-        return typeMappings;
-    }
-
-    protected <T> TypeConverter getOrFindTypeConverter(TypeMapping key) {
-        TypeConverter converter = typeMappings.get(key);
+    protected <T> TypeConverter getOrFindTypeConverter(Class<?> toType, Class<?> fromType) {
+        TypeConverter converter = typeMappings.get(toType, fromType);
         if (converter == null) {
             // converter not found, try to lookup then
-            converter = lookup(key.getToType(), key.getFromType());
+            converter = lookup(toType, fromType);
             if (converter != null) {
-                typeMappings.putIfAbsent(key, converter);
+                typeMappings.put(toType, fromType, converter);
             }
         }
         return converter;
@@ -588,21 +498,16 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             if (fromType != null && !fromType.equals(Object.class)) {
 
                 // lets try classes derived from this toType
-                Set<Map.Entry<TypeMapping, TypeConverter>> entries = typeMappings.entrySet();
-                for (Map.Entry<TypeMapping, TypeConverter> entry : entries) {
-                    TypeMapping key = entry.getKey();
-                    Class<?> aToType = key.getToType();
-                    if (toType.isAssignableFrom(aToType)) {
-                        Class<?> aFromType = key.getFromType();
+                TypeConverter converter = typeMappings.getFirst(
+                        to -> toType.isAssignableFrom(to),
                         // skip Object based we do them last
-                        if (!aFromType.equals(Object.class) && aFromType.isAssignableFrom(fromType)) {
-                            return entry.getValue();
-                        }
-                    }
+                        from -> !from.equals(Object.class) && from.isAssignableFrom(fromType));
+                if (converter != null) {
+                    return converter;
                 }
 
                 // lets test for Object based converters as last resort
-                TypeConverter converter = getTypeConverter(toType, Object.class);
+                converter = getTypeConverter(toType, Object.class);
                 if (converter != null) {
                     return converter;
                 }
@@ -614,10 +519,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     }
 
     public List<Class<?>[]> listAllTypeConvertersFromTo() {
-        List<Class<?>[]> answer = new ArrayList<>(typeMappings.size());
-        for (TypeMapping mapping : typeMappings.keySet()) {
-            answer.add(new Class<?>[]{mapping.getFromType(), mapping.getToType()});
-        }
+        List<Class<?>[]> answer = new ArrayList<>();
+        typeMappings.forEach((k1, k2, v) -> answer.add(new Class<?>[]{k2, k1}));
         return answer;
     }
 
@@ -626,7 +529,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
      */
     public void loadCoreTypeConverters() throws Exception {
         // load all the type converters from camel-core
-        CoreTypeConverterLoader core = new CoreTypeConverterLoader();
+        CoreStaticTypeConverterLoader core = new CoreStaticTypeConverterLoader();
         core.load(this);
     }
 
@@ -654,6 +557,11 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     }
 
     protected TypeConversionException createTypeConversionException(Exchange exchange, Class<?> type, Object value, Throwable cause) {
+        if (cause instanceof TypeConversionException) {
+            if (((TypeConversionException) cause).getToType() == type) {
+                return (TypeConversionException) cause;
+            }
+        }
         Object body;
         // extract the body for logging which allows to limit the message body in the exception/stacktrace
         // and also can be used to turn off logging sensitive message data
@@ -701,12 +609,17 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         // log utilization statistics when stopping, including mappings
         if (statistics.isStatisticsEnabled()) {
             String info = statistics.toString();
-            info += String.format(" mappings[total=%s, misses=%s]", typeMappings.size(), misses.size());
+            AtomicInteger misses = new AtomicInteger();
+            typeMappings.forEach((k1, k2, v) -> {
+                if (v == MISS_CONVERTER) {
+                    misses.incrementAndGet();
+                }
+            });
+            info += String.format(" mappings[total=%s, misses=%s]", typeMappings.size(), misses);
             log.info(info);
         }
 
         typeMappings.clear();
-        misses.clear();
         statistics.reset();
     }
 
@@ -775,58 +688,6 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     }
 
     /**
-     * Represents a mapping from one type (which can be null) to another
-     */
-    protected static final class TypeMapping {
-        private final Class<?> toType;
-        private final Class<?> fromType;
-        private final int hashCode;
-
-        TypeMapping(Class<?> toType, Class<?> fromType) {
-            this.toType = toType;
-            this.fromType = fromType;
-
-            // pre calculate hashcode
-            int hash = toType.hashCode();
-            if (fromType != null) {
-                hash *= 37 + fromType.hashCode();
-            }
-            hashCode = hash;
-        }
-
-        public Class<?> getFromType() {
-            return fromType;
-        }
-
-        public Class<?> getToType() {
-            return toType;
-        }
-
-        @Override
-        public boolean equals(Object object) {
-            if (object instanceof TypeMapping) {
-                TypeMapping that = (TypeMapping) object;
-                return this.fromType == that.fromType && this.toType == that.toType;
-            }
-            return false;
-        }
-
-        @Override
-        public int hashCode() {
-            return hashCode;
-        }
-
-        @Override
-        public String toString() {
-            return "[" + fromType + "=>" + toType + "]";
-        }
-
-        public boolean isApplicable(Class<?> fromClass) {
-            return fromType.isAssignableFrom(fromClass);
-        }
-    }
-
-    /**
      * Represents a fallback type converter
      */
     protected static class FallbackTypeConverter {
@@ -846,4 +707,174 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             return fallbackTypeConverter;
         }
     }
+
+    @SuppressWarnings("unchecked")
+    protected static class DoubleMap<K1, K2, V> {
+
+        static class Entry {
+            Object k1;
+            Object k2;
+            Object v;
+            Entry next;
+        }
+
+        private Entry[] table;
+        private int mask;
+
+        public DoubleMap(int size) {
+            table = new Entry[closedTableSize(size)];
+            mask = table.length - 1;
+        }
+
+        public V get(K1 k1, K2 k2) {
+            Entry[] table = this.table;
+            int mask = this.mask;
+            int index = smear(k1.hashCode() * 31 + k2.hashCode()) & mask;
+            for (Entry entry = table[index]; entry != null; entry = entry.next) {
+                if (k1 == entry.k1 && k2 == entry.k2) {
+                    return (V) entry.v;
+                }
+            }
+            return null;
+        }
+
+        public void forEach(TriConsumer<K1, K2, V> consumer) {
+            Entry[] table = this.table;
+            for (Entry entry : table) {
+                while (entry != null) {
+                    consumer.accept((K1) entry.k1, (K2) entry.k2, (V) entry.v);
+                    entry = entry.next;
+                }
+            }
+        }
+
+        public boolean containsKey(K1 k1, K2 k2) {
+            Entry[] table = this.table;
+            int mask = this.mask;
+            int index = smear(k1.hashCode() * 31 + k2.hashCode()) & mask;
+            for (Entry entry = table[index]; entry != null; entry = entry.next) {
+                if (k1 == entry.k1 && k2 == entry.k2) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public synchronized void put(K1 k1, K2 k2, V v) {
+            Entry[] table = this.table;
+            int size = size() + 1;
+            int realSize = closedTableSize(size);
+            if (realSize <= table.length) {
+                realSize = table.length;
+                int index = smear(k1.hashCode() * 31 + k2.hashCode()) & (realSize - 1);
+                for (Entry oldEntry = table[index]; oldEntry != null; oldEntry = oldEntry.next) {
+                    if (oldEntry.k1 == k1 && oldEntry.k2 == k2) {
+                        oldEntry.v = v;
+                        return;
+                    }
+                }
+                Entry entry = new Entry();
+                entry.k1 = k1;
+                entry.k2 = k2;
+                entry.v = v;
+                entry.next = table[index];
+                table[index] = entry;
+            } else {
+                Entry[] newT = new Entry[realSize];
+                int index = smear(k1.hashCode() * 31 + k2.hashCode()) & (realSize - 1);
+                Entry entry = new Entry();
+                newT[index] = entry;
+                entry.k1 = k1;
+                entry.k2 = k2;
+                entry.v = v;
+                for (Entry oldEntry : table) {
+                    while (oldEntry != null) {
+                        if (k1 != oldEntry.k1 || k2 != oldEntry.k2) {
+                            index = smear(oldEntry.k1.hashCode() * 31 + oldEntry.k2.hashCode()) & (realSize - 1);
+                            Entry newEntry = new Entry();
+                            newEntry.k1 = oldEntry.k1;
+                            newEntry.k2 = oldEntry.k2;
+                            newEntry.v = oldEntry.v;
+                            newEntry.next = newT[index];
+                            newT[index] = newEntry;
+                        }
+                        oldEntry = oldEntry.next;
+                    }
+                }
+                this.table = newT;
+                this.mask = realSize - 1;
+            }
+        }
+
+        public synchronized boolean remove(K1 k1, K2 k2) {
+            Entry[] table = this.table;
+            int mask = this.mask;
+            int index = smear(k1.hashCode() * 31 + k2.hashCode()) & mask;
+            Entry prevEntry = null;
+            for (Entry oldEntry = table[index]; oldEntry != null; prevEntry = oldEntry, oldEntry = oldEntry.next) {
+                if (oldEntry.k1 == k1 && oldEntry.k2 == k2) {
+                    if (prevEntry == null) {
+                        table[index] = oldEntry.next;
+                    } else {
+                        prevEntry.next = oldEntry.next;
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public V getFirst(Predicate<K1> p1, Predicate<K2> p2) {
+            for (Entry entry : table) {
+                while (entry != null) {
+                    if (p1.test((K1) entry.k1) && p2.test((K2) entry.k2)) {
+                        return (V) entry.v;
+                    }
+                    entry = entry.next;
+                }
+            }
+            return null;
+        }
+
+        public int size() {
+            Entry[] table = this.table;
+            int n = 0;
+            if (table != null) {
+                for (Entry e : table) {
+                    for (Entry c = e; c != null; c = c.next) {
+                        n++;
+                    }
+                }
+            }
+            return n;
+        }
+
+        public synchronized void clear() {
+            this.table = new Entry[table.length];
+        }
+
+        private static final double MAX_LOAD_FACTOR = 1.2;
+        private static final int MAX_TABLE_SIZE = 32768;
+        private static final int C1 = 0xcc9e2d51;
+        private static final int C2 = 0x1b873593;
+
+        static int smear(int hashCode) {
+            return C2 * Integer.rotateLeft(hashCode * C1, 15);
+        }
+
+        static int closedTableSize(int expectedEntries) {
+            // Get the recommended table size.
+            // Round down to the nearest power of 2.
+            expectedEntries = Math.max(expectedEntries, 2);
+            int tableSize = Integer.highestOneBit(expectedEntries);
+            // Check to make sure that we will not exceed the maximum load factor.
+            if (expectedEntries > (int) (MAX_LOAD_FACTOR * tableSize)) {
+                tableSize <<= 1;
+                return (tableSize > 0) ? tableSize : MAX_TABLE_SIZE;
+            }
+            return tableSize;
+        }
+
+    }
+
 }

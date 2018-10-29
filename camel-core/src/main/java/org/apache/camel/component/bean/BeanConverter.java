@@ -22,6 +22,8 @@ import org.apache.camel.FallbackConverter;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 
+import static org.apache.camel.TypeConverter.MISS_VALUE;
+
 /**
  * A set of converter methods for working with beans
  */
@@ -40,7 +42,7 @@ public final class BeanConverter {
             BeanInvocation bi = (BeanInvocation) value;
             if (bi.getArgs() == null || bi.getArgs().length != 1) {
                 // not possible to convert at this time as we try to convert the data passed in at first argument
-                return Void.TYPE;
+                return MISS_VALUE;
             }
 
             Class<?> from = bi.getArgs()[0].getClass();

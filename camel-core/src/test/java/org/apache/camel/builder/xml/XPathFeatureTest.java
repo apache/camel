@@ -58,8 +58,7 @@ public class XPathFeatureTest extends ContextTestSupport {
             xpath("/").stringResult().evaluate(createExchange(XML_DATA));
             fail("Expect an Exception here");
         } catch (TypeConversionException ex) {
-            assertTrue("Get a wrong exception cause.", ex.getCause() instanceof RuntimeCamelException);
-            assertTrue("Get a wrong exception cause.", ex.getCause().getCause() instanceof FileNotFoundException);
+            assertTrue("Get a wrong exception cause.", ex.getCause() instanceof FileNotFoundException);
         } finally {
             System.clearProperty(DOM_BUILDER_FACTORY_FEATURE + ":"
                 + "http://xml.org/sax/features/external-general-entities");
@@ -83,8 +82,7 @@ public class XPathFeatureTest extends ContextTestSupport {
             xpath("/").stringResult().evaluate(createExchange(XML_DATA_INVALID));
             fail("Expect an Exception here");
         } catch (TypeConversionException ex) {
-            assertTrue("Get a wrong exception cause.", ex.getCause() instanceof RuntimeCamelException);
-            assertTrue("Get a wrong exception cause.", ex.getCause().getCause() instanceof SAXParseException);
+            assertTrue("Get a wrong exception cause.", ex.getCause() instanceof SAXParseException);
         }
     }
 

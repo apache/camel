@@ -36,22 +36,22 @@ public class ToStringTypeConverter extends TypeConverterSupport {
 
         // should not try to convert Message
         if (Message.class.isAssignableFrom(value.getClass())) {
-            return (T) Void.TYPE;
+            return (T) MISS_VALUE;
         }
 
         // should not try to convert future
         if (Future.class.isAssignableFrom(value.getClass())) {
-            return (T) Void.TYPE;
+            return (T) MISS_VALUE;
         }
 
         // should not try to convert bean invocations
         if (BeanInvocation.class.isAssignableFrom(value.getClass())) {
-            return (T) Void.TYPE;
+            return (T) MISS_VALUE;
         }
 
         // should not try to convert files
         if (WrappedFile.class.isAssignableFrom(value.getClass())) {
-            return (T) Void.TYPE;
+            return (T) MISS_VALUE;
         }
 
         if (toType.equals(String.class)) {
