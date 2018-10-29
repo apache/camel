@@ -62,7 +62,7 @@
 * [How to run Camel in an OSGi container]
 * [Using OSGi blueprint with Camel]
 * [Working with Camel and SCR]
-* Working with REST and [Rest DSL]
+* Working with REST and [Rest DSL]
 
 ### [Examples](examples.adoc)
 
@@ -511,6 +511,8 @@
 	* [Castor](castor-dataformat.adoc)
 	* [Crypto (Java Cryptographic Extension)](crypto-dataformat.adoc)
 	* [CSV](csv-dataformat.adoc)
+	* [FHIR JSon](fhirJson-dataformat.adoc)
+	* [FHIR XML](fhirXml-dataformat.adoc)
 	* [Flatpack](flatpack-dataformat.adoc)
 	* [GZip](gzip-dataformat.adoc)
 	* [Hessian](hessian-dataformat.adoc)
