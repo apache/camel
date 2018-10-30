@@ -33,6 +33,37 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.asciidoctor</groupId>
+        <artifactId>asciidoctor-maven-plugin</artifactId>
+        <version>${asciidoctorj-version}</version>
+        <executions>
+          <execution>
+            <id>output-html</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>process-asciidoc</goal>
+            </goals>
+            <configuration>
+              <backend>html5</backend>
+              <doctype>article</doctype>
+              <attributes>
+                <toc />
+                <linkcss>true</linkcss>
+                <stylesheet>apache.css</stylesheet>
+                <imagesdir>images</imagesdir>
+              </attributes>
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+          <sourceDirectory>../docs/user-manual/en</sourceDirectory>
+          <outputDirectory>public/manual/en</outputDirectory>
+          <preserveDirectories>true</preserveDirectories>
+          <headerFooter>true</headerFooter>
+          <imagesDir>../docs/user-manual/en/images</imagesDir>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
         <version>1.6</version>
