@@ -229,6 +229,7 @@
     <module>camel-netty4</module>
     <module>camel-netty-http</module>
     <module>camel-netty4-http</module>
+    <module>camel-nsq</module>
     <module>camel-ognl</module>
     <module>camel-olingo2</module>
     <module>camel-olingo4</module>
