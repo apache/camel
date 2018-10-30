@@ -45,7 +45,7 @@ title = "Integration that you want"
     identifier = "manual"
     pre = "<i class='fa fa-space-shuttle'></i>"
     weight = 40
-    url = "/manual/"
+    url = "/manual/en/"
 
 [[menu.main]]
     name = "Components"
