@@ -17,7 +17,7 @@
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-   <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.apache.camel</groupId>
@@ -26,60 +26,60 @@
     <relativePath>../parent</relativePath>
   </parent>
 
-   <artifactId>camel-website</artifactId>
-   <packaging>jar</packaging>
-   <name>Camel Website</name>
+  <artifactId>camel-website</artifactId>
+  <packaging>jar</packaging>
+  <name>Camel Website</name>
 
-   <build>
-      <plugins>
-         <plugin>
-            <groupId>com.github.eirslett</groupId>
-            <artifactId>frontend-maven-plugin</artifactId>
-            <version>1.6</version>
-            <executions>
-               <execution>
-                  <id>install node and yarn</id>
-                  <goals>
-                     <goal>install-node-and-yarn</goal>
-                  </goals>
-                  <phase>generate-sources</phase>
-                  <configuration>
-                     <nodeVersion>v8.10.0</nodeVersion>
-                     <yarnVersion>v1.5.1</yarnVersion>
-                  </configuration>
-               </execution>
-               <execution>
-                  <id>set version</id>
-                  <goals>
-                     <goal>yarn</goal>
-                  </goals>
-                  <phase>generate-sources</phase>
-                  <configuration>
-                      <arguments>version --new-version ${project.version}</arguments>
-                  </configuration>
-               </execution>
-               <execution>
-                  <id>yarn install</id>
-                  <goals>
-                     <goal>yarn</goal>
-                  </goals>
-                  <phase>generate-sources</phase>
-                  <configuration>
-                     <arguments>install</arguments>
-                  </configuration>
-               </execution>
-               <execution>
-                  <id>yarn build</id>
-                  <goals>
-                     <goal>yarn</goal>
-                  </goals>
-                  <phase>package</phase>
-                  <configuration>
-                     <arguments>build</arguments>
-                  </configuration>
-               </execution>
-            </executions>
-         </plugin>
-      </plugins>
-   </build>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>1.6</version>
+        <executions>
+          <execution>
+            <id>install node and yarn</id>
+            <goals>
+              <goal>install-node-and-yarn</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <nodeVersion>v8.10.0</nodeVersion>
+              <yarnVersion>v1.5.1</yarnVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>set version</id>
+            <goals>
+              <goal>yarn</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <arguments>version --new-version ${project.version}</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>yarn install</id>
+            <goals>
+              <goal>yarn</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <arguments>install</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>yarn build</id>
+            <goals>
+              <goal>yarn</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <arguments>build</arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
