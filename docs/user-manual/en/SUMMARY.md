@@ -587,7 +587,7 @@
 * [Contributing](../../../CONTRIBUTING.md)
 * [Mailing Lists](mailing-lists.adoc)
 * Gitter / IRC Chat
-* User Stories
+* [User Stories](user-stories.adoc)
 * News
 * Articles
 * Site
