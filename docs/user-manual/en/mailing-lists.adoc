@@ -55,7 +55,7 @@ this list for your Camel questions.
 |Camel Issues List |issues@camel.apache.org
 |mailto:issues-subscribe@camel.apache.org[Subscribe]
 |mailto:issues-unsubscribe@camel.apache.org[Unsubscribe]
-|http://mail-archives.apache.org/mod_mbox/camel-issues/[Archive] |  |
+|http://mail-archives.apache.org/mod_mbox/camel-issues/[Archive] | |
 |=======================================================================
 
 There were various discussions before these mailing lists were setup on
