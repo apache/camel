@@ -20,7 +20,7 @@ instructions
 <http://localhost:8080/camel-example-servlet-tomcat-no-spring>
 
 The servlet is located at
-	http://localhost:8080/camel-example-servlet-tomcat-no-spring/camel
+	
 <http://localhost:8080/camel-example-servlet-tomcat-no-spring/camel>
 
 ### Forum, Help, etc
