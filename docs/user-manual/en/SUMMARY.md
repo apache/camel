@@ -115,7 +115,7 @@
 * [Routes](routes.adoc)
 * [ServicePool](servicepool.adoc)
 * Stream caching
-* Threading Model
+* [Threading Model](threading-model.adoc)
 * ToAsync
 * Tracer
 * [Transport](transport.adoc)
