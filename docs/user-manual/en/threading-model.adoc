@@ -213,7 +213,7 @@ there is activity in the logs.
 The APIs on `ExecutorServiceManager` that is related to shutting down a
 thread pool is as follows:
 
-[width="100%",cols="2,5,^1,2",options="header"]
+[width="100%",cols="25%,75%",options="header"]
 |===
 |Method |Description
 
