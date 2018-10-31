@@ -1,6 +1,5 @@
 [[Architecture-Architecture]]
-Architecture
-~~~~~~~~~~~~
+=== Architecture
 
 Camel uses a Java based link:dsl.adoc[Routing Domain Specific Language
 (DSL)] or an XML Configuration to configure
@@ -38,7 +37,6 @@ link:annotation-based-expression-language.html[Annotation Based
 Expression Language].
 
 [[Architecture-Diagram]]
-Diagram
-~~~~~~~
+==== Diagram
 
 image:images/architecture.data/camel-components.png[image]
