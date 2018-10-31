@@ -113,7 +113,7 @@
 * [RouteBuilder](route-builder.adoc)
 * [RoutePolicy](route-policy.adoc)
 * [Routes](routes.adoc)
-* ServicePool
+* [ServicePool](servicepool.adoc)
 * Stream caching
 * Threading Model
 * ToAsync
