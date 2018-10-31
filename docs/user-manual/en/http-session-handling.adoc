@@ -18,7 +18,7 @@ the scope of this session should be considered.
 Independently from the session scope the implementation must honor the
 domain of the handled cookies.
 
-[[HTTP-SessionHandling-Route/ContextScope]]
+[[HTTP-SessionHandling-RouteContextScope]]
 ==== Route/Context Scope
 
 It might be desirable to have a single session for a route or a
