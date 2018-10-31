@@ -85,7 +85,7 @@
 * [CEP](cep.adoc)
 * Clustering and loadbalancing
 * [Component](component.adoc)
-* ComponentConfiguration
+* [ComponentConfiguration](componentconfiguration.adoc)
 * [Data Format](data-format.adoc)
 * [Debugger](debugger.adoc)
 * [Delay Interceptor](delay-interceptor.adoc)
