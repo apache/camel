@@ -41,4 +41,4 @@ Expression Language].
 Diagram
 ~~~~~~~
 
-image:architecture.data/camel-components.png[image]
+image:images/architecture.data/camel-components.png[image]
