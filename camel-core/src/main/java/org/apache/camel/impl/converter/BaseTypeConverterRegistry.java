@@ -646,11 +646,6 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         }
 
         @Override
-        public long getBaseHitCounter() {
-            return baseHitCounter.longValue();
-        }
-
-        @Override
         public long getMissCounter() {
             return missCounter.longValue();
         }
@@ -665,7 +660,6 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             noopCounter.reset();
             attemptCounter.reset();
             hitCounter.reset();
-            baseHitCounter.reset();
             missCounter.reset();
             failedCounter.reset();
         }
@@ -682,8 +676,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         @Override
         public String toString() {
-            return String.format("TypeConverterRegistry utilization[noop=%s, attempts=%s, hits=%s, baseHits=%s, misses=%s, failures=%s]",
-                    getNoopCounter(), getAttemptCounter(), getHitCounter(), getBaseHitCounter(), getMissCounter(), getFailedCounter());
+            return String.format("TypeConverterRegistry utilization[noop=%s, attempts=%s, hits=%s, misses=%s, failures=%s]",
+                    getNoopCounter(), getAttemptCounter(), getHitCounter(), getMissCounter(), getFailedCounter());
         }
     }
 
