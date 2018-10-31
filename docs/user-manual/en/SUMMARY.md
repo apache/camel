@@ -99,7 +99,7 @@
 * [Exchange](exchange.adoc)
 * [Exchange Pattern](exchange-pattern.adoc)
 * [Expression](expression.adoc)
-* HTTP-Session Handling
+* [HTTP-Session Handling](http-session-handling.adoc)
 * [Injector](injector.adoc)
 * [Intercept](intercept.adoc)
 * [Inversion of Control with Smart Defaults](inversion-of-control-with-smart-defaults.adoc)
