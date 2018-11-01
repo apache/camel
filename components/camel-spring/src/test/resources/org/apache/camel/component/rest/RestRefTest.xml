@@ -54,7 +54,7 @@
         <constant>Hello World</constant>
       </transform>
     </route>
-    <route>
+    <route id="route1">
       <from uri="direct:bye"/>
       <transform>
         <constant>Bye World</constant>
