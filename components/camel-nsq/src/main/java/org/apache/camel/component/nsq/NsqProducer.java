@@ -33,8 +33,8 @@ public class NsqProducer extends DefaultProducer {
 
         LOG.debug("Publishing to topic: {}", topic);
 
-        String body = exchange.getIn().getBody(String.class);
-        producer.produce(topic, body.getBytes());
+        byte[] body = exchange.getIn().getBody(byte[].class);
+        producer.produce(topic, body);
     }
 
     @Override
