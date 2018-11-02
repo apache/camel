@@ -1,0 +1,129 @@
+[[nsq-component]]
+== nsq Component
+
+
+http://nsq.io/[NSQ] is a realtime distributed messaging platform.
+
+Maven users will need to add the following dependency to
+their `pom.xml` for this component.
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-nsq</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.y.z</version>
+</dependency>
+------------------------------------------------------------
+
+### URI format
+
+[source,java]
+----------------------
+nsq:servers[?options]
+----------------------
+
+Where *servers* represents the list of NSQ servers - nsqlookupd servers in the case of a consumer and nsqd servers in the case of a producer.
+
+### Options
+
+
+// component options: START
+The Nsq component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+
+// endpoint options: START
+The NSQ endpoint is configured using URI syntax:
+
+----
+nsq:servers
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *servers* | *Required* URLs to one or more nsqlookupq (consumer) or nsqd (producer) servers. Use comma to separate URLs when specifying multiple servers. The port can also be specified using <hostname>:<port>. |  | String
+|===
+
+
+==== Query Parameters (25 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *topic* (common) | *Required* The name of topic we want to use |  | String
+| *channel* (consumer) | *Required* The name of channel we want to use |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *poolSize* (consumer) | Consumer pool size | 10 | int
+| *lookupServerPort* (consumer) | The default port number to use to connect to nsqlookupd server | 4161 | int
+| *port* (producer) | The default port number to use to connect to nsqd server | 4150 | int
+| *lookupInterval* (consumer) | The retry interval in millicseconds to lookup the topic at the nsqlookupq server. | 5000 | int
+| *requeueInterval* (consumer) | The requeue interval. Default of 0 will
+
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+// spring-boot-auto-configure options: END
+
+
+
+
+
+### Headers
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Name |Type |Description
+
+|CamelNatsMessageTimestamp |long |The timestamp of a consumed message.
+|=======================================================================
+ 
+*Producer example:*
+
+[source,java]
+-----------------------------------------------------------
+from("direct:send").to("nats://localhost:4222?topic=test");
+-----------------------------------------------------------
+
+In case of using Authorization you can directly specify your credentials in the server URL
+
+[source,java]
+-----------------------------------------------------------
+from("direct:send").to("nats://username:password@localhost:4222?topic=test");
+-----------------------------------------------------------
+
+or your token
+
+[source,java]
+-----------------------------------------------------------
+from("direct:send").to("nats://token@localhost:4222?topic=test");
+-----------------------------------------------------------
+
+*Consumer example:*
+
+[source,java]
+----------------------------------------------------------------------------------------
+from("nats://localhost:4222?topic=test&maxMessages=5&queueName=test").to("mock:result");
+----------------------------------------------------------------------------------------
