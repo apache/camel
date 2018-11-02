@@ -6,6 +6,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.jsse.SSLContextParameters;
 
 import java.util.Set;
 
@@ -33,6 +34,8 @@ public class NsqConfiguration {
     private long lookupInterval = 5000;
     @UriParam(label = "consumer", defaultValue = "0", description = "The requeue interval")
     private long requeueInterval = 0;
+    @UriParam(label = "security")
+    private SSLContextParameters sslContextParameters;
 
     /*
      * URL a NSQ lookup server hostname.
@@ -137,7 +140,7 @@ public class NsqConfiguration {
     }
 
     /**
-     * The requeue retry interval
+     * The requeue interval
      */
     public long getRequeueInterval() {
         return requeueInterval;
@@ -147,6 +150,16 @@ public class NsqConfiguration {
         this.requeueInterval = requeueInterval;
     }
 
+    /**
+     * To configure security using SSLContextParameters
+     */
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
 
     private String splitServers() {
         StringBuilder servers = new StringBuilder();

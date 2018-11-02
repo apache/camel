@@ -85,7 +85,7 @@ public class NsqConsumer extends DefaultConsumer {
             public void message(NSQMessage msg) {
                 LOG.debug("Received Message: {}", msg);
                 Exchange exchange = getEndpoint().createExchange();
-                exchange.getIn().setBody(new String(msg.getMessage()));
+                exchange.getIn().setBody(msg.getMessage());
                 exchange.getIn().setHeader(NsqConstants.NSQ_MESSAGE_ID, msg.getId());
                 exchange.getIn().setHeader(NsqConstants.NSQ_MESSAGE_ATTEMPTS, msg.getAttempts());
                 exchange.getIn().setHeader(NsqConstants.NSQ_MESSAGE_TIMESTAMP, msg.getTimestamp());
