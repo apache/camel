@@ -64,7 +64,7 @@
     <arquillian-weld-embedded-version>2.0.0.Final</arquillian-weld-embedded-version>
     <asciidoctorj-version>1.5.6</asciidoctorj-version>
     <asm-version>5.0.4</asm-version>
-    <aspectj-version>1.9.1</aspectj-version>
+    <aspectj-version>1.9.2</aspectj-version>
     <assertj-version>3.11.1</assertj-version>
     <asterisk-java-version>1.0.0-final</asterisk-java-version>
     <asterisk-java-bundle-version>1.0.0-final_1</asterisk-java-bundle-version>
@@ -315,7 +315,7 @@
     <ibatis-version>2.3.4.726</ibatis-version>
     <ical4j-version>1.0.7</ical4j-version>
     <ignite-version>2.6.0</ignite-version>
-    <infinispan-version>9.4.0.Final</infinispan-version>
+    <infinispan-version>9.4.1.Final</infinispan-version>
     <infinispan-spring-boot-version>2.0.0.Final</infinispan-spring-boot-version>
     <influx-java-driver-version>2.13</influx-java-driver-version>
     <influx-java-driver-bundle-version>2.13_1</influx-java-driver-bundle-version>

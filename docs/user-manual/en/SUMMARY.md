@@ -85,7 +85,7 @@
 * [CEP](cep.adoc)
 * Clustering and loadbalancing
 * [Component](component.adoc)
-* ComponentConfiguration
+* [ComponentConfiguration](componentconfiguration.adoc)
 * [Data Format](data-format.adoc)
 * [Debugger](debugger.adoc)
 * [Delay Interceptor](delay-interceptor.adoc)
@@ -99,7 +99,7 @@
 * [Exchange](exchange.adoc)
 * [Exchange Pattern](exchange-pattern.adoc)
 * [Expression](expression.adoc)
-* HTTP-Session Handling
+* [HTTP-Session Handling](http-session-handling.adoc)
 * [Injector](injector.adoc)
 * [Intercept](intercept.adoc)
 * [Inversion of Control with Smart Defaults](inversion-of-control-with-smart-defaults.adoc)
@@ -113,9 +113,9 @@
 * [RouteBuilder](route-builder.adoc)
 * [RoutePolicy](route-policy.adoc)
 * [Routes](routes.adoc)
-* ServicePool
+* [ServicePool](servicepool.adoc)
 * Stream caching
-* Threading Model
+* [Threading Model](threading-model.adoc)
 * ToAsync
 * Tracer
 * [Transport](transport.adoc)
