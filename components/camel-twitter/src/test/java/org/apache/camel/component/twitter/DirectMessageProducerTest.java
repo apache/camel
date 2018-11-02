@@ -67,7 +67,7 @@ public class DirectMessageProducerTest extends CamelTwitterTestSupport {
             public void configure() {
                 from("direct:tweets")
                         //.to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
-                        .to("twitter-directmessage:user?" + getUriTokens())
+                        .to("twitter-directmessage:cameltweet?" + getUriTokens())
                         //.to("log:org.apache.camel.component.twitter?level=INFO&showAll=true&multiline=true")
                         .to("mock:result");
             }
