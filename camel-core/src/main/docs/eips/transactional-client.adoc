@@ -47,11 +47,11 @@ Then you look them up and use them to create the JmsComponent.
 
 [source,java]
 ----
-PlatformTransactionManager transactionManager = (PlatformTransactionManager) spring.getBean("jmsTransactionManager");
-ConnectionFactory connectionFactory = (ConnectionFactory) spring.getBean("jmsConnectionFactory");
-JmsComponent component = JmsComponent.jmsComponentTransacted(connectionFactory, transactionManager);
-component.getConfiguration().setConcurrentConsumers(1);
-ctx.addComponent("activemq", component);
+  PlatformTransactionManager transactionManager = (PlatformTransactionManager) spring.getBean("jmsTransactionManager");
+  ConnectionFactory connectionFactory = (ConnectionFactory) spring.getBean("jmsConnectionFactory");
+  JmsComponent component = JmsComponent.jmsComponentTransacted(connectionFactory, transactionManager);
+  component.getConfiguration().setConcurrentConsumers(1);
+  ctx.addComponent("activemq", component);
 ----
 
 [[TransactionalClient-TransactionPolicies]]
@@ -154,8 +154,24 @@ configure a transaction policy bean, so we do not have any
 `PROPAGATION_REQUIRED` beans. All the beans needed to be configured is
 *standard* Spring beans only, eg. there are no Camel specific
 configuration at all.
+[source,xml]
+----
+    <!-- this example uses JDBC so we define a data source -->
+    <jdbc:embedded-database id="dataSource" type="DERBY">
+    	<jdbc:script location="classpath:sql/init.sql" />
+    </jdbc:embedded-database>
 
-/components/camel-spring/src/test/resources/org/apache/camel/spring/interceptor/springTransactionalClientDataSourceMinimalConfiguration.xml
+    <!-- spring transaction manager -->
+    <!-- this is the transaction manager Camel will use for transacted routes -->
+    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- bean for book business logic -->
+    <bean id="bookService" class="org.apache.camel.spring.interceptor.BookService">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+----
 
 Then we are ready to define our Camel routes. We have two routes: 1 for
 success conditions, and 1 for a forced rollback condition.
@@ -163,7 +179,42 @@ success conditions, and 1 for a forced rollback condition.
 This is after all based on a unit test. Notice that we mark each route
 as transacted using the *transacted* tag.
 
-/components/camel-spring/src/test/resources/org/apache/camel/spring/interceptor/springTransactionalClientDataSourceMinimalConfiguration.xml
+[source,xml]
+----
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:okay"/>
+        <!-- we mark this route as transacted. Camel will lookup the spring transaction manager
+             and use it by default. We can optimally pass in arguments to specify a policy to use
+             that is configured with a spring transaction manager of choice. However Camel supports
+             convention over configuration as we can just use the defaults out of the box and Camel
+             that suites in most situations -->
+        <transacted/>
+        <setBody>
+            <constant>Tiger in Action</constant>
+        </setBody>
+        <bean ref="bookService"/>
+        <setBody>
+            <constant>Elephant in Action</constant>
+        </setBody>
+        <bean ref="bookService"/>
+    </route>
+
+    <route>
+        <from uri="direct:fail"/>
+        <!-- we mark this route as transacted. See comments above. -->
+        <transacted/>
+        <setBody>
+            <constant>Tiger in Action</constant>
+        </setBody>
+        <bean ref="bookService"/>
+        <setBody>
+            <constant>Donkey in Action</constant>
+        </setBody>
+        <bean ref="bookService"/>
+    </route>
+    </camelContext>
+----
 
 That is all that is needed to configure a Camel route as being transacted.
 Just remember to use the *transacted* DSL. The rest is standard Spring
@@ -182,12 +233,57 @@ First we configure the standard Spring XML to declare a JMS connection
 factory, a JMS transaction manager and our ActiveMQ component that we
 use in our routing.
 
-/components/camel-jms/src/test/resources/org/apache/camel/component/jms/tx/TransactionMinimalConfigurationTest.xml
+[source,xml]
+----
+    <!-- setup JMS connection factory -->
+    <bean id="poolConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory" init-method="start" destroy-method="stop">
+        <property name="maxConnections" value="8"/>
+        <property name="connectionFactory" ref="jmsConnectionFactory"/>
+    </bean>
+
+    <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
+    </bean>
+
+    <!-- setup spring jms TX manager -->
+    <bean id="jmsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
+        <property name="connectionFactory" ref="poolConnectionFactory"/>
+    </bean>
+
+    <!-- define our activemq component -->
+    <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+        <property name="connectionFactory" ref="poolConnectionFactory"/>
+        <!-- define the jms consumer/producer as transacted -->
+        <property name="transacted" value="true"/>
+        <!-- setup the transaction manager to use -->
+        <!-- if not provided then Camel will automatic use a JmsTransactionManager, however if you
+             for instance use a JTA transaction manager then you must configure it -->
+        <property name="transactionManager" ref="jmsTransactionManager"/>
+    </bean>
+----
 
 And then we configure our routes. Notice that all we have to do is mark the
 route as transacted using the *transacted* tag.
 
-/components/camel-jms/src/test/resources/org/apache/camel/component/jms/tx/TransactionMinimalConfigurationTest.xml
+[source,xml]
+----
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <!-- disable JMX during testing -->
+        <jmxAgent id="agent" disabled="true"/>
+        <route>
+            <!-- 1: from the jms queue -->
+            <from uri="activemq:queue:okay"/>
+            <!-- 2: mark this route as transacted -->
+            <transacted/>
+            <!-- 3: call our business logic that is myProcessor -->
+            <process ref="myProcessor"/>
+            <!-- 4: if success then send it to the mock -->
+            <to uri="mock:result"/>
+        </route>
+    </camelContext>
+
+    <bean id="myProcessor" class="org.apache.camel.component.jms.tx.JMSTransactionalClientTest$MyProcessor"/>
+----
 
 ===== Transaction error handler
 
@@ -243,12 +339,44 @@ propagation behaviors for that where you configure it as follows:
 
 This is configured in the Spring XML file:
 
-/components/camel-spring/src/test/resources/org/apache/camel/spring/interceptor/MixedTransactionPropagationTest.xml
+[source,xml]
+----
+    <bean id="PROPAGATION_REQUIRED" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
+        <property name="transactionManager" ref="txManager"/>
+        <property name="propagationBehaviorName" value="PROPAGATION_REQUIRED"/>
+    </bean>
+
+    <bean id="PROPAGATION_REQUIRES_NEW" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
+        <property name="transactionManager" ref="txManager"/>
+        <property name="propagationBehaviorName" value="PROPAGATION_REQUIRES_NEW"/>
+    </bean>
+----
 
 Then in the routes you use transacted DSL to indicate which of these two
 propagations it uses.
 
-/components/camel-spring/src/test/java/org/apache/camel/spring/interceptor/MixedTransactionPropagationTest.java
+[source,java]
+----
+    from("direct:mixed")
+    // using required
+    .transacted("PROPAGATION_REQUIRED")
+    // all these steps will be okay
+    .setBody(constant("Tiger in Action")).bean("bookService")
+    .setBody(constant("Elephant in Action")).bean("bookService")
+    // continue on route 2
+    .to("direct:mixed2");
+
+    from("direct:mixed2")
+    // tell Camel that if this route fails then only rollback this last route
+    // by using (rollback only *last*)
+    .onException(Exception.class).markRollbackOnlyLast().end()
+    // using a different propagation which is requires new
+    .transacted("PROPAGATION_REQUIRES_NEW")
+    // this step will be okay
+    .setBody(constant("Lion in Action")).bean("bookService")
+    // this step will fail with donkey
+    .setBody(constant("Donkey in Action")).bean("bookService");
+----
 
 Notice how we have configured the `onException` in the 2nd route to indicate in
 case of any exceptions we should handle it and just rollback this
