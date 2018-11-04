@@ -36,6 +36,10 @@ public class NsqConfiguration {
     private long requeueInterval = 0;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+    @UriParam(label = "consumer", defaultValue = "true", description = "Automatically finish the NSQ Message when it is retrievd from the queue and before the Exchange is processed.")
+    private Boolean autoFinish = true;
+    @UriParam(label = "consumer", description = "The NSQ consumer timeout period for messages retrieved from the queue.")
+    private long messageTimeout;
 
     /*
      * URL a NSQ lookup server hostname.
@@ -159,6 +163,28 @@ public class NsqConfiguration {
 
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    /**
+     * Automatically finish the NSQ message when it is retrieved from the quese and before the Exchange is processed.
+     */
+    public Boolean getAutoFinish() {
+        return autoFinish;
+    }
+
+    public void setAutoFinish(Boolean autoFinish) {
+        this.autoFinish = autoFinish;
+    }
+
+    /**
+     * The NSQ message timeout for a consumer.
+     */
+    public long getMessageTimeout() {
+        return messageTimeout;
+    }
+
+    public void setMessageTimeout(long messageTimeout) {
+        this.messageTimeout = messageTimeout;
     }
 
     private String splitServers() {
