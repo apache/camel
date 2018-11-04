@@ -23,4 +23,9 @@ public class NsqSynchronization extends SynchronizationAdapter {
     public void onFailure(Exchange exchange) {
         nsqMessage.requeue(requeueInterval);
     }
+
+    @Override
+    public boolean allowHandover() {
+        return false;
+    }
 }

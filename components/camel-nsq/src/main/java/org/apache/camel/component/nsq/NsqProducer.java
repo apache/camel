@@ -15,9 +15,11 @@ public class NsqProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(NsqProducer.class);
 
     private NSQProducer producer;
+    private final NsqConfiguration configuration;
 
     public NsqProducer(NsqEndpoint endpoint) {
         super(endpoint);
+        this.configuration = endpoint.getNsqConfiguration();
     }
 
     @Override
@@ -29,7 +31,7 @@ public class NsqProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
 
         String topic = exchange.getIn().getHeader(NsqConstants.NSQ_MESSAGE_TOPIC,
-                getEndpoint().getNsqConfiguration().getTopic(), String.class);
+                configuration.getTopic(), String.class);
 
         LOG.debug("Publishing to topic: {}", topic);
 
@@ -48,6 +50,7 @@ public class NsqProducer extends DefaultProducer {
             producer.addAddress(server.getHost(),
                     server.getPort() == 0 ? config.getPort() : server.getPort());
         }
+        producer.setConfig(getEndpoint().getNsqConfig());
         producer.start();
     }
 

@@ -78,8 +78,11 @@ with the following path and query parameters:
 | *lookupServerPort* (consumer) | The default port number to use to connect to nsqlookupd server | 4161 | int
 | *port* (producer) | The default port number to use to connect to nsqd server | 4150 | int
 | *lookupInterval* (consumer) | The retry interval in millicseconds to lookup the topic at the nsqlookupq server. | 5000 | int
-| *requeueInterval* (consumer) | The requeue interval. Default of 0 will
-
+| *autoFinish* (consumer) | Automatically finish the NSQ Message when it is retrievd from the queue and before the Exchange is processed | true | boolean
+| *messageTimeout* (consumer) | The NSQ consumer timeout period for messages retrieved from the queue | 0 | int
+| *requeueInterval* (consumer) | The requeue interval. Default of 0 will use the default configured on the server | 0 | int
+| *secure* (security) | Set secure option indicating TLS is required | false | boolean
+| *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
