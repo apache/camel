@@ -410,7 +410,7 @@
     <!-- Upgrade to 1.7.26 causes stability issues. See CAMEL-10477 -->
     <jruby-version>1.7.18</jruby-version>
     <jsendnsca-version>2.1.1</jsendnsca-version>
-    <jsmpp-version>2.3.6</jsmpp-version>
+    <jsmpp-version>2.3.7</jsmpp-version>
     <jsch-version>0.1.54</jsch-version>
     <jsch-bundle-version>0.1.54_1</jsch-bundle-version>
     <jsonlib-bundle-version>2.4_1</jsonlib-bundle-version>
