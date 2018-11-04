@@ -16,11 +16,15 @@ public class NsqComponent extends DefaultComponent implements SSLContextParamete
     private boolean useGlobalSslContextParameters;
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        NsqConfiguration config = new NsqConfiguration();
-        setProperties(config, parameters);
-        config.setServers(remaining);
+        NsqConfiguration configuration = new NsqConfiguration();
+        setProperties(configuration, parameters);
+        configuration.setServers(remaining);
 
-        NsqEndpoint endpoint = new NsqEndpoint(uri, this, config);
+        if (configuration.getSslContextParameters() == null) {
+            configuration.setSslContextParameters(retrieveGlobalSslContextParameters());
+        }
+
+        NsqEndpoint endpoint = new NsqEndpoint(uri, this, configuration);
         return endpoint;
     }
 
