@@ -50,8 +50,14 @@ public class NsqEndpoint extends DefaultEndpoint {
 
     public NSQConfig getNsqConfig() throws GeneralSecurityException, IOException {
         NSQConfig nsqConfig = new NSQConfig();
-        SslContext sslContext = new JdkSslContext(getNsqConfiguration().getSslContextParameters().createSSLContext(getCamelContext()), true, null);
-        nsqConfig.setSslContext(sslContext);
+        if (getNsqConfiguration().getSslContextParameters() != null) {
+            SslContext sslContext = new JdkSslContext(getNsqConfiguration().getSslContextParameters().createSSLContext(getCamelContext()), true, null);
+            nsqConfig.setSslContext(sslContext);
+
+        }
+        if (configuration.getMessageTimeout() > 0) {
+            nsqConfig.setMsgTimeout((int) configuration.getMessageTimeout());
+        }
 
         return nsqConfig;
     }
