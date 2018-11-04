@@ -7,8 +7,10 @@ import com.github.brainlag.nsq.callbacks.NSQMessageCallback;
 import com.github.brainlag.nsq.lookup.DefaultNSQLookup;
 import com.github.brainlag.nsq.lookup.NSQLookup;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.spi.Synchronization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,12 +27,12 @@ public class NsqConsumer extends DefaultConsumer {
     private ExecutorService executor;
     private boolean active;
     NSQConsumer consumer;
-    private final NsqConfiguration config;
+    private final NsqConfiguration configuration;
 
     public NsqConsumer(NsqEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.processor = processor;
-        this.config = getEndpoint().getNsqConfiguration();
+        this.configuration = getEndpoint().getNsqConfiguration();
     }
 
     @Override
@@ -47,14 +49,14 @@ public class NsqConsumer extends DefaultConsumer {
         LOG.debug("Getting NSQ Connection");
         NSQLookup lookup = new DefaultNSQLookup();
 
-        for(ServerAddress server : config.getServerAddresses()) {
+        for(ServerAddress server : configuration.getServerAddresses()) {
             lookup.addLookupAddress(server.getHost(),
-                    server.getPort() == 0 ? config.getLookupServerPort() : server.getPort());
+                    server.getPort() == 0 ? configuration.getLookupServerPort() : server.getPort());
         }
 
-        consumer = new NSQConsumer(lookup, config.getTopic(),
-                config.getChannel(), new CamelNsqMessageHandler());
-        consumer.setLookupPeriod(config.getLookupInterval());
+        consumer = new NSQConsumer(lookup, configuration.getTopic(),
+                configuration.getChannel(), new CamelNsqMessageHandler(), getEndpoint().getNsqConfig());
+        consumer.setLookupPeriod(configuration.getLookupInterval());
         consumer.setExecutor(getEndpoint().createExecutor());
         consumer.start();
     }
@@ -84,18 +86,45 @@ public class NsqConsumer extends DefaultConsumer {
             @Override
             public void message(NSQMessage msg) {
                 LOG.debug("Received Message: {}", msg);
-                Exchange exchange = getEndpoint().createExchange();
+                Exchange exchange = getEndpoint().createExchange(ExchangePattern.InOnly);
                 exchange.getIn().setBody(msg.getMessage());
                 exchange.getIn().setHeader(NsqConstants.NSQ_MESSAGE_ID, msg.getId());
                 exchange.getIn().setHeader(NsqConstants.NSQ_MESSAGE_ATTEMPTS, msg.getAttempts());
                 exchange.getIn().setHeader(NsqConstants.NSQ_MESSAGE_TIMESTAMP, msg.getTimestamp());
                 try {
+                    if (configuration.getAutoFinish()) {
+                        msg.finished();
+                    } else {
+                        exchange.addOnCompletion(new NsqSynchronization(msg, (int) configuration.getRequeueInterval()));
+                    }
                     processor.process(exchange);
-                    msg.finished();
                 } catch (Exception e) {
-                    msg.requeue((int) config.getRequeueInterval());
+                    if (!configuration.getAutoFinish()) {
+                        msg.requeue((int) configuration.getRequeueInterval());
+                    }
                     getExceptionHandler().handleException("Error during processing", exchange, e);
                 }
             }
         }
+
+    class Sync implements Synchronization {
+
+        @Override
+        public void onComplete(final Exchange exchange) {
+            try {
+                //msg.finished();
+            } catch (Exception e) {
+                LOG.error(String.format("Could not run completion of exchange %s", exchange), e);
+            }
+        }
+
+        @Override
+        public void onFailure(final Exchange exchange) {
+            try {
+                //msg.requeue((int) config.getRequeueInterval());
+            } catch (Exception e) {
+                LOG.error(String.format("Could not run failure of exchange %s", exchange), e);
+            }
+        }
+    }
 }
