@@ -32,14 +32,18 @@ public class NsqConfiguration {
     private int port = NSQ_DEFAULT_PORT;
     @UriParam(label = "consumer", defaultValue = "5000", description = "The lookup interval")
     private long lookupInterval = 5000;
-    @UriParam(label = "consumer", defaultValue = "0", description = "The requeue interval")
-    private long requeueInterval = 0;
+    @UriParam(label = "consumer", defaultValue = "-1", description = "The requeue interval in milliseconds. A value of -1 is the server default")
+    private long requeueInterval = -1;
+    @UriParam(label = "consumer", defaultValue = "true", description = "Automatically finish the NSQ Message when it is retrieved from the queue and before the Exchange is processed")
+    private Boolean autoFinish = true;
+    @UriParam(label = "consumer", defaultValue = "-1", description = "The NSQ consumer timeout period for messages retrieved from the queue. A value of -1 is the server default")
+    private long messageTimeout = -1;
+    @UriParam(description = "")
+    private String userAgent;
+    @UriParam(label = "security")
+    private boolean secure;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
-    @UriParam(label = "consumer", defaultValue = "true", description = "Automatically finish the NSQ Message when it is retrievd from the queue and before the Exchange is processed.")
-    private Boolean autoFinish = true;
-    @UriParam(label = "consumer", description = "The NSQ consumer timeout period for messages retrieved from the queue.")
-    private long messageTimeout;
 
     /*
      * URL a NSQ lookup server hostname.
@@ -155,17 +159,6 @@ public class NsqConfiguration {
     }
 
     /**
-     * To configure security using SSLContextParameters
-     */
-    public SSLContextParameters getSslContextParameters() {
-        return sslContextParameters;
-    }
-
-    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
-        this.sslContextParameters = sslContextParameters;
-    }
-
-    /**
      * Automatically finish the NSQ message when it is retrieved from the quese and before the Exchange is processed.
      */
     public Boolean getAutoFinish() {
@@ -185,6 +178,36 @@ public class NsqConfiguration {
 
     public void setMessageTimeout(long messageTimeout) {
         this.messageTimeout = messageTimeout;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+    }
+
+    /**
+     * Set secure option indicating TLS is required
+     */
+    public boolean isSecure() {
+        return secure;
+    }
+
+    public void setSecure(boolean secure) {
+        this.secure = secure;
+    }
+
+    /**
+     * To configure security using SSLContextParameters
+     */
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     private String splitServers() {
