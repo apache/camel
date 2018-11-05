@@ -93,7 +93,7 @@
 * [DSL](dsl.adoc)
 * [Endpoint](endpoint.adoc)
 * Endpoint Annotations
-* EndpointCompleter
+* [EndpointCompleter](endpoint-completer.adoc)
 * [Error Handler](error-handler.adoc)
 * [Exchange](exchange.adoc)
 * [Exchange Pattern](exchange-pattern.adoc)
