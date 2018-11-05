@@ -70,7 +70,7 @@
     <asterisk-java-bundle-version>1.0.0-final_1</asterisk-java-bundle-version>
     <atmos-client-version>2.2.2</atmos-client-version>
     <atmosphere-version>2.5.1</atmosphere-version>
-    <atmosphere-version-range>[2.4,3.0)</atmosphere-version-range>
+    <atmosphere-version-range>[2.5,3.0)</atmosphere-version-range>
     <atomix-version>1.0.8</atomix-version>
     <atomix-catalyst-version>1.2.1</atomix-catalyst-version>
     <atomix-copycat-version>1.2.8</atomix-copycat-version>
@@ -744,7 +744,7 @@
     <xom-version>1.2.5</xom-version>
     <zendesk-client-version>0.6.2</zendesk-client-version>
     <zipkin-reporter-version>2.7.10</zipkin-reporter-version>
-    <zipkin-version>2.11.7</zipkin-version>
+    <zipkin-version>2.11.8</zipkin-version>
     <zjsonpatch-version>0.3.0</zjsonpatch-version>
     <zookeeper-version>3.4.13</zookeeper-version>
     <zookeeper-guava-version>16.0</zookeeper-guava-version>
