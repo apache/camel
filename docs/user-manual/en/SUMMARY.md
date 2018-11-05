@@ -119,7 +119,7 @@
 * Tracer
 * [Transport](transport.adoc)
 * [Type Converter](type-converter.adoc)
-* URIs
+* [URIs](uris.adoc)
 * [UuidGenerator](uuidgenerator.adoc)
 * XML Configuration
 
