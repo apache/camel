@@ -115,7 +115,6 @@ The component supports 21 options, which are listed below.
 | *camel.component.infinispan.configuration.cache-container* | Specifies the cache Container to connect |  | BasicCacheContainer
 | *camel.component.infinispan.configuration.cache-container-configuration* | The CacheContainer configuration. Uses if the cacheContainer is not defined. Must be the following types: org.infinispan.client.hotrod.configuration.Configuration - for remote cache interaction configuration; org.infinispan.configuration.cache.Configuration - for embedded cache interaction configuration; |  | Object
 | *camel.component.infinispan.configuration.clustered-listener* | If true, the listener will be installed for the entire cluster | false | Boolean
-| *camel.component.infinispan.configuration.command* | The operation to perform. | PUT | String
 | *camel.component.infinispan.configuration.configuration-properties* | Implementation specific properties for the CacheManager |  | Map
 | *camel.component.infinispan.configuration.configuration-uri* | An implementation specific URI for the CacheManager |  | String
 | *camel.component.infinispan.configuration.custom-listener* | Returns the custom listener in use, if provided |  | InfinispanCustom Listener
@@ -132,6 +131,7 @@ The component supports 21 options, which are listed below.
 | *camel.component.infinispan.customizer.remote-cache-manager.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
 | *camel.component.infinispan.enabled* | Enable infinispan component | true | Boolean
 | *camel.component.infinispan.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.infinispan.configuration.command* | The operation to perform. | PUT | String
 |===
 // spring-boot-auto-configure options: END
 
