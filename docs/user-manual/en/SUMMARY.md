@@ -59,7 +59,7 @@
 * [Camel Maven Archetypes]
 * [Creating a new Spring based Camel Route]
 * [Camel JMX]
-* [Using OSGi blueprint with Camel]
+* [Using OSGi blueprint with Camel](using-osgi-blueprint-with-camel.adoc)
 * [Working with Camel and SCR]
 * Working with REST and [Rest DSL]
 
