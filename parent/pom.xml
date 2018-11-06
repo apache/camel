@@ -98,7 +98,7 @@
     <bouncycastle-version>1.60</bouncycastle-version>
     <boxjavalibv2.version>3.2.1</boxjavalibv2.version>
     <box-java-sdk-version>2.10.0</box-java-sdk-version>
-    <braintree-gateway-version>2.84.0</braintree-gateway-version>
+    <braintree-gateway-version>2.86.0</braintree-gateway-version>
     <brave-zipkin-version>5.5.0</brave-zipkin-version>
     <build-helper-maven-plugin-version>1.12</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.2</c3p0-version>
@@ -191,7 +191,7 @@
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <egit-github-core-bundle-version>2.1.5_1</egit-github-core-bundle-version>
-    <ehcache-version>2.10.5</ehcache-version>
+    <ehcache-version>2.10.6</ehcache-version>
     <ehcache3-version>3.6.1</ehcache3-version>
     <ekstazi-maven-plugin-version>5.3.0</ekstazi-maven-plugin-version>
     <elasticsearch-bundle-version>2.4.4_1</elasticsearch-bundle-version>
@@ -634,7 +634,7 @@
     <splunk-version>1.6.4.0_1</splunk-version>
     <spring-batch-version>4.0.1.RELEASE</spring-batch-version>
     <spring-batch-bundle-version>4.0.1.RELEASE_1</spring-batch-bundle-version>
-    <spring-boot-version>2.0.6.RELEASE</spring-boot-version>
+    <spring-boot-version>2.1.0.RELEASE</spring-boot-version>
     <spring-cloud-commons-version>2.0.2.RELEASE</spring-cloud-commons-version>
     <spring-cloud-consul-version>2.0.1.RELEASE</spring-cloud-consul-version>
     <spring-cloud-netflix-version>2.0.2.RELEASE</spring-cloud-netflix-version>
@@ -651,7 +651,7 @@
     <!-- karaf 4.1.x supports spring 4.x and karaf 4.2.x supports spring 5 -->
     <spring-version-range>[4.3,6)</spring-version-range>
     <spring-version>${spring5-version}</spring-version>
-    <spring5-version>5.0.10.RELEASE</spring5-version>
+    <spring5-version>5.1.2.RELEASE</spring5-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
     <spring-security-version>5.0.8.RELEASE</spring-security-version>
     <spring-security-bundle-version>5.0.4.RELEASE_1</spring-security-bundle-version>
@@ -680,7 +680,7 @@
     <stringtemplate-version>4.0.8</stringtemplate-version>
     <tagsoup-bundle-version>1.2.1_1</tagsoup-bundle-version>
     <tagsoup-version>1.2.1</tagsoup-version>
-    <testcontainers-version>1.9.1</testcontainers-version>
+    <testcontainers-version>1.10.0</testcontainers-version>
     <testng-version>6.14.2</testng-version>
     <tinybundles-version>2.1.1</tinybundles-version>
     <tika-version>1.19.1</tika-version>
