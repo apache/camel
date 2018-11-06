@@ -117,8 +117,8 @@
     <cdi-api-1.2-version>1.2</cdi-api-1.2-version>
     <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
     <jta-api-1.2-version>1.2</jta-api-1.2-version>
-    <cglib-bundle-version>3.2.6_1</cglib-bundle-version>
-    <cglib-version>3.2.6</cglib-version>
+    <cglib-bundle-version>3.2.8_1</cglib-bundle-version>
+    <cglib-version>3.2.8</cglib-version>
     <chronicle-bytes-version>1.16.29</chronicle-bytes-version>
     <chronicle-core-version>1.16.29</chronicle-core-version>
     <chronicle-engine-version>1.13.27</chronicle-engine-version>
