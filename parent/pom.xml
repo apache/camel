@@ -164,8 +164,8 @@
     <commons-text-version>1.6</commons-text-version>
     <commons-vfs2-version>2.0</commons-vfs2-version>
     <compress-lzf-version>1.0.4</compress-lzf-version>
-    <consul-client-version>1.2.4</consul-client-version>
-    <consul-client-bundle-version>1.2.4_1</consul-client-bundle-version>
+    <consul-client-version>1.2.5</consul-client-version>
+    <consul-client-bundle-version>1.2.5_1</consul-client-bundle-version>
     <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
     <couchbase-client-version>1.4.13</couchbase-client-version>
     <couchbase-client-bundle-version>1.4.13_1</couchbase-client-bundle-version>
