@@ -645,7 +645,7 @@
     <spring-data-keyvalue-bundle-version>2.0.10.RELEASE_1</spring-data-keyvalue-bundle-version>
     <spring-data-redis-version>2.0.10.RELEASE</spring-data-redis-version>
     <spring-data-redis-bundle-version>2.0.10.RELEASE_1</spring-data-redis-bundle-version>
-    <spring-integration-version>5.0.8.RELEASE</spring-integration-version>
+    <spring-integration-version>5.1.0.RELEASE</spring-integration-version>
     <spring-ldap-version>2.3.2.RELEASE</spring-ldap-version>
     <spring-ldap-bundle-version>2.3.2.RELEASE_1</spring-ldap-bundle-version>
     <!-- karaf 4.1.x supports spring 4.x and karaf 4.2.x supports spring 5 -->
