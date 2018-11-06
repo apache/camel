@@ -33,7 +33,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @DirtiesContext
 @RunWith(SpringRunner.class)
 @EnableAutoConfiguration
-@SpringBootTest(classes = CamelConfigurationLocationsTest.class, properties = "camel.springboot.file-configurations=file:src/test/secret/*.properties")
+@SpringBootTest(properties = "camel.springboot.file-configurations=file:src/test/secret/*.properties")
 public class CamelConfigurationLocationsTest extends Assert {
 
     @Configuration
