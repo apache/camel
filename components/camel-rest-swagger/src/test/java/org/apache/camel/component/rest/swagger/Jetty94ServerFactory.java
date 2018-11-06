@@ -59,7 +59,7 @@ public final class Jetty94ServerFactory extends JettyHttpServerFactory {
                     sslContextFactory.setTrustStoreType(httpsSettings.trustStoreType());
                 }
                 sslContextFactory.setNeedClientAuth(httpsSettings.needClientAuth());
-                sslContextFactory.setIncludeCipherSuites("TLS_RSA_WITH_AES_128_CBC_SHA256");
+                sslContextFactory.setIncludeCipherSuites("TLS_DHE_RSA_WITH_AES_128_GCM_SHA256");
                 sslContextFactory.setProtocol("TLSv1.2");
 
                 final HttpConfiguration httpConfig = createHttpConfig(jettySettings);
