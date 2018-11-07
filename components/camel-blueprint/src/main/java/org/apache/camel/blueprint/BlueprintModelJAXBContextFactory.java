@@ -18,14 +18,12 @@ package org.apache.camel.blueprint;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 
 import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
-import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.impl.DefaultModelJAXBContextFactory;
 import org.apache.camel.util.blueprint.SSLContextParametersFactoryBean;
 
-public class BlueprintModelJAXBContextFactory implements ModelJAXBContextFactory {
+public class BlueprintModelJAXBContextFactory extends DefaultModelJAXBContextFactory {
 
     private final ClassLoader classLoader;
 
@@ -33,7 +31,12 @@ public class BlueprintModelJAXBContextFactory implements ModelJAXBContextFactory
         this.classLoader = classLoader;
     }
 
-    private String getPackages() {
+    @Override
+    protected ClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    protected String getPackages() {
         // we nedd to have a class from each different package with jaxb models
         // and we must use the .class for the classloader to work in OSGi
         Set<Class<?>> classes = new LinkedHashSet<>();
@@ -54,13 +57,9 @@ public class BlueprintModelJAXBContextFactory implements ModelJAXBContextFactory
             if (packages.length() > 0) {
                 packages.append(":");
             }
-            packages.append(cl.getName().substring(0, cl.getName().lastIndexOf('.')));
+            packages.append(cl.getName(), 0, cl.getName().lastIndexOf('.'));
         }
         return packages.toString();
     }
 
-    @Override
-    public JAXBContext newJAXBContext() throws JAXBException {
-        return JAXBContext.newInstance(getPackages(), classLoader);
-    }
 }
