@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -41,7 +42,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
     protected final GenericFileEndpoint<T> endpoint;
     protected GenericFileOperations<T> operations;
     // assume writing to 100 different files concurrently at most for the same file producer
-    private final Map<String, Lock> locks = LRUCacheFactory.newLRUCache(100);
+    private final Map<String, Lock> locks = Collections.synchronizedMap(LRUCacheFactory.newLRUCache(100));
 
     protected GenericFileProducer(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations) {
         super(endpoint);
@@ -66,14 +67,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
 
         // use lock for same file name to avoid concurrent writes to the same file
         // for example when you concurrently append to the same file
-        Lock lock;
-        synchronized (locks) {
-            lock = locks.get(target);
-            if (lock == null) {
-                lock = new ReentrantLock();
-                locks.put(target, lock);
-            }
-        }
+        Lock lock = locks.computeIfAbsent(target, f -> new ReentrantLock());
 
         lock.lock();
         try {
