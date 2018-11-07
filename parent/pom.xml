@@ -426,8 +426,8 @@
     <jsoup-version>1.11.3</jsoup-version>
     <jsp-api-2.1-version>1.0.1</jsp-api-2.1-version>
     <jsr311-api-version>1.1.1</jsr311-api-version>
-    <jt400-version>9.5</jt400-version>
-    <jt400-bundle-version>9.5_1</jt400-bundle-version>
+    <jt400-version>9.6</jt400-version>
+    <jt400-bundle-version>9.6_1</jt400-bundle-version>
     <juel-bundle-version>2.1.3_1</juel-bundle-version>
     <juel-version>2.1.3</juel-version>
     <!-- camel-itest-karaf doesn't work with JUnit 4.12 at present -->
