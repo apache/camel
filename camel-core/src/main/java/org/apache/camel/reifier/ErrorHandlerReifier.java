@@ -28,9 +28,7 @@ public class ErrorHandlerReifier {
                 answer.setRedeliveryDelay(CamelContextHelper.parseLong(context, definition.getRedeliveryDelay()));
             }
             if (definition.getAsyncDelayedRedelivery() != null) {
-                if (CamelContextHelper.parseBoolean(context, definition.getAsyncDelayedRedelivery())) {
-                    answer.asyncDelayedRedelivery();
-                }
+                answer.setAsyncDelayedRedelivery(CamelContextHelper.parseBoolean(context, definition.getAsyncDelayedRedelivery()));
             }
             if (definition.getRetriesExhaustedLogLevel() != null) {
                 answer.setRetriesExhaustedLogLevel(definition.getRetriesExhaustedLogLevel());
