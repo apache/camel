@@ -17,58 +17,40 @@ public class NsqTestSupport extends ContainerAwareTestSupport {
     public static final String CONTAINER_NSQD_IMAGE = "nsqio/nsq";
     public static final String CONTAINER_NSQD_NAME = "nsqd";
 
-    Network network = Network.newNetwork();
+    Network network;
 
     @Override
     protected List<GenericContainer<?>> createContainers() {
+        network = Network.newNetwork();
         return new ArrayList<GenericContainer<?>>(
                 Arrays.asList(
-                        new FixedHostPortGenericContainer<>(CONTAINER_NSQLOOKUPD_IMAGE)
-                                .withFixedExposedPort(4160, 4160)
-                                .withFixedExposedPort(4161, 4161)
-                                .withNetworkAliases(CONTAINER_NSQLOOKUPD_NAME)
-                                .withCommand("/nsqlookupd").withNetwork(network),
-                        new FixedHostPortGenericContainer<>(CONTAINER_NSQD_IMAGE)
-                                .withFixedExposedPort(4150, 4150)
-                                .withFixedExposedPort(4151, 4151)
-                                .withNetworkAliases(CONTAINER_NSQD_NAME)
-                                .withCommand(String.format("/nsqd --broadcast-address=%s --lookupd-tcp-address=%s:4160",
-                                        "localhost", CONTAINER_NSQLOOKUPD_NAME)).withNetwork(network)
+                        nsqlookupdContainer(network),
+                        nsqdContainer(network)
                 ));
     }
 
-    public static GenericContainer<?> nsqlookupdContainer() {
-        return new FixedHostPortGenericContainer(CONTAINER_NSQLOOKUPD_IMAGE)
+    public static GenericContainer<?> nsqlookupdContainer(Network network) {
+        return new FixedHostPortGenericContainer<>(CONTAINER_NSQLOOKUPD_IMAGE)
                 .withFixedExposedPort(4160, 4160)
                 .withFixedExposedPort(4161, 4161)
                 .withNetworkAliases(CONTAINER_NSQLOOKUPD_NAME)
-                .withCommand("/nsqlookupd");
+                .withCommand("/nsqlookupd").withNetwork(network);
     }
 
-    public static GenericContainer<?> nsqdContainer() {
-        return new FixedHostPortGenericContainer(CONTAINER_NSQD_IMAGE)
+    public static GenericContainer<?> nsqdContainer(Network network) {
+        return new FixedHostPortGenericContainer<>(CONTAINER_NSQD_IMAGE)
                 .withFixedExposedPort(4150, 4150)
                 .withFixedExposedPort(4151, 4151)
                 .withNetworkAliases(CONTAINER_NSQD_NAME)
                 .withCommand(String.format("/nsqd --broadcast-address=%s --lookupd-tcp-address=%s:4160",
-                        "localhost", CONTAINER_NSQLOOKUPD_NAME));
+                        "localhost", CONTAINER_NSQLOOKUPD_NAME)).withNetwork(network);
     }
 
     public String getNsqConsumerUrl() {
-        String format = String.format(
-                "%s:%d", "localhost", 4161
-                //getContainerHost(CONTAINER_NSQLOOKUPD_NAME),
-                //getContainerPort(CONTAINER_NSQLOOKUPD_NAME, NsqConstants.NSQ_DEFAULT_LOOKUP_PORT_HTTP)
-        );
-        return format;
+        return String.format("%s:%d", "localhost", 4161);
     }
 
     public String getNsqProducerUrl() {
-        String format = String.format(
-                "%s:%d", "localhost", 4150
-                //getContainerHost(CONTAINER_NSQD_NAME),
-                //getContainerPort(CONTAINER_NSQD_NAME, NsqConstants.NSQ_DEFAULT_PORT)
-        );
-        return format;
+        return String.format("%s:%d", "localhost", 4150);
     }
 }

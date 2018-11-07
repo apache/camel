@@ -46,7 +46,7 @@ public class NsqProducerTest extends NsqTestSupport {
             counter.incrementAndGet();
             message.finished();
             lock.countDown();
-            assertTrue(new String(message.getMessage()) == TEST_MESSAGE);
+            assertTrue(new String(message.getMessage()).equals(TEST_MESSAGE));
         });
         consumer.start();
 
