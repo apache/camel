@@ -16,8 +16,8 @@
  */
 package org.apache.camel.impl;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.NamedNode;
@@ -28,7 +28,7 @@ import org.apache.camel.spi.NodeIdFactory;
  */
 public class DefaultNodeIdFactory implements NodeIdFactory {
 
-    protected static Map<String, AtomicInteger> nodeCounters = new HashMap<>();
+    protected static Map<String, AtomicInteger> nodeCounters = new ConcurrentHashMap<>();
 
     public String createId(NamedNode definition) {
         String key = definition.getShortName();
@@ -38,13 +38,8 @@ public class DefaultNodeIdFactory implements NodeIdFactory {
     /**
      * Returns the counter for the given node key, lazily creating one if necessary
      */
-    protected static synchronized AtomicInteger getNodeCounter(String key) {
-        AtomicInteger answer = nodeCounters.get(key);
-        if (answer == null) {
-            answer = new AtomicInteger(0);
-            nodeCounters.put(key, answer);
-        }
-        return answer;
+    protected static AtomicInteger getNodeCounter(String key) {
+        return nodeCounters.computeIfAbsent(key, k -> new AtomicInteger(0));
     }
 
 
@@ -52,7 +47,7 @@ public class DefaultNodeIdFactory implements NodeIdFactory {
      * Helper method for test purposes that allows tests to start clean (made protected 
      *  to ensure that it is not called accidentally)
      */
-    protected static synchronized void resetAllCounters() {
+    protected static void resetAllCounters() {
         for (AtomicInteger counter : nodeCounters.values()) {
             counter.set(0);
         }
