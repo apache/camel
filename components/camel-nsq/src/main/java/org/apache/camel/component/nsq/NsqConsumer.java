@@ -10,7 +10,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.spi.Synchronization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,25 +105,4 @@ public class NsqConsumer extends DefaultConsumer {
                 }
             }
         }
-
-    class Sync implements Synchronization {
-
-        @Override
-        public void onComplete(final Exchange exchange) {
-            try {
-                //msg.finished();
-            } catch (Exception e) {
-                LOG.error(String.format("Could not run completion of exchange %s", exchange), e);
-            }
-        }
-
-        @Override
-        public void onFailure(final Exchange exchange) {
-            try {
-                //msg.requeue((int) config.getRequeueInterval());
-            } catch (Exception e) {
-                LOG.error(String.format("Could not run failure of exchange %s", exchange), e);
-            }
-        }
-    }
 }
