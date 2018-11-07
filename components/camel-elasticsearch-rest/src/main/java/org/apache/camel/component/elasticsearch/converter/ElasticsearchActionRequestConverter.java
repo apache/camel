@@ -61,7 +61,7 @@ public final class ElasticsearchActionRequestConverter {
         } else if (document instanceof Map) {
             updateRequest.doc((Map<String, Object>) document);
         } else if (document instanceof String) {
-            updateRequest.doc(XContentFactory.xContent((String) document),(String) document);
+            updateRequest.doc(XContentFactory.xContent((String) document), (String) document);
         } else if (document instanceof XContentBuilder) {
             updateRequest.doc((XContentBuilder) document);
         } else {

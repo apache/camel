@@ -96,9 +96,9 @@ public class ElasticsearchProducer extends DefaultProducer {
             return ElasticsearchOperation.Delete;
         } else if (request instanceof SearchRequest) {
             return ElasticsearchOperation.Search;
-        }  else if (request instanceof MultiSearchRequest) {
+        } else if (request instanceof MultiSearchRequest) {
             return ElasticsearchOperation.MultiSearch;
-        }else if (request instanceof DeleteIndexRequest) {
+        } else if (request instanceof DeleteIndexRequest) {
             return ElasticsearchOperation.DeleteIndex;
         }
 
