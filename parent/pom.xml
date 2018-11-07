@@ -624,9 +624,9 @@
     <snakeyaml-version>1.23</snakeyaml-version>
     <snappy-version>1.1.4</snappy-version>
     <snmp4j-version>2.6.3_1</snmp4j-version>
-    <solr-bundle-version>7.2.1_1</solr-bundle-version>
+    <solr-bundle-version>7.5.0_1</solr-bundle-version>
     <!-- solr version aligned with lucene -->
-    <solr-version>7.2.1</solr-version>
+    <solr-version>7.5.0</solr-version>
     <solr-version-range>[7,8)</solr-version-range>
     <spark-version>2.3.2</spark-version>
     <spark-rest-version>2.8.0</spark-rest-version>
