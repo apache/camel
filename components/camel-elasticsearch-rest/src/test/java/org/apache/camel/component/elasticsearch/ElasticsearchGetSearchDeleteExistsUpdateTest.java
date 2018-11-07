@@ -32,9 +32,6 @@ import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.search.SearchHits;
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
