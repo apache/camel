@@ -20,3 +20,4 @@ RandomLoadBalancerDefinition
 RoundRobinLoadBalancerDefinition
 StickyLoadBalancerDefinition
 TopicLoadBalancerDefinition
+WeightedLoadBalancerDefinition

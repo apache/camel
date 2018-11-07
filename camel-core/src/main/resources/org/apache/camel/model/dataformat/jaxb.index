@@ -16,14 +16,17 @@
 ## ------------------------------------------------------------------------
 ASN1DataFormat
 AvroDataFormat
+BarcodeDataFormat
 Base64DataFormat
 BeanioDataFormat
 BindyDataFormat
 BindyType
+BoonDataFormat
 CryptoDataFormat
 CsvDataFormat
 CustomDataFormat
 DataFormatsDefinition
+JacksonXMLDataFormat
 FhirJsonDataFormat
 FhirXmlDataFormat
 FlatpackDataFormat
@@ -36,6 +39,7 @@ JsonDataFormat
 JsonLibrary
 LZFDataFormat
 MimeMultipartDataFormat
+PGPDataFormat
 ProtobufDataFormat
 RssDataFormat
 SerializationDataFormat
@@ -49,9 +53,12 @@ UniVocityCsvDataFormat
 UniVocityFixedWidthDataFormat
 UniVocityHeader
 UniVocityTsvDataFormat
+XmlRpcDataFormat
 XMLSecurityDataFormat
 XStreamDataFormat
 YAMLDataFormat
 YAMLLibrary
+YAMLTypeFilterDefinition
+YAMLTypeFilterType
 ZipDataFormat
 ZipFileDataFormat
