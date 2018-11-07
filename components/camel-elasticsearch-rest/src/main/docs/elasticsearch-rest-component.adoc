@@ -233,7 +233,7 @@ from("direct:search")
 ----
 <route>
     <from uri="direct:search" />
-    <to uri="eelasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&indexType=tweet"/>
+    <to uri="elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&indexType=tweet"/>
 </route>
 ----
 
