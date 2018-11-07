@@ -16,9 +16,14 @@
  */
 package org.apache.camel.model;
 
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlType;
+
 /**
  * Enumerates all saga propagation modes.
  */
+@XmlType
+@XmlEnum
 public enum SagaPropagation {
 
     /**

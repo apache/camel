@@ -77,7 +77,10 @@ RouteDefinition
 RouteContextRefDefinition
 RoutesDefinition
 RoutingSlipDefinition
+SagaCompletionMode
 SagaDefinition
+SagaOptionDefinition
+SagaPropagation
 SamplingDefinition
 ScriptDefinition
 SetBodyDefinition
