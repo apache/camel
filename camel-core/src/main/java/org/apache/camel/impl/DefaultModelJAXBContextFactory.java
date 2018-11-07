@@ -27,8 +27,17 @@ import org.apache.camel.spi.ModelJAXBContextFactory;
  */
 public class DefaultModelJAXBContextFactory implements ModelJAXBContextFactory {
 
+    private volatile JAXBContext context;
+
     public JAXBContext newJAXBContext() throws JAXBException {
-        return JAXBContext.newInstance(getPackages(), getClassLoader());
+        if (context == null) {
+            synchronized (this) {
+                if (context == null) {
+                    context = JAXBContext.newInstance(getPackages(), getClassLoader());
+                }
+            }
+        }
+        return context;
     }
 
     protected String getPackages() {

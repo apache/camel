@@ -26,10 +26,6 @@ public class SpringModelJAXBContextFactory extends DefaultModelJAXBContextFactor
             + "org.apache.camel.spring:"
             + "org.apache.camel.util.spring:";
 
-    protected ClassLoader getClassLoader() {
-        return getClass().getClassLoader();
-    }
-
     protected String getPackages() {
         return super.getPackages() + ADDITIONAL_JAXB_CONTEXT_PACKAGES;
     }

@@ -379,7 +379,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             return null;
         }
 
-        return ModelHelper.dumpModelAsXml(null, route);
+        return ModelHelper.dumpModelAsXml(context, route);
     }
 
     @Override
@@ -421,7 +421,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         // use a rests definition to dump the rests
         RestsDefinition def = new RestsDefinition();
         def.setRests(rests);
-        return ModelHelper.dumpModelAsXml(null, def);
+        return ModelHelper.dumpModelAsXml(context, def);
     }
 
     public String getRestApiDocAsJson(String camelContextName) throws Exception {
