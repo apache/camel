@@ -14,24 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.jbpm;
 
-import java.net.URL;
-import java.util.Map;
+/**
+ * Indicates that class implementing this interface should receive (at some point)
+ * JBPMConsumer instance that is required to operate.
+ */
+public interface JBPMCamelConsumerAware {
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-
-public class JBPMComponent extends DefaultComponent {
-
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        JBPMConfiguration configuration = new JBPMConfiguration();
-        if (remaining.startsWith("events")) {
-            configuration.setEventListenerType(remaining.split(":")[1]);
-        } else {        
-            configuration.setConnectionURL(new URL(remaining));
-        }
-        setProperties(configuration, parameters);
-        return new JBPMEndpoint(uri, this, configuration);
-    }
+    void addConsumer(JBPMConsumer consumer);
+    
+    void removeConsumer(JBPMConsumer consumer);
 }

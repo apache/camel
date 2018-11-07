@@ -43,32 +43,55 @@
             <artifactId>camel-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.kie.remote</groupId>
-            <artifactId>kie-remote-client</artifactId>
+            <groupId>org.kie.server</groupId>
+            <artifactId>kie-server-client</artifactId>
             <version>${jbpm-version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hornetq</groupId>
-                    <artifactId>hornetq-core-client</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.hornetq</groupId>
-                    <artifactId>hornetq-jms-client</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jboss.spec.javax.jms</groupId>
-                    <artifactId>jboss-jms-api_1.1_spec</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jboss.spec.javax.xml.ws</groupId>
-                    <artifactId>jboss-jaxws-api_2.2_spec</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jboss.logging</groupId>
-                    <artifactId>jboss-logging</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
+        
+        <!-- jBPM consumer -->
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-api</artifactId>
+            <version>${jbpm-version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-internal</artifactId>
+            <version>${jbpm-version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-services-api</artifactId>
+            <version>${jbpm-version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-case-mgmt-api</artifactId>
+            <version>${jbpm-version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.kie.server</groupId>
+            <artifactId>kie-server-services-common</artifactId>
+            <version>${jbpm-version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-persistence-api</artifactId>
+            <version>${jbpm-version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        
         <dependency>
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging</artifactId>
