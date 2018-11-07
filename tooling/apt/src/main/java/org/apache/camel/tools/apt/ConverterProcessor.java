@@ -118,6 +118,8 @@ public class ConverterProcessor extends AbstractProcessor {
                 writer.append("@SuppressWarnings(\"unchecked\")\n");
                 writer.append("public class ").append(c).append(" implements TypeConverterLoader {\n");
                 writer.append("\n");
+                writer.append("    public static final CoreStaticTypeConverterLoader INSTANCE = new CoreStaticTypeConverterLoader();\n");
+                writer.append("\n");
                 writer.append("    static abstract class SimpleTypeConverter extends TypeConverterSupport {\n");
                 writer.append("        private final boolean allowNull;\n");
                 writer.append("\n");
@@ -143,8 +145,9 @@ public class ConverterProcessor extends AbstractProcessor {
                 writer.append("        protected abstract Object doConvert(Exchange exchange, Object value) throws Exception;\n");
                 writer.append("    };\n");
                 writer.append("\n");
-                writer.append("    @Override\n");
-                writer.append("    public void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {\n");
+                writer.append("    private DoubleMap<Class<?>, Class<?>, SimpleTypeConverter> converters = new DoubleMap<>(256);\n");
+                writer.append("\n");
+                writer.append("    private ").append(c).append("() {\n");
 
                 for (Map.Entry<String, Map<TypeMirror, ExecutableElement>> to : converters.entrySet()) {
                     for (Map.Entry<TypeMirror, ExecutableElement> from : to.getValue().entrySet()) {
@@ -162,7 +165,7 @@ public class ConverterProcessor extends AbstractProcessor {
                                 }
                             }
                         }
-                        writer.append("        registry.addTypeConverter(").append(to.getKey()).append(".class").append(", ")
+                        writer.append("        converters.put(").append(to.getKey()).append(".class").append(", ")
                                 .append(toString(from.getKey())).append(".class, new SimpleTypeConverter(")
                                 .append(Boolean.toString(allowNull)).append(") {\n");
                         writer.append("            @Override\n");
@@ -172,7 +175,11 @@ public class ConverterProcessor extends AbstractProcessor {
                         writer.append("        });\n");
                     }
                 }
-
+                writer.append("    }\n");
+                writer.append("\n");
+                writer.append("    @Override\n");
+                writer.append("    public void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {\n");
+                writer.append("        converters.forEach((k, v, c) -> registry.addTypeConverter(k, v, c));\n");
                 for (ExecutableElement ee : fallbackConverters) {
                     boolean allowNull = false;
                     boolean canPromote = false;
@@ -209,7 +216,6 @@ public class ConverterProcessor extends AbstractProcessor {
                     writer.append("            }\n");
                     writer.append("        }, ").append(Boolean.toString(canPromote)).append(");\n");
                 }
-                writer.append("\n");
                 writer.append("    }\n");
                 writer.append("\n");
 
