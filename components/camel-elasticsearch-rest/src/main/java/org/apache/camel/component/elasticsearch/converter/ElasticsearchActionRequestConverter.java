@@ -28,6 +28,7 @@ import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.common.Strings;
@@ -192,6 +193,15 @@ public final class ElasticsearchActionRequestConverter {
         searchRequest.source(searchSourceBuilder);
 
         return searchRequest;
+    }
+    
+    @Converter
+    public static MultiSearchRequest toMultiSearchRequest(Object queryObject, Exchange exchange) throws IOException {
+        if (queryObject instanceof MultiSearchRequest) {
+            return (MultiSearchRequest) queryObject;
+        } else {
+            throw new IllegalArgumentException("Wrong body type. Only MultiSearchRequest is allowed as a type");
+        }
     }
 
     @Converter
