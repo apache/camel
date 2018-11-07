@@ -42,6 +42,7 @@ import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,9 +50,8 @@ import org.slf4j.LoggerFactory;
 /**
  * The default implementation of the {@link Debugger}.
  */
-public class DefaultDebugger implements Debugger, CamelContextAware {
+public class DefaultDebugger extends ServiceSupport implements Debugger, CamelContextAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultDebugger.class);
     private final EventNotifier debugEventNotifier = new DebugEventNotifier();
     private final List<BreakpointConditions> breakpoints = new CopyOnWriteArrayList<>();
     private final int maxConcurrentSingleSteps = 1;
@@ -286,7 +286,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         try {
             breakpoint.beforeProcess(exchange, processor, definition);
         } catch (Throwable e) {
-            LOG.warn("Exception occurred in breakpoint: " + breakpoint + ". This exception will be ignored.", e);
+            log.warn("Exception occurred in breakpoint: " + breakpoint + ". This exception will be ignored.", e);
         }
     }
 
@@ -294,7 +294,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         try {
             breakpoint.afterProcess(exchange, processor, definition, timeTaken);
         } catch (Throwable e) {
-            LOG.warn("Exception occurred in breakpoint: " + breakpoint + ". This exception will be ignored.", e);
+            log.warn("Exception occurred in breakpoint: " + breakpoint + ". This exception will be ignored.", e);
         }
     }
 
@@ -314,7 +314,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         try {
             breakpoint.onEvent(exchange, event, definition);
         } catch (Throwable e) {
-            LOG.warn("Exception occurred in breakpoint: " + breakpoint + ". This exception will be ignored.", e);
+            log.warn("Exception occurred in breakpoint: " + breakpoint + ". This exception will be ignored.", e);
         }
     }
 
@@ -340,6 +340,11 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
 
     @Override
     public void start() throws Exception {
+        super.start();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
 
         // register our event notifier
@@ -348,7 +353,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
     }
 
     @Override
-    public void stop() throws Exception {
+    protected void doStop() throws Exception {
         breakpoints.clear();
         singleSteps.clear();
         ServiceHelper.stopService(debugEventNotifier);
