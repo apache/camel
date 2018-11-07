@@ -194,15 +194,6 @@ public final class ElasticsearchActionRequestConverter {
 
         return searchRequest;
     }
-    
-    @Converter
-    public static MultiSearchRequest toMultiSearchRequest(Object queryObject, Exchange exchange) throws IOException {
-        if (queryObject instanceof MultiSearchRequest) {
-            return (MultiSearchRequest) queryObject;
-        } else {
-            throw new IllegalArgumentException("Wrong body type. Only MultiSearchRequest is allowed as a type");
-        }
-    }
 
     @Converter
     public static BulkRequest toBulkRequest(Object documents, Exchange exchange) {
