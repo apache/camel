@@ -614,6 +614,7 @@
     <bundle>mvn:org.apache.camel/camel-elasticsearch5/${project.version}</bundle>
   </feature>
   <feature name='camel-elasticsearch-rest' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>camel-elasticsearch-rest currently does not work in OSGi</details>
     <feature version='${project.version}'>camel-core</feature>
     <feature>http</feature>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -2097,7 +2098,7 @@
     <bundle>mvn:org.apache.camel/camel-spring-ldap/${project.version}</bundle>
   </feature>
   <feature name='camel-spring-redis' version='${project.version}' resolver='(obr)' start-level='50'>
-    <details>Does not work with Karaf 4.1.x due KARAF-4921, but work with Karaf 4.2.x</details>
+    <details>Does not work with in OSGi actually</details>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${spring-version-range}'>spring</feature>
     <feature version='${spring-version-range}'>spring-tx</feature>

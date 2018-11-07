@@ -429,6 +429,10 @@ public class BomGeneratorMojo extends AbstractMojo {
                 String prop = version.substring(start + 2, end);
                 String resolved = project.getProperties().getProperty(prop);
                 if (resolved != null) {
+                    // may contain yet another placeholder
+                    if (resolved.contains("${")) {
+                        resolved = resolveVersion(project, resolved);
+                    }
                     version = version.substring(0, start) + resolved + version.substring(end + 1);
                 }
             }

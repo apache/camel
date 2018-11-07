@@ -35,6 +35,7 @@ import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.RestClient;
@@ -95,6 +96,8 @@ public class ElasticsearchProducer extends DefaultProducer {
             return ElasticsearchOperation.Delete;
         } else if (request instanceof SearchRequest) {
             return ElasticsearchOperation.Search;
+        } else if (request instanceof MultiSearchRequest) {
+            return ElasticsearchOperation.MultiSearch;
         } else if (request instanceof DeleteIndexRequest) {
             return ElasticsearchOperation.DeleteIndex;
         }
@@ -192,6 +195,9 @@ public class ElasticsearchProducer extends DefaultProducer {
         } else if (operation == ElasticsearchOperation.Search) {
             SearchRequest searchRequest = message.getBody(SearchRequest.class);
             message.setBody(restHighLevelClient.search(searchRequest).getHits());
+        } else if (operation == ElasticsearchOperation.MultiSearch) {
+            MultiSearchRequest searchRequest = message.getBody(MultiSearchRequest.class);
+            message.setBody(restHighLevelClient.multiSearch(searchRequest).getResponses());
         } else if (operation == ElasticsearchOperation.Ping) {
             message.setBody(restHighLevelClient.ping());
         } else if (operation == ElasticsearchOperation.Info) {

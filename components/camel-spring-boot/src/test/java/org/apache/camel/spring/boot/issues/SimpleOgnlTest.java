@@ -34,7 +34,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @EnableAutoConfiguration
-@SpringBootTest(classes = { SimpleOgnlTest.class })
+@SpringBootTest
 public class SimpleOgnlTest {
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;

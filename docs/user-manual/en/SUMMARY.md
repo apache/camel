@@ -93,7 +93,7 @@
 * [DSL](dsl.adoc)
 * [Endpoint](endpoint.adoc)
 * Endpoint Annotations
-* EndpointCompleter
+* [EndpointCompleter](endpoint-completer.adoc)
 * [Error Handler](error-handler.adoc)
 * [Exchange](exchange.adoc)
 * [Exchange Pattern](exchange-pattern.adoc)
@@ -119,7 +119,7 @@
 * Tracer
 * [Transport](transport.adoc)
 * [Type Converter](type-converter.adoc)
-* URIs
+* [URIs](uris.adoc)
 * [UuidGenerator](uuidgenerator.adoc)
 * XML Configuration
 

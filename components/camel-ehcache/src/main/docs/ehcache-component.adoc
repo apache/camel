@@ -120,7 +120,6 @@ The component supports 25 options, which are listed below.
 | *camel.component.ehcache.configuration.action* | To configure the default cache action. If an action is set in the message header, then the operation from the header takes precedence. |  | String
 | *camel.component.ehcache.configuration.cache-manager* | The cache manager |  | CacheManager
 | *camel.component.ehcache.configuration.cache-manager-configuration* | The cache manager configuration |  | Configuration
-| *camel.component.ehcache.configuration.config-uri* | URI pointing to the Ehcache XML configuration file's location  @deprecated use {@link #setConfigurationUri(String)} instead |  | String
 | *camel.component.ehcache.configuration.configuration* | The default cache configuration to be used to create caches. |  | CacheConfiguration
 | *camel.component.ehcache.configuration.configuration-uri* | URI pointing to the Ehcache XML configuration file's location |  | String
 | *camel.component.ehcache.configuration.configurations* | A map of cache configuration to be used to create caches. |  | Map
@@ -137,6 +136,7 @@ The component supports 25 options, which are listed below.
 | *camel.component.ehcache.customizer.cache-manager.override* | Configure if the cache manager eventually set on the component should be overridden by the customizer. | false | Boolean
 | *camel.component.ehcache.enabled* | Enable ehcache component | true | Boolean
 | *camel.component.ehcache.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.ehcache.configuration.config-uri* | URI pointing to the Ehcache XML configuration file's location  @deprecated use {@link #setConfigurationUri(String)} instead |  | String
 |===
 // spring-boot-auto-configure options: END
 

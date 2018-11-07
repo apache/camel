@@ -529,7 +529,6 @@ The component supports 172 options, which are listed below.
 | *camel.component.jms.configuration.test-connection-on-startup* | Specifies whether to test the connection on startup. This ensures that when Camel starts that all the JMS consumers have a valid connection to the JMS broker. If a connection cannot be granted then Camel throws an exception on startup. This ensures that Camel is not started with failed connections. The JMS producers is tested as well. | false | Boolean
 | *camel.component.jms.configuration.time-to-live* | When sending messages, specifies the time-to-live of the message (in milliseconds). | -1 | Long
 | *camel.component.jms.configuration.transacted* | Specifies whether to use transacted mode | false | Boolean
-| *camel.component.jms.configuration.transacted-in-out* |  |  | Boolean
 | *camel.component.jms.configuration.transaction-manager* | The Spring transaction manager to use. |  | PlatformTransaction Manager
 | *camel.component.jms.configuration.transaction-name* | The name of the transaction to use. |  | String
 | *camel.component.jms.configuration.transaction-timeout* | The timeout value of the transaction (in seconds), if using transacted mode. | -1 | Integer
@@ -605,6 +604,7 @@ The component supports 172 options, which are listed below.
 | *camel.component.jms.username* | Username to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory. |  | String
 | *camel.component.jms.wait-for-provision-correlation-to-be-updated-counter* | Number of times to wait for provisional correlation id to be updated to the actual correlation id when doing request/reply over JMS and when the option useMessageIDAsCorrelationID is enabled. | 50 | Integer
 | *camel.component.jms.wait-for-provision-correlation-to-be-updated-thread-sleeping-time* | Interval in millis to sleep each time while waiting for provisional correlation id to be updated. | 100 | Long
+| *camel.component.jms.configuration.transacted-in-out* |  |  | Boolean
 |===
 // spring-boot-auto-configure options: END
 

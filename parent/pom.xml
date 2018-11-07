@@ -81,8 +81,8 @@
     <avro-bundle-version>1.8.2_1</avro-bundle-version>
     <avro-ipc-bundle-version>1.8.2_1</avro-ipc-bundle-version>
     <awaitility-version>3.1.2</awaitility-version>
-    <aws-java-sdk-bundle-version>1.11.373_1</aws-java-sdk-bundle-version>
-    <aws-java-sdk-version>1.11.373</aws-java-sdk-version>
+    <aws-java-sdk-bundle-version>1.11.438_1</aws-java-sdk-bundle-version>
+    <aws-java-sdk-version>1.11.438</aws-java-sdk-version>
     <aws-xray-version>2.0.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-storage-java-sdk-version>8.0.0</azure-storage-java-sdk-version>
@@ -98,7 +98,7 @@
     <bouncycastle-version>1.60</bouncycastle-version>
     <boxjavalibv2.version>3.2.1</boxjavalibv2.version>
     <box-java-sdk-version>2.10.0</box-java-sdk-version>
-    <braintree-gateway-version>2.84.0</braintree-gateway-version>
+    <braintree-gateway-version>2.86.0</braintree-gateway-version>
     <brave-zipkin-version>5.5.0</brave-zipkin-version>
     <build-helper-maven-plugin-version>1.12</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.2</c3p0-version>
@@ -117,8 +117,8 @@
     <cdi-api-1.2-version>1.2</cdi-api-1.2-version>
     <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
     <jta-api-1.2-version>1.2</jta-api-1.2-version>
-    <cglib-bundle-version>3.2.6_1</cglib-bundle-version>
-    <cglib-version>3.2.6</cglib-version>
+    <cglib-bundle-version>3.2.8_1</cglib-bundle-version>
+    <cglib-version>3.2.8</cglib-version>
     <chronicle-bytes-version>1.16.29</chronicle-bytes-version>
     <chronicle-core-version>1.16.29</chronicle-core-version>
     <chronicle-engine-version>1.13.27</chronicle-engine-version>
@@ -164,8 +164,8 @@
     <commons-text-version>1.6</commons-text-version>
     <commons-vfs2-version>2.0</commons-vfs2-version>
     <compress-lzf-version>1.0.4</compress-lzf-version>
-    <consul-client-version>1.2.4</consul-client-version>
-    <consul-client-bundle-version>1.2.4_1</consul-client-bundle-version>
+    <consul-client-version>1.2.5</consul-client-version>
+    <consul-client-bundle-version>1.2.5_1</consul-client-bundle-version>
     <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
     <couchbase-client-version>1.4.13</couchbase-client-version>
     <couchbase-client-bundle-version>1.4.13_1</couchbase-client-bundle-version>
@@ -191,7 +191,7 @@
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <egit-github-core-bundle-version>2.1.5_1</egit-github-core-bundle-version>
-    <ehcache-version>2.10.5</ehcache-version>
+    <ehcache-version>2.10.6</ehcache-version>
     <ehcache3-version>3.6.1</ehcache3-version>
     <ekstazi-maven-plugin-version>5.3.0</ekstazi-maven-plugin-version>
     <elasticsearch-bundle-version>2.4.4_1</elasticsearch-bundle-version>
@@ -202,10 +202,10 @@
     <elasticsearch-sniffer-version>5.6.3</elasticsearch-sniffer-version>
     <elasticsearch-cluster-runner-version>2.4.0.0</elasticsearch-cluster-runner-version>
     <elasticsearch5-cluster-runner-version>5.6.3.0</elasticsearch5-cluster-runner-version>
-    <elasticsearch-rest-sniffer-version>6.1.1</elasticsearch-rest-sniffer-version>
-    <elasticsearch-rest-cluster-runner-version>6.1.1.0</elasticsearch-rest-cluster-runner-version>
-    <elasticsearch-rest-version>6.1.1</elasticsearch-rest-version>
-    <elasticsearch-rest-bundle-version>6.1.1_1</elasticsearch-rest-bundle-version>
+    <elasticsearch-rest-sniffer-version>6.4.2</elasticsearch-rest-sniffer-version>
+    <elasticsearch-rest-cluster-runner-version>6.4.2.0</elasticsearch-rest-cluster-runner-version>
+    <elasticsearch-rest-version>6.4.2</elasticsearch-rest-version>
+    <elasticsearch-rest-bundle-version>6.4.2_1</elasticsearch-rest-bundle-version>
     <elsql-version>1.3</elsql-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
     <embedmongo-version>2.1.1</embedmongo-version>
@@ -216,8 +216,8 @@
     <facebook4j-core-version>2.4.12</facebook4j-core-version>
     <facebook4j-core-bundle-version>2.4.12_1</facebook4j-core-bundle-version>
     <fastinfoset-version>1.2.13_1</fastinfoset-version>
-    <fastjson-version>1.2.49</fastjson-version>
-    <fastjson-bundle-version>1.2.49_1</fastjson-bundle-version>
+    <fastjson-version>1.2.51</fastjson-version>
+    <fastjson-bundle-version>1.2.51_1</fastjson-bundle-version>
     <felix-configadmin-version>1.8.8</felix-configadmin-version>
     <felix-connect-version>0.2.0</felix-connect-version>
     <felix-fileinstall-version>3.5.2</felix-fileinstall-version>
@@ -317,8 +317,8 @@
     <ignite-version>2.6.0</ignite-version>
     <infinispan-version>9.4.1.Final</infinispan-version>
     <infinispan-spring-boot-version>2.0.0.Final</infinispan-spring-boot-version>
-    <influx-java-driver-version>2.13</influx-java-driver-version>
-    <influx-java-driver-bundle-version>2.13_1</influx-java-driver-bundle-version>
+    <influx-java-driver-version>2.14</influx-java-driver-version>
+    <influx-java-driver-bundle-version>2.14_1</influx-java-driver-bundle-version>
     <influx-guava-version>20.0</influx-guava-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <irclib-version>1.10</irclib-version>
@@ -382,7 +382,7 @@
     <jersey-version>2.11</jersey-version>
     <jetty6-bundle-version>6.1.26_4</jetty6-bundle-version>
     <jetty92-version>9.2.22.v20170606</jetty92-version>
-    <jetty9-version>9.4.11.v20180605</jetty9-version>
+    <jetty9-version>9.4.12.v20180830</jetty9-version>
     <jetty-version>${jetty9-version}</jetty-version>
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
@@ -426,8 +426,8 @@
     <jsoup-version>1.11.3</jsoup-version>
     <jsp-api-2.1-version>1.0.1</jsp-api-2.1-version>
     <jsr311-api-version>1.1.1</jsr311-api-version>
-    <jt400-version>9.5</jt400-version>
-    <jt400-bundle-version>9.5_1</jt400-bundle-version>
+    <jt400-version>9.6</jt400-version>
+    <jt400-bundle-version>9.6_1</jt400-bundle-version>
     <juel-bundle-version>2.1.3_1</juel-bundle-version>
     <juel-version>2.1.3</juel-version>
     <!-- camel-itest-karaf doesn't work with JUnit 4.12 at present -->
@@ -451,17 +451,17 @@
     <leveldbjni-version>1.8</leveldbjni-version>
     <leveldb-api-version>0.10</leveldb-api-version>
     <leveldb-version>0.10</leveldb-version>
-    <libphonenumber-version>8.9.13</libphonenumber-version>
-    <libphonenumber-bundle-version>8.9.13_1</libphonenumber-bundle-version>
+    <libphonenumber-version>8.9.16</libphonenumber-version>
+    <libphonenumber-bundle-version>8.9.16_1</libphonenumber-bundle-version>
     <!-- virtual dependency only used by Eclipse m2e -->
     <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
     <log4j-version>1.2.17</log4j-version>
     <log4j2-version>2.11.1</log4j2-version>
     <lucene3-bundle-version>3.6.0_1</lucene3-bundle-version>
     <lucene3-version>3.6.0</lucene3-version>
-    <lucene-bundle-version>7.2.1_1</lucene-bundle-version>
+    <lucene-bundle-version>7.5.0_1</lucene-bundle-version>
     <!-- lucene aligned with elasticsearch version of lucene in use -->
-    <lucene-version>7.2.1</lucene-version>
+    <lucene-version>7.5.0</lucene-version>
     <lucene-version-range>[7,8)</lucene-version-range>
     <lightcouch-version>0.2.0</lightcouch-version>
     <lightcouch-bundle-version>0.2.0_1</lightcouch-bundle-version>
@@ -625,34 +625,34 @@
     <snakeyaml-version>1.23</snakeyaml-version>
     <snappy-version>1.1.4</snappy-version>
     <snmp4j-version>2.6.3_1</snmp4j-version>
-    <solr-bundle-version>7.2.1_1</solr-bundle-version>
+    <solr-bundle-version>7.5.0_1</solr-bundle-version>
     <!-- solr version aligned with lucene -->
-    <solr-version>7.2.1</solr-version>
+    <solr-version>7.5.0</solr-version>
     <solr-version-range>[7,8)</solr-version-range>
     <spark-version>2.3.2</spark-version>
-    <spark-rest-version>2.7.2</spark-rest-version>
-    <spark-rest-bundle-version>2.7.2_1</spark-rest-bundle-version>
+    <spark-rest-version>2.8.0</spark-rest-version>
+    <spark-rest-bundle-version>2.8.0_1</spark-rest-bundle-version>
     <splunk-version>1.6.4.0_1</splunk-version>
     <spring-batch-version>4.0.1.RELEASE</spring-batch-version>
     <spring-batch-bundle-version>4.0.1.RELEASE_1</spring-batch-bundle-version>
-    <spring-boot-version>2.0.6.RELEASE</spring-boot-version>
+    <spring-boot-version>2.1.0.RELEASE</spring-boot-version>
     <spring-cloud-commons-version>2.0.2.RELEASE</spring-cloud-commons-version>
     <spring-cloud-consul-version>2.0.1.RELEASE</spring-cloud-consul-version>
     <spring-cloud-netflix-version>2.0.2.RELEASE</spring-cloud-netflix-version>
     <spring-cloud-zookeeper-version>2.0.0.RELEASE</spring-cloud-zookeeper-version>
-    <spring-data-commons-version>2.0.10.RELEASE</spring-data-commons-version>
-    <spring-data-commons-bundle-version>2.0.10.RELEASE_1</spring-data-commons-bundle-version>
-    <spring-data-keyvalue-version>2.0.10.RELEASE</spring-data-keyvalue-version>
-    <spring-data-keyvalue-bundle-version>2.0.10.RELEASE_1</spring-data-keyvalue-bundle-version>
-    <spring-data-redis-version>2.0.10.RELEASE</spring-data-redis-version>
-    <spring-data-redis-bundle-version>2.0.10.RELEASE_1</spring-data-redis-bundle-version>
-    <spring-integration-version>5.0.8.RELEASE</spring-integration-version>
+    <spring-data-commons-version>2.1.1.RELEASE</spring-data-commons-version>
+    <spring-data-commons-bundle-version>2.1.1.RELEASE_1</spring-data-commons-bundle-version>
+    <spring-data-keyvalue-version>2.1.1.RELEASE</spring-data-keyvalue-version>
+    <spring-data-keyvalue-bundle-version>2.1.1.RELEASE_1</spring-data-keyvalue-bundle-version>
+    <spring-data-redis-version>2.1.1.RELEASE</spring-data-redis-version>
+    <spring-data-redis-bundle-version>2.1.1.RELEASE_1</spring-data-redis-bundle-version>
+    <spring-integration-version>5.1.0.RELEASE</spring-integration-version>
     <spring-ldap-version>2.3.2.RELEASE</spring-ldap-version>
     <spring-ldap-bundle-version>2.3.2.RELEASE_1</spring-ldap-bundle-version>
     <!-- karaf 4.1.x supports spring 4.x and karaf 4.2.x supports spring 5 -->
     <spring-version-range>[4.3,6)</spring-version-range>
     <spring-version>${spring5-version}</spring-version>
-    <spring5-version>5.0.10.RELEASE</spring5-version>
+    <spring5-version>5.1.2.RELEASE</spring5-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
     <spring-security-version>5.0.8.RELEASE</spring-security-version>
     <spring-security-bundle-version>5.0.4.RELEASE_1</spring-security-bundle-version>
@@ -681,7 +681,7 @@
     <stringtemplate-version>4.0.8</stringtemplate-version>
     <tagsoup-bundle-version>1.2.1_1</tagsoup-bundle-version>
     <tagsoup-version>1.2.1</tagsoup-version>
-    <testcontainers-version>1.9.1</testcontainers-version>
+    <testcontainers-version>1.10.0</testcontainers-version>
     <testng-version>6.14.2</testng-version>
     <tinybundles-version>2.1.1</tinybundles-version>
     <tika-version>1.19.1</tika-version>
