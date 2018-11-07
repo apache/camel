@@ -108,7 +108,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (48 parameters):
+==== Query Parameters (49 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -161,6 +161,7 @@ with the following path and query parameters:
 | *authMethodPriority* (security) | Which authentication method to prioritize to use, either as Basic, Digest or NTLM. |  | String
 | *authPassword* (security) | Authentication password |  | String
 | *authUsername* (security) | Authentication username |  | String
+| *sslContextParameters* (security) | To configure security using SSLContextParameters. Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need. |  | SSLContextParameters
 | *x509HostnameVerifier* (security) | To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or org.apache.http.conn.ssl.NoopHostnameVerifier. |  | HostnameVerifier
 |===
 // endpoint options: END
