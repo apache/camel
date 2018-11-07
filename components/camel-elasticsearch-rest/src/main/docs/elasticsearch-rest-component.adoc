@@ -279,7 +279,7 @@ from("direct:multiSearch")
 </route>
 ----
 
-MultiSearch on specific field(s) using Map.
+MultiSearch on specific field(s) 
 
 [source,java]
 ----
