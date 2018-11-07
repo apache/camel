@@ -614,6 +614,7 @@
     <bundle>mvn:org.apache.camel/camel-elasticsearch5/${project.version}</bundle>
   </feature>
   <feature name='camel-elasticsearch-rest' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>camel-elasticsearch-rest currently does not work in OSGi</details>
     <feature version='${project.version}'>camel-core</feature>
     <feature>http</feature>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
