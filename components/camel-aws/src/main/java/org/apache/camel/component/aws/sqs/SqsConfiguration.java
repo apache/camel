@@ -70,7 +70,7 @@ public class SqsConfiguration implements Cloneable {
     @UriParam(label = "producer")
     private Integer delaySeconds;
     // producer properties
-    @UriParam(label = "producer")
+    @UriParam(label = "advanced")
     private boolean delayQueue;
     @UriParam(label = "producer", enums = "useConstant,useExchangeId,usePropertyValue")
     private MessageGroupIdStrategy messageGroupIdStrategy;
