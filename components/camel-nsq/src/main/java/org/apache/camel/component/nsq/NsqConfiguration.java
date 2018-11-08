@@ -54,7 +54,7 @@ public class NsqConfiguration {
     private Boolean autoFinish = true;
     @UriParam(label = "consumer", defaultValue = "-1", description = "The NSQ consumer timeout period for messages retrieved from the queue. A value of -1 is the server default")
     private long messageTimeout = -1;
-    @UriParam(description = "A String to identify the userAgent")
+    @UriParam(description = "A String to identify the kind of client")
     private String userAgent;
     @UriParam(label = "security")
     private boolean secure;
