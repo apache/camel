@@ -17,6 +17,9 @@
 package org.apache.camel.builder.xml;
 
 import java.io.FileNotFoundException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 import org.xml.sax.SAXParseException;
 
@@ -26,6 +29,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.impl.converter.CoreStaticTypeConverterLoader;
 import org.junit.Test;
 
 import static org.apache.camel.builder.xml.XPathBuilder.xpath;
@@ -37,6 +41,23 @@ public class XPathFeatureTest extends ContextTestSupport {
         + " <!ELEMENT foo ANY > <!ENTITY xxe SYSTEM \"file:///bin/test.sh\" >]> <test> &xxe; </test>";
     public static final String XML_DATA_INVALID = " <!DOCTYPE foo [ " 
             + " <!ELEMENT foo ANY > <!ENTITY xxe SYSTEM \"file:///bin/test.sh\" >]> <test> &xxe; </test><notwellformed>";
+
+    @Override
+    public void setUp() throws Exception {
+        resetCoreConverters();
+        super.setUp();
+    }
+
+    private void resetCoreConverters() throws Exception {
+        Field field = CoreStaticTypeConverterLoader.class.getDeclaredField("INSTANCE");
+        field.setAccessible(true);
+        Field modifiersField = Field.class.getDeclaredField("modifiers");
+        modifiersField.setAccessible(true);
+        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+        Constructor<?> cns = CoreStaticTypeConverterLoader.class.getDeclaredConstructor();
+        cns.setAccessible(true);
+        field.set(null, cns.newInstance());
+    }
 
     @Override
     public boolean isUseRouteBuilder() {
